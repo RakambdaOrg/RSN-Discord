@@ -21,7 +21,7 @@ public class Main
 	{
 		Settings settings = new Settings(new File(SETTINGS_NAME));
 		
-		JDA jda = new JDABuilder(AccountType.BOT).setToken("***REMOVED***").addEventListener(new ReadyListener()).buildBlocking();
+		JDA jda = new JDABuilder(AccountType.BOT).setToken("NDMyOTU4NDgwMTk0ODYzMTA0.Da03lw.6O-ruk9Km6wk5Wo_4it9EN30Dm4").addEventListener(new ReadyListener()).buildBlocking();
 		jda.addEventListener(new MessageListener(settings));
 		jda.addEventListener(new ShutdownListener(settings));
 		jda.setAutoReconnect(true);
