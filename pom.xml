@@ -60,7 +60,7 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
-                    <release>${java.version}</release>
+                    <!--<release>${java.version}</release>-->
                     <showWarnings>true</showWarnings>
                     <showDeprecation>true</showDeprecation>
                 </configuration>
