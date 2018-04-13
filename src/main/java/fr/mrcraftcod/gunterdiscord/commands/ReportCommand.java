@@ -18,7 +18,7 @@ public class ReportCommand implements Command
 	@Override
 	public int getScope()
 	{
-		return ChannelType.PRIVATE.getId();
+		return -5;
 	}
 	
 	@Override
@@ -36,6 +36,11 @@ public class ReportCommand implements Command
 	@Override
 	public boolean execute(Settings settings, MessageReceivedEvent event, LinkedList<String> args)
 	{
+		if(event.getChannel().getType() != ChannelType.PRIVATE)
+		{
+			event.getMessage().delete().complete();
+			return true;
+		}
 		long reportChannel = settings.getReportChannel();
 		if(reportChannel < 0)
 		{
@@ -44,8 +49,8 @@ public class ReportCommand implements Command
 		else
 		{
 			event.getChannel().sendMessage("Votre message a bien été transféré. Merci à vous.").complete();
-			event.getJDA().getTextChannelById(reportChannel).sendMessageFormat("Nouveau report de %s#%s: %s", event.getAuthor().getAsMention(), event.getAuthor().getId(), args.stream().collect(Collectors.joining(" "))).complete();
+			event.getJDA().getTextChannelById(reportChannel).sendMessageFormat("Nouveau report de %s#%s: %s", event.getAuthor().getAsMention(), event.getAuthor().getDiscriminator(), args.stream().collect(Collectors.joining(" "))).complete();
 		}
-		return false;
+		return true;
 	}
 }
