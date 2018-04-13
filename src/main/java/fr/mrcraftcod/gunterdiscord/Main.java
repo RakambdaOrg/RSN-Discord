@@ -1,11 +1,15 @@
 package fr.mrcraftcod.gunterdiscord;
 
+import fr.mrcraftcod.gunterdiscord.listeners.MessageListener;
+import fr.mrcraftcod.gunterdiscord.listeners.ReadyListener;
+import fr.mrcraftcod.gunterdiscord.listeners.ShutdownListener;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import javax.security.auth.login.LoginException;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Paths;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 09/04/2018.
@@ -15,13 +19,14 @@ import java.io.FileNotFoundException;
  */
 public class Main
 {
-	private static final String SETTINGS_NAME = "settings.properties";
+	private static final String SETTINGS_NAME = "settings.json";
 	
-	public static void main(String[] args) throws LoginException, InterruptedException, FileNotFoundException
+	public static void main(String[] args) throws LoginException, InterruptedException, IOException
 	{
-		Settings settings = new Settings(new File(SETTINGS_NAME));
+		Settings settings = new Settings(Paths.get(new File(SETTINGS_NAME).toURI()));
 		
-		JDA jda = new JDABuilder(AccountType.BOT).setToken("NDMyOTU4NDgwMTk0ODYzMTA0.Da03lw.6O-ruk9Km6wk5Wo_4it9EN30Dm4").addEventListener(new ReadyListener()).buildBlocking();
+		JDA jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).buildBlocking();
+		jda.addEventListener(new ReadyListener());
 		jda.addEventListener(new MessageListener(settings));
 		jda.addEventListener(new ShutdownListener(settings));
 		jda.setAutoReconnect(true);
