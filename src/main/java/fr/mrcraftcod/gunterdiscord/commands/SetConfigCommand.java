@@ -4,6 +4,7 @@ import fr.mrcraftcod.gunterdiscord.Settings;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.commands.BasicCommand.AccessLevel.ADMIN;
 
 /**
@@ -63,7 +64,7 @@ public class SetConfigCommand extends BasicCommand
 			case "reportChan":
 				if(args.size() > 0)
 				{
-					settings.setReportChannel(Long.parseLong(args.pop()));
+					settings.setReportChannel(Long.parseLong(args.stream().collect(Collectors.joining(" ")).trim()));
 					event.getChannel().sendMessage("Value set").complete();
 				}
 				break;
@@ -77,7 +78,7 @@ public class SetConfigCommand extends BasicCommand
 			case "modoRole":
 				if(args.size() > 0)
 				{
-					settings.addModoRole(args.pop());
+					settings.addModoRole(args.stream().collect(Collectors.joining(" ")).trim());
 					event.getChannel().sendMessage("Value added").complete();
 				}
 				break;
@@ -91,7 +92,7 @@ public class SetConfigCommand extends BasicCommand
 			case "modoRole":
 				if(args.size() > 0)
 				{
-					settings.removeModoRole(args.pop());
+					settings.removeModoRole(args.stream().collect(Collectors.joining(" ")).trim());
 					event.getChannel().sendMessage("Value removed").complete();
 				}
 				break;
