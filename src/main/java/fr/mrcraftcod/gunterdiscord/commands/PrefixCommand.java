@@ -11,7 +11,7 @@ import java.util.LinkedList;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public class PrefixCommand implements Command
+public class PrefixCommand extends BasicCommand
 {
 	@Override
 	public int getScope()
@@ -34,8 +34,16 @@ public class PrefixCommand implements Command
 	@Override
 	public boolean execute(Settings settings, MessageReceivedEvent event, LinkedList<String> args)
 	{
+		if(!super.execute(settings, event, args))
+			return false;
 		if(args.size() > 0)
 			return settings.setPrefix(args.pop());
 		return false;
+	}
+	
+	@Override
+	protected AccessLevel getAccessLevel()
+	{
+		return AccessLevel.ADMIN;
 	}
 }

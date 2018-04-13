@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord;
 import fr.mrcraftcod.gunterdiscord.listeners.MessageListener;
 import fr.mrcraftcod.gunterdiscord.listeners.ReadyListener;
 import fr.mrcraftcod.gunterdiscord.listeners.ShutdownListener;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -19,11 +20,13 @@ import java.nio.file.Paths;
  */
 public class Main
 {
+	public static Utilities utilities;
 	private static final String SETTINGS_NAME = "settings.json";
 	
 	public static void main(String[] args) throws LoginException, InterruptedException, IOException
 	{
 		Settings settings = new Settings(Paths.get(new File(SETTINGS_NAME).toURI()));
+		utilities = new Utilities(settings);
 		
 		JDA jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).buildBlocking();
 		jda.addEventListener(new ReadyListener());

@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord;
 
 import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,6 +24,7 @@ public class Settings
 	private static final String PREFIX_KEY = "prefix";
 	private static final String IMAGES_ONLY_KEY = "onlyImage";
 	private static final String REPORT_CHANNEL_KEY = "reportChannel";
+	private static final String MODO_ROLES_KEY = "modoRoles";
 	private final Path path;
 	private final JSONObject settings;
 	
@@ -63,11 +65,44 @@ public class Settings
 				if(obj instanceof Long)
 					if((Long) obj == id)
 						return true;
+					else
+						System.out.println(obj.getClass().getName());
+			}
+		}
+		return false;
+	}
+	
+	public void addModoRole(String role)
+	{
+		if(!settings.has(MODO_ROLES_KEY))
+			settings.put(MODO_ROLES_KEY, new JSONArray());
+		settings.getJSONArray(MODO_ROLES_KEY).put(role);
+	}
+	
+	public void removeModoRole(String role)
+	{
+		if(settings.has(MODO_ROLES_KEY))
+		{
+			int index = settings.getJSONArray(MODO_ROLES_KEY).toList().indexOf(role);
+			if(index != -1)
+				settings.getJSONArray(MODO_ROLES_KEY).remove(index);
+		}
+	}
+	
+	public List<String> getModeratorsRoles()
+	{
+		List<String> roles = new ArrayList<>();
+		if(settings.has(MODO_ROLES_KEY))
+		{
+			for(Object obj : settings.getJSONArray(MODO_ROLES_KEY))
+			{
+				if(obj instanceof String)
+					roles.add((String) obj);
 				else
 					System.out.println(obj.getClass().getName());
 			}
 		}
-		return false;
+		return roles;
 	}
 	
 	public long getReportChannel()

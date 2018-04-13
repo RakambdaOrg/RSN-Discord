@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
-public class ReportCommand implements Command
+public class ReportCommand extends BasicCommand
 {
 	
 	@Override
@@ -36,6 +36,8 @@ public class ReportCommand implements Command
 	@Override
 	public boolean execute(Settings settings, MessageReceivedEvent event, LinkedList<String> args)
 	{
+		if(!super.execute(settings, event, args))
+			return false;
 		if(event.getChannel().getType() != ChannelType.PRIVATE)
 		{
 			event.getMessage().delete().complete();
@@ -52,5 +54,11 @@ public class ReportCommand implements Command
 			event.getJDA().getTextChannelById(reportChannel).sendMessageFormat("Nouveau report de %s#%s: %s", event.getAuthor().getAsMention(), event.getAuthor().getDiscriminator(), args.stream().collect(Collectors.joining(" "))).complete();
 		}
 		return true;
+	}
+	
+	@Override
+	protected AccessLevel getAccessLevel()
+	{
+		return AccessLevel.ALL;
 	}
 }

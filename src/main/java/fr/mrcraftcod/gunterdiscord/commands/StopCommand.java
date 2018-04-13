@@ -11,8 +11,9 @@ import java.util.LinkedList;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public class StopCommand implements Command
+public class StopCommand extends BasicCommand
 {
+	
 	@Override
 	public int getScope()
 	{
@@ -34,7 +35,15 @@ public class StopCommand implements Command
 	@Override
 	public boolean execute(Settings settings, MessageReceivedEvent event, LinkedList<String> args)
 	{
+		if(!super.execute(settings, event, args))
+			return false;
 		event.getJDA().shutdown();
 		return true;
+	}
+	
+	@Override
+	protected AccessLevel getAccessLevel()
+	{
+		return AccessLevel.MODERATOR;
 	}
 }
