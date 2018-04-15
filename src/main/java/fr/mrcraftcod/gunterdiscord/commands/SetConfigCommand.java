@@ -82,6 +82,13 @@ public class SetConfigCommand extends BasicCommand
 					event.getChannel().sendMessage("Value added").complete();
 				}
 				break;
+			case "questionOnly":
+				if(args.size() > 0)
+				{
+					settings.addQuestionOnly(Long.parseLong(args.stream().collect(Collectors.joining(" ")).trim()));
+					event.getChannel().sendMessage("Value added").complete();
+				}
+				break;
 		}
 	}
 	
@@ -93,6 +100,13 @@ public class SetConfigCommand extends BasicCommand
 				if(args.size() > 0)
 				{
 					settings.removeModoRole(args.stream().collect(Collectors.joining(" ")).trim());
+					event.getChannel().sendMessage("Value removed").complete();
+				}
+				break;
+			case "questionOnly":
+				if(args.size() > 0)
+				{
+					settings.removeQuestionOnly(Long.parseLong(args.stream().collect(Collectors.joining(" ")).trim()));
 					event.getChannel().sendMessage("Value removed").complete();
 				}
 				break;

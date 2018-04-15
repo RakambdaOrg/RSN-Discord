@@ -23,6 +23,7 @@ public class Settings
 	private static final String BANNED_WORDS_KEY = "bannedRegexes";
 	private static final String PREFIX_KEY = "prefix";
 	private static final String IMAGES_ONLY_KEY = "onlyImage";
+	private static final String QUESTION_ONLY_KEY = "onlyQuestion";
 	private static final String REPORT_CHANNEL_KEY = "reportChannel";
 	private static final String MODO_ROLES_KEY = "modoRoles";
 	private final Path path;
@@ -70,6 +71,39 @@ public class Settings
 			}
 		}
 		return false;
+	}
+	
+	public boolean isQuestionOnly(long id)
+	{
+		if(settings.has(QUESTION_ONLY_KEY))
+		{
+			for(Object obj : settings.getJSONArray(QUESTION_ONLY_KEY))
+			{
+				if(obj instanceof Long)
+					if((Long)obj == id)
+						return true;
+					else
+						System.out.println(obj.getClass().getName());
+			}
+		}
+		return false;
+	}
+	
+	public void addQuestionOnly(long ID)
+	{
+		if(!settings.has(QUESTION_ONLY_KEY))
+			settings.put(QUESTION_ONLY_KEY, new JSONArray());
+		settings.getJSONArray(QUESTION_ONLY_KEY).put(ID);
+	}
+	
+	public void removeQuestionOnly(long ID)
+	{
+		if(settings.has(QUESTION_ONLY_KEY))
+		{
+			int index = settings.getJSONArray(QUESTION_ONLY_KEY).toList().indexOf(ID);
+			if(index != -1)
+				settings.getJSONArray(QUESTION_ONLY_KEY).remove(index);
+		}
 	}
 	
 	public void addModoRole(String role)

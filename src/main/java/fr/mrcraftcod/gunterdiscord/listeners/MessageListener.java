@@ -65,6 +65,12 @@ public class MessageListener extends ListenerAdapter
 				event.getMessage().delete().complete();
 				event.getAuthor().openPrivateChannel().complete().sendMessageFormat("Le channel " + event.getChannel().getName() + " est pour les images seulement.");
 			}
+			
+			if(!event.getMessage().getContentRaw().trim().endsWith("?") && settings.isQuestionOnly(event.getMessage().getChannel().getIdLong()))
+			{
+				event.getMessage().delete().complete();
+				event.getAuthor().openPrivateChannel().complete().sendMessageFormat("Le channel " + event.getChannel().getName() + " est pour les questions seulement (ça finit par un '?').");
+			}
 		}
 	}
 	
