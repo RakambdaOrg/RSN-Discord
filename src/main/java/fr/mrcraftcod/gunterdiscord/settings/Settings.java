@@ -1,15 +1,16 @@
-package fr.mrcraftcod.gunterdiscord;
+package fr.mrcraftcod.gunterdiscord.settings;
 
+import fr.mrcraftcod.gunterdiscord.Main;
+import fr.mrcraftcod.gunterdiscord.settings.configs.*;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -20,151 +21,73 @@ import java.util.stream.Collectors;
  */
 public class Settings
 {
-	private static final String BANNED_WORDS_KEY = "bannedRegexes";
-	private static final String PREFIX_KEY = "prefix";
-	private static final String IMAGES_ONLY_KEY = "onlyImage";
-	private static final String QUESTION_ONLY_KEY = "onlyQuestion";
-	private static final String REPORT_CHANNEL_KEY = "reportChannel";
-	private static final String MODO_ROLES_KEY = "modoRoles";
-	private final Path path;
-	private final JSONObject settings;
+	private static Path path;
+	private static JSONObject settings;
+	public static final Class<? extends Configuration>[] SETTINGS = new Class[]{
+			BannedRegexConfig.class,
+			ModoRolesConfig.class,
+			OnlyImagesConfig.class,
+			OnlyQuestionsConfig.class,
+			PrefixConfig.class,
+			ReportChannelConfig.class
+	};
 	
-	public Settings(Path path) throws IOException
+	public static void init(Path path) throws IOException
 	{
-		this.path = path;
+		Settings.path = path;
 		if(path.toFile().exists())
 			settings = new JSONObject(Files.readAllLines(path).stream().collect(Collectors.joining("")));
 		else
 			settings = new JSONObject(IOUtils.toString(Main.class.getResourceAsStream("/settings/default.json"), "UTF-8"));
 	}
 	
-	public void save() throws IOException
+	public static Configuration getSettings(String name)
+	{
+		for(Class<? extends Configuration> klass : SETTINGS)
+		{
+			try
+			{
+				Configuration configuration = (Configuration) klass.getConstructors()[0].newInstance();
+				if(configuration.getName().equalsIgnoreCase(name))
+					return configuration;
+			}
+			catch(InstantiationException | InvocationTargetException | IllegalAccessException e)
+			{
+				e.printStackTrace();
+			}
+			
+		}
+		return null;
+	}
+	
+	public static void save() throws IOException
 	{
 		Files.write(path, Arrays.asList(settings.toString(4).split("\n")), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
 	}
 	
-	public void close()
+	public static void close()
 	{
 	}
 	
-	public boolean setPrefix(String prefix)
+	public static Object getObject(String name)
 	{
-		if(prefix.length() > 0)
-		{
-			settings.put(PREFIX_KEY, true);
-			return true;
-		}
-		return false;
+		return settings.has(name) ? settings.get(name) : null;
 	}
 	
-	public boolean isImageOnly(long id)
+	public static JSONArray getArray(String name)
 	{
-		if(settings.has(IMAGES_ONLY_KEY))
-		{
-			for(Object obj : settings.getJSONArray(IMAGES_ONLY_KEY))
-			{
-				if(obj instanceof Long)
-					if((Long) obj == id)
-						return true;
-					else
-						System.out.println(obj.getClass().getName());
-			}
-		}
-		return false;
+		return settings.has(name) ? settings.getJSONArray(name) : null;
 	}
 	
-	public boolean isQuestionOnly(long id)
+	public static void setValue(ValueConfiguration configuration, Object value)
 	{
-		if(settings.has(QUESTION_ONLY_KEY))
-		{
-			for(Object obj : settings.getJSONArray(QUESTION_ONLY_KEY))
-			{
-				if(obj instanceof Long)
-					if((Long)obj == id)
-						return true;
-					else
-						System.out.println(obj.getClass().getName());
-			}
-		}
-		return false;
+		settings.put(configuration.getName(), value);
 	}
 	
-	public void addQuestionOnly(long ID)
+	public static <T> void addValue(ListConfiguration configuration, T value)
 	{
-		if(!settings.has(QUESTION_ONLY_KEY))
-			settings.put(QUESTION_ONLY_KEY, new JSONArray());
-		settings.getJSONArray(QUESTION_ONLY_KEY).put(ID);
-	}
-	
-	public void removeQuestionOnly(long ID)
-	{
-		if(settings.has(QUESTION_ONLY_KEY))
-		{
-			int index = settings.getJSONArray(QUESTION_ONLY_KEY).toList().indexOf(ID);
-			if(index != -1)
-				settings.getJSONArray(QUESTION_ONLY_KEY).remove(index);
-		}
-	}
-	
-	public void addModoRole(String role)
-	{
-		if(!settings.has(MODO_ROLES_KEY))
-			settings.put(MODO_ROLES_KEY, new JSONArray());
-		settings.getJSONArray(MODO_ROLES_KEY).put(role);
-	}
-	
-	public void removeModoRole(String role)
-	{
-		if(settings.has(MODO_ROLES_KEY))
-		{
-			int index = settings.getJSONArray(MODO_ROLES_KEY).toList().indexOf(role);
-			if(index != -1)
-				settings.getJSONArray(MODO_ROLES_KEY).remove(index);
-		}
-	}
-	
-	public List<String> getModeratorsRoles()
-	{
-		List<String> roles = new ArrayList<>();
-		if(settings.has(MODO_ROLES_KEY))
-		{
-			for(Object obj : settings.getJSONArray(MODO_ROLES_KEY))
-			{
-				if(obj instanceof String)
-					roles.add((String) obj);
-			}
-		}
-		return roles;
-	}
-	
-	public long getReportChannel()
-	{
-		return settings.getLong(REPORT_CHANNEL_KEY);
-	}
-	
-	public void setReportChannel(long ID)
-	{
-		settings.put(REPORT_CHANNEL_KEY, ID);
-	}
-	
-	public String getPrefix()
-	{
-		if(settings.has(PREFIX_KEY))
-			return settings.getString(PREFIX_KEY);
-		return "g?";
-	}
-	
-	public List<String> getBannedWords()
-	{
-		List<String> banned = new ArrayList<>();
-		if(settings.has(BANNED_WORDS_KEY))
-		{
-			for(Object obj : settings.getJSONArray(BANNED_WORDS_KEY))
-			{
-				if(obj instanceof String)
-					banned.add((String) obj);
-			}
-		}
-		return banned;
+		if(!settings.has(configuration.getName()))
+			settings.put(configuration.getName(), new JSONArray());
+		settings.put(configuration.getName(), settings.getJSONArray(configuration.getName()).put(value));
 	}
 }

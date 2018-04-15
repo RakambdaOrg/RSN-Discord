@@ -1,10 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
+import fr.mrcraftcod.gunterdiscord.settings.Configuration;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
-import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.commands.BasicCommand.AccessLevel.ADMIN;
 
 /**
@@ -15,6 +16,19 @@ import static fr.mrcraftcod.gunterdiscord.commands.BasicCommand.AccessLevel.ADMI
  */
 public class SetConfigCommand extends BasicCommand
 {
+	public enum ChangeConfigType
+	{
+		ADD, REMOVE, SET, ERROR;
+		
+		public static ChangeConfigType get(String action)
+		{
+			for(ChangeConfigType type : ChangeConfigType.values())
+				if(type.name().equalsIgnoreCase(action))
+					return type;
+			return ERROR;
+		}
+	}
+	
 	@Override
 	public int getScope()
 	{
@@ -34,83 +48,39 @@ public class SetConfigCommand extends BasicCommand
 	}
 	
 	@Override
-	public boolean execute(Settings settings, MessageReceivedEvent event, LinkedList<String> args)
+	public String getCommandDescription()
 	{
-		if(!super.execute(settings, event, args))
-			return false;
+		return super.getCommandDescription() + " <parametre> <action> <valeur...>";
+	}
+	
+	@Override
+	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
+	{
+		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
+			return CommandResult.NOT_ALLOWED;
 		if(args.size() > 0)
-			switch(args.pop())
+		{
+			Configuration configuration = Settings.getSettings(args.pop());
+			if(configuration != null)
 			{
-				case "set":
-					if(args.size() > 0)
-						setValue(settings, event, args);
-					break;
-				case "add":
-					if(args.size() > 0)
-						addValue(settings, event, args);
-					break;
-				case "remove":
-					if(args.size() > 0)
-						removeValue(settings, event, args);
-					break;
+				if(processWithValue(configuration, args))
+					Actions.reply(event, "Paramètre changé");
+				else
+					Actions.reply(event, "Fonctionnement de la commande: " + getCommand() + configuration);
 			}
+		}
+		return CommandResult.SUCCESS;
+	}
+	
+	private boolean processWithValue(Configuration configuration, LinkedList<String> args)
+	{
+		String actionStr;
+		if((actionStr = args.poll()) == null)
+			return false;
+		ChangeConfigType action = ChangeConfigType.get(actionStr);
+		if(configuration.isActionAllowed(action))
+			return configuration.handleChange(action, args);
 		return false;
-	}
-	
-	private void setValue(Settings settings, MessageReceivedEvent event, LinkedList<String> args)
-	{
-		switch(args.pop())
-		{
-			case "reportChan":
-				if(args.size() > 0)
-				{
-					settings.setReportChannel(Long.parseLong(args.stream().collect(Collectors.joining(" ")).trim()));
-					event.getChannel().sendMessage("Value set").complete();
-				}
-				break;
-		}
-	}
-	
-	private void addValue(Settings settings, MessageReceivedEvent event, LinkedList<String> args)
-	{
-		switch(args.pop())
-		{
-			case "modoRole":
-				if(args.size() > 0)
-				{
-					settings.addModoRole(args.stream().collect(Collectors.joining(" ")).trim());
-					event.getChannel().sendMessage("Value added").complete();
-				}
-				break;
-			case "questionOnly":
-				if(args.size() > 0)
-				{
-					settings.addQuestionOnly(Long.parseLong(args.stream().collect(Collectors.joining(" ")).trim()));
-					event.getChannel().sendMessage("Value added").complete();
-				}
-				break;
-		}
-	}
-	
-	private void removeValue(Settings settings, MessageReceivedEvent event, LinkedList<String> args)
-	{
-		switch(args.pop())
-		{
-			case "modoRole":
-				if(args.size() > 0)
-				{
-					settings.removeModoRole(args.stream().collect(Collectors.joining(" ")).trim());
-					event.getChannel().sendMessage("Value removed").complete();
-				}
-				break;
-			case "questionOnly":
-				if(args.size() > 0)
-				{
-					settings.removeQuestionOnly(Long.parseLong(args.stream().collect(Collectors.joining(" ")).trim()));
-					event.getChannel().sendMessage("Value removed").complete();
-				}
-				break;
-		}
 	}
 	
 	@Override

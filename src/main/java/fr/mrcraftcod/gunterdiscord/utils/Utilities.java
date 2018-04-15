@@ -1,10 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.utils;
 
-import fr.mrcraftcod.gunterdiscord.Main;
-import fr.mrcraftcod.gunterdiscord.settings.Settings;
+import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
+import fr.mrcraftcod.gunterdiscord.settings.configs.ModoRolesConfig;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
+import java.io.InvalidClassException;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
@@ -14,22 +15,24 @@ import net.dv8tion.jda.core.entities.Role;
  */
 public class Utilities
 {
-	private final Settings settings;
-	
-	public Utilities(Settings settings)
-	{
-		this.settings = settings;
-	}
-	
-	public boolean isModerator(Member member)
+	public static boolean isModerator(Member member)
 	{
 		for(Role role : member.getRoles())
-			if(settings.getModeratorsRoles().contains(role.getAsMention()))
-				return true;
+		{
+			try
+			{
+				if(new ModoRolesConfig().getAsList().contains(role.getAsMention()))
+					return true;
+			}
+			catch(NoValueDefinedException | InvalidClassException e)
+			{
+				e.printStackTrace();
+			}
+		}
 		return false;
 	}
 	
-	public boolean isAdmin(Member member)
+	public static boolean isAdmin(Member member)
 	{
 		for(Role role : member.getRoles())
 			if(role.hasPermission(Permission.ADMINISTRATOR))
@@ -37,8 +40,8 @@ public class Utilities
 		return false;
 	}
 	
-	public boolean isTeam(Member member)
+	public static boolean isTeam(Member member)
 	{
-		return Main.utilities.isModerator(member) || Main.utilities.isAdmin(member);
+		return isModerator(member) || isAdmin(member);
 	}
 }

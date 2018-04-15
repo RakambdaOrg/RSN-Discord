@@ -1,6 +1,5 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
-import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
@@ -33,12 +32,12 @@ public class StopCommand extends BasicCommand
 	}
 	
 	@Override
-	public boolean execute(Settings settings, MessageReceivedEvent event, LinkedList<String> args)
+	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
-		if(!super.execute(settings, event, args))
-			return false;
+		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
+			return CommandResult.NOT_ALLOWED;
 		event.getJDA().shutdown();
-		return true;
+		return CommandResult.SUCCESS;
 	}
 	
 	@Override

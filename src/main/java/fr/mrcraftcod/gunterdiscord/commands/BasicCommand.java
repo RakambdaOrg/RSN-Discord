@@ -1,8 +1,10 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
-import fr.mrcraftcod.gunterdiscord.Main;
-import fr.mrcraftcod.gunterdiscord.settings.Settings;
+import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
+import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import java.io.InvalidClassException;
 import java.util.LinkedList;
 import static fr.mrcraftcod.gunterdiscord.commands.BasicCommand.AccessLevel.ALL;
 import static fr.mrcraftcod.gunterdiscord.commands.BasicCommand.AccessLevel.MODERATOR;
@@ -21,13 +23,29 @@ public abstract class BasicCommand implements Command
 	}
 	
 	@Override
-	public boolean execute(Settings settings, MessageReceivedEvent event, LinkedList<String> args)
+	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		if(getAccessLevel() == ALL)
-			return true;
-		if(getAccessLevel() == MODERATOR && Main.utilities.isModerator(event.getMember()))
-			return true;
-		return Main.utilities.isAdmin(event.getMember());
+			return CommandResult.SUCCESS;
+		if(getAccessLevel() == MODERATOR && Utilities.isModerator(event.getMember()))
+			return CommandResult.SUCCESS;
+		if(Utilities.isAdmin(event.getMember()))
+			return CommandResult.SUCCESS;
+		return CommandResult.NOT_ALLOWED;
+	}
+	
+	@Override
+	public String getCommandDescription()
+	{
+		try
+		{
+			return new PrefixConfig().getString() + getCommand();
+		}
+		catch(InvalidClassException | NoValueDefinedException e)
+		{
+			e.printStackTrace();
+		}
+		return getCommand();
 	}
 	
 	protected abstract AccessLevel getAccessLevel();

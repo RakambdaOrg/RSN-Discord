@@ -13,20 +13,13 @@ import java.io.IOException;
  */
 public class ShutdownListener extends ListenerAdapter
 {
-	private final Settings settings;
-	
-	public ShutdownListener(Settings settings)
-	{
-		this.settings = settings;
-	}
-	
 	@Override
 	public void onShutdown(ShutdownEvent event)
 	{
 		super.onShutdown(event);
 		try
 		{
-			settings.save();
+			Settings.save();
 		}
 		catch(IOException e)
 		{
@@ -34,7 +27,7 @@ public class ShutdownListener extends ListenerAdapter
 		}
 		finally
 		{
-			settings.close();
+			Settings.close();
 		}
 	}
 }

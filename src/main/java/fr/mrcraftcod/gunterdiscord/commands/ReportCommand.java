@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
-import fr.mrcraftcod.gunterdiscord.settings.Settings;
+import fr.mrcraftcod.gunterdiscord.settings.configs.ReportChannelConfig;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
@@ -14,7 +15,6 @@ import java.util.stream.Collectors;
  */
 public class ReportCommand extends BasicCommand
 {
-	
 	@Override
 	public int getScope()
 	{
@@ -34,26 +34,32 @@ public class ReportCommand extends BasicCommand
 	}
 	
 	@Override
-	public boolean execute(Settings settings, MessageReceivedEvent event, LinkedList<String> args)
+	public String getCommandDescription()
 	{
-		if(!super.execute(settings, event, args))
-			return false;
+		return super.getCommandDescription() + " <raison>";
+	}
+	
+	@Override
+	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
+	{
+		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
+			return CommandResult.NOT_ALLOWED;
 		if(event.getChannel().getType() != ChannelType.PRIVATE)
 		{
 			event.getMessage().delete().complete();
-			return true;
+			return CommandResult.SUCCESS;
 		}
-		long reportChannel = settings.getReportChannel();
+		long reportChannel = new ReportChannelConfig().getLong();
 		if(reportChannel < 0)
 		{
-			event.getChannel().sendMessage("Cette fonctionnalité doit encore être configuré. Veuillez en avertir un modérateur.").complete();
+			Actions.reply(event, "Cette fonctionnalité doit encore être configuré. Veuillez en avertir un modérateur.");
 		}
 		else
 		{
-			event.getChannel().sendMessage("Votre message a bien été transféré. Merci à vous.").complete();
+			Actions.reply(event, "Votre message a bien été transféré. Merci à vous.");
 			event.getJDA().getTextChannelById(reportChannel).sendMessageFormat("Nouveau report de %s#%s: %s", event.getAuthor().getAsMention(), event.getAuthor().getDiscriminator(), args.stream().collect(Collectors.joining(" "))).complete();
 		}
-		return true;
+		return CommandResult.SUCCESS;
 	}
 	
 	@Override

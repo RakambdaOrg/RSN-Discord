@@ -1,6 +1,5 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
-import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
 
@@ -15,5 +14,6 @@ public interface Command
 	int getScope();
 	String getName();
 	String getCommand();
-	boolean execute(Settings settings, MessageReceivedEvent event, LinkedList<String> args);
+	String getCommandDescription();
+	CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception;
 }
