@@ -62,6 +62,6 @@ public abstract class ValueConfiguration extends Configuration
 	@Override
 	public boolean isActionAllowed(SetConfigCommand.ChangeConfigType action)
 	{
-		return action == SetConfigCommand.ChangeConfigType.SET;
+		return action == SetConfigCommand.ChangeConfigType.SET || action == SetConfigCommand.ChangeConfigType.SHOW;
 	}
 }

@@ -60,6 +60,6 @@ public abstract class ListConfiguration<T> extends Configuration
 	@Override
 	public boolean isActionAllowed(SetConfigCommand.ChangeConfigType action)
 	{
-		return action == SetConfigCommand.ChangeConfigType.ADD || action == SetConfigCommand.ChangeConfigType.REMOVE;
+		return action == SetConfigCommand.ChangeConfigType.ADD || action == SetConfigCommand.ChangeConfigType.REMOVE || action == SetConfigCommand.ChangeConfigType.SHOW;
 	}
 }

@@ -64,9 +64,9 @@ public class SetConfigCommand extends BasicCommand
 			if(configuration != null)
 			{
 				if(processWithValue(event, configuration, args))
-					Actions.reply(event, "Paramètre changé");
+					Actions.reply(event, "OK");
 				else
-					Actions.reply(event, "Fonctionnement de la commande: " + getCommandDescription() + " // " + configuration.getName());
+					Actions.reply(event, "Erreur - Fonctionnement de la commande: " + getCommandDescription() + " // " + configuration.getName());
 			}
 		}
 		return CommandResult.SUCCESS;
