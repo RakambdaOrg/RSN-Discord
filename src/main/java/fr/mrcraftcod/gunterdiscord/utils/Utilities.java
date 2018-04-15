@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils;
 
+import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
@@ -34,5 +35,10 @@ public class Utilities
 			if(role.hasPermission(Permission.ADMINISTRATOR))
 				return true;
 		return false;
+	}
+	
+	public boolean isTeam(Member member)
+	{
+		return Main.utilities.isModerator(member) || Main.utilities.isAdmin(member);
 	}
 }

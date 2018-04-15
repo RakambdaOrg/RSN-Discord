@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
+import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.Settings;
 import fr.mrcraftcod.gunterdiscord.commands.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -41,7 +42,7 @@ public class MessageListener extends ListenerAdapter
 			args.addAll(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 			Command command = getCommand(args.pop().substring(settings.getPrefix().length()));
 			if(command != null && (command.getScope() == -5 || command.getScope() == event.getChannel().getType().getId()))
-					command.execute(settings, event, args);
+				command.execute(settings, event, args);
 		}
 		
 		if(true)
@@ -62,14 +63,20 @@ public class MessageListener extends ListenerAdapter
 			
 			if(event.getMessage().getAttachments().size() < 1 && settings.isImageOnly(event.getMessage().getChannel().getIdLong()))
 			{
-				event.getMessage().delete().complete();
-				event.getAuthor().openPrivateChannel().complete().sendMessageFormat("Le channel " + event.getChannel().getName() + " est pour les images seulement.").complete();
+				if(!Main.utilities.isTeam(event.getMember()))
+				{
+					event.getMessage().delete().complete();
+					event.getAuthor().openPrivateChannel().complete().sendMessageFormat("Le channel " + event.getChannel().getName() + " est pour les images seulement.").complete();
+				}
 			}
 			
 			if(!event.getMessage().getContentRaw().trim().endsWith("?") && settings.isQuestionOnly(event.getMessage().getChannel().getIdLong()))
 			{
-				event.getMessage().delete().complete();
-				event.getAuthor().openPrivateChannel().complete().sendMessageFormat("Le channel " + event.getChannel().getName() + " est pour les questions seulement (ça finit par un '?'). Ton message était: " + event.getMessage().getContentRaw()).complete();
+				if(!Main.utilities.isTeam(event.getMember()))
+				{
+					event.getMessage().delete().complete();
+					event.getAuthor().openPrivateChannel().complete().sendMessageFormat("Le channel " + event.getChannel().getName() + " est pour les questions seulement (ça finit par un '?'). Ton message était: " + event.getMessage().getContentRaw()).complete();
+				}
 			}
 		}
 	}

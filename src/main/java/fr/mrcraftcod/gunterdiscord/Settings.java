@@ -132,8 +132,6 @@ public class Settings
 			{
 				if(obj instanceof String)
 					roles.add((String) obj);
-				else
-					System.out.println(obj.getClass().getName());
 			}
 		}
 		return roles;
@@ -165,8 +163,6 @@ public class Settings
 			{
 				if(obj instanceof String)
 					banned.add((String) obj);
-				else
-					System.out.println(obj.getClass().getName());
 			}
 		}
 		return banned;
