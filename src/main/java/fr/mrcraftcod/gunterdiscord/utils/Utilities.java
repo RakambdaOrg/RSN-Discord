@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord.utils;
 
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.ModoRolesConfig;
+import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
@@ -38,6 +39,14 @@ public class Utilities
 			if(role.hasPermission(Permission.ADMINISTRATOR))
 				return true;
 		return false;
+	}
+	
+	public static Role getRole(JDA jda, String name)
+	{
+		for(Role role : jda.getRoles())
+			if(role.getName().equalsIgnoreCase(name))
+				return role;
+		return null;
 	}
 	
 	public static boolean isTeam(Member member)

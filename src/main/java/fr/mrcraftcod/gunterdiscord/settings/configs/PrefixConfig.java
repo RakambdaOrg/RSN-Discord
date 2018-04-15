@@ -2,6 +2,8 @@ package fr.mrcraftcod.gunterdiscord.settings.configs;
 
 import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
 import fr.mrcraftcod.gunterdiscord.settings.ValueConfiguration;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
 
 /**
@@ -13,8 +15,21 @@ import java.util.LinkedList;
 public class PrefixConfig extends ValueConfiguration
 {
 	@Override
-	public boolean handleChange(SetConfigCommand.ChangeConfigType action, LinkedList<String> args)
+	public boolean handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args) throws Exception
 	{
+		if(action == SetConfigCommand.ChangeConfigType.SHOW)
+		{
+			Actions.reply(event, getObject().toString());
+			return true;
+		}
+		if(args.size() < 1)
+			return false;
+		switch(action)
+		{
+			case SET:
+				setValue(args.poll());
+				return true;
+		}
 		return false;
 	}
 	

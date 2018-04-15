@@ -90,4 +90,20 @@ public class Settings
 			settings.put(configuration.getName(), new JSONArray());
 		settings.put(configuration.getName(), settings.getJSONArray(configuration.getName()).put(value));
 	}
+	
+	public static void resetList(ListConfiguration configuration)
+	{
+		settings.put(configuration.getName(), new JSONArray());
+	}
+	
+	public static <T> void removeValue(ListConfiguration configuration, T value)
+	{
+		JSONArray array = getArray(configuration.getName());
+		if(array == null)
+			return;
+		int index = array.toList().indexOf(value);
+		if(index != -1)
+			array.remove(index);
+		settings.put(configuration.getName(), array);
+	}
 }

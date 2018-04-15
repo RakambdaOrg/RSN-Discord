@@ -18,7 +18,7 @@ public class SetConfigCommand extends BasicCommand
 {
 	public enum ChangeConfigType
 	{
-		ADD, REMOVE, SET, ERROR;
+		ADD, REMOVE, SET, SHOW, ERROR;
 		
 		public static ChangeConfigType get(String action)
 		{
@@ -63,23 +63,32 @@ public class SetConfigCommand extends BasicCommand
 			Configuration configuration = Settings.getSettings(args.pop());
 			if(configuration != null)
 			{
-				if(processWithValue(configuration, args))
+				if(processWithValue(event, configuration, args))
 					Actions.reply(event, "Paramètre changé");
 				else
-					Actions.reply(event, "Fonctionnement de la commande: " + getCommand() + configuration);
+					Actions.reply(event, "Fonctionnement de la commande: " + getCommandDescription() + " // " + configuration.getName());
 			}
 		}
 		return CommandResult.SUCCESS;
 	}
 	
-	private boolean processWithValue(Configuration configuration, LinkedList<String> args)
+	private boolean processWithValue(MessageReceivedEvent event, Configuration configuration, LinkedList<String> args)
 	{
 		String actionStr;
 		if((actionStr = args.poll()) == null)
 			return false;
 		ChangeConfigType action = ChangeConfigType.get(actionStr);
 		if(configuration.isActionAllowed(action))
-			return configuration.handleChange(action, args);
+		{
+			try
+			{
+				return configuration.handleChange(event, action, args);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
 		return false;
 	}
 	

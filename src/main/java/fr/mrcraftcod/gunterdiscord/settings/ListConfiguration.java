@@ -20,6 +20,11 @@ public abstract class ListConfiguration<T> extends Configuration
 		Settings.addValue(this, value);
 	}
 	
+	public void removeValue(T value)
+	{
+		Settings.removeValue(this, value);
+	}
+	
 	@Override
 	public ConfigType getType()
 	{
@@ -39,15 +44,16 @@ public abstract class ListConfiguration<T> extends Configuration
 		List<T> elements = new LinkedList<>();
 		JSONArray array = getObjectList(this);
 		if(array == null)
-			throw new NoValueDefinedException(this);
-		for(int i = 0; i < array.length(); i++)
-		{
-			Object value = array.get(i);
-			if(klass.isInstance(value))
-				elements.add(klass.cast(value));
-			else
-				throw new InvalidClassException("Config is not a T");
-		}
+			Settings.resetList(this);
+		else
+			for(int i = 0; i < array.length(); i++)
+			{
+				Object value = array.get(i);
+				if(klass.isInstance(value))
+					elements.add(klass.cast(value));
+				else
+					throw new InvalidClassException("Config is not a T");
+			}
 		return elements;
 	}
 	

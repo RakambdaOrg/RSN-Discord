@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.settings.configs.ReportChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
@@ -57,7 +58,7 @@ public class ReportCommand extends BasicCommand
 		else
 		{
 			Actions.reply(event, "Votre message a bien été transféré. Merci à vous.");
-			event.getJDA().getTextChannelById(reportChannel).sendMessageFormat("Nouveau report de %s#%s: %s", event.getAuthor().getAsMention(), event.getAuthor().getDiscriminator(), args.stream().collect(Collectors.joining(" "))).complete();
+			event.getJDA().getTextChannelById(reportChannel).sendMessageFormat("%s Nouveau report de %s#%s: %s", Utilities.getRole(event.getJDA(), "Kaporal (modo)").getAsMention(), event.getAuthor().getAsMention(), event.getAuthor().getDiscriminator(), args.stream().collect(Collectors.joining(" "))).complete();
 		}
 		return CommandResult.SUCCESS;
 	}

@@ -17,7 +17,7 @@ public abstract class ValueConfiguration extends Configuration
 		return ConfigType.VALUE;
 	}
 	
-	private Object getObject() throws IllegalArgumentException
+	protected Object getObject() throws IllegalArgumentException
 	{
 		if(getType() != ConfigType.VALUE)
 			throw new IllegalArgumentException("Not a value config");
