@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.Settings;
+import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import net.dv8tion.jda.core.events.ShutdownEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.io.IOException;

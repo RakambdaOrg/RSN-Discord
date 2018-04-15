@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.utils;
 
 import fr.mrcraftcod.gunterdiscord.Main;
-import fr.mrcraftcod.gunterdiscord.Settings;
+import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;

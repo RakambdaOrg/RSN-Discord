@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
-import fr.mrcraftcod.gunterdiscord.Settings;
+import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;

@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.Main;
-import fr.mrcraftcod.gunterdiscord.Settings;
+import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.commands.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;

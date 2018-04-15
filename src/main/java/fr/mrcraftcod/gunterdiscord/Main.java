@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord;
 import fr.mrcraftcod.gunterdiscord.listeners.MessageListener;
 import fr.mrcraftcod.gunterdiscord.listeners.ReadyListener;
 import fr.mrcraftcod.gunterdiscord.listeners.ShutdownListener;
+import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;

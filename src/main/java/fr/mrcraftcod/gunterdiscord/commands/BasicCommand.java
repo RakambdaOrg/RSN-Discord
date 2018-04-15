@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.Main;
-import fr.mrcraftcod.gunterdiscord.Settings;
+import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
 import static fr.mrcraftcod.gunterdiscord.commands.BasicCommand.AccessLevel.ALL;
