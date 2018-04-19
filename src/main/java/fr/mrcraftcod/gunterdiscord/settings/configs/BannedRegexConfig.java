@@ -17,25 +17,25 @@ public class BannedRegexConfig extends ListConfiguration<String>
 {
 	@SuppressWarnings("Duplicates")
 	@Override
-	public boolean handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args) throws Exception
+	public SetConfigCommand.ActionResult handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args) throws Exception
 	{
 		if(action == SetConfigCommand.ChangeConfigType.SHOW)
 		{
 			Actions.reply(event, getAsList().stream().collect(Collectors.joining(", ")));
-			return true;
+			return SetConfigCommand.ActionResult.NONE;
 		}
 		if(args.size() < 1)
-			return false;
+			return SetConfigCommand.ActionResult.ERROR;
 		switch(action)
 		{
 			case ADD:
 				addValue(args.poll());
-				return true;
+				return SetConfigCommand.ActionResult.OK;
 			case REMOVE:
 				removeValue(args.poll());
-				return true;
+				return SetConfigCommand.ActionResult.OK;
 		}
-		return false;
+		return SetConfigCommand.ActionResult.ERROR;
 	}
 	
 	@Override

@@ -1,6 +1,8 @@
 package fr.mrcraftcod.gunterdiscord;
 
-import fr.mrcraftcod.gunterdiscord.listeners.*;
+import fr.mrcraftcod.gunterdiscord.listeners.CommandsMessageListener;
+import fr.mrcraftcod.gunterdiscord.listeners.ReadyListener;
+import fr.mrcraftcod.gunterdiscord.listeners.ShutdownListener;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -27,9 +29,9 @@ public class Main
 		JDA jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).buildBlocking();
 		jda.addEventListener(new ReadyListener());
 		jda.addEventListener(new CommandsMessageListener());
-		jda.addEventListener(new BannedRegexesMessageListener());
-		jda.addEventListener(new OnlyImagesMessageListener());
-		jda.addEventListener(new OnlyQuestionsMessageListener());
+		// jda.addEventListener(new BannedRegexesMessageListener());
+		// jda.addEventListener(new OnlyImagesMessageListener());
+		// jda.addEventListener(new OnlyQuestionsMessageListener());
 		jda.addEventListener(new ShutdownListener());
 		jda.setAutoReconnect(true);
 	}

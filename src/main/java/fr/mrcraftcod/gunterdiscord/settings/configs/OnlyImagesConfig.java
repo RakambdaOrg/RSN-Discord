@@ -17,25 +17,25 @@ public class OnlyImagesConfig extends ListConfiguration<Long>
 {
 	@SuppressWarnings("Duplicates")
 	@Override
-	public boolean handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args) throws Exception
+	public SetConfigCommand.ActionResult handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args) throws Exception
 	{
 		if(action == SetConfigCommand.ChangeConfigType.SHOW)
 		{
 			Actions.reply(event, getAsList().stream().map(Object::toString).collect(Collectors.joining(", ")));
-			return true;
+			return SetConfigCommand.ActionResult.NONE;
 		}
 		if(args.size() < 1)
-			return false;
+			return SetConfigCommand.ActionResult.ERROR;
 		switch(action)
 		{
 			case ADD:
 				addValue(Long.parseLong(args.poll()));
-				return true;
+				return SetConfigCommand.ActionResult.OK;
 			case REMOVE:
 				removeValue(Long.parseLong(args.poll()));
-				return true;
+				return SetConfigCommand.ActionResult.OK;
 		}
-		return false;
+		return SetConfigCommand.ActionResult.ERROR;
 	}
 	
 	@Override

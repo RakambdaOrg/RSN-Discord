@@ -29,6 +29,11 @@ public class SetConfigCommand extends BasicCommand
 		}
 	}
 	
+	public enum ActionResult
+	{
+		OK, NONE, ERROR
+	}
+	
 	@Override
 	public int getScope()
 	{
@@ -63,20 +68,21 @@ public class SetConfigCommand extends BasicCommand
 			Configuration configuration = Settings.getSettings(args.pop());
 			if(configuration != null)
 			{
-				if(processWithValue(event, configuration, args))
+				ActionResult result = processWithValue(event, configuration, args);
+				if(result == ActionResult.OK)
 					Actions.reply(event, "OK");
-				else
+				else if(result == ActionResult.ERROR)
 					Actions.reply(event, "Erreur - Fonctionnement de la commande: " + getCommandDescription() + " // " + configuration.getName());
 			}
 		}
 		return CommandResult.SUCCESS;
 	}
 	
-	private boolean processWithValue(MessageReceivedEvent event, Configuration configuration, LinkedList<String> args)
+	private ActionResult processWithValue(MessageReceivedEvent event, Configuration configuration, LinkedList<String> args)
 	{
 		String actionStr;
 		if((actionStr = args.poll()) == null)
-			return false;
+			return ActionResult.ERROR;
 		ChangeConfigType action = ChangeConfigType.get(actionStr);
 		if(configuration.isActionAllowed(action))
 		{
@@ -89,7 +95,7 @@ public class SetConfigCommand extends BasicCommand
 				e.printStackTrace();
 			}
 		}
-		return false;
+		return ActionResult.ERROR;
 	}
 	
 	@Override

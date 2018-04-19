@@ -20,7 +20,7 @@ public abstract class Configuration
 	
 	public abstract boolean isActionAllowed(SetConfigCommand.ChangeConfigType action);
 	
-	public abstract boolean handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args) throws Exception;
+	public abstract SetConfigCommand.ActionResult handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args) throws Exception;
 	
 	public abstract String getName();
 	
