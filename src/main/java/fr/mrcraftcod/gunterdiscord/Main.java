@@ -1,13 +1,14 @@
 package fr.mrcraftcod.gunterdiscord;
 
 import fr.mrcraftcod.gunterdiscord.listeners.CommandsMessageListener;
-import fr.mrcraftcod.gunterdiscord.listeners.QuizzMessageListener;
+import fr.mrcraftcod.gunterdiscord.listeners.QuizMessageListener;
 import fr.mrcraftcod.gunterdiscord.listeners.ReadyListener;
 import fr.mrcraftcod.gunterdiscord.listeners.ShutdownListener;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.entities.Game;
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
@@ -34,9 +35,10 @@ public class Main
 		// jda.addEventListener(new BannedRegexesMessageListener());
 		// jda.addEventListener(new OnlyImagesMessageListener());
 		// jda.addEventListener(new OnlyQuestionsMessageListener());
-		jda.addEventListener(new QuizzMessageListener());
+		jda.addEventListener(new QuizMessageListener());
 		jda.addEventListener(new ShutdownListener());
 		jda.setAutoReconnect(true);
+		jda.getPresence().setGame(Game.playing("Le chalumeau"));
 	}
 	
 	public static JDA getJDA()

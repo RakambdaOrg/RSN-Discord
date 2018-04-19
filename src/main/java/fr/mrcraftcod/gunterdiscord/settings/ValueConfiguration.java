@@ -55,7 +55,7 @@ public abstract class ValueConfiguration extends Configuration
 			return defaultValue;
 		if(value instanceof String)
 			return (String) value;
-		throw new InvalidClassException("Config is not a string");
+		throw new InvalidClassException("Config is not a string: " + value.getClass().getSimpleName());
 	}
 	
 	public long getLong() throws InvalidClassException, IllegalArgumentException, NoValueDefinedException
@@ -65,7 +65,7 @@ public abstract class ValueConfiguration extends Configuration
 			throw new NoValueDefinedException(this);
 		if(value instanceof Long)
 			return (Long) value;
-		throw new InvalidClassException("Config is not a long");
+		throw new InvalidClassException("Config is not a long: " + value.getClass().getSimpleName());
 	}
 	
 	public String getString() throws InvalidClassException, IllegalArgumentException, NoValueDefinedException
@@ -75,7 +75,7 @@ public abstract class ValueConfiguration extends Configuration
 			throw new NoValueDefinedException(this);
 		if(value instanceof String)
 			return (String) value;
-		throw new InvalidClassException("Config is not a string");
+		throw new InvalidClassException("Config is not a string: " + value.getClass().getSimpleName());
 	}
 	
 	public void setValue(Object value)

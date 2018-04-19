@@ -1,12 +1,15 @@
 package fr.mrcraftcod.gunterdiscord.utils;
 
+import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.ModoRolesConfig;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Emote;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 import java.io.InvalidClassException;
+import java.util.List;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
@@ -52,5 +55,13 @@ public class Utilities
 	public static boolean isTeam(Member member)
 	{
 		return isModerator(member) || isAdmin(member);
+	}
+	
+	public static String getEmoteMention(String name)
+	{
+		List<Emote> emotes = Main.getJDA().getEmotesByName(name, true);
+		if(emotes.size() < 1)
+			return "";
+		return emotes.get(0).getAsMention();
 	}
 }

@@ -29,7 +29,8 @@ public class Settings
 			OnlyImagesConfig.class,
 			OnlyQuestionsConfig.class,
 			PrefixConfig.class,
-			ReportChannelConfig.class
+			ReportChannelConfig.class,
+			QuizChannelConfig.class
 	};
 	
 	public static void init(Path path) throws IOException

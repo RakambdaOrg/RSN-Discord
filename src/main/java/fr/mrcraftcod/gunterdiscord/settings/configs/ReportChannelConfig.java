@@ -11,6 +11,18 @@ import fr.mrcraftcod.gunterdiscord.settings.ValueConfiguration;
 public class ReportChannelConfig extends ValueConfiguration
 {
 	@Override
+	public void setValue(Object value)
+	{
+		try
+		{
+			super.setValue(Long.parseLong(value.toString()));
+		}
+		catch(Exception e)
+		{
+		}
+	}
+	
+	@Override
 	public String getName()
 	{
 		return "reportChannel";
