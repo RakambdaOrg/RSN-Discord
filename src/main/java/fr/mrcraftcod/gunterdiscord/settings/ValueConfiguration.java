@@ -11,6 +11,8 @@ import java.io.InvalidClassException;
  */
 public abstract class ValueConfiguration extends Configuration
 {
+	private Object lastValue = null;
+	
 	@Override
 	public ConfigType getType()
 	{
@@ -24,19 +26,9 @@ public abstract class ValueConfiguration extends Configuration
 		return Settings.getObject(getName());
 	}
 	
-	public String getString() throws InvalidClassException, IllegalArgumentException, NoValueDefinedException
-	{
-		Object value = getObject();
-		if(value == null)
-			throw new NoValueDefinedException(this);
-		if(value instanceof String)
-			return (String) value;
-		throw new InvalidClassException("Config is not a string");
-	}
-	
 	public String getString(String defaultValue) throws InvalidClassException, IllegalArgumentException
 	{
-		Object value = getObject();
+		Object value = lastValue == null ? getObject() : lastValue;
 		if(value == null)
 			return defaultValue;
 		if(value instanceof String)
@@ -46,7 +38,7 @@ public abstract class ValueConfiguration extends Configuration
 	
 	public long getLong() throws InvalidClassException, IllegalArgumentException, NoValueDefinedException
 	{
-		Object value = getObject();
+		Object value = lastValue == null ? getObject() : lastValue;
 		if(value == null)
 			throw new NoValueDefinedException(this);
 		if(value instanceof Long)
@@ -54,8 +46,19 @@ public abstract class ValueConfiguration extends Configuration
 		throw new InvalidClassException("Config is not a long");
 	}
 	
+	public String getString() throws InvalidClassException, IllegalArgumentException, NoValueDefinedException
+	{
+		Object value = lastValue == null ? getObject() : lastValue;
+		if(value == null)
+			throw new NoValueDefinedException(this);
+		if(value instanceof String)
+			return (String) value;
+		throw new InvalidClassException("Config is not a string");
+	}
+	
 	public void setValue(Object value)
 	{
+		lastValue = value;
 		Settings.setValue(this, value);
 	}
 	

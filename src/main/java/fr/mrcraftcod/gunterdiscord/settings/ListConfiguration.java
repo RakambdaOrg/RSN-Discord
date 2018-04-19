@@ -15,13 +15,19 @@ import java.util.List;
  */
 public abstract class ListConfiguration<T> extends Configuration
 {
+	private List<T> lastValue = null;
+	
 	public void addValue(T value)
 	{
+		if(lastValue != null)
+			lastValue.add(value);
 		Settings.addValue(this, value);
 	}
 	
 	public void removeValue(T value)
 	{
+		if(lastValue != null)
+			lastValue.remove(value);
 		Settings.removeValue(this, value);
 	}
 	
@@ -40,6 +46,8 @@ public abstract class ListConfiguration<T> extends Configuration
 	
 	public List<T> getAsList() throws NoValueDefinedException, IllegalArgumentException, InvalidClassException
 	{
+		if(lastValue != null)
+			return lastValue;
 		Class<T> klass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		List<T> elements = new LinkedList<>();
 		JSONArray array = getObjectList(this);
