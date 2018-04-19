@@ -1,10 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.settings.configs;
 
-import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
 import fr.mrcraftcod.gunterdiscord.settings.ValueConfiguration;
-import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import java.util.LinkedList;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -14,25 +10,6 @@ import java.util.LinkedList;
  */
 public class PrefixConfig extends ValueConfiguration
 {
-	@Override
-	public SetConfigCommand.ActionResult handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args) throws Exception
-	{
-		if(action == SetConfigCommand.ChangeConfigType.SHOW)
-		{
-			Actions.reply(event, getObject().toString());
-			return SetConfigCommand.ActionResult.NONE;
-		}
-		if(args.size() < 1)
-			return SetConfigCommand.ActionResult.ERROR;
-		switch(action)
-		{
-			case SET:
-				setValue(args.poll());
-				return SetConfigCommand.ActionResult.OK;
-		}
-		return SetConfigCommand.ActionResult.OK;
-	}
-	
 	@Override
 	public String getName()
 	{

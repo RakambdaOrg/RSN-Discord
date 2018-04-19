@@ -1,7 +1,10 @@
 package fr.mrcraftcod.gunterdiscord.settings;
 
 import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.io.InvalidClassException;
+import java.util.LinkedList;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -12,6 +15,25 @@ import java.io.InvalidClassException;
 public abstract class ValueConfiguration extends Configuration
 {
 	private Object lastValue = null;
+	
+	@Override
+	public SetConfigCommand.ActionResult handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args) throws Exception
+	{
+		if(action == SetConfigCommand.ChangeConfigType.SHOW)
+		{
+			Actions.reply(event, getObject().toString());
+			return SetConfigCommand.ActionResult.NONE;
+		}
+		if(args.size() < 1)
+			return SetConfigCommand.ActionResult.ERROR;
+		switch(action)
+		{
+			case SET:
+				setValue(args.poll());
+				return SetConfigCommand.ActionResult.OK;
+		}
+		return SetConfigCommand.ActionResult.OK;
+	}
 	
 	@Override
 	public ConfigType getType()

@@ -8,11 +8,11 @@ import fr.mrcraftcod.gunterdiscord.settings.ValueConfiguration;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class ReportChannelConfig extends ValueConfiguration
+public class QuizzChannelConfig extends ValueConfiguration
 {
 	@Override
 	public String getName()
 	{
-		return "reportChannel";
+		return "quizzChannel";
 	}
 }

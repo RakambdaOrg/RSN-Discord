@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord;
 
 import fr.mrcraftcod.gunterdiscord.listeners.CommandsMessageListener;
+import fr.mrcraftcod.gunterdiscord.listeners.QuizzMessageListener;
 import fr.mrcraftcod.gunterdiscord.listeners.ReadyListener;
 import fr.mrcraftcod.gunterdiscord.listeners.ShutdownListener;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
@@ -21,18 +22,25 @@ import java.nio.file.Paths;
 public class Main
 {
 	private static final String SETTINGS_NAME = "settings.json";
+	private static JDA jda;
 	
 	public static void main(String[] args) throws LoginException, InterruptedException, IOException
 	{
 		Settings.init(Paths.get(new File(SETTINGS_NAME).toURI()));
 		
-		JDA jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).buildBlocking();
+		jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).buildBlocking();
 		jda.addEventListener(new ReadyListener());
 		jda.addEventListener(new CommandsMessageListener());
 		// jda.addEventListener(new BannedRegexesMessageListener());
 		// jda.addEventListener(new OnlyImagesMessageListener());
 		// jda.addEventListener(new OnlyQuestionsMessageListener());
+		jda.addEventListener(new QuizzMessageListener());
 		jda.addEventListener(new ShutdownListener());
 		jda.setAutoReconnect(true);
+	}
+	
+	public static JDA getJDA()
+	{
+		return jda;
 	}
 }
