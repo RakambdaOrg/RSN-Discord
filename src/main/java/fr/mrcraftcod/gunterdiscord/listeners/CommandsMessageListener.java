@@ -1,6 +1,9 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.commands.*;
+import fr.mrcraftcod.gunterdiscord.commands.Command;
+import fr.mrcraftcod.gunterdiscord.commands.ReportCommand;
+import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
+import fr.mrcraftcod.gunterdiscord.commands.StopCommand;
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -27,7 +30,7 @@ public class CommandsMessageListener extends ListenerAdapter
 		commands.add(new StopCommand());
 		commands.add(new SetConfigCommand());
 		commands.add(new ReportCommand());
-		commands.add(new QuizCommand());
+		//commands.add(new QuizCommand());
 	}
 	
 	@Override

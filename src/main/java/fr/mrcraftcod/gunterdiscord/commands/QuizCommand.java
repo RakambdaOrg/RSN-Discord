@@ -43,7 +43,7 @@ public class QuizCommand extends BasicCommand
 	
 	private void start(LinkedList<String> args)
 	{
-		QuizMessageListener quiz = QuizMessageListener.getInstance(generateQuestions(args.size() > 0 ? Integer.parseInt(args.pop()) : 5));
+		QuizMessageListener quiz = QuizMessageListener.getInstance(generateQuestions(args.size() > 0 ? Integer.parseInt(args.pop()) : 20));
 		if(quiz != null)
 			new Thread(quiz).start();
 	}
