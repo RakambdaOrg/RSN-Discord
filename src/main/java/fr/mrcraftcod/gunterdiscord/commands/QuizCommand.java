@@ -32,6 +32,7 @@ public class QuizCommand extends BasicCommand
 			{
 				case "start":
 					start(args);
+					event.getMessage().delete().queue();
 					break;
 				case "stop":
 					stop(args);
@@ -43,14 +44,14 @@ public class QuizCommand extends BasicCommand
 	
 	private void start(LinkedList<String> args)
 	{
-		QuizMessageListener quiz = QuizMessageListener.getInstance(generateQuestions(args.size() > 0 ? Integer.parseInt(args.pop()) : 20));
+		QuizMessageListener quiz = QuizMessageListener.getInstance(generateQuestions(args.size() > 0 ? Integer.parseInt(args.pop()) : Integer.MAX_VALUE));
 		if(quiz != null)
 			new Thread(quiz).start();
 	}
 	
 	private void stop(LinkedList<String> args)
 	{
-		QuizMessageListener.getInstance(new LinkedList<>()).setBack();
+		QuizMessageListener.setBack();
 	}
 	
 	private LinkedList<Question> generateQuestions(int amount)

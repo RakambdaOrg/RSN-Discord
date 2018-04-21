@@ -10,6 +10,7 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -58,6 +59,8 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 	@Override
 	public void run()
 	{
+		int HALF_WAIT_TIME = 30;
+		int QUESTION_TIME = 20;
 		try
 		{
 			JDA jda = Main.getJDA();
@@ -79,21 +82,21 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 				return;
 			}
 			
-			Actions.sendMessage(quizChannel, "Ok @here, j'espère que vous êtes aussi chaud que mon chalumeau pour un petit kwizzz!\n" + "Le principe est simple: une question va apparaitre avec un set de réponses possibles. Vous pouvez répondre à la question en ajoutant une réaction avec la lettre corespondante. Le temps limite pour répondre est de 15s.\n" + "Chaque bonne réponse vous donnera 1 point.\n\nOn commence dans 1 minute!");
+			Actions.sendMessage(quizChannel, "Ok @here, j'espère que vous êtes aussi chaud que mon chalumeau pour un petit kwizzz!\n" + "Le principe est simple: une question va apparaitre avec un set de réponses possibles. Vous pouvez répondre à la question en ajoutant une réaction avec la lettre corespondante. Le temps limite pour répondre est de " + QUESTION_TIME + "s.\n" + "Chaque bonne réponse vous donnera 1 point.\n\nOn commence dans " + (HALF_WAIT_TIME * 2) + " secondes!");
 			try
 			{
-				Thread.sleep(30 * 1000);
+				Thread.sleep(HALF_WAIT_TIME * 1000);
 			}
 			catch(InterruptedException e)
 			{
 				e.printStackTrace();
 			}
 			
-			Actions.sendMessage(quizChannel, "Encore 30 secondes! " + Utilities.getEmoteMention("cookie"));
+			Actions.sendMessage(quizChannel, "Encore " + HALF_WAIT_TIME + " secondes! " + Utilities.getEmoteMention("cookie"));
 			
 			try
 			{
-				Thread.sleep(30 * 1000);
+				Thread.sleep(HALF_WAIT_TIME * 1000);
 			}
 			catch(InterruptedException e)
 			{
@@ -120,7 +123,7 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 					
 					try
 					{
-						Thread.sleep(15 * 1000);
+						Thread.sleep(QUESTION_TIME * 1000);
 					}
 					catch(InterruptedException e)
 					{
@@ -132,8 +135,9 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 					answers.forEach((k, v) -> {
 						if(v == question.getCorrectAnswerIndex())
 						{
-							scores.put(k, scores.getOrDefault(k, 0) + 1);
-							System.out.println(k + " +1 pt");
+							int newScore = scores.getOrDefault(k, 0) + 1;
+							scores.put(k, newScore);
+							System.out.println(k + " +1 pt - now: " + newScore);
 						}
 						else if(!scores.containsKey(k))
 							scores.put(k, 0);
@@ -143,9 +147,12 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 						fos.println("Question: " + question.getQuestion());
 						fos.println("Reponses: ");
 						for(int j = 0; j < question.getAnswers().size(); j++)
-							fos.println("\t" + (j == question.getCorrectAnswerIndex() ? "@@ " : "") + j + " " + question.getAnswers().get(j));
+							fos.println("\t" + (j == question.getCorrectAnswerIndex() ? "-> " : "") + "\t" + j + " " + question.getAnswers().get(j));
 						fos.println();
-						answers.forEach((k, v) -> fos.println(k + " -> " + v));
+						answers.forEach((k, v) -> {
+							User user = jda.getUserById(k);
+							fos.println(user.getName() + "#" + user.getDiscriminator() + " -> " + v + " : " + question.getAnswers().get(v));
+						});
 					}
 					catch(IOException e)
 					{
@@ -185,11 +192,12 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 		}
 	}
 	
-	public void setBack()
+	public static void setBack()
 	{
 		JDA jda = Main.getJDA();
 		jda.getPresence().setGame(Game.playing("Le chalumeau"));
-		done = true;
+		if(INSTANCE != null)
+			INSTANCE.done = true;
 	}
 	
 	@Override
@@ -207,16 +215,16 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 					BasicEmotes emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
 					if(emote == null)
 					{
-						event.getReaction().removeReaction().queue();
+						event.getReaction().removeReaction(event.getUser()).queue();
 						event.getUser().openPrivateChannel().queue(channel -> channel.sendMessage("Merci de n'utilser que les lettres.").queue());
 					}
 					else
 					{
 						if(answers.containsKey(event.getUser().getIdLong()))
 						{
-							event.getReaction().removeReaction().queue();
+							event.getReaction().removeReaction(event.getUser()).queue();
 							event.getUser().openPrivateChannel().queue(channel -> channel.sendMessage("Merci de ne mettre qu'une seule réaction par question.").queue());
-							System.out.println("User " + event.getUser().getAsMention() + " removed answer AGAIN");
+							System.out.println("User " + event.getUser().getAsMention() + " added answer AGAIN " + emote.name() + " - not counted");
 						}
 						else
 						{
@@ -239,13 +247,19 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 		super.onMessageReactionRemove(event);
 		try
 		{
-			
 			if(waitingMsg != null && event.getMessageIdLong() == waitingMsg.getIdLong())
 			{
 				if(answers != null)
 				{
-					answers.remove(event.getUser().getIdLong());
-					System.out.println("User " + event.getUser().getAsMention() + " removed answer");
+					if(answers.containsKey(event.getUser().getIdLong()))
+					{
+						BasicEmotes emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
+						if(answers.get(event.getUser().getIdLong()) == mapEmote(emote))
+						{
+							answers.remove(event.getUser().getIdLong());
+							System.out.println("User " + event.getUser().getAsMention() + " removed answer");
+						}
+					}
 				}
 			}
 		}
@@ -257,6 +271,6 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 	
 	private int mapEmote(BasicEmotes name)
 	{
-		return name.name().toLowerCase().charAt(0) - 'a';
+		return name == null ? -1 : name.name().toLowerCase().charAt(0) - 'a';
 	}
 }

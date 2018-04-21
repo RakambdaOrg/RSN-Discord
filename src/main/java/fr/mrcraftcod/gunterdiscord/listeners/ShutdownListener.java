@@ -19,6 +19,7 @@ public class ShutdownListener extends ListenerAdapter
 		super.onShutdown(event);
 		try
 		{
+			QuizMessageListener.setBack();
 			Settings.save();
 		}
 		catch(IOException e)
