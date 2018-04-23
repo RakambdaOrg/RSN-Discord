@@ -142,7 +142,7 @@ public class HangmanListener extends ListenerAdapter
 				}
 			}
 		}
-		catch(InvalidClassException | NoValueDefinedException e)
+		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
