@@ -183,6 +183,7 @@ public class HangmanListener extends ListenerAdapter
 			e.printStackTrace();
 		}
 		channel.getMembers().stream().filter(m -> m.getUser().getIdLong() != Main.getJDA().getSelfUser().getIdLong()).forEach(member -> guild.getController().removeRolesFromMember(member, role).queue());
+		channel.sendMessageFormat("?purge any %d", 250).queue();
 	}
 	
 	private static void pickRandomUser()
