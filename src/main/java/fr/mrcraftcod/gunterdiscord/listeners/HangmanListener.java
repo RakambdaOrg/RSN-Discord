@@ -217,7 +217,7 @@ public class HangmanListener extends ListenerAdapter
 		try
 		{
 			TextChannel channel = Main.getJDA().getTextChannelById(new HangmanChannelConfig().getLong());
-			channel.sendMessageFormat("Salut à tous @here! Si vous êtes la c'est que vous êtes chaud pour un petit pendu. Mais j'espère que vous êtes bons, sinon c'est vous qui allez finir pendu!\n\nLe principe est simple. Je vais commencer par choisir un mot dans ma petite tête. Ensuite je vous l'écrirais avec les lettres cachées. Seul " + DISCOVER_START + " lettres seront apparentes au debut. Une fois cela fait, je désignerai une personne afin de me dire la lettre que vous voulez essayer, à vous de vous entendre afin de faire les bons choix.\n\nSi une personne ne déclare pas de choix en 60s, écrivez un petit mot et je referai tourner la roue pour désigner un représentant.\n\n\nAlley, laissez moi réfléchir!").queue();
+			channel.sendMessageFormat("Salut à tous @here! Si vous êtes la c'est que vous êtes chaud pour un petit pendu. Mais j'espère que vous êtes bons, sinon c'est vous qui allez finir pendu (au bout de %d fautes)!\n\nLe principe est simple. Je vais commencer par choisir un mot dans ma petite tête. Ensuite je vous l'écrirais avec les lettres cachées. Seul " + DISCOVER_START + " lettres seront apparentes au debut. Une fois cela fait, je désignerai une personne afin de me dire la lettre que vous voulez essayer, à vous de vous entendre afin de faire les bons choix.\n\nSi une personne ne déclare pas de choix en 60s, écrivez un petit mot et je referai tourner la roue pour désigner un représentant.\n\n\nAlley, laissez moi réfléchir!", MAX_HANG_LEVEL).queue();
 			
 			new Thread(() -> {
 				try
@@ -256,7 +256,7 @@ public class HangmanListener extends ListenerAdapter
 		words.add("nitescence");
 		words.add("peccamineux");
 		words.add("épectase");
-		words.add("nivaal");
+		words.add("niveal");
 		words.add("perclus");
 		words.add("obombrer");
 		words.add("amphigouri");
