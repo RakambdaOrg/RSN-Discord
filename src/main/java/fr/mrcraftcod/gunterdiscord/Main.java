@@ -1,9 +1,6 @@
 package fr.mrcraftcod.gunterdiscord;
 
-import fr.mrcraftcod.gunterdiscord.listeners.CommandsMessageListener;
-import fr.mrcraftcod.gunterdiscord.listeners.QuizMessageListener;
-import fr.mrcraftcod.gunterdiscord.listeners.ReadyListener;
-import fr.mrcraftcod.gunterdiscord.listeners.ShutdownListener;
+import fr.mrcraftcod.gunterdiscord.listeners.*;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -37,6 +34,7 @@ public class Main
 		// jda.addEventListener(new OnlyQuestionsMessageListener());
 		jda.addEventListener(new QuizMessageListener());
 		jda.addEventListener(new ShutdownListener());
+		jda.addEventListener(new HangmanListener());
 		jda.setAutoReconnect(true);
 		jda.getPresence().setGame(Game.playing("Le chalumeau"));
 	}

@@ -43,6 +43,6 @@ public class StopCommand extends BasicCommand
 	@Override
 	protected AccessLevel getAccessLevel()
 	{
-		return AccessLevel.MODERATOR;
+		return AccessLevel.ADMIN;
 	}
 }

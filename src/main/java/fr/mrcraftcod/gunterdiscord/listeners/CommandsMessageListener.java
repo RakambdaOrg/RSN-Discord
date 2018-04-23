@@ -28,6 +28,7 @@ public class CommandsMessageListener extends ListenerAdapter
 		commands.add(new SetConfigCommand());
 		commands.add(new ReportCommand());
 		commands.add(new QuizCommand());
+		commands.add(new HangmanCommand());
 	}
 	
 	@Override

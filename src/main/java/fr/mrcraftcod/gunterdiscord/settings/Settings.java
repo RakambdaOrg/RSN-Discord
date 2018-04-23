@@ -30,7 +30,8 @@ public class Settings
 			OnlyQuestionsConfig.class,
 			PrefixConfig.class,
 			ReportChannelConfig.class,
-			QuizChannelConfig.class
+			QuizChannelConfig.class,
+			HangmanChannelConfig.class
 	};
 	
 	public static void init(Path path) throws IOException
