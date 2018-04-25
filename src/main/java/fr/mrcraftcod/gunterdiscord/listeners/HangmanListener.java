@@ -31,10 +31,12 @@ public class HangmanListener extends ListenerAdapter
 	private static long waitingTime;
 	private static long waitingID;
 	private static int hangStage;
+	private static int playerCount;
 	private static StringBuilder hiddenWord;
 	private static String realWord;
 	private static List<Character> badTry;
 	private static Role role;
+	public static boolean resetting;
 	
 	public HangmanListener()
 	{
@@ -44,10 +46,19 @@ public class HangmanListener extends ListenerAdapter
 	public static void stop()
 	{
 		inProgress = false;
+		resetting = false;
 		waitingMsg = false;
 		hangStage = 0;
+		playerCount = 0;
 		hiddenWord = new StringBuilder();
 		realWord = "";
+	}
+	
+	public static boolean onPlayerJoin(Member member) throws InvalidClassException, NoValueDefinedException
+	{
+		playerCount++;
+		Main.getJDA().getTextChannelById(new HangmanChannelConfig().getLong()).sendMessageFormat("%s a rejoint la partie!", member.getUser().getAsMention()).queue();
+		return true;
 	}
 	
 	@SuppressWarnings("Duplicates")
@@ -67,7 +78,8 @@ public class HangmanListener extends ListenerAdapter
 						boolean STOP = false;
 						waitingMsg = false;
 						LinkedList<String> parts = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
-						if("gh?lettre".equalsIgnoreCase(parts.poll()))
+						String command = parts.poll();
+						if("gh?lettre".equalsIgnoreCase(command))
 						{
 							if(parts.size() > 0)
 							{
@@ -134,6 +146,16 @@ public class HangmanListener extends ListenerAdapter
 								event.getChannel().sendMessage("Faut entrer une lettre mon beau!").queue();
 							}
 						}
+						else if("gh?leave".equalsIgnoreCase(command))
+						{
+							event.getGuild().getController().removeRolesFromMember(event.getMember(), role).queue();
+							playerCount--;
+							if(playerCount < 1)
+							{
+								removeUsers(event.getGuild(), event.getTextChannel());
+								stop();
+							}
+						}
 						if(!STOP)
 							waitingMsg = true;
 					}
@@ -178,6 +200,7 @@ public class HangmanListener extends ListenerAdapter
 	
 	private void removeUsers(Guild guild, TextChannel channel)
 	{
+		resetting = true;
 		try
 		{
 			Thread.sleep(5000);
@@ -189,6 +212,14 @@ public class HangmanListener extends ListenerAdapter
 		channel.getMembers().stream().filter(m -> m.getUser().getIdLong() != Main.getJDA().getSelfUser().getIdLong()).forEach(member -> guild.getController().removeRolesFromMember(member, role).queue());
 		for(Message message : channel.getIterableHistory().cache(false))
 			message.delete().queue();
+		try
+		{
+			Thread.sleep(15000);
+		}
+		catch(InterruptedException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	private static boolean matchLetter(char c1, char c2)
@@ -243,7 +274,7 @@ public class HangmanListener extends ListenerAdapter
 		try
 		{
 			TextChannel channel = Main.getJDA().getTextChannelById(new HangmanChannelConfig().getLong());
-			channel.sendMessageFormat("Salut à tous @here! Si vous êtes la c'est que vous êtes chaud pour un petit pendu. Mais j'espère que vous êtes bons, sinon c'est vous qui allez finir pendu (au bout de %d fautes)!\n\nLe principe est simple. Je vais commencer par choisir un mot dans ma petite tête. Ensuite je vous l'écrirais avec les lettres cachées. Seul " + DISCOVER_START + " lettres seront apparentes au debut. Une fois cela fait, je désignerai une personne afin de me dire la lettre que vous voulez essayer, à vous de vous entendre afin de faire les bons choix.\n\nSi une personne ne déclare pas de choix en 60s, écrivez un petit mot et je referai tourner la roue pour désigner un représentant.\n\n\nAlley, laissez moi réfléchir!", MAX_HANG_LEVEL).queue();
+			channel.sendMessageFormat("Salut à tous @here! Si vous êtes la c'est que vous êtes chaud pour un petit pendu. Mais j'espère que vous êtes bons, sinon c'est vous qui allez finir pendu (au bout de %d fautes)!\n\nLe principe est simple. Je vais commencer par choisir un mot dans ma petite tête. Ensuite je vous l'écrirais avec les lettres cachées. Seul " + DISCOVER_START + " lettres seront apparentes au debut. Une fois cela fait, je désignerai une personne afin de me dire la lettre que vous voulez essayer, à vous de vous entendre afin de faire les bons choix.\n\nSi une personne ne déclare pas de choix en " + MAX_WAIT_TIME + "s, écrivez un petit mot et je referai tourner la roue pour désigner un représentant. Si vous désirez quitter, utilisez `gh?leave`\n\n\nAlley, laissez moi réfléchir!", MAX_HANG_LEVEL).queue(message -> message.pin().queue());
 			
 			new Thread(() -> {
 				try

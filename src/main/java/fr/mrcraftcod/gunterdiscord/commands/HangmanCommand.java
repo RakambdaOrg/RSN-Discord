@@ -1,7 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.listeners.HangmanListener;
-import fr.mrcraftcod.gunterdiscord.settings.configs.HangmanChannelConfig;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -21,12 +20,14 @@ public class HangmanCommand extends BasicCommand
 	{
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
 			return CommandResult.NOT_ALLOWED;
+		if(HangmanListener.resetting)
+			return CommandResult.SUCCESS;
 		List<Role> roles = event.getGuild().getRolesByName("pendu", true);
 		if(roles.size() > 0)
 		{
 			event.getMember().getGuild().getController().addRolesToMember(event.getMember(), roles.get(0)).queue();
-			event.getJDA().getTextChannelById(new HangmanChannelConfig().getLong()).sendMessageFormat("%s a rejoint la partie!", event.getAuthor().getAsMention()).queue();
 			HangmanListener.setUp(event.getGuild());
+			HangmanListener.onPlayerJoin(event.getMember());
 		}
 		else
 			return CommandResult.FAILED;
