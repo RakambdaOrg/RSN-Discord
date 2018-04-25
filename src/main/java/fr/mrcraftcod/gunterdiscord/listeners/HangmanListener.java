@@ -6,11 +6,10 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.HangmanChannelConfig;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.io.InvalidClassException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -277,10 +276,10 @@ public class HangmanListener extends ListenerAdapter
 	{
 		try
 		{
-			List<String> words = new ArrayList<>(Files.readAllLines(Paths.get(Main.class.getResource("/hangman/words.csv").toURI())));
+			List<String> words = new ArrayList<>(IOUtils.readLines(Main.class.getResource("/hangman/words.csv").openStream(), Charset.defaultCharset()));
 			return words.get(ThreadLocalRandom.current().nextInt(words.size()));
 		}
-		catch(IOException | URISyntaxException e)
+		catch(IOException e)
 		{
 			e.printStackTrace();
 		}
