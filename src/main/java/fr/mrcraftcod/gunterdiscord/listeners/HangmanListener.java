@@ -5,6 +5,7 @@ import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.HangmanChannelConfig;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.user.update.UserUpdateOnlineStatusEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.apache.commons.io.IOUtils;
 import java.io.IOException;
@@ -148,13 +149,8 @@ public class HangmanListener extends ListenerAdapter
 						}
 						else if("gh?leave".equalsIgnoreCase(command))
 						{
-							event.getGuild().getController().removeRolesFromMember(event.getMember(), role).queue();
-							playerCount--;
-							if(playerCount < 1)
-							{
-								removeUsers(event.getGuild(), event.getTextChannel());
-								stop();
-							}
+							playerLeave(event.getGuild(), event.getMember());
+							
 						}
 						if(!STOP)
 							waitingMsg = true;
@@ -196,6 +192,37 @@ public class HangmanListener extends ListenerAdapter
 	{
 		channel.sendFile(Main.class.getResourceAsStream("/hangman/level_" + hangStage + ".png"), hangStage + ".png").queue();
 		//channel.sendMessageFormat("Hang level: %d", hangStage).queue();
+	}
+	
+	@Override
+	public void onUserUpdateOnlineStatus(UserUpdateOnlineStatusEvent event)
+	{
+		super.onUserUpdateOnlineStatus(event);
+		if(inProgress)
+		{
+			if(event.getMember().getRoles().contains(role))
+			{
+				try
+				{
+					playerLeave(event.getGuild(), event.getMember());
+				}
+				catch(InvalidClassException | NoValueDefinedException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	private void playerLeave(Guild guild, Member member) throws InvalidClassException, NoValueDefinedException
+	{
+		playerCount--;
+		guild.getController().removeRolesFromMember(member, role).queue();
+		if(playerCount < 1)
+		{
+			removeUsers(guild, Main.getJDA().getTextChannelById(new HangmanChannelConfig().getLong()));
+			stop();
+		}
 	}
 	
 	private void removeUsers(Guild guild, TextChannel channel)
@@ -248,6 +275,8 @@ public class HangmanListener extends ListenerAdapter
 		{
 			TextChannel channel = Main.getJDA().getTextChannelById(new HangmanChannelConfig().getLong());
 			List<Member> members = role.getGuild().getMembersWithRoles(role);
+			if(members.size() > 1)
+				members = members.stream().filter(member -> member.getUser().getIdLong() != waitingID).collect(Collectors.toList());
 			Member member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
 			waitingID = member.getUser().getIdLong();
 			waitingMsg = true;
@@ -274,7 +303,7 @@ public class HangmanListener extends ListenerAdapter
 		try
 		{
 			TextChannel channel = Main.getJDA().getTextChannelById(new HangmanChannelConfig().getLong());
-			channel.sendMessageFormat("Salut à tous @here! Si vous êtes la c'est que vous êtes chaud pour un petit pendu. Mais j'espère que vous êtes bons, sinon c'est vous qui allez finir pendu (au bout de %d fautes)!\n\nLe principe est simple. Je vais commencer par choisir un mot dans ma petite tête. Ensuite je vous l'écrirais avec les lettres cachées. Seul " + DISCOVER_START + " lettres seront apparentes au debut. Une fois cela fait, je désignerai une personne afin de me dire la lettre que vous voulez essayer, à vous de vous entendre afin de faire les bons choix.\n\nSi une personne ne déclare pas de choix en " + MAX_WAIT_TIME + "s, écrivez un petit mot et je referai tourner la roue pour désigner un représentant. Si vous désirez quitter, utilisez `gh?leave`\n\n\nAlley, laissez moi réfléchir!", MAX_HANG_LEVEL).queue(message -> message.pin().queue());
+			channel.sendMessageFormat("Salut à tous! Si vous êtes la c'est que vous êtes chaud pour un petit pendu. Mais j'espère que vous êtes bons, sinon c'est vous qui allez finir pendu (au bout de %d fautes)!\n\nLe principe est simple. Je vais commencer par choisir un mot dans ma petite tête. Ensuite je vous l'écrirais avec les lettres cachées. Seul " + DISCOVER_START + " lettres seront apparentes au debut. Une fois cela fait, je désignerai une personne afin de me dire la lettre que vous voulez essayer, à vous de vous entendre afin de faire les bons choix.\n\nSi une personne ne déclare pas de choix en " + MAX_WAIT_TIME + "s, écrivez un petit mot et je referai tourner la roue pour désigner un représentant. Si vous désirez quitter, utilisez `gh?leave`\n\n\nAlley, laissez moi réfléchir!", MAX_HANG_LEVEL).queue(message -> message.pin().queue());
 			
 			new Thread(() -> {
 				try
