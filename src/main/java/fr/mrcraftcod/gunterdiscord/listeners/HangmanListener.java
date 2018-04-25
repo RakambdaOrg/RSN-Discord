@@ -160,7 +160,7 @@ public class HangmanListener extends ListenerAdapter
 				if(matchLetter(realWord.toLowerCase().charAt(i), c))
 				{
 					count++;
-					hiddenWord.replace(i, i + 1, "" + c);
+					hiddenWord.replace(i, i + 1, "" + realWord.charAt(i));
 				}
 		return count;
 	}
