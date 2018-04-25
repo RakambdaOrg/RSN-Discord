@@ -26,6 +26,8 @@ public class HangmanCommand extends BasicCommand
 		List<Role> roles = event.getGuild().getRolesByName("pendu", true);
 		if(roles.size() > 0)
 		{
+			if(event.getMember().getRoles().contains(roles.get(0)))
+				return CommandResult.SUCCESS;
 			event.getMember().getGuild().getController().addRolesToMember(event.getMember(), roles.get(0)).queue();
 			HangmanListener.setUp(event.getGuild());
 			HangmanListener.onPlayerJoin(event.getMember());

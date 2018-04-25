@@ -25,7 +25,7 @@ public class HangmanListener extends ListenerAdapter
 {
 	private static final int DISCOVER_START = 2;
 	private static final char HIDDEN_CHAR = '-';
-	private static final long MAX_WAIT_TIME = 1000 * 30;
+	private static final long MAX_WAIT_TIME = 30;
 	private static final int MAX_HANG_LEVEL = 6;
 	private static boolean inProgress;
 	private static boolean waitingMsg;
@@ -58,7 +58,7 @@ public class HangmanListener extends ListenerAdapter
 	public static boolean onPlayerJoin(Member member) throws InvalidClassException, NoValueDefinedException
 	{
 		playerCount++;
-		Main.getJDA().getTextChannelById(new HangmanChannelConfig().getLong()).sendMessageFormat("%s a rejoint la partie!", member.getUser().getAsMention()).queue();
+		Main.getJDA().getTextChannelById(new HangmanChannelConfig().getLong()).sendMessageFormat("%s a rejoint la partie! Pour les règles regardes le message pinné.", member.getUser().getAsMention()).queue();
 		return true;
 	}
 	
@@ -92,7 +92,8 @@ public class HangmanListener extends ListenerAdapter
 								{
 									if(!badTry.contains(c))
 										badTry.add(c);
-									event.getChannel().sendMessageFormat("Oh ché doumache, ça va finir plus vite que prévu.\nLettres déjà essayées: %s\nVoici le mot: %s", getTried(), hiddenWord).queue();
+									event.getChannel().sendMessageFormat("Oh ché doumache, ça va finir plus vite que prévu.").queue();
+									displayWord(event.getTextChannel());
 									hangStage++;
 									displayHangman(event.getTextChannel());
 									if(hangStage >= MAX_HANG_LEVEL)
@@ -150,15 +151,23 @@ public class HangmanListener extends ListenerAdapter
 						else if("gh?leave".equalsIgnoreCase(command))
 						{
 							playerLeave(event.getGuild(), event.getMember());
-							
+						}
+						else if("gh?skip".equalsIgnoreCase(command))
+						{
+							if(event.getMember().getUser().getIdLong() == waitingID)
+								pickRandomUser();
+						}
+						else if("gh?mot".equalsIgnoreCase(command))
+						{
+							displayWord(event.getTextChannel());
 						}
 						if(!STOP)
 							waitingMsg = true;
 					}
-					if(!OK && System.currentTimeMillis() - waitingTime > MAX_WAIT_TIME)
+					if(!OK && System.currentTimeMillis() - waitingTime > (MAX_WAIT_TIME * 1000))
 					{
 						pickRandomUser();
-						event.getChannel().sendMessageFormat("Voici le mot: %s", hiddenWord).queue();
+						displayWord(event.getTextChannel());
 					}
 				}
 			}
@@ -167,6 +176,11 @@ public class HangmanListener extends ListenerAdapter
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	private void displayWord(TextChannel channel)
+	{
+		channel.sendMessageFormat("Lettres déjà essayées: %s\nVoici le mot: %s", getTried(), hiddenWord).queue();
 	}
 	
 	private static int discoverLetter(char c)
@@ -303,7 +317,7 @@ public class HangmanListener extends ListenerAdapter
 		try
 		{
 			TextChannel channel = Main.getJDA().getTextChannelById(new HangmanChannelConfig().getLong());
-			channel.sendMessageFormat("Salut à tous! Si vous êtes la c'est que vous êtes chaud pour un petit pendu. Mais j'espère que vous êtes bons, sinon c'est vous qui allez finir pendu (au bout de %d fautes)!\n\nLe principe est simple. Je vais commencer par choisir un mot dans ma petite tête. Ensuite je vous l'écrirais avec les lettres cachées. Seul " + DISCOVER_START + " lettres seront apparentes au debut. Une fois cela fait, je désignerai une personne afin de me dire la lettre que vous voulez essayer, à vous de vous entendre afin de faire les bons choix.\n\nSi une personne ne déclare pas de choix en " + MAX_WAIT_TIME + "s, écrivez un petit mot et je referai tourner la roue pour désigner un représentant. Si vous désirez quitter, utilisez `gh?leave`\n\n\nAlley, laissez moi réfléchir!", MAX_HANG_LEVEL).queue(message -> message.pin().queue());
+			channel.sendMessageFormat("Salut à tous! Si vous êtes la c'est que vous êtes chaud pour un petit pendu. Mais j'espère que vous êtes bons, sinon c'est vous qui allez finir pendu (au bout de %d fautes)!\n\nLe principe est simple. Je vais commencer par choisir un mot dans ma petite tête. Ensuite je vous l'écrirais avec les lettres cachées. Seul " + DISCOVER_START + " lettres seront apparentes au debut. Une fois cela fait, je désignerai une personne afin de me dire la lettre que vous voulez essayer, à vous de vous entendre afin de faire les bons choix.\n\nSi une personne ne déclare pas de choix en " + MAX_WAIT_TIME + "s, écrivez un petit mot et je referai tourner la roue pour désigner un représentant. Si vous désirez quitter, utilisez `gh?leave`. Si vous voulez passer votre tour utilisez `gh?skip`. Pour avoir des infos sur le mot actuel utilisez `gh?mot`.\n\n\nAlley, laissez moi réfléchir!", MAX_HANG_LEVEL).queue(message -> message.pin().queue());
 			
 			new Thread(() -> {
 				try
