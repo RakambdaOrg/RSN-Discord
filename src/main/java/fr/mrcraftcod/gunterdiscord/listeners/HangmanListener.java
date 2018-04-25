@@ -3,13 +3,14 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.HangmanChannelConfig;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import java.io.IOException;
 import java.io.InvalidClassException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -24,8 +25,8 @@ public class HangmanListener extends ListenerAdapter
 {
 	private static final int DISCOVER_START = 2;
 	private static final char HIDDEN_CHAR = '-';
-	private static final long MAX_WAIT_TIME = 1000 * 60;
-	private static final int MAX_HANG_LEVEL = 7;
+	private static final long MAX_WAIT_TIME = 1000 * 30;
+	private static final int MAX_HANG_LEVEL = 6;
 	private static boolean inProgress;
 	private static boolean waitingMsg;
 	private static long waitingTime;
@@ -123,7 +124,10 @@ public class HangmanListener extends ListenerAdapter
 										}).start();
 									}
 									else
+									{
+										displayHangman(event.getTextChannel());
 										pickRandomUser();
+									}
 								}
 							}
 							else
@@ -154,7 +158,7 @@ public class HangmanListener extends ListenerAdapter
 		int count = 0;
 		if(realWord != null)
 			for(int i = 0; i < realWord.length(); i++)
-				if(realWord.toLowerCase().charAt(i) == c)
+				if(matchLetter(realWord.toLowerCase().charAt(i), c))
 				{
 					count++;
 					hiddenWord.replace(i, i + 1, "" + c);
@@ -167,9 +171,10 @@ public class HangmanListener extends ListenerAdapter
 		return badTry.toString();
 	}
 	
-	private void displayHangman(TextChannel channel)
+	private static void displayHangman(TextChannel channel)
 	{
-		channel.sendMessageFormat("Hang level: %d", hangStage).queue();
+		channel.sendFile(Main.class.getResourceAsStream("/hangman/level_" + hangStage + ".png"), hangStage + ".png").queue();
+		//channel.sendMessageFormat("Hang level: %d", hangStage).queue();
 	}
 	
 	private void removeUsers(Guild guild, TextChannel channel)
@@ -183,7 +188,28 @@ public class HangmanListener extends ListenerAdapter
 			e.printStackTrace();
 		}
 		channel.getMembers().stream().filter(m -> m.getUser().getIdLong() != Main.getJDA().getSelfUser().getIdLong()).forEach(member -> guild.getController().removeRolesFromMember(member, role).queue());
-		channel.getHistory().getRetrievedHistory().forEach(message -> message.delete().queue());
+		for(Message message : channel.getIterableHistory().cache(false))
+			message.delete().queue();
+	}
+	
+	private static boolean matchLetter(char c1, char c2)
+	{
+		return mapChar(c1) == mapChar(c2);
+	}
+	
+	private static char mapChar(char c)
+	{
+		if(c == 'é' || c == 'è' || c == 'ê')
+			return 'e';
+		if(c == 'à' || c == 'â')
+			return 'a';
+		if(c == 'ì' || c == 'î')
+			return 'i';
+		if(c == 'ô' || c == 'ò')
+			return 'o';
+		if(c == 'û' || c == 'ù')
+			return 'u';
+		return c;
 	}
 	
 	private static void pickRandomUser()
@@ -231,12 +257,13 @@ public class HangmanListener extends ListenerAdapter
 				}
 				realWord = selectRandomWord();
 				hiddenWord = genHidden(realWord);
-				List<Character> chars = realWord.chars().distinct().boxed().map(i -> (char) (int) i).collect(Collectors.toList());
+				List<Character> chars = realWord.chars().map(c -> mapChar((char) c)).distinct().boxed().map(i -> (char) (int) i).collect(Collectors.toList());
 				Collections.shuffle(chars);
 				for(int i = 0; i < DISCOVER_START; i++)
 					if(chars.size() > i)
 						discoverLetter((char) ((int) chars.get(i)));
 				channel.sendMessageFormat("Le mot que j'ai choisi est: %s\n", hiddenWord.toString()).queue();
+				displayHangman(channel);
 				pickRandomUser();
 			}).start();
 		}
@@ -248,21 +275,16 @@ public class HangmanListener extends ListenerAdapter
 	
 	private static String selectRandomWord()
 	{
-		List<String> words = new ArrayList<>();
-		words.add("flavescent");
-		words.add("chalumeau");
-		words.add("caligineux");
-		words.add("immarcescible");
-		words.add("hapax");
-		words.add("nitescence");
-		words.add("peccamineux");
-		words.add("épectase");
-		words.add("niveal");
-		words.add("perclus");
-		words.add("obombrer");
-		words.add("amphigouri");
-		words.add("cyprine");
-		return words.get(ThreadLocalRandom.current().nextInt(words.size()));
+		try
+		{
+			List<String> words = new ArrayList<>(Files.readAllLines(Paths.get(Main.class.getResource("/hangman/words.csv").toURI())));
+			return words.get(ThreadLocalRandom.current().nextInt(words.size()));
+		}
+		catch(IOException | URISyntaxException e)
+		{
+			e.printStackTrace();
+		}
+		return "ERROR";
 	}
 	
 	private static StringBuilder genHidden(String word)
