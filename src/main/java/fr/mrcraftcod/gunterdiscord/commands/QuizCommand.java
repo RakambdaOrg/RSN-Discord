@@ -75,7 +75,7 @@ public class QuizCommand extends BasicCommand
 			String[] line = lines.pop().split(",");
 			String correctAnswer = line[1];
 			
-			List<String> answersList = Arrays.stream(line, 2, line.length).filter(l -> l != null && !l.equalsIgnoreCase("")).collect(Collectors.toList());
+			List<String> answersList = Arrays.stream(line, 2, line.length).filter(l -> l != null && !l.trim().equalsIgnoreCase("")).collect(Collectors.toList());
 			Collections.sort(answersList);
 			int ID = ThreadLocalRandom.current().nextInt(0, answersList.size() + 1);
 			HashMap<Integer, String> answers = new HashMap<>();
