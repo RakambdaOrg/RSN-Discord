@@ -61,6 +61,7 @@ public class DelPhotoCommand extends BasicCommand
 					if(Utilities.isModerator(event.getMember()) || Utilities.isAdmin(event.getMember()))
 					{
 						new PhotoConfig().deleteKey(user.getIdLong());
+						event.getGuild().getController().removeRolesFromMember(event.getGuild().getMember(user), Utilities.getRole(event.getJDA(), "Trombi")).complete();
 						Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photo de " + user.getAsMention() + " supprimée");
 					}
 					else
@@ -69,6 +70,7 @@ public class DelPhotoCommand extends BasicCommand
 				else
 				{
 					new PhotoConfig().deleteKey(event.getAuthor().getIdLong());
+					event.getGuild().getController().removeRolesFromMember(event.getMember(), Utilities.getRole(event.getJDA(), "Trombi")).complete();
 					Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photo supprimée");
 				}
 			}
@@ -76,6 +78,7 @@ public class DelPhotoCommand extends BasicCommand
 		else
 		{
 			new PhotoConfig().deleteKey(event.getAuthor().getIdLong());
+			event.getGuild().getController().removeRolesFromMember(event.getMember(), Utilities.getRole(event.getJDA(), "Trombi")).complete();
 			Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photo supprimée");
 		}
 		event.getMessage().delete().complete();

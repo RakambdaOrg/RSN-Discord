@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.InvalidClassException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
@@ -70,6 +71,7 @@ public class PhotoCommand extends BasicCommand
 						if(attachment.download(saveFile))
 						{
 							new PhotoConfig().addValue(user.getIdLong(), saveFile.getAbsolutePath());
+							event.getGuild().getController().addRolesToMember(event.getGuild().getMember(user), Utilities.getRole(event.getJDA(), "Trombi")).complete();
 							Actions.sendMessage(event.getTextChannel(), "Photo ajoutée pour " + user.getAsMention());
 						}
 						else
@@ -109,7 +111,22 @@ public class PhotoCommand extends BasicCommand
 			}
 		}
 		else
-			Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Merci de renseigner un utilisateur: " + getCommandDescription());
+		{
+			try
+			{
+				if(new PhotoChannelConfig().getLong() != event.getTextChannel().getIdLong())
+				{
+					event.getMessage().delete().complete();
+					return CommandResult.SUCCESS;
+				}
+			}
+			catch(InvalidClassException | NoValueDefinedException e)
+			{
+				e.printStackTrace();
+				return CommandResult.SUCCESS;
+			}
+			event.getTextChannel().sendMessage("Participants: " + event.getGuild().getMembersWithRoles(Utilities.getRole(event.getJDA(), "Trombi")).stream().map(u -> u.getUser().getName()).collect(Collectors.joining(", "))).queue();
+		}
 		event.getMessage().delete().complete();
 		return CommandResult.SUCCESS;
 	}
