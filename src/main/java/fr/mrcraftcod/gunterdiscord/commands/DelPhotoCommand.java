@@ -36,7 +36,6 @@ public class DelPhotoCommand extends BasicCommand
 	@SuppressWarnings("Duplicates")
 	private CommandResult handlePublic(MessageReceivedEvent event, LinkedList<String> args)
 	{
-		event.getMessage().delete().complete();
 		if(args.size() > 0)
 		{
 			User user = null;
@@ -79,6 +78,7 @@ public class DelPhotoCommand extends BasicCommand
 			new PhotoConfig().deleteKey(event.getAuthor().getIdLong());
 			Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photo supprimée");
 		}
+		event.getMessage().delete().complete();
 		return CommandResult.SUCCESS;
 	}
 	

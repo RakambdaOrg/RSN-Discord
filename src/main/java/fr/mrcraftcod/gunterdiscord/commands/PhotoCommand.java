@@ -1,11 +1,15 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
+import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
+import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.io.File;
+import java.io.InvalidClassException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,8 +29,6 @@ public class PhotoCommand extends BasicCommand
 			return CommandResult.NOT_ALLOWED;
 		switch(event.getChannel().getType())
 		{
-			case PRIVATE:
-				return handlePrivate(event, args);
 			case TEXT:
 				return handlePublic(event, args);
 			default:
@@ -37,7 +39,6 @@ public class PhotoCommand extends BasicCommand
 	@SuppressWarnings("Duplicates")
 	private CommandResult handlePublic(MessageReceivedEvent event, LinkedList<String> args)
 	{
-		event.getMessage().delete().complete();
 		if(args.size() > 0)
 		{
 			User user = null;
@@ -58,42 +59,58 @@ public class PhotoCommand extends BasicCommand
 			}
 			else
 			{
-				String path = new PhotoConfig().getValue(user.getIdLong());
-				if(path != null)
+				if(event.getMessage().getAttachments().size() > 0)
 				{
-					File file = new File(path);
-					if(file.exists())
-						event.getAuthor().openPrivateChannel().complete().sendFile(file).complete();
-					else
-						Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Désolé je ne retrouves plus l'image");
+					if(Utilities.isAdmin(event.getMember()))
+					{
+						Message.Attachment attachment = event.getMessage().getAttachments().get(0);
+						String ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
+						File saveFile = new File("./pictures/", event.getAuthor().getIdLong() + "_" + event.getMessage().getCreationTime().toEpochSecond() + ext);
+						saveFile.getParentFile().mkdirs();
+						if(attachment.download(saveFile))
+						{
+							new PhotoConfig().addValue(user.getIdLong(), saveFile.getAbsolutePath());
+							Actions.sendMessage(event.getTextChannel(), "Photo ajoutée pour " + user.getAsMention());
+						}
+						else
+							Actions.sendMessage(event.getPrivateChannel(), "L'envoi a échoué");
+					}
 				}
 				else
-					Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Cet utilisateur n'a pas d'image");
+				{
+					try
+					{
+						if(new PhotoChannelConfig().getLong() != event.getTextChannel().getIdLong())
+						{
+							event.getMessage().delete().complete();
+							return CommandResult.SUCCESS;
+						}
+					}
+					catch(InvalidClassException | NoValueDefinedException e)
+					{
+						e.printStackTrace();
+						return CommandResult.SUCCESS;
+					}
+					String path = new PhotoConfig().getValue(user.getIdLong());
+					if(path != null)
+					{
+						File file = new File(path);
+						if(file.exists())
+						{
+							event.getTextChannel().sendMessage(event.getAuthor().getAsMention() + " a demandé la photo de " + user.getName()).complete();
+							event.getTextChannel().sendFile(file).complete();
+						}
+						else
+							Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Désolé je ne retrouves plus l'image");
+					}
+					else
+						Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Cet utilisateur n'a pas d'image");
+				}
 			}
 		}
 		else
-			Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Merci de renseigner un utilisateur ou de m'envoyer ta photo en mp avec comme commentaire `g?photo`: " + getCommandDescription());
-		return CommandResult.SUCCESS;
-	}
-	
-	private CommandResult handlePrivate(MessageReceivedEvent event, LinkedList<String> args)
-	{
-		if(event.getMessage().getAttachments().size() == 1)
-		{
-			Message.Attachment attachment = event.getMessage().getAttachments().get(0);
-			String ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
-			File saveFile = new File("./pictures/", event.getAuthor().getIdLong() + "_" + event.getMessage().getCreationTime().toEpochSecond() + ext);
-			saveFile.getParentFile().mkdirs();
-			if(attachment.download(saveFile))
-			{
-				new PhotoConfig().addValue(event.getAuthor().getIdLong(), saveFile.getAbsolutePath());
-				Actions.sendMessage(event.getPrivateChannel(), "Perfect mon ami(e)");
-			}
-			else
-				Actions.sendMessage(event.getPrivateChannel(), "L'envoi a échoué, merci de réessayer ou contactez un admin");
-		}
-		else
-			Actions.sendMessage(event.getPrivateChannel(), "Merci de n'envoyer qu'une seule photo avec `g?photo` comme commentaire");
+			Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Merci de renseigner un utilisateur: " + getCommandDescription());
+		event.getMessage().delete().complete();
 		return CommandResult.SUCCESS;
 	}
 	

@@ -30,6 +30,7 @@ public class CommandsMessageListener extends ListenerAdapter
 		commands.add(new QuizCommand());
 		commands.add(new HangmanCommand());
 		commands.add(new PhotoCommand());
+		commands.add(new DelPhotoCommand());
 	}
 	
 	@Override
