@@ -6,6 +6,7 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.io.File;
@@ -72,7 +73,18 @@ public class PhotoCommand extends BasicCommand
 						{
 							new PhotoConfig().addValue(user.getIdLong(), saveFile.getAbsolutePath());
 							event.getGuild().getController().addRolesToMember(event.getGuild().getMember(user), Utilities.getRole(event.getJDA(), "Trombi")).complete();
-							Actions.sendMessage(event.getTextChannel(), "Photo ajoutée pour " + user.getAsMention());
+							TextChannel chan = null;
+							try
+							{
+								chan = event.getGuild().getTextChannelById(new PhotoChannelConfig().getLong());
+							}
+							catch(InvalidClassException | NoValueDefinedException e)
+							{
+								e.printStackTrace();
+							}
+							if(chan == null)
+								chan = event.getTextChannel();
+							Actions.sendMessage(chan, "Photo ajoutée pour " + user.getAsMention());
 						}
 						else
 							Actions.sendMessage(event.getPrivateChannel(), "L'envoi a échoué");
