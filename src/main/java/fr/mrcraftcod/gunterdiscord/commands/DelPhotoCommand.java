@@ -119,6 +119,6 @@ public class DelPhotoCommand extends BasicCommand
 	@Override
 	public String getCommand()
 	{
-		return "photo";
+		return "delPhoto";
 	}
 }
