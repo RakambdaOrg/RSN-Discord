@@ -1,10 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.settings.configs;
 
 import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
-import fr.mrcraftcod.gunterdiscord.settings.MapConfiguration;
+import fr.mrcraftcod.gunterdiscord.settings.MapListConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -13,7 +14,7 @@ import java.util.function.Function;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class PhotoConfig extends MapConfiguration<Long, String>
+public class PhotoConfig extends MapListConfiguration<Long, String>
 {
 	@Override
 	public SetConfigCommand.ActionResult handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args) throws Exception
@@ -49,5 +50,11 @@ public class PhotoConfig extends MapConfiguration<Long, String>
 	public String getName()
 	{
 		return "photo";
+	}
+	
+	@Override
+	protected BiFunction<Object, String, Boolean> getMatcher()
+	{
+		return (o1, o2) -> o1.toString().contains(o2);
 	}
 }

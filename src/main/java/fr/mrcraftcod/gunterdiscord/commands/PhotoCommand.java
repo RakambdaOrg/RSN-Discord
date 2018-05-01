@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.InvalidClassException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 /**
@@ -67,7 +68,7 @@ public class PhotoCommand extends BasicCommand
 					{
 						Message.Attachment attachment = event.getMessage().getAttachments().get(0);
 						String ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
-						File saveFile = new File("./pictures/", event.getAuthor().getIdLong() + "_" + event.getMessage().getCreationTime().toEpochSecond() + ext);
+						File saveFile = new File("./pictures/" + event.getAuthor().getIdLong() +"/", event.getMessage().getCreationTime().toEpochSecond() + ext);
 						saveFile.getParentFile().mkdirs();
 						if(attachment.download(saveFile))
 						{
@@ -105,13 +106,15 @@ public class PhotoCommand extends BasicCommand
 						e.printStackTrace();
 						return CommandResult.SUCCESS;
 					}
-					String path = new PhotoConfig().getValue(user.getIdLong());
-					if(path != null)
+					List<String> paths = new PhotoConfig().getValue(user.getIdLong());
+					if(paths != null)
 					{
-						File file = new File(path);
+						File file = new File(paths.get(ThreadLocalRandom.current().nextInt(paths.size())));
 						if(file.exists())
 						{
-							event.getTextChannel().sendMessage(event.getAuthor().getAsMention() + " a demandé la photo de " + user.getName()).complete();
+							String ID = file.getName().substring(file.getName().lastIndexOf("_"));
+							ID = ID.substring(0, ID.lastIndexOf("."));
+							event.getTextChannel().sendMessage(event.getAuthor().getAsMention() + " a demandé la photo (" + paths.size() + ") de " + user.getName() + " (ID: " + ID + ")").complete();
 							event.getTextChannel().sendFile(file).complete();
 						}
 						else

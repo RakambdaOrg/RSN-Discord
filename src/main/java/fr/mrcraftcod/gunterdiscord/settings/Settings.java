@@ -11,6 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -133,5 +135,55 @@ public class Settings
 	public static void resetMap(MapConfiguration configuration)
 	{
 		settings.put(configuration.getName(), new JSONObject());
+	}
+	
+	public static void resetMap(MapListConfiguration configuration)
+	{
+		settings.put(configuration.getName(), new JSONObject());
+	}
+	
+	public static <K, V> void mapListValue(MapListConfiguration configuration, K key, V value)
+	{
+		JSONObject map = settings.optJSONObject(configuration.getName());
+		if(map == null)
+			map = new JSONObject();
+		map.append(key.toString(), value);
+		settings.put(configuration.getName(), map);
+	}
+	
+	public static <K, V> void deleteKey(MapListConfiguration<K,V> configuration, K key)
+	{
+		JSONObject map = settings.optJSONObject(configuration.getName());
+		if(map == null)
+			return;
+		map.remove(key.toString());
+	}
+	
+	public static <K, V> void deleteKey(MapListConfiguration configuration, K key, V value)
+	{
+		deleteKey(configuration, key, value, Objects::equals);
+	}
+	
+	public static <K, V> void deleteKey(MapListConfiguration configuration, K key, V value, BiFunction<Object, V, Boolean> matcher)
+	{
+		JSONObject map = settings.optJSONObject(configuration.getName());
+		if(map == null)
+			return;
+		JSONArray array = map.optJSONArray(key.toString());
+		if(array != null)
+		{
+			int index = -1;
+			for(int i = 0; i < array.length(); i++)
+			{
+				if(matcher.apply(array.get(i), value))
+				{
+					index = i;
+					break;
+				}
+			}
+			if(index != -1)
+				array.remove(index);
+			map.put(key.toString(), map);
+		}
 	}
 }
