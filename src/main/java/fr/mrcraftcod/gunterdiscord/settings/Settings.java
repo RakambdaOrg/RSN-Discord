@@ -31,7 +31,8 @@ public class Settings
 			PrefixConfig.class,
 			ReportChannelConfig.class,
 			QuizChannelConfig.class,
-			HangmanChannelConfig.class
+			HangmanChannelConfig.class,
+			PhotoConfig.class
 	};
 	
 	public static void init(Path path) throws IOException
@@ -57,7 +58,6 @@ public class Settings
 			{
 				e.printStackTrace();
 			}
-			
 		}
 		return null;
 	}
@@ -78,7 +78,7 @@ public class Settings
 	
 	public static JSONArray getArray(String name)
 	{
-		return settings.has(name) ? settings.getJSONArray(name) : null;
+		return settings.optJSONArray(name);
 	}
 	
 	public static void setValue(ValueConfiguration configuration, Object value)
@@ -88,9 +88,7 @@ public class Settings
 	
 	public static <T> void addValue(ListConfiguration configuration, T value)
 	{
-		if(!settings.has(configuration.getName()))
-			settings.put(configuration.getName(), new JSONArray());
-		settings.put(configuration.getName(), settings.getJSONArray(configuration.getName()).put(value));
+		settings.append(configuration.getName(), value);
 	}
 	
 	public static void resetList(ListConfiguration configuration)
@@ -107,5 +105,32 @@ public class Settings
 		if(index != -1)
 			array.remove(index);
 		settings.put(configuration.getName(), array);
+	}
+	
+	public static <V, K> void mapValue(MapConfiguration configuration, K key, V value)
+	{
+		JSONObject map = settings.optJSONObject(configuration.getName());
+		if(map == null)
+			map = new JSONObject();
+		map.put(key.toString(), value);
+		settings.put(configuration.getName(), map);
+	}
+	
+	public static <K> void deleteKey(MapConfiguration configuration, K key)
+	{
+		JSONObject map = settings.optJSONObject(configuration.getName());
+		if(map == null)
+			return;
+		map.remove(key.toString());
+	}
+	
+	public static JSONObject getJSONObject(String name)
+	{
+		return settings.optJSONObject(name);
+	}
+	
+	public static void resetMap(MapConfiguration configuration)
+	{
+		settings.put(configuration.getName(), new JSONObject());
 	}
 }

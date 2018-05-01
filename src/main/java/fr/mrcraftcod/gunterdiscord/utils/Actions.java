@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord.utils;
 
 import fr.mrcraftcod.gunterdiscord.Main;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -15,15 +16,25 @@ public class Actions
 {
 	public static Message reply(MessageReceivedEvent event, String text)
 	{
-		return sendMessage(event.getTextChannel(), text);
+		return sendMessage(event.getMessage().getTextChannel(), text);
 	}
 	
 	public static Message sendMessage(TextChannel channel, String text)
 	{
-		if(channel.canTalk())
+		if(channel != null)
+		{
+			if(channel.canTalk())
+				return channel.sendMessage(text).complete();
+			else
+				reportError("Access denied to text channel: " + channel.getAsMention());
+		}
+		return null;
+	}
+	
+	public static Message sendMessage(PrivateChannel channel, String text)
+	{
+		if(channel != null)
 			return channel.sendMessage(text).complete();
-		else
-			reportError("Access denied to text channel: " + channel.getAsMention());
 		return null;
 	}
 	

@@ -29,6 +29,7 @@ public class CommandsMessageListener extends ListenerAdapter
 		commands.add(new ReportCommand());
 		commands.add(new QuizCommand());
 		commands.add(new HangmanCommand());
+		commands.add(new PhotoCommand());
 	}
 	
 	@Override
@@ -50,6 +51,7 @@ public class CommandsMessageListener extends ListenerAdapter
 					}
 					catch(Exception e)
 					{
+						e.printStackTrace();
 						event.getChannel().sendMessage("Cette fonctionnalité doit encore être configuré. Veuillez en avertir un modérateur.").complete();
 					}
 				}

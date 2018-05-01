@@ -15,7 +15,8 @@ public abstract class Configuration
 	public enum ConfigType
 	{
 		VALUE,
-		LIST
+		LIST,
+		MAP
 	}
 	
 	public abstract boolean isActionAllowed(SetConfigCommand.ChangeConfigType action);

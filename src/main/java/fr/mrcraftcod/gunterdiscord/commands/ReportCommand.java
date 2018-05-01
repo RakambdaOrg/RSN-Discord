@@ -53,11 +53,11 @@ public class ReportCommand extends BasicCommand
 		long reportChannel = new ReportChannelConfig().getLong();
 		if(reportChannel < 0)
 		{
-			Actions.reply(event, "Cette fonctionnalité doit encore être configuré. Veuillez en avertir un modérateur.");
+			Actions.sendMessage(event.getPrivateChannel(), "Cette fonctionnalité doit encore être configuré. Veuillez en avertir un modérateur.");
 		}
 		else
 		{
-			Actions.reply(event, "Votre message a bien été transféré. Merci à vous.");
+			Actions.sendMessage(event.getPrivateChannel(), "Votre message a bien été transféré. Merci à vous.");
 			event.getJDA().getTextChannelById(reportChannel).sendMessageFormat("%s Nouveau report de %s#%s: %s", Utilities.getRole(event.getJDA(), "Kaporal (modo)").getAsMention(), event.getAuthor().getAsMention(), event.getAuthor().getDiscriminator(), args.stream().collect(Collectors.joining(" "))).complete();
 		}
 		return CommandResult.SUCCESS;
