@@ -34,8 +34,9 @@ public class ReadyListener implements EventListener
 					while(true)
 					{
 						for(Message message : trombiChannel.getIterableHistory().cache(false))
-							if(message.getCreationTime().isBefore(OffsetDateTime.now().minusDays(1)))
-								message.delete().queue();
+							if(!message.isPinned())
+								if(message.getCreationTime().isBefore(OffsetDateTime.now().minusDays(1)))
+									message.delete().queue();
 						
 						Thread.sleep(WAIT_TIME * 1000);
 					}
