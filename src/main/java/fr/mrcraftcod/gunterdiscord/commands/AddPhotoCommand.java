@@ -67,7 +67,7 @@ public class AddPhotoCommand extends BasicCommand
 				if(attachment.download(saveFile))
 				{
 					new PhotoConfig().addValue(user.getIdLong(), saveFile.getAbsolutePath());
-					event.getGuild().getController().addRolesToMember(event.getGuild().getMember(user), Utilities.getRole(event.getJDA(), "Trombi")).complete();
+					event.getGuild().getController().addRolesToMember(event.getGuild().getMember(user), Utilities.getRole(event.getJDA(), "Trombi")).queue();
 					TextChannel chan = null;
 					try
 					{
@@ -89,6 +89,7 @@ public class AddPhotoCommand extends BasicCommand
 		{
 			Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Veuillez joindre un image");
 		}
+		event.getMessage().delete().queue();
 		return CommandResult.SUCCESS;
 	}
 	

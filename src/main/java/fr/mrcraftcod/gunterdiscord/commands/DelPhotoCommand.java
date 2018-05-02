@@ -55,7 +55,7 @@ public class DelPhotoCommand extends BasicCommand
 					{
 						new PhotoConfig().deleteKeyValue(user.getIdLong(), args.poll());
 						if(new PhotoConfig().getValue(user.getIdLong()).isEmpty())
-							event.getGuild().getController().removeRolesFromMember(event.getGuild().getMember(user), Utilities.getRole(event.getJDA(), "Trombi")).complete();
+							event.getGuild().getController().removeRolesFromMember(event.getGuild().getMember(user), Utilities.getRole(event.getJDA(), "Trombi")).queue();
 						Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photos de " + user.getAsMention() + " supprimées");
 					}
 					else
@@ -65,7 +65,7 @@ public class DelPhotoCommand extends BasicCommand
 				{
 					new PhotoConfig().deleteKeyValue(event.getAuthor().getIdLong(), args.poll());
 					if(new PhotoConfig().getValue(user.getIdLong()).isEmpty())
-						event.getGuild().getController().removeRolesFromMember(event.getMember(), Utilities.getRole(event.getJDA(), "Trombi")).complete();
+						event.getGuild().getController().removeRolesFromMember(event.getMember(), Utilities.getRole(event.getJDA(), "Trombi")).queue();
 					Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photos supprimées");
 				}
 			}
@@ -73,10 +73,10 @@ public class DelPhotoCommand extends BasicCommand
 		else
 		{
 			new PhotoConfig().deleteKey(event.getAuthor().getIdLong());
-			event.getGuild().getController().removeRolesFromMember(event.getMember(), Utilities.getRole(event.getJDA(), "Trombi")).complete();
+			event.getGuild().getController().removeRolesFromMember(event.getMember(), Utilities.getRole(event.getJDA(), "Trombi")).queue();
 			Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photos supprimées");
 		}
-		event.getMessage().delete().complete();
+		event.getMessage().delete().queue();
 		return CommandResult.SUCCESS;
 	}
 	

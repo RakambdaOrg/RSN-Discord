@@ -81,8 +81,8 @@ public class PhotoCommand extends BasicCommand
 							if(file.exists())
 							{
 								String ID = file.getName().substring(0, file.getName().lastIndexOf("."));
-								event.getTextChannel().sendMessage(event.getAuthor().getAsMention() + " a demandé la photo (" + (rnd + 1) + "/" + paths.size() + ") de " + user.getName() + " (ID: " + ID + ")").complete();
-								event.getTextChannel().sendFile(file).complete();
+								event.getTextChannel().sendMessage(event.getAuthor().getAsMention() + " a demandé la photo (" + (rnd + 1) + "/" + paths.size() + ") de " + user.getName() + " (ID: " + ID + ")").queue();
+								event.getTextChannel().sendFile(file).queue();
 							}
 							else
 								Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Désolé je ne retrouves plus l'image");
@@ -111,7 +111,7 @@ public class PhotoCommand extends BasicCommand
 				e.printStackTrace();
 			}
 		}
-		event.getMessage().delete().complete();
+		event.getMessage().delete().queue();
 		return CommandResult.SUCCESS;
 	}
 	
