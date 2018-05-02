@@ -292,11 +292,14 @@ public class HangmanListener extends ListenerAdapter
 			List<Member> members = role.getGuild().getMembersWithRoles(role);
 			if(members.size() > 1)
 				members = members.stream().filter(member -> member.getUser().getIdLong() != waitingID).collect(Collectors.toList());
-			Member member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
-			waitingID = member.getUser().getIdLong();
-			waitingMsg = true;
-			waitingTime = System.currentTimeMillis();
-			channel.sendMessageFormat("L'élu est %s, c'est a lui d'indiquer la lettre que vous avez choisit grâce à la commande " + "h" + new PrefixConfig().getString() + "lettre <lettre>\n", member.getAsMention()).queue();
+			if(members.size() > 0)
+			{
+				Member member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
+				waitingID = member.getUser().getIdLong();
+				waitingMsg = true;
+				waitingTime = System.currentTimeMillis();
+				channel.sendMessageFormat("L'élu est %s, c'est a lui d'indiquer la lettre que vous avez choisit grâce à la commande " + "h" + new PrefixConfig().getString() + "lettre <lettre>\n", member.getAsMention()).queue();
+			}
 		}
 		catch(InvalidClassException | NoValueDefinedException e)
 		{
