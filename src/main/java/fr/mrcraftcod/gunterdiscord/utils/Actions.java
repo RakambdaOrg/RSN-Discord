@@ -1,10 +1,9 @@
 package fr.mrcraftcod.gunterdiscord.utils;
 
 import fr.mrcraftcod.gunterdiscord.Main;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.PrivateChannel;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import static fr.mrcraftcod.gunterdiscord.utils.Utilities.getRole;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -46,5 +45,49 @@ public class Actions
 	public static Message sendMessage(long channelID, String text)
 	{
 		return sendMessage(Main.getJDA().getTextChannelById(channelID), text);
+	}
+	
+	public static void replyPrivate(User user, String text)
+	{
+		if(user != null)
+		{
+			user.openPrivateChannel().queue(channel -> channel.sendMessage(text).queue());
+			Log.info("Sent private message to " + getUserToLog(user) + ": " + text);
+		}
+		else
+			Log.warning("Sent message to null");
+	}
+	
+	public static void giveRole(Guild guild, User user, Roles role)
+	{
+		try
+		{
+			//noinspection ConstantConditions
+			guild.getController().addSingleRoleToMember(guild.getMember(user), getRole(Main.getJDA(), role.getRole())).queue();
+			Log.info("Added role " + role + " to " + getUserToLog(user));
+		}
+		catch(IllegalArgumentException e)
+		{
+			Log.warning("User/Role not found", e);
+		}
+	}
+	
+	public static void removeRole(Guild guild, User user, Roles role)
+	{
+		try
+		{
+			//noinspection ConstantConditions
+			guild.getController().removeSingleRoleFromMember(guild.getMember(user), getRole(Main.getJDA(), role.getRole())).queue();
+			Log.info("Removed role " + role + " from " + getUserToLog(user));
+		}
+		catch(IllegalArgumentException e)
+		{
+			Log.warning("User/Role not found", e);
+		}
+	}
+	
+	public static String getUserToLog(User user)
+	{
+		return user == null ? "NULL" : (user.getName() + "#" + user.getDiscriminator() + " (" + user.getIdLong() + ")");
 	}
 }

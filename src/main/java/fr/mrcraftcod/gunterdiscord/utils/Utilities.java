@@ -5,9 +5,7 @@ import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.ModoRolesConfig;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Emote;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.*;
 import java.io.InvalidClassException;
 import java.util.List;
 
@@ -42,6 +40,11 @@ public class Utilities
 			if(role.hasPermission(Permission.ADMINISTRATOR))
 				return true;
 		return false;
+	}
+	
+	public static Role getRole(JDA jda, Roles role)
+	{
+		return getRole(jda, role.getRole());
 	}
 	
 	public static Role getRole(JDA jda, String name)

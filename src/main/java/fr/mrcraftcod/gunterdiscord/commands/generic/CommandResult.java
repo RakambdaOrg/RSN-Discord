@@ -1,4 +1,4 @@
-package fr.mrcraftcod.gunterdiscord.commands;
+package fr.mrcraftcod.gunterdiscord.commands.generic;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)

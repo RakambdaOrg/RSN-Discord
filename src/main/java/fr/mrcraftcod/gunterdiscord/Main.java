@@ -2,6 +2,8 @@ package fr.mrcraftcod.gunterdiscord;
 
 import fr.mrcraftcod.gunterdiscord.listeners.*;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
+import fr.mrcraftcod.gunterdiscord.utils.Log;
+import fr.mrcraftcod.gunterdiscord.utils.LoggerFormatter;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -10,6 +12,8 @@ import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 09/04/2018.
@@ -22,23 +26,56 @@ public class Main
 	private static final String SETTINGS_NAME = "settings.json";
 	private static JDA jda;
 	
-	public static void main(String[] args) throws LoginException, InterruptedException, IOException
+	/**
+	 * Main entry point.
+	 *
+	 * @param args Not used.
+	 */
+	public static void main(String[] args)
 	{
-		Settings.init(Paths.get(new File(SETTINGS_NAME).toURI()));
+		try
+		{
+			Log.setAppName("GunterDiscord");
+			Handler handler = new FileHandler("log.log");
+			handler.setFormatter(new LoggerFormatter());
+			Log.getLogger().addHandler(handler);
+		}
+		catch(IOException e)
+		{
+			System.out.println("Error setting up logger");
+			e.printStackTrace();
+		}
 		
-		jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).buildBlocking();
-		jda.addEventListener(new ReadyListener());
-		jda.addEventListener(new CommandsMessageListener());
-		// jda.addEventListener(new BannedRegexesMessageListener());
-		// jda.addEventListener(new OnlyImagesMessageListener());
-		// jda.addEventListener(new OnlyQuestionsMessageListener());
-		jda.addEventListener(new QuizMessageListener());
-		jda.addEventListener(new ShutdownListener());
-		jda.addEventListener(new HangmanListener());
-		jda.setAutoReconnect(true);
-		jda.getPresence().setGame(Game.playing("Le chalumeau"));
+		try
+		{
+			Settings.init(Paths.get(new File(SETTINGS_NAME).toURI()));
+			jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).buildBlocking();
+			jda.addEventListener(new ReadyListener());
+			jda.addEventListener(new CommandsMessageListener());
+			// jda.addEventListener(new BannedRegexesMessageListener());
+			// jda.addEventListener(new OnlyImagesMessageListener());
+			// jda.addEventListener(new OnlyQuestionsMessageListener());
+			jda.addEventListener(new QuizMessageListener());
+			jda.addEventListener(new ShutdownListener());
+			jda.addEventListener(new HangmanListener());
+			jda.setAutoReconnect(true);
+			jda.getPresence().setGame(Game.playing("Le chalumeau"));
+		}
+		catch(IOException e)
+		{
+			Log.error("Couldn't load settings", e);
+		}
+		catch(LoginException | InterruptedException e)
+		{
+			Log.error("Couldn't start bot", e);
+		}
 	}
 	
+	/**
+	 * Get the running JDA.
+	 *
+	 * @return The JDA.
+	 */
 	public static JDA getJDA()
 	{
 		return jda;

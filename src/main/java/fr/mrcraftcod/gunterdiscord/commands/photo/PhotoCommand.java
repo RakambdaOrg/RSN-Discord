@@ -1,9 +1,14 @@
-package fr.mrcraftcod.gunterdiscord.commands;
+package fr.mrcraftcod.gunterdiscord.commands.photo;
 
+import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.Log;
+import fr.mrcraftcod.gunterdiscord.utils.Roles;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.User;
@@ -21,6 +26,7 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
+@CallableCommand
 public class PhotoCommand extends BasicCommand
 {
 	@SuppressWarnings("Duplicates")
@@ -29,12 +35,6 @@ public class PhotoCommand extends BasicCommand
 	{
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
 			return CommandResult.NOT_ALLOWED;
-		return handlePublic(event, args);
-	}
-	
-	@SuppressWarnings("Duplicates")
-	private CommandResult handlePublic(MessageReceivedEvent event, LinkedList<String> args)
-	{
 		if(args.size() > 0)
 		{
 			User user = null;
@@ -48,10 +48,9 @@ public class PhotoCommand extends BasicCommand
 				if(users.size() > 0)
 					user = users.get(0);
 			}
+			
 			if(user == null)
-			{
-				Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Utilisateur non trouvé");
-			}
+				Actions.replyPrivate(event.getAuthor(), "Utilisateur non trouvé");
 			else
 			{
 				try
@@ -69,25 +68,25 @@ public class PhotoCommand extends BasicCommand
 								}
 								catch(Exception e)
 								{
-									e.printStackTrace();
+									Log.warning("Provided argument isn't an integer", e);
 								}
 							File file = new File(paths.get(rnd));
 							if(file.exists())
 							{
 								String ID = file.getName().substring(0, file.getName().lastIndexOf("."));
-								event.getTextChannel().sendMessage(event.getAuthor().getAsMention() + " a demandé la photo (" + (rnd + 1) + "/" + paths.size() + ") de " + user.getName() + " (ID: " + ID + ")").queue();
+								Actions.reply(event, event.getAuthor().getAsMention() + " a demandé la photo (" + (rnd + 1) + "/" + paths.size() + ") de " + user.getName() + " (ID: " + ID + ")");
 								event.getTextChannel().sendFile(file).queue();
 							}
 							else
-								Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Désolé je ne retrouves plus l'image");
+								Actions.reply(event, "Désolé je ne retrouves plus l'image");
 						}
 						else
-							Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Cet utilisateur n'a pas d'image");
+							Actions.reply(event, "Cet utilisateur n'a pas d'image");
 					}
 				}
 				catch(InvalidClassException | NoValueDefinedException e)
 				{
-					e.printStackTrace();
+					Log.error("Couldn't get photo channel", e);
 				}
 			}
 		}
@@ -97,12 +96,12 @@ public class PhotoCommand extends BasicCommand
 			{
 				if(new PhotoChannelConfig().getLong() == event.getTextChannel().getIdLong())
 				{
-					event.getTextChannel().sendMessage("Participants: " + event.getGuild().getMembersWithRoles(Utilities.getRole(event.getJDA(), "Trombi")).stream().map(u -> u.getUser().getName()).collect(Collectors.joining(", "))).queue();
+					Actions.reply(event, "Participants: " + event.getGuild().getMembersWithRoles(Utilities.getRole(event.getJDA(), Roles.TROMBINOSCOPE)).stream().map(u -> u.getUser().getName()).collect(Collectors.joining(", ")));
 				}
 			}
 			catch(InvalidClassException | NoValueDefinedException e)
 			{
-				e.printStackTrace();
+				Log.error("Couldn't get photo channel", e);
 			}
 		}
 		event.getMessage().delete().queue();

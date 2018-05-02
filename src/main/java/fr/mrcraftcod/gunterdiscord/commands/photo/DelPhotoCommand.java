@@ -1,7 +1,11 @@
-package fr.mrcraftcod.gunterdiscord.commands;
+package fr.mrcraftcod.gunterdiscord.commands.photo;
 
+import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.Roles;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.User;
@@ -15,6 +19,7 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
+@CallableCommand
 public class DelPhotoCommand extends BasicCommand
 {
 	@SuppressWarnings("Duplicates")
@@ -23,12 +28,6 @@ public class DelPhotoCommand extends BasicCommand
 	{
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
 			return CommandResult.NOT_ALLOWED;
-		return handlePublic(event, args);
-	}
-	
-	@SuppressWarnings("Duplicates")
-	private CommandResult handlePublic(MessageReceivedEvent event, LinkedList<String> args)
-	{
 		if(args.size() > 0)
 		{
 			User user = null;
@@ -44,9 +43,7 @@ public class DelPhotoCommand extends BasicCommand
 					user = users.get(0);
 			}
 			if(user == null)
-			{
-				Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Utilisateur non trouvé");
-			}
+				Actions.replyPrivate(event.getAuthor(), "Utilisateur non trouvé");
 			else
 			{
 				if(user.getIdLong() != event.getAuthor().getIdLong())
@@ -55,17 +52,17 @@ public class DelPhotoCommand extends BasicCommand
 					{
 						new PhotoConfig().deleteKeyValue(user.getIdLong(), args.poll());
 						if(new PhotoConfig().getValue(user.getIdLong()).isEmpty())
-							event.getGuild().getController().removeRolesFromMember(event.getGuild().getMember(user), Utilities.getRole(event.getJDA(), "Trombi")).queue();
-						Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photos de " + user.getAsMention() + " supprimées");
+							Actions.removeRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
+						Actions.replyPrivate(event.getAuthor(), "Photos de " + user.getAsMention() + " supprimées");
 					}
 					else
-						Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Vous ne pouvez pas supprimer la photo de quelqu'un d'autre");
+						Actions.replyPrivate(event.getAuthor(), "Vous ne pouvez pas supprimer la photo de quelqu'un d'autre");
 				}
 				else
 				{
-					new PhotoConfig().deleteKeyValue(event.getAuthor().getIdLong(), args.poll());
+					new PhotoConfig().deleteKeyValue(user.getIdLong(), args.poll());
 					if(new PhotoConfig().getValue(user.getIdLong()).isEmpty())
-						event.getGuild().getController().removeRolesFromMember(event.getMember(), Utilities.getRole(event.getJDA(), "Trombi")).queue();
+						Actions.removeRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
 					Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photos supprimées");
 				}
 			}
@@ -73,7 +70,7 @@ public class DelPhotoCommand extends BasicCommand
 		else
 		{
 			new PhotoConfig().deleteKey(event.getAuthor().getIdLong());
-			event.getGuild().getController().removeRolesFromMember(event.getMember(), Utilities.getRole(event.getJDA(), "Trombi")).queue();
+			Actions.removeRole(event.getGuild(), event.getAuthor(), Roles.TROMBINOSCOPE);
 			Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photos supprimées");
 		}
 		event.getMessage().delete().queue();
