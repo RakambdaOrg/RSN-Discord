@@ -31,6 +31,7 @@ public class CommandsMessageListener extends ListenerAdapter
 		commands.add(new HangmanCommand());
 		commands.add(new PhotoCommand());
 		commands.add(new DelPhotoCommand());
+		commands.add(new AddPhotoCommand());
 	}
 	
 	@Override
