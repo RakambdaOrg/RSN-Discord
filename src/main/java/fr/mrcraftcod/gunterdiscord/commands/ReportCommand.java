@@ -1,11 +1,16 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.ReportChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.Log;
+import fr.mrcraftcod.gunterdiscord.utils.Roles;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
@@ -16,6 +21,7 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
+@CallableCommand
 public class ReportCommand extends BasicCommand
 {
 	@Override
@@ -48,19 +54,30 @@ public class ReportCommand extends BasicCommand
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
 			return CommandResult.NOT_ALLOWED;
 		if(event.getChannel().getType() != ChannelType.PRIVATE)
-		{
 			event.getMessage().delete().complete();
-			return CommandResult.SUCCESS;
-		}
-		long reportChannel = new ReportChannelConfig().getLong();
-		if(reportChannel < 0)
-		{
-			Actions.sendMessage(event.getPrivateChannel(), "Cette fonctionnalité doit encore être configuré. Veuillez en avertir un modérateur.");
-		}
 		else
 		{
-			Actions.sendMessage(event.getPrivateChannel(), "Votre message a bien été transféré. Merci à vous.");
-			event.getJDA().getTextChannelById(reportChannel).sendMessageFormat("%s Nouveau report de %s#%s: %s", Utilities.getRole(event.getJDA(), "Kaporal (modo)").getAsMention(), event.getAuthor().getAsMention(), event.getAuthor().getDiscriminator(), args.stream().collect(Collectors.joining(" "))).complete();
+			TextChannel channel = null;
+			try
+			{
+				
+				long reportChannel = new ReportChannelConfig().getLong();
+				channel = event.getJDA().getTextChannelById(reportChannel);
+			}
+			catch(Exception e)
+			{
+				Log.error("Failed to get report channel", e);
+			}
+			if(channel == null)
+			{
+				Actions.replyPrivate(event.getAuthor(), "Cette fonctionnalité doit encore être configuré. Veuillez en avertir un modérateur.");
+			}
+			else
+			{
+				Role role = Utilities.getRole(event.getJDA(), Roles.MODERATOR);
+				Actions.sendMessage(channel, String.format("%s Nouveau report de %s#%s: %s", role == null ? "" : role.getAsMention(), event.getAuthor().getAsMention(), event.getAuthor().getDiscriminator(), args.stream().collect(Collectors.joining(" "))));
+				Actions.replyPrivate(event.getAuthor(), "Votre message a bien été transféré. Merci à vous.");
+			}
 		}
 		return CommandResult.SUCCESS;
 	}
