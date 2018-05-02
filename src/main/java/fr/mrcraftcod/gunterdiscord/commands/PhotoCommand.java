@@ -29,13 +29,7 @@ public class PhotoCommand extends BasicCommand
 	{
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
 			return CommandResult.NOT_ALLOWED;
-		switch(event.getChannel().getType())
-		{
-			case TEXT:
-				return handlePublic(event, args);
-			default:
-				return CommandResult.FAILED;
-		}
+		return handlePublic(event, args);
 	}
 	
 	@SuppressWarnings("Duplicates")
@@ -71,7 +65,7 @@ public class PhotoCommand extends BasicCommand
 							if(args.peek() != null)
 								try
 								{
-									rnd = Math.max(0, Math.min(paths.size(), Integer.parseInt(args.pop()) - 1));
+									rnd = Math.max(0, Math.min(paths.size(), Integer.parseInt(args.pop())) - 1);
 								}
 								catch(Exception e)
 								{
