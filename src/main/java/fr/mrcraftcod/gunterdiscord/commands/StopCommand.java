@@ -1,7 +1,9 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
+import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
@@ -12,9 +14,9 @@ import java.util.LinkedList;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
+@CallableCommand
 public class StopCommand extends BasicCommand
 {
-	
 	@Override
 	public int getScope()
 	{
@@ -39,7 +41,7 @@ public class StopCommand extends BasicCommand
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
 			return CommandResult.NOT_ALLOWED;
 		event.getJDA().shutdownNow();
-		System.out.println("BOT STOPPED");
+		Log.info("BOT STOPPED");
 		return CommandResult.SUCCESS;
 	}
 	
