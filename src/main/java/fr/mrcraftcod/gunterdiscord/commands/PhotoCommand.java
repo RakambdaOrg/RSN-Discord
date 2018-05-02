@@ -68,7 +68,7 @@ public class PhotoCommand extends BasicCommand
 					{
 						Message.Attachment attachment = event.getMessage().getAttachments().get(0);
 						String ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
-						File saveFile = new File("./pictures/" + event.getAuthor().getIdLong() +"/", event.getMessage().getCreationTime().toEpochSecond() + ext);
+						File saveFile = new File("./pictures/" + user.getIdLong() +"/", event.getMessage().getCreationTime().toEpochSecond() + ext);
 						saveFile.getParentFile().mkdirs();
 						if(attachment.download(saveFile))
 						{
