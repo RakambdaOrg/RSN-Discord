@@ -6,6 +6,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.Question;
 import fr.mrcraftcod.gunterdiscord.listeners.QuizMessageListener;
+import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.io.IOException;
@@ -48,6 +49,13 @@ public class QuizCommand extends BasicCommand
 		return CommandResult.SUCCESS;
 	}
 	
+	/**
+	 * Pick some random questions from the CSV file.
+	 *
+	 * @param amount The maximum number of question.
+	 *
+	 * @return The questions.
+	 */
 	private LinkedList<Question> generateQuestions(int amount)
 	{
 		LinkedList<String> lines = new LinkedList<>();
@@ -57,7 +65,7 @@ public class QuizCommand extends BasicCommand
 		}
 		catch(IOException | URISyntaxException e)
 		{
-			e.printStackTrace();
+			Log.error("Error reading questions file", e);
 		}
 		
 		Collections.shuffle(lines);
@@ -70,16 +78,14 @@ public class QuizCommand extends BasicCommand
 			String correctAnswer = line[1];
 			
 			List<String> answersList = Arrays.stream(line, 2, line.length).filter(l -> l != null && !l.trim().equalsIgnoreCase("")).collect(Collectors.toList());
-			Collections.sort(answersList);
+			Collections.shuffle(answersList);
 			int ID = ThreadLocalRandom.current().nextInt(0, answersList.size() + 1);
 			HashMap<Integer, String> answers = new HashMap<>();
 			for(int j = 0; j < answersList.size() + 1; j++)
-			{
 				if(j == ID)
 					answers.put(j, correctAnswer);
 				else
 					answers.put(j, answersList.get(j - (j > ID ? 1 : 0)));
-			}
 			list.add(new Question(line[0], answers, ID));
 		}
 		return list;
