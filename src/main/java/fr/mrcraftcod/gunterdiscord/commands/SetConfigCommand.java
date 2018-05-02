@@ -55,7 +55,7 @@ public class SetConfigCommand extends BasicCommand
 	@Override
 	public String getCommandDescription()
 	{
-		return super.getCommandDescription() + " <parametre> <action> <valeur...>";
+		return super.getCommandDescription() + " <parametre> <action> [valeur...]";
 	}
 	
 	@Override

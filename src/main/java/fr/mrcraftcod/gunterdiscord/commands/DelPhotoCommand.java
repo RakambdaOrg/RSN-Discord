@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.commands;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
@@ -22,15 +23,7 @@ public class DelPhotoCommand extends BasicCommand
 	{
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
 			return CommandResult.NOT_ALLOWED;
-		switch(event.getChannel().getType())
-		{
-			case PRIVATE:
-				return handlePrivate(event, args);
-			case TEXT:
-				return handlePublic(event, args);
-			default:
-				return CommandResult.FAILED;
-		}
+		return handlePublic(event, args);
 	}
 	
 	@SuppressWarnings("Duplicates")
@@ -60,7 +53,7 @@ public class DelPhotoCommand extends BasicCommand
 				{
 					if(Utilities.isModerator(event.getMember()) || Utilities.isAdmin(event.getMember()))
 					{
-						new PhotoConfig().deleteKeyValue(user.getIdLong(), args.pop());
+						new PhotoConfig().deleteKeyValue(user.getIdLong(), args.poll());
 						if(new PhotoConfig().getValue(user.getIdLong()).isEmpty())
 							event.getGuild().getController().removeRolesFromMember(event.getGuild().getMember(user), Utilities.getRole(event.getJDA(), "Trombi")).complete();
 						Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photos de " + user.getAsMention() + " supprimées");
@@ -70,7 +63,7 @@ public class DelPhotoCommand extends BasicCommand
 				}
 				else
 				{
-					new PhotoConfig().deleteKeyValue(event.getAuthor().getIdLong(), args.pop());
+					new PhotoConfig().deleteKeyValue(event.getAuthor().getIdLong(), args.poll());
 					if(new PhotoConfig().getValue(user.getIdLong()).isEmpty())
 						event.getGuild().getController().removeRolesFromMember(event.getMember(), Utilities.getRole(event.getJDA(), "Trombi")).complete();
 					Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photos supprimées");
@@ -87,17 +80,10 @@ public class DelPhotoCommand extends BasicCommand
 		return CommandResult.SUCCESS;
 	}
 	
-	private CommandResult handlePrivate(MessageReceivedEvent event, LinkedList<String> args)
-	{
-		new PhotoConfig().deleteKey(event.getAuthor().getIdLong());
-		Actions.sendMessage(event.getPrivateChannel(), "Photo supprimée");
-		return CommandResult.SUCCESS;
-	}
-	
 	@Override
 	public String getCommandDescription()
 	{
-		return super.getCommandDescription() + " <user>";
+		return super.getCommandDescription() + " [user] [ID]";
 	}
 	
 	@Override
@@ -109,13 +95,13 @@ public class DelPhotoCommand extends BasicCommand
 	@Override
 	public int getScope()
 	{
-		return -5;
+		return ChannelType.TEXT.getId();
 	}
 	
 	@Override
 	public String getName()
 	{
-		return "Photo";
+		return "Supprimer photo";
 	}
 	
 	@Override

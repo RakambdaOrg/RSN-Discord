@@ -94,7 +94,7 @@ public class QuizCommand extends BasicCommand
 	@Override
 	public String getCommandDescription()
 	{
-		return super.getCommandDescription() + " <action> <params>";
+		return super.getCommandDescription() + " <action> [params]";
 	}
 	
 	@Override
