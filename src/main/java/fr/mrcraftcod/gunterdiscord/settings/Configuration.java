@@ -12,18 +12,47 @@ import java.util.LinkedList;
  */
 public abstract class Configuration
 {
+	/**
+	 * The type of the configuration.
+	 */
 	public enum ConfigType
 	{
-		VALUE,
-		LIST,
-		MAP
+		VALUE, LIST, MAP
 	}
 	
+	/**
+	 * Tells if the given action is allowed.
+	 *
+	 * @param action The action.
+	 *
+	 * @return True if allowed, false otherwise.
+	 */
 	public abstract boolean isActionAllowed(SetConfigCommand.ChangeConfigType action);
 	
+	/**
+	 * Handle the changes requested.
+	 *
+	 * @param event  The event that triggered this change.
+	 * @param action The action to perform.
+	 * @param args   The parameters.
+	 *
+	 * @return The result of this change.
+	 *
+	 * @throws Exception If anything too bad happened.
+	 */
 	public abstract SetConfigCommand.ActionResult handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args) throws Exception;
 	
+	/**
+	 * Get the name of this configuration.
+	 *
+	 * @return The name.
+	 */
 	public abstract String getName();
 	
+	/**
+	 * Get the type of this configuration.
+	 *
+	 * @return The type.
+	 */
 	public abstract ConfigType getType();
 }

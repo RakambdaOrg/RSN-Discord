@@ -1,11 +1,12 @@
 package fr.mrcraftcod.gunterdiscord.utils;
 
 import fr.mrcraftcod.gunterdiscord.Main;
-import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.ModoRolesConfig;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Emote;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Role;
 import java.io.InvalidClassException;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class Utilities
 				if(new ModoRolesConfig().getAsList().contains(role.getAsMention()))
 					return true;
 			}
-			catch(NoValueDefinedException | InvalidClassException e)
+			catch(InvalidClassException e)
 			{
 				e.printStackTrace();
 			}

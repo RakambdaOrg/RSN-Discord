@@ -1,6 +1,5 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.OnlyImagesConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -30,7 +29,7 @@ public class OnlyImagesMessageListener extends ListenerAdapter
 				}
 			}
 		}
-		catch(NoValueDefinedException | InvalidClassException e)
+		catch(InvalidClassException e)
 		{
 			e.printStackTrace();
 		}

@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.settings;
 
 import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
+import fr.mrcraftcod.gunterdiscord.utils.Log;
 import org.json.JSONObject;
 import java.io.InvalidClassException;
 import java.lang.reflect.ParameterizedType;
@@ -18,21 +19,39 @@ public abstract class MapConfiguration<K, V> extends Configuration
 {
 	private Map<K, V> lastValue = null;
 	
+	/**
+	 * Get the value from the given key.
+	 *
+	 * @param key The key to get.
+	 *
+	 * @return The value or null if not found.
+	 */
 	public V getValue(K key)
 	{
 		try
 		{
 			return getAsMap().get(key);
 		}
-		catch(NoValueDefinedException | InvalidClassException e)
+		catch(InvalidClassException e)
 		{
-			e.printStackTrace();
+			Log.error("Can't get value " + getName() + " with key " + key, e);
 		}
 		return null;
 	}
 	
-	protected abstract Function<String, K> getKeyParser();
+	/**
+	 * Get the parser to parse back string keys to K.
+	 *
+	 * @return The parser.
+	 */
+	abstract Function<String, K> getKeyParser();
 	
+	/**
+	 * Add a value to the map.
+	 *
+	 * @param key   The key to add into.
+	 * @param value The value to add.
+	 */
 	public void addValue(K key, V value)
 	{
 		if(lastValue != null)
@@ -40,6 +59,11 @@ public abstract class MapConfiguration<K, V> extends Configuration
 		Settings.mapValue(this, key, value);
 	}
 	
+	/**
+	 * Delete the key.
+	 *
+	 * @param key The key.
+	 */
 	public void deleteKey(K key)
 	{
 		if(lastValue != null)
@@ -53,21 +77,35 @@ public abstract class MapConfiguration<K, V> extends Configuration
 		return ConfigType.MAP;
 	}
 	
-	private static JSONObject getObjectMap(Configuration configuration) throws IllegalArgumentException
+	/**
+	 * Get the JSON Object.
+	 *
+	 * @return The JSON object.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a map.
+	 */
+	private JSONObject getObjectMap() throws IllegalArgumentException
 	{
-		if(configuration.getType() != ConfigType.MAP)
+		if(getType() != ConfigType.MAP)
 			throw new IllegalArgumentException("Not a map config");
-		return Settings.getJSONObject(configuration.getName());
+		return Settings.getJSONObject(getName());
 	}
 	
-	public Map<K, V> getAsMap() throws NoValueDefinedException, IllegalArgumentException, InvalidClassException
+	/**
+	 * Get the map of this configuration.
+	 *
+	 * @return The map.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a map.
+	 * @throws InvalidClassException    If either they key isn't K or the value isn't V.
+	 */
+	public Map<K, V> getAsMap() throws IllegalArgumentException, InvalidClassException
 	{
 		if(lastValue != null)
 			return lastValue;
-		Class<K> klassK = (Class<K>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		Class<V> klassV = (Class<V>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
 		Map<K, V> elements = new HashMap<>();
-		JSONObject map = getObjectMap(this);
+		JSONObject map = getObjectMap();
 		if(map == null)
 			Settings.resetMap(this);
 		else

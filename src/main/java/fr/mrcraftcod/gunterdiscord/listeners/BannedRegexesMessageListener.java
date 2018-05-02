@@ -1,6 +1,5 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.BannedRegexConfig;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
@@ -59,7 +58,7 @@ public class BannedRegexesMessageListener extends ListenerAdapter
 					return matcher.group(0);
 			}
 		}
-		catch(NoValueDefinedException | InvalidClassException e)
+		catch(InvalidClassException e)
 		{
 			e.printStackTrace();
 		}

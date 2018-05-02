@@ -17,6 +17,11 @@ public abstract class ListConfiguration<T> extends Configuration
 {
 	private List<T> lastValue = null;
 	
+	/**
+	 * Add a value to the list.
+	 *
+	 * @param value The value to add.
+	 */
 	public void addValue(T value)
 	{
 		if(lastValue != null)
@@ -24,6 +29,11 @@ public abstract class ListConfiguration<T> extends Configuration
 		Settings.addValue(this, value);
 	}
 	
+	/**
+	 * Remove a value from the list.
+	 *
+	 * @param value The value to remove.
+	 */
 	public void removeValue(T value)
 	{
 		if(lastValue != null)
@@ -37,20 +47,36 @@ public abstract class ListConfiguration<T> extends Configuration
 		return ConfigType.LIST;
 	}
 	
-	private static JSONArray getObjectList(Configuration configuration) throws IllegalArgumentException
+	/**
+	 * Get the JSON array.
+	 *
+	 * @return The JSON array.
+	 *
+	 * @throws IllegalArgumentException If the configuration isn't a list.
+	 */
+	private JSONArray getObjectList() throws IllegalArgumentException
 	{
-		if(configuration.getType() != ConfigType.LIST)
+		if(getType() != ConfigType.LIST)
 			throw new IllegalArgumentException("Not a list config");
-		return Settings.getArray(configuration.getName());
+		return Settings.getArray(getName());
 	}
 	
-	public List<T> getAsList() throws NoValueDefinedException, IllegalArgumentException, InvalidClassException
+	/**
+	 * Get a list of the values.
+	 *
+	 * @return The values list.
+	 *
+	 * @throws IllegalArgumentException If the configuration isn't a list.
+	 * @throws InvalidClassException    If the values are not of type T.
+	 */
+	public List<T> getAsList() throws IllegalArgumentException, InvalidClassException
 	{
 		if(lastValue != null)
 			return lastValue;
+		@SuppressWarnings("unchecked")
 		Class<T> klass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		List<T> elements = new LinkedList<>();
-		JSONArray array = getObjectList(this);
+		JSONArray array = getObjectList();
 		if(array == null)
 			Settings.resetList(this);
 		else
