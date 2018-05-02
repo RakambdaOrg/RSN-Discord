@@ -68,6 +68,7 @@ public class Settings
 	public static void save() throws IOException
 	{
 		Files.write(path, Arrays.asList(settings.toString(4).split("\n")), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+		System.out.println("Config written");
 	}
 	
 	public static void close()
@@ -183,7 +184,7 @@ public class Settings
 			}
 			if(index != -1)
 				array.remove(index);
-			map.put(key.toString(), map);
+			map.put(key.toString(), array);
 		}
 	}
 }

@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.HangmanChannelConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.user.update.UserUpdateOnlineStatusEvent;
@@ -80,7 +81,7 @@ public class HangmanListener extends ListenerAdapter
 						waitingMsg = false;
 						LinkedList<String> parts = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 						String command = parts.poll();
-						if("gh?lettre".equalsIgnoreCase(command))
+						if(("h" + new PrefixConfig().getString() + "lettre").equalsIgnoreCase(command))
 						{
 							if(parts.size() > 0)
 							{
@@ -148,16 +149,16 @@ public class HangmanListener extends ListenerAdapter
 								event.getChannel().sendMessage("Faut entrer une lettre mon beau!").queue();
 							}
 						}
-						else if("gh?leave".equalsIgnoreCase(command))
+						else if(("h" + new PrefixConfig().getString() + "leave").equalsIgnoreCase(command))
 						{
 							playerLeave(event.getGuild(), event.getMember());
 						}
-						else if("gh?skip".equalsIgnoreCase(command))
+						else if(("h" + new PrefixConfig().getString() + "skip").equalsIgnoreCase(command))
 						{
 							if(event.getMember().getUser().getIdLong() == waitingID)
 								pickRandomUser();
 						}
-						else if("gh?mot".equalsIgnoreCase(command))
+						else if(("h" + new PrefixConfig().getString() + "mot").equalsIgnoreCase(command))
 						{
 							displayWord(event.getTextChannel());
 						}
@@ -295,7 +296,7 @@ public class HangmanListener extends ListenerAdapter
 			waitingID = member.getUser().getIdLong();
 			waitingMsg = true;
 			waitingTime = System.currentTimeMillis();
-			channel.sendMessageFormat("L'élu est %s, c'est a lui d'indiquer la lettre que vous avez choisit grâce à la commande gh?lettre <lettre>\n", member.getAsMention()).queue();
+			channel.sendMessageFormat("L'élu est %s, c'est a lui d'indiquer la lettre que vous avez choisit grâce à la commande " + "h" + new PrefixConfig().getString() + "lettre <lettre>\n", member.getAsMention()).queue();
 		}
 		catch(InvalidClassException | NoValueDefinedException e)
 		{
@@ -317,7 +318,7 @@ public class HangmanListener extends ListenerAdapter
 		try
 		{
 			TextChannel channel = Main.getJDA().getTextChannelById(new HangmanChannelConfig().getLong());
-			channel.sendMessageFormat("Salut à tous! Si vous êtes la c'est que vous êtes chaud pour un petit pendu. Mais j'espère que vous êtes bons, sinon c'est vous qui allez finir pendu (au bout de %d fautes)!\n\nLe principe est simple. Je vais commencer par choisir un mot dans ma petite tête. Ensuite je vous l'écrirais avec les lettres cachées. Seul " + DISCOVER_START + " lettres seront apparentes au debut. Une fois cela fait, je désignerai une personne afin de me dire la lettre que vous voulez essayer, à vous de vous entendre afin de faire les bons choix.\n\nSi une personne ne déclare pas de choix en " + MAX_WAIT_TIME + "s, écrivez un petit mot et je referai tourner la roue pour désigner un représentant. Si vous désirez quitter, utilisez `gh?leave`. Si vous voulez passer votre tour utilisez `gh?skip`. Pour avoir des infos sur le mot actuel utilisez `gh?mot`.\n\n\nAlley, laissez moi réfléchir!", MAX_HANG_LEVEL).queue(message -> message.pin().queue());
+			channel.sendMessageFormat("Salut à tous! Si vous êtes la c'est que vous êtes chaud pour un petit pendu. Mais j'espère que vous êtes bons, sinon c'est vous qui allez finir pendu (au bout de %d fautes)!\n\nLe principe est simple. Je vais commencer par choisir un mot dans ma petite tête. Ensuite je vous l'écrirais avec les lettres cachées. Seul " + DISCOVER_START + " lettres seront apparentes au debut. Une fois cela fait, je désignerai une personne afin de me dire la lettre que vous voulez essayer, à vous de vous entendre afin de faire les bons choix.\n\nSi une personne ne déclare pas de choix en " + MAX_WAIT_TIME + "s, écrivez un petit mot et je referai tourner la roue pour désigner un représentant. Si vous désirez quitter, utilisez `" + "h" + new PrefixConfig().getString() + "leave`. Si vous voulez passer votre tour utilisez `" + "h" + new PrefixConfig().getString() + "skip`. Pour avoir des infos sur le mot actuel utilisez `" + "h" + new PrefixConfig().getString() + "mot`.\n\n\nAlley, laissez moi réfléchir!", MAX_HANG_LEVEL).queue(message -> message.pin().queue());
 			
 			new Thread(() -> {
 				try

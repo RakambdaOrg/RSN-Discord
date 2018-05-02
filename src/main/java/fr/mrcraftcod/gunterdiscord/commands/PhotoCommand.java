@@ -107,14 +107,14 @@ public class PhotoCommand extends BasicCommand
 						return CommandResult.SUCCESS;
 					}
 					List<String> paths = new PhotoConfig().getValue(user.getIdLong());
-					if(paths != null)
+					if(paths != null && !paths.isEmpty())
 					{
-						File file = new File(paths.get(ThreadLocalRandom.current().nextInt(paths.size())));
+						int rnd = ThreadLocalRandom.current().nextInt(paths.size());
+						File file = new File(paths.get(rnd));
 						if(file.exists())
 						{
-							String ID = file.getName().substring(file.getName().lastIndexOf("_"));
-							ID = ID.substring(0, ID.lastIndexOf("."));
-							event.getTextChannel().sendMessage(event.getAuthor().getAsMention() + " a demandé la photo (" + paths.size() + ") de " + user.getName() + " (ID: " + ID + ")").complete();
+							String ID = file.getName().substring(0, file.getName().lastIndexOf("."));
+							event.getTextChannel().sendMessage(event.getAuthor().getAsMention() + " a demandé la photo (" + (rnd + 1) + "/" + paths.size() + ") de " + user.getName() + " (ID: " + ID + ")").complete();
 							event.getTextChannel().sendFile(file).complete();
 						}
 						else

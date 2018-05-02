@@ -61,8 +61,9 @@ public class DelPhotoCommand extends BasicCommand
 					if(Utilities.isModerator(event.getMember()) || Utilities.isAdmin(event.getMember()))
 					{
 						new PhotoConfig().deleteKeyValue(user.getIdLong(), args.pop());
-						event.getGuild().getController().removeRolesFromMember(event.getGuild().getMember(user), Utilities.getRole(event.getJDA(), "Trombi")).complete();
-						Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photo de " + user.getAsMention() + " supprimée");
+						if(new PhotoConfig().getValue(user.getIdLong()).isEmpty())
+							event.getGuild().getController().removeRolesFromMember(event.getGuild().getMember(user), Utilities.getRole(event.getJDA(), "Trombi")).complete();
+						Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photos de " + user.getAsMention() + " supprimées");
 					}
 					else
 						Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Vous ne pouvez pas supprimer la photo de quelqu'un d'autre");
@@ -70,8 +71,9 @@ public class DelPhotoCommand extends BasicCommand
 				else
 				{
 					new PhotoConfig().deleteKeyValue(event.getAuthor().getIdLong(), args.pop());
-					event.getGuild().getController().removeRolesFromMember(event.getMember(), Utilities.getRole(event.getJDA(), "Trombi")).complete();
-					Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photo supprimée");
+					if(new PhotoConfig().getValue(user.getIdLong()).isEmpty())
+						event.getGuild().getController().removeRolesFromMember(event.getMember(), Utilities.getRole(event.getJDA(), "Trombi")).complete();
+					Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photos supprimées");
 				}
 			}
 		}
@@ -79,7 +81,7 @@ public class DelPhotoCommand extends BasicCommand
 		{
 			new PhotoConfig().deleteKey(event.getAuthor().getIdLong());
 			event.getGuild().getController().removeRolesFromMember(event.getMember(), Utilities.getRole(event.getJDA(), "Trombi")).complete();
-			Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photo supprimée");
+			Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photos supprimées");
 		}
 		event.getMessage().delete().complete();
 		return CommandResult.SUCCESS;
