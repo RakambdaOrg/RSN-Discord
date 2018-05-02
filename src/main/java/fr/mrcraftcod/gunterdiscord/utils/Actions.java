@@ -60,10 +60,15 @@ public class Actions
 	
 	public static void giveRole(Guild guild, User user, Roles role)
 	{
+		giveRole(guild, user, getRole(Main.getJDA(), role.getRole()));
+	}
+	
+	public static void giveRole(Guild guild, User user, Role role)
+	{
 		try
 		{
 			//noinspection ConstantConditions
-			guild.getController().addSingleRoleToMember(guild.getMember(user), getRole(Main.getJDA(), role.getRole())).queue();
+			guild.getController().addSingleRoleToMember(guild.getMember(user), role).queue();
 			Log.info("Added role " + role + " to " + getUserToLog(user));
 		}
 		catch(IllegalArgumentException e)

@@ -35,54 +35,60 @@ public class AddPhotoCommand extends BasicCommand
 	{
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
 			return CommandResult.NOT_ALLOWED;
-		if(event.getMessage().getAttachments().size() > 0)
-		{
-			User user = null;
-			if(args.size() > 0)
+		if(event.getMember().getRoles().contains(Utilities.getRole(event.getJDA(), Roles.TROMBINOSCOPE)) || Utilities.isAdmin(event.getMember()))
+			if(event.getMessage().getAttachments().size() > 0)
 			{
-				try
+				User user = null;
+				if(args.size() > 0)
 				{
-					user = event.getJDA().getUserById(Long.parseLong(args.pop()));
-				}
-				catch(Exception e)
-				{
-					List<User> users = event.getMessage().getMentionedUsers();
-					if(users.size() > 0)
-						user = users.get(0);
-				}
-			}
-			else
-				user = event.getAuthor();
-			
-			if(user == null)
-				Actions.replyPrivate(event.getAuthor(), "Utilisateur non trouvé");
-			else if(Utilities.isAdmin(event.getMember()))
-			{
-				Message.Attachment attachment = event.getMessage().getAttachments().get(0);
-				String ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
-				File saveFile = new File("./pictures/" + user.getIdLong() + "/", event.getMessage().getCreationTime().toEpochSecond() + ext);
-				saveFile.getParentFile().mkdirs();
-				if(attachment.download(saveFile))
-				{
-					new PhotoConfig().addValue(user.getIdLong(), saveFile.getAbsolutePath());
-					Actions.giveRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
 					try
 					{
-						TextChannel chan = event.getGuild().getTextChannelById(new PhotoChannelConfig().getLong());
-						if(chan != null)
-							Actions.sendMessage(chan, "Photo ajoutée pour " + user.getAsMention() + " (ID: " + event.getMessage().getCreationTime().toEpochSecond() + ")");
+						user = event.getJDA().getUserById(Long.parseLong(args.pop()));
 					}
-					catch(InvalidClassException | NoValueDefinedException e)
+					catch(Exception e)
 					{
-						Log.error("Error getting photo channel", e);
+						List<User> users = event.getMessage().getMentionedUsers();
+						if(users.size() > 0)
+							user = users.get(0);
 					}
 				}
 				else
-					Actions.replyPrivate(event.getAuthor(), "L'envoi a échoué");
+					user = event.getAuthor();
+				
+				if(user == null)
+					Actions.replyPrivate(event.getAuthor(), "Utilisateur non trouvé");
+				else
+				{
+					if(user.getIdLong() != event.getAuthor().getIdLong() && !Utilities.isAdmin(event.getMember()))
+						Actions.replyPrivate(event.getAuthor(), "Vous ne pouvez pas ajouter une image pour quelqu'un d'autre");
+					else
+					{
+						Message.Attachment attachment = event.getMessage().getAttachments().get(0);
+						String ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
+						File saveFile = new File("./pictures/" + user.getIdLong() + "/", event.getMessage().getCreationTime().toEpochSecond() + ext);
+						saveFile.getParentFile().mkdirs();
+						if(attachment.download(saveFile))
+						{
+							new PhotoConfig().addValue(user.getIdLong(), saveFile.getAbsolutePath());
+							Actions.giveRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
+							try
+							{
+								TextChannel chan = event.getGuild().getTextChannelById(new PhotoChannelConfig().getLong());
+								if(chan != null)
+									Actions.sendMessage(chan, "Photo ajoutée pour " + user.getAsMention() + " (ID: " + event.getMessage().getCreationTime().toEpochSecond() + ")");
+							}
+							catch(InvalidClassException | NoValueDefinedException e)
+							{
+								Log.error("Error getting photo channel", e);
+							}
+						}
+						else
+							Actions.replyPrivate(event.getAuthor(), "L'envoi a échoué");
+					}
+				}
 			}
-		}
-		else
-			Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Veuillez joindre un image");
+			else
+				Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Veuillez joindre une image");
 		event.getMessage().delete().queue();
 		return CommandResult.SUCCESS;
 	}

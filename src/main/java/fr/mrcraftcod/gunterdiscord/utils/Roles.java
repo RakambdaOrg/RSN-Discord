@@ -8,7 +8,8 @@ package fr.mrcraftcod.gunterdiscord.utils;
  */
 public enum Roles
 {
-	TROMBINOSCOPE("Trombi");
+	TROMBINOSCOPE("Trombi"),
+	HANGMAN("pendu");
 	
 	private final String role;
 	

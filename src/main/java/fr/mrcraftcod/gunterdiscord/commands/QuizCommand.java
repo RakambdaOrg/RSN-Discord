@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.Question;
 import fr.mrcraftcod.gunterdiscord.listeners.QuizMessageListener;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
+@CallableCommand
 public class QuizCommand extends BasicCommand
 {
 	@Override
@@ -33,27 +35,17 @@ public class QuizCommand extends BasicCommand
 			switch(args.pop())
 			{
 				case "start":
-					start(args);
-					event.getMessage().delete().queue();
+					QuizMessageListener quiz = QuizMessageListener.getInstance(generateQuestions(args.size() > 0 ? Integer.parseInt(args.pop()) : Integer.MAX_VALUE));
+					if(quiz != null)
+						new Thread(quiz).start();
 					break;
 				case "stop":
-					stop(args);
+					QuizMessageListener.setBack();
 					break;
 			}
 		}
+		event.getMessage().delete().queue();
 		return CommandResult.SUCCESS;
-	}
-	
-	private void start(LinkedList<String> args)
-	{
-		QuizMessageListener quiz = QuizMessageListener.getInstance(generateQuestions(args.size() > 0 ? Integer.parseInt(args.pop()) : Integer.MAX_VALUE));
-		if(quiz != null)
-			new Thread(quiz).start();
-	}
-	
-	private void stop(LinkedList<String> args)
-	{
-		QuizMessageListener.setBack();
 	}
 	
 	private LinkedList<Question> generateQuestions(int amount)

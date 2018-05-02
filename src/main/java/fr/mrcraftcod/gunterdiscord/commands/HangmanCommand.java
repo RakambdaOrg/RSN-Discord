@@ -1,13 +1,16 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.HangmanListener;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.Roles;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
@@ -15,6 +18,7 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
+@CallableCommand
 public class HangmanCommand extends BasicCommand
 {
 	@Override
@@ -25,12 +29,12 @@ public class HangmanCommand extends BasicCommand
 			return CommandResult.NOT_ALLOWED;
 		if(HangmanListener.resetting)
 			return CommandResult.SUCCESS;
-		List<Role> roles = event.getGuild().getRolesByName("pendu", true);
-		if(roles.size() > 0)
+		Role role = Utilities.getRole(event.getJDA(), Roles.HANGMAN);
+		if(role != null)
 		{
-			if(event.getMember().getRoles().contains(roles.get(0)))
+			if(event.getMember().getRoles().contains(role))
 				return CommandResult.SUCCESS;
-			event.getMember().getGuild().getController().addRolesToMember(event.getMember(), roles.get(0)).queue();
+			Actions.giveRole(event.getGuild(), event.getAuthor(), role);
 			HangmanListener.setUp(event.getGuild());
 			HangmanListener.onPlayerJoin(event.getMember());
 		}
