@@ -85,7 +85,7 @@ public class PhotoCommand extends BasicCommand
 							}
 							if(chan == null)
 								chan = event.getTextChannel();
-							Actions.sendMessage(chan, "Photo ajoutée pour " + user.getAsMention() + "(ID: " + event.getMessage().getCreationTime().toEpochSecond() + ")");
+							Actions.sendMessage(chan, "Photo ajoutée pour " + user.getAsMention() + " (ID: " + event.getMessage().getCreationTime().toEpochSecond() + ")");
 						}
 						else
 							Actions.sendMessage(event.getPrivateChannel(), "L'envoi a échoué");
