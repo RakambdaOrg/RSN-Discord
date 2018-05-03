@@ -1,12 +1,10 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.commands.*;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
-import fr.mrcraftcod.gunterdiscord.commands.photo.AddPhotoCommand;
-import fr.mrcraftcod.gunterdiscord.commands.photo.DelPhotoCommand;
-import fr.mrcraftcod.gunterdiscord.commands.photo.PhotoCommand;
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
+import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.io.File;
@@ -17,6 +15,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 09/04/2018.
@@ -30,15 +29,18 @@ public class CommandsMessageListener extends ListenerAdapter
 	
 	public CommandsMessageListener()
 	{
-		commands = new ArrayList<>();
-		commands.add(new StopCommand());
-		commands.add(new SetConfigCommand());
-		commands.add(new ReportCommand());
-		commands.add(new QuizCommand());
-		commands.add(new HangmanCommand());
-		commands.add(new PhotoCommand());
-		commands.add(new DelPhotoCommand());
-		commands.add(new AddPhotoCommand());
+		commands = getAnnotatedClasses(CallableCommand.class, "fr.mrcraftcod.gunterdiscord.commands").stream().map(c -> {
+			try
+			{
+				//noinspection unchecked
+				return (Command) c.getConstructor().newInstance();
+			}
+			catch(Exception e)
+			{
+				Log.error("Error creating command", e);
+			}
+			return null;
+		}).collect(Collectors.toList());
 	}
 	
 	/**
@@ -49,7 +51,7 @@ public class CommandsMessageListener extends ListenerAdapter
 	 *
 	 * @return The classes found.
 	 */
-	private Iterable<Class> getAnnotatedClasses(Class<? extends Annotation> annotation, String packageName)
+	private List<Class> getAnnotatedClasses(Class<? extends Annotation> annotation, String packageName)
 	{
 		List<Class> classes = new ArrayList<>();
 		try

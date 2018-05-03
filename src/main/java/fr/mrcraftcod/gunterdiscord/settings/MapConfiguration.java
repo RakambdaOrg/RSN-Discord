@@ -50,7 +50,7 @@ public abstract class MapConfiguration<K, V> extends Configuration
 	 * Add a value to the map.
 	 *
 	 * @param key   The key to add into.
-	 * @param value The value to add.
+	 * @param value The value to set at the key.
 	 */
 	public void addValue(K key, V value)
 	{
@@ -103,6 +103,7 @@ public abstract class MapConfiguration<K, V> extends Configuration
 	{
 		if(lastValue != null)
 			return lastValue;
+		@SuppressWarnings("unchecked")
 		Class<V> klassV = (Class<V>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
 		Map<K, V> elements = new HashMap<>();
 		JSONObject map = getObjectMap();
