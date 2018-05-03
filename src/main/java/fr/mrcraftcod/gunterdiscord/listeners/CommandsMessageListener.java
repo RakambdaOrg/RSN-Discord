@@ -91,7 +91,14 @@ public class CommandsMessageListener extends ListenerAdapter
 		{
 			URL resource = resources.nextElement();
 			URI uri = new URI(resource.toString());
-			dirs.add(new File(uri.getPath()));
+			try
+			{
+				dirs.add(new File(uri.getPath()));
+			}
+			catch(NullPointerException e)
+			{
+				Log.error("Error getting class in " + uri + " // " + resource, e);
+			}
 		}
 		List<Class> classes = new ArrayList<>();
 		for(File directory : dirs)
