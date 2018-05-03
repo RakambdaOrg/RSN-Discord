@@ -171,7 +171,7 @@ public class CommandsMessageListener extends ListenerAdapter
 	private Command getCommand(String commandText)
 	{
 		for(Command command : commands)
-			if(command.getCommand().equals(commandText))
+			if(command.getCommand().equalsIgnoreCase(commandText))
 				return command;
 		
 		return null;
