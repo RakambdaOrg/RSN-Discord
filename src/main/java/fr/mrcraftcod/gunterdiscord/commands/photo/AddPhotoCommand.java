@@ -69,7 +69,7 @@ public class AddPhotoCommand extends BasicCommand
 						saveFile.getParentFile().mkdirs();
 						if(attachment.download(saveFile))
 						{
-							new PhotoConfig().addValue(user.getIdLong(), saveFile.getAbsolutePath());
+							new PhotoConfig().addValue(user.getIdLong(), saveFile.getPath());
 							Actions.giveRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
 							try
 							{
