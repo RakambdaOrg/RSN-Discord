@@ -4,3 +4,4 @@ target
 settings.json
 pictures/
 log.log
+log.log.lck

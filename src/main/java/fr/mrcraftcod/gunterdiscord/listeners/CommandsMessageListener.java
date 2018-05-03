@@ -32,6 +32,7 @@ public class CommandsMessageListener extends ListenerAdapter
 		commands = getAnnotatedClasses(CallableCommand.class, "fr.mrcraftcod.gunterdiscord.commands").stream().map(c -> {
 			try
 			{
+				Log.info("Found command " + c.getSimpleName());
 				//noinspection unchecked
 				return (Command) c.getConstructor().newInstance();
 			}
