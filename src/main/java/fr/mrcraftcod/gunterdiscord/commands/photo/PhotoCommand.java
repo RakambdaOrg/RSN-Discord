@@ -91,19 +91,7 @@ public class PhotoCommand extends BasicCommand
 			}
 		}
 		else
-		{
-			try
-			{
-				if(new PhotoChannelConfig().getLong() == event.getTextChannel().getIdLong())
-				{
-					Actions.reply(event, "Participants: " + event.getGuild().getMembersWithRoles(Utilities.getRole(event.getJDA(), Roles.TROMBINOSCOPE)).stream().map(u -> u.getUser().getName()).collect(Collectors.joining(", ")));
-				}
-			}
-			catch(InvalidClassException | NoValueDefinedException e)
-			{
-				Log.error("Couldn't get photo channel", e);
-			}
-		}
+			Actions.reply(event, "Participants du trombinoscope: " + event.getGuild().getMembersWithRoles(Utilities.getRole(event.getJDA(), Roles.TROMBINOSCOPE)).stream().map(u -> u.getUser().getName()).collect(Collectors.joining(", ")));
 		event.getMessage().delete().queue();
 		return CommandResult.SUCCESS;
 	}
