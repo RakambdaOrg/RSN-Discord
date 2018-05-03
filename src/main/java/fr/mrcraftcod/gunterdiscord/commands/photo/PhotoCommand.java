@@ -33,6 +33,7 @@ public class PhotoCommand extends BasicCommand
 	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
+		Actions.deleteMessage(event.getMessage());
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
 			return CommandResult.NOT_ALLOWED;
 		if(args.size() > 0)
@@ -68,7 +69,7 @@ public class PhotoCommand extends BasicCommand
 								}
 								catch(Exception e)
 								{
-									Log.warning("Provided argument isn't an integer", e);
+									Log.warning("Provided photo index isn't an integer", e);
 								}
 							File file = new File(paths.get(rnd));
 							if(file.exists())
@@ -92,7 +93,6 @@ public class PhotoCommand extends BasicCommand
 		}
 		else
 			Actions.reply(event, "Participants du trombinoscope: " + event.getGuild().getMembersWithRoles(Utilities.getRole(event.getJDA(), Roles.TROMBINOSCOPE)).stream().map(u -> u.getUser().getName()).collect(Collectors.joining(", ")));
-		event.getMessage().delete().queue();
 		return CommandResult.SUCCESS;
 	}
 	

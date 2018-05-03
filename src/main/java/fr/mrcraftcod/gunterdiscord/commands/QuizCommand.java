@@ -6,6 +6,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.Question;
 import fr.mrcraftcod.gunterdiscord.listeners.QuizMessageListener;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -29,6 +30,7 @@ public class QuizCommand extends BasicCommand
 	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
+		Actions.deleteMessage(event.getMessage());
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
 			return CommandResult.NOT_ALLOWED;
 		if(args.size() > 0)
@@ -45,7 +47,6 @@ public class QuizCommand extends BasicCommand
 					break;
 			}
 		}
-		event.getMessage().delete().queue();
 		return CommandResult.SUCCESS;
 	}
 	

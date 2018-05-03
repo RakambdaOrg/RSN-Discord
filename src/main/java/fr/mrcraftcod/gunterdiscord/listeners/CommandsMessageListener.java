@@ -7,6 +7,7 @@ import fr.mrcraftcod.gunterdiscord.commands.photo.DelPhotoCommand;
 import fr.mrcraftcod.gunterdiscord.commands.photo.PhotoCommand;
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -29,6 +30,9 @@ public class CommandsMessageListener extends ListenerAdapter
 {
 	private final List<Command> commands;
 	
+	/**
+	 * Constructor.
+	 */
 	public CommandsMessageListener()
 	{
 		commands = Arrays.asList(new AddPhotoCommand(), new DelPhotoCommand(), new PhotoCommand(), new HangmanCommand(), new QuizCommand(), new ReportCommand(), new SetConfigCommand(), new StopCommand());
@@ -154,18 +158,25 @@ public class CommandsMessageListener extends ListenerAdapter
 					}
 					catch(Exception e)
 					{
-						e.printStackTrace();
-						event.getChannel().sendMessage("Cette fonctionnalité doit encore être configuré. Veuillez en avertir un modérateur.").complete();
+						Log.error("Error executing command " + command, e);
+						Actions.reply(event, "Cette fonctionnalité doit encore être configuré. Veuillez en avertir un modérateur.");
 					}
 				}
 			}
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			Log.error("", e);
 		}
 	}
 	
+	/**
+	 * Tell if this text is a command.
+	 *
+	 * @param text The text.
+	 *
+	 * @return True if a command, false otherwise.
+	 */
 	private boolean isCommand(String text)
 	{
 		try
@@ -174,17 +185,23 @@ public class CommandsMessageListener extends ListenerAdapter
 		}
 		catch(InvalidClassException | NoValueDefinedException e)
 		{
-			e.printStackTrace();
+			Log.warning("Error testing command", e);
 		}
 		return false;
 	}
 	
+	/**
+	 * get the command associated to this string.
+	 *
+	 * @param commandText The command text.
+	 *
+	 * @return The command or null if not found.
+	 */
 	private Command getCommand(String commandText)
 	{
 		for(Command command : commands)
 			if(command.getCommand().equalsIgnoreCase(commandText))
 				return command;
-		
 		return null;
 	}
 }

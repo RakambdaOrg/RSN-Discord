@@ -6,10 +6,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.ReportChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
-import fr.mrcraftcod.gunterdiscord.utils.Roles;
-import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
@@ -54,7 +51,7 @@ public class ReportCommand extends BasicCommand
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
 			return CommandResult.NOT_ALLOWED;
 		if(event.getChannel().getType() != ChannelType.PRIVATE)
-			event.getMessage().delete().complete();
+			Actions.deleteMessage(event.getMessage());
 		else
 		{
 			TextChannel channel = null;
@@ -69,13 +66,10 @@ public class ReportCommand extends BasicCommand
 				Log.error("Failed to get report channel", e);
 			}
 			if(channel == null)
-			{
 				Actions.replyPrivate(event.getAuthor(), "Cette fonctionnalité doit encore être configuré. Veuillez en avertir un modérateur.");
-			}
 			else
 			{
-				Role role = Utilities.getRole(event.getJDA(), Roles.MODERATOR);
-				Actions.sendMessage(channel, String.format("%s Nouveau report de %s#%s: %s", role == null ? "" : role.getAsMention(), event.getAuthor().getAsMention(), event.getAuthor().getDiscriminator(), args.stream().collect(Collectors.joining(" "))));
+				Actions.sendMessage(channel, String.format("@here Nouveau report de %s#%s: %s", event.getAuthor().getAsMention(), event.getAuthor().getDiscriminator(), args.stream().collect(Collectors.joining(" "))));
 				Actions.replyPrivate(event.getAuthor(), "Votre message a bien été transféré. Merci à vous.");
 			}
 		}

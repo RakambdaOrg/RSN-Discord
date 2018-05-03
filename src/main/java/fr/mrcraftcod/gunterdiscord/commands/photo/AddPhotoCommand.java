@@ -33,6 +33,7 @@ public class AddPhotoCommand extends BasicCommand
 	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
+		Actions.deleteMessage(event.getMessage());
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
 			return CommandResult.NOT_ALLOWED;
 		if(event.getMember().getRoles().contains(Utilities.getRole(event.getJDA(), Roles.TROMBINOSCOPE)) || Utilities.isAdmin(event.getMember()))
@@ -75,7 +76,7 @@ public class AddPhotoCommand extends BasicCommand
 							{
 								TextChannel chan = event.getGuild().getTextChannelById(new PhotoChannelConfig().getLong());
 								if(chan != null)
-									Actions.sendMessage(chan, "Oyé tout @here, nous avons une nouvelle photo pour " + user.getAsMention() + "! (ID: " + event.getMessage().getCreationTime().toEpochSecond() + ")");
+									Actions.sendMessage(chan, "Oyé @here, nous avons une nouvelle photo pour " + user.getAsMention() + "! (ID: " + event.getMessage().getCreationTime().toEpochSecond() + ")");
 							}
 							catch(InvalidClassException | NoValueDefinedException e)
 							{
@@ -89,7 +90,6 @@ public class AddPhotoCommand extends BasicCommand
 			}
 			else
 				Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Veuillez joindre une image");
-		event.getMessage().delete().queue();
 		return CommandResult.SUCCESS;
 	}
 	

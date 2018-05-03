@@ -67,9 +67,17 @@ public class Actions
 	{
 		try
 		{
-			//noinspection ConstantConditions
-			guild.getController().addSingleRoleToMember(guild.getMember(user), role).queue();
-			Log.info("Added role " + role + " to " + getUserToLog(user));
+			Member member = guild.getMember(user);
+			if(member.getRoles().contains(role))
+			{
+				Log.info(getUserToLog(user) + " already have role " + role);
+			}
+			else
+			{
+				//noinspection ConstantConditions
+				guild.getController().addSingleRoleToMember(guild.getMember(user), role).queue();
+				Log.info("Added role " + role + " to " + getUserToLog(user));
+			}
 		}
 		catch(IllegalArgumentException e)
 		{
@@ -94,5 +102,10 @@ public class Actions
 	public static String getUserToLog(User user)
 	{
 		return user == null ? "NULL" : (user.getName() + "#" + user.getDiscriminator() + " (" + user.getIdLong() + ")");
+	}
+	
+	public static void deleteMessage(Message message)
+	{
+		message.delete().queue();
 	}
 }

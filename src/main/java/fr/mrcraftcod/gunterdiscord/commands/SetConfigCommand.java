@@ -73,7 +73,7 @@ public class SetConfigCommand extends BasicCommand
 	@Override
 	public String getCommandDescription()
 	{
-		return super.getCommandDescription() + " <parametre> <action> [valeur...]";
+		return super.getCommandDescription() + " <paramètre> <action> [valeur...]";
 	}
 	
 	@Override
@@ -119,6 +119,7 @@ public class SetConfigCommand extends BasicCommand
 		{
 			try
 			{
+				Log.info("Handling change " + action + " on config " + configuration + " with parameters " + args);
 				return configuration.handleChange(event, action, args);
 			}
 			catch(Exception e)

@@ -26,6 +26,7 @@ public class DelPhotoCommand extends BasicCommand
 	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
+		Actions.deleteMessage(event.getMessage());
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
 			return CommandResult.NOT_ALLOWED;
 		if(args.size() > 0)
@@ -73,7 +74,6 @@ public class DelPhotoCommand extends BasicCommand
 			Actions.removeRole(event.getGuild(), event.getAuthor(), Roles.TROMBINOSCOPE);
 			Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photos supprimées");
 		}
-		event.getMessage().delete().queue();
 		return CommandResult.SUCCESS;
 	}
 	
