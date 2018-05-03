@@ -1,7 +1,10 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
+import fr.mrcraftcod.gunterdiscord.commands.*;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
+import fr.mrcraftcod.gunterdiscord.commands.photo.AddPhotoCommand;
+import fr.mrcraftcod.gunterdiscord.commands.photo.DelPhotoCommand;
+import fr.mrcraftcod.gunterdiscord.commands.photo.PhotoCommand;
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
@@ -15,7 +18,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 09/04/2018.
@@ -29,7 +31,8 @@ public class CommandsMessageListener extends ListenerAdapter
 	
 	public CommandsMessageListener()
 	{
-		commands = getAnnotatedClasses(CallableCommand.class, "fr.mrcraftcod.gunterdiscord.commands").stream().map(c -> {
+		commands = Arrays.asList(new AddPhotoCommand(), new DelPhotoCommand(), new PhotoCommand(), new HangmanCommand(), new QuizCommand(), new ReportCommand(), new SetConfigCommand(), new StopCommand());
+		/*commands = getAnnotatedClasses(CallableCommand.class, "fr.mrcraftcod.gunterdiscord.commands").stream().map(c -> {
 			try
 			{
 				Log.info("Found command " + c.getSimpleName());
@@ -41,7 +44,7 @@ public class CommandsMessageListener extends ListenerAdapter
 				Log.error("Error creating command", e);
 			}
 			return null;
-		}).collect(Collectors.toList());
+		}).collect(Collectors.toList());*/
 	}
 	
 	/**
