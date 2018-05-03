@@ -75,7 +75,7 @@ public class AddPhotoCommand extends BasicCommand
 							{
 								TextChannel chan = event.getGuild().getTextChannelById(new PhotoChannelConfig().getLong());
 								if(chan != null)
-									Actions.sendMessage(chan, "Photo ajoutée pour " + user.getAsMention() + " (ID: " + event.getMessage().getCreationTime().toEpochSecond() + ")");
+									Actions.sendMessage(chan, "Oyé tout @here, nous avons une nouvelle photo pour " + user.getAsMention() + "! (ID: " + event.getMessage().getCreationTime().toEpochSecond() + ")");
 							}
 							catch(InvalidClassException | NoValueDefinedException e)
 							{
