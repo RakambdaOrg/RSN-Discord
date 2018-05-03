@@ -41,6 +41,13 @@ public abstract class ValueConfiguration extends Configuration
 		return ConfigType.VALUE;
 	}
 	
+	/**
+	 * Get the value as an object.
+	 *
+	 * @return The object or null if not found.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a value.
+	 */
 	protected Object getObject() throws IllegalArgumentException
 	{
 		if(getType() != ConfigType.VALUE)
@@ -48,6 +55,16 @@ public abstract class ValueConfiguration extends Configuration
 		return Settings.getObject(getName());
 	}
 	
+	/**
+	 * Get the value as a string.
+	 *
+	 * @param defaultValue The default value to return if none was found.
+	 *
+	 * @return The string.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a value.
+	 * @throws InvalidClassException    If this configuration isn't a string.
+	 */
 	public String getString(String defaultValue) throws InvalidClassException, IllegalArgumentException
 	{
 		Object value = lastValue == null ? getObject() : lastValue;
@@ -58,6 +75,15 @@ public abstract class ValueConfiguration extends Configuration
 		throw new InvalidClassException("Config is not a string: " + value.getClass().getSimpleName());
 	}
 	
+	/**
+	 * Get the value as a long.
+	 *
+	 * @return The long.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a value.
+	 * @throws InvalidClassException    If this configuration isn't a string.
+	 * @throws NoValueDefinedException  If no value exists for this config.
+	 */
 	public long getLong() throws InvalidClassException, IllegalArgumentException, NoValueDefinedException
 	{
 		Object value = lastValue == null ? getObject() : lastValue;
@@ -68,6 +94,15 @@ public abstract class ValueConfiguration extends Configuration
 		throw new InvalidClassException("Config is not a long: " + value.getClass().getSimpleName());
 	}
 	
+	/**
+	 * Get the value as a string.
+	 *
+	 * @return The string.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a value.
+	 * @throws InvalidClassException    If this configuration isn't a string.
+	 * @throws NoValueDefinedException  If no value exists for this config.
+	 */
 	public String getString() throws InvalidClassException, IllegalArgumentException, NoValueDefinedException
 	{
 		Object value = lastValue == null ? getObject() : lastValue;
@@ -78,6 +113,11 @@ public abstract class ValueConfiguration extends Configuration
 		throw new InvalidClassException("Config is not a string: " + value.getClass().getSimpleName());
 	}
 	
+	/**
+	 * Set the value.
+	 *
+	 * @param value the value to set.
+	 */
 	public void setValue(Object value)
 	{
 		lastValue = value;

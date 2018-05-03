@@ -8,6 +8,11 @@ package fr.mrcraftcod.gunterdiscord.settings;
  */
 public class NoValueDefinedException extends Exception
 {
+	/**
+	 * Constructor.
+	 *
+	 * @param configuration The configuration concerned.
+	 */
 	public NoValueDefinedException(Configuration configuration)
 	{
 		super("The value of " + configuration.getName() + " insn't set.");
