@@ -41,6 +41,7 @@ public class CommandsMessageListener extends ListenerAdapter
 				{
 					try
 					{
+						Log.info("Executing command `" + command.getName() + " from " + Actions.getUserToLog(event.getAuthor()) + ", args: " + args);
 						command.execute(event, args);
 					}
 					catch(Exception e)

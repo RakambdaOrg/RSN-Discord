@@ -27,6 +27,7 @@ public class BannedRegexesMessageListener extends ListenerAdapter
 			Actions.deleteMessage(event.getMessage());
 			Actions.reply(event, "Attention " + event.getAuthor().getAsMention() + ", l'utilisation de mot prohibés va finir par te bruler le derrière.");
 			Actions.replyPrivate(event.getAuthor(), "Restes poli s'il te plait :). Le mot " + getCensoredWord(word) + " est prohibé.");
+			Log.info("Banned message from user " + Actions.getUserToLog(event.getAuthor()) + " for word `" + word + "` : " + event.getMessage().getContentRaw());
 		}
 	}
 	
