@@ -77,7 +77,7 @@ public class PhotoCommand extends BasicCommand
 						if(file.exists())
 						{
 							String ID = file.getName().substring(0, file.getName().lastIndexOf("."));
-							Actions.reply(event, "%s a demandé la photo (%d/%d%s) de %s (ID: %s)", event.getAuthor().getAsMention(), rnd + 1, paths.size(), randomGen ? " aléatoire" : "", member.getNickname(), ID);
+							Actions.reply(event, "%s a demandé la photo (%d/%d%s) de %s (ID: %s)", event.getAuthor().getAsMention(), rnd + 1, paths.size(), randomGen ? " aléatoire" : "", user.getName(), ID);
 							Actions.sendFile(event.getTextChannel(), file);
 						}
 						else
