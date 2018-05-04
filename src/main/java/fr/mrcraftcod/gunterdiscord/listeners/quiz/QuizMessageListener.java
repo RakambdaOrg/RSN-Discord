@@ -218,6 +218,14 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 		super.onMessageReactionAdd(event);
 		try
 		{
+			Log.info("New reaction from `" + Actions.getUserToLog(event.getUser()) + "` on `" + event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).complete().getContentRaw() + "` -> " + event.getReaction().getReactionEmote().getName());
+		}
+		catch(NullPointerException ignored)
+		{
+		}
+		
+		try
+		{
 			if(waitingMsg != null && event.getMessageIdLong() == waitingMsg.getIdLong() && event.getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong())
 			{
 				if(answers != null)
