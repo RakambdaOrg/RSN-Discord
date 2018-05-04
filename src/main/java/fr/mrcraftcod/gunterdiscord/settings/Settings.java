@@ -36,7 +36,7 @@ public class Settings
 			QuizChannelConfig.class,
 			HangmanChannelConfig.class,
 			PhotoConfig.class,
-	};
+			};
 	
 	public static void init(Path path) throws IOException
 	{
@@ -152,7 +152,7 @@ public class Settings
 		settings.put(configuration.getName(), map);
 	}
 	
-	public static <K, V> void deleteKey(MapListConfiguration<K,V> configuration, K key)
+	public static <K, V> void deleteKey(MapListConfiguration<K, V> configuration, K key)
 	{
 		JSONObject map = settings.optJSONObject(configuration.getName());
 		if(map == null)

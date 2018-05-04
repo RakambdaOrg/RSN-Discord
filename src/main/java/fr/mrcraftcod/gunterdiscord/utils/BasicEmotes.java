@@ -13,18 +13,36 @@ public enum BasicEmotes
 	private final String name;
 	private final String[] others;
 	
+	/**
+	 * Constructor.
+	 *
+	 * @param name The representation of the emote.
+	 */
 	BasicEmotes(String name)
 	{
 		this.name = name;
 		this.others = new String[]{};
 	}
 	
+	/**
+	 * Constructor.
+	 *
+	 * @param name   The representation of the emote.
+	 * @param others The other representations of the emote.
+	 */
 	BasicEmotes(String name, String... others)
 	{
 		this.name = name;
 		this.others = others;
 	}
 	
+	/**
+	 * Get an emote by a representation.
+	 *
+	 * @param text The representation.
+	 *
+	 * @return The emote, or null if non were found.
+	 */
 	public static BasicEmotes getEmote(String text)
 	{
 		for(BasicEmotes emote : BasicEmotes.values())
@@ -38,11 +56,21 @@ public enum BasicEmotes
 		return null;
 	}
 	
+	/**
+	 * Get the value of this emote.
+	 *
+	 * @return The emote's value.
+	 */
 	public String getValue()
 	{
 		return name;
 	}
 	
+	/**
+	 * Get the other representations.
+	 *
+	 * @return The other representations.
+	 */
 	private String[] getOthers()
 	{
 		return others;

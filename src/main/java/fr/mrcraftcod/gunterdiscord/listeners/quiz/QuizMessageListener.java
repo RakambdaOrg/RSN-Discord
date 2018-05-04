@@ -1,10 +1,10 @@
-package fr.mrcraftcod.gunterdiscord.listeners;
+package fr.mrcraftcod.gunterdiscord.listeners.quiz;
 
 import fr.mrcraftcod.gunterdiscord.Main;
-import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.QuizChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
+import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Game;
@@ -15,7 +15,6 @@ import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.io.IOException;
-import java.io.InvalidClassException;
 import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,16 +33,30 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 	private boolean done = false;
 	private LinkedList<Question> questions;
 	
+	/**
+	 * Constructor.
+	 */
 	public QuizMessageListener()
 	{
-	
 	}
 	
-	public QuizMessageListener(LinkedList<Question> questions)
+	/**
+	 * Constructor of the game.
+	 *
+	 * @param questions The questions to set.
+	 */
+	private QuizMessageListener(LinkedList<Question> questions)
 	{
 		this.questions = questions;
 	}
 	
+	/**
+	 * Get the current instance of teh game.
+	 *
+	 * @param questions The questions to set if a new game is started.
+	 *
+	 * @return A new game or null is one is already running.
+	 */
 	public static QuizMessageListener getInstance(LinkedList<Question> questions)
 	{
 		if(INSTANCE == null || INSTANCE.isDone())
@@ -51,6 +64,11 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 		return null;
 	}
 	
+	/**
+	 * Tell is this game is over.
+	 *
+	 * @return True if over, false otherwise.
+	 */
 	private boolean isDone()
 	{
 		return done;
@@ -65,16 +83,7 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 		{
 			JDA jda = Main.getJDA();
 			jda.getPresence().setGame(Game.playing("The Kwizzz"));
-			TextChannel quizChannel = null;
-			
-			try
-			{
-				quizChannel = jda.getTextChannelById(new QuizChannelConfig().getLong());
-			}
-			catch(InvalidClassException | NoValueDefinedException e)
-			{
-				e.printStackTrace();
-			}
+			TextChannel quizChannel = new QuizChannelConfig().getTextChannel(jda);
 			
 			if(quizChannel == null)
 			{
@@ -82,17 +91,17 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 				return;
 			}
 			
-			Actions.sendMessage(quizChannel, "Ok @here, j'espère que vous êtes aussi chaud que mon chalumeau pour un petit kwizzz!\n" + "Le principe est simple: une question va apparaitre avec un set de réponses possibles. Vous pouvez répondre à la question en ajoutant une réaction avec la lettre corespondante. Le temps limite pour répondre est de " + QUESTION_TIME + "s.\n" + "Chaque bonne réponse vous donnera 1 point.\n\nOn commence dans " + (HALF_WAIT_TIME * 2) + " secondes!");
+			Actions.sendMessage(quizChannel, "Ok @here, j'espère que vous êtes aussi chaud que mon chalumeau pour un petit kwizzz!\n" + "Le principe est simple: une question va apparaitre avec un set de réponses possibles. Vous pouvez répondre à la question en ajoutant une réaction avec la lettre corespondante. Le temps limite pour répondre est de %ds.\n" + "Chaque bonne réponse vous donnera 1 point.\n\nOn commence dans %d secondes!", QUESTION_TIME, HALF_WAIT_TIME * 2);
 			try
 			{
 				Thread.sleep(HALF_WAIT_TIME * 1000);
 			}
 			catch(InterruptedException e)
 			{
-				e.printStackTrace();
+				Log.error("Error sleeping", e);
 			}
 			
-			Actions.sendMessage(quizChannel, "Encore " + HALF_WAIT_TIME + " secondes! " + Utilities.getEmoteMention("cookie"));
+			Actions.sendMessage(quizChannel, "Encore %d secondes! %d", HALF_WAIT_TIME, Utilities.getEmoteMention("cookie"));
 			
 			try
 			{
@@ -100,7 +109,7 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 			}
 			catch(InterruptedException e)
 			{
-				e.printStackTrace();
+				Log.error("Error sleeping", e);
 			}
 			
 			HashMap<Long, Integer> scores = new HashMap<>();
@@ -112,11 +121,11 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 				{
 					Question question = questions.pop();
 					List<Character> emotes = new ArrayList<>();
-					Message questionMessage = quizChannel.sendMessage("Question " + i + ": " + question.getQuestion() + "\n" + question.getAnswers().keySet().stream().map(k -> {
+					Message questionMessage = Actions.getMessage(quizChannel, "Question %d: %s\n%s", i, question.getQuestion(), question.getAnswers().keySet().stream().map(k -> {
 						char emote = (char) ((int) 'a' + k);
 						emotes.add(emote);
 						return ":regional_indicator_" + emote + ":: " + question.getAnswers().get(k);
-					}).collect(Collectors.joining("\n"))).complete();
+					}).collect(Collectors.joining("\n")));
 					answers = new HashMap<>();
 					waitingMsg = questionMessage;
 					emotes.forEach(e -> questionMessage.addReaction(BasicEmotes.getEmote("" + e).getValue()).queue());
@@ -127,17 +136,17 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 					}
 					catch(InterruptedException e)
 					{
-						e.printStackTrace();
+						Log.error("Error sleeping", e);
 					}
-					quizChannel.sendMessage("Stoooooooooooooopu!").complete();
-					System.out.println("Question over, answer was " + question.getCorrectAnswerIndex());
+					Actions.sendMessage(quizChannel, "Stoooooooooooooopu!");
+					Log.info("Question over, answer was " + question.getCorrectAnswerIndex());
 					waitingMsg = null;
 					answers.forEach((k, v) -> {
 						if(v == question.getCorrectAnswerIndex())
 						{
 							int newScore = scores.getOrDefault(k, 0) + 1;
 							scores.put(k, newScore);
-							System.out.println(k + " +1 pt - now: " + newScore);
+							Log.info(k + " +1 pt - now: " + newScore);
 						}
 						else if(!scores.containsKey(k))
 							scores.put(k, 0);
@@ -145,7 +154,7 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 					try(PrintWriter fos = new PrintWriter(System.currentTimeMillis() + ".txt"))
 					{
 						fos.println("Question: " + question.getQuestion());
-						fos.println("Reponses: ");
+						fos.println("Réponses: ");
 						for(int j = 0; j < question.getAnswers().size(); j++)
 							fos.println("\t" + (j == question.getCorrectAnswerIndex() ? "-> " : "") + "\t" + j + " " + question.getAnswers().get(j));
 						fos.println();
@@ -156,7 +165,7 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 					}
 					catch(IOException e)
 					{
-						e.printStackTrace();
+						Log.error("Error writing quiz question file", e);
 					}
 					answers = null;
 					
@@ -166,12 +175,12 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 					}
 					catch(InterruptedException e)
 					{
-						e.printStackTrace();
+						Log.error("Error sleeping", e);
 					}
 				}
 				catch(Exception e)
 				{
-					e.printStackTrace();
+					Log.error("Error quiz question", e);
 				}
 			}
 			
@@ -183,15 +192,18 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 				if(bests.containsKey(v))
 					bests.get(v).add(jda.getUserById(k).getAsMention());
 			});
-			quizChannel.sendMessage("Le jeu est terminé! Voici le top des scores:\n" + bests.keySet().stream().sorted(Comparator.reverseOrder()).map(v -> "" + (1 + bestsScores.indexOf(v)) + " (" + v + " points): " + bests.get(v).stream().collect(Collectors.joining(", "))).collect(Collectors.joining("\n"))).queue();
+			Actions.sendMessage(quizChannel, "Le jeu est terminé! Voici le top des scores:\n%s", bests.keySet().stream().sorted(Comparator.reverseOrder()).map(v -> "" + (1 + bestsScores.indexOf(v)) + " (" + v + " points): " + bests.get(v).stream().collect(Collectors.joining(", "))).collect(Collectors.joining("\n")));
 			setBack();
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			Log.error("Error quiz", e);
 		}
 	}
 	
+	/**
+	 * Resets the game.
+	 */
 	public static void setBack()
 	{
 		JDA jda = Main.getJDA();
@@ -206,8 +218,6 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 		super.onMessageReactionAdd(event);
 		try
 		{
-			System.out.println(event.getUser().getName() + " --- " + event.getMessageIdLong() + " - " + (waitingMsg == null ? "NULL" : waitingMsg.getIdLong()) + " - " + event.getUser().getIdLong() + " - " + event.getJDA().getSelfUser().getIdLong());
-			
 			if(waitingMsg != null && event.getMessageIdLong() == waitingMsg.getIdLong() && event.getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong())
 			{
 				if(answers != null)
@@ -216,28 +226,24 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 					if(emote == null)
 					{
 						event.getReaction().removeReaction(event.getUser()).queue();
-						event.getUser().openPrivateChannel().queue(channel -> channel.sendMessage("Merci de n'utilser que les lettres.").queue());
+						Actions.replyPrivate(event.getUser(), "Merci de n'utilser que les lettres.");
 					}
 					else
 					{
 						if(answers.containsKey(event.getUser().getIdLong()))
 						{
 							event.getReaction().removeReaction(event.getUser()).queue();
-							event.getUser().openPrivateChannel().queue(channel -> channel.sendMessage("Merci de ne mettre qu'une seule réaction par question.").queue());
-							System.out.println("User " + event.getUser().getAsMention() + " added answer AGAIN " + emote.name() + " - not counted");
+							Actions.replyPrivate(event.getUser(), "Merci de ne mettre qu'une seule réaction par question.");
 						}
 						else
-						{
 							answers.put(event.getUser().getIdLong(), mapEmote(emote));
-							System.out.println("User " + event.getUser().getAsMention() + " added answer for " + emote.name());
-						}
 					}
 				}
 			}
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			Log.error("", e);
 		}
 	}
 	
@@ -257,7 +263,7 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 						if(answers.get(event.getUser().getIdLong()) == mapEmote(emote))
 						{
 							answers.remove(event.getUser().getIdLong());
-							System.out.println("User " + event.getUser().getAsMention() + " removed answer");
+							Log.info("User " + event.getUser().getAsMention() + " removed answer");
 						}
 					}
 				}
@@ -265,10 +271,17 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			Log.error("", e);
 		}
 	}
 	
+	/**
+	 * Map an emote to a choice.
+	 *
+	 * @param name The emote.
+	 *
+	 * @return The choice selected.
+	 */
 	private int mapEmote(BasicEmotes name)
 	{
 		return name == null ? -1 : name.name().toLowerCase().charAt(0) - 'a';

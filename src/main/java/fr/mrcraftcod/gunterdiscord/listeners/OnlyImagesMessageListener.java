@@ -1,6 +1,8 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.settings.configs.OnlyImagesConfig;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -24,14 +26,14 @@ public class OnlyImagesMessageListener extends ListenerAdapter
 			{
 				if(!Utilities.isTeam(event.getMember()))
 				{
-					event.getMessage().delete().complete();
-					event.getAuthor().openPrivateChannel().complete().sendMessageFormat("Le channel %s est pour les images seulement.", event.getChannel().getName()).complete();
+					Actions.deleteMessage(event.getMessage());
+					Actions.replyPrivate(event.getAuthor(), "Le channel %s est pour les images seulement.", event.getChannel().getName());
 				}
 			}
 		}
 		catch(InvalidClassException e)
 		{
-			e.printStackTrace();
+			Log.error("Error getting images only list");
 		}
 	}
 }

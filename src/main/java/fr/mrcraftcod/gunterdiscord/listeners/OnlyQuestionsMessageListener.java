@@ -1,6 +1,8 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.settings.configs.OnlyQuestionsConfig;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -23,14 +25,14 @@ public class OnlyQuestionsMessageListener extends ListenerAdapter
 			{
 				if(!Utilities.isTeam(event.getMember()))
 				{
-					event.getMessage().delete().complete();
-					event.getAuthor().openPrivateChannel().complete().sendMessageFormat("Le channel " + event.getChannel().getName() + " est pour les questions seulement (ça finit par un '?'). Ton message était: " + event.getMessage().getContentRaw()).complete();
+					Actions.deleteMessage(event.getMessage());
+					Actions.replyPrivate(event.getAuthor(), "Le channel %s est pour les questions seulement (ça finit par un '?'). Ton message était: %s", event.getChannel().getName(), event.getMessage().getContentRaw());
 				}
 			}
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			Log.error("Error getting questions only list");
 		}
 	}
 }

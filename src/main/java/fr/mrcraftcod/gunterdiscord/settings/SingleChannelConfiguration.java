@@ -28,7 +28,9 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration
 	
 	/**
 	 * Get the text channel.
+	 *
 	 * @param jda The JDA.
+	 *
 	 * @return The text channel or null if not found.
 	 */
 	public TextChannel getTextChannel(JDA jda)

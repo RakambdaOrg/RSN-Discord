@@ -1,25 +1,12 @@
 package fr.mrcraftcod.gunterdiscord.utils;
 
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@SuppressWarnings("JavaDoc")
 public class Log
 {
 	private static Logger logger;
-	private static final ArrayList<LogListener> listeners = new ArrayList<>();
-	
-	public interface LogListener
-	{
-		void onLogMessage(Level level, String message);
-		
-		void onLogMessage(Level level, String message, Throwable throwable);
-	}
-	
-	public static void addListener(LogListener listener)
-	{
-		listeners.add(listener);
-	}
 	
 	public static Logger getLogger()
 	{
@@ -42,21 +29,9 @@ public class Log
 		log(Level.WARNING, s, e);
 	}
 	
-	public static void warning(boolean log, String s, Throwable e)
-	{
-		if(log)
-			warning(s, e);
-	}
-	
 	public static void info(String s)
 	{
 		log(Level.INFO, s);
-	}
-	
-	public static void info(boolean log, String s)
-	{
-		if(log)
-			info(s);
 	}
 	
 	public static void error(String s)
@@ -78,12 +53,10 @@ public class Log
 	public static void log(Level level, String s)
 	{
 		getLogger().log(level, s);
-		listeners.forEach(logListener -> logListener.onLogMessage(level, s));
 	}
 	
 	public static void log(Level level, String s, Throwable e)
 	{
 		getLogger().log(level, s, e);
-		listeners.forEach(logListener -> logListener.onLogMessage(level, s, e));
 	}
 }

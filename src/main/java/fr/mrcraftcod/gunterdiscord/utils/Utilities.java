@@ -20,6 +20,13 @@ import java.util.stream.Collectors;
  */
 public class Utilities
 {
+	/**
+	 * Tell if the member is a moderator.
+	 *
+	 * @param member The member to test.
+	 *
+	 * @return True if moderator, false otherwise.
+	 */
 	public static boolean isModerator(Member member)
 	{
 		for(Role role : member.getRoles())
@@ -37,6 +44,13 @@ public class Utilities
 		return false;
 	}
 	
+	/**
+	 * Tell if the member is an admin.
+	 *
+	 * @param member The member to test.
+	 *
+	 * @return True if admin, false otherwise.
+	 */
 	public static boolean isAdmin(Member member)
 	{
 		for(Role role : member.getRoles())
@@ -45,36 +59,90 @@ public class Utilities
 		return false;
 	}
 	
+	/**
+	 * Check if a member have a role.
+	 *
+	 * @param member The member to test.
+	 * @param role   The role to search for.
+	 *
+	 * @return True if the member have the role, false otherwise.
+	 */
 	public static boolean hasRole(Member member, Roles role)
 	{
 		return getRole(member.getGuild(), role).stream().anyMatch(r -> member.getRoles().contains(r));
 	}
 	
+	/**
+	 * Check if a member have a role.
+	 *
+	 * @param member The member to test.
+	 * @param role   The role to search for.
+	 *
+	 * @return True if the member have the role, false otherwise.
+	 */
 	public static boolean hasRole(Member member, Role role)
 	{
 		return member.getRoles().contains(role);
 	}
 	
+	/**
+	 * Check if a member have a role.
+	 *
+	 * @param member The member to test.
+	 * @param roles  The roles to search for.
+	 *
+	 * @return True if the member have the role, false otherwise.
+	 */
 	public static boolean hasRole(Member member, List<Role> roles)
 	{
 		return roles.stream().anyMatch(r -> hasRole(member, r));
 	}
 	
+	/**
+	 * Get a role.
+	 *
+	 * @param guild The guild the role is in.
+	 * @param role  The role to search for.
+	 *
+	 * @return The role or null if not found.
+	 */
 	public static List<Role> getRole(Guild guild, Roles role)
 	{
 		return getRole(guild, role.getRole());
 	}
 	
+	/**
+	 * Get a role.
+	 *
+	 * @param guild The guild the role is in.
+	 * @param name  The role to search for.
+	 *
+	 * @return The role or null if not found.
+	 */
 	public static List<Role> getRole(Guild guild, String name)
 	{
 		return guild.getJDA().getRoles().stream().filter(r -> r.getName().equalsIgnoreCase(name)).filter(r -> r.getGuild().equals(guild)).collect(Collectors.toList());
 	}
 	
+	/**
+	 * Tell if a member is part of the team (admin or moderator).
+	 *
+	 * @param member The member to test.
+	 *
+	 * @return True if part of the team, false otherwise.
+	 */
 	public static boolean isTeam(Member member)
 	{
 		return isModerator(member) || isAdmin(member);
 	}
 	
+	/**
+	 * Get a server emote as a mention.
+	 *
+	 * @param name The name of the emote.
+	 *
+	 * @return The mention, or empty string if not found.
+	 */
 	public static String getEmoteMention(String name)
 	{
 		List<Emote> emotes = Main.getJDA().getEmotesByName(name, true);
@@ -83,18 +151,40 @@ public class Utilities
 		return emotes.get(0).getAsMention();
 	}
 	
+	/**
+	 * Get all the members that have a role.
+	 *
+	 * @param guild The guild the role is in.
+	 * @param role  The role to search for.
+	 *
+	 * @return The members that have this role.
+	 */
 	public static List<Member> getMembersRole(Guild guild, Roles role)
 	{
 		return getMembersRole(getRole(guild, role));
 	}
 	
-	public static List<Member> getMembersRole(Guild guild, Role role)
+	/**
+	 * Get all the members that have a role.
+	 *
+	 * @param role The role to search for.
+	 *
+	 * @return The members that have this role.
+	 */
+	public static List<Member> getMembersRole(Role role)
 	{
-		return guild.getMembersWithRoles(role);
+		return role.getGuild().getMembersWithRoles(role);
 	}
 	
+	/**
+	 * Get all the members that have a role.
+	 *
+	 * @param roles The roles to search for.
+	 *
+	 * @return The members that have this role.
+	 */
 	public static List<Member> getMembersRole(List<Role> roles)
 	{
-		return roles.stream().map(r -> getMembersRole(r.getGuild(), r)).flatMap(Collection::stream).collect(Collectors.toList());
+		return roles.stream().map(Utilities::getMembersRole).flatMap(Collection::stream).collect(Collectors.toList());
 	}
 }
