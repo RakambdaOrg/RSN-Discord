@@ -3,7 +3,6 @@ package fr.mrcraftcod.gunterdiscord.commands.photo;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
@@ -15,7 +14,6 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.io.File;
-import java.io.InvalidClassException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -55,50 +53,43 @@ public class PhotoCommand extends BasicCommand
 				Actions.replyPrivate(event.getAuthor(), "Utilisateur non trouvé");
 			else
 			{
-				try
+				Member member = event.getGuild().getMember(user);
+				if(member == null || !Utilities.hasRole(member, Roles.TROMBINOSCOPE))
+					Actions.reply(event, "L'utilisateur ne fait pas parti du trombinoscope");
+				else if(event.getTextChannel().equals(new PhotoChannelConfig().getTextChannel(event.getJDA())))
 				{
-					Member member = event.getGuild().getMember(user);
-					if(member == null || !Utilities.hasRole(member, Roles.TROMBINOSCOPE))
+					List<String> paths = new PhotoConfig().getValue(user.getIdLong());
+					if(paths != null && !paths.isEmpty())
 					{
-						Actions.reply(event, "L'utilisateur ne fait pas parti du trombinoscope");
-					}
-					else if(new PhotoChannelConfig().getLong() == event.getTextChannel().getIdLong())
-					{
-						List<String> paths = new PhotoConfig().getValue(user.getIdLong());
-						if(paths != null && !paths.isEmpty())
-						{
-							int rnd = ThreadLocalRandom.current().nextInt(paths.size());
-							if(args.peek() != null)
-								try
-								{
-									rnd = Math.max(0, Math.min(paths.size(), Integer.parseInt(args.pop())) - 1);
-								}
-								catch(Exception e)
-								{
-									Log.warning("Provided photo index isn't an integer", e);
-								}
-							File file = new File(paths.get(rnd));
-							if(file.exists())
+						boolean randomGen = true;
+						int rnd = ThreadLocalRandom.current().nextInt(paths.size());
+						if(args.peek() != null)
+							try
 							{
-								String ID = file.getName().substring(0, file.getName().lastIndexOf("."));
-								Actions.reply(event, event.getAuthor().getAsMention() + " a demandé la photo (" + (rnd + 1) + "/" + paths.size() + ") de " + user.getName() + " (ID: " + ID + ")");
-								event.getTextChannel().sendFile(file).queue();
+								rnd = Math.max(0, Math.min(paths.size(), Integer.parseInt(args.pop())) - 1);
+								randomGen = false;
 							}
-							else
-								Actions.reply(event, "Désolé je ne retrouves plus l'image");
+							catch(Exception e)
+							{
+								Log.warning("Provided photo index isn't an integer", e);
+							}
+						File file = new File(paths.get(rnd));
+						if(file.exists())
+						{
+							String ID = file.getName().substring(0, file.getName().lastIndexOf("."));
+							Actions.reply(event, "%s a demandé la photo (%d/%d%s) de %s (ID: %s)", event.getAuthor().getAsMention(), rnd + 1, paths.size(), randomGen ? " aléatoire" : "", member.getNickname(), ID);
+							event.getTextChannel().sendFile(file).queue();
 						}
 						else
-							Actions.reply(event, "Cet utilisateur n'a pas d'image");
+							Actions.reply(event, "Désolé je ne retrouves plus l'image");
 					}
-				}
-				catch(InvalidClassException | NoValueDefinedException e)
-				{
-					Log.error("Couldn't get photo channel", e);
+					else
+						Actions.reply(event, "Cet utilisateur n'a pas d'image");
 				}
 			}
 		}
 		else
-			Actions.reply(event, "Participants du trombinoscope: " + Utilities.getMembersRole(event.getGuild(), Roles.TROMBINOSCOPE).stream().map(u -> u.getUser().getName()).collect(Collectors.joining(", ")));
+			Actions.reply(event, "Participants du trombinoscope: %s", Utilities.getMembersRole(event.getGuild(), Roles.TROMBINOSCOPE).stream().map(u -> u.getUser().getName()).collect(Collectors.joining(", ")));
 		return CommandResult.SUCCESS;
 	}
 	

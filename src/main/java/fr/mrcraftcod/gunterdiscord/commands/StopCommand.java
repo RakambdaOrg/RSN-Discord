@@ -41,7 +41,7 @@ public class StopCommand extends BasicCommand
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
 			return CommandResult.NOT_ALLOWED;
 		event.getJDA().shutdownNow();
-		Log.info("BOT STOPPED");
+		Log.info("BOT STOPPING");
 		return CommandResult.SUCCESS;
 	}
 	

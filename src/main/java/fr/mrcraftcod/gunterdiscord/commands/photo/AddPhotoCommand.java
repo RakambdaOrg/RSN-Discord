@@ -3,20 +3,16 @@ package fr.mrcraftcod.gunterdiscord.commands.photo;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Roles;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.io.File;
-import java.io.InvalidClassException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -72,16 +68,7 @@ public class AddPhotoCommand extends BasicCommand
 						{
 							new PhotoConfig().addValue(user.getIdLong(), saveFile.getPath());
 							Actions.giveRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
-							try
-							{
-								TextChannel chan = event.getGuild().getTextChannelById(new PhotoChannelConfig().getLong());
-								if(chan != null)
-									Actions.sendMessage(chan, "Oyé @here, nous avons une nouvelle photo pour " + user.getAsMention() + "! (ID: " + event.getMessage().getCreationTime().toEpochSecond() + ")");
-							}
-							catch(InvalidClassException | NoValueDefinedException e)
-							{
-								Log.error("Error getting photo channel", e);
-							}
+							Actions.sendMessage(new PhotoChannelConfig().getTextChannel(event.getJDA()), "Oyé @here, nous avons une nouvelle photo pour %s! (ID: %d)", user.getAsMention(), event.getMessage().getCreationTime().toEpochSecond());
 						}
 						else
 							Actions.replyPrivate(event.getAuthor(), "L'envoi a échoué");

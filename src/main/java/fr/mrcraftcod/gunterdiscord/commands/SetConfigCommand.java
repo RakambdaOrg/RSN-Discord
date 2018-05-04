@@ -90,13 +90,13 @@ public class SetConfigCommand extends BasicCommand
 				if(result == ActionResult.OK)
 					Actions.reply(event, "OK");
 				else if(result == ActionResult.ERROR)
-					Actions.reply(event, "Erreur - Fonctionnement de la commande: " + getCommandDescription() + " // " + configuration.getName());
+					Actions.reply(event, "Erreur - Fonctionnement de la commande: %s // %s", getCommandDescription(), configuration.getName());
 			}
 			else
 				Actions.reply(event, "Configuration non trouvée");
 		}
 		else
-			Actions.reply(event, "Merci de renseigner un paramètre: " + getCommandDescription());
+			Actions.reply(event, "Merci de renseigner un paramètre: %s", getCommandDescription());
 		return CommandResult.SUCCESS;
 	}
 	

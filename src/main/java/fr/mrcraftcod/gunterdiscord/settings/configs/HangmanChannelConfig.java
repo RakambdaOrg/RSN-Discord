@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.settings.configs;
 
-import fr.mrcraftcod.gunterdiscord.settings.ValueConfiguration;
+import fr.mrcraftcod.gunterdiscord.settings.SingleChannelConfiguration;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -8,23 +8,11 @@ import fr.mrcraftcod.gunterdiscord.settings.ValueConfiguration;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class HangmanChannelConfig extends ValueConfiguration
+public class HangmanChannelConfig extends SingleChannelConfiguration
 {
 	@Override
 	public String getName()
 	{
 		return "hangmanChannel";
-	}
-	
-	@Override
-	public void setValue(Object value)
-	{
-		try
-		{
-			super.setValue(Long.parseLong(value.toString()));
-		}
-		catch(Exception e)
-		{
-		}
 	}
 }

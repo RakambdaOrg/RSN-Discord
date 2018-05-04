@@ -4,6 +4,11 @@ import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.HangmanChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.Log;
+import fr.mrcraftcod.gunterdiscord.utils.Roles;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.user.update.UserUpdateOnlineStatusEvent;
@@ -29,38 +34,48 @@ public class HangmanListener extends ListenerAdapter
 	private static final long MAX_WAIT_TIME = 30;
 	private static final int MAX_HANG_LEVEL = 6;
 	private static boolean inProgress;
-	private static boolean waitingMsg;
+	private static boolean isWaitingMsg;
 	private static long waitingTime;
-	private static long waitingID;
+	private static long waitingUserID;
 	private static int hangStage;
 	private static int playerCount;
 	private static StringBuilder hiddenWord;
 	private static String realWord;
 	private static List<Character> badTry;
-	private static Role role;
+	private static List<Role> role;
 	public static boolean resetting;
 	
+	/**
+	 * Constructor.
+	 */
 	public HangmanListener()
 	{
 		stop();
 	}
 	
+	/**
+	 * Resets the game.
+	 */
 	public static void stop()
 	{
 		inProgress = false;
 		resetting = false;
-		waitingMsg = false;
+		isWaitingMsg = false;
 		hangStage = 0;
 		playerCount = 0;
 		hiddenWord = new StringBuilder();
 		realWord = "";
 	}
 	
-	public static boolean onPlayerJoin(Member member) throws InvalidClassException, NoValueDefinedException
+	/**
+	 * Called when a player joins the game.
+	 *
+	 * @param member The member that joined.
+	 */
+	public static void onPlayerJoin(Member member)
 	{
 		playerCount++;
-		Main.getJDA().getTextChannelById(new HangmanChannelConfig().getLong()).sendMessageFormat("%s a rejoint la partie! Pour les règles regardes le message pinné.", member.getUser().getAsMention()).queue();
-		return true;
+		Actions.sendMessage(new HangmanChannelConfig().getTextChannel(member.getJDA()), "%s a rejoint la partie! Pour les règles regardes le message pinné.", member.getUser().getAsMention());
 	}
 	
 	@SuppressWarnings("Duplicates")
@@ -70,104 +85,85 @@ public class HangmanListener extends ListenerAdapter
 		super.onMessageReceived(event);
 		try
 		{
-			if(inProgress && event.getChannel().getIdLong() == new HangmanChannelConfig().getLong())
+			if(inProgress && event.getChannel().equals(new HangmanChannelConfig().getTextChannel(event.getJDA())))
 			{
-				if(waitingMsg)
+				if(isWaitingMsg)
 				{
-					boolean OK = false;
-					if(event.getAuthor().getIdLong() == waitingID)
+					boolean electedIsDoingSomething = false;
+					if(event.getAuthor().getIdLong() == waitingUserID)
 					{
-						boolean STOP = false;
-						waitingMsg = false;
+						boolean stopWaitingMessage = false;
+						isWaitingMsg = false;
 						LinkedList<String> parts = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 						String command = parts.poll();
-						if(("h" + new PrefixConfig().getString() + "lettre").equalsIgnoreCase(command))
+						if(command != null && command.startsWith("h" + new PrefixConfig().getString()))
 						{
-							if(parts.size() > 0)
+							command = command.substring(("h" + new PrefixConfig().getString()).length());
+							switch(command)
 							{
-								OK = true;
-								char c = parts.poll().charAt(0);
-								event.getChannel().sendMessageFormat("La lettre choisie est %c.", c).queue();
-								int changed = discoverLetter(c);
-								if(changed <= 0)
-								{
-									if(!badTry.contains(c))
-										badTry.add(c);
-									event.getChannel().sendMessageFormat("Oh ché doumache, ça va finir plus vite que prévu.").queue();
+								case "lettre":
+									if(parts.size() > 0)
+									{
+										electedIsDoingSomething = true;
+										String argWord = parts.poll();
+										if(argWord == null)
+											break;
+										char c = argWord.charAt(0);
+										Actions.sendMessage(event.getTextChannel(), "La lettre choisie est %c.", c);
+										int changed = discoverLetter(c);
+										if(changed <= 0)
+										{
+											if(!badTry.contains(c))
+												badTry.add(c);
+											Actions.sendMessage(event.getTextChannel(), "Oh ché doumache, ça va finir plus vite que prévu.");
+											displayWord(event.getTextChannel());
+											hangStage++;
+											displayHangman(event.getTextChannel());
+											if(hangStage >= MAX_HANG_LEVEL)
+											{
+												stopWaitingMessage = true;
+												Actions.sendMessage(event.getTextChannel(), "%s Oh bah alors? On est pas assez bon? Vous voulez un cookie? %s", event.getGuild().getEmotesByName("Arold", true).get(0).getAsMention(), event.getGuild().getEmotesByName("cookie", true).get(0).getAsMention());
+												new Thread(() -> delayEndGame(event.getTextChannel())).start();
+											}
+											else
+												pickRandomUser(event.getJDA());
+										}
+										else
+										{
+											Actions.sendMessage(event.getTextChannel(), "Clap... clap.... clap! Voici le mot: %s", hiddenWord);
+											if(realWord.equalsIgnoreCase(hiddenWord.toString()))
+											{
+												stopWaitingMessage = true;
+												Actions.sendMessage(event.getTextChannel(), ":tada: :tada: Bon on va dire qu'on a rien vu ok? :tada: :tada:");
+												new Thread(() -> delayEndGame(event.getTextChannel())).start();
+											}
+											else
+											{
+												displayHangman(event.getTextChannel());
+												pickRandomUser(event.getJDA());
+											}
+										}
+									}
+									else
+										Actions.sendMessage(event.getTextChannel(), "Faut entrer une lettre mon beau!");
+									break;
+								case "leave":
+									playerLeave(event.getMember());
+									break;
+								case "skip":
+									if(event.getMember().getUser().getIdLong() == waitingUserID)
+										pickRandomUser(event.getJDA());
+									break;
+								case "mot":
 									displayWord(event.getTextChannel());
-									hangStage++;
-									displayHangman(event.getTextChannel());
-									if(hangStage >= MAX_HANG_LEVEL)
-									{
-										STOP = true;
-										event.getChannel().sendMessageFormat(event.getGuild().getEmotesByName("Arold", true).get(0).getAsMention() + " Oh bah alors? On est pas assez bon? Vous voulez un cookie? " + event.getGuild().getEmotesByName("cookie", true).get(0).getAsMention()).queue();
-										new Thread(() -> {
-											try
-											{
-												Thread.sleep(10000);
-											}
-											catch(InterruptedException e)
-											{
-												e.printStackTrace();
-											}
-											removeUsers(event.getGuild(), event.getTextChannel());
-											stop();
-										}).start();
-									}
-									else
-										pickRandomUser();
-								}
-								else
-								{
-									event.getChannel().sendMessageFormat("Clap... clap.... clap! Voici le mot: %s", hiddenWord).queue();
-									if(realWord.equalsIgnoreCase(hiddenWord.toString()))
-									{
-										STOP = true;
-										event.getChannel().sendMessageFormat(":tada: :tada: Bon on va dire qu'on a rien vu ok? :tada: :tada:").queue();
-										new Thread(() -> {
-											try
-											{
-												Thread.sleep(10000);
-											}
-											catch(InterruptedException e)
-											{
-												e.printStackTrace();
-											}
-											removeUsers(event.getGuild(), event.getTextChannel());
-											stop();
-										}).start();
-									}
-									else
-									{
-										displayHangman(event.getTextChannel());
-										pickRandomUser();
-									}
-								}
-							}
-							else
-							{
-								event.getChannel().sendMessage("Faut entrer une lettre mon beau!").queue();
 							}
 						}
-						else if(("h" + new PrefixConfig().getString() + "leave").equalsIgnoreCase(command))
-						{
-							playerLeave(event.getGuild(), event.getMember());
-						}
-						else if(("h" + new PrefixConfig().getString() + "skip").equalsIgnoreCase(command))
-						{
-							if(event.getMember().getUser().getIdLong() == waitingID)
-								pickRandomUser();
-						}
-						else if(("h" + new PrefixConfig().getString() + "mot").equalsIgnoreCase(command))
-						{
-							displayWord(event.getTextChannel());
-						}
-						if(!STOP)
-							waitingMsg = true;
+						if(!stopWaitingMessage)
+							isWaitingMsg = true;
 					}
-					if(!OK && System.currentTimeMillis() - waitingTime > (MAX_WAIT_TIME * 1000))
+					if(!electedIsDoingSomething && System.currentTimeMillis() - waitingTime > (MAX_WAIT_TIME * 1000))
 					{
-						pickRandomUser();
+						pickRandomUser(event.getJDA());
 						displayWord(event.getTextChannel());
 					}
 				}
@@ -175,15 +171,46 @@ public class HangmanListener extends ListenerAdapter
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			Log.error("Error happened in teh hangman", e);
 		}
 	}
 	
-	private void displayWord(TextChannel channel)
+	/**
+	 * Delay the ending then remove users and messages.
+	 *
+	 * @param channel The hangman channel.
+	 */
+	private void delayEndGame(TextChannel channel)
 	{
-		channel.sendMessageFormat("Lettres déjà essayées: %s\nVoici le mot: %s", getTried(), hiddenWord).queue();
+		try
+		{
+			Thread.sleep(10000);
+		}
+		catch(InterruptedException e)
+		{
+			Log.error("Error sleeping", e);
+		}
+		removeUsers(channel);
+		stop();
 	}
 	
+	/**
+	 * Display the current cord with letters tried.
+	 *
+	 * @param channel The channel.
+	 */
+	private void displayWord(TextChannel channel)
+	{
+		Actions.sendMessage(channel, "Lettres déjà essayées: %s\nVoici le mot: %s", badTry, hiddenWord);
+	}
+	
+	/**
+	 * Discover a letter in the word.
+	 *
+	 * @param c The letter to try.
+	 *
+	 * @return The number of letters discovered in teh word.
+	 */
 	private static int discoverLetter(char c)
 	{
 		c = Character.toLowerCase(c);
@@ -198,49 +225,46 @@ public class HangmanListener extends ListenerAdapter
 		return count;
 	}
 	
-	private String getTried()
-	{
-		return badTry.toString();
-	}
-	
+	/**
+	 * Display the hangman in the chat.
+	 *
+	 * @param channel The channel to send into.
+	 */
 	private static void displayHangman(TextChannel channel)
 	{
-		channel.sendFile(Main.class.getResourceAsStream("/hangman/level_" + hangStage + ".png"), hangStage + ".png").queue();
-		//channel.sendMessageFormat("Hang level: %d", hangStage).queue();
+		Actions.sendFile(channel, "/hangman/level_" + hangStage + ".png", hangStage + ".png");
 	}
 	
 	@Override
 	public void onUserUpdateOnlineStatus(UserUpdateOnlineStatusEvent event)
 	{
 		super.onUserUpdateOnlineStatus(event);
-		if(inProgress)
-		{
-			if(event.getMember().getRoles().contains(role))
-			{
-				try
-				{
-					playerLeave(event.getGuild(), event.getMember());
-				}
-				catch(InvalidClassException | NoValueDefinedException e)
-				{
-					e.printStackTrace();
-				}
-			}
-		}
+		if(inProgress && Utilities.hasRole(event.getMember(), role))
+			playerLeave(event.getMember());
 	}
 	
-	private void playerLeave(Guild guild, Member member) throws InvalidClassException, NoValueDefinedException
+	/**
+	 * Make a player leave.
+	 *
+	 * @param member The member leaving.
+	 */
+	private void playerLeave(Member member)
 	{
 		playerCount--;
-		guild.getController().removeRolesFromMember(member, role).queue();
+		Actions.removeRole(member, role);
 		if(playerCount < 1)
 		{
-			removeUsers(guild, Main.getJDA().getTextChannelById(new HangmanChannelConfig().getLong()));
+			removeUsers(new HangmanChannelConfig().getTextChannel(member.getJDA()));
 			stop();
 		}
 	}
 	
-	private void removeUsers(Guild guild, TextChannel channel)
+	/**
+	 * Remove the users from the channel.
+	 *
+	 * @param channel The text channel.
+	 */
+	private void removeUsers(TextChannel channel)
 	{
 		resetting = true;
 		try
@@ -249,9 +273,9 @@ public class HangmanListener extends ListenerAdapter
 		}
 		catch(InterruptedException e)
 		{
-			e.printStackTrace();
+			Log.error("Error sleeping");
 		}
-		channel.getMembers().stream().filter(m -> m.getUser().getIdLong() != Main.getJDA().getSelfUser().getIdLong()).forEach(member -> guild.getController().removeRolesFromMember(member, role).queue());
+		channel.getMembers().stream().filter(m -> m.getUser().getIdLong() != channel.getJDA().getSelfUser().getIdLong()).forEach(member -> channel.getGuild().getController().removeRolesFromMember(member, role).queue());
 		for(Message message : channel.getIterableHistory().cache(false))
 			message.delete().queue();
 		try
@@ -260,15 +284,31 @@ public class HangmanListener extends ListenerAdapter
 		}
 		catch(InterruptedException e)
 		{
-			e.printStackTrace();
+			Log.error("Error sleeping");
 		}
 	}
 	
+	/**
+	 * Tells if 2 letters are the same.
+	 *
+	 * @param c1 First letter.
+	 * @param c2 Second letter.
+	 *
+	 * @return True if matches, false otherwise.
+	 */
 	private static boolean matchLetter(char c1, char c2)
 	{
 		return mapChar(c1) == mapChar(c2);
 	}
 	
+	/**
+	 * Get a char base on its parent.
+	 * For example letters with accent will become the letter without the accent.
+	 *
+	 * @param c The letter.
+	 *
+	 * @return The mapped letter.
+	 */
 	private static char mapChar(char c)
 	{
 		if(c == 'é' || c == 'è' || c == 'ê')
@@ -284,44 +324,55 @@ public class HangmanListener extends ListenerAdapter
 		return c;
 	}
 	
-	private static void pickRandomUser()
+	/**
+	 * Pick a random user to say a letter.
+	 *
+	 * @param jda The JDA.
+	 */
+	private static void pickRandomUser(JDA jda)
 	{
-		try
+		TextChannel channel = new HangmanChannelConfig().getTextChannel(jda);
+		List<Member> members = Utilities.getMembersRole(role);
+		if(members.size() > 1)
+			members = members.stream().filter(member -> member.getUser().getIdLong() != waitingUserID).collect(Collectors.toList());
+		if(members.size() > 0)
 		{
-			TextChannel channel = Main.getJDA().getTextChannelById(new HangmanChannelConfig().getLong());
-			List<Member> members = role.getGuild().getMembersWithRoles(role);
-			if(members.size() > 1)
-				members = members.stream().filter(member -> member.getUser().getIdLong() != waitingID).collect(Collectors.toList());
-			if(members.size() > 0)
+			Member member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
+			waitingUserID = member.getUser().getIdLong();
+			isWaitingMsg = true;
+			waitingTime = System.currentTimeMillis();
+			try
 			{
-				Member member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
-				waitingID = member.getUser().getIdLong();
-				waitingMsg = true;
-				waitingTime = System.currentTimeMillis();
-				channel.sendMessageFormat("L'élu est %s, c'est a lui d'indiquer la lettre que vous avez choisit grâce à la commande " + "h" + new PrefixConfig().getString() + "lettre <lettre>\n", member.getAsMention()).queue();
+				Actions.sendMessage(channel, "L'élu est %s, c'est a lui d'indiquer la lettre que vous avez choisit grâce à la commande %c%slettre <lettre>\n", member.getAsMention(), 'h', new PrefixConfig().getString("g?"));
 			}
-		}
-		catch(InvalidClassException | NoValueDefinedException e)
-		{
-			e.printStackTrace();
+			catch(InvalidClassException | IllegalArgumentException e)
+			{
+				Log.error("Error getting prefix", e);
+			}
 		}
 	}
 	
+	/**
+	 * Set up a new game.
+	 *
+	 * @param guild The guild the channel is in.
+	 */
 	public static void setUp(Guild guild)
 	{
 		if(inProgress)
 			return;
 		stop();
-		List<Role> roles = guild.getRolesByName("pendu", true);
+		List<Role> roles = Utilities.getRole(guild, Roles.HANGMAN);
 		if(roles.size() <= 0)
 			return;
-		role = roles.get(0);
+		role = roles;
 		inProgress = true;
 		badTry = new ArrayList<>();
 		try
 		{
-			TextChannel channel = Main.getJDA().getTextChannelById(new HangmanChannelConfig().getLong());
-			channel.sendMessageFormat("Salut à tous! Si vous êtes la c'est que vous êtes chaud pour un petit pendu. Mais j'espère que vous êtes bons, sinon c'est vous qui allez finir pendu (au bout de %d fautes)!\n\nLe principe est simple. Je vais commencer par choisir un mot dans ma petite tête. Ensuite je vous l'écrirais avec les lettres cachées. Seul " + DISCOVER_START + " lettres seront apparentes au debut. Une fois cela fait, je désignerai une personne afin de me dire la lettre que vous voulez essayer, à vous de vous entendre afin de faire les bons choix.\n\nSi une personne ne déclare pas de choix en " + MAX_WAIT_TIME + "s, écrivez un petit mot et je referai tourner la roue pour désigner un représentant. Si vous désirez quitter, utilisez `" + "h" + new PrefixConfig().getString() + "leave`. Si vous voulez passer votre tour utilisez `" + "h" + new PrefixConfig().getString() + "skip`. Pour avoir des infos sur le mot actuel utilisez `" + "h" + new PrefixConfig().getString() + "mot`.\n\n\nAlley, laissez moi réfléchir!", MAX_HANG_LEVEL).queue(message -> message.pin().queue());
+			String prefix = new PrefixConfig().getString();
+			TextChannel channel = new HangmanChannelConfig().getTextChannel(guild.getJDA());
+			Actions.sendMessage(channel, Actions.PIN_MESSAGE, "Salut à tous! Si vous êtes la c'est que vous êtes chaud pour un petit pendu. Mais j'espère que vous êtes bons, sinon c'est vous qui allez finir pendu (au bout de %d fautes)!\n\nLe principe est simple. Je vais commencer par choisir un mot dans ma petite tête. Ensuite je vous l'écrirais avec les lettres cachées. Seul %d lettres seront apparentes au debut. Une fois cela fait, je désignerai une personne afin de me dire la lettre que vous voulez essayer, à vous de vous entendre afin de faire les bons choix.\n\nSi une personne ne déclare pas de choix en %ds, écrivez un petit mot et je referai tourner la roue pour désigner un représentant. Si vous désirez quitter, utilisez `h%sleave`. Si vous voulez passer votre tour utilisez `h%sskip`. Pour avoir des infos sur le mot actuel utilisez `" + "h%smot`.\n\n\nAlley, laissez moi réfléchir!", MAX_HANG_LEVEL, DISCOVER_START, MAX_WAIT_TIME, prefix, prefix, prefix);
 			
 			new Thread(() -> {
 				try
@@ -330,7 +381,7 @@ public class HangmanListener extends ListenerAdapter
 				}
 				catch(InterruptedException e)
 				{
-					e.printStackTrace();
+					Log.error("Error sleeping");
 				}
 				realWord = selectRandomWord();
 				hiddenWord = genHidden(realWord);
@@ -339,17 +390,22 @@ public class HangmanListener extends ListenerAdapter
 				for(int i = 0; i < DISCOVER_START; i++)
 					if(chars.size() > i)
 						discoverLetter((char) ((int) chars.get(i)));
-				channel.sendMessageFormat("Le mot que j'ai choisi est: %s\n", hiddenWord.toString()).queue();
+				Actions.sendMessage(channel, "Le mot que j'ai choisi est: %s", hiddenWord);
 				displayHangman(channel);
-				pickRandomUser();
+				pickRandomUser(channel.getJDA());
 			}).start();
 		}
 		catch(InvalidClassException | NoValueDefinedException e)
 		{
-			e.printStackTrace();
+			Log.error("Error getting prefix", e);
 		}
 	}
 	
+	/**
+	 * Select a random word.
+	 *
+	 * @return The chosen word.
+	 */
 	private static String selectRandomWord()
 	{
 		try
@@ -359,11 +415,18 @@ public class HangmanListener extends ListenerAdapter
 		}
 		catch(IOException e)
 		{
-			e.printStackTrace();
+			Log.error("Error getting random hangman word", e);
 		}
 		return "ERROR";
 	}
 	
+	/**
+	 * Get the word as being hidden.
+	 *
+	 * @param word The word to hide.
+	 *
+	 * @return The hidden word.
+	 */
 	private static StringBuilder genHidden(String word)
 	{
 		StringBuilder str = new StringBuilder();
@@ -372,6 +435,13 @@ public class HangmanListener extends ListenerAdapter
 		return str;
 	}
 	
+	/**
+	 * tell if a character should be hidden or not.
+	 *
+	 * @param c The character.
+	 *
+	 * @return True if should not be hidden, false otherwise.
+	 */
 	private static boolean keepNotHidden(char c)
 	{
 		return c == ' ' || c == '-';

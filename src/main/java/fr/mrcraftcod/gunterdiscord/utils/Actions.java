@@ -3,7 +3,9 @@ package fr.mrcraftcod.gunterdiscord.utils;
 import fr.mrcraftcod.gunterdiscord.Main;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import java.io.InputStream;
 import java.util.List;
+import java.util.function.Consumer;
 import static fr.mrcraftcod.gunterdiscord.utils.Utilities.getRole;
 
 /**
@@ -14,49 +16,83 @@ import static fr.mrcraftcod.gunterdiscord.utils.Utilities.getRole;
  */
 public class Actions
 {
-	public static Message reply(MessageReceivedEvent event, String text)
+	public static final Consumer<Message> PIN_MESSAGE = m -> m.pin().queue();
+	
+	public static void reply(MessageReceivedEvent event, String text)
 	{
-		return sendMessage(event.getMessage().getTextChannel(), text);
+		switch(event.getChannelType())
+		{
+			case PRIVATE:
+				sendMessage(event.getPrivateChannel(), text);
+				break;
+			case TEXT:
+				sendMessage(event.getTextChannel(), text);
+				break;
+		}
 	}
 	
-	public static Message sendMessage(TextChannel channel, String text)
+	public static void reply(MessageReceivedEvent event, String format, Object... args)
+	{
+		reply(event, String.format(format, args));
+	}
+	
+	public static void sendMessage(TextChannel channel, Consumer<Message> onDone, String text)
 	{
 		if(channel != null)
 		{
 			if(channel.canTalk())
-				return channel.sendMessage(text).complete();
+			{
+				if(onDone != null)
+					channel.sendMessage(text).queue(onDone);
+				else
+					channel.sendMessage(text).queue();
+			}
 			else
-				reportError("Access denied to text channel: " + channel.getAsMention());
+				Log.error("Access denied to text channel: " + channel.getAsMention());
 		}
-		return null;
+		else
+			Log.warning("Cannot send message to null channel : " + text);
 	}
 	
-	public static Message sendMessage(PrivateChannel channel, String text)
+	public static void sendMessage(TextChannel channel, String text)
+	{
+		sendMessage(channel, null, text);
+	}
+	
+	public static void sendMessage(TextChannel channel, String format, Object... args)
+	{
+		sendMessage(channel, String.format(format, args));
+	}
+	
+	public static void sendMessage(TextChannel channel, Consumer<Message> onDone, String format, Object... args)
+	{
+		sendMessage(channel, onDone, String.format(format, args));
+	}
+	
+	public static void sendMessage(PrivateChannel channel, String text)
 	{
 		if(channel != null)
-			return channel.sendMessage(text).complete();
-		return null;
+			channel.sendMessage(text).queue();
+		else
+			Log.warning("Cannot send private message to null channel : " + text);
 	}
 	
-	private static void reportError(String text)
+	public static void sendMessage(long channelID, String text)
 	{
-		//TODO
-	}
-	
-	public static Message sendMessage(long channelID, String text)
-	{
-		return sendMessage(Main.getJDA().getTextChannelById(channelID), text);
+		sendMessage(Main.getJDA().getTextChannelById(channelID), text);
 	}
 	
 	public static void replyPrivate(User user, String text)
 	{
 		if(user != null)
-		{
-			user.openPrivateChannel().queue(channel -> channel.sendMessage(text).queue());
-			Log.info("Sent private message to " + getUserToLog(user) + ": " + text);
-		}
+			user.openPrivateChannel().queue(c -> sendMessage(c, text));
 		else
-			Log.warning("Sent message to null");
+			Log.warning("Sent private message to null user : " + text);
+	}
+	
+	public static void replyPrivate(User user, String format, Object... args)
+	{
+		replyPrivate(user, String.format(format, args));
 	}
 	
 	public static void giveRole(Guild guild, User user, Roles role)
@@ -108,6 +144,30 @@ public class Actions
 		}
 	}
 	
+	public static void removeRole(Guild guild, User user, Role role)
+	{
+		try
+		{
+			//noinspection ConstantConditions
+			guild.getController().removeSingleRoleFromMember(guild.getMember(user), role).queue();
+			Log.info("Removed role " + role + " from " + getUserToLog(user));
+		}
+		catch(IllegalArgumentException e)
+		{
+			Log.warning("User/Role not found", e);
+		}
+	}
+	
+	public static void removeRole(Member member, Role role)
+	{
+		removeRole(member.getGuild(), member.getUser(), role);
+	}
+	
+	public static void removeRole(Member member, List<Role> roles)
+	{
+		roles.forEach(r -> removeRole(member, r));
+	}
+	
 	public static String getUserToLog(User user)
 	{
 		return user == null ? "NULL" : (user.getName() + "#" + user.getDiscriminator() + " (" + user.getIdLong() + ")");
@@ -116,5 +176,16 @@ public class Actions
 	public static void deleteMessage(Message message)
 	{
 		message.delete().queue();
+	}
+	
+	public static void sendFile(TextChannel channel, String resource, String name)
+	{
+		sendFile(channel, Main.class.getResourceAsStream(resource), name);
+	}
+	
+	public static void sendFile(TextChannel channel, InputStream stream, String name)
+	{
+		if(channel != null)
+			channel.sendFile(stream, name).queue();
 	}
 }

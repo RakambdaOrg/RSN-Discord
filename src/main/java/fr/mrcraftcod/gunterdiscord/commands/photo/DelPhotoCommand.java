@@ -54,7 +54,7 @@ public class DelPhotoCommand extends BasicCommand
 						new PhotoConfig().deleteKeyValue(user.getIdLong(), args.poll());
 						if(new PhotoConfig().getValue(user.getIdLong()).isEmpty())
 							Actions.removeRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
-						Actions.replyPrivate(event.getAuthor(), "Photos de " + user.getAsMention() + " supprimées");
+						Actions.replyPrivate(event.getAuthor(),"Photos de %s supprimées", user.getAsMention());
 					}
 					else
 						Actions.replyPrivate(event.getAuthor(), "Vous ne pouvez pas supprimer la photo de quelqu'un d'autre");

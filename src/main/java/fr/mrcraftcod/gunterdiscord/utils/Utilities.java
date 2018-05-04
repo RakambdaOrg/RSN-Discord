@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 import java.io.InvalidClassException;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,7 @@ public class Utilities
 		{
 			try
 			{
-				if(new ModoRolesConfig().getAsList().contains(role.getAsMention()))
+				if(new ModoRolesConfig().getAsList().contains(role.getName()))
 					return true;
 			}
 			catch(InvalidClassException e)
@@ -47,6 +48,16 @@ public class Utilities
 	public static boolean hasRole(Member member, Roles role)
 	{
 		return getRole(member.getGuild(), role).stream().anyMatch(r -> member.getRoles().contains(r));
+	}
+	
+	public static boolean hasRole(Member member, Role role)
+	{
+		return member.getRoles().contains(role);
+	}
+	
+	public static boolean hasRole(Member member, List<Role> roles)
+	{
+		return roles.stream().anyMatch(r -> hasRole(member, r));
 	}
 	
 	public static List<Role> getRole(Guild guild, Roles role)
@@ -74,6 +85,16 @@ public class Utilities
 	
 	public static List<Member> getMembersRole(Guild guild, Roles role)
 	{
-		return guild.getMembersWithRoles((Role[]) getRole(guild, role).toArray());
+		return getMembersRole(getRole(guild, role));
+	}
+	
+	public static List<Member> getMembersRole(Guild guild, Role role)
+	{
+		return guild.getMembersWithRoles(role);
+	}
+	
+	public static List<Member> getMembersRole(List<Role> roles)
+	{
+		return roles.stream().map(r -> getMembersRole(r.getGuild(), r)).flatMap(Collection::stream).collect(Collectors.toList());
 	}
 }

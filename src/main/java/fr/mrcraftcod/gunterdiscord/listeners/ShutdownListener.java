@@ -25,6 +25,7 @@ public class ShutdownListener extends ListenerAdapter
 			Settings.save();
 			for(Handler h : Log.getLogger().getHandlers())
 				h.close();
+			Log.info("BOT STOPPED");
 		}
 		catch(IOException e)
 		{
