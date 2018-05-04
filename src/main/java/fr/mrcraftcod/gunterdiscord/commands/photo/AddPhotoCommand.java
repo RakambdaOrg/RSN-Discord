@@ -36,7 +36,7 @@ public class AddPhotoCommand extends BasicCommand
 		Actions.deleteMessage(event.getMessage());
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
 			return CommandResult.NOT_ALLOWED;
-		if(event.getMember().getRoles().contains(Utilities.getRole(event.getJDA(), Roles.TROMBINOSCOPE)) || Utilities.isAdmin(event.getMember()))
+		if(Utilities.hasRole(event.getMember(), Roles.TROMBINOSCOPE) || Utilities.isAdmin(event.getMember()))
 			if(event.getMessage().getAttachments().size() > 0)
 			{
 				User user = null;

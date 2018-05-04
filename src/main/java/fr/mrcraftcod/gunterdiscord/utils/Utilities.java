@@ -2,13 +2,14 @@ package fr.mrcraftcod.gunterdiscord.utils;
 
 import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.settings.configs.ModoRolesConfig;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Emote;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 import java.io.InvalidClassException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
@@ -43,17 +44,19 @@ public class Utilities
 		return false;
 	}
 	
-	public static Role getRole(JDA jda, Roles role)
+	public static boolean hasRole(Member member, Roles role)
 	{
-		return getRole(jda, role.getRole());
+		return getRole(member.getGuild(), role).stream().anyMatch(r -> member.getRoles().contains(r));
 	}
 	
-	public static Role getRole(JDA jda, String name)
+	public static List<Role> getRole(Guild guild, Roles role)
 	{
-		for(Role role : jda.getRoles())
-			if(role.getName().equalsIgnoreCase(name))
-				return role;
-		return null;
+		return getRole(guild, role.getRole());
+	}
+	
+	public static List<Role> getRole(Guild guild, String name)
+	{
+		return guild.getJDA().getRoles().stream().filter(r -> r.getName().equalsIgnoreCase(name)).filter(r -> r.getGuild().equals(guild)).collect(Collectors.toList());
 	}
 	
 	public static boolean isTeam(Member member)
@@ -67,5 +70,10 @@ public class Utilities
 		if(emotes.size() < 1)
 			return "";
 		return emotes.get(0).getAsMention();
+	}
+	
+	public static List<Member> getMembersRole(Guild guild, Roles role)
+	{
+		return guild.getMembersWithRoles((Role[]) getRole(guild, role).toArray());
 	}
 }

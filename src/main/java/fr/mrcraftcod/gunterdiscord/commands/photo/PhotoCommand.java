@@ -11,6 +11,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Roles;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.io.File;
@@ -56,7 +57,12 @@ public class PhotoCommand extends BasicCommand
 			{
 				try
 				{
-					if(new PhotoChannelConfig().getLong() == event.getTextChannel().getIdLong())
+					Member member = event.getGuild().getMember(user);
+					if(member == null || !Utilities.hasRole(member, Roles.TROMBINOSCOPE))
+					{
+						Actions.reply(event, "L'utilisateur ne fait pas parti du trombinoscope");
+					}
+					else if(new PhotoChannelConfig().getLong() == event.getTextChannel().getIdLong())
 					{
 						List<String> paths = new PhotoConfig().getValue(user.getIdLong());
 						if(paths != null && !paths.isEmpty())
@@ -92,7 +98,7 @@ public class PhotoCommand extends BasicCommand
 			}
 		}
 		else
-			Actions.reply(event, "Participants du trombinoscope: " + event.getGuild().getMembersWithRoles(Utilities.getRole(event.getJDA(), Roles.TROMBINOSCOPE)).stream().map(u -> u.getUser().getName()).collect(Collectors.joining(", ")));
+			Actions.reply(event, "Participants du trombinoscope: " + Utilities.getMembersRole(event.getGuild(), Roles.TROMBINOSCOPE).stream().map(u -> u.getUser().getName()).collect(Collectors.joining(", ")));
 		return CommandResult.SUCCESS;
 	}
 	
