@@ -21,7 +21,7 @@ public class PhotoConfig extends MapListConfiguration<Long, String>
 	{
 		if(action == SetConfigCommand.ChangeConfigType.SHOW)
 		{
-			Actions.reply(event, getAsMap().toString());
+			Actions.reply(event, "Value: " + getAsMap().toString());
 			return SetConfigCommand.ActionResult.NONE;
 		}
 		switch(action)

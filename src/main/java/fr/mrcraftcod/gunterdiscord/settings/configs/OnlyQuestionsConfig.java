@@ -21,7 +21,7 @@ public class OnlyQuestionsConfig extends ListConfiguration<Long>
 	{
 		if(action == SetConfigCommand.ChangeConfigType.SHOW)
 		{
-			Actions.reply(event, getAsList().stream().map(Object::toString).collect(Collectors.joining(", ")));
+			Actions.reply(event, "Value: " + getAsList().stream().map(Object::toString).collect(Collectors.joining(", ")));
 			return SetConfigCommand.ActionResult.NONE;
 		}
 		if(args.size() < 1)

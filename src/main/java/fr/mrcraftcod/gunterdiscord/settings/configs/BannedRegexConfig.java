@@ -21,7 +21,7 @@ public class BannedRegexConfig extends ListConfiguration<String>
 	{
 		if(action == SetConfigCommand.ChangeConfigType.SHOW)
 		{
-			Actions.reply(event, getAsList().stream().collect(Collectors.joining(", ")));
+			Actions.reply(event, "Value: " + getAsList().stream().collect(Collectors.joining(", ")));
 			return SetConfigCommand.ActionResult.NONE;
 		}
 		if(args.size() < 1)

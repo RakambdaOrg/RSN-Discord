@@ -21,7 +21,7 @@ public abstract class ValueConfiguration extends Configuration
 	{
 		if(action == SetConfigCommand.ChangeConfigType.SHOW)
 		{
-			Actions.reply(event, getObject().toString());
+			Actions.reply(event, "Value: " + getObject().toString());
 			return SetConfigCommand.ActionResult.NONE;
 		}
 		if(args.size() < 1)
