@@ -2,8 +2,9 @@ package fr.mrcraftcod.gunterdiscord;
 
 import fr.mrcraftcod.gunterdiscord.listeners.CommandsMessageListener;
 import fr.mrcraftcod.gunterdiscord.listeners.HangmanListener;
-import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizMessageListener;
+import fr.mrcraftcod.gunterdiscord.listeners.OnlyImagesMessageListener;
 import fr.mrcraftcod.gunterdiscord.listeners.ShutdownListener;
+import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizMessageListener;
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoChannelConfig;
@@ -62,7 +63,7 @@ public class Main
 			jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).buildBlocking();
 			jda.addEventListener(new CommandsMessageListener());
 			// jda.addEventListener(new BannedRegexesMessageListener());
-			// jda.addEventListener(new OnlyImagesMessageListener());
+			jda.addEventListener(new OnlyImagesMessageListener());
 			// jda.addEventListener(new OnlyQuestionsMessageListener());
 			jda.addEventListener(new QuizMessageListener());
 			jda.addEventListener(new ShutdownListener());
