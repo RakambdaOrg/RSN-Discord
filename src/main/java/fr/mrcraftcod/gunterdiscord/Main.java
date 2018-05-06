@@ -66,6 +66,7 @@ public class Main
 			jda.addEventListener(new ShutdownListener());
 			jda.addEventListener(new HangmanListener());
 			jda.addEventListener(new LogListener());
+			jda.addEventListener(new IdeaChannelMessageListener());
 			jda.setAutoReconnect(true);
 			jda.getPresence().setGame(Game.playing("Le chalumeau"));
 			
