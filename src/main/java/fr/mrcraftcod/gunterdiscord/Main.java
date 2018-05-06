@@ -1,9 +1,6 @@
 package fr.mrcraftcod.gunterdiscord;
 
-import fr.mrcraftcod.gunterdiscord.listeners.CommandsMessageListener;
-import fr.mrcraftcod.gunterdiscord.listeners.HangmanListener;
-import fr.mrcraftcod.gunterdiscord.listeners.OnlyImagesMessageListener;
-import fr.mrcraftcod.gunterdiscord.listeners.ShutdownListener;
+import fr.mrcraftcod.gunterdiscord.listeners.*;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizMessageListener;
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
@@ -68,6 +65,7 @@ public class Main
 			jda.addEventListener(new QuizMessageListener());
 			jda.addEventListener(new ShutdownListener());
 			jda.addEventListener(new HangmanListener());
+			jda.addEventListener(new LogListener());
 			jda.setAutoReconnect(true);
 			jda.getPresence().setGame(Game.playing("Le chalumeau"));
 			
