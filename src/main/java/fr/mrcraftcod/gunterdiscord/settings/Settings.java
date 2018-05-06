@@ -28,6 +28,7 @@ public class Settings
 	public static final Class<? extends Configuration>[] SETTINGS = new Class[]{
 			BannedRegexConfig.class,
 			ModoRolesConfig.class,
+			OnlyIdeasConfig.class,
 			OnlyImagesConfig.class,
 			OnlyQuestionsConfig.class,
 			PrefixConfig.class,

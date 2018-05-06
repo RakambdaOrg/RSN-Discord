@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.settings.configs.IdeaChannelConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.OnlyIdeasConfig;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -21,7 +21,7 @@ public class IdeaChannelMessageListener extends ListenerAdapter
 		super.onMessageReceived(event);
 		try
 		{
-			if(new IdeaChannelConfig().getAsList().contains(event.getMessage().getChannel().getIdLong()))
+			if(new OnlyIdeasConfig().getAsList().contains(event.getMessage().getChannel().getIdLong()))
 			{
 				event.getMessage().addReaction(BasicEmotes.THUMB_UP.getValue()).complete();
 				event.getMessage().addReaction(BasicEmotes.THUMB_DOWN.getValue()).complete();

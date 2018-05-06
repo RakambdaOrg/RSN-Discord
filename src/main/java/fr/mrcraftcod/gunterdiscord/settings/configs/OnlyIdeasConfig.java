@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class IdeaChannelConfig extends ListConfiguration<Long>
+public class OnlyIdeasConfig extends ListConfiguration<Long>
 {
 	@SuppressWarnings("Duplicates")
 	@Override
