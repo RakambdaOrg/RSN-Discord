@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class ModoRolesConfig extends ListConfiguration<String>
+public class ModoRolesConfig extends ListConfiguration<Long>
 {
 	@SuppressWarnings("Duplicates")
 	@Override
@@ -21,7 +21,7 @@ public class ModoRolesConfig extends ListConfiguration<String>
 	{
 		if(action == SetConfigCommand.ChangeConfigType.SHOW)
 		{
-			Actions.reply(event, "Value: " + getAsList().stream().collect(Collectors.joining(", ")));
+			Actions.reply(event, "Value: " + getAsList().stream().map(Object::toString).collect(Collectors.joining(", ")));
 			return SetConfigCommand.ActionResult.NONE;
 		}
 		if(args.size() < 1)
@@ -29,10 +29,10 @@ public class ModoRolesConfig extends ListConfiguration<String>
 		switch(action)
 		{
 			case ADD:
-				addValue(args.poll());
+				addValue(event.getMessage().getMentionedRoles().get(0).getIdLong());
 				return SetConfigCommand.ActionResult.OK;
 			case REMOVE:
-				removeValue(args.poll());
+				removeValue(event.getMessage().getMentionedRoles().get(0).getIdLong());
 				return SetConfigCommand.ActionResult.OK;
 		}
 		return SetConfigCommand.ActionResult.ERROR;
