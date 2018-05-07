@@ -51,13 +51,20 @@ public class CandidCommand extends BasicCommand
 			return CommandResult.NOT_ALLOWED;
 		if(event.getChannel().getType() != ChannelType.PRIVATE)
 			Actions.deleteMessage(event.getMessage());
-		TextChannel channel = new CandidChannelConfig().getTextChannel(event.getJDA());
-		if(channel == null)
-			return CommandResult.FAILED;
+		if(args.size() < 1)
+		{
+			Actions.replyPrivate(event.getAuthor(), "Veuillez entrer un texte de candidature: " + getCommandDescription());
+		}
 		else
 		{
-			Actions.sendMessage(channel, "@here Nouvelle candidature de %s: %s", event.getAuthor().getAsMention(), args.stream().collect(Collectors.joining(" ")));
-			Actions.replyPrivate(event.getAuthor(), "Votre candidature a bien été transférée. Merci à vous.");
+			TextChannel channel = new CandidChannelConfig().getTextChannel(event.getJDA());
+			if(channel == null)
+				return CommandResult.FAILED;
+			else
+			{
+				Actions.sendMessage(channel, "@here Nouvelle candidature de %s: %s", event.getAuthor().getAsMention(), args.stream().collect(Collectors.joining(" ")));
+				Actions.replyPrivate(event.getAuthor(), "Votre candidature a bien été transférée. Merci à vous.");
+			}
 		}
 		return CommandResult.SUCCESS;
 	}
