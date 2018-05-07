@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class CommandsMessageListener extends ListenerAdapter
 {
-	private static final List<Command> commands = Arrays.asList(new AddPhotoCommand(), new DelPhotoCommand(), new PhotoCommand(), new HangmanCommand(), new QuizCommand(), new ReportCommand(), new SetConfigCommand(), new StopCommand());
+	private static final List<Command> commands = Arrays.asList(new AddPhotoCommand(), new DelPhotoCommand(), new PhotoCommand(), new HangmanCommand(), new QuizCommand(), new ReportCommand(), new SetConfigCommand(), new StopCommand(), new CandidCommand());
 	
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event)

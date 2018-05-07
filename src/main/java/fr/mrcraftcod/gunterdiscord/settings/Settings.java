@@ -37,6 +37,7 @@ public class Settings
 			QuizChannelConfig.class,
 			HangmanChannelConfig.class,
 			PhotoConfig.class,
+			CandidChannelConfig.class,
 			};
 	
 	public static void init(Path path) throws IOException
