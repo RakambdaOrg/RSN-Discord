@@ -57,7 +57,7 @@ public class CandidCommand extends BasicCommand
 		else
 		{
 			Actions.sendMessage(channel, "@here Nouvelle candidature de %s: %s", event.getAuthor().getAsMention(), args.stream().collect(Collectors.joining(" ")));
-			Actions.replyPrivate(event.getAuthor(), "Votre candidature a bien été transféré. Merci à vous.");
+			Actions.replyPrivate(event.getAuthor(), "Votre candidature a bien été transférée. Merci à vous.");
 		}
 		return CommandResult.SUCCESS;
 	}
