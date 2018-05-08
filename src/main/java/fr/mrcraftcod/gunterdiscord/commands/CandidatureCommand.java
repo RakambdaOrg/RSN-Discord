@@ -9,6 +9,7 @@ import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
  * @since 2018-04-13
  */
 @CallableCommand
-public class CandidCommand extends BasicCommand
+public class CandidatureCommand extends BasicCommand
 {
 	@Override
 	public int getScope()
@@ -33,27 +34,32 @@ public class CandidCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommand()
+	public List<String> getCommand()
 	{
-		return "c";
+		return List.of("candidature", "c");
 	}
 	
 	@Override
-	public String getCommandDescription()
+	public String getCommandUsage()
 	{
-		return super.getCommandDescription() + " <candidature>";
+		return super.getCommandUsage() + " <candidature>";
+	}
+	
+	@Override
+	public String getDescription()
+	{
+		return "Propose uen candidature pour des élections";
 	}
 	
 	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
-		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
-			return CommandResult.NOT_ALLOWED;
+		super.execute(event, args);
 		if(event.getChannel().getType() != ChannelType.PRIVATE)
 			Actions.deleteMessage(event.getMessage());
 		if(args.size() < 1)
 		{
-			Actions.replyPrivate(event.getAuthor(), "Veuillez entrer un texte de candidature: " + getCommandDescription());
+			Actions.replyPrivate(event.getAuthor(), "Veuillez entrer un texte de candidature: " + getCommandUsage());
 		}
 		else
 		{

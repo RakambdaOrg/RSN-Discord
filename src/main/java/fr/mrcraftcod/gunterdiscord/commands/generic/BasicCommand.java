@@ -41,21 +41,21 @@ public abstract class BasicCommand implements Command
 			return CommandResult.SUCCESS;
 		if(Utilities.isAdmin(event.getMember()))
 			return CommandResult.SUCCESS;
-		return CommandResult.NOT_ALLOWED;
+		throw new NotAllowedException();
 	}
 	
 	@Override
-	public String getCommandDescription()
+	public String getCommandUsage()
 	{
 		try
 		{
-			return new PrefixConfig().getString() + getCommand();
+			return new PrefixConfig().getString() + getCommand().get(0);
 		}
 		catch(InvalidClassException | NoValueDefinedException e)
 		{
 			e.printStackTrace();
 		}
-		return getCommand();
+		return getCommand().get(0);
 	}
 	
 	/**

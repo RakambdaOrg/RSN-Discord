@@ -6,7 +6,6 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.Question;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizMessageListener;
-import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -29,10 +28,7 @@ public class QuizCommand extends BasicCommand
 {
 	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
-		Actions.deleteMessage(event.getMessage());
-		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
-			return CommandResult.NOT_ALLOWED;
+	{super.execute(event, args);
 		if(args.size() > 0)
 		{
 			switch(args.pop())
@@ -93,9 +89,15 @@ public class QuizCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommandDescription()
+	public String getCommandUsage()
 	{
-		return super.getCommandDescription() + " <action> [params]";
+		return super.getCommandUsage() + " <action> [params]";
+	}
+	
+	@Override
+	public String getDescription()
+	{
+		return "Lance ou arrête un quiz";
 	}
 	
 	@Override
@@ -117,8 +119,8 @@ public class QuizCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommand()
+	public List<String> getCommand()
 	{
-		return "quiz";
+		return List.of("quiz", "q");
 	}
 }

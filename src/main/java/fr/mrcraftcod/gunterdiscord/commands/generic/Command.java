@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.commands.generic;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
@@ -33,14 +34,21 @@ public interface Command
 	 *
 	 * @return The command.
 	 */
-	String getCommand();
+	List<String> getCommand();
 	
 	/**
-	 * Get a description of the command.
+	 * Get a description of the usage of command.
 	 *
 	 * @return The description.
 	 */
-	String getCommandDescription();
+	String getCommandUsage();
+	
+	/**
+	 * Get the description of the command.
+	 *
+	 * @return The description.
+	 */
+	String getDescription();
 	
 	/**
 	 * Handle the command.

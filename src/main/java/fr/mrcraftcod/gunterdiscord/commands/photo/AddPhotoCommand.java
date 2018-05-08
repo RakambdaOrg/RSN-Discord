@@ -81,9 +81,15 @@ public class AddPhotoCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommandDescription()
+	public String getCommandUsage()
 	{
-		return super.getCommandDescription() + " [user]";
+		return super.getCommandUsage() + " [utilisateur]";
+	}
+	
+	@Override
+	public String getDescription()
+	{
+		return "Ajoute une photo au trombinoscope";
 	}
 	
 	@Override
@@ -105,8 +111,8 @@ public class AddPhotoCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommand()
+	public List<String> getCommand()
 	{
-		return "addPhoto";
+		return List.of("addphoto", "ap");
 	}
 }

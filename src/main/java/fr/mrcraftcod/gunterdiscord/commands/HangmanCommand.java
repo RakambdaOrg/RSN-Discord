@@ -10,6 +10,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
@@ -23,9 +24,7 @@ public class HangmanCommand extends BasicCommand
 	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
-		Actions.deleteMessage(event.getMessage());
-		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
-			return CommandResult.NOT_ALLOWED;
+		super.execute(event, args);
 		if(HangmanListener.resetting)
 		{
 			Actions.replyPrivate(event.getAuthor(), "Patiente quelques secondes, le pendu se réinitialise");
@@ -59,8 +58,14 @@ public class HangmanCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommand()
+	public List<String> getCommand()
 	{
-		return "pendu";
+		return List.of("pendu");
+	}
+	
+	@Override
+	public String getDescription()
+	{
+		return "Lance une partie de pendu";
 	}
 }

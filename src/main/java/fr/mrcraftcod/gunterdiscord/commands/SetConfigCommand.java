@@ -10,6 +10,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
+import java.util.List;
 import static fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand.AccessLevel.ADMIN;
 
 /**
@@ -65,22 +66,27 @@ public class SetConfigCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommand()
+	public List<String> getCommand()
 	{
-		return "value";
+		return List.of("value", "v");
 	}
 	
 	@Override
-	public String getCommandDescription()
+	public String getCommandUsage()
 	{
-		return super.getCommandDescription() + " <paramètre> <action> [valeur...]";
+		return super.getCommandUsage() + " <paramètre> <action> [valeur...]";
+	}
+	
+	@Override
+	public String getDescription()
+	{
+		return "Modifie la configuration du bot";
 	}
 	
 	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
-		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
-			return CommandResult.NOT_ALLOWED;
+		super.execute(event, args);
 		if(args.size() > 0)
 		{
 			Configuration configuration = Settings.getSettings(args.pop());
@@ -90,13 +96,13 @@ public class SetConfigCommand extends BasicCommand
 				if(result == ActionResult.OK)
 					Actions.reply(event, "OK");
 				else if(result == ActionResult.ERROR)
-					Actions.reply(event, "Erreur - Fonctionnement de la commande: %s // %s", getCommandDescription(), configuration.getName());
+					Actions.reply(event, "Erreur - Fonctionnement de la commande: %s // %s", getCommandUsage(), configuration.getName());
 			}
 			else
 				Actions.reply(event, "Configuration non trouvée");
 		}
 		else
-			Actions.reply(event, "Merci de renseigner un paramètre: %s", getCommandDescription());
+			Actions.reply(event, "Merci de renseigner un paramètre: %s", getCommandUsage());
 		return CommandResult.SUCCESS;
 	}
 	

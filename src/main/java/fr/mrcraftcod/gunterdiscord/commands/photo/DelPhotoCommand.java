@@ -54,7 +54,7 @@ public class DelPhotoCommand extends BasicCommand
 						new PhotoConfig().deleteKeyValue(user.getIdLong(), args.poll());
 						if(new PhotoConfig().getValue(user.getIdLong()).isEmpty())
 							Actions.removeRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
-						Actions.replyPrivate(event.getAuthor(),"Photos de %s supprimées", user.getAsMention());
+						Actions.replyPrivate(event.getAuthor(), "Photos de %s supprimées", user.getAsMention());
 					}
 					else
 						Actions.replyPrivate(event.getAuthor(), "Vous ne pouvez pas supprimer la photo de quelqu'un d'autre");
@@ -78,9 +78,15 @@ public class DelPhotoCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommandDescription()
+	public String getCommandUsage()
 	{
-		return super.getCommandDescription() + " [user] [ID]";
+		return super.getCommandUsage() + " [utilisateur] [ID]";
+	}
+	
+	@Override
+	public String getDescription()
+	{
+		return "Supprime une ou des photos du trombinoscope";
 	}
 	
 	@Override
@@ -102,8 +108,8 @@ public class DelPhotoCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommand()
+	public List<String> getCommand()
 	{
-		return "delPhoto";
+		return List.of("delphoto", "dp");
 	}
 }

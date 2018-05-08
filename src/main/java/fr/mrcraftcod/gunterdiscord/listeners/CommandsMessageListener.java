@@ -13,8 +13,10 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.io.InvalidClassException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 09/04/2018.
@@ -24,7 +26,16 @@ import java.util.List;
  */
 public class CommandsMessageListener extends ListenerAdapter
 {
-	private static final List<Command> commands = Arrays.asList(new AddPhotoCommand(), new DelPhotoCommand(), new PhotoCommand(), new HangmanCommand(), new QuizCommand(), new ReportCommand(), new SetConfigCommand(), new StopCommand(), new CandidCommand());
+	public static final List<Command> commands = Arrays.asList(new AddPhotoCommand(), new DelPhotoCommand(), new PhotoCommand(), new HangmanCommand(), new QuizCommand(), new ReportCommand(), new SetConfigCommand(), new StopCommand(), new CandidatureCommand(), new HelpCommand());
+	
+	public CommandsMessageListener()
+	{
+		HashMap<String, Integer> counts = new HashMap<>();
+		commands.forEach(c -> c.getCommand().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
+		String clash = counts.keySet().stream().filter(k -> counts.get(k) > 1).collect(Collectors.joining(", "));
+		if(clash != null && !clash.isEmpty())
+			Log.error("Command clash: " + clash);
+	}
 	
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event)
@@ -34,22 +45,40 @@ public class CommandsMessageListener extends ListenerAdapter
 		{
 			if(isCommand(event.getMessage().getContentRaw()))
 			{
+				Actions.deleteMessage(event.getMessage());
 				LinkedList<String> args = new LinkedList<>();
 				args.addAll(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 				Command command = getCommand(args.pop().substring(new PrefixConfig().getString("g?").length()));
-				if(command != null && (command.getScope() == -5 || command.getScope() == event.getChannel().getType().getId()))
+				if(command != null)
 				{
-					try
+					if(command.getScope() == -5 || command.getScope() == event.getChannel().getType().getId())
 					{
-						Log.info("Executing command `" + command.getName() + " from " + Actions.getUserToLog(event.getAuthor()) + ", args: " + args);
-						command.execute(event, args);
+						try
+						{
+							Log.info("Executing command `" + command.getName() + " from " + Actions.getUserToLog(event.getAuthor()) + ", args: " + args);
+							switch(command.execute(event, args))
+							{
+								case NOT_ALLOWED:
+									Actions.replyPrivate(event.getAuthor(), "Vous n'etes par autorisé à utiliser cette commande");
+									break;
+								case FAILED:
+									Actions.replyPrivate(event.getAuthor(), "Une erreur est survenue");
+									break;
+								default:
+								case SUCCESS:
+							}
+						}
+						catch(Exception e)
+						{
+							Log.error("Error executing command " + command, e);
+							Actions.reply(event, "Cette fonctionnalité doit encore être configuré. Veuillez en avertir un modérateur.");
+						}
 					}
-					catch(Exception e)
-					{
-						Log.error("Error executing command " + command, e);
-						Actions.reply(event, "Cette fonctionnalité doit encore être configuré. Veuillez en avertir un modérateur.");
-					}
+					else
+						Actions.replyPrivate(event.getAuthor(), "Cette commande ne s'exécute pas dans ce type de channel");
 				}
+				else
+					Actions.replyPrivate(event.getAuthor(), "Commande inconnue");
 			}
 		}
 		catch(Exception e)
@@ -88,7 +117,7 @@ public class CommandsMessageListener extends ListenerAdapter
 	private Command getCommand(String commandText)
 	{
 		for(Command command : commands)
-			if(command.getCommand().equalsIgnoreCase(commandText))
+			if(command.getCommand().contains(commandText.toLowerCase()))
 				return command;
 		return null;
 	}
