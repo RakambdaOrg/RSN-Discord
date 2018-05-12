@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.commands.*;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
+import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
 import fr.mrcraftcod.gunterdiscord.commands.photo.AddPhotoCommand;
 import fr.mrcraftcod.gunterdiscord.commands.photo.DelPhotoCommand;
 import fr.mrcraftcod.gunterdiscord.commands.photo.PhotoCommand;
@@ -9,8 +10,10 @@ import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import java.awt.*;
 import java.io.InvalidClassException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,7 +29,7 @@ import java.util.stream.Collectors;
  */
 public class CommandsMessageListener extends ListenerAdapter
 {
-	public static final List<Command> commands = Arrays.asList(new AddPhotoCommand(), new DelPhotoCommand(), new PhotoCommand(), new HangmanCommand(), new QuizCommand(), new ReportCommand(), new SetConfigCommand(), new StopCommand(), new CandidatureCommand(), new HelpCommand());
+	public static final List<Command> commands = Arrays.asList(new AddPhotoCommand(), new DelPhotoCommand(), new PhotoCommand(), new HangmanCommand(), new QuizCommand(), new ReportCommand(), new SetConfigCommand(), new StopCommand(), new CandidatureCommand(), new HelpCommand(), new AvatarCommand());
 	
 	public CommandsMessageListener()
 	{
@@ -68,17 +71,42 @@ public class CommandsMessageListener extends ListenerAdapter
 								case SUCCESS:
 							}
 						}
+						catch(NotAllowedException e)
+						{
+							Log.error("Error executing command " + command + " (not allowed)", e);
+							EmbedBuilder builder = new EmbedBuilder();
+							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+							builder.setColor(Color.RED);
+							builder.setTitle("Vous n'avez pas accès à cette commande.");
+							Actions.reply(event, builder.build());
+						}
 						catch(Exception e)
 						{
 							Log.error("Error executing command " + command, e);
-							Actions.reply(event, "Cette fonctionnalité doit encore être configuré. Veuillez en avertir un modérateur.");
+							EmbedBuilder builder = new EmbedBuilder();
+							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+							builder.setColor(Color.RED);
+							builder.setTitle("Cette fonctionnalité doit encore être configuré. Veuillez en avertir un modérateur.");
+							Actions.reply(event, builder.build());
 						}
 					}
 					else
-						Actions.replyPrivate(event.getAuthor(), "Cette commande ne s'exécute pas dans ce type de channel");
+					{
+						EmbedBuilder builder = new EmbedBuilder();
+						builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+						builder.setColor(Color.ORANGE);
+						builder.setTitle("Cette commande ne s'exécute pas dans ce type de channel");
+						Actions.reply(event, builder.build());
+					}
 				}
 				else
-					Actions.replyPrivate(event.getAuthor(), "Commande inconnue");
+				{
+					EmbedBuilder builder = new EmbedBuilder();
+					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+					builder.setColor(Color.ORANGE);
+					builder.setTitle("Commande non trouvée");
+					Actions.reply(event, builder.build());
+				}
 			}
 		}
 		catch(Exception e)

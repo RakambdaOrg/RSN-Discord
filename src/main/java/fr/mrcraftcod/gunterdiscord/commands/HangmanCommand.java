@@ -40,7 +40,7 @@ public class HangmanCommand extends BasicCommand
 	}
 	
 	@Override
-	protected AccessLevel getAccessLevel()
+	public AccessLevel getAccessLevel()
 	{
 		return AccessLevel.ALL;
 	}

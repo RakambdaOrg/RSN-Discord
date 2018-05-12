@@ -16,7 +16,7 @@ import java.util.function.Function;
  */
 public abstract class MapListConfiguration<K, V> extends Configuration
 {
-	private Map<K, List<V>> lastValue = null;
+	private Map<K, ArrayList<V>> lastValue = null;
 	
 	/**
 	 * Get the list of values from the given key.
@@ -117,12 +117,12 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
-	public Map<K, List<V>> getAsMap() throws IllegalArgumentException
+	public Map<K, ArrayList<V>> getAsMap() throws IllegalArgumentException
 	{
 		if(lastValue != null)
 			return lastValue;
 		@SuppressWarnings("unchecked") Class<V> klassV = (Class<V>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
-		Map<K, List<V>> elements = new HashMap<>();
+		Map<K, ArrayList<V>> elements = new HashMap<>();
 		JSONObject map = getObjectMap();
 		if(map == null)
 			Settings.resetMap(this);

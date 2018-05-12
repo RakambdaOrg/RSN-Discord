@@ -1,7 +1,6 @@
-package fr.mrcraftcod.gunterdiscord.settings.configs;
+package fr.mrcraftcod.gunterdiscord.settings;
 
 import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
-import fr.mrcraftcod.gunterdiscord.settings.ListConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -9,12 +8,12 @@ import java.awt.*;
 import java.util.LinkedList;
 
 /**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
+ * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/05/2018.
  *
  * @author Thomas Couchoud
- * @since 2018-04-15
+ * @since 2018-05-12
  */
-public class BannedRegexConfig extends ListConfiguration<String>
+public abstract class MultipleChannelConfig extends ListConfiguration<Long>
 {
 	@SuppressWarnings("Duplicates")
 	@Override
@@ -26,7 +25,7 @@ public class BannedRegexConfig extends ListConfiguration<String>
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Valeurs de " + getName());
-			getAsList().stream().map(Object::toString).forEach(o -> builder.addField("", o, false));
+			getAsList().stream().map(c -> event.getJDA().getTextChannelById(c)).forEach(o -> builder.addField("", "#" + o.getName(), false));
 			Actions.reply(event, builder.build());
 			return SetConfigCommand.ActionResult.NONE;
 		}
@@ -35,18 +34,12 @@ public class BannedRegexConfig extends ListConfiguration<String>
 		switch(action)
 		{
 			case ADD:
-				addValue(args.poll());
+				addValue(event.getMessage().getMentionedChannels().get(0).getIdLong());
 				return SetConfigCommand.ActionResult.OK;
 			case REMOVE:
-				removeValue(args.poll());
+				removeValue(event.getMessage().getMentionedChannels().get(0).getIdLong());
 				return SetConfigCommand.ActionResult.OK;
 		}
 		return SetConfigCommand.ActionResult.ERROR;
-	}
-	
-	@Override
-	public String getName()
-	{
-		return "bannedRegexes";
 	}
 }

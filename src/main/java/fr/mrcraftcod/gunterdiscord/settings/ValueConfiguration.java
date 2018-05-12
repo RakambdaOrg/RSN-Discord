@@ -2,7 +2,9 @@ package fr.mrcraftcod.gunterdiscord.settings;
 
 import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import java.awt.*;
 import java.io.InvalidClassException;
 import java.util.LinkedList;
 
@@ -21,7 +23,12 @@ public abstract class ValueConfiguration extends Configuration
 	{
 		if(action == SetConfigCommand.ChangeConfigType.SHOW)
 		{
-			Actions.reply(event, "Value: " + getObject().toString());
+			EmbedBuilder builder = new EmbedBuilder();
+			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+			builder.setColor(Color.GREEN);
+			builder.setTitle("Valeur de " + getName());
+			builder.addField("", getObject().toString(), false);
+			Actions.reply(event, builder.build());
 			return SetConfigCommand.ActionResult.NONE;
 		}
 		if(args.size() < 1)

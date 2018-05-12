@@ -66,7 +66,7 @@ public class ReportCommand extends BasicCommand
 	}
 	
 	@Override
-	protected AccessLevel getAccessLevel()
+	public AccessLevel getAccessLevel()
 	{
 		return AccessLevel.ALL;
 	}

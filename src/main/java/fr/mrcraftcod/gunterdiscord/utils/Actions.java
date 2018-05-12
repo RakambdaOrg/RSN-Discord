@@ -28,6 +28,7 @@ public class Actions
 	 * @param event The message event.
 	 * @param text  The text to send.
 	 */
+	@SuppressWarnings("Duplicates")
 	public static void reply(MessageReceivedEvent event, String text)
 	{
 		switch(event.getChannelType())
@@ -60,6 +61,7 @@ public class Actions
 	 * @param onDone  The action to do when done.
 	 * @param text    The message to send.
 	 */
+	@SuppressWarnings("Duplicates")
 	public static void sendMessage(TextChannel channel, Consumer<Message> onDone, String text)
 	{
 		if(channel != null)
@@ -363,11 +365,12 @@ public class Actions
 		}
 		return null;
 	}
+	
 	/**
 	 * Send a file to a channel.
 	 *
 	 * @param channel The channel to send to.
-	 * @param file  The file to send.
+	 * @param file    The file to send.
 	 */
 	public static void sendFile(TextChannel channel, File file)
 	{
@@ -389,5 +392,74 @@ public class Actions
 	public static Role getRoleByID(Guild guild, Long role)
 	{
 		return guild.getRoleById(role);
+	}
+	
+	@SuppressWarnings("Duplicates")
+	public static void reply(MessageReceivedEvent event, MessageEmbed embed)
+	{
+		switch(event.getChannelType())
+		{
+			case PRIVATE:
+				sendMessage(event.getPrivateChannel(), embed);
+				break;
+			case TEXT:
+				sendMessage(event.getTextChannel(), embed);
+				break;
+		}
+	}
+	
+	/**
+	 * Send a message to a channel.
+	 *
+	 * @param channel The channel to send to.
+	 * @param onDone  The action to do when done.
+	 * @param embed   The message to send.
+	 */
+	@SuppressWarnings("Duplicates")
+	public static void sendMessage(TextChannel channel, Consumer<Message> onDone, MessageEmbed embed)
+	{
+		if(channel != null)
+		{
+			if(channel.canTalk())
+			{
+				if(onDone != null)
+					channel.sendMessage(embed).queue(onDone);
+				else
+					channel.sendMessage(embed).queue();
+				Log.info("Sent message to " + channel.getName() + " : " + embed);
+			}
+			else
+				Log.error("Access denied to text channel: " + channel.getAsMention());
+		}
+		else
+			Log.warning("Cannot send message to null channel : " + embed);
+	}
+	
+	/**
+	 * Send a message to a channel.
+	 *
+	 * @param channel The channel to send to.
+	 * @param embed   The message to send.
+	 */
+	public static void sendMessage(TextChannel channel, MessageEmbed embed)
+	{
+		sendMessage(channel, null, embed);
+	}
+	
+	/**
+	 * Send a message to a channel.
+	 *
+	 * @param channel The channel to send to.
+	 * @param embed    The message to send.
+	 */
+	public static void sendMessage(PrivateChannel channel, MessageEmbed embed)
+	{
+		if(channel != null)
+		{
+			channel.sendMessage(embed).queue();
+			Log.info("Sent private message to " + getUserToLog(channel.getUser()) + " : " + embed);
+		}
+		else
+			Log.warning("Cannot send private message to null channel : " + embed);
 	}
 }

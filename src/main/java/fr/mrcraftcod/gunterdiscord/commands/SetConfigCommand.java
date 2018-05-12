@@ -7,11 +7,13 @@ import fr.mrcraftcod.gunterdiscord.settings.Configuration;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
-import static fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand.AccessLevel.ADMIN;
+import static fr.mrcraftcod.gunterdiscord.commands.generic.Command.AccessLevel.ADMIN;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
@@ -94,15 +96,39 @@ public class SetConfigCommand extends BasicCommand
 			{
 				ActionResult result = processWithValue(event, configuration, args);
 				if(result == ActionResult.OK)
-					Actions.reply(event, "OK");
+				{
+					EmbedBuilder builder = new EmbedBuilder();
+					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+					builder.setColor(Color.GREEN);
+					builder.setTitle("Valeur modifiée");
+					Actions.reply(event, builder.build());
+				}
 				else if(result == ActionResult.ERROR)
-					Actions.reply(event, "Erreur - Fonctionnement de la commande: %s // %s", getCommandUsage(), configuration.getName());
+				{
+					EmbedBuilder builder = new EmbedBuilder();
+					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+					builder.setColor(Color.RED);
+					builder.setTitle("Erreur lors de la modification");
+					Actions.reply(event, builder.build());
+				}
 			}
 			else
-				Actions.reply(event, "Configuration non trouvée");
+			{
+				EmbedBuilder builder = new EmbedBuilder();
+				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+				builder.setColor(Color.ORANGE);
+				builder.setTitle("Configuration non trouvée");
+				Actions.reply(event, builder.build());
+			}
 		}
 		else
-			Actions.reply(event, "Merci de renseigner un paramètre: %s", getCommandUsage());
+		{
+			EmbedBuilder builder = new EmbedBuilder();
+			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+			builder.setColor(Color.ORANGE);
+			builder.setTitle("Merci de renseigner le nom de la configuration à changer");
+			Actions.reply(event, builder.build());
+		}
 		return CommandResult.SUCCESS;
 	}
 	
@@ -137,7 +163,7 @@ public class SetConfigCommand extends BasicCommand
 	}
 	
 	@Override
-	protected AccessLevel getAccessLevel()
+	public AccessLevel getAccessLevel()
 	{
 		return ADMIN;
 	}

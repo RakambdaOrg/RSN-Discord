@@ -3,8 +3,13 @@ package fr.mrcraftcod.gunterdiscord.settings.configs;
 import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
 import fr.mrcraftcod.gunterdiscord.settings.MapListConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -21,7 +26,13 @@ public class PhotoConfig extends MapListConfiguration<Long, String>
 	{
 		if(action == SetConfigCommand.ChangeConfigType.SHOW)
 		{
-			Actions.reply(event, "Value: " + getAsMap().toString());
+			EmbedBuilder builder = new EmbedBuilder();
+			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+			builder.setColor(Color.GREEN);
+			builder.setTitle("Valeurs de " + getName());
+			Map<Long, ArrayList<String>> map = getAsMap();
+			map.keySet().stream().map(k -> new MessageEmbed.Field(k.toString(), map.get(k).toString(), false)).forEach(builder::addField);
+			Actions.reply(event, builder.build());
 			return SetConfigCommand.ActionResult.NONE;
 		}
 		switch(action)

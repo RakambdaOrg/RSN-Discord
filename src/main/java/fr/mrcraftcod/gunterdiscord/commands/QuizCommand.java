@@ -101,7 +101,7 @@ public class QuizCommand extends BasicCommand
 	}
 	
 	@Override
-	protected AccessLevel getAccessLevel()
+	public AccessLevel getAccessLevel()
 	{
 		return AccessLevel.MODERATOR;
 	}

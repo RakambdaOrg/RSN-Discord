@@ -9,15 +9,16 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Roles;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import java.awt.*;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
@@ -55,7 +56,13 @@ public class PhotoCommand extends BasicCommand
 			{
 				Member member = event.getGuild().getMember(user);
 				if(member == null || !Utilities.hasRole(member, Roles.TROMBINOSCOPE))
-					Actions.reply(event, "L'utilisateur ne fait pas parti du trombinoscope");
+				{
+					EmbedBuilder builder = new EmbedBuilder();
+					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+					builder.setColor(Color.RED);
+					builder.setTitle("L'utilisateur ne fait pas parti du trombinoscope");
+					Actions.reply(event, builder.build());
+				}
 				else if(event.getTextChannel().equals(new PhotoChannelConfig().getTextChannel(event.getJDA())))
 				{
 					List<String> paths = new PhotoConfig().getValue(user.getIdLong());
@@ -77,19 +84,44 @@ public class PhotoCommand extends BasicCommand
 						if(file.exists())
 						{
 							String ID = file.getName().substring(0, file.getName().lastIndexOf("."));
-							Actions.reply(event, "%s a demandé la photo (%d/%d%s) de %s (ID: %s)", event.getAuthor().getAsMention(), rnd + 1, paths.size(), randomGen ? " aléatoire" : "", user.getName(), ID);
+							EmbedBuilder builder = new EmbedBuilder();
+							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+							builder.setColor(Color.GREEN);
+							builder.addField("Sélection", String.format("%d/%d%s", rnd + 1, paths.size(), randomGen ? " aléatoire" : ""), true);
+							builder.addField("Utilisateur", user.getName(), true);
+							builder.addField("ID", ID, true);
+							Actions.reply(event, builder.build());
 							Actions.sendFile(event.getTextChannel(), file);
 						}
 						else
-							Actions.reply(event, "Désolé je ne retrouves plus l'image");
+						{
+							EmbedBuilder builder = new EmbedBuilder();
+							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+							builder.setColor(Color.RED);
+							builder.setTitle("Image non trouvée");
+							Actions.reply(event, builder.build());
+						}
 					}
 					else
-						Actions.reply(event, "Cet utilisateur n'a pas d'image");
+					{
+						EmbedBuilder builder = new EmbedBuilder();
+						builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+						builder.setColor(Color.ORANGE);
+						builder.setTitle("Cet utilisateur n'a pas d'images");
+						Actions.reply(event, builder.build());
+					}
 				}
 			}
 		}
 		else
-			Actions.reply(event, "Participants du trombinoscope: %s", Utilities.getMembersRole(event.getGuild(), Roles.TROMBINOSCOPE).stream().map(u -> u.getUser().getName()).collect(Collectors.joining(", ")));
+		{
+			EmbedBuilder builder = new EmbedBuilder();
+			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+			builder.setColor(Color.GREEN);
+			builder.setTitle("Participants du trombinoscope");
+			Utilities.getMembersRole(event.getGuild(), Roles.TROMBINOSCOPE).stream().map(u -> u.getUser().getName()).forEach(u -> builder.addField("", u, false));
+			Actions.reply(event, builder.build());
+		}
 		return CommandResult.SUCCESS;
 	}
 	
@@ -106,7 +138,7 @@ public class PhotoCommand extends BasicCommand
 	}
 	
 	@Override
-	protected AccessLevel getAccessLevel()
+	public AccessLevel getAccessLevel()
 	{
 		return AccessLevel.ALL;
 	}
