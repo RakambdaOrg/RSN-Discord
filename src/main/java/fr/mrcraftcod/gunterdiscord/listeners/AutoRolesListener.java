@@ -20,7 +20,7 @@ public class AutoRolesListener extends ListenerAdapter
 		super.onGuildMemberJoin(event);
 		try
 		{
-			Actions.giveRole(event.getMember().getUser(), new AutoRolesConfig().getAsList());
+			Actions.giveRole(event.getMember(), new AutoRolesConfig().getAsList());
 		}
 		catch(Exception e)
 		{
