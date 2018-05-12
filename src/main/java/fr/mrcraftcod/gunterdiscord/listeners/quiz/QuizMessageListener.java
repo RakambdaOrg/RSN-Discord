@@ -10,12 +10,9 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -151,22 +148,6 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 						else if(!scores.containsKey(k))
 							scores.put(k, 0);
 					});
-					try(PrintWriter fos = new PrintWriter(System.currentTimeMillis() + ".txt"))
-					{
-						fos.println("Question: " + question.getQuestion());
-						fos.println("Réponses: ");
-						for(int j = 0; j < question.getAnswers().size(); j++)
-							fos.println("\t" + (j == question.getCorrectAnswerIndex() ? "-> " : "") + "\t" + j + " " + question.getAnswers().get(j));
-						fos.println();
-						answers.forEach((k, v) -> {
-							User user = jda.getUserById(k);
-							fos.println(user.getName() + "#" + user.getDiscriminator() + " -> " + v + " : " + question.getAnswers().get(v));
-						});
-					}
-					catch(IOException e)
-					{
-						Log.error("Error writing quiz question file", e);
-					}
 					answers = null;
 					
 					try

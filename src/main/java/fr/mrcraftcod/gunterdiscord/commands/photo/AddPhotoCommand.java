@@ -64,7 +64,7 @@ public class AddPhotoCommand extends BasicCommand
 						String ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
 						File saveFile = new File("./pictures/" + user.getIdLong() + "/", event.getMessage().getCreationTime().toEpochSecond() + ext);
 						saveFile.getParentFile().mkdirs();
-						if(attachment.download(saveFile))
+						if(attachment.download(saveFile) && attachment.getSize() == saveFile.length())
 						{
 							new PhotoConfig().addValue(user.getIdLong(), saveFile.getPath());
 							Actions.giveRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
