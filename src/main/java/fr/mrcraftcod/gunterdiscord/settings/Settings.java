@@ -38,6 +38,7 @@ public class Settings
 			HangmanChannelConfig.class,
 			PhotoConfig.class,
 			CandidChannelConfig.class,
+			AutoRolesConfig.class,
 			};
 	
 	public static void init(Path path) throws IOException

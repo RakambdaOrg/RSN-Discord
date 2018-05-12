@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.Utilities.getRole;
 
 /**
@@ -378,5 +379,15 @@ public class Actions
 		{
 			Log.error("Error sending file " + file.getAbsolutePath(), e);
 		}
+	}
+	
+	public static void giveRole(Member member, List<Long> roles)
+	{
+		giveRole(member.getGuild(), member.getUser(), roles.stream().map(r -> getRoleByID(member.getGuild(), r)).collect(Collectors.toList()));
+	}
+	
+	public static Role getRoleByID(Guild guild, Long role)
+	{
+		return guild.getRoleById(role);
 	}
 }
