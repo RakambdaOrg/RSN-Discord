@@ -4,6 +4,7 @@ import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
 import org.json.JSONArray;
 import java.io.InvalidClassException;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -73,22 +74,36 @@ public abstract class ListConfiguration<T> extends Configuration
 	{
 		if(lastValue != null)
 			return lastValue;
-		@SuppressWarnings("unchecked")
-		Class<T> klass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-		List<T> elements = new LinkedList<>();
-		JSONArray array = getObjectList();
-		if(array == null)
-			Settings.resetList(this);
-		else
-			for(int i = 0; i < array.length(); i++)
-			{
-				Object value = array.get(i);
-				if(klass.isInstance(value))
-					elements.add(klass.cast(value));
-				else
-					throw new InvalidClassException("Config is not a T");
-			}
-		return elements;
+		Type type = getParameterizedType(getClass());
+		if(type instanceof ParameterizedType)
+		{
+			@SuppressWarnings("unchecked")
+			Class<T> klass = (Class<T>) ((ParameterizedType) type).getActualTypeArguments()[0];
+			List<T> elements = new LinkedList<>();
+			JSONArray array = getObjectList();
+			if(array == null)
+				Settings.resetList(this);
+			else
+				for(int i = 0; i < array.length(); i++)
+				{
+					Object value = array.get(i);
+					if(klass.isInstance(value))
+						elements.add(klass.cast(value));
+					else
+						throw new InvalidClassException("Config is not a T");
+				}
+			return elements;
+		}
+		throw new InvalidClassException("Failed to get parameterized type");
+	}
+	
+	private Type getParameterizedType(Class klass)
+	{
+		if(klass == null || klass.equals(Object.class))
+			return klass;
+		if(klass.getGenericSuperclass() instanceof ParameterizedType)
+			return klass.getGenericSuperclass();
+		return getParameterizedType(klass.getSuperclass());
 	}
 	
 	@Override
