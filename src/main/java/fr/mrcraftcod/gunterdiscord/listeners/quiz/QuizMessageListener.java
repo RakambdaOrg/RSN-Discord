@@ -5,7 +5,6 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.QuizChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
-import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Message;
@@ -101,7 +100,7 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 				Log.error("Error sleeping", e);
 			}
 			
-			Actions.sendMessage(quizChannel, "Encore %d secondes! %d", HALF_WAIT_TIME, Utilities.getEmoteMention("cookie"));
+			Actions.sendMessage(quizChannel, "Encore %d secondes!", HALF_WAIT_TIME);
 			
 			try
 			{
