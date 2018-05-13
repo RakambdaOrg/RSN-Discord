@@ -37,7 +37,6 @@ public class Settings
 			QuizChannelConfig.class,
 			HangmanChannelConfig.class,
 			PhotoConfig.class,
-			CandidChannelConfig.class,
 			AutoRolesConfig.class,
 			};
 	
