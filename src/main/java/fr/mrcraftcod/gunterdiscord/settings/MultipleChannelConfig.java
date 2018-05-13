@@ -6,6 +6,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
 import java.util.LinkedList;
+import java.util.Objects;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/05/2018.
@@ -25,7 +26,7 @@ public abstract class MultipleChannelConfig extends ListConfiguration<Long>
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Valeurs de " + getName());
-			getAsList().stream().map(c -> event.getJDA().getTextChannelById(c)).forEach(o -> builder.addField("", "#" + o.getName(), false));
+			getAsList().stream().map(c -> event.getJDA().getTextChannelById(c)).filter(Objects::nonNull).forEach(o -> builder.addField("", "#" + o.getName(), false));
 			Actions.reply(event, builder.build());
 			return SetConfigCommand.ActionResult.NONE;
 		}
