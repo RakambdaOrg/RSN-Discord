@@ -81,8 +81,9 @@ public class HangmanListener extends ListenerAdapter
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setAuthor(member.getUser().getName(), null, member.getUser().getAvatarUrl());
 		builder.setColor(Color.BLUE);
-		builder.setTitle(member.getAsMention() + " a rejoint la partie!");
+		builder.setTitle("Un nouveau joueur a rejoint la partie!");
 		builder.setDescription("Pour les règles regardes le message pinné.");
+		builder.addField("Utilisateur", member.getUser().getAsMention(), false);
 		Actions.sendMessage(new HangmanChannelConfig().getTextChannel(member.getJDA()), builder.build());
 	}
 	

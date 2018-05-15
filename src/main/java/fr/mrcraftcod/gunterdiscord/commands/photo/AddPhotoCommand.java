@@ -73,7 +73,8 @@ public class AddPhotoCommand extends BasicCommand
 							EmbedBuilder builder = new EmbedBuilder();
 							builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 							builder.setColor(Color.GREEN);
-							builder.setTitle("Nouvelle photo pour " + user.getAsMention());
+							builder.setTitle("Nouvelle photo");
+							builder.addField("Utilisateur", user.getAsMention(), true);
 							builder.addField("ID", "" + event.getMessage().getCreationTime().toEpochSecond(), true);
 							Actions.sendMessage(new PhotoChannelConfig().getTextChannel(event.getJDA()), builder.build());
 						}

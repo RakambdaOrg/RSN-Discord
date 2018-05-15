@@ -64,7 +64,8 @@ public class ReportCommand extends BasicCommand
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.ORANGE);
-			builder.setTitle("Nouveau report de " + event.getAuthor().getAsMention());
+			builder.setTitle("Nouveau report");
+			builder.addField("utilisateur", event.getAuthor().getAsMention(), false);
 			builder.addField("Raison", args.stream().collect(Collectors.joining(" ")), false);
 			Actions.sendMessage(channel, builder.build());
 			Actions.replyPrivate(event.getAuthor(), "Votre message a bien été transféré. Merci à vous.");
