@@ -65,8 +65,9 @@ public class ReportCommand extends BasicCommand
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.ORANGE);
 			builder.setTitle("Nouveau report");
-			builder.addField("utilisateur", event.getAuthor().getAsMention(), false);
+			builder.addField("Utilisateur", event.getAuthor().getAsMention(), false);
 			builder.addField("Raison", args.stream().collect(Collectors.joining(" ")), false);
+			builder.setTimestamp(event.getMessage().getCreationTime());
 			Actions.sendMessage(channel, builder.build());
 			Actions.replyPrivate(event.getAuthor(), "Votre message a bien été transféré. Merci à vous.");
 		}
