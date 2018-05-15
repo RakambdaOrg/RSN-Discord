@@ -122,7 +122,7 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 					Question question = questions.pop();
 					List<Character> emotes = new ArrayList<>();
 					EmbedBuilder builder = new EmbedBuilder();
-					builder.setAuthor(quizChannel.getJDA().getSelfUser().getName(), "", quizChannel.getJDA().getSelfUser().getAvatarUrl());
+					builder.setAuthor(quizChannel.getJDA().getSelfUser().getName(), null, quizChannel.getJDA().getSelfUser().getAvatarUrl());
 					builder.setColor(Color.YELLOW);
 					builder.setTitle("Question " + i);
 					builder.setDescription(question.getQuestion());
@@ -183,7 +183,13 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 				if(bests.containsKey(v))
 					bests.get(v).add(jda.getUserById(k).getAsMention());
 			});
-			Actions.sendMessage(quizChannel, "Le jeu est terminé! Voici le top des scores:\n%s", bests.keySet().stream().sorted(Comparator.reverseOrder()).map(v -> "" + (1 + bestsScores.indexOf(v)) + " (" + v + " points): " + bests.get(v).stream().collect(Collectors.joining(", "))).collect(Collectors.joining("\n")));
+			EmbedBuilder builder = new EmbedBuilder();
+			builder.setAuthor(quizChannel.getJDA().getSelfUser().getName(), null, quizChannel.getJDA().getSelfUser().getAvatarUrl());
+			builder.setColor(Color.PINK);
+			builder.setTitle("Le jeu est terminé!");
+			builder.setDescription("Voici le top des scores:");
+			bests.keySet().stream().sorted(Comparator.reverseOrder()).map(v -> new MessageEmbed.Field((1 + bestsScores.indexOf(v)) + " (" + v + " points)", bests.get(v).stream().collect(Collectors.joining(", ")), false)).forEach(builder::addField);
+			Actions.sendMessage(quizChannel, builder.build());
 			setBack();
 		}
 		catch(Exception e)

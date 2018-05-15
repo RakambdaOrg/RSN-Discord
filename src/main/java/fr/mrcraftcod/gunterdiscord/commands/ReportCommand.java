@@ -62,7 +62,7 @@ public class ReportCommand extends BasicCommand
 		else
 		{
 			EmbedBuilder builder = new EmbedBuilder();
-			builder.setAuthor(event.getAuthor().getName(), "", event.getAuthor().getAvatarUrl());
+			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.ORANGE);
 			builder.setTitle("Nouveau report de " + event.getAuthor().getAsMention());
 			builder.addField("Raison", args.stream().collect(Collectors.joining(" ")), false);

@@ -71,7 +71,7 @@ public class AddPhotoCommand extends BasicCommand
 							new PhotoConfig().addValue(user.getIdLong(), saveFile.getPath());
 							Actions.giveRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
 							EmbedBuilder builder = new EmbedBuilder();
-							builder.setAuthor(user.getName(), "", user.getAvatarUrl());
+							builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 							builder.setColor(Color.GREEN);
 							builder.setTitle("Nouvelle photo pour " + user.getAsMention());
 							builder.addField("ID", "" + event.getMessage().getCreationTime().toEpochSecond(), true);
