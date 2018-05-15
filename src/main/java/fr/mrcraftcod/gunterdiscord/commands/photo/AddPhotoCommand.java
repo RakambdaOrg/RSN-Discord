@@ -84,7 +84,7 @@ public class AddPhotoCommand extends BasicCommand
 				}
 			}
 			else
-				Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Veuillez joindre une image");
+				Actions.replyPrivate(event.getAuthor(), "Veuillez joindre une image");
 		return CommandResult.SUCCESS;
 	}
 	

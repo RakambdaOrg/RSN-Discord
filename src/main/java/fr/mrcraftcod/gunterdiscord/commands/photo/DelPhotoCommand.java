@@ -64,7 +64,7 @@ public class DelPhotoCommand extends BasicCommand
 					new PhotoConfig().deleteKeyValue(user.getIdLong(), args.poll());
 					if(new PhotoConfig().getValue(user.getIdLong()).isEmpty())
 						Actions.removeRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
-					Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photos supprimées");
+					Actions.replyPrivate(event.getAuthor(), "Photos supprimées");
 				}
 			}
 		}
@@ -72,7 +72,7 @@ public class DelPhotoCommand extends BasicCommand
 		{
 			new PhotoConfig().deleteKey(event.getAuthor().getIdLong());
 			Actions.removeRole(event.getGuild(), event.getAuthor(), Roles.TROMBINOSCOPE);
-			Actions.sendMessage(event.getAuthor().openPrivateChannel().complete(), "Photos supprimées");
+			Actions.replyPrivate(event.getAuthor(), "Photos supprimées");
 		}
 		return CommandResult.SUCCESS;
 	}
