@@ -3,7 +3,11 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 import fr.mrcraftcod.gunterdiscord.settings.configs.BannedRegexConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.io.InvalidClassException;
 import java.util.regex.Matcher;
@@ -21,13 +25,28 @@ public class BannedRegexesMessageListener extends ListenerAdapter
 	public void onMessageReceived(MessageReceivedEvent event)
 	{
 		super.onMessageReceived(event);
-		String word = isBanned(event.getMessage().getContentRaw());
-		if(word != null)
+		verify(event, event.getMessage());
+	}
+	
+	@Override
+	public void onMessageUpdate(MessageUpdateEvent event)
+	{
+		super.onMessageUpdate(event);
+		verify(event, event.getMessage());
+	}
+	
+	private void verify(GenericMessageEvent event, Message message)
+	{
+		if(!Utilities.isTeam(message.getMember()))
 		{
-			Actions.deleteMessage(event.getMessage());
-			Actions.reply(event, "Attention " + event.getAuthor().getAsMention() + ", l'utilisation de mot prohibés va finir par te bruler le derrière.");
-			Actions.replyPrivate(event.getAuthor(), "Restes poli s'il te plait :). Le mot " + getCensoredWord(word) + " est prohibé.");
-			Log.info("Banned message from user " + Actions.getUserToLog(event.getAuthor()) + " for word `" + word + "` : " + event.getMessage().getContentRaw());
+			String word = isBanned(message.getContentRaw());
+			if(word != null)
+			{
+				Actions.deleteMessage(message);
+				Actions.reply(event, "Attention " + message.getAuthor().getAsMention() + ", l'utilisation de mot prohibés va finir par te bruler le derrière.");
+				Actions.replyPrivate(message.getAuthor(), "Restes poli s'il te plait :). Le mot " + getCensoredWord(word) + " est prohibé.");
+				Log.info("Banned message from user " + Actions.getUserToLog(message.getAuthor()) + " for word `" + word + "` : " + message.getContentRaw());
+			}
 		}
 	}
 	

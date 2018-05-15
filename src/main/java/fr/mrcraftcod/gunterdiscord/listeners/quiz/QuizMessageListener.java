@@ -5,14 +5,18 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.QuizChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -117,11 +121,18 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 				{
 					Question question = questions.pop();
 					List<Character> emotes = new ArrayList<>();
-					Message questionMessage = Actions.getMessage(quizChannel, "Question %d: %s\n%s", i, question.getQuestion(), question.getAnswers().keySet().stream().map(k -> {
+					EmbedBuilder builder = new EmbedBuilder();
+					builder.setAuthor(quizChannel.getJDA().getSelfUser().getName(), "", quizChannel.getJDA().getSelfUser().getAvatarUrl());
+					builder.setColor(Color.YELLOW);
+					builder.setTitle("Question " + i);
+					builder.setDescription(question.getQuestion());
+					question.getAnswers().keySet().stream().map(k -> {
 						char emote = (char) ((int) 'a' + k);
 						emotes.add(emote);
-						return ":regional_indicator_" + emote + ":: " + question.getAnswers().get(k);
-					}).collect(Collectors.joining("\n")));
+						return new MessageEmbed.Field(":regional_indicator_" + emote + ":", question.getAnswers().get(k), false);
+					}).forEach(builder::addField);
+					
+					Message questionMessage = Actions.getMessage(quizChannel, builder.build());
 					answers = new HashMap<>();
 					waitingMsg = questionMessage;
 					emotes.forEach(e -> questionMessage.addReaction(BasicEmotes.getEmote("" + e).getValue()).queue());

@@ -5,8 +5,10 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.ReportChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,10 +58,15 @@ public class ReportCommand extends BasicCommand
 		super.execute(event, args);
 		TextChannel channel = new ReportChannelConfig().getTextChannel(event.getJDA());
 		if(channel == null)
-			Actions.replyPrivate(event.getAuthor(), "Cette fonctionnalité doit encore être configuré. Veuillez en avertir un modérateur.");
+			return CommandResult.FAILED;
 		else
 		{
-			Actions.sendMessage(channel, "@here Nouveau report de %s#%s: %s", event.getAuthor().getAsMention(), event.getAuthor().getDiscriminator(), args.stream().collect(Collectors.joining(" ")));
+			EmbedBuilder builder = new EmbedBuilder();
+			builder.setAuthor(event.getAuthor().getName(), "", event.getAuthor().getAvatarUrl());
+			builder.setColor(Color.ORANGE);
+			builder.setTitle("Nouveau report de " + event.getAuthor().getAsMention());
+			builder.addField("Raison", args.stream().collect(Collectors.joining(" ")), false);
+			Actions.sendMessage(channel, builder.build());
 			Actions.replyPrivate(event.getAuthor(), "Votre message a bien été transféré. Merci à vous.");
 		}
 		return CommandResult.SUCCESS;

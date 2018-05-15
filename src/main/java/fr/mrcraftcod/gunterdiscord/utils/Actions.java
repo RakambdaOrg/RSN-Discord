@@ -2,7 +2,7 @@ package fr.mrcraftcod.gunterdiscord.utils;
 
 import fr.mrcraftcod.gunterdiscord.Main;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,11 +25,23 @@ public class Actions
 	/**
 	 * Reply to a message.
 	 *
+	 * @param event  The message event.
+	 * @param format The message format.
+	 * @param args   The message parameters.
+	 */
+	public static void reply(GenericMessageEvent event, String format, Object... args)
+	{
+		reply(event, String.format(format, args));
+	}
+	
+	/**
+	 * Reply to a message.
+	 *
 	 * @param event The message event.
 	 * @param text  The text to send.
 	 */
 	@SuppressWarnings("Duplicates")
-	public static void reply(MessageReceivedEvent event, String text)
+	public static void reply(GenericMessageEvent event, String text)
 	{
 		switch(event.getChannelType())
 		{
@@ -40,18 +52,6 @@ public class Actions
 				sendMessage(event.getTextChannel(), text);
 				break;
 		}
-	}
-	
-	/**
-	 * Reply to a message.
-	 *
-	 * @param event  The message event.
-	 * @param format The message format.
-	 * @param args   The message parameters.
-	 */
-	public static void reply(MessageReceivedEvent event, String format, Object... args)
-	{
-		reply(event, String.format(format, args));
 	}
 	
 	/**
@@ -367,6 +367,24 @@ public class Actions
 	}
 	
 	/**
+	 * Send a message and gets it.
+	 *
+	 * @param channel the channel to send to.
+	 * @param embed   The message to send.
+	 *
+	 * @return The message sent or null fi there was a problem.
+	 */
+	public static Message getMessage(TextChannel channel, MessageEmbed embed)
+	{
+		if(channel != null)
+		{
+			Log.info("Sent message to " + channel.getName() + " : " + embed);
+			return channel.sendMessage(embed).complete();
+		}
+		return null;
+	}
+	
+	/**
 	 * Send a file to a channel.
 	 *
 	 * @param channel The channel to send to.
@@ -395,7 +413,7 @@ public class Actions
 	}
 	
 	@SuppressWarnings("Duplicates")
-	public static void reply(MessageReceivedEvent event, MessageEmbed embed)
+	public static void reply(GenericMessageEvent event, MessageEmbed embed)
 	{
 		switch(event.getChannelType())
 		{

@@ -88,7 +88,7 @@ public class PhotoCommand extends BasicCommand
 							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 							builder.setColor(Color.GREEN);
 							builder.addField("Sélection", String.format("%d/%d%s", rnd + 1, paths.size(), randomGen ? " aléatoire" : ""), true);
-							builder.addField("Utilisateur", user.getName(), true);
+							builder.addField("Utilisateur", user.getAsMention(), true);
 							builder.addField("ID", ID, true);
 							Actions.reply(event, builder.build());
 							Actions.sendFile(event.getTextChannel(), file);

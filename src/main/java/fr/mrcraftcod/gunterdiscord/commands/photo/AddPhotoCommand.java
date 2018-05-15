@@ -8,10 +8,12 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Roles;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import java.awt.*;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,7 +70,12 @@ public class AddPhotoCommand extends BasicCommand
 						{
 							new PhotoConfig().addValue(user.getIdLong(), saveFile.getPath());
 							Actions.giveRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
-							Actions.sendMessage(new PhotoChannelConfig().getTextChannel(event.getJDA()), "Oyé @here, nous avons une nouvelle photo pour %s! (ID: %d)", user.getAsMention(), event.getMessage().getCreationTime().toEpochSecond());
+							EmbedBuilder builder = new EmbedBuilder();
+							builder.setAuthor(user.getName(), "", user.getAvatarUrl());
+							builder.setColor(Color.GREEN);
+							builder.setTitle("Nouvelle photo pour " + user.getAsMention());
+							builder.addField("ID", "" + event.getMessage().getCreationTime().toEpochSecond(), true);
+							Actions.sendMessage(new PhotoChannelConfig().getTextChannel(event.getJDA()), builder.build());
 						}
 						else
 							Actions.replyPrivate(event.getAuthor(), "L'envoi a échoué");

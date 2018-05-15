@@ -8,16 +8,19 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Roles;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.user.update.UserUpdateOnlineStatusEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.apache.commons.io.IOUtils;
+import java.awt.*;
 import java.io.IOException;
 import java.io.InvalidClassException;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -75,7 +78,12 @@ public class HangmanListener extends ListenerAdapter
 	public static void onPlayerJoin(Member member)
 	{
 		playerCount++;
-		Actions.sendMessage(new HangmanChannelConfig().getTextChannel(member.getJDA()), "%s a rejoint la partie! Pour les règles regardes le message pinné.", member.getUser().getAsMention());
+		EmbedBuilder builder = new EmbedBuilder();
+		builder.setAuthor(member.getUser().getName(), "", member.getUser().getAvatarUrl());
+		builder.setColor(Color.BLUE);
+		builder.setTitle(member.getAsMention() + " a rejoint la partie!");
+		builder.setDescription("Pour les règles regardes le message pinné.");
+		Actions.sendMessage(new HangmanChannelConfig().getTextChannel(member.getJDA()), builder.build());
 	}
 	
 	@SuppressWarnings("Duplicates")
@@ -115,7 +123,7 @@ public class HangmanListener extends ListenerAdapter
 										{
 											if(!badTry.contains(c))
 												badTry.add(c);
-											Actions.sendMessage(event.getTextChannel(), "Oh ché doumache, ça va finir plus vite que prévu.");
+											Actions.reply(event, "Oh ché doumache, ça va finir plus vite que prévu.");
 											displayWord(event.getTextChannel());
 											hangStage++;
 											displayHangman(event.getTextChannel());
@@ -134,7 +142,7 @@ public class HangmanListener extends ListenerAdapter
 											if(realWord.equalsIgnoreCase(hiddenWord.toString()))
 											{
 												stopWaitingMessage = true;
-												Actions.sendMessage(event.getTextChannel(), ":tada: :tada: Bon on va dire qu'on a rien vu ok? :tada: :tada:");
+												Actions.reply(event, ":tada: :tada: Bon on va dire qu'on a rien vu ok? :tada: :tada:");
 												new Thread(() -> delayEndGame(event.getTextChannel())).start();
 											}
 											else
@@ -145,7 +153,7 @@ public class HangmanListener extends ListenerAdapter
 										}
 									}
 									else
-										Actions.sendMessage(event.getTextChannel(), "Faut entrer une lettre mon beau!");
+										Actions.reply(event, "Faut entrer une lettre mon beau!");
 									break;
 								case "leave":
 									playerLeave(event.getMember());
