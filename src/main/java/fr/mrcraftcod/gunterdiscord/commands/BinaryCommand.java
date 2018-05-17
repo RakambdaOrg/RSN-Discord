@@ -26,7 +26,7 @@ public class BinaryCommand extends BasicCommand
 	{
 		super.execute(event, args);
 		if(Objects.equals(args.poll(), "t"))
-			Actions.reply(event, Arrays.stream(args.stream().collect(Collectors.joining(" ")).split("(?<=\\G.{8})")).map(s -> "" + ((char) Integer.parseInt(s, 2))).collect(Collectors.joining()));
+			Actions.reply(event, Arrays.stream(args.stream().collect(Collectors.joining(" ")).replace(" ", "").split("(?<=\\G.{8})")).map(s -> "" + ((char) Integer.parseInt(s, 2))).collect(Collectors.joining()));
 		else
 			Actions.reply(event, args.stream().collect(Collectors.joining(" ")).chars().mapToObj(i -> Integer.toBinaryString((char)i)).collect(Collectors.joining()));
 		return CommandResult.SUCCESS;
