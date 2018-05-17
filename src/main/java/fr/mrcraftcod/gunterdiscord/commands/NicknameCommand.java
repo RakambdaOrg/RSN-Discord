@@ -6,7 +6,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
 import java.util.LinkedList;
@@ -19,12 +19,12 @@ import java.util.List;
  * @since 2018-04-12
  */
 @CallableCommand
-public class AvatarCommand extends BasicCommand
+public class NicknameCommand extends BasicCommand
 {
 	@Override
 	public String getCommandUsage()
 	{
-		return super.getCommandUsage() + "<@utilisateur>";
+		return super.getCommandUsage() + " <@utilisateur> [surnom]";
 	}
 	
 	@Override
@@ -36,19 +36,19 @@ public class AvatarCommand extends BasicCommand
 	@Override
 	public String getName()
 	{
-		return "Avatar";
+		return "Nickname";
 	}
 	
 	@Override
 	public List<String> getCommand()
 	{
-		return List.of("avatar");
+		return List.of("nickname", "nick");
 	}
 	
 	@Override
 	public String getDescription()
 	{
-		return "Obtient l'avatar d'un utilisateur";
+		return "Change le surnom d'un utilisateur";
 	}
 	
 	@Override
@@ -57,12 +57,16 @@ public class AvatarCommand extends BasicCommand
 		super.execute(event, args);
 		if(event.getMessage().getMentionedUsers().size() > 0)
 		{
-			User user = event.getMessage().getMentionedUsers().get(0);
+			args.pop();
+			Member member = event.getGuild().getMember(event.getMessage().getMentionedUsers().get(0));
+			String oldName = member.getNickname();
+			String newName = args.poll();
+			member.getGuild().getController().setNickname(member, newName).complete();
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setColor(Color.GREEN);
-			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
-			builder.addField("URL", user.getAvatarUrl(), true);
-			builder.setImage(user.getAvatarUrl());
+			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+			builder.addField("Ancien surnom", oldName == null ? "*AUCUN*" : oldName, true);
+			builder.addField("Nouveau surnom", newName == null ? "*AUCUN*" : newName, true);
 			Actions.reply(event, builder.build());
 		}
 		else
@@ -79,6 +83,6 @@ public class AvatarCommand extends BasicCommand
 	@Override
 	public AccessLevel getAccessLevel()
 	{
-		return AccessLevel.ALL;
+		return AccessLevel.MODERATOR;
 	}
 }
