@@ -54,6 +54,7 @@ public class NicknameCommand extends BasicCommand
 		return "Change le surnom d'un utilisateur";
 	}
 	
+	@SuppressWarnings("Duplicates")
 	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
@@ -68,27 +69,23 @@ public class NicknameCommand extends BasicCommand
 				newName = null;
 			else
 				newName = args.stream().collect(Collectors.joining(" "));
+			EmbedBuilder builder = new EmbedBuilder();
+			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+			builder.addField("Ancien surnom", oldName == null ? "*AUCUN*" : oldName, true);
+			builder.addField("Nouveau surnom", newName == null ? "*AUCUN*" : newName, true);
+			builder.addField("Utilisateur", member.getAsMention(), true);
 			try
 			{
 				member.getGuild().getController().setNickname(member, newName).complete();
-				EmbedBuilder builder = new EmbedBuilder();
 				builder.setColor(Color.GREEN);
-				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-				builder.addField("Ancien surnom", oldName == null ? "*AUCUN*" : oldName, true);
-				builder.addField("Nouveau surnom", newName == null ? "*AUCUN*" : newName, true);
-				Actions.reply(event, builder.build());
 				Log.info(Actions.getUserToLog(event.getAuthor()) + " renamed " + Actions.getUserToLog(member.getUser()) + " from `" + oldName + "` to `" + newName + "`");
 			}
 			catch(HierarchyException e)
 			{
-				EmbedBuilder builder = new EmbedBuilder();
 				builder.setColor(Color.RED);
-				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.setTitle("T'es cru changer le nom d'un mec plus haut que moi?!");
-				builder.addField("Ancien surnom", oldName == null ? "*AUCUN*" : oldName, true);
-				builder.addField("Nouveau surnom", newName == null ? "*AUCUN*" : newName, true);
-				Actions.reply(event, builder.build());
 			}
+			Actions.reply(event, builder.build());
 		}
 		else
 		{
