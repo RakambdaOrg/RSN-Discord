@@ -189,4 +189,48 @@ public class Settings
 			map.put(key.toString(), array);
 		}
 	}
+	
+	public static <K> void mapMapValue(MapMapConfiguration configuration, K key)
+	{
+		JSONObject map = settings.optJSONObject(configuration.getName());
+		if(map == null)
+			map = new JSONObject();
+		if(!map.has(key.toString()))
+			map.put(key.toString(), new JSONObject());
+		settings.put(configuration.getName(), map);
+	}
+	
+	public static <V, W, K> void mapMapValue(MapMapConfiguration configuration, K key, V value, W insideValue)
+	{
+		JSONObject map = settings.optJSONObject(configuration.getName());
+		if(map == null)
+			map = new JSONObject();
+		if(!map.has(key.toString()))
+			map.put(key.toString(), new JSONObject());
+		map.optJSONObject(key.toString()).put(value.toString(), insideValue);
+		settings.put(configuration.getName(), map);
+	}
+	
+	public static <K> void deleteKey(MapMapConfiguration configuration, K key)
+	{
+		JSONObject map = settings.optJSONObject(configuration.getName());
+		if(map == null)
+			return;
+		map.remove(key.toString());
+	}
+	
+	public static void resetMap(MapMapConfiguration configuration)
+	{
+		settings.put(configuration.getName(), new JSONObject());
+	}
+	
+	public static <V, K> void deleteKey(MapMapConfiguration configuration, K key, V value, BiFunction<Object, V, Boolean> matcher)
+	{
+		JSONObject map = settings.optJSONObject(configuration.getName());
+		if(map == null)
+			return;
+		JSONObject map2 = map.optJSONObject(key.toString());
+		if(map2 != null)
+			map2.remove(value.toString());
+	}
 }

@@ -1,12 +1,13 @@
 package fr.mrcraftcod.gunterdiscord.settings;
 
 import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
-import org.json.JSONArray;
 import org.json.JSONObject;
-import java.lang.reflect.ParameterizedType;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -14,9 +15,9 @@ import java.util.function.Function;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public abstract class MapListConfiguration<K, V> extends Configuration
+public abstract class MapMapConfiguration<K, V, W> extends Configuration
 {
-	private Map<K, ArrayList<V>> lastValue = null;
+	private Map<K, Map<V, W>> lastValue = null;
 	
 	/**
 	 * Get the list of values from the given key.
@@ -25,7 +26,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	 *
 	 * @return The values or null if not found.
 	 */
-	public List<V> getValue(K key)
+	public Map<V, W> getValue(K key)
 	{
 		return getAsMap().get(key);
 	}
@@ -38,20 +39,53 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	protected abstract Function<String, K> getKeyParser();
 	
 	/**
+	 * Get the parser to parse back key string values to W.
+	 *
+	 * @return The parser.
+	 */
+	protected abstract Function<String, V> getKeyValueParser();
+	
+	/**
+	 * Get the parser to parse back string values to W.
+	 *
+	 * @return The parser.
+	 */
+	protected abstract Function<String, W> getValueParser();
+	
+	/**
+	 * Add an empty value to the map list.
+	 *
+	 * @param key   The key to add into.
+	 */
+	public void addValue(K key)
+	{
+		if(lastValue != null && !lastValue.containsKey(key))
+		{
+			lastValue.put(key, new HashMap<>());
+		}
+		Settings.mapMapValue(this, key);
+	}
+	
+	/**
 	 * Add a value to the map list.
 	 *
 	 * @param key   The key to add into.
 	 * @param value The value to add at the key.
 	 */
-	public void addValue(K key, V value)
+	public void addValue(K key, V value, W insideValue)
 	{
-		if(lastValue != null)
+		if(value == null || insideValue == null)
+			addValue(key);
+		else
 		{
-			if(!lastValue.containsKey(key))
-				lastValue.put(key, new ArrayList<>());
-			lastValue.get(key).add(value);
+			if(lastValue != null)
+			{
+				if(!lastValue.containsKey(key))
+					lastValue.put(key, new HashMap<>());
+				lastValue.get(key).put(value, insideValue);
+			}
+			Settings.mapMapValue(this, key, value, insideValue);
 		}
-		Settings.mapListValue(this, key, value);
 	}
 	
 	/**
@@ -121,12 +155,11 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
-	public Map<K, ArrayList<V>> getAsMap() throws IllegalArgumentException
+	public Map<K, Map<V, W>> getAsMap() throws IllegalArgumentException
 	{
 		if(lastValue != null)
 			return lastValue;
-		@SuppressWarnings("unchecked") Class<V> klassV = (Class<V>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
-		Map<K, ArrayList<V>> elements = new HashMap<>();
+		Map<K, Map<V, W>> elements = new HashMap<>();
 		JSONObject map = getObjectMap();
 		if(map == null)
 			Settings.resetMap(this);
@@ -134,11 +167,9 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 			for(String key : map.keySet())
 			{
 				K kKey = getKeyParser().apply(key);
-				if(!elements.containsKey(kKey))
-					elements.put(kKey, new ArrayList<>());
-				JSONArray value = map.optJSONArray(key);
+				JSONObject value = map.optJSONObject(key);
 				if(value != null)
-					value.toList().stream().map(klassV::cast).forEach(o -> elements.get(kKey).add(o));
+					elements.put(kKey, value.keySet().stream().collect(Collectors.toMap(k -> getKeyValueParser().apply(k), k -> getValueParser().apply(value.getString(k)))));
 			}
 		return elements;
 	}
