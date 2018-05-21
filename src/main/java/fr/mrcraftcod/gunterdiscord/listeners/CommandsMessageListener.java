@@ -51,7 +51,8 @@ public class CommandsMessageListener extends ListenerAdapter
 				Actions.deleteMessage(event.getMessage());
 				LinkedList<String> args = new LinkedList<>();
 				args.addAll(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
-				Command command = getCommand(args.pop().substring(new PrefixConfig().getString(event.getGuild(), "g?").length()));
+				String cmdText = args.pop().substring(new PrefixConfig().getString(event.getGuild(), "g?").length());
+				Command command = getCommand(cmdText);
 				if(command != null)
 				{
 					if(command.getScope() == -5 || command.getScope() == event.getChannel().getType().getId())
@@ -105,6 +106,7 @@ public class CommandsMessageListener extends ListenerAdapter
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.ORANGE);
 					builder.setTitle("Commande non trouvée");
+					builder.addField("Commande", cmdText, false);
 					Actions.reply(event, builder.build());
 				}
 			}
