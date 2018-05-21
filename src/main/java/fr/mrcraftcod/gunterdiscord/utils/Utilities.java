@@ -196,4 +196,9 @@ public class Utilities
 	{
 		return roles.stream().map(Utilities::getMembersRole).flatMap(Collection::stream).collect(Collectors.toList());
 	}
+	
+	public static boolean isCreator(Member member)
+	{
+		return member.getUser().getIdLong() == 170119951498084352L;
+	}
 }

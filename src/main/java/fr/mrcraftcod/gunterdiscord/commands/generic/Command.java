@@ -81,7 +81,7 @@ public interface Command
 			return true;
 		if(getAccessLevel() == MODERATOR && Utilities.isModerator(member))
 			return true;
-		return Utilities.isAdmin(member) || member.getUser().getIdLong() == 170119951498084352L;
+		return Utilities.isAdmin(member) || Utilities.isCreator(member);
 	}
 	
 	/**
