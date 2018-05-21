@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord.settings;
 
 import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.settings.configs.*;
+import net.dv8tion.jda.core.entities.Guild;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -40,6 +41,12 @@ public class Settings
 			AutoRolesConfig.class,
 			};
 	
+	public static Object getObject(Guild guild, String name)
+	{
+		JSONObject settings = getServerSettings(guild);
+		return settings.has(name) ? settings.get(name) : null;
+	}
+	
 	public static void init(Path path) throws IOException
 	{
 		Settings.path = path;
@@ -77,24 +84,28 @@ public class Settings
 	{
 	}
 	
-	public static Object getObject(String name)
+	public static JSONObject getServerSettings(Guild guild)
 	{
-		return settings.has(name) ? settings.get(name) : null;
+		String id = "" + guild.getIdLong();
+		if(settings.has(id))
+			return settings.optJSONObject(id);
+		settings.put(id, new JSONObject());
+		return settings.optJSONObject(id);
 	}
 	
-	public static JSONArray getArray(String name)
+	public static JSONArray getArray(Guild guild, String name)
 	{
-		return settings.optJSONArray(name);
+		return getServerSettings(guild).optJSONArray(name);
 	}
 	
-	public static void setValue(ValueConfiguration configuration, Object value)
+	public static void setValue(Guild guild, ValueConfiguration configuration, Object value)
 	{
-		settings.put(configuration.getName(), value);
+		getServerSettings(guild).put(configuration.getName(), value);
 	}
 	
-	public static <T> void addValue(ListConfiguration configuration, T value)
+	public static <T> void addValue(Guild guild, ListConfiguration configuration, T value)
 	{
-		settings.append(configuration.getName(), value);
+		getServerSettings(guild).append(configuration.getName(), value);
 	}
 	
 	public static void resetList(ListConfiguration configuration)
