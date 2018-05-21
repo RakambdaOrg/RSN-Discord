@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.settings;
 
 import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
+import net.dv8tion.jda.core.entities.Guild;
 import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,9 +27,9 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 	 *
 	 * @return The values or null if not found.
 	 */
-	public Map<V, W> getValue(K key)
+	public Map<V, W> getValue(Guild guild, K key)
 	{
-		return getAsMap().get(key);
+		return getAsMap(guild).get(key);
 	}
 	
 	/**
@@ -53,17 +54,43 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 	protected abstract Function<String, W> getValueParser();
 	
 	/**
-	 * Add an empty value to the map list.
+	 * Get the map of this configuration.
 	 *
-	 * @param key   The key to add into.
+	 * @return The map.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
-	public void addValue(K key)
+	public Map<K, Map<V, W>> getAsMap(Guild guild) throws IllegalArgumentException
 	{
-		if(lastValue != null && !lastValue.containsKey(key))
-		{
-			lastValue.put(key, new HashMap<>());
-		}
-		Settings.mapMapValue(this, key);
+		if(lastValue != null)
+			return lastValue;
+		Map<K, Map<V, W>> elements = new HashMap<>();
+		JSONObject map = getObjectMap(guild);
+		if(map == null)
+			Settings.resetMap(guild, this);
+		else
+			for(String key : map.keySet())
+			{
+				K kKey = getKeyParser().apply(key);
+				JSONObject value = map.optJSONObject(key);
+				if(value != null)
+					elements.put(kKey, value.keySet().stream().collect(Collectors.toMap(k -> getKeyValueParser().apply(k), k -> getValueParser().apply(value.getString(k)))));
+			}
+		return elements;
+	}
+	
+	/**
+	 * Get the JSON Object.
+	 *
+	 * @return The JSON object.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a map.
+	 */
+	private JSONObject getObjectMap(Guild guild) throws IllegalArgumentException
+	{
+		if(getType() != ConfigType.MAP)
+			throw new IllegalArgumentException("Not a map config");
+		return Settings.getJSONObject(guild, getName());
 	}
 	
 	/**
@@ -72,10 +99,10 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 	 * @param key   The key to add into.
 	 * @param value The value to add at the key.
 	 */
-	public void addValue(K key, V value, W insideValue)
+	public void addValue(Guild guild, K key, V value, W insideValue)
 	{
 		if(value == null || insideValue == null)
-			addValue(key);
+			addValue(guild, key);
 		else
 		{
 			if(lastValue != null)
@@ -84,38 +111,22 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 					lastValue.put(key, new HashMap<>());
 				lastValue.get(key).put(value, insideValue);
 			}
-			Settings.mapMapValue(this, key, value, insideValue);
+			Settings.mapMapValue(guild, this, key, value, insideValue);
 		}
 	}
 	
 	/**
-	 * Delete the key.
+	 * Add an empty value to the map list.
 	 *
-	 * @param key The key.
+	 * @param key   The key to add into.
 	 */
-	public void deleteKey(K key)
+	public void addValue(Guild guild, K key)
 	{
-		if(lastValue != null)
-			lastValue.remove(key);
-		Settings.deleteKey(this, key);
-	}
-	
-	/**
-	 * Delete a value inside a key.
-	 *
-	 * @param key   The key.
-	 * @param value The value.
-	 */
-	public void deleteKeyValue(K key, V value)
-	{
-		if(value == null)
-			deleteKey(key);
-		else
+		if(lastValue != null && !lastValue.containsKey(key))
 		{
-			if(lastValue != null && lastValue.containsKey(key))
-				lastValue.get(key).remove(value);
-			Settings.deleteKey(this, key, value, getMatcher());
+			lastValue.put(key, new HashMap<>());
 		}
+		Settings.mapMapValue(guild, this, key);
 	}
 	
 	/**
@@ -135,43 +146,33 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 	}
 	
 	/**
-	 * Get the JSON Object.
+	 * Delete a value inside a key.
 	 *
-	 * @return The JSON object.
-	 *
-	 * @throws IllegalArgumentException If this configuration isn't a map.
+	 * @param key   The key.
+	 * @param value The value.
 	 */
-	private JSONObject getObjectMap() throws IllegalArgumentException
+	public void deleteKeyValue(Guild guild, K key, V value)
 	{
-		if(getType() != ConfigType.MAP)
-			throw new IllegalArgumentException("Not a map config");
-		return Settings.getJSONObject(getName());
+		if(value == null)
+			deleteKey(guild, key);
+		else
+		{
+			if(lastValue != null && lastValue.containsKey(key))
+				lastValue.get(key).remove(value);
+			Settings.deleteKey(guild, this, key, value, getMatcher());
+		}
 	}
 	
 	/**
-	 * Get the map of this configuration.
+	 * Delete the key.
 	 *
-	 * @return The map.
-	 *
-	 * @throws IllegalArgumentException If this configuration isn't a map.
+	 * @param key The key.
 	 */
-	public Map<K, Map<V, W>> getAsMap() throws IllegalArgumentException
+	public void deleteKey(Guild guild, K key)
 	{
 		if(lastValue != null)
-			return lastValue;
-		Map<K, Map<V, W>> elements = new HashMap<>();
-		JSONObject map = getObjectMap();
-		if(map == null)
-			Settings.resetMap(this);
-		else
-			for(String key : map.keySet())
-			{
-				K kKey = getKeyParser().apply(key);
-				JSONObject value = map.optJSONObject(key);
-				if(value != null)
-					elements.put(kKey, value.keySet().stream().collect(Collectors.toMap(k -> getKeyValueParser().apply(k), k -> getValueParser().apply(value.getString(k)))));
-			}
-		return elements;
+			lastValue.remove(key);
+		Settings.deleteKey(guild, this, key);
 	}
 	
 	@Override

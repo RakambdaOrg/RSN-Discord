@@ -26,7 +26,7 @@ public abstract class MultipleChannelConfig extends ListConfiguration<Long>
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Valeurs de " + getName());
-			getAsList().stream().map(c -> event.getJDA().getTextChannelById(c)).filter(Objects::nonNull).forEach(o -> builder.addField("", "#" + o.getName(), false));
+			getAsList(event.getGuild()).stream().map(c -> event.getJDA().getTextChannelById(c)).filter(Objects::nonNull).forEach(o -> builder.addField("", "#" + o.getName(), false));
 			Actions.reply(event, builder.build());
 			return SetConfigCommand.ActionResult.NONE;
 		}
@@ -35,10 +35,10 @@ public abstract class MultipleChannelConfig extends ListConfiguration<Long>
 		switch(action)
 		{
 			case ADD:
-				addValue(event.getMessage().getMentionedChannels().get(0).getIdLong());
+				addValue(event.getGuild(), event.getMessage().getMentionedChannels().get(0).getIdLong());
 				return SetConfigCommand.ActionResult.OK;
 			case REMOVE:
-				removeValue(event.getMessage().getMentionedChannels().get(0).getIdLong());
+				removeValue(event.getGuild(), event.getMessage().getMentionedChannels().get(0).getIdLong());
 				return SetConfigCommand.ActionResult.OK;
 		}
 		return SetConfigCommand.ActionResult.ERROR;

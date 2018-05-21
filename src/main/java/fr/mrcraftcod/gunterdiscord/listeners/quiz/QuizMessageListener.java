@@ -83,7 +83,7 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 		{
 			JDA jda = Main.getJDA();
 			jda.getPresence().setGame(Game.playing("The Kwizzz"));
-			TextChannel quizChannel = new QuizChannelConfig().getTextChannel(jda);
+			TextChannel quizChannel = new QuizChannelConfig().getTextChannel(jda.getGuilds().stream().filter(g -> g.getName().contains("Léo")).findFirst().get());
 			
 			if(quizChannel == null)
 			{

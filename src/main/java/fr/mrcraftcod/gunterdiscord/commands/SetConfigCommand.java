@@ -9,6 +9,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
 import java.util.LinkedList;
@@ -74,9 +75,9 @@ public class SetConfigCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommandUsage()
+	public String getCommandUsage(Guild guild)
 	{
-		return super.getCommandUsage() + " <paramètre> <action> [valeur...]";
+		return super.getCommandUsage(guild) + " <paramètre> <action> [valeur...]";
 	}
 	
 	@Override

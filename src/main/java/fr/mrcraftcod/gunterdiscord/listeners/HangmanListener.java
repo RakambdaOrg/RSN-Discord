@@ -9,7 +9,6 @@ import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Roles;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.user.update.UserUpdateOnlineStatusEvent;
@@ -84,7 +83,7 @@ public class HangmanListener extends ListenerAdapter
 		builder.setTitle("Un nouveau joueur a rejoint la partie!");
 		builder.setDescription("Pour les règles regardes le message pinné.");
 		builder.addField("Utilisateur", member.getUser().getAsMention(), false);
-		Actions.sendMessage(new HangmanChannelConfig().getTextChannel(member.getJDA()), builder.build());
+		Actions.sendMessage(new HangmanChannelConfig().getTextChannel(member.getGuild()), builder.build());
 	}
 	
 	@SuppressWarnings("Duplicates")
@@ -94,7 +93,7 @@ public class HangmanListener extends ListenerAdapter
 		super.onMessageReceived(event);
 		try
 		{
-			if(inProgress && event.getChannel().equals(new HangmanChannelConfig().getTextChannel(event.getJDA())))
+			if(inProgress && event.getChannel().equals(new HangmanChannelConfig().getTextChannel(event.getGuild())))
 			{
 				if(isWaitingMsg)
 				{
@@ -105,9 +104,9 @@ public class HangmanListener extends ListenerAdapter
 						isWaitingMsg = false;
 						LinkedList<String> parts = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 						String command = parts.poll();
-						if(command != null && command.startsWith("h" + new PrefixConfig().getString()))
+						if(command != null && command.startsWith("h" + new PrefixConfig().getString(event.getGuild())))
 						{
-							command = command.substring(("h" + new PrefixConfig().getString()).length());
+							command = command.substring(("h" + new PrefixConfig().getString(event.getGuild())).length());
 							switch(command)
 							{
 								case "lettre":
@@ -135,7 +134,7 @@ public class HangmanListener extends ListenerAdapter
 												new Thread(() -> delayEndGame(event.getTextChannel())).start();
 											}
 											else
-												pickRandomUser(event.getJDA());
+												pickRandomUser(event.getGuild());
 										}
 										else
 										{
@@ -149,7 +148,7 @@ public class HangmanListener extends ListenerAdapter
 											else
 											{
 												displayHangman(event.getTextChannel());
-												pickRandomUser(event.getJDA());
+												pickRandomUser(event.getGuild());
 											}
 										}
 									}
@@ -161,7 +160,7 @@ public class HangmanListener extends ListenerAdapter
 									break;
 								case "skip":
 									if(event.getMember().getUser().getIdLong() == waitingUserID)
-										pickRandomUser(event.getJDA());
+										pickRandomUser(event.getGuild());
 									break;
 								case "mot":
 									displayWord(event.getTextChannel());
@@ -172,7 +171,7 @@ public class HangmanListener extends ListenerAdapter
 					}
 					if(!electedIsDoingSomething && System.currentTimeMillis() - waitingTime > (MAX_WAIT_TIME * 1000))
 					{
-						pickRandomUser(event.getJDA());
+						pickRandomUser(event.getGuild());
 						displayWord(event.getTextChannel());
 					}
 				}
@@ -253,18 +252,30 @@ public class HangmanListener extends ListenerAdapter
 	}
 	
 	/**
-	 * Make a player leave.
+	 * Pick a random user to say a letter.
 	 *
-	 * @param member The member leaving.
+	 * @param guild The guild.
 	 */
-	private void playerLeave(Member member)
+	private static void pickRandomUser(Guild guild)
 	{
-		playerCount--;
-		Actions.removeRole(member, role);
-		if(playerCount < 1)
+		TextChannel channel = new HangmanChannelConfig().getTextChannel(guild);
+		List<Member> members = Utilities.getMembersRole(role);
+		if(members.size() > 1)
+			members = members.stream().filter(member -> member.getUser().getIdLong() != waitingUserID).collect(Collectors.toList());
+		if(members.size() > 0)
 		{
-			removeUsers(new HangmanChannelConfig().getTextChannel(member.getJDA()));
-			stop();
+			Member member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
+			waitingUserID = member.getUser().getIdLong();
+			isWaitingMsg = true;
+			waitingTime = System.currentTimeMillis();
+			try
+			{
+				Actions.sendMessage(channel, "L'élu est %s, c'est a lui d'indiquer la lettre que vous avez choisit grâce à la commande %c%slettre <lettre>\n", member.getAsMention(), 'h', new PrefixConfig().getString(guild, "g?"));
+			}
+			catch(InvalidClassException | IllegalArgumentException e)
+			{
+				Log.error("Error getting prefix", e);
+			}
 		}
 	}
 	
@@ -334,30 +345,18 @@ public class HangmanListener extends ListenerAdapter
 	}
 	
 	/**
-	 * Pick a random user to say a letter.
+	 * Make a player leave.
 	 *
-	 * @param jda The JDA.
+	 * @param member The member leaving.
 	 */
-	private static void pickRandomUser(JDA jda)
+	private void playerLeave(Member member)
 	{
-		TextChannel channel = new HangmanChannelConfig().getTextChannel(jda);
-		List<Member> members = Utilities.getMembersRole(role);
-		if(members.size() > 1)
-			members = members.stream().filter(member -> member.getUser().getIdLong() != waitingUserID).collect(Collectors.toList());
-		if(members.size() > 0)
+		playerCount--;
+		Actions.removeRole(member, role);
+		if(playerCount < 1)
 		{
-			Member member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
-			waitingUserID = member.getUser().getIdLong();
-			isWaitingMsg = true;
-			waitingTime = System.currentTimeMillis();
-			try
-			{
-				Actions.sendMessage(channel, "L'élu est %s, c'est a lui d'indiquer la lettre que vous avez choisit grâce à la commande %c%slettre <lettre>\n", member.getAsMention(), 'h', new PrefixConfig().getString("g?"));
-			}
-			catch(InvalidClassException | IllegalArgumentException e)
-			{
-				Log.error("Error getting prefix", e);
-			}
+			removeUsers(new HangmanChannelConfig().getTextChannel(member.getGuild()));
+			stop();
 		}
 	}
 	
@@ -379,8 +378,8 @@ public class HangmanListener extends ListenerAdapter
 		badTry = new ArrayList<>();
 		try
 		{
-			String prefix = new PrefixConfig().getString();
-			TextChannel channel = new HangmanChannelConfig().getTextChannel(guild.getJDA());
+			String prefix = new PrefixConfig().getString(guild);
+			TextChannel channel = new HangmanChannelConfig().getTextChannel(guild);
 			Actions.sendMessage(channel, Actions.PIN_MESSAGE, "Salut à tous! Si vous êtes la c'est que vous êtes chaud pour un petit pendu. Mais j'espère que vous êtes bons, sinon c'est vous qui allez finir pendu (au bout de %d fautes)!\n\nLe principe est simple. Je vais commencer par choisir un mot dans ma petite tête. Ensuite je vous l'écrirais avec les lettres cachées. Seul %d lettres seront apparentes au debut. Une fois cela fait, je désignerai une personne afin de me dire la lettre que vous voulez essayer, à vous de vous entendre afin de faire les bons choix.\n\nSi une personne ne déclare pas de choix en %ds, écrivez un petit mot et je referai tourner la roue pour désigner un représentant. Si vous désirez quitter, utilisez `h%sleave`. Si vous voulez passer votre tour utilisez `h%sskip`. Pour avoir des infos sur le mot actuel utilisez `" + "h%smot`.\n\n\nAlley, laissez moi réfléchir!", MAX_HANG_LEVEL, DISCOVER_START, MAX_WAIT_TIME, prefix, prefix, prefix);
 			
 			new Thread(() -> {
@@ -401,7 +400,7 @@ public class HangmanListener extends ListenerAdapter
 						discoverLetter((char) ((int) chars.get(i)));
 				Actions.sendMessage(channel, "Le mot que j'ai choisi est: %s", hiddenWord);
 				displayHangman(channel);
-				pickRandomUser(channel.getJDA());
+				pickRandomUser(channel.getGuild());
 			}).start();
 		}
 		catch(InvalidClassException | NoValueDefinedException e)

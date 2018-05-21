@@ -22,7 +22,7 @@ import java.util.function.Function;
 public class PhotoConfig extends MapListConfiguration<Long, String>
 {
 	@Override
-	public SetConfigCommand.ActionResult handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args) throws Exception
+	public SetConfigCommand.ActionResult handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args)
 	{
 		if(action == SetConfigCommand.ChangeConfigType.SHOW)
 		{
@@ -30,7 +30,7 @@ public class PhotoConfig extends MapListConfiguration<Long, String>
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Valeurs de " + getName());
-			Map<Long, ArrayList<String>> map = getAsMap();
+			Map<Long, ArrayList<String>> map = getAsMap(event.getGuild());
 			map.keySet().stream().map(k -> new MessageEmbed.Field(k.toString(), map.get(k).toString(), false)).forEach(builder::addField);
 			Actions.reply(event, builder.build());
 			return SetConfigCommand.ActionResult.NONE;
@@ -40,12 +40,12 @@ public class PhotoConfig extends MapListConfiguration<Long, String>
 			case ADD:
 				if(args.size() < 2)
 					return SetConfigCommand.ActionResult.ERROR;
-				addValue(Long.parseLong(args.poll()), args.poll());
+				addValue(event.getGuild(), Long.parseLong(args.poll()), args.poll());
 				return SetConfigCommand.ActionResult.OK;
 			case REMOVE:
 				if(args.size() < 1)
 					return SetConfigCommand.ActionResult.ERROR;
-				deleteKey(Long.parseLong(args.poll()));
+				deleteKey(event.getGuild(), Long.parseLong(args.poll()));
 				return SetConfigCommand.ActionResult.OK;
 		}
 		return SetConfigCommand.ActionResult.ERROR;

@@ -22,7 +22,7 @@ public class OnlyImagesMessageListener extends ListenerAdapter
 		super.onMessageReceived(event);
 		try
 		{
-			if(new OnlyImagesConfig().getAsList().contains(event.getMessage().getChannel().getIdLong()) && event.getMessage().getAttachments().size() < 1)
+			if(new OnlyImagesConfig().getAsList(event.getGuild()).contains(event.getMessage().getChannel().getIdLong()) && event.getMessage().getAttachments().size() < 1)
 			{
 				if(!Utilities.isTeam(event.getMember()))
 				{

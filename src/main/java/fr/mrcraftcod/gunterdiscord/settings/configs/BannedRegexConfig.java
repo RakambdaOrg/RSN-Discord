@@ -26,7 +26,7 @@ public class BannedRegexConfig extends ListConfiguration<String>
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Valeurs de " + getName());
-			getAsList().stream().map(Object::toString).forEach(o -> builder.addField("", o, false));
+			getAsList(event.getGuild()).stream().map(Object::toString).forEach(o -> builder.addField("", o, false));
 			Actions.reply(event, builder.build());
 			return SetConfigCommand.ActionResult.NONE;
 		}
@@ -35,10 +35,10 @@ public class BannedRegexConfig extends ListConfiguration<String>
 		switch(action)
 		{
 			case ADD:
-				addValue(args.poll());
+				addValue(event.getGuild(), args.poll());
 				return SetConfigCommand.ActionResult.OK;
 			case REMOVE:
-				removeValue(args.poll());
+				removeValue(event.getGuild(), args.poll());
 				return SetConfigCommand.ActionResult.OK;
 		}
 		return SetConfigCommand.ActionResult.ERROR;

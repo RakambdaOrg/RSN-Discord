@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.settings;
 import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
 import java.io.InvalidClassException;
@@ -19,7 +20,7 @@ public abstract class ValueConfiguration extends Configuration
 	private Object lastValue = null;
 	
 	@Override
-	public SetConfigCommand.ActionResult handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args) throws Exception
+	public SetConfigCommand.ActionResult handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args)
 	{
 		if(action == SetConfigCommand.ChangeConfigType.SHOW)
 		{
@@ -27,7 +28,7 @@ public abstract class ValueConfiguration extends Configuration
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Valeur de " + getName());
-			builder.addField("", getObject().toString(), false);
+			builder.addField("", getObject(event.getGuild()).toString(), false);
 			Actions.reply(event, builder.build());
 			return SetConfigCommand.ActionResult.NONE;
 		}
@@ -36,7 +37,7 @@ public abstract class ValueConfiguration extends Configuration
 		switch(action)
 		{
 			case SET:
-				setValue(args.poll());
+				setValue(event.getGuild(), args.poll());
 				return SetConfigCommand.ActionResult.OK;
 		}
 		return SetConfigCommand.ActionResult.OK;
@@ -55,11 +56,22 @@ public abstract class ValueConfiguration extends Configuration
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a value.
 	 */
-	protected Object getObject() throws IllegalArgumentException
+	protected Object getObject(Guild guild) throws IllegalArgumentException
 	{
 		if(getType() != ConfigType.VALUE)
 			throw new IllegalArgumentException("Not a value config");
-		return Settings.getObject(getName());
+		return Settings.getObject(guild, getName());
+	}
+	
+	/**
+	 * Set the value.
+	 *
+	 * @param value the value to set.
+	 */
+	public void setValue(Guild guild, Object value)
+	{
+		lastValue = value;
+		Settings.setValue(guild, this, value);
 	}
 	
 	/**
@@ -72,9 +84,9 @@ public abstract class ValueConfiguration extends Configuration
 	 * @throws IllegalArgumentException If this configuration isn't a value.
 	 * @throws InvalidClassException    If this configuration isn't a string.
 	 */
-	public String getString(String defaultValue) throws InvalidClassException, IllegalArgumentException
+	public String getString(Guild guild, String defaultValue) throws InvalidClassException, IllegalArgumentException
 	{
-		Object value = lastValue == null ? getObject() : lastValue;
+		Object value = lastValue == null ? getObject(guild) : lastValue;
 		if(value == null)
 			return defaultValue;
 		if(value instanceof String)
@@ -91,9 +103,9 @@ public abstract class ValueConfiguration extends Configuration
 	 * @throws InvalidClassException    If this configuration isn't a string.
 	 * @throws NoValueDefinedException  If no value exists for this config.
 	 */
-	public long getLong() throws InvalidClassException, IllegalArgumentException, NoValueDefinedException
+	public long getLong(Guild guild) throws InvalidClassException, IllegalArgumentException, NoValueDefinedException
 	{
-		Object value = lastValue == null ? getObject() : lastValue;
+		Object value = lastValue == null ? getObject(guild) : lastValue;
 		if(value == null)
 			throw new NoValueDefinedException(this);
 		if(value instanceof Long)
@@ -110,25 +122,14 @@ public abstract class ValueConfiguration extends Configuration
 	 * @throws InvalidClassException    If this configuration isn't a string.
 	 * @throws NoValueDefinedException  If no value exists for this config.
 	 */
-	public String getString() throws InvalidClassException, IllegalArgumentException, NoValueDefinedException
+	public String getString(Guild guild) throws InvalidClassException, IllegalArgumentException, NoValueDefinedException
 	{
-		Object value = lastValue == null ? getObject() : lastValue;
+		Object value = lastValue == null ? getObject(guild) : lastValue;
 		if(value == null)
 			throw new NoValueDefinedException(this);
 		if(value instanceof String)
 			return (String) value;
 		throw new InvalidClassException("Config is not a string: " + value.getClass().getSimpleName());
-	}
-	
-	/**
-	 * Set the value.
-	 *
-	 * @param value the value to set.
-	 */
-	public void setValue(Object value)
-	{
-		lastValue = value;
-		Settings.setValue(this, value);
 	}
 	
 	@Override

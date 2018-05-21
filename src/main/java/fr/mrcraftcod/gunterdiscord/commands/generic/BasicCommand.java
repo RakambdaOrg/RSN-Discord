@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord.commands.generic;
 
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.io.InvalidClassException;
 import java.util.LinkedList;
@@ -30,11 +31,11 @@ public abstract class BasicCommand implements Command
 	}
 	
 	@Override
-	public String getCommandUsage()
+	public String getCommandUsage(Guild guild)
 	{
 		try
 		{
-			return new PrefixConfig().getString() + getCommand().get(0);
+			return new PrefixConfig().getString(guild) + getCommand().get(0);
 		}
 		catch(InvalidClassException | NoValueDefinedException e)
 		{

@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.settings;
 
 import fr.mrcraftcod.gunterdiscord.utils.Log;
-import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import java.io.InvalidClassException;
 
@@ -14,11 +14,11 @@ import java.io.InvalidClassException;
 public abstract class SingleChannelConfiguration extends ValueConfiguration
 {
 	@Override
-	public void setValue(Object value)
+	public void setValue(Guild guild, Object value)
 	{
 		try
 		{
-			super.setValue(Long.parseLong(value.toString()));
+			super.setValue(guild, Long.parseLong(value.toString()));
 		}
 		catch(Exception e)
 		{
@@ -33,11 +33,11 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration
 	 *
 	 * @return The text channel or null if not found.
 	 */
-	public TextChannel getTextChannel(JDA jda)
+	public TextChannel getTextChannel(Guild guild)
 	{
 		try
 		{
-			return jda.getTextChannelById(getLong());
+			return guild.getJDA().getTextChannelById(getLong(guild));
 		}
 		catch(InvalidClassException | NoValueDefinedException e)
 		{

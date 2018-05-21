@@ -11,6 +11,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Roles;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -63,9 +64,9 @@ public class PhotoCommand extends BasicCommand
 					builder.setTitle("L'utilisateur ne fait pas parti du trombinoscope");
 					Actions.reply(event, builder.build());
 				}
-				else if(event.getTextChannel().equals(new PhotoChannelConfig().getTextChannel(event.getJDA())))
+				else if(event.getTextChannel().equals(new PhotoChannelConfig().getTextChannel(event.getGuild())))
 				{
-					List<String> paths = new PhotoConfig().getValue(user.getIdLong());
+					List<String> paths = new PhotoConfig().getValue(event.getGuild(), user.getIdLong());
 					if(paths != null && !paths.isEmpty())
 					{
 						boolean randomGen = true;
@@ -126,9 +127,9 @@ public class PhotoCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommandUsage()
+	public String getCommandUsage(Guild guild)
 	{
-		return super.getCommandUsage() + " [utilisateur] [numéro]";
+		return super.getCommandUsage(guild) + " [utilisateur] [numéro]";
 	}
 	
 	@Override

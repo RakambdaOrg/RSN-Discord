@@ -4,6 +4,7 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.BannedRegexConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -39,7 +40,7 @@ public class BannedRegexesMessageListener extends ListenerAdapter
 	{
 		if(!Utilities.isTeam(message.getMember()))
 		{
-			String word = isBanned(message.getContentRaw());
+			String word = isBanned(event.getGuild(), message.getContentRaw());
 			if(word != null)
 			{
 				Actions.deleteMessage(message);
@@ -75,12 +76,12 @@ public class BannedRegexesMessageListener extends ListenerAdapter
 	 *
 	 * @return The banned word found.
 	 */
-	private String isBanned(String text)
+	private String isBanned(Guild guild, String text)
 	{
 		text = text.toLowerCase();
 		try
 		{
-			for(String regex : new BannedRegexConfig().getAsList())
+			for(String regex : new BannedRegexConfig().getAsList(guild))
 			{
 				Matcher matcher = Pattern.compile(regex).matcher(text);
 				if(matcher.matches())

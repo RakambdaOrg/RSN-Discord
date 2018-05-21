@@ -31,7 +31,7 @@ public class Utilities
 	{
 		try
 		{
-			return Utilities.hasRoleIDs(member, new ModoRolesConfig().getAsList());
+			return Utilities.hasRoleIDs(member, new ModoRolesConfig().getAsList(member.getGuild()));
 		}
 		catch(InvalidClassException e)
 		{

@@ -5,6 +5,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,9 +21,9 @@ import java.util.stream.Collectors;
 public class SayCommand extends BasicCommand
 {
 	@Override
-	public String getCommandUsage()
+	public String getCommandUsage(Guild guild)
 	{
-		return super.getCommandUsage() + " <message>";
+		return super.getCommandUsage(guild) + " <message>";
 	}
 	
 	@Override

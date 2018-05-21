@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.settings;
 
 import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
+import net.dv8tion.jda.core.entities.Guild;
 import org.json.JSONArray;
 import java.io.InvalidClassException;
 import java.lang.reflect.ParameterizedType;
@@ -23,11 +24,11 @@ public abstract class ListConfiguration<T> extends Configuration
 	 *
 	 * @param value The value to add.
 	 */
-	public void addValue(T value)
+	public void addValue(Guild guild, T value)
 	{
 		if(lastValue != null)
 			lastValue.add(value);
-		Settings.addValue(this, value);
+		Settings.addValue(guild, this, value);
 	}
 	
 	/**
@@ -35,31 +36,17 @@ public abstract class ListConfiguration<T> extends Configuration
 	 *
 	 * @param value The value to remove.
 	 */
-	public void removeValue(T value)
+	public void removeValue(Guild guild, T value)
 	{
 		if(lastValue != null)
 			lastValue.remove(value);
-		Settings.removeValue(this, value);
+		Settings.removeValue(guild, this, value);
 	}
 	
 	@Override
 	public ConfigType getType()
 	{
 		return ConfigType.LIST;
-	}
-	
-	/**
-	 * Get the JSON array.
-	 *
-	 * @return The JSON array.
-	 *
-	 * @throws IllegalArgumentException If the configuration isn't a list.
-	 */
-	private JSONArray getObjectList() throws IllegalArgumentException
-	{
-		if(getType() != ConfigType.LIST)
-			throw new IllegalArgumentException("Not a list config");
-		return Settings.getArray(getName());
 	}
 	
 	/**
@@ -70,7 +57,7 @@ public abstract class ListConfiguration<T> extends Configuration
 	 * @throws IllegalArgumentException If the configuration isn't a list.
 	 * @throws InvalidClassException    If the values are not of type T.
 	 */
-	public List<T> getAsList() throws IllegalArgumentException, InvalidClassException
+	public List<T> getAsList(Guild guild) throws IllegalArgumentException, InvalidClassException
 	{
 		if(lastValue != null)
 			return lastValue;
@@ -80,9 +67,9 @@ public abstract class ListConfiguration<T> extends Configuration
 			@SuppressWarnings("unchecked")
 			Class<T> klass = (Class<T>) ((ParameterizedType) type).getActualTypeArguments()[0];
 			List<T> elements = new LinkedList<>();
-			JSONArray array = getObjectList();
+			JSONArray array = getObjectList(guild);
 			if(array == null)
-				Settings.resetList(this);
+				Settings.resetList(guild, this);
 			else
 				for(int i = 0; i < array.length(); i++)
 				{
@@ -95,6 +82,20 @@ public abstract class ListConfiguration<T> extends Configuration
 			return elements;
 		}
 		throw new InvalidClassException("Failed to get parameterized type");
+	}
+	
+	/**
+	 * Get the JSON array.
+	 *
+	 * @return The JSON array.
+	 *
+	 * @throws IllegalArgumentException If the configuration isn't a list.
+	 */
+	private JSONArray getObjectList(Guild guild) throws IllegalArgumentException
+	{
+		if(getType() != ConfigType.LIST)
+			throw new IllegalArgumentException("Not a list config");
+		return Settings.getArray(guild, getName());
 	}
 	
 	private Type getParameterizedType(Class klass)

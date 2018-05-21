@@ -2,23 +2,17 @@ package fr.mrcraftcod.gunterdiscord;
 
 import fr.mrcraftcod.gunterdiscord.listeners.*;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizMessageListener;
-import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
-import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.LoggerFormatter;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
-import java.io.InvalidClassException;
 import java.nio.file.Paths;
-import java.time.OffsetDateTime;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 
@@ -69,30 +63,7 @@ public class Main
 			jda.addEventListener(new AutoRolesListener());
 			jda.addEventListener(new IdeaChannelMessageListener());
 			jda.setAutoReconnect(true);
-			jda.getPresence().setGame(Game.playing("Le chalumeau"));
-			
-			Thread t = new Thread(() -> {
-				try
-				{
-					TextChannel trombiChannel = jda.getTextChannelById(new PhotoChannelConfig().getLong());
-					//noinspection InfiniteLoopStatement
-					while(true)
-					{
-						for(Message message : trombiChannel.getIterableHistory().cache(false))
-							if(!message.isPinned())
-								if(message.getCreationTime().isBefore(OffsetDateTime.now().minusDays(1)))
-									message.delete().queue();
-						
-						Thread.sleep(WAIT_TIME * 1000);
-					}
-				}
-				catch(InvalidClassException | NoValueDefinedException | InterruptedException e)
-				{
-					Log.error("Error getting photo channel", e);
-				}
-			});
-			t.setDaemon(true);
-			t.start();
+			jda.getPresence().setGame(Game.playing("g?help pour l'aide"));
 		}
 		catch(IOException e)
 		{

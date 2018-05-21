@@ -6,6 +6,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.ReportChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
@@ -41,22 +42,10 @@ public class ReportCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommandUsage()
-	{
-		return super.getCommandUsage() + " <raison>";
-	}
-	
-	@Override
-	public String getDescription()
-	{
-		return "Envoi un message aux modérateurs";
-	}
-	
-	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
-		TextChannel channel = new ReportChannelConfig().getTextChannel(event.getJDA());
+		TextChannel channel = new ReportChannelConfig().getTextChannel(event.getGuild());
 		if(channel == null)
 			return CommandResult.FAILED;
 		else
@@ -72,6 +61,18 @@ public class ReportCommand extends BasicCommand
 			Actions.replyPrivate(event.getAuthor(), "Votre message a bien été transféré. Merci à vous.");
 		}
 		return CommandResult.SUCCESS;
+	}
+	
+	@Override
+	public String getDescription()
+	{
+		return "Envoi un message aux modérateurs";
+	}
+	
+	@Override
+	public String getCommandUsage(Guild guild)
+	{
+		return super.getCommandUsage(guild) + " <raison>";
 	}
 	
 	@Override

@@ -8,6 +8,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Roles;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
@@ -51,8 +52,8 @@ public class DelPhotoCommand extends BasicCommand
 				{
 					if(Utilities.isModerator(event.getMember()) || Utilities.isAdmin(event.getMember()))
 					{
-						new PhotoConfig().deleteKeyValue(user.getIdLong(), args.poll());
-						if(new PhotoConfig().getValue(user.getIdLong()).isEmpty())
+						new PhotoConfig().deleteKeyValue(event.getGuild(), user.getIdLong(), args.poll());
+						if(new PhotoConfig().getValue(event.getGuild(), user.getIdLong()).isEmpty())
 							Actions.removeRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
 						Actions.replyPrivate(event.getAuthor(), "Photos de %s supprimées", user.getAsMention());
 					}
@@ -61,8 +62,8 @@ public class DelPhotoCommand extends BasicCommand
 				}
 				else
 				{
-					new PhotoConfig().deleteKeyValue(user.getIdLong(), args.poll());
-					if(new PhotoConfig().getValue(user.getIdLong()).isEmpty())
+					new PhotoConfig().deleteKeyValue(event.getGuild(), user.getIdLong(), args.poll());
+					if(new PhotoConfig().getValue(event.getGuild(), user.getIdLong()).isEmpty())
 						Actions.removeRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
 					Actions.replyPrivate(event.getAuthor(), "Photos supprimées");
 				}
@@ -70,7 +71,7 @@ public class DelPhotoCommand extends BasicCommand
 		}
 		else
 		{
-			new PhotoConfig().deleteKey(event.getAuthor().getIdLong());
+			new PhotoConfig().deleteKey(event.getGuild(), event.getAuthor().getIdLong());
 			Actions.removeRole(event.getGuild(), event.getAuthor(), Roles.TROMBINOSCOPE);
 			Actions.replyPrivate(event.getAuthor(), "Photos supprimées");
 		}
@@ -78,9 +79,9 @@ public class DelPhotoCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommandUsage()
+	public String getCommandUsage(Guild guild)
 	{
-		return super.getCommandUsage() + " [utilisateur] [ID]";
+		return super.getCommandUsage(guild) + " [utilisateur] [ID]";
 	}
 	
 	@Override

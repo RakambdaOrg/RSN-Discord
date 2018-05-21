@@ -108,79 +108,79 @@ public class Settings
 		getServerSettings(guild).append(configuration.getName(), value);
 	}
 	
-	public static void resetList(ListConfiguration configuration)
+	public static void resetList(Guild guild, ListConfiguration configuration)
 	{
-		settings.put(configuration.getName(), new JSONArray());
+		getServerSettings(guild).put(configuration.getName(), new JSONArray());
 	}
 	
-	public static <T> void removeValue(ListConfiguration configuration, T value)
+	public static <T> void removeValue(Guild guild, ListConfiguration configuration, T value)
 	{
-		JSONArray array = getArray(configuration.getName());
+		JSONArray array = getArray(guild, configuration.getName());
 		if(array == null)
 			return;
 		int index = array.toList().indexOf(value);
 		if(index != -1)
 			array.remove(index);
-		settings.put(configuration.getName(), array);
+		getServerSettings(guild).put(configuration.getName(), array);
 	}
 	
-	public static <V, K> void mapValue(MapConfiguration configuration, K key, V value)
+	public static <V, K> void mapValue(Guild guild, MapConfiguration configuration, K key, V value)
 	{
-		JSONObject map = settings.optJSONObject(configuration.getName());
+		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null)
 			map = new JSONObject();
 		map.put(key.toString(), value);
-		settings.put(configuration.getName(), map);
+		getServerSettings(guild).put(configuration.getName(), map);
 	}
 	
-	public static <K> void deleteKey(MapConfiguration configuration, K key)
+	public static <K> void deleteKey(Guild guild, MapConfiguration configuration, K key)
 	{
-		JSONObject map = settings.optJSONObject(configuration.getName());
+		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null)
 			return;
 		map.remove(key.toString());
 	}
 	
-	public static JSONObject getJSONObject(String name)
+	public static JSONObject getJSONObject(Guild guild, String name)
 	{
-		return settings.optJSONObject(name);
+		return getServerSettings(guild).optJSONObject(name);
 	}
 	
-	public static void resetMap(MapConfiguration configuration)
+	public static void resetMap(Guild guild, MapConfiguration configuration)
 	{
-		settings.put(configuration.getName(), new JSONObject());
+		getServerSettings(guild).put(configuration.getName(), new JSONObject());
 	}
 	
-	public static void resetMap(MapListConfiguration configuration)
+	public static void resetMap(Guild guild, MapListConfiguration configuration)
 	{
-		settings.put(configuration.getName(), new JSONObject());
+		getServerSettings(guild).put(configuration.getName(), new JSONObject());
 	}
 	
-	public static <K, V> void mapListValue(MapListConfiguration configuration, K key, V value)
+	public static <K, V> void mapListValue(Guild guild, MapListConfiguration configuration, K key, V value)
 	{
-		JSONObject map = settings.optJSONObject(configuration.getName());
+		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null)
 			map = new JSONObject();
 		map.append(key.toString(), value);
-		settings.put(configuration.getName(), map);
+		getServerSettings(guild).put(configuration.getName(), map);
 	}
 	
-	public static <K, V> void deleteKey(MapListConfiguration<K, V> configuration, K key)
+	public static <K, V> void deleteKey(Guild guild, MapListConfiguration<K, V> configuration, K key)
 	{
-		JSONObject map = settings.optJSONObject(configuration.getName());
+		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null)
 			return;
 		map.remove(key.toString());
 	}
 	
-	public static <K, V> void deleteKey(MapListConfiguration configuration, K key, V value)
+	public static <K, V> void deleteKey(Guild guild, MapListConfiguration configuration, K key, V value)
 	{
-		deleteKey(configuration, key, value, Objects::equals);
+		deleteKey(guild, configuration, key, value, Objects::equals);
 	}
 	
-	public static <K, V> void deleteKey(MapListConfiguration configuration, K key, V value, BiFunction<Object, V, Boolean> matcher)
+	public static <K, V> void deleteKey(Guild guild, MapListConfiguration configuration, K key, V value, BiFunction<Object, V, Boolean> matcher)
 	{
-		JSONObject map = settings.optJSONObject(configuration.getName());
+		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null)
 			return;
 		JSONArray array = map.optJSONArray(key.toString());
@@ -201,43 +201,43 @@ public class Settings
 		}
 	}
 	
-	public static <K> void mapMapValue(MapMapConfiguration configuration, K key)
+	public static <K> void mapMapValue(Guild guild, MapMapConfiguration configuration, K key)
 	{
-		JSONObject map = settings.optJSONObject(configuration.getName());
+		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null)
 			map = new JSONObject();
 		if(!map.has(key.toString()))
 			map.put(key.toString(), new JSONObject());
-		settings.put(configuration.getName(), map);
+		getServerSettings(guild).put(configuration.getName(), map);
 	}
 	
-	public static <V, W, K> void mapMapValue(MapMapConfiguration configuration, K key, V value, W insideValue)
+	public static <V, W, K> void mapMapValue(Guild guild, MapMapConfiguration configuration, K key, V value, W insideValue)
 	{
-		JSONObject map = settings.optJSONObject(configuration.getName());
+		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null)
 			map = new JSONObject();
 		if(!map.has(key.toString()))
 			map.put(key.toString(), new JSONObject());
 		map.optJSONObject(key.toString()).put(value.toString(), insideValue);
-		settings.put(configuration.getName(), map);
+		getServerSettings(guild).put(configuration.getName(), map);
 	}
 	
-	public static <K> void deleteKey(MapMapConfiguration configuration, K key)
+	public static <K> void deleteKey(Guild guild, MapMapConfiguration configuration, K key)
 	{
-		JSONObject map = settings.optJSONObject(configuration.getName());
+		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null)
 			return;
 		map.remove(key.toString());
 	}
 	
-	public static void resetMap(MapMapConfiguration configuration)
+	public static void resetMap(Guild guild, MapMapConfiguration configuration)
 	{
-		settings.put(configuration.getName(), new JSONObject());
+		getServerSettings(guild).put(configuration.getName(), new JSONObject());
 	}
 	
-	public static <V, K> void deleteKey(MapMapConfiguration configuration, K key, V value, BiFunction<Object, V, Boolean> matcher)
+	public static <V, K> void deleteKey(Guild guild, MapMapConfiguration configuration, K key, V value, BiFunction<Object, V, Boolean> matcher)
 	{
-		JSONObject map = settings.optJSONObject(configuration.getName());
+		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null)
 			return;
 		JSONObject map2 = map.optJSONObject(key.toString());

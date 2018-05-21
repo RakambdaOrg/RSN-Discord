@@ -6,6 +6,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
@@ -22,9 +23,9 @@ import java.util.List;
 public class AvatarCommand extends BasicCommand
 {
 	@Override
-	public String getCommandUsage()
+	public String getCommandUsage(Guild guild)
 	{
-		return super.getCommandUsage() + "<@utilisateur>";
+		return super.getCommandUsage(guild) + "<@utilisateur>";
 	}
 	
 	@Override

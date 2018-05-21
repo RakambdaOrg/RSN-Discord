@@ -25,7 +25,7 @@ public abstract class MultipleRoleConfig extends ListConfiguration<Long>
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Valeurs de " + getName());
-			getAsList().stream().map(r -> event.getJDA().getRoleById(r)).forEach(o -> builder.addField("", "@" + o.getName(), false));
+			getAsList(event.getGuild()).stream().map(r -> event.getJDA().getRoleById(r)).forEach(o -> builder.addField("", "@" + o.getName(), false));
 			Actions.reply(event, builder.build());
 			return SetConfigCommand.ActionResult.NONE;
 		}
@@ -34,10 +34,10 @@ public abstract class MultipleRoleConfig extends ListConfiguration<Long>
 		switch(action)
 		{
 			case ADD:
-				addValue(event.getMessage().getMentionedRoles().get(0).getIdLong());
+				addValue(event.getGuild(), event.getMessage().getMentionedRoles().get(0).getIdLong());
 				return SetConfigCommand.ActionResult.OK;
 			case REMOVE:
-				removeValue(event.getMessage().getMentionedRoles().get(0).getIdLong());
+				removeValue(event.getGuild(), event.getMessage().getMentionedRoles().get(0).getIdLong());
 				return SetConfigCommand.ActionResult.OK;
 		}
 		return SetConfigCommand.ActionResult.ERROR;

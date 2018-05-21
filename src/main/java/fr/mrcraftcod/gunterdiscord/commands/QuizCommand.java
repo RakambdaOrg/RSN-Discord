@@ -8,6 +8,7 @@ import fr.mrcraftcod.gunterdiscord.listeners.quiz.Question;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizMessageListener;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -89,9 +90,9 @@ public class QuizCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommandUsage()
+	public String getCommandUsage(Guild guild)
 	{
-		return super.getCommandUsage() + " <action> [params]";
+		return super.getCommandUsage(guild) + " <action> [params]";
 	}
 	
 	@Override

@@ -11,6 +11,7 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.awt.*;
@@ -46,12 +47,12 @@ public class CommandsMessageListener extends ListenerAdapter
 		super.onMessageReceived(event);
 		try
 		{
-			if(isCommand(event.getMessage().getContentRaw()))
+			if(isCommand(event.getGuild(), event.getMessage().getContentRaw()))
 			{
 				Actions.deleteMessage(event.getMessage());
 				LinkedList<String> args = new LinkedList<>();
 				args.addAll(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
-				Command command = getCommand(args.pop().substring(new PrefixConfig().getString("g?").length()));
+				Command command = getCommand(args.pop().substring(new PrefixConfig().getString(event.getGuild(), "g?").length()));
 				if(command != null)
 				{
 					if(command.getScope() == -5 || command.getScope() == event.getChannel().getType().getId())
@@ -122,11 +123,11 @@ public class CommandsMessageListener extends ListenerAdapter
 	 *
 	 * @return True if a command, false otherwise.
 	 */
-	private boolean isCommand(String text)
+	private boolean isCommand(Guild guild, String text)
 	{
 		try
 		{
-			return text.startsWith(new PrefixConfig().getString());
+			return text.startsWith(new PrefixConfig().getString(guild));
 		}
 		catch(InvalidClassException | NoValueDefinedException e)
 		{

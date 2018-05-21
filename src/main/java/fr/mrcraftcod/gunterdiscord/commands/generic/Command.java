@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord.commands.generic;
 
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
@@ -53,7 +54,7 @@ public interface Command
 	 *
 	 * @return The description.
 	 */
-	String getCommandUsage();
+	String getCommandUsage(Guild guild);
 	
 	/**
 	 * Get the description of the command.
@@ -80,9 +81,7 @@ public interface Command
 			return true;
 		if(getAccessLevel() == MODERATOR && Utilities.isModerator(member))
 			return true;
-		if(Utilities.isAdmin(member) || member.getUser().getIdLong() == 170119951498084352L)
-			return true;
-		return false;
+		return Utilities.isAdmin(member) || member.getUser().getIdLong() == 170119951498084352L;
 	}
 	
 	/**

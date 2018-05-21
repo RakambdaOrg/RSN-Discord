@@ -10,6 +10,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Roles;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -34,64 +35,63 @@ public class AddPhotoCommand extends BasicCommand
 		Actions.deleteMessage(event.getMessage());
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
 			return CommandResult.NOT_ALLOWED;
-		if(Utilities.hasRole(event.getMember(), Roles.TROMBINOSCOPE) || Utilities.isAdmin(event.getMember()))
-			if(event.getMessage().getAttachments().size() > 0)
+		if(event.getMessage().getAttachments().size() > 0)
+		{
+			User user = null;
+			if(args.size() > 0)
 			{
-				User user = null;
-				if(args.size() > 0)
+				try
 				{
-					try
-					{
-						user = event.getJDA().getUserById(Long.parseLong(args.pop()));
-					}
-					catch(Exception e)
-					{
-						List<User> users = event.getMessage().getMentionedUsers();
-						if(users.size() > 0)
-							user = users.get(0);
-					}
+					user = event.getJDA().getUserById(Long.parseLong(args.pop()));
 				}
-				else
-					user = event.getAuthor();
-				
-				if(user == null)
-					Actions.replyPrivate(event.getAuthor(), "Utilisateur non trouvé");
-				else
+				catch(Exception e)
 				{
-					if(user.getIdLong() != event.getAuthor().getIdLong() && !Utilities.isAdmin(event.getMember()))
-						Actions.replyPrivate(event.getAuthor(), "Vous ne pouvez pas ajouter une image pour quelqu'un d'autre");
-					else
-					{
-						Message.Attachment attachment = event.getMessage().getAttachments().get(0);
-						String ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
-						File saveFile = new File("./pictures/" + user.getIdLong() + "/", event.getMessage().getCreationTime().toEpochSecond() + ext);
-						saveFile.getParentFile().mkdirs();
-						if(attachment.download(saveFile) && attachment.getSize() == saveFile.length())
-						{
-							new PhotoConfig().addValue(user.getIdLong(), saveFile.getPath());
-							Actions.giveRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
-							EmbedBuilder builder = new EmbedBuilder();
-							builder.setAuthor(user.getName(), null, user.getAvatarUrl());
-							builder.setColor(Color.GREEN);
-							builder.setTitle("Nouvelle photo");
-							builder.addField("Utilisateur", user.getAsMention(), true);
-							builder.addField("ID", "" + event.getMessage().getCreationTime().toEpochSecond(), true);
-							Actions.sendMessage(new PhotoChannelConfig().getTextChannel(event.getJDA()), builder.build());
-						}
-						else
-							Actions.replyPrivate(event.getAuthor(), "L'envoi a échoué");
-					}
+					List<User> users = event.getMessage().getMentionedUsers();
+					if(users.size() > 0)
+						user = users.get(0);
 				}
 			}
 			else
-				Actions.replyPrivate(event.getAuthor(), "Veuillez joindre une image");
+				user = event.getAuthor();
+			
+			if(user == null)
+				Actions.replyPrivate(event.getAuthor(), "Utilisateur non trouvé");
+			else
+			{
+				if(user.getIdLong() != event.getAuthor().getIdLong() && !Utilities.isAdmin(event.getMember()))
+					Actions.replyPrivate(event.getAuthor(), "Vous ne pouvez pas ajouter une image pour quelqu'un d'autre");
+				else
+				{
+					Message.Attachment attachment = event.getMessage().getAttachments().get(0);
+					String ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
+					File saveFile = new File("./pictures/" + user.getIdLong() + "/", event.getMessage().getCreationTime().toEpochSecond() + ext);
+					saveFile.getParentFile().mkdirs();
+					if(attachment.download(saveFile) && attachment.getSize() == saveFile.length())
+					{
+						new PhotoConfig().addValue(event.getGuild(), user.getIdLong(), saveFile.getPath());
+						Actions.giveRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
+						EmbedBuilder builder = new EmbedBuilder();
+						builder.setAuthor(user.getName(), null, user.getAvatarUrl());
+						builder.setColor(Color.GREEN);
+						builder.setTitle("Nouvelle photo");
+						builder.addField("Utilisateur", user.getAsMention(), true);
+						builder.addField("ID", "" + event.getMessage().getCreationTime().toEpochSecond(), true);
+						Actions.sendMessage(new PhotoChannelConfig().getTextChannel(event.getGuild()), builder.build());
+					}
+					else
+						Actions.replyPrivate(event.getAuthor(), "L'envoi a échoué");
+				}
+			}
+		}
+		else
+			Actions.replyPrivate(event.getAuthor(), "Veuillez joindre une image");
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
-	public String getCommandUsage()
+	public String getCommandUsage(Guild guild)
 	{
-		return super.getCommandUsage() + " [utilisateur]";
+		return super.getCommandUsage(guild) + " [utilisateur]";
 	}
 	
 	@Override

@@ -21,7 +21,7 @@ public class OnlyQuestionsMessageListener extends ListenerAdapter
 		super.onMessageReceived(event);
 		try
 		{
-			if(!event.getMessage().getContentRaw().trim().endsWith("?") && new OnlyQuestionsConfig().getAsList().contains(event.getMessage().getChannel().getIdLong()))
+			if(!event.getMessage().getContentRaw().trim().endsWith("?") && new OnlyQuestionsConfig().getAsList(event.getGuild()).contains(event.getMessage().getChannel().getIdLong()))
 			{
 				if(!Utilities.isTeam(event.getMember()))
 				{

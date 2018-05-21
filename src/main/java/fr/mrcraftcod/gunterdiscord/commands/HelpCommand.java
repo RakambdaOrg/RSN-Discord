@@ -9,6 +9,7 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
@@ -44,22 +45,10 @@ public class HelpCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommandUsage()
-	{
-		return super.getCommandUsage() + " [commande]";
-	}
-	
-	@Override
-	public String getDescription()
-	{
-		return "Aide des commandes";
-	}
-	
-	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
-		String prefix = new PrefixConfig().getString("");
+		String prefix = new PrefixConfig().getString(event.getGuild(), "");
 		if(args.size() < 1)
 		{
 			EmbedBuilder builder = new EmbedBuilder();
@@ -79,7 +68,7 @@ public class HelpCommand extends BasicCommand
 				builder.setColor(Color.GREEN);
 				builder.setTitle("Commande " + prefix + command.getCommand().get(0));
 				builder.addField("Description", command.getDescription(), false);
-				builder.addField("Utilisation", command.getCommandUsage(), false);
+				builder.addField("Utilisation", command.getCommandUsage(event.getGuild()), false);
 			}
 			else
 			{
@@ -90,6 +79,18 @@ public class HelpCommand extends BasicCommand
 		}
 		
 		return CommandResult.SUCCESS;
+	}
+	
+	@Override
+	public String getDescription()
+	{
+		return "Aide des commandes";
+	}
+	
+	@Override
+	public String getCommandUsage(Guild guild)
+	{
+		return super.getCommandUsage(guild) + " [commande]";
 	}
 	
 	@Override
