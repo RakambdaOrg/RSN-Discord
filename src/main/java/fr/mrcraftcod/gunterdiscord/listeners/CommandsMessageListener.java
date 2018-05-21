@@ -6,7 +6,6 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
 import fr.mrcraftcod.gunterdiscord.commands.photo.AddPhotoCommand;
 import fr.mrcraftcod.gunterdiscord.commands.photo.DelPhotoCommand;
 import fr.mrcraftcod.gunterdiscord.commands.photo.PhotoCommand;
-import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
@@ -127,9 +126,9 @@ public class CommandsMessageListener extends ListenerAdapter
 	{
 		try
 		{
-			return text.startsWith(new PrefixConfig().getString(guild));
+			return text.startsWith(new PrefixConfig().getString(guild, "g?"));
 		}
-		catch(InvalidClassException | NoValueDefinedException e)
+		catch(InvalidClassException e)
 		{
 			Log.warning("Error testing command", e);
 		}

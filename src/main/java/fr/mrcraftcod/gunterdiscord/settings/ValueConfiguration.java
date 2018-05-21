@@ -88,7 +88,10 @@ public abstract class ValueConfiguration extends Configuration
 	{
 		Object value = lastValue == null ? getObject(guild) : lastValue;
 		if(value == null)
+		{
+			setValue(guild, defaultValue);
 			return defaultValue;
+		}
 		if(value instanceof String)
 			return (String) value;
 		throw new InvalidClassException("Config is not a string: " + value.getClass().getSimpleName());
