@@ -89,7 +89,7 @@ public class NicknameCommand extends BasicCommand
 		String oldName = member.getNickname();
 		Long lastChangeRaw = new NickLastChangeConfig().getValue(event.getGuild(), member.getUser().getIdLong());
 		Date lastChange = new Date(lastChangeRaw == null ? 0 : lastChangeRaw);
-		Duration delay = Duration.ofMinutes(new NickDelayConfig().getLong(event.getGuild(), 6 * 60));
+		Duration delay = Duration.ofMinutes(new NickDelayConfig().getInt(event.getGuild(), 6 * 60));
 		if(!Utilities.isTeam(event.getMember()) && (lastChange.getTime() + delay.getSeconds() * 1000) >= new Date().getTime())
 		{
 			EmbedBuilder builder = new EmbedBuilder();

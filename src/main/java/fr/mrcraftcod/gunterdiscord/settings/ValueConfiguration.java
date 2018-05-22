@@ -44,6 +44,29 @@ public abstract class ValueConfiguration extends Configuration
 	}
 	
 	/**
+	 * Get the value as an integer.
+	 *
+	 * @param defaultValue The default value to return if none was found.
+	 *
+	 * @return The string.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a value.
+	 * @throws InvalidClassException    If this configuration isn't an integer.
+	 */
+	public int getInt(Guild guild, int defaultValue) throws InvalidClassException
+	{
+		Object value = lastValue == null ? getObject(guild) : lastValue;
+		if(value == null)
+		{
+			setValue(guild, defaultValue);
+			return defaultValue;
+		}
+		if(value instanceof Integer)
+			return (Integer) value;
+		throw new InvalidClassException("Config is not a long: " + value.getClass().getSimpleName());
+	}
+	
+	/**
 	 * Get the value as a long.
 	 *
 	 * @param defaultValue The default value to return if none was found.
@@ -51,7 +74,7 @@ public abstract class ValueConfiguration extends Configuration
 	 * @return The string.
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a value.
-	 * @throws InvalidClassException    If this configuration isn't a string.
+	 * @throws InvalidClassException    If this configuration isn't a long.
 	 */
 	public long getLong(Guild guild, long defaultValue) throws InvalidClassException
 	{

@@ -17,7 +17,7 @@ public class NickDelayConfig extends ValueConfiguration
 	{
 		try
 		{
-			super.setValue(guild, Long.parseLong(value.toString()));
+			super.setValue(guild, Integer.parseInt(value.toString()));
 		}
 		catch(Exception e)
 		{
