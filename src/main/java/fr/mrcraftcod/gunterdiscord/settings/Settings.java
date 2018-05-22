@@ -39,6 +39,8 @@ public class Settings
 			HangmanChannelConfig.class,
 			PhotoConfig.class,
 			AutoRolesConfig.class,
+			NickDelayConfig.class,
+			NickLastChangeConfig.class
 			};
 	
 	public static Object getObject(Guild guild, String name)

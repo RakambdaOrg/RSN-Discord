@@ -3,8 +3,11 @@ package fr.mrcraftcod.gunterdiscord.commands;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
+import fr.mrcraftcod.gunterdiscord.settings.configs.NickDelayConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.NickLastChangeConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
@@ -12,6 +15,9 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
 import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +31,8 @@ import java.util.stream.Collectors;
 @CallableCommand
 public class NicknameCommand extends BasicCommand
 {
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	
 	@Override
 	public String getCommandUsage(Guild guild)
 	{
@@ -60,11 +68,32 @@ public class NicknameCommand extends BasicCommand
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
+		Member member;
 		if(event.getMessage().getMentionedUsers().size() > 0)
 		{
 			args.pop();
-			Member member = event.getGuild().getMember(event.getMessage().getMentionedUsers().get(0));
-			String oldName = member.getNickname();
+			member = event.getGuild().getMember(event.getMessage().getMentionedUsers().get(0));
+		}
+		else
+			member = event.getMember();
+		String oldName = member.getNickname();
+		Long lastChangeRaw = new NickLastChangeConfig().getValue(event.getGuild(), member.getUser().getIdLong());
+		Date lastChange = new Date(lastChangeRaw == null ? 0 : lastChangeRaw);
+		Duration delay = Duration.ofMinutes(new NickDelayConfig().getLong(event.getGuild(), 6 * 60));
+		if(!Utilities.isTeam(event.getMember()) && (lastChange.getTime() + delay.getSeconds() * 1000) >= new Date().getTime())
+		{
+			EmbedBuilder builder = new EmbedBuilder();
+			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+			builder.setColor(Color.RED);
+			builder.addField("Ancien surnom", oldName == null ? "*AUCUN*" : oldName, true);
+			builder.addField("Utilisateur", member.getAsMention(), true);
+			builder.addField("Raison", "Vous ne pouvez changer de nickname qu'une fois toutes les " + delay.toString().replace("PT", ""), true);
+			builder.addField("Dernier changement", sdf.format(lastChange), true);
+			builder.setTimestamp(new Date().toInstant());
+			Actions.reply(event, builder.build());
+		}
+		else
+		{
 			String newName;
 			if(args.size() == 0)
 				newName = null;
@@ -79,6 +108,7 @@ public class NicknameCommand extends BasicCommand
 			{
 				member.getGuild().getController().setNickname(member, newName).complete();
 				builder.setColor(Color.GREEN);
+				new NickLastChangeConfig().addValue(event.getGuild(), member.getUser().getIdLong(), new Date().getTime());
 				Log.info(Actions.getUserToLog(event.getAuthor()) + " renamed " + Actions.getUserToLog(member.getUser()) + " from `" + oldName + "` to `" + newName + "`");
 			}
 			catch(HierarchyException e)
@@ -88,20 +118,12 @@ public class NicknameCommand extends BasicCommand
 			}
 			Actions.reply(event, builder.build());
 		}
-		else
-		{
-			EmbedBuilder builder = new EmbedBuilder();
-			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-			builder.setColor(Color.RED);
-			builder.addField("Erreur", "Merci de mentionner un utilisateur", true);
-			Actions.reply(event, builder.build());
-		}
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
 	public AccessLevel getAccessLevel()
 	{
-		return AccessLevel.MODERATOR;
+		return AccessLevel.ALL;
 	}
 }

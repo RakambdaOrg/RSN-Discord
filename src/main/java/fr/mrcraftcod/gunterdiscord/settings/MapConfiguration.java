@@ -1,12 +1,16 @@
 package fr.mrcraftcod.gunterdiscord.settings;
 
 import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.json.JSONObject;
+import java.awt.*;
 import java.io.InvalidClassException;
-import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -33,19 +37,12 @@ public abstract class MapConfiguration<K, V> extends Configuration
 		{
 			return getAsMap(guild).get(key);
 		}
-		catch(InvalidClassException e)
+		catch(Exception e)
 		{
 			Log.error("Can't get value " + getName() + " with key " + key, e);
 		}
 		return null;
 	}
-	
-	/**
-	 * Get the parser to parse back string keys to K.
-	 *
-	 * @return The parser.
-	 */
-	abstract Function<String, K> getKeyParser();
 	
 	/**
 	 * Get the map of this configuration.
@@ -55,12 +52,10 @@ public abstract class MapConfiguration<K, V> extends Configuration
 	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 * @throws InvalidClassException    If either they key isn't K or the value isn't V.
 	 */
-	public Map<K, V> getAsMap(Guild guild) throws IllegalArgumentException, InvalidClassException
+	public Map<K, V> getAsMap(Guild guild) throws IllegalArgumentException
 	{
 		if(lastValue != null)
 			return lastValue;
-		@SuppressWarnings("unchecked")
-		Class<V> klassV = (Class<V>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
 		Map<K, V> elements = new HashMap<>();
 		JSONObject map = getObjectMap(guild);
 		if(map == null)
@@ -69,12 +64,54 @@ public abstract class MapConfiguration<K, V> extends Configuration
 			for(String key : map.keySet())
 			{
 				Object value = map.get(key);
-				if(klassV.isInstance(value))
-					elements.put(getKeyParser().apply(key), klassV.cast(value));
-				else
-					throw new InvalidClassException("Config is not a K,V");
+				elements.put(getKeyParser().apply(key), getValueParser().apply(value.toString()));
 			}
 		return elements;
+	}
+	
+	/**
+	 * Get the parser to parse back string keys to K.
+	 *
+	 * @return The parser.
+	 */
+	protected abstract Function<String, K> getKeyParser();
+	
+	/**
+	 * Get the parser to parse back string values to V.
+	 *
+	 * @return The parser.
+	 */
+	protected abstract Function<String, V> getValueParser();
+	
+	@Override
+	public SetConfigCommand.ActionResult handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args) throws Exception
+	{
+		if(action == SetConfigCommand.ChangeConfigType.SHOW)
+		{
+			EmbedBuilder builder = new EmbedBuilder();
+			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+			builder.setColor(Color.GREEN);
+			builder.setTitle("Valeurs de " + getName());
+			Map<K, V> map = getAsMap(event.getGuild());
+			map.keySet().stream().map(k -> k + " -> " + map.get(k)).forEach(o -> builder.addField("", o, false));
+			Actions.reply(event, builder.build());
+			return SetConfigCommand.ActionResult.NONE;
+		}
+		
+		switch(action)
+		{
+			case ADD:
+				if(args.size() < 2)
+					return SetConfigCommand.ActionResult.ERROR;
+				addValue(event.getGuild(), getKeyParser().apply(args.poll()), getValueParser().apply(args.poll()));
+				return SetConfigCommand.ActionResult.OK;
+			case REMOVE:
+				if(args.size() < 1)
+					return SetConfigCommand.ActionResult.ERROR;
+				deleteKey(event.getGuild(), getKeyParser().apply(args.poll()));
+				return SetConfigCommand.ActionResult.OK;
+		}
+		return SetConfigCommand.ActionResult.ERROR;
 	}
 	
 	/**
