@@ -73,6 +73,16 @@ public class NicknameCommand extends BasicCommand
 		{
 			args.pop();
 			member = event.getGuild().getMember(event.getMessage().getMentionedUsers().get(0));
+			if(event.getAuthor().getIdLong() != member.getUser().getIdLong() && !Utilities.isTeam(event.getMember()))
+			{
+				EmbedBuilder builder = new EmbedBuilder();
+				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+				builder.addField("Utilisateur", member.getAsMention(), true);
+				builder.setTitle("T'es cru changer le nom d'un autre mec alors que t'es pas du staff?!");
+				builder.setColor(Color.RED);
+				Actions.reply(event, builder.build());
+				return CommandResult.SUCCESS;
+			}
 		}
 		else
 			member = event.getMember();
