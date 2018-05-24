@@ -157,6 +157,13 @@ public class SetConfigCommand extends BasicCommand
 			}
 			catch(Exception e)
 			{
+				EmbedBuilder builder = new EmbedBuilder();
+				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+				builder.setColor(Color.RED);
+				builder.setTitle("Erreur durant l'opération");
+				builder.setDescription("Commande: " + getName());
+				builder.addField("Raison", e.getMessage(), false);
+				Actions.reply(event, builder.build());
 				Log.error("Error handling configuration change", e);
 			}
 		}
