@@ -35,19 +35,6 @@ public class PhotoConfig extends MapListConfiguration<Long, String>
 			Actions.reply(event, builder.build());
 			return SetConfigCommand.ActionResult.NONE;
 		}
-		switch(action)
-		{
-			case ADD:
-				if(args.size() < 2)
-					return SetConfigCommand.ActionResult.ERROR;
-				addValue(event.getGuild(), Long.parseLong(args.poll()), args.poll());
-				return SetConfigCommand.ActionResult.OK;
-			case REMOVE:
-				if(args.size() < 1)
-					return SetConfigCommand.ActionResult.ERROR;
-				deleteKey(event.getGuild(), Long.parseLong(args.poll()));
-				return SetConfigCommand.ActionResult.OK;
-		}
 		return SetConfigCommand.ActionResult.ERROR;
 	}
 	
