@@ -41,7 +41,8 @@ public class Settings
 			AutoRolesConfig.class,
 			NickDelayConfig.class,
 			NickLastChangeConfig.class,
-			TrombinoscopeRoleConfig.class
+			TrombinoscopeRoleConfig.class,
+			QueueChannelConfig.class
 			};
 	
 	public static Object getObject(Guild guild, String name)
