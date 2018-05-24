@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.settings.configs;
 
-import fr.mrcraftcod.gunterdiscord.settings.MultipleRoleConfig;
+import fr.mrcraftcod.gunterdiscord.settings.MultipleRoleConfiguration;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -8,7 +8,7 @@ import fr.mrcraftcod.gunterdiscord.settings.MultipleRoleConfig;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class AutoRolesConfig extends MultipleRoleConfig
+public class AutoRolesConfig extends MultipleRoleConfiguration
 {
 	@Override
 	public String getName()

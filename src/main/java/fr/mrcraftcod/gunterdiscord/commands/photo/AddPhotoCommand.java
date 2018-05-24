@@ -5,8 +5,8 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.TrombinoscopeRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Roles;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -69,7 +69,7 @@ public class AddPhotoCommand extends BasicCommand
 					if(attachment.download(saveFile) && attachment.getSize() == saveFile.length())
 					{
 						new PhotoConfig().addValue(event.getGuild(), user.getIdLong(), saveFile.getPath());
-						Actions.giveRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
+						Actions.giveRole(event.getGuild(), user, new TrombinoscopeRoleConfig().getRole(event.getGuild()));
 						EmbedBuilder builder = new EmbedBuilder();
 						builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 						builder.setColor(Color.GREEN);

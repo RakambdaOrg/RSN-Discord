@@ -5,9 +5,9 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.TrombinoscopeRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
-import fr.mrcraftcod.gunterdiscord.utils.Roles;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -56,7 +56,7 @@ public class PhotoCommand extends BasicCommand
 			else
 			{
 				Member member = event.getGuild().getMember(user);
-				if(member == null || !Utilities.hasRole(member, Roles.TROMBINOSCOPE))
+				if(member == null || !Utilities.hasRole(member, new TrombinoscopeRoleConfig().getRole(event.getGuild())))
 				{
 					EmbedBuilder builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
@@ -120,7 +120,7 @@ public class PhotoCommand extends BasicCommand
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Participants du trombinoscope");
-			Utilities.getMembersRole(event.getGuild(), Roles.TROMBINOSCOPE).stream().map(u -> u.getUser().getName()).forEach(u -> builder.addField("", u, false));
+			Utilities.getMembersRole(new TrombinoscopeRoleConfig().getRole(event.getGuild())).stream().map(u -> u.getUser().getName()).forEach(u -> builder.addField("", u, false));
 			Actions.reply(event, builder.build());
 		}
 		return CommandResult.SUCCESS;

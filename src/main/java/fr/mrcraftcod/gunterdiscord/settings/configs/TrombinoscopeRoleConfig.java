@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.settings.configs;
 
-import fr.mrcraftcod.gunterdiscord.settings.MultipleChannelConfiguration;
+import fr.mrcraftcod.gunterdiscord.settings.SingleRoleConfiguration;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -8,11 +8,11 @@ import fr.mrcraftcod.gunterdiscord.settings.MultipleChannelConfiguration;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class OnlyIdeasConfig extends MultipleChannelConfiguration
+public class TrombinoscopeRoleConfig extends SingleRoleConfiguration
 {
 	@Override
 	public String getName()
 	{
-		return "onlyIdeas";
+		return "trombinoscopeRole";
 	}
 }

@@ -13,7 +13,7 @@ import java.util.LinkedList;
  * @author Thomas Couchoud
  * @since 2018-05-12
  */
-public abstract class MultipleRoleConfig extends ListConfiguration<Long>
+public abstract class MultipleRoleConfiguration extends ListConfiguration<Long>
 {
 	@SuppressWarnings("Duplicates")
 	@Override

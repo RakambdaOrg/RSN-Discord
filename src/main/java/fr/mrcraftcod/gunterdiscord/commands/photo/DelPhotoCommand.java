@@ -4,8 +4,8 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.TrombinoscopeRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Roles;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
@@ -54,7 +54,7 @@ public class DelPhotoCommand extends BasicCommand
 					{
 						new PhotoConfig().deleteKeyValue(event.getGuild(), user.getIdLong(), args.poll());
 						if(new PhotoConfig().getValue(event.getGuild(), user.getIdLong()).isEmpty())
-							Actions.removeRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
+							Actions.removeRole(event.getGuild(), user, new TrombinoscopeRoleConfig().getRole(event.getGuild()));
 						Actions.replyPrivate(event.getAuthor(), "Photos de %s supprimées", user.getAsMention());
 					}
 					else
@@ -64,7 +64,7 @@ public class DelPhotoCommand extends BasicCommand
 				{
 					new PhotoConfig().deleteKeyValue(event.getGuild(), user.getIdLong(), args.poll());
 					if(new PhotoConfig().getValue(event.getGuild(), user.getIdLong()).isEmpty())
-						Actions.removeRole(event.getGuild(), user, Roles.TROMBINOSCOPE);
+						Actions.removeRole(event.getGuild(), user, new TrombinoscopeRoleConfig().getRole(event.getGuild()));
 					Actions.replyPrivate(event.getAuthor(), "Photos supprimées");
 				}
 			}
@@ -72,7 +72,7 @@ public class DelPhotoCommand extends BasicCommand
 		else
 		{
 			new PhotoConfig().deleteKey(event.getGuild(), event.getAuthor().getIdLong());
-			Actions.removeRole(event.getGuild(), event.getAuthor(), Roles.TROMBINOSCOPE);
+			Actions.removeRole(event.getGuild(), event.getAuthor(), new TrombinoscopeRoleConfig().getRole(event.getGuild()));
 			Actions.replyPrivate(event.getAuthor(), "Photos supprimées");
 		}
 		return CommandResult.SUCCESS;

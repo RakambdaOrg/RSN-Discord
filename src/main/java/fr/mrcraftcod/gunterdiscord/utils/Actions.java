@@ -242,6 +242,18 @@ public class Actions
 	/**
 	 * Remove a role from a user.
 	 *
+	 * @param guild The guild the role is in.
+	 * @param user  The user to remove the role from.
+	 * @param role  The role to remove.
+	 */
+	public static void removeRole(Guild guild, User user, Role role)
+	{
+		removeRole(guild.getMember(user), role);
+	}
+	
+	/**
+	 * Remove a role from a user.
+	 *
 	 * @param user The user to remove the role from.
 	 * @param role The role to remove.
 	 */
