@@ -28,15 +28,26 @@ public class QueueCommand extends BasicCommand
 	{
 		super.execute(event, args);
 		
-		EmbedBuilder builder = new EmbedBuilder();
-		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-		builder.setColor(Color.GREEN);
-		builder.setTitle("Nouvelle entrée");
-		builder.addField("Utilisateur", event.getAuthor().getAsMention(), true);
-		builder.addField("Message", args.stream().collect(Collectors.joining(" ")), false);
-		
-		Actions.sendMessage(new QueueChannelConfig().getTextChannel(event.getGuild()), builder.build());
-		Actions.replyPrivate(event.getAuthor(), "Ok, ta candidature a été prise en compte");
+		if(args.size() == 0)
+		{
+			Actions.replyPrivate(event.getAuthor(), "Merci de renseigner une raison pour rentrer dans la queue `g?queue raison`");
+		}
+		else if(args.peek().equalsIgnoreCase("message"))
+		{
+			Actions.replyPrivate(event.getAuthor(), "Merci de renseigner une raison pour rentrer dans la queue, et pas 'message' `g?queue raison`");
+		}
+		else
+		{
+			EmbedBuilder builder = new EmbedBuilder();
+			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+			builder.setColor(Color.GREEN);
+			builder.setTitle("Nouvelle entrée");
+			builder.addField("Utilisateur", event.getAuthor().getAsMention(), true);
+			builder.addField("Message", args.stream().collect(Collectors.joining(" ")), false);
+			
+			Actions.sendMessage(new QueueChannelConfig().getTextChannel(event.getGuild()), builder.build());
+			Actions.replyPrivate(event.getAuthor(), "Ok, ta candidature a été prise en compte");
+		}
 		return CommandResult.SUCCESS;
 	}
 	
