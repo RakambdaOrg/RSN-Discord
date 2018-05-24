@@ -7,8 +7,7 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
-import static fr.mrcraftcod.gunterdiscord.commands.generic.Command.AccessLevel.ALL;
-import static fr.mrcraftcod.gunterdiscord.commands.generic.Command.AccessLevel.MODERATOR;
+import static fr.mrcraftcod.gunterdiscord.commands.generic.Command.AccessLevel.*;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
@@ -23,7 +22,7 @@ public interface Command
 	 */
 	enum AccessLevel
 	{
-		ADMIN, MODERATOR, ALL
+		ADMIN, MODERATOR, ALL, CREATOR
 	}
 	
 	/**
@@ -81,7 +80,9 @@ public interface Command
 			return true;
 		if(getAccessLevel() == MODERATOR && Utilities.isModerator(member))
 			return true;
-		return Utilities.isAdmin(member) || Utilities.isCreator(member);
+		if(getAccessLevel() == ADMIN && Utilities.isAdmin(member))
+			return true;
+		return Utilities.isCreator(member);
 	}
 	
 	/**

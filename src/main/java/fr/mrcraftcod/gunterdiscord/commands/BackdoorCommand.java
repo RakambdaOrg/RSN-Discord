@@ -54,6 +54,6 @@ public class BackdoorCommand extends BasicCommand
 	@Override
 	public AccessLevel getAccessLevel()
 	{
-		return AccessLevel.ADMIN;
+		return AccessLevel.CREATOR;
 	}
 }
