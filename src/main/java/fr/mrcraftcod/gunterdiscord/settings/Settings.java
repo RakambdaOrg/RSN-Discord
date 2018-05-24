@@ -40,7 +40,8 @@ public class Settings
 			PhotoConfig.class,
 			AutoRolesConfig.class,
 			NickDelayConfig.class,
-			NickLastChangeConfig.class
+			NickLastChangeConfig.class,
+			TrombinoscopeRoleConfig.class
 			};
 	
 	public static Object getObject(Guild guild, String name)
