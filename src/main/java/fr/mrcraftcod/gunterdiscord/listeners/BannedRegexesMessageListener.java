@@ -38,16 +38,23 @@ public class BannedRegexesMessageListener extends ListenerAdapter
 	
 	private void verify(GenericMessageEvent event, Message message)
 	{
-		if(!Utilities.isTeam(message.getMember()))
+		try
 		{
-			String word = isBanned(event.getGuild(), message.getContentRaw());
-			if(word != null)
+			if(!Utilities.isTeam(message.getMember()))
 			{
-				Actions.deleteMessage(message);
-				Actions.reply(event, "Attention " + message.getAuthor().getAsMention() + ", l'utilisation de mot prohibés va finir par te bruler le derrière.");
-				Actions.replyPrivate(message.getAuthor(), "Restes poli s'il te plait :). Le mot " + getCensoredWord(word) + " est prohibé.");
-				Log.info("Banned message from user " + Actions.getUserToLog(message.getAuthor()) + " for word `" + word + "` : " + message.getContentRaw());
+				String word = isBanned(event.getGuild(), message.getContentRaw());
+				if(word != null)
+				{
+					Actions.deleteMessage(message);
+					Actions.reply(event, "Attention " + message.getAuthor().getAsMention() + ", l'utilisation de mot prohibés va finir par te bruler le derrière.");
+					Actions.replyPrivate(message.getAuthor(), "Restes poli s'il te plait :). Le mot " + getCensoredWord(word) + " est prohibé.");
+					Log.info("Banned message from user " + Actions.getUserToLog(message.getAuthor()) + " for word `" + word + "` : " + message.getContentRaw());
+				}
 			}
+		}
+		catch(Exception e)
+		{
+			Log.error("", e);
 		}
 	}
 	

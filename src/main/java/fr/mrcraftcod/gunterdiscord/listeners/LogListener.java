@@ -17,32 +17,6 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 public class LogListener extends ListenerAdapter
 {
 	@Override
-	public void onMessageReactionAdd(MessageReactionAddEvent event)
-	{
-		super.onMessageReactionAdd(event);
-		try
-		{
-			Log.info("New reaction " + event.getReaction().getReactionEmote().getName() + " from `" + Actions.getUserToLog(event.getUser()) + "` in " + event.getReaction().getTextChannel().getName() + " on `" + event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).complete().getContentRaw().replace("\n", "{n}") + "`");
-		}
-		catch(NullPointerException ignored)
-		{
-		}
-	}
-	
-	@Override
-	public void onMessageReactionRemove(MessageReactionRemoveEvent event)
-	{
-		super.onMessageReactionRemove(event);
-		try
-		{
-			Log.info("Reaction " + event.getReaction().getReactionEmote().getName() + " removed by `" + Actions.getUserToLog(event.getUser()) + "` in " + event.getReaction().getTextChannel().getName() + " on `" + event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).complete().getContentRaw().replace("\n", "{n}") + "`");
-		}
-		catch(NullPointerException ignored)
-		{
-		}
-	}
-	
-	@Override
 	public void onUserUpdateName(UserUpdateNameEvent event)
 	{
 		super.onUserUpdateName(event);
@@ -52,6 +26,10 @@ public class LogListener extends ListenerAdapter
 		}
 		catch(NullPointerException ignored)
 		{
+		}
+		catch(Exception e)
+		{
+			Log.error("", e);
 		}
 	}
 	
@@ -66,7 +44,43 @@ public class LogListener extends ListenerAdapter
 		catch(NullPointerException ignored)
 		{
 		}
+		catch(Exception e)
+		{
+			Log.error("", e);
+		}
 	}
 	
+	@Override
+	public void onMessageReactionAdd(MessageReactionAddEvent event)
+	{
+		super.onMessageReactionAdd(event);
+		try
+		{
+			Log.info("New reaction " + event.getReaction().getReactionEmote().getName() + " from `" + Actions.getUserToLog(event.getUser()) + "` in " + event.getReaction().getTextChannel().getName() + " on `" + event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).complete().getContentRaw().replace("\n", "{n}") + "`");
+		}
+		catch(NullPointerException ignored)
+		{
+		}
+		catch(Exception e)
+		{
+			Log.error("", e);
+		}
+	}
 	
+	@Override
+	public void onMessageReactionRemove(MessageReactionRemoveEvent event)
+	{
+		super.onMessageReactionRemove(event);
+		try
+		{
+			Log.info("Reaction " + event.getReaction().getReactionEmote().getName() + " removed by `" + Actions.getUserToLog(event.getUser()) + "` in " + event.getReaction().getTextChannel().getName() + " on `" + event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).complete().getContentRaw().replace("\n", "{n}") + "`");
+		}
+		catch(NullPointerException ignored)
+		{
+		}
+		catch(Exception e)
+		{
+			Log.error("", e);
+		}
+	}
 }

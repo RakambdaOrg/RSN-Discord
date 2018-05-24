@@ -35,5 +35,9 @@ public class OnlyImagesMessageListener extends ListenerAdapter
 		{
 			Log.error("Error getting images only list");
 		}
+		catch(Exception e)
+		{
+			Log.error("", e);
+		}
 	}
 }

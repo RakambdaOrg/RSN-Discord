@@ -32,6 +32,10 @@ public class ShutdownListener extends ListenerAdapter
 		{
 			e.printStackTrace();
 		}
+		catch(Exception e)
+		{
+			Log.error("", e);
+		}
 		finally
 		{
 			Settings.close();

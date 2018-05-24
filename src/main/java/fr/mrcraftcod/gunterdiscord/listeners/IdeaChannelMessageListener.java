@@ -31,5 +31,9 @@ public class IdeaChannelMessageListener extends ListenerAdapter
 		{
 			Log.error("Error getting idea channel list");
 		}
+		catch(Exception e)
+		{
+			Log.error("", e);
+		}
 	}
 }
