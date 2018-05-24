@@ -36,6 +36,7 @@ public class QueueCommand extends BasicCommand
 		builder.addField("Message", args.stream().collect(Collectors.joining(" ")), false);
 		
 		Actions.sendMessage(new QueueChannelConfig().getTextChannel(event.getGuild()), builder.build());
+		Actions.replyPrivate(event.getAuthor(), "Ok, ta candidature a été prise en compte");
 		return CommandResult.SUCCESS;
 	}
 	
