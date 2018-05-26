@@ -322,7 +322,7 @@ public class HangmanListener extends ListenerAdapter
 	}
 	
 	/**
-	 * Get a char base on its parent.
+	 * Get a char configurations on its parent.
 	 * For example letters with accent will become the letter without the accent.
 	 *
 	 * @param c The letter.

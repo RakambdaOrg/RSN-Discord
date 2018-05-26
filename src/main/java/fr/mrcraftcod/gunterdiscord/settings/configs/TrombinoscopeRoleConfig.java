@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.settings.configs;
 
-import fr.mrcraftcod.gunterdiscord.settings.SingleRoleConfiguration;
+import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleRoleConfiguration;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)

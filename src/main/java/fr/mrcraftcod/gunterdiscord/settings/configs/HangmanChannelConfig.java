@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.settings.configs;
 
-import fr.mrcraftcod.gunterdiscord.settings.SingleChannelConfiguration;
+import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleChannelConfiguration;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)

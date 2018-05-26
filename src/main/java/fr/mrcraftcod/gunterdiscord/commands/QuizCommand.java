@@ -2,13 +2,11 @@ package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.Question;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizMessageListener;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -24,8 +22,7 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
-@CallableCommand
-public class QuizCommand extends BasicCommand
+public class QuizCommand extends BasicCommand //TODO Composite
 {
 	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
@@ -90,9 +87,9 @@ public class QuizCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommandUsage(Guild guild)
+	public String getCommandUsage()
 	{
-		return super.getCommandUsage(guild) + " <action> [params]";
+		return super.getCommandUsage() + " <action> [params]";
 	}
 	
 	@Override

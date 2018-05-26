@@ -1,7 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.HangmanListener;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
@@ -18,7 +17,6 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-@CallableCommand
 public class HangmanCommand extends BasicCommand
 {
 	@Override

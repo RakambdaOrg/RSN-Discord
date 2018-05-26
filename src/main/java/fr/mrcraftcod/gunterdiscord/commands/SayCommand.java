@@ -1,15 +1,14 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
@@ -17,13 +16,20 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-@CallableCommand
 public class SayCommand extends BasicCommand
 {
 	@Override
-	public String getCommandUsage(Guild guild)
+	public String getCommandUsage()
 	{
-		return super.getCommandUsage(guild) + " <message>";
+		return super.getCommandUsage() + " message...";
+	}
+	
+	@Override
+	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
+	{
+		super.execute(event, args);
+		Actions.reply(event, String.join(" ", args));
+		return CommandResult.SUCCESS;
 	}
 	
 	@Override
@@ -33,9 +39,10 @@ public class SayCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getName()
+	public void addHelp(Guild guild, EmbedBuilder builder)
 	{
-		return "Say";
+		super.addHelp(guild, builder);
+		builder.addField("Message", "Le message à dire", false);
 	}
 	
 	@Override
@@ -45,17 +52,15 @@ public class SayCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getDescription()
+	public String getName()
 	{
-		return "Envoie un message";
+		return "Dire";
 	}
 	
 	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
+	public String getDescription()
 	{
-		super.execute(event, args);
-		Actions.reply(event, args.stream().collect(Collectors.joining(" ")));
-		return CommandResult.SUCCESS;
+		return "Envoie un message en tant que le bot";
 	}
 	
 	@Override

@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord.settings;
 
 import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.settings.configs.*;
+import fr.mrcraftcod.gunterdiscord.settings.configurations.*;
 import net.dv8tion.jda.core.entities.Guild;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;

@@ -1,7 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.Configuration;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
@@ -9,7 +8,6 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
 import java.util.LinkedList;
@@ -22,8 +20,7 @@ import static fr.mrcraftcod.gunterdiscord.commands.generic.Command.AccessLevel.A
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
-@CallableCommand
-public class SetConfigCommand extends BasicCommand
+public class SetConfigCommand extends BasicCommand //TODO Composite
 {
 	/**
 	 * Actions available.
@@ -75,9 +72,9 @@ public class SetConfigCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommandUsage(Guild guild)
+	public String getCommandUsage()
 	{
-		return super.getCommandUsage(guild) + " <paramètre> <action> [valeur...]";
+		return super.getCommandUsage() + " <paramètre> <action> [valeur...]";
 	}
 	
 	@Override

@@ -8,6 +8,9 @@ package fr.mrcraftcod.gunterdiscord.commands.generic;
  */
 public class NotAllowedException extends Exception
 {
+	/**
+	 * Constructor.
+	 */
 	public NotAllowedException()
 	{
 		super();
