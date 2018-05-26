@@ -32,7 +32,6 @@ public class Settings
 			ModoRolesConfig.class,
 			OnlyIdeasConfig.class,
 			OnlyImagesConfig.class,
-			OnlyQuestionsConfig.class,
 			PrefixConfig.class,
 			ReportChannelConfig.class,
 			PhotoChannelConfig.class,
