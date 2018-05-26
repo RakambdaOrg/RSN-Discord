@@ -29,6 +29,9 @@ public class CommandsMessageListener extends ListenerAdapter
 {
 	public static final List<Command> commands = Arrays.asList(new PhotoCompositeCommand(), new HangmanCommand(), new QuizCommand(), new ReportCommand(), new SetConfigCommand(), new StopCommand(), new HelpCommand(), new AvatarCommand(), new NicknameCommand(), new SayCommand(), new BackdoorCommand(), new QueueCommand());
 	
+	/**
+	 * Constructor.
+	 */
 	public CommandsMessageListener()
 	{
 		HashMap<String, Integer> counts = new HashMap<>();
@@ -47,8 +50,7 @@ public class CommandsMessageListener extends ListenerAdapter
 			if(isCommand(event.getGuild(), event.getMessage().getContentRaw()))
 			{
 				Actions.deleteMessage(event.getMessage());
-				LinkedList<String> args = new LinkedList<>();
-				args.addAll(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
+				LinkedList<String> args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 				String cmdText = args.pop().substring(new PrefixConfig().getString(event.getGuild(), "g?").length());
 				Command command = getCommand(cmdText);
 				if(command != null)
@@ -118,7 +120,8 @@ public class CommandsMessageListener extends ListenerAdapter
 	/**
 	 * Tell if this text is a command.
 	 *
-	 * @param text The text.
+	 * @param guild The guild.
+	 * @param text  The text.
 	 *
 	 * @return True if a command, false otherwise.
 	 */
