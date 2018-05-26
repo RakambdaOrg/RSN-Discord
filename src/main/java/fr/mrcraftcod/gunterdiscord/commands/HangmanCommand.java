@@ -23,16 +23,16 @@ public class HangmanCommand extends BasicCommand
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
-		if(HangmanListener.resetting)
-		{
-			Actions.replyPrivate(event.getAuthor(), "Patiente quelques secondes, le pendu se réinitialise");
-			return CommandResult.SUCCESS;
-		}
 		if(!Utilities.hasRole(event.getMember(), Roles.HANGMAN))
 		{
-			Actions.giveRole(event.getGuild(), event.getAuthor(), Roles.HANGMAN);
-			HangmanListener.setUp(event.getGuild());
-			HangmanListener.onPlayerJoin(event.getMember());
+			HangmanListener game = HangmanListener.getGame(event.getGuild());
+			if(game != null)
+			{
+				Actions.giveRole(event.getGuild(), event.getAuthor(), Roles.HANGMAN);
+				game.onPlayerJoin(event.getMember());
+			}
+			else
+				return CommandResult.FAILED;
 		}
 		return CommandResult.SUCCESS;
 	}
