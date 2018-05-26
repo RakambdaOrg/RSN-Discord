@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.settings.configs;
 
 import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
-import fr.mrcraftcod.gunterdiscord.settings.ListConfiguration;
+import fr.mrcraftcod.gunterdiscord.settings.configurations.ListConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;

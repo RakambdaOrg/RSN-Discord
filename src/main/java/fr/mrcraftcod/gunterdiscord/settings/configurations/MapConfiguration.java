@@ -1,6 +1,8 @@
-package fr.mrcraftcod.gunterdiscord.settings;
+package fr.mrcraftcod.gunterdiscord.settings.configurations;
 
 import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
+import fr.mrcraftcod.gunterdiscord.settings.Configuration;
+import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.EmbedBuilder;

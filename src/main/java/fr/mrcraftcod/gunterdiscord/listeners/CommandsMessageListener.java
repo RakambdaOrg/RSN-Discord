@@ -3,9 +3,7 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 import fr.mrcraftcod.gunterdiscord.commands.*;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
-import fr.mrcraftcod.gunterdiscord.commands.photo.AddPhotoCommand;
-import fr.mrcraftcod.gunterdiscord.commands.photo.DelPhotoCommand;
-import fr.mrcraftcod.gunterdiscord.commands.photo.PhotoCommand;
+import fr.mrcraftcod.gunterdiscord.commands.photo.PhotoCompositeCommand;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
@@ -29,7 +27,7 @@ import java.util.stream.Collectors;
  */
 public class CommandsMessageListener extends ListenerAdapter
 {
-	public static final List<Command> commands = Arrays.asList(new AddPhotoCommand(), new DelPhotoCommand(), new PhotoCommand(), new HangmanCommand(), new QuizCommand(), new ReportCommand(), new SetConfigCommand(), new StopCommand(), new HelpCommand(), new AvatarCommand(), new NicknameCommand(), new SayCommand(), new BinaryCommand(), new BackdoorCommand(), new QueueCommand());
+	public static final List<Command> commands = Arrays.asList(new PhotoCompositeCommand(), new HangmanCommand(), new QuizCommand(), new ReportCommand(), new SetConfigCommand(), new StopCommand(), new HelpCommand(), new AvatarCommand(), new NicknameCommand(), new SayCommand(), new BackdoorCommand(), new QueueCommand());
 	
 	public CommandsMessageListener()
 	{

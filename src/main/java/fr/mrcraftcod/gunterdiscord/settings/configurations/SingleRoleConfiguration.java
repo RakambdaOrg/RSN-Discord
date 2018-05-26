@@ -1,23 +1,24 @@
-package fr.mrcraftcod.gunterdiscord.settings;
+package fr.mrcraftcod.gunterdiscord.settings.configurations;
 
 import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
+import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
 import java.io.InvalidClassException;
 import java.util.LinkedList;
 
 /**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
+ * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/05/2018.
  *
  * @author Thomas Couchoud
- * @since 2018-05-04
+ * @since 2018-05-12
  */
-public abstract class SingleChannelConfiguration extends ValueConfiguration
+public abstract class SingleRoleConfiguration extends ValueConfiguration
 {
 	@SuppressWarnings("Duplicates")
 	@Override
@@ -38,28 +39,21 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration
 		switch(action)
 		{
 			case SET:
-				setValue(event.getGuild(), event.getMessage().getMentionedChannels().get(0).getIdLong());
+				setValue(event.getGuild(), event.getMessage().getMentionedRoles().get(0).getIdLong());
 				return SetConfigCommand.ActionResult.OK;
 		}
 		return SetConfigCommand.ActionResult.ERROR;
 	}
 	
-	/**
-	 * Get the text channel.
-	 *
-	 * @param jda The JDA.
-	 *
-	 * @return The text channel or null if not found.
-	 */
-	public TextChannel getTextChannel(Guild guild)
+	public Role getRole(Guild guild)
 	{
 		try
 		{
-			return guild.getJDA().getTextChannelById(getLong(guild));
+			return guild.getJDA().getRoleById(getLong(guild));
 		}
 		catch(InvalidClassException | NoValueDefinedException e)
 		{
-			Log.error("Error getting channel from config", e);
+			Log.error("Error getting role from config", e);
 		}
 		return null;
 	}

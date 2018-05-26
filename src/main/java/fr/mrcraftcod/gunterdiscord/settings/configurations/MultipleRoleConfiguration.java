@@ -1,14 +1,10 @@
-package fr.mrcraftcod.gunterdiscord.settings;
+package fr.mrcraftcod.gunterdiscord.settings.configurations;
 
 import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
-import java.io.InvalidClassException;
 import java.util.LinkedList;
 
 /**
@@ -17,19 +13,19 @@ import java.util.LinkedList;
  * @author Thomas Couchoud
  * @since 2018-05-12
  */
-public abstract class SingleRoleConfiguration extends ValueConfiguration
+public abstract class MultipleRoleConfiguration extends ListConfiguration<Long>
 {
 	@SuppressWarnings("Duplicates")
 	@Override
-	public SetConfigCommand.ActionResult handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args)
+	public SetConfigCommand.ActionResult handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args) throws Exception
 	{
 		if(action == SetConfigCommand.ChangeConfigType.SHOW)
 		{
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
-			builder.setTitle("Valeur de " + getName());
-			builder.addField("", getObject(event.getGuild()).toString(), false);
+			builder.setTitle("Valeurs de " + getName());
+			getAsList(event.getGuild()).stream().map(r -> event.getJDA().getRoleById(r)).forEach(o -> builder.addField("", "@" + o.getName(), false));
 			Actions.reply(event, builder.build());
 			return SetConfigCommand.ActionResult.NONE;
 		}
@@ -37,23 +33,13 @@ public abstract class SingleRoleConfiguration extends ValueConfiguration
 			return SetConfigCommand.ActionResult.ERROR;
 		switch(action)
 		{
-			case SET:
-				setValue(event.getGuild(), event.getMessage().getMentionedRoles().get(0).getIdLong());
+			case ADD:
+				addValue(event.getGuild(), event.getMessage().getMentionedRoles().get(0).getIdLong());
+				return SetConfigCommand.ActionResult.OK;
+			case REMOVE:
+				removeValue(event.getGuild(), event.getMessage().getMentionedRoles().get(0).getIdLong());
 				return SetConfigCommand.ActionResult.OK;
 		}
 		return SetConfigCommand.ActionResult.ERROR;
-	}
-	
-	public Role getRole(Guild guild)
-	{
-		try
-		{
-			return guild.getJDA().getRoleById(getLong(guild));
-		}
-		catch(InvalidClassException | NoValueDefinedException e)
-		{
-			Log.error("Error getting role from config", e);
-		}
-		return null;
 	}
 }

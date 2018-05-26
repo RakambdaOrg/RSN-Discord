@@ -2,11 +2,10 @@ package fr.mrcraftcod.gunterdiscord.utils;
 
 import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.settings.configs.ModoRolesConfig;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Emote;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.*;
+import java.awt.*;
 import java.io.InvalidClassException;
 import java.util.Collection;
 import java.util.List;
@@ -200,5 +199,14 @@ public class Utilities
 	public static boolean isCreator(Member member)
 	{
 		return member.getUser().getIdLong() == 170119951498084352L;
+	}
+	
+	public static EmbedBuilder buildEmbed(User author, Color color, String title)
+	{
+		EmbedBuilder builder = new EmbedBuilder();
+		builder.setAuthor(author.getName(), null, author.getAvatarUrl());
+		builder.setColor(color);
+		builder.setTitle(title);
+		return builder;
 	}
 }

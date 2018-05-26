@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.settings.configs;
 
-import fr.mrcraftcod.gunterdiscord.settings.MapConfiguration;
+import fr.mrcraftcod.gunterdiscord.settings.configurations.MapConfiguration;
 import java.util.function.Function;
 
 /**

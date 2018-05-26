@@ -1,7 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.NickDelayConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.NickLastChangeConfig;
@@ -20,7 +19,6 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
@@ -28,39 +26,20 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-@CallableCommand
 public class NicknameCommand extends BasicCommand
 {
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	
 	@Override
-	public String getCommandUsage(Guild guild)
+	public String getCommandUsage()
 	{
-		return super.getCommandUsage(guild) + " <@utilisateur> [surnom]";
+		return super.getCommandUsage() + " [@utilisateur] [surnom]";
 	}
 	
 	@Override
 	public int getScope()
 	{
 		return ChannelType.TEXT.getId();
-	}
-	
-	@Override
-	public String getName()
-	{
-		return "Nickname";
-	}
-	
-	@Override
-	public List<String> getCommand()
-	{
-		return List.of("nickname", "nick");
-	}
-	
-	@Override
-	public String getDescription()
-	{
-		return "Change le surnom d'un utilisateur";
 	}
 	
 	@SuppressWarnings("Duplicates")
@@ -108,7 +87,7 @@ public class NicknameCommand extends BasicCommand
 			if(args.size() == 0)
 				newName = null;
 			else
-				newName = args.stream().collect(Collectors.joining(" "));
+				newName = String.join(" ", args);
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.addField("Ancien surnom", oldName == null ? "*AUCUN*" : oldName, true);
@@ -124,11 +103,37 @@ public class NicknameCommand extends BasicCommand
 			catch(HierarchyException e)
 			{
 				builder.setColor(Color.RED);
-				builder.setTitle("T'es cru changer le nom d'un mec plus haut que moi?!");
+				builder.setTitle("T'as cru changer le nom d'un mec plus haut que moi?!");
 			}
 			Actions.reply(event, builder.build());
 		}
 		return CommandResult.SUCCESS;
+	}
+	
+	@Override
+	public List<String> getCommand()
+	{
+		return List.of("nickname", "nick");
+	}
+	
+	@Override
+	public String getDescription()
+	{
+		return "Change le surnom d'un utilisateur";
+	}
+	
+	@Override
+	public void addHelp(Guild guild, EmbedBuilder builder)
+	{
+		super.addHelp(guild, builder);
+		builder.addField("Optionnel: Utilisateur", "L'utilisateur visé par la suppression (par défaut @me)", false);
+		builder.addField("Optionnel: Surnom", "Le nouveau surnom (si aucun n'est précisé le surnom sera réinitialisé)", false);
+	}
+	
+	@Override
+	public String getName()
+	{
+		return "Surnom";
 	}
 	
 	@Override

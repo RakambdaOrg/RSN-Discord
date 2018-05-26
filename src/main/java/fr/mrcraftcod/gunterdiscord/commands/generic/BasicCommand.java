@@ -1,10 +1,8 @@
 package fr.mrcraftcod.gunterdiscord.commands.generic;
 
-import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
-import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import java.io.InvalidClassException;
 import java.util.LinkedList;
 
 /**
@@ -15,11 +13,30 @@ import java.util.LinkedList;
  */
 public abstract class BasicCommand implements Command
 {
+	private final Command parent;
+	
 	/**
 	 * Constructor.
 	 */
 	public BasicCommand()
 	{
+		this(null);
+	}
+	
+	/**
+	 * Constructor.
+	 *
+	 * @param parent The parent command.
+	 */
+	public BasicCommand(Command parent)
+	{
+		this.parent = parent;
+	}
+	
+	@Override
+	public String getCommandUsage()
+	{
+		return getParent() == null || getParent() instanceof CompositeCommand ? "" : getParent().getCommandUsage();
 	}
 	
 	@Override
@@ -31,16 +48,13 @@ public abstract class BasicCommand implements Command
 	}
 	
 	@Override
-	public String getCommandUsage(Guild guild)
+	public Command getParent()
 	{
-		try
-		{
-			return new PrefixConfig().getString(guild) + getCommand().get(0);
-		}
-		catch(InvalidClassException | NoValueDefinedException e)
-		{
-			e.printStackTrace();
-		}
-		return getCommand().get(0);
+		return parent;
+	}
+	
+	@Override
+	public void addHelp(Guild guild, EmbedBuilder builder)
+	{
 	}
 }
