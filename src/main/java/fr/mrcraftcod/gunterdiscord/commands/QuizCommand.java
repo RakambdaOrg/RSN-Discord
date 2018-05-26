@@ -89,7 +89,7 @@ public class QuizCommand extends BasicCommand //TODO Composite
 	@Override
 	public String getCommandUsage()
 	{
-		return super.getCommandUsage() + " <action> [params]";
+		return super.getCommandUsage() + " action [params]";
 	}
 	
 	@Override

@@ -1,4 +1,4 @@
-package fr.mrcraftcod.gunterdiscord.commands;
+package fr.mrcraftcod.gunterdiscord.commands.hangman;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;

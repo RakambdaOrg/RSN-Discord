@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 import fr.mrcraftcod.gunterdiscord.commands.*;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
+import fr.mrcraftcod.gunterdiscord.commands.hangman.HangmanCommand;
 import fr.mrcraftcod.gunterdiscord.commands.photo.PhotoCompositeCommand;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;

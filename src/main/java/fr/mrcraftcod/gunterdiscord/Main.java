@@ -58,7 +58,6 @@ public class Main
 			// jda.addEventListener(new OnlyQuestionsMessageListener());
 			jda.addEventListener(new QuizMessageListener());
 			jda.addEventListener(new ShutdownListener());
-			jda.addEventListener(new HangmanListener());
 			jda.addEventListener(new LogListener());
 			jda.addEventListener(new AutoRolesListener());
 			jda.addEventListener(new IdeaChannelMessageListener());
