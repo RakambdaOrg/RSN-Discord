@@ -86,7 +86,15 @@ public class QuizListener extends ListenerAdapter implements Runnable
 		}
 		catch(IOException | URISyntaxException e)
 		{
-			Log.error("Error reading questions file", e);
+			Log.error("Error reading assets questions file", e);
+			try
+			{
+				lines.addAll(Files.readAllLines(Paths.get("./questions.csv")));
+			}
+			catch(IOException e2)
+			{
+				Log.error("Error reading questions file", e2);
+			}
 		}
 		
 		Collections.shuffle(lines);
