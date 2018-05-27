@@ -12,8 +12,6 @@ import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.awt.*;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -84,18 +82,21 @@ public class QuizListener extends ListenerAdapter implements Runnable
 		{
 			lines.addAll(Files.readAllLines(Paths.get(Main.class.getResource("/quiz/questions.csv").toURI())));
 		}
-		catch(IOException | URISyntaxException e)
+		catch(Exception e)
 		{
 			Log.error("Error reading assets questions file", e);
 			try
 			{
 				lines.addAll(Files.readAllLines(Paths.get("./questions.csv")));
 			}
-			catch(IOException e2)
+			catch(Exception e2)
 			{
 				Log.error("Error reading questions file", e2);
 			}
 		}
+		
+		if(lines.isEmpty())
+			throw new IllegalStateException("No questions found");
 		
 		Collections.shuffle(lines);
 		LinkedList<Question> list = new LinkedList<>();
