@@ -31,7 +31,7 @@ public class QuizStopCommand extends BasicCommand
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
-		QuizListener.getQuiz(event.getGuild(), 0, false).ifPresent(QuizListener::stop);
+		QuizListener.getQuiz(event.getGuild(), 0, 2, false).ifPresent(QuizListener::stop);
 		return CommandResult.SUCCESS;
 	}
 	
