@@ -464,6 +464,7 @@ public class Actions
 		builder.append("\n").append("Author: ").append(embed.getAuthor().getName());
 		builder.append("\n").append("Title: ").append(embed.getTitle());
 		builder.append("\n").append("Description: ").append(embed.getDescription());
+		builder.append("\n").append("Color: ").append(embed.getColor());
 		embed.getFields().forEach(f -> {
 			builder.append("\n").append("FIELD:");
 			builder.append("\n\t").append("Name: ").append(f.getName());
