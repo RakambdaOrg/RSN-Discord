@@ -22,7 +22,7 @@ public class ShutdownListener extends ListenerAdapter
 		super.onShutdown(event);
 		try
 		{
-			QuizListener.setBack();
+			QuizListener.stopAll();
 			HangmanListener.stopAll();
 			Settings.save();
 			for(Handler h : Log.getLogger().getHandlers())

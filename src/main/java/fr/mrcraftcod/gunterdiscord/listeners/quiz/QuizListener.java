@@ -38,7 +38,8 @@ public class QuizListener extends ListenerAdapter implements Runnable
 	/**
 	 * Constructor.
 	 *
-	 * @param guild The guild.
+	 * @param guild  The guild.
+	 * @param amount The amount of questions to add.
 	 */
 	private QuizListener(Guild guild, int amount)
 	{
@@ -49,6 +50,14 @@ public class QuizListener extends ListenerAdapter implements Runnable
 		guild.getJDA().addEventListener(this);
 		quizzes.add(this);
 		new Thread(this).run();
+	}
+	
+	/**
+	 * Stop all quizzes.
+	 */
+	public static void stopAll()
+	{
+		quizzes.forEach(QuizListener::stop);
 	}
 	
 	/**
