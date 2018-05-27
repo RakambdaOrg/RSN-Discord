@@ -99,6 +99,14 @@ public class HangmanListener extends ListenerAdapter
 	}
 	
 	/**
+	 * Stop all running games.
+	 */
+	public static void stopAll()
+	{
+		games.forEach(HangmanListener::delayEndGame);
+	}
+	
+	/**
 	 * Discover a letter in the word.
 	 *
 	 * @param c The letter to try.
@@ -178,7 +186,7 @@ public class HangmanListener extends ListenerAdapter
 			waitingUser = member.getUser();
 			try
 			{
-				Actions.sendMessage(channel, "L'élu est %s, c'est a lui d'indiquer la lettre que vous avez choisit grâce à la commande %spendu l <lettre>\n", member.getAsMention(), 'h', new PrefixConfig().getString(guild, "g?"));
+				Actions.sendMessage(channel, "L'élu est %s, c'est a lui d'indiquer la lettre que vous avez choisit grâce à la commande %spendu l <lettre>\n", member.getAsMention(), new PrefixConfig().getString(guild, "g?"));
 			}
 			catch(InvalidClassException | IllegalArgumentException e)
 			{

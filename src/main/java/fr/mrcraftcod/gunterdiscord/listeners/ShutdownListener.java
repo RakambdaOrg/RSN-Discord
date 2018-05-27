@@ -23,6 +23,7 @@ public class ShutdownListener extends ListenerAdapter
 		try
 		{
 			QuizMessageListener.setBack();
+			HangmanListener.stopAll();
 			Settings.save();
 			for(Handler h : Log.getLogger().getHandlers())
 				h.close();

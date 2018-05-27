@@ -17,6 +17,9 @@ public class HangmanCompositeCommand extends CompositeCommand
 		super();
 		addSubCommand(new HangmanJoinCommand(this));
 		addSubCommand(new HangmanLeaveCommand(this));
+		addSubCommand(new HangmanLetterCommand(this));
+		addSubCommand(new HangmanSkipCommand(this));
+		addSubCommand(new HangmanWordCommand(this));
 	}
 	
 	@Override
