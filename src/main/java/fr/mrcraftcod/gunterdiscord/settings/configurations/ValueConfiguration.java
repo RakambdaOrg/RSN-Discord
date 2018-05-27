@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.settings.configurations;
 
-import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
+import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.Configuration;
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
@@ -22,33 +22,10 @@ public abstract class ValueConfiguration extends Configuration
 {
 	private Object lastValue = null;
 	
-	@Override
-	public SetConfigCommand.ActionResult handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args)
-	{
-		if(action == SetConfigCommand.ChangeConfigType.SHOW)
-		{
-			EmbedBuilder builder = new EmbedBuilder();
-			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-			builder.setColor(Color.GREEN);
-			builder.setTitle("Valeur de " + getName());
-			builder.addField("", getObject(event.getGuild()).toString(), false);
-			Actions.reply(event, builder.build());
-			return SetConfigCommand.ActionResult.NONE;
-		}
-		if(args.size() < 1)
-			return SetConfigCommand.ActionResult.ERROR;
-		switch(action)
-		{
-			case SET:
-				setValue(event.getGuild(), args.poll());
-				return SetConfigCommand.ActionResult.OK;
-		}
-		return SetConfigCommand.ActionResult.OK;
-	}
-	
 	/**
 	 * Get the value as an integer.
 	 *
+	 * @param guild        The guild.
 	 * @param defaultValue The default value to return if none was found.
 	 *
 	 * @return The string.
@@ -72,6 +49,7 @@ public abstract class ValueConfiguration extends Configuration
 	/**
 	 * Get the value as a long.
 	 *
+	 * @param guild        The guild.
 	 * @param defaultValue The default value to return if none was found.
 	 *
 	 * @return The string.
@@ -92,40 +70,10 @@ public abstract class ValueConfiguration extends Configuration
 		throw new InvalidClassException("Config is not a long: " + value.getClass().getSimpleName());
 	}
 	
-	@Override
-	public ConfigType getType()
-	{
-		return ConfigType.VALUE;
-	}
-	
-	/**
-	 * Get the value as an object.
-	 *
-	 * @return The object or null if not found.
-	 *
-	 * @throws IllegalArgumentException If this configuration isn't a value.
-	 */
-	protected Object getObject(Guild guild) throws IllegalArgumentException
-	{
-		if(getType() != ConfigType.VALUE)
-			throw new IllegalArgumentException("Not a value config");
-		return Settings.getObject(guild, getName());
-	}
-	
-	/**
-	 * Set the value.
-	 *
-	 * @param value the value to set.
-	 */
-	public void setValue(Guild guild, Object value)
-	{
-		lastValue = value;
-		Settings.setValue(guild, this, value);
-	}
-	
 	/**
 	 * Get the value as a string.
 	 *
+	 * @param guild        The guild.
 	 * @param defaultValue The default value to return if none was found.
 	 *
 	 * @return The string.
@@ -146,8 +94,16 @@ public abstract class ValueConfiguration extends Configuration
 		throw new InvalidClassException("Config is not a string: " + value.getClass().getSimpleName());
 	}
 	
+	@Override
+	public ConfigType getType()
+	{
+		return ConfigType.VALUE;
+	}
+	
 	/**
 	 * Get the value as a long.
+	 *
+	 * @param guild The guild.
 	 *
 	 * @return The long.
 	 *
@@ -168,6 +124,8 @@ public abstract class ValueConfiguration extends Configuration
 	/**
 	 * Get the value as a string.
 	 *
+	 * @param guild The guild.
+	 *
 	 * @return The string.
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a value.
@@ -185,8 +143,61 @@ public abstract class ValueConfiguration extends Configuration
 	}
 	
 	@Override
-	public boolean isActionAllowed(SetConfigCommand.ChangeConfigType action)
+	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action)
 	{
-		return action == SetConfigCommand.ChangeConfigType.SET || action == SetConfigCommand.ChangeConfigType.SHOW;
+		return action == ConfigurationCommand.ChangeConfigType.SET || action == ConfigurationCommand.ChangeConfigType.SHOW;
+	}
+	
+	@SuppressWarnings("Duplicates")
+	@Override
+	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args)
+	{
+		if(action == ConfigurationCommand.ChangeConfigType.SHOW)
+		{
+			EmbedBuilder builder = new EmbedBuilder();
+			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+			builder.setColor(Color.GREEN);
+			builder.setTitle("Valeur de " + getName());
+			builder.addField("", getObject(event.getGuild()).toString(), false);
+			Actions.reply(event, builder.build());
+			return ConfigurationCommand.ActionResult.NONE;
+		}
+		if(args.size() < 1)
+			return ConfigurationCommand.ActionResult.ERROR;
+		switch(action)
+		{
+			case SET:
+				setValue(event.getGuild(), args.poll());
+				return ConfigurationCommand.ActionResult.OK;
+		}
+		return ConfigurationCommand.ActionResult.OK;
+	}
+	
+	/**
+	 * Get the value as an object.
+	 *
+	 * @param guild The guild.
+	 *
+	 * @return The object or null if not found.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a value.
+	 */
+	protected Object getObject(Guild guild) throws IllegalArgumentException
+	{
+		if(getType() != ConfigType.VALUE)
+			throw new IllegalArgumentException("Not a value config");
+		return Settings.getObject(guild, getName());
+	}
+	
+	/**
+	 * Set the value.
+	 *
+	 * @param guild The guild.
+	 * @param value the value to set.
+	 */
+	public void setValue(Guild guild, Object value)
+	{
+		lastValue = value;
+		Settings.setValue(guild, this, value);
 	}
 }

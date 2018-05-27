@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.settings.configurations;
 
-import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
+import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.Configuration;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
@@ -10,7 +10,6 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.json.JSONObject;
 import java.awt.*;
-import java.io.InvalidClassException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -29,7 +28,8 @@ public abstract class MapConfiguration<K, V> extends Configuration
 	/**
 	 * Get the value from the given key.
 	 *
-	 * @param key The key to get.
+	 * @param guild The guild.
+	 * @param key   The key to get.
 	 *
 	 * @return The value or null if not found.
 	 */
@@ -49,10 +49,11 @@ public abstract class MapConfiguration<K, V> extends Configuration
 	/**
 	 * Get the map of this configuration.
 	 *
+	 * @param guild The guild.
+	 *
 	 * @return The map.
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a map.
-	 * @throws InvalidClassException    If either they key isn't K or the value isn't V.
 	 */
 	public Map<K, V> getAsMap(Guild guild) throws IllegalArgumentException
 	{
@@ -85,39 +86,10 @@ public abstract class MapConfiguration<K, V> extends Configuration
 	 */
 	protected abstract Function<String, V> getValueParser();
 	
-	@Override
-	public SetConfigCommand.ActionResult handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args) throws Exception
-	{
-		if(action == SetConfigCommand.ChangeConfigType.SHOW)
-		{
-			EmbedBuilder builder = new EmbedBuilder();
-			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-			builder.setColor(Color.GREEN);
-			builder.setTitle("Valeurs de " + getName());
-			Map<K, V> map = getAsMap(event.getGuild());
-			map.keySet().stream().map(k -> k + " -> " + map.get(k)).forEach(o -> builder.addField("", o, false));
-			Actions.reply(event, builder.build());
-			return SetConfigCommand.ActionResult.NONE;
-		}
-		
-		switch(action)
-		{
-			case ADD:
-				if(args.size() < 2)
-					return SetConfigCommand.ActionResult.ERROR;
-				addValue(event.getGuild(), getKeyParser().apply(args.poll()), getValueParser().apply(args.poll()));
-				return SetConfigCommand.ActionResult.OK;
-			case REMOVE:
-				if(args.size() < 1)
-					return SetConfigCommand.ActionResult.ERROR;
-				deleteKey(event.getGuild(), getKeyParser().apply(args.poll()));
-				return SetConfigCommand.ActionResult.OK;
-		}
-		return SetConfigCommand.ActionResult.ERROR;
-	}
-	
 	/**
 	 * Get the JSON Object.
+	 *
+	 * @param guild The guild.
 	 *
 	 * @return The JSON object.
 	 *
@@ -131,14 +103,52 @@ public abstract class MapConfiguration<K, V> extends Configuration
 	}
 	
 	@Override
+	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action)
+	{
+		return action == ConfigurationCommand.ChangeConfigType.ADD || action == ConfigurationCommand.ChangeConfigType.REMOVE || action == ConfigurationCommand.ChangeConfigType.SHOW;
+	}
+	
+	@Override
 	public ConfigType getType()
 	{
 		return ConfigType.MAP;
 	}
 	
+	@Override
+	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args) throws Exception
+	{
+		if(action == ConfigurationCommand.ChangeConfigType.SHOW)
+		{
+			EmbedBuilder builder = new EmbedBuilder();
+			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+			builder.setColor(Color.GREEN);
+			builder.setTitle("Valeurs de " + getName());
+			Map<K, V> map = getAsMap(event.getGuild());
+			map.keySet().stream().map(k -> k + " -> " + map.get(k)).forEach(o -> builder.addField("", o, false));
+			Actions.reply(event, builder.build());
+			return ConfigurationCommand.ActionResult.NONE;
+		}
+		
+		switch(action)
+		{
+			case ADD:
+				if(args.size() < 2)
+					return ConfigurationCommand.ActionResult.ERROR;
+				addValue(event.getGuild(), getKeyParser().apply(args.poll()), getValueParser().apply(args.poll()));
+				return ConfigurationCommand.ActionResult.OK;
+			case REMOVE:
+				if(args.size() < 1)
+					return ConfigurationCommand.ActionResult.ERROR;
+				deleteKey(event.getGuild(), getKeyParser().apply(args.poll()));
+				return ConfigurationCommand.ActionResult.OK;
+		}
+		return ConfigurationCommand.ActionResult.ERROR;
+	}
+	
 	/**
 	 * Add a value to the map.
 	 *
+	 * @param guild The guild.
 	 * @param key   The key to add into.
 	 * @param value The value to set at the key.
 	 */
@@ -152,18 +162,13 @@ public abstract class MapConfiguration<K, V> extends Configuration
 	/**
 	 * Delete the key.
 	 *
-	 * @param key The key.
+	 * @param guild The guild.
+	 * @param key   The key.
 	 */
 	public void deleteKey(Guild guild, K key)
 	{
 		if(lastValue != null)
 			lastValue.remove(key);
 		Settings.deleteKey(guild, this, key);
-	}
-	
-	@Override
-	public boolean isActionAllowed(SetConfigCommand.ChangeConfigType action)
-	{
-		return action == SetConfigCommand.ChangeConfigType.ADD || action == SetConfigCommand.ChangeConfigType.REMOVE || action == SetConfigCommand.ChangeConfigType.SHOW;
 	}
 }

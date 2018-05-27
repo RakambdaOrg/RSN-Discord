@@ -7,16 +7,18 @@ import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.awt.*;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 /**
@@ -25,53 +27,126 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-19
  */
-public class QuizMessageListener extends ListenerAdapter implements Runnable
+public class QuizListener extends ListenerAdapter implements Runnable
 {
-	private static QuizMessageListener INSTANCE = null;
-	private static Message waitingMsg = null;
-	private static HashMap<Long, Integer> answers;
-	private boolean done = false;
+	private static final ArrayList<QuizListener> quizzes = new ArrayList<>();
+	private final Guild guild;
+	private Message waitingMsg = null;
+	private HashMap<Long, Integer> answers;
 	private LinkedList<Question> questions;
 	
 	/**
 	 * Constructor.
+	 *
+	 * @param guild The guild.
 	 */
-	public QuizMessageListener()
+	private QuizListener(Guild guild, int amount)
 	{
+		this.guild = guild;
+		
+		questions = generateQuestions(amount);
+		
+		guild.getJDA().addEventListener(this);
+		quizzes.add(this);
+		new Thread(this).run();
 	}
 	
 	/**
-	 * Constructor of the game.
+	 * Pick some random questions from the CSV file.
 	 *
-	 * @param questions The questions to set.
+	 * @param amount The maximum number of question.
+	 *
+	 * @return The questions.
 	 */
-	private QuizMessageListener(LinkedList<Question> questions)
+	private LinkedList<Question> generateQuestions(int amount)
 	{
-		this.questions = questions;
+		LinkedList<String> lines = new LinkedList<>();
+		try
+		{
+			lines.addAll(Files.readAllLines(Paths.get(Main.class.getResource("/quiz/questions.csv").toURI())));
+		}
+		catch(IOException | URISyntaxException e)
+		{
+			Log.error("Error reading questions file", e);
+		}
+		
+		Collections.shuffle(lines);
+		LinkedList<Question> list = new LinkedList<>();
+		for(int i = 0; i < amount; i++)
+		{
+			if(lines.size() < 1)
+				break;
+			String[] line = lines.pop().split(",");
+			String correctAnswer = line[1];
+			
+			List<String> answersList = Arrays.stream(line, 2, line.length).filter(l -> l != null && !l.trim().equalsIgnoreCase("")).collect(Collectors.toList());
+			Collections.shuffle(answersList);
+			int ID = ThreadLocalRandom.current().nextInt(0, answersList.size() + 1);
+			HashMap<Integer, String> answers = new HashMap<>();
+			for(int j = 0; j < answersList.size() + 1; j++)
+				if(j == ID)
+					answers.put(j, correctAnswer);
+				else
+					answers.put(j, answersList.get(j - (j > ID ? 1 : 0)));
+			list.add(new Question(line[0], answers, ID));
+		}
+		return list;
 	}
 	
 	/**
-	 * Get the current instance of teh game.
+	 * Get the current instance of the game.
 	 *
-	 * @param questions The questions to set if a new game is started.
+	 * @param guild  The guild.
+	 * @param amount The amount of questions.
 	 *
-	 * @return A new game or null is one is already running.
+	 * @return The game of the guild.
 	 */
-	public static QuizMessageListener getInstance(LinkedList<Question> questions)
+	public static Optional<QuizListener> getQuiz(Guild guild, int amount)
 	{
-		if(INSTANCE == null || INSTANCE.isDone())
-			return (INSTANCE = new QuizMessageListener(questions));
-		return null;
+		return getQuiz(guild, amount, true);
 	}
 	
 	/**
-	 * Tell is this game is over.
+	 * Get the current instance of the game.
 	 *
-	 * @return True if over, false otherwise.
+	 * @param guild        The guild.
+	 * @param amount       The amount of questions.
+	 * @param shouldCreate If a new game should be created if not found.
+	 *
+	 * @return The game of the guild.
 	 */
-	private boolean isDone()
+	public static Optional<QuizListener> getQuiz(Guild guild, int amount, boolean shouldCreate)
 	{
-		return done;
+		return quizzes.stream().filter(q -> q.getGuild().getIdLong() == guild.getIdLong()).findAny().or(() -> {
+			try
+			{
+				if(shouldCreate)
+					return Optional.of(new QuizListener(guild, amount));
+			}
+			catch(Exception e)
+			{
+				Log.error("Error create a new quiz game", e);
+			}
+			return Optional.empty();
+		});
+	}
+	
+	/**
+	 * Get the guild.
+	 *
+	 * @return The guild.
+	 */
+	private Guild getGuild()
+	{
+		return guild;
+	}
+	
+	/**
+	 * Stop the quiz.
+	 */
+	public void stop()
+	{
+		Thread.currentThread().interrupt();
 	}
 	
 	@Override
@@ -83,13 +158,10 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 		{
 			JDA jda = Main.getJDA();
 			jda.getPresence().setGame(Game.playing("The Kwizzz"));
-			TextChannel quizChannel = new QuizChannelConfig().getTextChannel(jda.getGuilds().stream().filter(g -> g.getName().contains("Léo")).findFirst().get());
+			TextChannel quizChannel = new QuizChannelConfig().getTextChannel(guild);
 			
 			if(quizChannel == null)
-			{
-				setBack();
 				return;
-			}
 			
 			Actions.sendMessage(quizChannel, "Ok @here, j'espère que vous êtes aussi chaud que mon chalumeau pour un petit kwizzz!\n" + "Le principe est simple: une question va apparaitre avec un set de réponses possibles. Vous pouvez répondre à la question en ajoutant une réaction avec la lettre corespondante. Le temps limite pour répondre est de %ds.\n" + "Chaque bonne réponse vous donnera 1 point.\n\nOn commence dans %d secondes!", QUESTION_TIME, HALF_WAIT_TIME * 2);
 			try
@@ -114,7 +186,7 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 			
 			HashMap<Long, Integer> scores = new HashMap<>();
 			int i = 0;
-			while(!done && questions.size() > 0)
+			while(!Thread.interrupted() && questions.size() > 0)
 			{
 				i++;
 				try
@@ -188,25 +260,15 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 			builder.setColor(Color.PINK);
 			builder.setTitle("Le jeu est terminé!");
 			builder.setDescription("Voici le top des scores:");
-			bests.keySet().stream().sorted(Comparator.reverseOrder()).map(v -> new MessageEmbed.Field((1 + bestsScores.indexOf(v)) + " (" + v + " points)", bests.get(v).stream().collect(Collectors.joining(", ")), false)).forEach(builder::addField);
+			bests.keySet().stream().sorted(Comparator.reverseOrder()).map(v -> new MessageEmbed.Field((1 + bestsScores.indexOf(v)) + " (" + v + " points)", String.join(", ", bests.get(v)), false)).forEach(builder::addField);
 			Actions.sendMessage(quizChannel, builder.build());
-			setBack();
 		}
 		catch(Exception e)
 		{
 			Log.error("Error quiz", e);
 		}
-	}
-	
-	/**
-	 * Resets the game.
-	 */
-	public static void setBack()
-	{
-		JDA jda = Main.getJDA();
-		jda.getPresence().setGame(Game.playing("Le chalumeau"));
-		if(INSTANCE != null)
-			INSTANCE.done = true;
+		quizzes.remove(this);
+		guild.getJDA().removeEventListener(this);
 	}
 	
 	@Override
@@ -215,7 +277,7 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 		super.onMessageReactionAdd(event);
 		try
 		{
-			if(waitingMsg != null && event.getMessageIdLong() == waitingMsg.getIdLong() && event.getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong())
+			if(event.getGuild().getIdLong() == getGuild().getIdLong() && waitingMsg != null && event.getMessageIdLong() == waitingMsg.getIdLong() && event.getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong())
 			{
 				if(answers != null)
 				{
@@ -250,7 +312,7 @@ public class QuizMessageListener extends ListenerAdapter implements Runnable
 		super.onMessageReactionRemove(event);
 		try
 		{
-			if(waitingMsg != null && event.getMessageIdLong() == waitingMsg.getIdLong())
+			if(event.getGuild().getIdLong() == getGuild().getIdLong() && waitingMsg != null && event.getMessageIdLong() == waitingMsg.getIdLong())
 			{
 				if(answers != null)
 				{

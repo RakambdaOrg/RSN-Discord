@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord;
 
 import fr.mrcraftcod.gunterdiscord.listeners.*;
-import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizMessageListener;
+import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.LoggerFormatter;
@@ -56,7 +56,7 @@ public class Main
 			// jda.addEventListener(new BannedRegexesMessageListener());
 			jda.addEventListener(new OnlyImagesMessageListener());
 			// jda.addEventListener(new OnlyQuestionsMessageListener());
-			jda.addEventListener(new QuizMessageListener());
+			jda.addEventListener(new QuizListener());
 			jda.addEventListener(new ShutdownListener());
 			jda.addEventListener(new LogListener());
 			jda.addEventListener(new AutoRolesListener());

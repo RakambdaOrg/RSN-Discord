@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.settings.configurations;
 
-import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
+import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.Configuration;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import net.dv8tion.jda.core.entities.Guild;
@@ -24,7 +24,8 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	/**
 	 * Get the list of values from the given key.
 	 *
-	 * @param key The key to get.
+	 * @param guild The guild.
+	 * @param key   The key to get.
 	 *
 	 * @return The values or null if not found.
 	 */
@@ -42,6 +43,8 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	
 	/**
 	 * Get the map of this configuration.
+	 *
+	 * @param guild The guild.
 	 *
 	 * @return The map.
 	 *
@@ -72,6 +75,8 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	/**
 	 * Get the JSON Object.
 	 *
+	 * @param guild The guild.
+	 *
 	 * @return The JSON object.
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a map.
@@ -86,6 +91,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	/**
 	 * Add a value to the map list.
 	 *
+	 * @param guild The guild.
 	 * @param key   The key to add into.
 	 * @param value The value to add at the key.
 	 */
@@ -119,6 +125,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	/**
 	 * Delete a value inside a key.
 	 *
+	 * @param guild The guild.
 	 * @param key   The key.
 	 * @param value The value.
 	 */
@@ -137,7 +144,8 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	/**
 	 * Delete the key.
 	 *
-	 * @param key The key.
+	 * @param guild The guild.
+	 * @param key   The key.
 	 */
 	public void deleteKey(Guild guild, K key)
 	{
@@ -147,8 +155,8 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	}
 	
 	@Override
-	public boolean isActionAllowed(SetConfigCommand.ChangeConfigType action)
+	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action)
 	{
-		return action == SetConfigCommand.ChangeConfigType.ADD || action == SetConfigCommand.ChangeConfigType.REMOVE || action == SetConfigCommand.ChangeConfigType.SHOW;
+		return action == ConfigurationCommand.ChangeConfigType.ADD || action == ConfigurationCommand.ChangeConfigType.REMOVE || action == ConfigurationCommand.ChangeConfigType.SHOW;
 	}
 }
