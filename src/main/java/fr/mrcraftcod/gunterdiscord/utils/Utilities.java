@@ -62,19 +62,6 @@ public class Utilities
 	 *
 	 * @return True if the member have the role, false otherwise.
 	 */
-	public static boolean hasRole(Member member, Roles role)
-	{
-		return getRole(member.getGuild(), role).stream().anyMatch(r -> member.getRoles().contains(r));
-	}
-	
-	/**
-	 * Check if a member have a role.
-	 *
-	 * @param member The member to test.
-	 * @param role   The role to search for.
-	 *
-	 * @return True if the member have the role, false otherwise.
-	 */
 	public static boolean hasRole(Member member, Role role)
 	{
 		return member.getRoles().contains(role);
@@ -104,19 +91,6 @@ public class Utilities
 	public static boolean hasRoleIDs(Member member, List<Long> roles)
 	{
 		return roles.stream().map(r -> member.getGuild().getRoleById(r)).anyMatch(r -> hasRole(member, r));
-	}
-	
-	/**
-	 * Get a role.
-	 *
-	 * @param guild The guild the role is in.
-	 * @param role  The role to search for.
-	 *
-	 * @return The role or null if not found.
-	 */
-	public static List<Role> getRole(Guild guild, Roles role)
-	{
-		return getRole(guild, role.getRole());
 	}
 	
 	/**
@@ -157,19 +131,6 @@ public class Utilities
 		if(emotes.size() < 1)
 			return "";
 		return emotes.get(0).getAsMention();
-	}
-	
-	/**
-	 * Get all the members that have a role.
-	 *
-	 * @param guild The guild the role is in.
-	 * @param role  The role to search for.
-	 *
-	 * @return The members that have this role.
-	 */
-	public static List<Member> getMembersRole(Guild guild, Roles role)
-	{
-		return getMembersRole(getRole(guild, role));
 	}
 	
 	/**

@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import static fr.mrcraftcod.gunterdiscord.utils.Utilities.getRole;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -178,20 +177,6 @@ public class Actions
 	 * @param user  The user to set the role to.
 	 * @param role  The role to set.
 	 */
-	public static void giveRole(Guild guild, User user, Roles role)
-	{
-		List<Role> roles = getRole(guild, role);
-		if(roles.size() > 0)
-			giveRole(guild, user, roles);
-	}
-	
-	/**
-	 * Give a role to a user.
-	 *
-	 * @param guild The guild the role is in.
-	 * @param user  The user to set the role to.
-	 * @param role  The role to set.
-	 */
 	public static void giveRole(Guild guild, User user, Role role)
 	{
 		try
@@ -225,18 +210,6 @@ public class Actions
 	{
 		for(Role role : roles)
 			giveRole(guild, user, role);
-	}
-	
-	/**
-	 * Remove a role from a user.
-	 *
-	 * @param guild The guild the role is in.
-	 * @param user  The user to remove the role from.
-	 * @param role  The role to remove.
-	 */
-	public static void removeRole(Guild guild, User user, Roles role)
-	{
-		removeRole(guild.getMember(user), getRole(guild, role));
 	}
 	
 	/**
@@ -414,6 +387,12 @@ public class Actions
 		}
 	}
 	
+	/**
+	 * Give roles to the user.
+	 *
+	 * @param member The member.
+	 * @param roles  The roles IDs.
+	 */
 	public static void giveRole(Member member, List<Long> roles)
 	{
 		giveRole(member.getGuild(), member.getUser(), roles.stream().map(r -> getRoleByID(member.getGuild(), r)).collect(Collectors.toList()));
@@ -424,6 +403,12 @@ public class Actions
 		return guild.getRoleById(role);
 	}
 	
+	/**
+	 * Reply to an event?
+	 *
+	 * @param event The event.
+	 * @param embed The message to send.
+	 */
 	@SuppressWarnings("Duplicates")
 	public static void reply(GenericMessageEvent event, MessageEmbed embed)
 	{
@@ -436,6 +421,55 @@ public class Actions
 				sendMessage(event.getTextChannel(), embed);
 				break;
 		}
+	}
+	
+	/**
+	 * Send a message to a channel.
+	 *
+	 * @param channel The channel to send to.
+	 * @param embed   The message to send.
+	 */
+	public static void sendMessage(PrivateChannel channel, MessageEmbed embed)
+	{
+		if(channel != null)
+		{
+			channel.sendMessage(embed).queue();
+			Log.info("Sent private message to " + getUserToLog(channel.getUser()) + " : " + getEmbedForLog(embed));
+		}
+		else
+			Log.warning("Cannot send private message to null channel : " + getEmbedForLog(embed));
+	}
+	
+	/**
+	 * Send a message to a channel.
+	 *
+	 * @param channel The channel to send to.
+	 * @param embed   The message to send.
+	 */
+	public static void sendMessage(TextChannel channel, MessageEmbed embed)
+	{
+		sendMessage(channel, null, embed);
+	}
+	
+	/**
+	 * Transform an embed into text.
+	 *
+	 * @param embed The embed.
+	 *
+	 * @return The text.
+	 */
+	private static String getEmbedForLog(MessageEmbed embed)
+	{
+		StringBuilder builder = new StringBuilder("Embed " + embed.hashCode());
+		builder.append("\n").append("Author: ").append(embed.getAuthor().getName());
+		builder.append("\n").append("Title: ").append(embed.getTitle());
+		builder.append("\n").append("Description: ").append(embed.getDescription());
+		embed.getFields().forEach(f -> {
+			builder.append("\n").append("FIELD:");
+			builder.append("\n\t").append("Name: ").append(f.getName());
+			builder.append("\n\t").append("Value: ").append(f.getValue());
+		});
+		return builder.toString();
 	}
 	
 	/**
@@ -456,40 +490,12 @@ public class Actions
 					channel.sendMessage(embed).queue(onDone);
 				else
 					channel.sendMessage(embed).queue();
-				Log.info("Sent message to " + channel.getName() + " : " + embed);
+				Log.info("Sent message to " + channel.getName() + " : " + getEmbedForLog(embed));
 			}
 			else
-				Log.error("Access denied to text channel: " + channel.getAsMention());
+				Log.error("Access denied to text channel: " + channel.getAsMention() + ", when sending: " + getEmbedForLog(embed));
 		}
 		else
-			Log.warning("Cannot send message to null channel : " + embed);
-	}
-	
-	/**
-	 * Send a message to a channel.
-	 *
-	 * @param channel The channel to send to.
-	 * @param embed   The message to send.
-	 */
-	public static void sendMessage(TextChannel channel, MessageEmbed embed)
-	{
-		sendMessage(channel, null, embed);
-	}
-	
-	/**
-	 * Send a message to a channel.
-	 *
-	 * @param channel The channel to send to.
-	 * @param embed    The message to send.
-	 */
-	public static void sendMessage(PrivateChannel channel, MessageEmbed embed)
-	{
-		if(channel != null)
-		{
-			channel.sendMessage(embed).queue();
-			Log.info("Sent private message to " + getUserToLog(channel.getUser()) + " : " + embed);
-		}
-		else
-			Log.warning("Cannot send private message to null channel : " + embed);
+			Log.warning("Cannot send message to null channel : " + getEmbedForLog(embed));
 	}
 }
