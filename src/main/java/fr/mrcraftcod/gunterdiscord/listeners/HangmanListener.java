@@ -95,6 +95,7 @@ public class HangmanListener extends ListenerAdapter
 		}).start();
 		guild.getJDA().addEventListener(this);
 		games.add(this);
+		Log.info("Crated hangman game");
 	}
 	
 	/**
@@ -302,7 +303,7 @@ public class HangmanListener extends ListenerAdapter
 		playerCount--;
 		Actions.removeRole(member, role);
 		if(playerCount < 1)
-			removeUsers();
+			delayEndGame();
 	}
 	
 	/**
@@ -358,6 +359,7 @@ public class HangmanListener extends ListenerAdapter
 	 */
 	private void delayEndGame()
 	{
+		Log.info("Ending hangman game");
 		guild.getJDA().removeEventListener(this);
 		waitingUser = null;
 		executor.shutdownNow();
