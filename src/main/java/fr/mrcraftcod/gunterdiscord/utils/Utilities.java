@@ -196,11 +196,27 @@ public class Utilities
 		return roles.stream().map(Utilities::getMembersRole).flatMap(Collection::stream).collect(Collectors.toList());
 	}
 	
+	/**
+	 * Tell if a user is this bot created.
+	 *
+	 * @param member The member to test.
+	 *
+	 * @return True if the creator, false otherwise.
+	 */
 	public static boolean isCreator(Member member)
 	{
 		return member.getUser().getIdLong() == 170119951498084352L;
 	}
 	
+	/**
+	 * Build an embed.
+	 *
+	 * @param author The author.
+	 * @param color  The color.
+	 * @param title  The title.
+	 *
+	 * @return The builder.
+	 */
 	public static EmbedBuilder buildEmbed(User author, Color color, String title)
 	{
 		EmbedBuilder builder = new EmbedBuilder();

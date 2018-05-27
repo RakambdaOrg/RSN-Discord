@@ -23,7 +23,7 @@ public class AvatarCommand extends BasicCommand
 	@Override
 	public String getCommandUsage()
 	{
-		return super.getCommandUsage() + " @utilisateur";
+		return super.getCommandUsage() + " <@utilisateur>";
 	}
 	
 	@Override

@@ -23,7 +23,7 @@ public class QueueCommand extends BasicCommand
 	@Override
 	public String getCommandUsage()
 	{
-		return super.getCommandUsage() + " message...";
+		return super.getCommandUsage() + " <message...>";
 	}
 	
 	@Override

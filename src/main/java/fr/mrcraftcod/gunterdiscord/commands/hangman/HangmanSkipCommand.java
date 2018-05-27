@@ -1,15 +1,11 @@
-package fr.mrcraftcod.gunterdiscord.commands.photo;
+package fr.mrcraftcod.gunterdiscord.commands.hangman;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.configs.TrombinoscopeRoleConfig;
-import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Utilities;
-import net.dv8tion.jda.core.EmbedBuilder;
+import fr.mrcraftcod.gunterdiscord.listeners.HangmanListener;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,16 +13,16 @@ import java.util.List;
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
  *
  * @author Thomas Couchoud
- * @since 2018-05-26
+ * @since 2018-05-27
  */
-public class ListPhotoCommand extends BasicCommand
+public class HangmanSkipCommand extends BasicCommand
 {
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	ListPhotoCommand(Command parent)
+	HangmanSkipCommand(Command parent)
 	{
 		super(parent);
 	}
@@ -35,12 +31,7 @@ public class ListPhotoCommand extends BasicCommand
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
-		EmbedBuilder builder = new EmbedBuilder();
-		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-		builder.setColor(Color.GREEN);
-		builder.setTitle("Participants du trombinoscope");
-		Utilities.getMembersRole(new TrombinoscopeRoleConfig().getRole(event.getGuild())).stream().map(u -> u.getUser().getName()).forEach(u -> builder.addField("", u, false));
-		Actions.reply(event, builder.build());
+		HangmanListener.getGame(event.getGuild(), false).ifPresent(h -> h.voteSkip(event.getMember()));
 		return CommandResult.SUCCESS;
 	}
 	
@@ -53,19 +44,19 @@ public class ListPhotoCommand extends BasicCommand
 	@Override
 	public String getName()
 	{
-		return "Liste";
+		return "Passer pendu";
 	}
 	
 	@Override
 	public List<String> getCommand()
 	{
-		return List.of("l", "list");
+		return List.of("skip", "s");
 	}
 	
 	@Override
 	public String getDescription()
 	{
-		return "Obtient la liste des participants du trombinoscope";
+		return "Passe son tour au pendu";
 	}
 	
 	@Override

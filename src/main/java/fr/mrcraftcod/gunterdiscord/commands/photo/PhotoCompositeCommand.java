@@ -18,10 +18,10 @@ public class PhotoCompositeCommand extends CompositeCommand
 	public PhotoCompositeCommand()
 	{
 		super();
-		addSubCommand(new GetPhotoCommand(this));
-		addSubCommand(new DelPhotoCommand(this));
-		addSubCommand(new AddPhotoCommand(this));
-		addSubCommand(new ListPhotoCommand(this));
+		addSubCommand(new PhotoGetCommand(this));
+		addSubCommand(new PhotoDeleteCommand(this));
+		addSubCommand(new PhotoAddCommand(this));
+		addSubCommand(new PhotoListCommand(this));
 	}
 	
 	@Override

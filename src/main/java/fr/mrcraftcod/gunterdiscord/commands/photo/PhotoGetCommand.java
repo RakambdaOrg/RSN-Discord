@@ -27,14 +27,14 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
-public class GetPhotoCommand extends BasicCommand
+public class PhotoGetCommand extends BasicCommand
 {
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	GetPhotoCommand(Command parent)
+	PhotoGetCommand(Command parent)
 	{
 		super(parent);
 	}

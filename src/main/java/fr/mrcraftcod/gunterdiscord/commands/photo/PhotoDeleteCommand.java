@@ -21,14 +21,14 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
-public class DelPhotoCommand extends BasicCommand
+public class PhotoDeleteCommand extends BasicCommand
 {
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	DelPhotoCommand(Command parent)
+	PhotoDeleteCommand(Command parent)
 	{
 		super(parent);
 	}

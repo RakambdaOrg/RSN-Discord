@@ -25,7 +25,7 @@ public class ReportCommand extends BasicCommand
 	@Override
 	public String getCommandUsage()
 	{
-		return super.getCommandUsage() + " raison...";
+		return super.getCommandUsage() + " <raison...>";
 	}
 	
 	@Override

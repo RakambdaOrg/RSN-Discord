@@ -25,14 +25,14 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
-public class AddPhotoCommand extends BasicCommand
+public class PhotoAddCommand extends BasicCommand
 {
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	AddPhotoCommand(Command parent)
+	PhotoAddCommand(Command parent)
 	{
 		super(parent);
 	}

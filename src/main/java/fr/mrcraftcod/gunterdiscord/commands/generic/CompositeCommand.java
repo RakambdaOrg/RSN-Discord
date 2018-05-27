@@ -80,7 +80,7 @@ public abstract class CompositeCommand extends BasicCommand
 			if(toExecute.isPresent())
 				toExecute.get().execute(event, args);
 			else
-				Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Erreur durant l'execution de la commande").addField("Command", getName(), false).addField("Raison", "Argument non valide", false).addField("Arguments available", subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false).build());
+				Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Erreur durant l'execution de la commande").addField("Command", getName(), false).addField("Raison", "Argument non valide", false).addField("Arguments disponibles", subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false).build());
 		}
 		return CommandResult.SUCCESS;
 	}

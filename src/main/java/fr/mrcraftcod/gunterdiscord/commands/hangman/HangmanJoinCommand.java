@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.hangman;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.HangmanListener;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
@@ -10,37 +11,42 @@ import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 /**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
+ * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
  *
  * @author Thomas Couchoud
- * @since 2018-04-12
+ * @since 2018-05-27
  */
-public class HangmanCommand extends BasicCommand
+public class HangmanJoinCommand extends BasicCommand
 {
+	/**
+	 * Constructor.
+	 *
+	 * @param parent The parent command.
+	 */
+	HangmanJoinCommand(Command parent)
+	{
+		super(parent);
+	}
+	
 	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
 		if(!Utilities.hasRole(event.getMember(), Roles.HANGMAN))
 		{
-			HangmanListener game = HangmanListener.getGame(event.getGuild());
-			if(game != null)
+			Optional<HangmanListener> game = HangmanListener.getGame(event.getGuild());
+			if(game.isPresent())
 			{
 				Actions.giveRole(event.getGuild(), event.getAuthor(), Roles.HANGMAN);
-				game.onPlayerJoin(event.getMember());
+				game.get().onPlayerJoin(event.getMember());
 			}
 			else
 				return CommandResult.FAILED;
 		}
 		return CommandResult.SUCCESS;
-	}
-	
-	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.ALL;
 	}
 	
 	@Override
@@ -52,18 +58,24 @@ public class HangmanCommand extends BasicCommand
 	@Override
 	public String getName()
 	{
-		return "Pendu";
+		return "Rejoindre pendu";
 	}
 	
 	@Override
 	public List<String> getCommand()
 	{
-		return List.of("pendu");
+		return List.of("join", "j");
 	}
 	
 	@Override
 	public String getDescription()
 	{
-		return "Lance une partie de pendu";
+		return "Rejoins une partie de pendu";
+	}
+	
+	@Override
+	public AccessLevel getAccessLevel()
+	{
+		return AccessLevel.ALL;
 	}
 }
