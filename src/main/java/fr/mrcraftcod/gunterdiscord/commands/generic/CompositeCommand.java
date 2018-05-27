@@ -73,7 +73,7 @@ public abstract class CompositeCommand extends BasicCommand
 			throw new NotAllowedException();
 		String switchStr = args.poll();
 		if(switchStr == null)
-			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.RED, "Erreur durant l'execution de la commande").addField("Command", getName(), false).addField("Raison", getCommandUsage(), false).build());
+			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.RED, "Erreur durant l'execution de la commande").addField("Command", getName(), false).addField("Raison", getCommandUsage(), false).addField("Arguments disponibles", subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false).build());
 		else
 		{
 			Optional<Command> toExecute = subCommands.stream().filter(c -> c.getCommand().contains(switchStr.toLowerCase())).findFirst();

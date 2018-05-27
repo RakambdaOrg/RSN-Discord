@@ -12,6 +12,9 @@ import java.util.List;
  */
 public class QuizCompositeCommand extends CompositeCommand
 {
+	/**
+	 * Constructor.
+	 */
 	public QuizCompositeCommand()
 	{
 		super();

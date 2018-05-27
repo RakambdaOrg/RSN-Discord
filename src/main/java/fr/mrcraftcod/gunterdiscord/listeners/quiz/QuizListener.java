@@ -18,6 +18,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -34,6 +36,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 	private Message waitingMsg = null;
 	private HashMap<Long, Integer> answers;
 	private LinkedList<Question> questions;
+	private boolean stopped;
 	
 	/**
 	 * Constructor.
@@ -44,12 +47,15 @@ public class QuizListener extends ListenerAdapter implements Runnable
 	private QuizListener(Guild guild, int amount)
 	{
 		this.guild = guild;
+		this.stopped = false;
 		
 		questions = generateQuestions(amount);
 		
 		guild.getJDA().addEventListener(this);
 		quizzes.add(this);
-		new Thread(this).run();
+		ExecutorService executorService = Executors.newSingleThreadExecutor();
+		executorService.submit(this);
+		executorService.shutdown();
 	}
 	
 	/**
@@ -155,7 +161,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 	 */
 	public void stop()
 	{
-		Thread.currentThread().interrupt();
+		stopped = true;
 	}
 	
 	@Override
@@ -195,7 +201,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 			
 			HashMap<Long, Integer> scores = new HashMap<>();
 			int i = 0;
-			while(!Thread.interrupted() && questions.size() > 0)
+			while(!stopped && questions.size() > 0)
 			{
 				i++;
 				try
@@ -210,7 +216,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 					question.getAnswers().keySet().stream().map(k -> {
 						char emote = (char) ((int) 'a' + k);
 						emotes.add(emote);
-						return new MessageEmbed.Field(":regional_indicator_" + emote + ":", question.getAnswers().get(k), false);
+						return new MessageEmbed.Field(":regional_indicator_" + emote + ":", question.getAnswers().get(k), true);
 					}).forEach(builder::addField);
 					
 					Message questionMessage = Actions.getMessage(quizChannel, builder.build());
@@ -269,7 +275,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 			builder.setColor(Color.PINK);
 			builder.setTitle("Le jeu est terminé!");
 			builder.setDescription("Voici le top des scores:");
-			bests.keySet().stream().sorted(Comparator.reverseOrder()).map(v -> new MessageEmbed.Field((1 + bestsScores.indexOf(v)) + " (" + v + " points)", String.join(", ", bests.get(v)), false)).forEach(builder::addField);
+			bests.keySet().stream().sorted(Comparator.reverseOrder()).map(v -> new MessageEmbed.Field("Position " + (1 + bestsScores.indexOf(v)) + " (" + v + " points)", String.join(", ", bests.get(v)), false)).forEach(builder::addField);
 			Actions.sendMessage(quizChannel, builder.build());
 		}
 		catch(Exception e)
