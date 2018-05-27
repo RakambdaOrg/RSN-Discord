@@ -192,7 +192,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 			if(quizChannel == null)
 				return;
 			
-			Actions.sendMessage(quizChannel, "Ok @here, j'espère que vous êtes aussi chaud que mon chalumeau pour un petit kwizzz!\n" + "Le principe est simple: une question va apparaitre avec un set de réponses possibles. Vous pouvez répondre à la question en ajoutant une réaction avec la lettre corespondante. Le temps limite pour répondre est de %s.\n" + "Chaque bonne réponse vous donnera 1 point.\n\nOn commence dans %d secondes!", QUESTION_TIME, waitTime.toString().replace("PT", ""));
+			Actions.sendMessage(quizChannel, "Ok @here, j'espère que vous êtes aussi chaud que mon chalumeau pour un petit kwizzz!\nLe principe est simple: une question va apparaitre avec un set de réponses possibles. Vous pouvez répondre à la question en ajoutant une réaction avec la lettre corespondante. Le temps limite pour répondre est de %ds.\n" + "Chaque bonne réponse vous donnera 1 point.\n\nOn commence dans %s secondes!", QUESTION_TIME, waitTime.toString().replace("PT", ""));
 			try
 			{
 				Thread.sleep((waitTime.getSeconds() / 2) * 1000);
