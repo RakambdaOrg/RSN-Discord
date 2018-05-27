@@ -3,10 +3,10 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.HangmanChannelConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.HangmanRoleConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
-import fr.mrcraftcod.gunterdiscord.utils.Roles;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.OnlineStatus;
@@ -45,7 +45,7 @@ public class HangmanListener extends ListenerAdapter
 	private StringBuilder hiddenWord;
 	private String realWord;
 	private List<Character> badTry;
-	private List<Role> role;
+	private Role role;
 	private ScheduledExecutorService executor;
 	private ScheduledFuture lastFuture;
 	
@@ -65,13 +65,14 @@ public class HangmanListener extends ListenerAdapter
 		playerCount = 0;
 		hiddenWord = new StringBuilder();
 		realWord = "";
-		List<Role> roles = Utilities.getRole(guild, Roles.HANGMAN);
-		if(roles.size() <= 0)
+		role = new HangmanRoleConfig().getRole(guild);
+		if(role == null)
 			throw new IllegalStateException("Hangman role doesn't exists");
-		role = roles;
 		badTry = new ArrayList<>();
 		String prefix = new PrefixConfig().getString(guild);
 		TextChannel channel = new HangmanChannelConfig().getTextChannel(guild);
+		if(channel == null)
+			throw new IllegalStateException("Hangman channel doesn't exists");
 		Actions.sendMessage(channel, Actions.PIN_MESSAGE, "Salut à tous! Si vous êtes la c'est que vous êtes chaud pour un petit pendu. Mais j'espère que vous êtes bons, sinon c'est vous qui allez finir pendu (au bout de %d fautes)!\n\nLe principe est simple. Je vais commencer par choisir un mot dans ma petite tête. Ensuite je vous l'écrirais avec les lettres cachées. Seul %d lettres seront apparentes au debut. Une fois cela fait, je désignerai une personne afin de me dire la lettre que vous voulez essayer, à vous de vous entendre afin de faire les bons choix.\n\nSi une personne ne déclare pas de choix en %ds, écrivez un petit mot et je referai tourner la roue pour désigner un représentant. Si vous désirez quitter, utilisez `%spendu leave`. Si vous voulez passer votre tour utilisez `%spendu skip`. Pour avoir des infos sur le mot actuel utilisez `%spendu mot`.\n\n\nAlley, laissez moi réfléchir!", MAX_HANG_LEVEL, DISCOVER_START, MAX_WAIT_TIME, prefix, prefix, prefix);
 		new Thread(() -> {
 			try
