@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 public class QuizListener extends ListenerAdapter implements Runnable
 {
 	private static final ArrayList<QuizListener> quizzes = new ArrayList<>();
+	private Duration waitTime;
 	private final Guild guild;
 	private Message waitingMsg = null;
 	private HashMap<Long, Integer> answers;
@@ -43,11 +45,13 @@ public class QuizListener extends ListenerAdapter implements Runnable
 	 *
 	 * @param guild  The guild.
 	 * @param amount The amount of questions to add.
+	 * @param delay  The delay before starting the quiz.
 	 */
-	private QuizListener(Guild guild, int amount)
+	private QuizListener(Guild guild, int amount, int delay)
 	{
 		this.guild = guild;
 		this.stopped = false;
+		waitTime = Duration.ofSeconds(delay);
 		
 		questions = generateQuestions(amount);
 		
@@ -113,12 +117,13 @@ public class QuizListener extends ListenerAdapter implements Runnable
 	 *
 	 * @param guild  The guild.
 	 * @param amount The amount of questions.
+	 * @param delay  The delay before starting the quiz.
 	 *
 	 * @return The game of the guild.
 	 */
-	public static Optional<QuizListener> getQuiz(Guild guild, int amount)
+	public static Optional<QuizListener> getQuiz(Guild guild, int amount, int delay)
 	{
-		return getQuiz(guild, amount, true);
+		return getQuiz(guild, amount, delay, true);
 	}
 	
 	/**
@@ -127,16 +132,17 @@ public class QuizListener extends ListenerAdapter implements Runnable
 	 * @param guild        The guild.
 	 * @param amount       The amount of questions.
 	 * @param shouldCreate If a new game should be created if not found.
+	 * @param delay        The delay before starting the quiz.
 	 *
 	 * @return The game of the guild.
 	 */
-	public static Optional<QuizListener> getQuiz(Guild guild, int amount, boolean shouldCreate)
+	public static Optional<QuizListener> getQuiz(Guild guild, int amount, int delay, boolean shouldCreate)
 	{
 		return quizzes.stream().filter(q -> q.getGuild().getIdLong() == guild.getIdLong()).findAny().or(() -> {
 			try
 			{
 				if(shouldCreate)
-					return Optional.of(new QuizListener(guild, amount));
+					return Optional.of(new QuizListener(guild, amount, delay));
 			}
 			catch(Exception e)
 			{
@@ -167,7 +173,6 @@ public class QuizListener extends ListenerAdapter implements Runnable
 	@Override
 	public void run()
 	{
-		int HALF_WAIT_TIME = 30;
 		int QUESTION_TIME = 20;
 		try
 		{
@@ -178,21 +183,21 @@ public class QuizListener extends ListenerAdapter implements Runnable
 			if(quizChannel == null)
 				return;
 			
-			Actions.sendMessage(quizChannel, "Ok @here, j'espère que vous êtes aussi chaud que mon chalumeau pour un petit kwizzz!\n" + "Le principe est simple: une question va apparaitre avec un set de réponses possibles. Vous pouvez répondre à la question en ajoutant une réaction avec la lettre corespondante. Le temps limite pour répondre est de %ds.\n" + "Chaque bonne réponse vous donnera 1 point.\n\nOn commence dans %d secondes!", QUESTION_TIME, HALF_WAIT_TIME * 2);
+			Actions.sendMessage(quizChannel, "Ok @here, j'espère que vous êtes aussi chaud que mon chalumeau pour un petit kwizzz!\n" + "Le principe est simple: une question va apparaitre avec un set de réponses possibles. Vous pouvez répondre à la question en ajoutant une réaction avec la lettre corespondante. Le temps limite pour répondre est de %s.\n" + "Chaque bonne réponse vous donnera 1 point.\n\nOn commence dans %d secondes!", QUESTION_TIME, waitTime.toString().replace("PT", ""));
 			try
 			{
-				Thread.sleep(HALF_WAIT_TIME * 1000);
+				Thread.sleep((waitTime.getSeconds() / 2) * 1000);
 			}
 			catch(InterruptedException e)
 			{
 				Log.error("Error sleeping", e);
 			}
 			
-			Actions.sendMessage(quizChannel, "Encore %d secondes!", HALF_WAIT_TIME);
+			Actions.sendMessage(quizChannel, "Encore %s!", waitTime.dividedBy(2).toString().replace("PT", ""));
 			
 			try
 			{
-				Thread.sleep(HALF_WAIT_TIME * 1000);
+				Thread.sleep((waitTime.getSeconds() / 2) * 1000);
 			}
 			catch(InterruptedException e)
 			{

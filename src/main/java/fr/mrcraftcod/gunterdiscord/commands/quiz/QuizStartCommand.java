@@ -32,7 +32,7 @@ public class QuizStartCommand extends BasicCommand
 	@Override
 	public String getCommandUsage()
 	{
-		return super.getCommandUsage() + " [quantité]";
+		return super.getCommandUsage() + " [quantité] [délais]";
 	}
 	
 	@Override
@@ -40,6 +40,7 @@ public class QuizStartCommand extends BasicCommand
 	{
 		super.execute(event, args);
 		int amount = Integer.MAX_VALUE;
+		int delay = 60;
 		if(!args.isEmpty())
 			try
 			{
@@ -48,7 +49,15 @@ public class QuizStartCommand extends BasicCommand
 			catch(Exception ignored)
 			{
 			}
-		QuizListener.getQuiz(event.getGuild(), amount);
+		if(!args.isEmpty())
+			try
+			{
+				delay = Integer.parseInt(args.poll());
+			}
+			catch(Exception ignored)
+			{
+			}
+		QuizListener.getQuiz(event.getGuild(), amount, delay);
 		return CommandResult.SUCCESS;
 	}
 	
@@ -57,6 +66,7 @@ public class QuizStartCommand extends BasicCommand
 	{
 		super.addHelp(guild, builder);
 		builder.addField("Optionnel: Quantité", "Le nombre de questions (par défaut le maximum disponible)", false);
+		builder.addField("Optionnel: Délais", "Le délais en secondes avant de commencer le quiz (par défaut 60 secondes)", false);
 	}
 	
 	@Override
