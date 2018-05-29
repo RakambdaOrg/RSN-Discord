@@ -73,6 +73,8 @@ public class Main
 		{
 			Log.error("Couldn't start bot", e);
 		}
+		
+		new ConsoleText(jda).start();
 	}
 	
 	/**
