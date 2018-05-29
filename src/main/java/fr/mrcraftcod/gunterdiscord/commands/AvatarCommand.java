@@ -1,7 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -19,13 +18,12 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-@CallableCommand
 public class AvatarCommand extends BasicCommand
 {
 	@Override
-	public String getCommandUsage(Guild guild)
+	public String getCommandUsage()
 	{
-		return super.getCommandUsage(guild) + "<@utilisateur>";
+		return super.getCommandUsage() + " <@utilisateur>";
 	}
 	
 	@Override
@@ -50,6 +48,13 @@ public class AvatarCommand extends BasicCommand
 	public String getDescription()
 	{
 		return "Obtient l'avatar d'un utilisateur";
+	}
+	
+	@Override
+	public void addHelp(Guild guild, EmbedBuilder builder)
+	{
+		super.addHelp(guild, builder);
+		builder.addField("Utilisateur", "L'utilisateur dont on veut l'avatar", false);
 	}
 	
 	@Override

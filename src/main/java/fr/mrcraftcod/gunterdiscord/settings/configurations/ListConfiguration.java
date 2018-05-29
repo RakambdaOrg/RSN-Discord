@@ -1,6 +1,8 @@
-package fr.mrcraftcod.gunterdiscord.settings;
+package fr.mrcraftcod.gunterdiscord.settings.configurations;
 
-import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
+import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
+import fr.mrcraftcod.gunterdiscord.settings.Configuration;
+import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import net.dv8tion.jda.core.entities.Guild;
 import org.json.JSONArray;
 import java.io.InvalidClassException;
@@ -22,6 +24,7 @@ public abstract class ListConfiguration<T> extends Configuration
 	/**
 	 * Add a value to the list.
 	 *
+	 * @param guild The guild.
 	 * @param value The value to add.
 	 */
 	public void addValue(Guild guild, T value)
@@ -34,6 +37,7 @@ public abstract class ListConfiguration<T> extends Configuration
 	/**
 	 * Remove a value from the list.
 	 *
+	 * @param guild The guild.
 	 * @param value The value to remove.
 	 */
 	public void removeValue(Guild guild, T value)
@@ -52,6 +56,8 @@ public abstract class ListConfiguration<T> extends Configuration
 	/**
 	 * Get a list of the values.
 	 *
+	 * @param guild The guild.
+	 *
 	 * @return The values list.
 	 *
 	 * @throws IllegalArgumentException If the configuration isn't a list.
@@ -64,8 +70,7 @@ public abstract class ListConfiguration<T> extends Configuration
 		Type type = getParameterizedType(getClass());
 		if(type instanceof ParameterizedType)
 		{
-			@SuppressWarnings("unchecked")
-			Class<T> klass = (Class<T>) ((ParameterizedType) type).getActualTypeArguments()[0];
+			@SuppressWarnings("unchecked") Class<T> klass = (Class<T>) ((ParameterizedType) type).getActualTypeArguments()[0];
 			List<T> elements = new LinkedList<>();
 			JSONArray array = getObjectList(guild);
 			if(array == null)
@@ -86,6 +91,8 @@ public abstract class ListConfiguration<T> extends Configuration
 	
 	/**
 	 * Get the JSON array.
+	 *
+	 * @param guild The guild.
 	 *
 	 * @return The JSON array.
 	 *
@@ -108,8 +115,8 @@ public abstract class ListConfiguration<T> extends Configuration
 	}
 	
 	@Override
-	public boolean isActionAllowed(SetConfigCommand.ChangeConfigType action)
+	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action)
 	{
-		return action == SetConfigCommand.ChangeConfigType.ADD || action == SetConfigCommand.ChangeConfigType.REMOVE || action == SetConfigCommand.ChangeConfigType.SHOW;
+		return action == ConfigurationCommand.ChangeConfigType.ADD || action == ConfigurationCommand.ChangeConfigType.REMOVE || action == ConfigurationCommand.ChangeConfigType.SHOW;
 	}
 }

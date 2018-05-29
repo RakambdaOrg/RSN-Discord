@@ -1,10 +1,12 @@
 package fr.mrcraftcod.gunterdiscord.commands.generic;
 
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import static fr.mrcraftcod.gunterdiscord.commands.generic.Command.AccessLevel.*;
@@ -15,7 +17,7 @@ import static fr.mrcraftcod.gunterdiscord.commands.generic.Command.AccessLevel.*
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public interface Command
+public interface Command extends Comparable<Command>
 {
 	/**
 	 * The level required to access a command.
@@ -49,11 +51,30 @@ public interface Command
 	List<String> getCommand();
 	
 	/**
-	 * Get a description of the usage of command.
+	 * Add entries into the help menu.
 	 *
-	 * @return The description.
+	 * @param guild   The guild.
+	 * @param builder The help menu.
 	 */
-	String getCommandUsage(Guild guild);
+	void addHelp(Guild guild, EmbedBuilder builder);
+	
+	/**
+	 * Tell if a member is allowed to run the command.
+	 *
+	 * @param member The member to test.
+	 *
+	 * @return True if allowed, false otherwise.
+	 */
+	default boolean isAllowed(Member member)
+	{
+		if(getAccessLevel() == ALL)
+			return true;
+		if(getAccessLevel() == MODERATOR && Utilities.isModerator(member))
+			return true;
+		if(getAccessLevel() == ADMIN && Utilities.isAdmin(member))
+			return true;
+		return Utilities.isCreator(member);
+	}
 	
 	/**
 	 * Get the description of the command.
@@ -74,16 +95,25 @@ public interface Command
 	 */
 	CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception;
 	
-	default boolean isAllowed(Member member)
+	@Override
+	default int compareTo(@NotNull Command o)
 	{
-		if(getAccessLevel() == ALL)
-			return true;
-		if(getAccessLevel() == MODERATOR && Utilities.isModerator(member))
-			return true;
-		if(getAccessLevel() == ADMIN && Utilities.isAdmin(member))
-			return true;
-		return Utilities.isCreator(member);
+		return getName().compareTo(o.getName());
 	}
+	
+	/**
+	 * Get a description of the usage of command.
+	 *
+	 * @return The description.
+	 */
+	String getCommandUsage();
+	
+	/**
+	 * Get the parent command.
+	 *
+	 * @return The parent command.
+	 */
+	Command getParent();
 	
 	/**
 	 * Get the level required to execute this command.

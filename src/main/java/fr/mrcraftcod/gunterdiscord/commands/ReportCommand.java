@@ -1,11 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.ReportChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -20,13 +20,12 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
-@CallableCommand
 public class ReportCommand extends BasicCommand
 {
 	@Override
-	public int getScope()
+	public String getCommandUsage()
 	{
-		return -5;
+		return super.getCommandUsage() + " <raison...>";
 	}
 	
 	@Override
@@ -64,15 +63,22 @@ public class ReportCommand extends BasicCommand
 	}
 	
 	@Override
+	public void addHelp(Guild guild, EmbedBuilder builder)
+	{
+		super.addHelp(guild, builder);
+		builder.addField("Raison", "La raison du report", false);
+	}
+	
+	@Override
 	public String getDescription()
 	{
 		return "Envoi un message aux modérateurs";
 	}
 	
 	@Override
-	public String getCommandUsage(Guild guild)
+	public int getScope()
 	{
-		return super.getCommandUsage(guild) + " <raison>";
+		return ChannelType.TEXT.getId();
 	}
 	
 	@Override

@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizMessageListener;
+import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.events.ShutdownEvent;
@@ -22,7 +22,8 @@ public class ShutdownListener extends ListenerAdapter
 		super.onShutdown(event);
 		try
 		{
-			QuizMessageListener.setBack();
+			QuizListener.stopAll();
+			HangmanListener.stopAll();
 			Settings.save();
 			for(Handler h : Log.getLogger().getHandlers())
 				h.close();

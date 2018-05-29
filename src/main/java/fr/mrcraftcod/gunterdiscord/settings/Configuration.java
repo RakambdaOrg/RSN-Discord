@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.settings;
 
-import fr.mrcraftcod.gunterdiscord.commands.SetConfigCommand;
+import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
 
@@ -27,7 +27,7 @@ public abstract class Configuration
 	 *
 	 * @return True if allowed, false otherwise.
 	 */
-	public abstract boolean isActionAllowed(SetConfigCommand.ChangeConfigType action);
+	public abstract boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action);
 	
 	/**
 	 * Handle the changes requested.
@@ -40,7 +40,7 @@ public abstract class Configuration
 	 *
 	 * @throws Exception If anything too bad happened.
 	 */
-	public abstract SetConfigCommand.ActionResult handleChange(MessageReceivedEvent event, SetConfigCommand.ChangeConfigType action, LinkedList<String> args) throws Exception;
+	public abstract ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args) throws Exception;
 	
 	/**
 	 * Get the name of this configuration.

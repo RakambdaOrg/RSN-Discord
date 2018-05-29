@@ -10,4 +10,5 @@ module fr.mrcraftcod.gunterdiscord {
 	requires json;
 	requires org.apache.commons.io;
 	requires java.desktop;
+	requires annotations;
 }

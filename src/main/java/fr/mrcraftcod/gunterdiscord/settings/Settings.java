@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord.settings;
 
 import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.settings.configs.*;
+import fr.mrcraftcod.gunterdiscord.settings.configurations.*;
 import net.dv8tion.jda.core.entities.Guild;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
@@ -31,7 +32,6 @@ public class Settings
 			ModoRolesConfig.class,
 			OnlyIdeasConfig.class,
 			OnlyImagesConfig.class,
-			OnlyQuestionsConfig.class,
 			PrefixConfig.class,
 			ReportChannelConfig.class,
 			PhotoChannelConfig.class,
@@ -42,7 +42,8 @@ public class Settings
 			NickDelayConfig.class,
 			NickLastChangeConfig.class,
 			TrombinoscopeRoleConfig.class,
-			QueueChannelConfig.class
+			QueueChannelConfig.class,
+			HangmanRoleConfig.class
 			};
 	
 	public static Object getObject(Guild guild, String name)

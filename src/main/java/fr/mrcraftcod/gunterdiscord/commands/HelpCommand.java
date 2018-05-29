@@ -1,9 +1,9 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CompositeCommand;
 import fr.mrcraftcod.gunterdiscord.listeners.CommandsMessageListener;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
@@ -23,7 +23,6 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-@CallableCommand
 public class HelpCommand extends BasicCommand
 {
 	@Override
@@ -45,6 +44,12 @@ public class HelpCommand extends BasicCommand
 	}
 	
 	@Override
+	public String getCommandUsage()
+	{
+		return super.getCommandUsage() + " [commande...]";
+	}
+	
+	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
@@ -61,14 +66,28 @@ public class HelpCommand extends BasicCommand
 		else
 		{
 			Command command = CommandsMessageListener.commands.stream().filter(s -> s.getCommand().contains(args.get(0).toLowerCase())).filter(c -> c.isAllowed(event.getMember())).findAny().orElse(null);
+			args.poll();
+			while(!args.isEmpty() && command instanceof CompositeCommand)
+			{
+				Command command2 = ((CompositeCommand) command).getSubCommand(args.get(0).toLowerCase());
+				if(command2 == null)
+					break;
+				command = command2;
+				args.poll();
+			}
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			if(command != null)
 			{
 				builder.setColor(Color.GREEN);
-				builder.setTitle("Commande " + prefix + command.getCommand().get(0));
-				builder.addField("Description", command.getDescription(), false);
-				builder.addField("Utilisation", command.getCommandUsage(event.getGuild()), false);
+				builder.setTitle(getName());
+				builder.addField("Nom", command.getName(), true);
+				builder.addField("Description", command.getDescription(), true);
+				builder.addField("Commande", String.join(", ", command.getCommand()), false);
+				builder.addField("Utilisation", command.getCommandUsage(), false);
+				builder.addBlankField(true);
+				builder.addField("", "Paramètres", false);
+				command.addHelp(event.getGuild(), builder);
 			}
 			else
 			{
@@ -88,9 +107,10 @@ public class HelpCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommandUsage(Guild guild)
+	public void addHelp(Guild guild, EmbedBuilder builder)
 	{
-		return super.getCommandUsage(guild) + " [commande]";
+		super.addHelp(guild, builder);
+		builder.addField("Optionnel: Commande", "La commande dont on veut l'information (par défaut affiche la liste des commandes)", false);
 	}
 	
 	@Override

@@ -1,7 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CallableCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.QueueChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
@@ -12,7 +11,6 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
@@ -20,22 +18,23 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-@CallableCommand
 public class QueueCommand extends BasicCommand
 {
+	@Override
+	public String getCommandUsage()
+	{
+		return super.getCommandUsage() + " <message...>";
+	}
+	
 	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
 		
 		if(args.size() == 0)
-		{
-			Actions.replyPrivate(event.getAuthor(), "Merci de renseigner une raison pour rentrer dans la queue `g?queue raison`");
-		}
+			Actions.replyPrivate(event.getAuthor(), "Merci de renseigner une raison pour rentrer dans la queue");
 		else if(args.peek().equalsIgnoreCase("message"))
-		{
-			Actions.replyPrivate(event.getAuthor(), "Merci de renseigner une raison pour rentrer dans la queue, et pas 'message' `g?queue raison`");
-		}
+			Actions.replyPrivate(event.getAuthor(), "Merci de renseigner une raison pour rentrer dans la queue, et pas 'message'");
 		else
 		{
 			EmbedBuilder builder = new EmbedBuilder();
@@ -43,7 +42,7 @@ public class QueueCommand extends BasicCommand
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Nouvelle entrée");
 			builder.addField("Utilisateur", event.getAuthor().getAsMention(), true);
-			builder.addField("Message", args.stream().collect(Collectors.joining(" ")), false);
+			builder.addField("Message", String.join(" ", args), false);
 			
 			Actions.sendMessage(new QueueChannelConfig().getTextChannel(event.getGuild()), builder.build());
 			Actions.replyPrivate(event.getAuthor(), "Ok, ta candidature a été prise en compte");
@@ -52,9 +51,10 @@ public class QueueCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommandUsage(Guild guild)
+	public void addHelp(Guild guild, EmbedBuilder builder)
 	{
-		return super.getCommandUsage(guild) + " <message>";
+		super.addHelp(guild, builder);
+		builder.addField("Message", "La raison pour laquelle vous rejoignez la liste d'attente", false);
 	}
 	
 	@Override
@@ -66,7 +66,7 @@ public class QueueCommand extends BasicCommand
 	@Override
 	public String getName()
 	{
-		return "Queue";
+		return "File d'attente";
 	}
 	
 	@Override

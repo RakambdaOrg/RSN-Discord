@@ -2,11 +2,10 @@ package fr.mrcraftcod.gunterdiscord.utils;
 
 import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.settings.configs.ModoRolesConfig;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Emote;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.*;
+import java.awt.*;
 import java.io.InvalidClassException;
 import java.util.Collection;
 import java.util.List;
@@ -63,19 +62,6 @@ public class Utilities
 	 *
 	 * @return True if the member have the role, false otherwise.
 	 */
-	public static boolean hasRole(Member member, Roles role)
-	{
-		return getRole(member.getGuild(), role).stream().anyMatch(r -> member.getRoles().contains(r));
-	}
-	
-	/**
-	 * Check if a member have a role.
-	 *
-	 * @param member The member to test.
-	 * @param role   The role to search for.
-	 *
-	 * @return True if the member have the role, false otherwise.
-	 */
 	public static boolean hasRole(Member member, Role role)
 	{
 		return member.getRoles().contains(role);
@@ -105,19 +91,6 @@ public class Utilities
 	public static boolean hasRoleIDs(Member member, List<Long> roles)
 	{
 		return roles.stream().map(r -> member.getGuild().getRoleById(r)).anyMatch(r -> hasRole(member, r));
-	}
-	
-	/**
-	 * Get a role.
-	 *
-	 * @param guild The guild the role is in.
-	 * @param role  The role to search for.
-	 *
-	 * @return The role or null if not found.
-	 */
-	public static List<Role> getRole(Guild guild, Roles role)
-	{
-		return getRole(guild, role.getRole());
 	}
 	
 	/**
@@ -163,19 +136,6 @@ public class Utilities
 	/**
 	 * Get all the members that have a role.
 	 *
-	 * @param guild The guild the role is in.
-	 * @param role  The role to search for.
-	 *
-	 * @return The members that have this role.
-	 */
-	public static List<Member> getMembersRole(Guild guild, Roles role)
-	{
-		return getMembersRole(getRole(guild, role));
-	}
-	
-	/**
-	 * Get all the members that have a role.
-	 *
 	 * @param role The role to search for.
 	 *
 	 * @return The members that have this role.
@@ -197,8 +157,33 @@ public class Utilities
 		return roles.stream().map(Utilities::getMembersRole).flatMap(Collection::stream).collect(Collectors.toList());
 	}
 	
+	/**
+	 * Tell if a user is this bot created.
+	 *
+	 * @param member The member to test.
+	 *
+	 * @return True if the creator, false otherwise.
+	 */
 	public static boolean isCreator(Member member)
 	{
 		return member.getUser().getIdLong() == 170119951498084352L;
+	}
+	
+	/**
+	 * Build an embed.
+	 *
+	 * @param author The author.
+	 * @param color  The color.
+	 * @param title  The title.
+	 *
+	 * @return The builder.
+	 */
+	public static EmbedBuilder buildEmbed(User author, Color color, String title)
+	{
+		EmbedBuilder builder = new EmbedBuilder();
+		builder.setAuthor(author.getName(), null, author.getAvatarUrl());
+		builder.setColor(color);
+		builder.setTitle(title);
+		return builder;
 	}
 }
