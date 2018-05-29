@@ -5,3 +5,6 @@ settings.json
 pictures/
 log.log
 log.log.lck
+log.*
+/questions.csv
+/settings2.json
