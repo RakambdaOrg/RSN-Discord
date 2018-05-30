@@ -67,7 +67,6 @@ public class PhotoGetCommand extends BasicCommand
 		}
 		else
 			user = event.getAuthor();
-		args.poll();
 		
 		Member member = event.getGuild().getMember(user);
 		if(member == null || !Utilities.hasRole(member, new TrombinoscopeRoleConfig().getRole(event.getGuild())))
