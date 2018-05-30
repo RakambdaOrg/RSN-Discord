@@ -54,7 +54,7 @@ public class Main
 			jda.addEventListener(new CommandsMessageListener());
 			// jda.addEventListener(new BannedRegexesMessageListener());
 			jda.addEventListener(new OnlyImagesMessageListener());
-			jda.addEventListener(new ShutdownListener());
+			jda.addEventListener(new ShutdownListener(jda));
 			jda.addEventListener(new LogListener());
 			jda.addEventListener(new AutoRolesListener());
 			jda.addEventListener(new IdeaChannelMessageListener());
