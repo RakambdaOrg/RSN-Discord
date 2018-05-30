@@ -31,13 +31,13 @@ public class ShutdownListener extends ListenerAdapter
 		service.scheduleAtFixedRate(() -> {
 			try
 			{
-				List<String> messages = List.of("Hey %s, chat va bien?", "Oh tu sais quoi %s? Hier soir j'ai mangé des boobs à la framboise!", "La vache %s, je sais pas si je vais réussir à dormir ce soir, tu me tiens companie?", "Bonsoir %s", "Bonjour %s", "Tu parles trop %s", "Surout n'oublie pas, sors protégé %s", "Hey %s tu peux me raconter une histoire?", "Miaou %s");
-				User user = jda.getUserById(433252836135010324L);
+				List<String> messages = List.of("Hey %s, chat va bien?", "Oh tu sais quoi %s? Hier soir j'ai mangé des boobs à la framboise!", "La vache %s, je sais pas si je vais réussir à dormir ce soir, tu me tiens companie?", "Bonsoir %s", "Bonjour %s", "Tu parles trop %s", "Surout n'oublie pas, sors protégé %s", "Hey %s tu peux me raconter une histoire?", "Miaou %s", "Oh mince %s, je crois je t'ai pin, mince alors");
+				User user = jda.getUserById(288737124444798976L);
 				jda.getGuildById(448124547322085397L).getTextChannelById(448130342512230417L).sendMessageFormat(messages.get(ThreadLocalRandom.current().nextInt(messages.size())), user.getAsMention()).complete();
 			}
 			catch(Exception e)
 			{
-				Log.error("ASSETS", e);
+				Log.error("BRIX", e);
 			}
 		}, 1, 15, TimeUnit.MINUTES);
 	}
