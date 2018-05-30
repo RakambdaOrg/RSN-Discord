@@ -27,11 +27,11 @@ public class ShutdownListener extends ListenerAdapter
 	
 	public ShutdownListener(JDA jda)
 	{
+		final List<String> messages = List.of("Hey %s, chat va bien ?", "Oh tu sais quoi %s ? Hier soir j'ai mangé des boobs à la framboise !", "La vache %s, je sais pas si je vais réussir à dormir ce soir, tu me tiens companie ?", "Bonsoir %s", "Bonjour %s", "Tu parles trop %s", "Surout n'oublie pas, sors protégé %s", "Hey %s tu peux me raconter une histoire ?", "Miaou %s", "Oh mince %s, je crois je t'ai pin, mince alors", "%s ? %s ? C'était pour savoir si tu dormais", "%s? Tu as mis où les somnifaires ?", "%s Réveille toi! Tu ronfles et c'est insuportable !", "%s, tu m'en veux de te pin ?", "%s, avoue tu regrettes tes everyone !", "%s tu sais, à la fin de cette punition tu vas me manquer :frowning2:", "%s, tu connais l'histoire de toto aux toilettes ?", "%s, j'ai retrouvé ta sextape, j'en fais quoi, je la publie ?", "%s mange 5 fruits et légumes par jour! (www.mangerbouger.com)", "%s ne prends pas ce somnifère avant d'avoir demandé conseil à ton spécialiste et avoir lu la notice d'embalage", "%s t'es un voilà !");
 		service = Executors.newSingleThreadScheduledExecutor();
 		service.scheduleAtFixedRate(() -> {
 			try
 			{
-				List<String> messages = List.of("Hey %s, chat va bien?", "Oh tu sais quoi %s? Hier soir j'ai mangé des boobs à la framboise!", "La vache %s, je sais pas si je vais réussir à dormir ce soir, tu me tiens companie?", "Bonsoir %s", "Bonjour %s", "Tu parles trop %s", "Surout n'oublie pas, sors protégé %s", "Hey %s tu peux me raconter une histoire?", "Miaou %s", "Oh mince %s, je crois je t'ai pin, mince alors");
 				User user = jda.getUserById(288737124444798976L);
 				jda.getGuildById(448124547322085397L).getTextChannelById(448130342512230417L).sendMessageFormat(messages.get(ThreadLocalRandom.current().nextInt(messages.size())), user.getAsMention()).complete();
 			}
