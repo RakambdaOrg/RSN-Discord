@@ -12,9 +12,7 @@ import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.StreamHandler;
+import java.util.logging.*;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 09/04/2018.
@@ -37,12 +35,18 @@ public class Main
 	{
 		try
 		{
-			Log.setAppName("GunterDiscord");
+			LogManager.getLogManager().reset();
+			
+			ConsoleHandler ch = new ConsoleHandler();
+			ch.setLevel(Level.INFO);
+			ch.setFormatter(new LoggerFormatter());
+			
 			Handler handler = new FileHandler("log.log");
 			handler.setFormatter(new LoggerFormatter());
+			
+			Log.setAppName("GunterDiscord");
 			Log.getLogger().addHandler(handler);
-			StreamHandler sh = new StreamHandler(System.out, new LoggerFormatter());
-			Log.getLogger().addHandler(sh);
+			Log.getLogger().addHandler(ch);
 		}
 		catch(IOException e)
 		{

@@ -35,7 +35,7 @@ public class LoggerFormatter extends Formatter
 				break;
 		}
 		if(trace != null)
-			stringBuilder.append(trace.toString().replace("fr.mrcraftcod.gunterdiscord.", ""));
+			stringBuilder.append(trace.toString().replaceAll("^fr\\.mrcraftcod\\.gunterdiscord(/fr\\.mrcraftcod\\.gunterdiscord)?\\.?", ""));
 		
 		stringBuilder.append(" -> ");
 		
