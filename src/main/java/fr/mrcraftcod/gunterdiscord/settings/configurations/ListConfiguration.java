@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.settings.configurations;
 import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.Configuration;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
+import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.entities.Guild;
 import org.json.JSONArray;
 import java.io.InvalidClassException;
@@ -102,7 +103,15 @@ public abstract class ListConfiguration<T> extends Configuration
 	{
 		if(getType() != ConfigType.LIST)
 			throw new IllegalArgumentException("Not a list config");
-		return Settings.getArray(guild, getName());
+		try
+		{
+			return Settings.getArray(guild, getName());
+		}
+		catch(NullPointerException e)
+		{
+			Log.error("NullPointer", e);
+		}
+		return null;
 	}
 	
 	private Type getParameterizedType(Class klass)

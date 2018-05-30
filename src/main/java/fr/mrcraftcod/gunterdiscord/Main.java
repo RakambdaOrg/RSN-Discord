@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
+import java.util.logging.StreamHandler;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 09/04/2018.
@@ -40,6 +41,8 @@ public class Main
 			Handler handler = new FileHandler("log.log");
 			handler.setFormatter(new LoggerFormatter());
 			Log.getLogger().addHandler(handler);
+			StreamHandler sh = new StreamHandler(System.out, new LoggerFormatter());
+			Log.getLogger().addHandler(sh);
 		}
 		catch(IOException e)
 		{
@@ -54,7 +57,7 @@ public class Main
 			jda.addEventListener(new CommandsMessageListener());
 			// jda.addEventListener(new BannedRegexesMessageListener());
 			jda.addEventListener(new OnlyImagesMessageListener());
-			jda.addEventListener(new ShutdownListener(jda));
+			jda.addEventListener(new ShutdownListener());
 			jda.addEventListener(new LogListener());
 			jda.addEventListener(new AutoRolesListener());
 			jda.addEventListener(new IdeaChannelMessageListener());
