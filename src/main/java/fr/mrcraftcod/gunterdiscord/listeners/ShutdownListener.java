@@ -39,7 +39,7 @@ public class ShutdownListener extends ListenerAdapter
 			{
 				Log.error("ASSETS", e);
 			}
-		}, 15, 15, TimeUnit.MINUTES);
+		}, 1, 15, TimeUnit.MINUTES);
 	}
 	
 	@Override
