@@ -1,14 +1,18 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
+import fr.mrcraftcod.gunterdiscord.settings.configs.WerewolvesChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -24,9 +28,10 @@ public class WerewolvesListener extends ListenerAdapter
 {
 	private static final ArrayList<WerewolvesListener> games = new ArrayList<>();
 	private final List<Member> willDie;
-	private final TextChannel channelText;
+	private final TextChannel werewolvesTextChannel;
+	private final TextChannel textChannel;
 	private final HashMap<Member, Integer> votes;
-	private final VoiceChannel channel;
+	private final VoiceChannel voiceChannel;
 	private final LinkedHashMap<Member, WerewolvesRole> users;
 	private final List<Member> waitingMember;
 	private int cycle;
@@ -75,12 +80,15 @@ public class WerewolvesListener extends ListenerAdapter
 	{
 		if(channel.getMembers().size() < 5)
 			throw new IllegalStateException("Pas assez de joueurs");
+		textChannel = new WerewolvesChannelConfig().getTextChannel(channel.getGuild());
+		if(textChannel == null)
+			throw new IllegalStateException("Le channel n'est pas configuré");
 		cycle = 0;
 		votes = new HashMap<>();
 		games.add(this);
 		channel.getJDA().addEventListener(this);
-		channelText = (TextChannel) channel.getGuild().getController().createTextChannel("TEMP-WEREWOLVES").addPermissionOverride(channel.getGuild().getPublicRole(), null, List.of(Permission.MESSAGE_READ)).complete();
-		this.channel = channel;
+		werewolvesTextChannel = (TextChannel) channel.getGuild().getController().createTextChannel("TEMP-WEREWOLVES").addPermissionOverride(channel.getGuild().getPublicRole(), null, List.of(Permission.MESSAGE_READ)).complete();
+		this.voiceChannel = channel;
 		willDie = new ArrayList<>();
 		waitingMember = new ArrayList<>();
 		users = new LinkedHashMap<>();
@@ -93,7 +101,7 @@ public class WerewolvesListener extends ListenerAdapter
 	/**
 	 * Get the game for a guild.
 	 *
-	 * @param channel The channel concerned.
+	 * @param channel The voiceChannel concerned.
 	 *
 	 * @return The game.
 	 */
@@ -105,14 +113,14 @@ public class WerewolvesListener extends ListenerAdapter
 	/**
 	 * Get the game for a guild.
 	 *
-	 * @param channel The channel concerned.
+	 * @param channel The voiceChannel concerned.
 	 * @param create  If a game is created if it doesn't exists.
 	 *
 	 * @return The game.
 	 */
 	public static Optional<WerewolvesListener> getGame(VoiceChannel channel, boolean create)
 	{
-		return games.stream().filter(h -> h.getChannel().getIdLong() == channel.getIdLong()).findAny().or(() -> {
+		return games.stream().filter(h -> h.getVoiceChannel().getIdLong() == channel.getIdLong()).findAny().or(() -> {
 			try
 			{
 				if(create)
@@ -126,13 +134,14 @@ public class WerewolvesListener extends ListenerAdapter
 		});
 	}
 	
-	private VoiceChannel getChannel()
+	private VoiceChannel getVoiceChannel()
 	{
-		return channel;
+		return voiceChannel;
 	}
 	
 	private void asignRoles()
 	{
+		Log.info("Werewolves: assigning roles");
 		LinkedList<WerewolvesRole> roles = new LinkedList<>();
 		roles.add(WerewolvesRole.SEER);
 		roles.add(WerewolvesRole.HUNTER);
@@ -145,6 +154,8 @@ public class WerewolvesListener extends ListenerAdapter
 	
 	private void electMayor()
 	{
+		Log.info("Werewolves: voting mayor");
+		Actions.sendMessage(textChannel, Utilities.buildEmbed(null, Color.GREEN, "Vote du maire").addField("Le vote du maire est ouvert", "Envoyez en mp au bot votre vote", false).build());
 		votes.clear();
 		waitingMember.addAll(users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).collect(Collectors.toList()));
 		waitingAction = s -> {
@@ -167,10 +178,12 @@ public class WerewolvesListener extends ListenerAdapter
 				{
 					votes.keySet().stream().min(Comparator.comparingInt(votes::get)).ifPresent(m -> {
 						users.get(m).setMayor(true);
-						users.keySet().forEach(mm -> Actions.replyPrivate(mm.getUser(), "Le maire est maintenant %s", m.getAsMention()));
+						Actions.sendMessage(textChannel, "Le maire est maintenant %s", m.getAsMention());
 					});
 					electKilled();
 				}
+				else
+					Actions.sendMessage(textChannel, "Encore %d votes", waitingMember.size());
 				return finished;
 			}
 			return false;
@@ -179,6 +192,8 @@ public class WerewolvesListener extends ListenerAdapter
 	
 	private void electKilled()
 	{
+		Log.info("Werewolves: voting kill");
+		Actions.sendMessage(textChannel, Utilities.buildEmbed(null, Color.GREEN, "Vote du tué du jour").addField("Le vote du maire est ouvert", "Envoyez en mp au bot votre vote", false).build());
 		votes.clear();
 		waitingMember.addAll(users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).collect(Collectors.toList()));
 		waitingAction = s -> {
@@ -202,6 +217,8 @@ public class WerewolvesListener extends ListenerAdapter
 					votes.keySet().stream().min(Comparator.comparingInt(votes::get)).ifPresent(willDie::add);
 					kill(() -> setPhase(WerewolvesPhase.NIGHT));
 				}
+				else
+					Actions.sendMessage(textChannel, "Encore %d votes", waitingMember.size());
 				return finished;
 			}
 			return false;
@@ -216,6 +233,8 @@ public class WerewolvesListener extends ListenerAdapter
 			Actions.replyPrivate(m.getUser(), "Vous êtes mort");
 			if(users.get(m).isMayor())
 			{
+				Log.info("Werewolves: mayor is dead");
+				Actions.sendMessage(textChannel, "Votre maire est mort, nous attendons un nouveau maire");
 				Actions.replyPrivate(m.getUser(), "Veuillez désigner un nouveau maire");
 				run.set(false);
 				waitingMember.clear();
@@ -232,7 +251,7 @@ public class WerewolvesListener extends ListenerAdapter
 							return false;
 						}
 						users.get(m2).setMayor(true);
-						users.keySet().forEach(m3 -> Actions.replyPrivate(m3.getUser(), "Le nouveau maire est: %s", m2.getAsMention()));
+						Actions.sendMessage(textChannel, "Le nouveau maire est: %s", m2.getAsMention());
 						runnable.run();
 						return true;
 					}
@@ -240,15 +259,16 @@ public class WerewolvesListener extends ListenerAdapter
 				};
 			}
 		});
-		users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).forEach(m -> Actions.replyPrivate(m.getUser(), "Les morts sont : %s", willDie.stream().map(IMentionable::getAsMention).collect(Collectors.joining(", "))));
+		Actions.sendMessage(textChannel, "Les morts sont : %s", willDie.stream().map(IMentionable::getAsMention).collect(Collectors.joining(", ")));
 		willDie.clear();
-		if(run.get())
+		if(!verifyEnd() && run.get())
 			runnable.run();
 	}
 	
 	private void roleHunter()
 	{
 		willDie.stream().filter(m -> users.get(m) == WerewolvesRole.HUNTER).findAny().ifPresentOrElse(m -> {
+			Actions.sendMessage(textChannel, "En attente de: " + WerewolvesRole.HUNTER.name());
 			Actions.replyPrivate(m.getUser(), "Vous allez mourrir, désignez la personne que vous tuez avec votre pistolet.");
 			waitingMember.clear();
 			waitingMember.add(m);
@@ -275,6 +295,7 @@ public class WerewolvesListener extends ListenerAdapter
 	private void roleWitch()
 	{
 		users.keySet().stream().filter(m -> users.get(m) == WerewolvesRole.WITCH).findAny().ifPresentOrElse(m -> {
+			Actions.sendMessage(textChannel, "En attente de: " + WerewolvesRole.WITCH.name());
 			Actions.replyPrivate(m.getUser(), "Si tu veux ressuciter la victime, envoie `R`, si tu veux empoisoner quelqu'un, envoie son nom `K<nom>`, sinon envoi moi `0`");
 			waitingAction = s -> {
 				Member m2;
@@ -312,9 +333,24 @@ public class WerewolvesListener extends ListenerAdapter
 		setRole(WerewolvesRole.WITCH);
 	}
 	
+	private Member getMember(String name)
+	{
+		return voiceChannel.getMembers().stream().filter(m -> (m.getNickname() != null && m.getNickname().equals(name)) || m.getUser().getName().equals(name)).findAny().orElse(null);
+	}
+	
 	private void roleWerewolves()
 	{
-		users.keySet().stream().filter(m -> users.get(m).getKind() == WerewolvesRoleKind.WEREWOLVES).peek(m -> channelText.putPermissionOverride(m).setAllow(Permission.MESSAGE_READ).complete()).findAny().ifPresent(m -> {
+		users.keySet().stream().filter(m -> users.get(m).getKind() == WerewolvesRoleKind.WEREWOLVES).peek(m -> {
+			try
+			{
+				werewolvesTextChannel.putPermissionOverride(m).setAllow(Permission.MESSAGE_READ).queue();
+			}
+			catch(Exception e)
+			{
+				Log.error("", e);
+			}
+		}).findAny().ifPresent(m -> {
+			Actions.sendMessage(textChannel, "En attente de: " + WerewolvesRole.WEREWOLF.name());
 			Actions.replyPrivate(m.getUser(), "C'est à votre tour les loups de choisir votre victime. Décidez entre vous et donne moi le nom de la personne que vous avez choisie");
 			waitingAction = s -> {
 				Member m2 = getMember(s.getContentRaw());
@@ -329,9 +365,16 @@ public class WerewolvesListener extends ListenerAdapter
 					{
 						willDie.add(m2);
 						users.keySet().stream().filter(mm -> users.get(mm).getKind() == WerewolvesRoleKind.WEREWOLVES).forEach(mm -> {
-							channelText.putPermissionOverride(mm).setDeny(Permission.MESSAGE_READ).complete();
+							try
+							{
+								werewolvesTextChannel.putPermissionOverride(mm).setDeny(Permission.MESSAGE_READ).queue();
+							}
+							catch(Exception e)
+							{
+								Log.error("", e);
+							}
 						});
-						clearChannel(channelText);
+						clearChannel(werewolvesTextChannel);
 						setRole(WerewolvesRole.SEER);
 						return true;
 					}
@@ -346,12 +389,7 @@ public class WerewolvesListener extends ListenerAdapter
 	private void clearChannel(TextChannel channel)
 	{
 		for(Message message : channel.getIterableHistory().cache(false))
-			message.delete().complete();
-	}
-	
-	private Member getMember(String name)
-	{
-		return channel.getMembers().stream().filter(m -> (m.getNickname() != null && m.getNickname().equals(name)) || m.getUser().getName().equals(name)).findAny().orElse(null);
+			message.delete().queue();
 	}
 	
 	@Override
@@ -360,6 +398,7 @@ public class WerewolvesListener extends ListenerAdapter
 		super.onPrivateMessageReceived(event);
 		if(waitingMember != null && waitingMember.stream().anyMatch(m -> m.getUser().getIdLong() == event.getAuthor().getIdLong()))
 		{
+			Log.info("Werewolves: " + Actions.getUserToLog(event.getAuthor()) + " said `" + event.getMessage().getContentRaw() + "`");
 			if(waitingAction != null)
 				waitingAction.apply(event.getMessage());
 		}
@@ -369,10 +408,11 @@ public class WerewolvesListener extends ListenerAdapter
 	public void onGuildVoiceJoin(GuildVoiceJoinEvent event)
 	{
 		super.onGuildVoiceJoin(event);
-		if(event.getChannelJoined().getIdLong() == channel.getIdLong())
+		if(event.getChannelJoined().getIdLong() == voiceChannel.getIdLong())
 		{
 			users.put(event.getMember(), WerewolvesRole.SPECTATOR);
-			event.getGuild().getController().setMute(event.getMember(), true).complete();
+			event.getGuild().getController().setMute(event.getMember(), true).queue();
+			Log.info("Werewolves: User " + Actions.getUserToLog(event.getMember().getUser()) + " joined as spectator");
 		}
 	}
 	
@@ -380,42 +420,75 @@ public class WerewolvesListener extends ListenerAdapter
 	public void onGuildVoiceLeave(GuildVoiceLeaveEvent event)
 	{
 		super.onGuildVoiceLeave(event);
-		if(event.getChannelLeft().getIdLong() == channelText.getIdLong())
+		if(event.getChannelLeft().getIdLong() == werewolvesTextChannel.getIdLong())
 		{
 			users.remove(event.getMember());
-			if(users.isEmpty())
-				stop();
-			else if(users.values().stream().filter(r -> r.getKind() == WerewolvesRoleKind.WEREWOLVES).count() < 1)
-			{
-				users.keySet().forEach(m -> Actions.replyPrivate(m.getUser(), "La partie de loups garous est terminée car plus aucun villageois n'est présent"));
-				stop();
-			}
-			else if(users.values().stream().filter(r -> r.getKind() == WerewolvesRoleKind.VILLAGERS).count() < 1)
-			{
-				users.keySet().forEach(m -> Actions.replyPrivate(m.getUser(), "La partie de loups garous est terminée car plus aucun loup-garou n'est présent"));
-				stop();
-			}
+			verifyEnd();
 		}
+	}
+	
+	private boolean verifyEnd()
+	{
+		if(users.isEmpty())
+		{
+			Actions.sendMessage(textChannel, "La partie de loups garous est terminée car plus personne n'est présent");
+			stop();
+			return true;
+		}
+		else if(users.values().stream().filter(r -> r.getKind() == WerewolvesRoleKind.WEREWOLVES).count() < 1)
+		{
+			Actions.sendMessage(textChannel, "La partie de loups garous est terminée car plus aucun villageois n'est présent");
+			stop();
+			return true;
+		}
+		else if(users.values().stream().filter(r -> r.getKind() == WerewolvesRoleKind.VILLAGERS).count() < 1)
+		{
+			Actions.sendMessage(textChannel, "La partie de loups garous est terminée car plus aucun loup-garou n'est présent");
+			stop();
+			return true;
+		}
+		return false;
 	}
 	
 	public void stop()
 	{
+		Log.info("Werewolves: stopping");
 		games.remove(this);
-		channel.getJDA().removeEventListener(this);
-		channelText.delete().complete();
+		voiceChannel.getJDA().removeEventListener(this);
+		werewolvesTextChannel.delete().queue();
 	}
 	
 	private void setPhase(WerewolvesPhase phase)
 	{
 		if(phase == WerewolvesPhase.NIGHT)
 		{
-			users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).forEach(m -> channel.getGuild().getController().setDeafen(m, true).complete());
+			Actions.sendMessage(textChannel, "Bienvenue dans la nuit!");
+			users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).forEach(m -> {
+				try
+				{
+					voiceChannel.getGuild().getController().setDeafen(m, true).queue();
+				}
+				catch(Exception e)
+				{
+					Log.error("", e);
+				}
+			});
 			setRole(WerewolvesRole.WEREWOLF);
 		}
 		else
 		{
+			Actions.sendMessage(textChannel, "Bienvenue dans le jour!");
 			cycle++;
-			users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).forEach(m -> channel.getGuild().getController().setDeafen(m, false).complete());
+			users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).forEach(m -> {
+				try
+				{
+					voiceChannel.getGuild().getController().setDeafen(m, false).queue();
+				}
+				catch(Exception e)
+				{
+					Log.error("", e);
+				}
+			});
 			kill(() -> {
 				if(cycle == 1)
 					electMayor();

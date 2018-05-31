@@ -181,7 +181,8 @@ public class Utilities
 	public static EmbedBuilder buildEmbed(User author, Color color, String title)
 	{
 		EmbedBuilder builder = new EmbedBuilder();
-		builder.setAuthor(author.getName(), null, author.getAvatarUrl());
+		if(author != null)
+			builder.setAuthor(author.getName(), null, author.getAvatarUrl());
 		builder.setColor(color);
 		builder.setTitle(title);
 		return builder;

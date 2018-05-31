@@ -43,7 +43,8 @@ public class Settings
 			NickLastChangeConfig.class,
 			TrombinoscopeRoleConfig.class,
 			QueueChannelConfig.class,
-			HangmanRoleConfig.class
+			HangmanRoleConfig.class,
+			WerewolvesChannelConfig.class
 			};
 	
 	public static Object getObject(Guild guild, String name)
