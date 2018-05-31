@@ -32,7 +32,7 @@ public class WerewolvesStopCommand extends BasicCommand
 		if(event.getMember().getVoiceState().inVoiceChannel())
 			WerewolvesListener.getGame(event.getMember().getVoiceState().getChannel()).ifPresent(WerewolvesListener::stop);
 		else
-			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.RED, "Erreur").addField("Raison", "Vous devez être dans un channel vocal pour pouvoir démarer une partie", false).build());
+			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.RED, "Erreur").addField("Raison", "Vous devez être dans un channel vocal pour pouvoir arrêter une partie", false).build());
 		return CommandResult.SUCCESS;
 	}
 	
