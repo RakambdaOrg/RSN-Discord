@@ -351,7 +351,7 @@ public class WerewolvesListener extends ListenerAdapter
 	
 	private Member getMember(String name)
 	{
-		return channel.getMembers().stream().filter(m -> m.getNickname().equals(name) || m.getUser().getName().equals(name)).findAny().orElse(null);
+		return channel.getMembers().stream().filter(m -> (m.getNickname() != null && m.getNickname().equals(name)) || m.getUser().getName().equals(name)).findAny().orElse(null);
 	}
 	
 	@Override
