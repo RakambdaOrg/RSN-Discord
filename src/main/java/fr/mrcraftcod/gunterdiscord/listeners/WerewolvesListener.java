@@ -314,7 +314,7 @@ public class WerewolvesListener extends ListenerAdapter
 	
 	private void roleWerewolves()
 	{
-		users.keySet().stream().filter(m -> users.get(m).getKind() == WerewolvesRoleKind.WEREWOLVES).peek(m -> channelText.createPermissionOverride(m).setAllow(Permission.MESSAGE_READ).complete()).findAny().ifPresent(m -> {
+		users.keySet().stream().filter(m -> users.get(m).getKind() == WerewolvesRoleKind.WEREWOLVES).peek(m -> channelText.putPermissionOverride(m).setAllow(Permission.MESSAGE_READ).complete()).findAny().ifPresent(m -> {
 			Actions.replyPrivate(m.getUser(), "C'est à votre tour les loups de choisir votre victime. Décidez entre vous et donne moi le nom de la personne que vous avez choisie");
 			waitingAction = s -> {
 				Member m2 = getMember(s.getContentRaw());
@@ -328,7 +328,9 @@ public class WerewolvesListener extends ListenerAdapter
 					else
 					{
 						willDie.add(m2);
-						users.keySet().stream().filter(mm -> users.get(mm).getKind() == WerewolvesRoleKind.WEREWOLVES).forEach(mm -> channelText.createPermissionOverride(m).setDeny(Permission.MESSAGE_READ).complete());
+						users.keySet().stream().filter(mm -> users.get(mm).getKind() == WerewolvesRoleKind.WEREWOLVES).forEach(mm -> {
+							channelText.putPermissionOverride(mm).setDeny(Permission.MESSAGE_READ).complete();
+						});
 						clearChannel(channelText);
 						setRole(WerewolvesRole.SEER);
 						return true;
