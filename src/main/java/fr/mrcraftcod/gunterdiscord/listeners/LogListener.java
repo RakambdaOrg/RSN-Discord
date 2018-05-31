@@ -56,7 +56,7 @@ public class LogListener extends ListenerAdapter
 		super.onMessageReactionAdd(event);
 		try
 		{
-			Log.info("New reaction " + event.getReaction().getReactionEmote().getName() + " from `" + Actions.getUserToLog(event.getUser()) + "` in " + event.getReaction().getTextChannel().getName() + " on `" + event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).complete().getContentRaw().replace("\n", "{n}") + "`");
+			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> Log.info("New reaction " + event.getReaction().getReactionEmote().getName() + " from `" + Actions.getUserToLog(event.getUser()) + "` in " + event.getReaction().getTextChannel().getName() + " on `" + m.getContentRaw().replace("\n", "{n}") + "` whose author is " + Actions.getUserToLog(m.getAuthor())));
 		}
 		catch(NullPointerException ignored)
 		{
@@ -73,7 +73,7 @@ public class LogListener extends ListenerAdapter
 		super.onMessageReactionRemove(event);
 		try
 		{
-			Log.info("Reaction " + event.getReaction().getReactionEmote().getName() + " removed by `" + Actions.getUserToLog(event.getUser()) + "` in " + event.getReaction().getTextChannel().getName() + " on `" + event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).complete().getContentRaw().replace("\n", "{n}") + "`");
+			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> Log.info("Reaction " + event.getReaction().getReactionEmote().getName() + " removed by `" + Actions.getUserToLog(event.getUser()) + "` in " + event.getReaction().getTextChannel().getName() + " on `" + m.getContentRaw().replace("\n", "{n}") + "` whose author is " + Actions.getUserToLog(m.getAuthor())));
 		}
 		catch(NullPointerException ignored)
 		{
