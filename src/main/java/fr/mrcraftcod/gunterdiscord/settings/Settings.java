@@ -91,11 +91,16 @@ public class Settings
 	
 	public static JSONObject getServerSettings(Guild guild)
 	{
+		JSONObject serverSettings;
 		String id = "" + guild.getIdLong();
 		if(settings.has(id))
-			return settings.optJSONObject(id);
-		settings.put(id, new JSONObject());
-		return settings.optJSONObject(id);
+			serverSettings = settings.optJSONObject(id);
+		else
+		{
+			settings.put(id, new JSONObject());
+			serverSettings = settings.optJSONObject(id);
+		}
+		return serverSettings == null ? new JSONObject() : serverSettings;
 	}
 	
 	public static JSONArray getArray(Guild guild, String name)
