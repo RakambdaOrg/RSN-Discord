@@ -71,8 +71,10 @@ public class WerewolvesListener extends ListenerAdapter
 		DAY, NIGHT
 	}
 	
-	private WerewolvesListener(VoiceChannel channel)
+	private WerewolvesListener(VoiceChannel channel) throws IllegalStateException
 	{
+		if(channel.getMembers().size() < 5)
+			throw new IllegalStateException("Pas assez de joueurs");
 		cycle = 0;
 		votes = new HashMap<>();
 		games.add(this);
