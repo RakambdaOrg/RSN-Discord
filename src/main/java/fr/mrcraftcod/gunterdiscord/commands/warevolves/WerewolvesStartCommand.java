@@ -31,7 +31,7 @@ public class WerewolvesStartCommand extends BasicCommand
 		super.execute(event, args);
 		if(event.getMember().getVoiceState().inVoiceChannel())
 		{
-			WerewolvesListener.getGame(event.getMember().getVoiceState().getChannel());
+			WerewolvesListener.getGame(event.getMember().getVoiceState().getChannel()).ifPresentOrElse(g -> {}, () -> Actions.reply(event, "Impossible de créer la partie, êtes vous bien au moins 5 joueurs dans le vocal?"));
 		}
 		else
 			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.RED, "Erreur").addField("Raison", "Vous devez être dans un channel vocal pour pouvoir démarer une partie", false).build());
