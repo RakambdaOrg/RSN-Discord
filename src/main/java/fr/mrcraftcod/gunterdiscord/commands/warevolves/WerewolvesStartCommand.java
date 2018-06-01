@@ -20,7 +20,12 @@ import java.util.List;
  */
 public class WerewolvesStartCommand extends BasicCommand
 {
-	public WerewolvesStartCommand(Command parent)
+	/**
+	 * Constructor.
+	 *
+	 * @param parent The parent command.
+	 */
+	WerewolvesStartCommand(Command parent)
 	{
 		super(parent);
 	}

@@ -20,7 +20,12 @@ import java.util.List;
  */
 public class WerewolvesStopCommand extends BasicCommand
 {
-	public WerewolvesStopCommand(Command parent)
+	/**
+	 * Constructor.
+	 *
+	 * @param parent The parent command.
+	 */
+	WerewolvesStopCommand(Command parent)
 	{
 		super(parent);
 	}
@@ -30,7 +35,7 @@ public class WerewolvesStopCommand extends BasicCommand
 	{
 		super.execute(event, args);
 		if(event.getMember().getVoiceState().inVoiceChannel())
-			WerewolvesListener.getGame(event.getMember().getVoiceState().getChannel()).ifPresent(WerewolvesListener::stop);
+			WerewolvesListener.getGame(event.getMember().getVoiceState().getChannel(), false).ifPresent(WerewolvesListener::stop);
 		else
 			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.RED, "Erreur").addField("Raison", "Vous devez être dans un channel vocal pour pouvoir arrêter une partie", false).build());
 		return CommandResult.SUCCESS;

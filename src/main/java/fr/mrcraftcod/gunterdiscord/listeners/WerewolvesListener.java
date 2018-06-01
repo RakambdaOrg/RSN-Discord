@@ -38,11 +38,17 @@ public class WerewolvesListener extends ListenerAdapter
 	private int cycle;
 	private Function<Message, Boolean> waitingAction = null;
 	
+	/**
+	 * The categories of player in the game.
+	 */
 	private enum WerewolvesRoleKind
 	{
 		SPECIAL, WEREWOLVES, VILLAGERS
 	}
 	
+	/**
+	 * The roles in the game.
+	 */
 	private enum WerewolvesRole
 	{
 		SPECTATOR(WerewolvesRoleKind.SPECIAL), VILLAGER(WerewolvesRoleKind.VILLAGERS), WEREWOLF(WerewolvesRoleKind.WEREWOLVES), SEER(WerewolvesRoleKind.VILLAGERS), WITCH(WerewolvesRoleKind.VILLAGERS), HUNTER(WerewolvesRoleKind.VILLAGERS);
@@ -50,33 +56,63 @@ public class WerewolvesListener extends ListenerAdapter
 		private final WerewolvesRoleKind kind;
 		private boolean mayor;
 		
+		/**
+		 * Constructor.
+		 *
+		 * @param kind The category the role is in.
+		 */
 		WerewolvesRole(WerewolvesRoleKind kind)
 		{
 			this.kind = kind;
 			mayor = false;
 		}
 		
+		/**
+		 * Get the category of the role.
+		 *
+		 * @return The category.
+		 */
 		public WerewolvesRoleKind getKind()
 		{
 			return kind;
 		}
 		
+		/**
+		 * Get if this role is also the mayor.
+		 *
+		 * @return True if mayor, false otherwise.
+		 */
 		public boolean isMayor()
 		{
 			return mayor;
 		}
 		
+		/**
+		 * Set if this role is the mayor.
+		 *
+		 * @param mayor True if mayor, false otherwise.
+		 */
 		public void setMayor(boolean mayor)
 		{
 			this.mayor = mayor;
 		}
 	}
 	
+	/**
+	 * The different phases in the game.
+	 */
 	private enum WerewolvesPhase
 	{
 		DAY, NIGHT
 	}
 	
+	/**
+	 * Constructor.
+	 *
+	 * @param channel The voice channel associated with this game.
+	 *
+	 * @throws IllegalStateException The the game couldn't be created.
+	 */
 	private WerewolvesListener(VoiceChannel channel) throws IllegalStateException
 	{
 		if(channel.getMembers().size() < MIN_PLAYER)
@@ -94,7 +130,7 @@ public class WerewolvesListener extends ListenerAdapter
 		waitingMember = new ArrayList<>();
 		users = new LinkedHashMap<>();
 		channel.getMembers().forEach(m -> users.put(m, WerewolvesRole.SPECTATOR));
-		asignRoles();
+		assignRoles();
 		users.forEach((m, r) -> Actions.replyPrivate(m.getUser(), "Votre role est: %s", r.name()));
 		setPhase(WerewolvesPhase.NIGHT);
 	}
@@ -130,12 +166,10 @@ public class WerewolvesListener extends ListenerAdapter
 		});
 	}
 	
-	private VoiceChannel getVoiceChannel()
-	{
-		return voiceChannel;
-	}
-	
-	private void asignRoles()
+	/**
+	 * Assign roles to members randomly.
+	 */
+	private void assignRoles()
 	{
 		Log.info("Werewolves: assigning roles");
 		LinkedList<WerewolvesRole> roles = new LinkedList<>();
@@ -148,7 +182,12 @@ public class WerewolvesListener extends ListenerAdapter
 		users.keySet().forEach(m -> users.put(m, roles.poll()));
 	}
 	
-	private void electMayor()
+	/**
+	 * Elect a new mayor.
+	 *
+	 * @param runnable What to do when the election is done.
+	 */
+	private void electMayor(Runnable runnable)
 	{
 		Log.info("Werewolves: voting mayor");
 		Actions.sendMessage(textChannel, Utilities.buildEmbed(null, Color.GREEN, "Vote du maire").addField("Le vote du maire est ouvert", "Envoyez en mp au bot votre vote", false).build());
@@ -176,7 +215,8 @@ public class WerewolvesListener extends ListenerAdapter
 						users.get(m).setMayor(true);
 						Actions.sendMessage(textChannel, "Le maire est maintenant %s", m.getAsMention());
 					});
-					electKilled();
+					if(runnable != null)
+						runnable.run();
 				}
 				else
 					Actions.sendMessage(textChannel, "Encore %d votes", waitingMember.size());
@@ -186,6 +226,9 @@ public class WerewolvesListener extends ListenerAdapter
 		};
 	}
 	
+	/**
+	 * Elect who is killed this day.
+	 */
 	private void electKilled()
 	{
 		Log.info("Werewolves: voting kill");
@@ -221,6 +264,11 @@ public class WerewolvesListener extends ListenerAdapter
 		};
 	}
 	
+	/**
+	 * Kill the persons marked as will die.
+	 *
+	 * @param runnable The action to do after.
+	 */
 	private void kill(Runnable runnable)
 	{
 		AtomicBoolean run = new AtomicBoolean(true);
@@ -261,6 +309,9 @@ public class WerewolvesListener extends ListenerAdapter
 			runnable.run();
 	}
 	
+	/**
+	 * Make the hunter play.
+	 */
 	private void roleHunter()
 	{
 		willDie.stream().filter(m -> users.get(m) == WerewolvesRole.HUNTER).findAny().ifPresentOrElse(m -> {
@@ -288,6 +339,9 @@ public class WerewolvesListener extends ListenerAdapter
 		}, () -> setPhase(WerewolvesPhase.DAY));
 	}
 	
+	/**
+	 * Make the witch play.
+	 */
 	private void roleWitch()
 	{
 		users.keySet().stream().filter(m -> users.get(m) == WerewolvesRole.WITCH).findAny().ifPresentOrElse(m -> {
@@ -295,6 +349,7 @@ public class WerewolvesListener extends ListenerAdapter
 			Actions.replyPrivate(m.getUser(), "Si tu veux ressuciter la victime, envoie `R`, si tu veux empoisoner quelqu'un, envoie son nom `K<nom>`, sinon envoi moi `0`");
 			waitingAction = s -> {
 				Member m2;
+				//noinspection StatementWithEmptyBody
 				if(s.getContentRaw().equals("0"))
 				{
 				}
@@ -315,25 +370,38 @@ public class WerewolvesListener extends ListenerAdapter
 					Actions.replyPrivate(m.getUser(), "Désolé, je ne connais pas cette personne ou l'action est inconnue");
 					return false;
 				}
-				setRole(WerewolvesRole.HUNTER);
+				roleHunter();
 				return true;
 			};
 			waitingMember.clear();
 			waitingMember.add(m);
-		}, () -> setRole(WerewolvesRole.HUNTER));
+		}, this::roleHunter);
 	}
 	
+	/**
+	 * Make the seer play.
+	 */
 	private void roleSeer()
 	{
 		users.keySet().stream().filter(m -> users.get(m) == WerewolvesRole.SEER).findAny().ifPresent(m -> Actions.replyPrivate(m.getUser(), "La personne qui va mourir est: %s", willDie.stream().map(IMentionable::getAsMention).collect(Collectors.joining(", "))));
-		setRole(WerewolvesRole.WITCH);
+		roleWitch();
 	}
 	
+	/**
+	 * Get a member in the game based on its name.
+	 *
+	 * @param name The name.
+	 *
+	 * @return The member or null if none where found.
+	 */
 	private Member getMember(String name)
 	{
-		return voiceChannel.getMembers().stream().filter(m -> (m.getNickname() != null && m.getNickname().equals(name)) || m.getUser().getName().equals(name)).findAny().orElse(null);
+		return voiceChannel.getMembers().stream().filter(m -> (m.getNickname() != null && m.getNickname().equals(name)) || m.getUser().getName().equals(name) || m.getUser().getId().equals(name)).findAny().orElse(null);
 	}
 	
+	/**
+	 * Make the werewolves play.
+	 */
 	private void roleWerewolves()
 	{
 		users.keySet().stream().filter(m -> users.get(m).getKind() == WerewolvesRoleKind.WEREWOLVES).peek(m -> {
@@ -347,7 +415,7 @@ public class WerewolvesListener extends ListenerAdapter
 			}
 		}).findAny().ifPresent(m -> {
 			Actions.sendMessage(textChannel, "En attente de: " + WerewolvesRole.WEREWOLF.name());
-			Actions.replyPrivate(m.getUser(), "C'est à votre tour les loups de choisir votre victime. Décidez entre vous et donne moi le nom de la personne que vous avez choisie");
+			Actions.sendMessage(werewolvesTextChannel, "@here Vous devez élire la personne qui mourra. %s est celui qui m'indiquera votre choix en MP", m.getAsMention());
 			waitingAction = s -> {
 				Member m2 = getMember(s.getContentRaw());
 				if(m2 == null)
@@ -370,8 +438,7 @@ public class WerewolvesListener extends ListenerAdapter
 								Log.error("", e);
 							}
 						});
-						clearChannel(werewolvesTextChannel);
-						setRole(WerewolvesRole.SEER);
+						roleSeer();
 						return true;
 					}
 				}
@@ -382,10 +449,32 @@ public class WerewolvesListener extends ListenerAdapter
 		});
 	}
 	
-	private void clearChannel(TextChannel channel)
+	/**
+	 * Verify if the game has ended.
+	 *
+	 * @return True if ended, false otherwise.
+	 */
+	private boolean verifyEnd()
 	{
-		for(Message message : channel.getIterableHistory().cache(false))
-			message.delete().queue();
+		if(users.isEmpty())
+		{
+			Actions.sendMessage(textChannel, "La partie de loups garous est terminée car plus personne n'est présent");
+			stop();
+			return true;
+		}
+		else if(users.values().stream().filter(r -> r.getKind() == WerewolvesRoleKind.WEREWOLVES).count() < 1)
+		{
+			Actions.sendMessage(textChannel, "La partie de loups garous est terminée car plus aucun villageois n'est présent");
+			stop();
+			return true;
+		}
+		else if(users.values().stream().filter(r -> r.getKind() == WerewolvesRoleKind.VILLAGERS).count() < 1)
+		{
+			Actions.sendMessage(textChannel, "La partie de loups garous est terminée car plus aucun loup-garou n'est présent");
+			stop();
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
@@ -423,29 +512,9 @@ public class WerewolvesListener extends ListenerAdapter
 		}
 	}
 	
-	private boolean verifyEnd()
-	{
-		if(users.isEmpty())
-		{
-			Actions.sendMessage(textChannel, "La partie de loups garous est terminée car plus personne n'est présent");
-			stop();
-			return true;
-		}
-		else if(users.values().stream().filter(r -> r.getKind() == WerewolvesRoleKind.WEREWOLVES).count() < 1)
-		{
-			Actions.sendMessage(textChannel, "La partie de loups garous est terminée car plus aucun villageois n'est présent");
-			stop();
-			return true;
-		}
-		else if(users.values().stream().filter(r -> r.getKind() == WerewolvesRoleKind.VILLAGERS).count() < 1)
-		{
-			Actions.sendMessage(textChannel, "La partie de loups garous est terminée car plus aucun loup-garou n'est présent");
-			stop();
-			return true;
-		}
-		return false;
-	}
-	
+	/**
+	 * Stops the game.
+	 */
 	public void stop()
 	{
 		Log.info("Werewolves: stopping");
@@ -454,6 +523,21 @@ public class WerewolvesListener extends ListenerAdapter
 		werewolvesTextChannel.delete().queue();
 	}
 	
+	/**
+	 * Get the voice channel associated with this game.
+	 *
+	 * @return The voice channel.
+	 */
+	private VoiceChannel getVoiceChannel()
+	{
+		return voiceChannel;
+	}
+	
+	/**
+	 * Set the current phase.
+	 *
+	 * @param phase The phase to set.
+	 */
 	private void setPhase(WerewolvesPhase phase)
 	{
 		if(phase == WerewolvesPhase.NIGHT)
@@ -469,7 +553,7 @@ public class WerewolvesListener extends ListenerAdapter
 					Log.error("", e);
 				}
 			});
-			setRole(WerewolvesRole.WEREWOLF);
+			roleWerewolves();
 		}
 		else
 		{
@@ -487,29 +571,10 @@ public class WerewolvesListener extends ListenerAdapter
 			});
 			kill(() -> {
 				if(cycle == 1)
-					electMayor();
+					electMayor(this::electKilled);
 				else
 					electKilled();
 			});
-		}
-	}
-	
-	private void setRole(WerewolvesRole role)
-	{
-		switch(role)
-		{
-			case WEREWOLF:
-				roleWerewolves();
-				break;
-			case SEER:
-				roleSeer();
-				break;
-			case WITCH:
-				roleWitch();
-				break;
-			case HUNTER:
-				roleHunter();
-				break;
 		}
 	}
 }
