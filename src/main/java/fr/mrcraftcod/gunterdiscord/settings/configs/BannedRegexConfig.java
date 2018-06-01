@@ -7,6 +7,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
 import java.util.LinkedList;
+import java.util.function.Function;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -48,5 +49,11 @@ public class BannedRegexConfig extends ListConfiguration<String>
 	public String getName()
 	{
 		return "bannedRegexes";
+	}
+	
+	@Override
+	protected Function<String, String> getValueParser()
+	{
+		return s -> s;
 	}
 }

@@ -6,7 +6,6 @@ import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import java.io.InvalidClassException;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -30,10 +29,6 @@ public class OnlyImagesMessageListener extends ListenerAdapter
 					Actions.replyPrivate(event.getAuthor(), "Le channel %s est pour les images seulement.", event.getChannel().getName());
 				}
 			}
-		}
-		catch(InvalidClassException e)
-		{
-			Log.error("Error getting images only list");
 		}
 		catch(Exception e)
 		{

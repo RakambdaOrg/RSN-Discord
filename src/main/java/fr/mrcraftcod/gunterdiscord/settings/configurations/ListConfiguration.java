@@ -6,11 +6,9 @@ import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.entities.Guild;
 import org.json.JSONArray;
-import java.io.InvalidClassException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -48,12 +46,6 @@ public abstract class ListConfiguration<T> extends Configuration
 		Settings.removeValue(guild, this, value);
 	}
 	
-	@Override
-	public ConfigType getType()
-	{
-		return ConfigType.LIST;
-	}
-	
 	/**
 	 * Get a list of the values.
 	 *
@@ -62,33 +54,33 @@ public abstract class ListConfiguration<T> extends Configuration
 	 * @return The values list.
 	 *
 	 * @throws IllegalArgumentException If the configuration isn't a list.
-	 * @throws InvalidClassException    If the values are not of type T.
 	 */
-	public List<T> getAsList(Guild guild) throws IllegalArgumentException, InvalidClassException
+	public List<T> getAsList(Guild guild) throws IllegalArgumentException
 	{
 		if(lastValue != null)
 			return lastValue;
-		Type type = getParameterizedType(getClass());
-		if(type instanceof ParameterizedType)
-		{
-			@SuppressWarnings("unchecked") Class<T> klass = (Class<T>) ((ParameterizedType) type).getActualTypeArguments()[0];
-			List<T> elements = new LinkedList<>();
-			JSONArray array = getObjectList(guild);
-			if(array == null)
-				Settings.resetList(guild, this);
-			else
-				for(int i = 0; i < array.length(); i++)
-				{
-					Object value = array.get(i);
-					if(klass.isInstance(value))
-						elements.add(klass.cast(value));
-					else
-						throw new InvalidClassException("Config is not a T");
-				}
-			return elements;
-		}
-		throw new InvalidClassException("Failed to get parameterized type");
+		List<T> elements = new LinkedList<>();
+		JSONArray array = getObjectList(guild);
+		if(array == null)
+			Settings.resetList(guild, this);
+		else
+			for(int i = 0; i < array.length(); i++)
+				elements.add(getValueParser().apply(array.get(i).toString()));
+		return elements;
 	}
+	
+	@Override
+	public ConfigType getType()
+	{
+		return ConfigType.LIST;
+	}
+	
+	/**
+	 * Get the parser to parse back values to T.
+	 *
+	 * @return The parser.
+	 */
+	protected abstract Function<String, T> getValueParser();
 	
 	/**
 	 * Get the JSON array.
@@ -112,15 +104,6 @@ public abstract class ListConfiguration<T> extends Configuration
 			Log.error("NullPointer", e);
 		}
 		return null;
-	}
-	
-	private Type getParameterizedType(Class klass)
-	{
-		if(klass == null || klass.equals(Object.class))
-			return klass;
-		if(klass.getGenericSuperclass() instanceof ParameterizedType)
-			return klass.getGenericSuperclass();
-		return getParameterizedType(klass.getSuperclass());
 	}
 	
 	@Override

@@ -45,6 +45,12 @@ public class PhotoConfig extends MapListConfiguration<Long, String>
 	}
 	
 	@Override
+	protected Function<String, String> getValueParser()
+	{
+		return s -> s;
+	}
+	
+	@Override
 	public String getName()
 	{
 		return "photo";

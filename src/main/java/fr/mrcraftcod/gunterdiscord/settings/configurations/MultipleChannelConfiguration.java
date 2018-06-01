@@ -7,6 +7,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/05/2018.
@@ -42,5 +43,11 @@ public abstract class MultipleChannelConfiguration extends ListConfiguration<Lon
 				return ConfigurationCommand.ActionResult.OK;
 		}
 		return ConfigurationCommand.ActionResult.ERROR;
+	}
+	
+	@Override
+	protected Function<String, Long> getValueParser()
+	{
+		return Long::parseLong;
 	}
 }
