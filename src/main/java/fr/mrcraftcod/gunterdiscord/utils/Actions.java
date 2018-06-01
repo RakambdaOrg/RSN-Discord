@@ -126,8 +126,13 @@ public class Actions
 	{
 		if(channel != null)
 		{
-			channel.sendMessage(text).queue();
-			Log.info("Sent private message to " + getUserToLog(channel.getUser()) + " : " + text);
+			if(channel.getUser().isBot())
+				Log.info("Cannot send private message to bot " + Actions.getUserToLog(channel.getUser()) + " : " + text);
+			else
+			{
+				channel.sendMessage(text).queue();
+				Log.info("Sent private message to " + getUserToLog(channel.getUser()) + " : " + text);
+			}
 		}
 		else
 			Log.warning("Cannot send private message to null channel : " + text);
