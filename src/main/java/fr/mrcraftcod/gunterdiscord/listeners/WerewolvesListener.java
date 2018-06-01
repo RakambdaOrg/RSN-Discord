@@ -26,6 +26,7 @@ import java.util.stream.IntStream;
  */
 public class WerewolvesListener extends ListenerAdapter
 {
+	public static final int MIN_PLAYER = 4;
 	private static final ArrayList<WerewolvesListener> games = new ArrayList<>();
 	private final List<Member> willDie;
 	private final TextChannel werewolvesTextChannel;
@@ -78,7 +79,7 @@ public class WerewolvesListener extends ListenerAdapter
 	
 	private WerewolvesListener(VoiceChannel channel) throws IllegalStateException
 	{
-		if(channel.getMembers().size() < 5)
+		if(channel.getMembers().size() < MIN_PLAYER)
 			throw new IllegalStateException("Pas assez de joueurs");
 		textChannel = new WerewolvesChannelConfig().getTextChannel(channel.getGuild());
 		if(textChannel == null)
@@ -117,19 +118,14 @@ public class WerewolvesListener extends ListenerAdapter
 	 * @param create  If a game is created if it doesn't exists.
 	 *
 	 * @return The game.
+	 *
+	 * @throws IllegalStateException If the game couldn't be created.
 	 */
-	public static Optional<WerewolvesListener> getGame(VoiceChannel channel, boolean create)
+	public static Optional<WerewolvesListener> getGame(VoiceChannel channel, boolean create) throws IllegalStateException
 	{
 		return games.stream().filter(h -> h.getVoiceChannel().getIdLong() == channel.getIdLong()).findAny().or(() -> {
-			try
-			{
-				if(create)
-					return Optional.of(new WerewolvesListener(channel));
-			}
-			catch(Exception e)
-			{
-				Log.error("Error create a new werewolves game", e);
-			}
+			if(create)
+				return Optional.of(new WerewolvesListener(channel));
 			return Optional.empty();
 		});
 	}
