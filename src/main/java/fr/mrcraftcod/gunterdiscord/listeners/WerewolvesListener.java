@@ -400,53 +400,30 @@ public class WerewolvesListener extends ListenerAdapter
 	}
 	
 	/**
-	 * Make the werewolves play.
+	 * Set the current phase.
+	 *
+	 * @param phase The phase to set.
 	 */
-	private void roleWerewolves()
+	private void setPhase(WerewolvesPhase phase)
 	{
-		users.keySet().stream().filter(m -> users.get(m).getKind() == WerewolvesRoleKind.WEREWOLVES).peek(m -> {
-			try
-			{
-				werewolvesTextChannel.putPermissionOverride(m).setAllow(Permission.MESSAGE_READ).queue();
-			}
-			catch(Exception e)
-			{
-				Log.error("", e);
-			}
-		}).findAny().ifPresent(m -> {
-			Actions.sendMessage(textChannel, "En attente de: " + WerewolvesRole.WEREWOLF.name());
-			Actions.sendMessage(werewolvesTextChannel, "@here Vous devez élire la personne qui mourra. %s est celui qui m'indiquera votre choix en MP", m.getAsMention());
-			waitingAction = s -> {
-				Member m2 = getMember(s.getContentRaw());
-				if(m2 == null)
-					Actions.replyPrivate(m.getUser(), "Désolé, je ne connais pas cette personne");
+		if(phase == WerewolvesPhase.NIGHT)
+		{
+			Actions.sendMessage(textChannel, "Bienvenue dans la nuit!");
+			Actions.deafen(users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).collect(Collectors.toList()), true);
+			roleWerewolves();
+		}
+		else
+		{
+			Actions.sendMessage(textChannel, "Bienvenue dans le jour!");
+			cycle++;
+			Actions.deafen(users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).collect(Collectors.toList()), false);
+			kill(() -> {
+				if(cycle == 1)
+					electMayor(this::electKilled);
 				else
-				{
-					WerewolvesRole r2 = users.get(m2);
-					if(r2.getKind() == WerewolvesRoleKind.WEREWOLVES || r2.getKind() == WerewolvesRoleKind.SPECIAL)
-						Actions.replyPrivate(m.getUser(), "Désolé, vous ne pouvez pas cibler cette personne");
-					else
-					{
-						willDie.add(m2);
-						users.keySet().stream().filter(mm -> users.get(mm).getKind() == WerewolvesRoleKind.WEREWOLVES).forEach(mm -> {
-							try
-							{
-								werewolvesTextChannel.putPermissionOverride(mm).setDeny(Permission.MESSAGE_READ).queue();
-							}
-							catch(Exception e)
-							{
-								Log.error("", e);
-							}
-						});
-						roleSeer();
-						return true;
-					}
-				}
-				return false;
-			};
-			waitingMember.clear();
-			waitingMember.add(m);
-		});
+					electKilled();
+			});
+		}
 	}
 	
 	/**
@@ -534,47 +511,35 @@ public class WerewolvesListener extends ListenerAdapter
 	}
 	
 	/**
-	 * Set the current phase.
-	 *
-	 * @param phase The phase to set.
+	 * Make the werewolves play.
 	 */
-	private void setPhase(WerewolvesPhase phase)
+	private void roleWerewolves()
 	{
-		if(phase == WerewolvesPhase.NIGHT)
-		{
-			Actions.sendMessage(textChannel, "Bienvenue dans la nuit!");
-			users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).forEach(m -> {
-				try
-				{
-					voiceChannel.getGuild().getController().setDeafen(m, true).queue();
-				}
-				catch(Exception e)
-				{
-					Log.error("", e);
-				}
-			});
-			roleWerewolves();
-		}
-		else
-		{
-			Actions.sendMessage(textChannel, "Bienvenue dans le jour!");
-			cycle++;
-			users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).forEach(m -> {
-				try
-				{
-					voiceChannel.getGuild().getController().setDeafen(m, false).queue();
-				}
-				catch(Exception e)
-				{
-					Log.error("", e);
-				}
-			});
-			kill(() -> {
-				if(cycle == 1)
-					electMayor(this::electKilled);
+		Actions.allowPermission(users.keySet().stream().filter(mm -> users.get(mm).getKind() == WerewolvesRoleKind.WEREWOLVES).collect(Collectors.toList()), werewolvesTextChannel, Permission.MESSAGE_READ);
+		users.keySet().stream().filter(m -> users.get(m).getKind() == WerewolvesRoleKind.WEREWOLVES).findAny().ifPresent(m -> {
+			Actions.sendMessage(textChannel, "En attente de: " + WerewolvesRole.WEREWOLF.name());
+			Actions.sendMessage(werewolvesTextChannel, "@here Vous devez élire la personne qui mourra. %s est celui qui m'indiquera votre choix en MP", m.getAsMention());
+			waitingAction = s -> {
+				Member m2 = getMember(s.getContentRaw());
+				if(m2 == null)
+					Actions.replyPrivate(m.getUser(), "Désolé, je ne connais pas cette personne");
 				else
-					electKilled();
-			});
-		}
+				{
+					WerewolvesRole r2 = users.get(m2);
+					if(r2.getKind() == WerewolvesRoleKind.WEREWOLVES || r2.getKind() == WerewolvesRoleKind.SPECIAL)
+						Actions.replyPrivate(m.getUser(), "Désolé, vous ne pouvez pas cibler cette personne");
+					else
+					{
+						willDie.add(m2);
+						Actions.denyPermission(users.keySet().stream().filter(mm -> users.get(mm).getKind() == WerewolvesRoleKind.WEREWOLVES).collect(Collectors.toList()), werewolvesTextChannel, Permission.MESSAGE_READ);
+						roleSeer();
+						return true;
+					}
+				}
+				return false;
+			};
+			waitingMember.clear();
+			waitingMember.add(m);
+		});
 	}
 }
