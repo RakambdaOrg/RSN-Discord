@@ -1,8 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.utils;
 
 import fr.mrcraftcod.gunterdiscord.Main;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.exceptions.HierarchyException;
+import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,6 +20,10 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
+@SuppressWarnings({
+		"WeakerAccess",
+		"unused"
+})
 public class Actions
 {
 	public static final Consumer<Message> PIN_MESSAGE = m -> m.pin().queue();
@@ -403,6 +410,14 @@ public class Actions
 		giveRole(member.getGuild(), member.getUser(), roles.stream().map(r -> getRoleByID(member.getGuild(), r)).collect(Collectors.toList()));
 	}
 	
+	/**
+	 * Get a role by its ID.
+	 *
+	 * @param guild The guild the role is in.
+	 * @param role  The ID of the role.
+	 *
+	 * @return The role or null if not found.
+	 */
 	public static Role getRoleByID(Guild guild, Long role)
 	{
 		return guild.getRoleById(role);
@@ -503,5 +518,111 @@ public class Actions
 		}
 		else
 			Log.warning("Cannot send message to null channel : " + getEmbedForLog(embed));
+	}
+	
+	/**
+	 * Deafen members.
+	 *
+	 * @param members The member to set deaf.
+	 * @param state   True if deaf, false is not deaf.
+	 */
+	public static void deafen(List<Member> members, boolean state)
+	{
+		members.forEach(m -> deafen(m, state));
+	}
+	
+	/**
+	 * Deafen a member.
+	 *
+	 * @param member The member to set deaf.
+	 * @param state  True if deaf, false is not deaf.
+	 */
+	private static void deafen(Member member, boolean state)
+	{
+		try
+		{
+			member.getGuild().getController().setDeafen(member, state).queue();
+			Log.info("Member " + Actions.getUserToLog(member.getUser()) + " is now " + (state ? "" : "un") + "deaf");
+		}
+		catch(HierarchyException | InsufficientPermissionException e)
+		{
+			Log.warning("Cannot " + (state ? "" : "un") + "deaf member " + Actions.getUserToLog(member.getUser()));
+		}
+		catch(Exception e)
+		{
+			Log.error("Error trying to " + (state ? "" : "un") + "deafen member", e);
+		}
+	}
+	
+	/**
+	 * Deny a person for members.
+	 *
+	 * @param members    The members concerned.
+	 * @param channel    The channel it'll apply to.
+	 * @param permission The permission to remove.
+	 */
+	public static void denyPermission(List<Member> members, Channel channel, Permission permission)
+	{
+		members.forEach(m -> denyPermission(m, channel, permission));
+	}
+	
+	/**
+	 * Deny a person for a member.
+	 *
+	 * @param member     The member concerned.
+	 * @param channel    The channel it'll apply to.
+	 * @param permission The permission to remove.
+	 */
+	public static void denyPermission(Member member, Channel channel, Permission permission)
+	{
+		try
+		{
+			channel.putPermissionOverride(member).setDeny(permission).queue();
+			Log.info(Actions.getUserToLog(member.getUser()) + " no longer have permission " + permission.name() + " on " + channel.getName());
+		}
+		catch(HierarchyException | InsufficientPermissionException e)
+		{
+			Log.warning("Cannot remove permission for " + Actions.getUserToLog(member.getUser()) + " on " + channel.getName());
+		}
+		catch(Exception e)
+		{
+			Log.warning("Error removing permission for " + Actions.getUserToLog(member.getUser()) + " on " + channel.getName());
+		}
+	}
+	
+	/**
+	 * Allow a person for members.
+	 *
+	 * @param members    The members concerned.
+	 * @param channel    The channel it'll apply to.
+	 * @param permission The permission to give.
+	 */
+	public static void allowPermission(List<Member> members, Channel channel, Permission permission)
+	{
+		members.forEach(m -> allowPermission(m, channel, permission));
+	}
+	
+	/**
+	 * Allow a person for a member.
+	 *
+	 * @param member     The member concerned.
+	 * @param channel    The channel it'll apply to.
+	 * @param permission The permission to give.
+	 */
+	public static void allowPermission(Member member, Channel channel, Permission permission)
+	{
+		try
+		{
+			channel.putPermissionOverride(member).setAllow(permission).queue();
+			Log.info(Actions.getUserToLog(member.getUser()) + " now have permission " + permission.name() + " on " + channel.getName());
+		}
+		catch(HierarchyException | InsufficientPermissionException e)
+		{
+			Log.warning("Cannot give permission for " + Actions.getUserToLog(member.getUser()) + " on " + channel.getName());
+		}
+		catch(Exception e)
+		{
+			Log.warning("Error giving permission for " + Actions.getUserToLog(member.getUser()) + " on " + channel.getName());
+		}
 	}
 }

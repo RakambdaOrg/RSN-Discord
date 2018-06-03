@@ -6,7 +6,6 @@ import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import net.dv8tion.jda.core.entities.Guild;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -54,7 +53,6 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	{
 		if(lastValue != null)
 			return lastValue;
-		@SuppressWarnings("unchecked") Class<V> klassV = (Class<V>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
 		Map<K, ArrayList<V>> elements = new HashMap<>();
 		JSONObject map = getObjectMap(guild);
 		if(map == null)
@@ -67,10 +65,17 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 					elements.put(kKey, new ArrayList<>());
 				JSONArray value = map.optJSONArray(key);
 				if(value != null)
-					value.toList().stream().map(klassV::cast).forEach(o -> elements.get(kKey).add(o));
+					value.toList().stream().map(val -> getValueParser().apply(val.toString())).forEach(o -> elements.get(kKey).add(o));
 			}
 		return elements;
 	}
+	
+	/**
+	 * Get the parser to parse back values to V.
+	 *
+	 * @return The parser.
+	 */
+	protected abstract Function<String, V> getValueParser();
 	
 	/**
 	 * Get the JSON Object.
@@ -129,6 +134,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	 * @param key   The key.
 	 * @param value The value.
 	 */
+	@SuppressWarnings("Duplicates")
 	public void deleteKeyValue(Guild guild, K key, V value)
 	{
 		if(value == null)

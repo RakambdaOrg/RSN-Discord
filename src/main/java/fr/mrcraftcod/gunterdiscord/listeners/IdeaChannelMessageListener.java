@@ -5,7 +5,6 @@ import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import java.io.InvalidClassException;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -26,10 +25,6 @@ public class IdeaChannelMessageListener extends ListenerAdapter
 				event.getMessage().addReaction(BasicEmotes.THUMB_UP.getValue()).complete();
 				event.getMessage().addReaction(BasicEmotes.THUMB_DOWN.getValue()).complete();
 			}
-		}
-		catch(InvalidClassException e)
-		{
-			Log.error("Error getting idea channel list");
 		}
 		catch(Exception e)
 		{

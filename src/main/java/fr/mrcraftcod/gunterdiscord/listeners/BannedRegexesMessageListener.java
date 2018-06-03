@@ -10,7 +10,6 @@ import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import java.io.InvalidClassException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,18 +85,11 @@ public class BannedRegexesMessageListener extends ListenerAdapter
 	private String isBanned(Guild guild, String text)
 	{
 		text = text.toLowerCase();
-		try
+		for(String regex : new BannedRegexConfig().getAsList(guild))
 		{
-			for(String regex : new BannedRegexConfig().getAsList(guild))
-			{
-				Matcher matcher = Pattern.compile(regex).matcher(text);
-				if(matcher.matches())
-					return matcher.group(0);
-			}
-		}
-		catch(InvalidClassException e)
-		{
-			Log.error("Error finding banned regexes", e);
+			Matcher matcher = Pattern.compile(regex).matcher(text);
+			if(matcher.matches())
+				return matcher.group(0);
 		}
 		return null;
 	}

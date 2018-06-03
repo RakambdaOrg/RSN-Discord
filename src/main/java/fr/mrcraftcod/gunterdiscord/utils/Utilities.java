@@ -6,7 +6,6 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import java.awt.*;
-import java.io.InvalidClassException;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,15 +27,7 @@ public class Utilities
 	 */
 	public static boolean isModerator(Member member)
 	{
-		try
-		{
-			return Utilities.hasRoleIDs(member, new ModoRolesConfig().getAsList(member.getGuild()));
-		}
-		catch(InvalidClassException e)
-		{
-			Log.error("Error getting moderator roles", e);
-		}
-		return false;
+		return Utilities.hasRoleIDs(member, new ModoRolesConfig().getAsList(member.getGuild()));
 	}
 	
 	/**
