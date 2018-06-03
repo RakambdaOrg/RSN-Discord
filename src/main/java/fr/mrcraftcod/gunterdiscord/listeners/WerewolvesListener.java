@@ -10,8 +10,6 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import java.awt.*;
-import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
@@ -155,7 +153,7 @@ public class WerewolvesListener extends ListenerAdapter
 	private void electMayor()
 	{
 		Log.info("Werewolves: voting mayor");
-		Actions.sendMessage(textChannel, Utilities.buildEmbed(null, Color.GREEN, "Vote du maire").addField("Le vote du maire est ouvert", "Envoyez en mp au bot votre vote", false).build());
+		Actions.sendMessage(textChannel, Utilities.buildEmbed(textChannel.getJDA().getSelfUser(), Color.GREEN, "Vote du maire").addField("Le vote du maire est ouvert", "Envoyez en mp au bot votre vote", false).build());
 		votes.clear();
 		waitingMember.addAll(users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).collect(Collectors.toList()));
 		waitingAction = s -> {
@@ -193,7 +191,7 @@ public class WerewolvesListener extends ListenerAdapter
 	private void electKilled()
 	{
 		Log.info("Werewolves: voting kill");
-		Actions.sendMessage(textChannel, Utilities.buildEmbed(null, Color.GREEN, "Vote du tué du jour").addField("Le vote du maire est ouvert", "Envoyez en mp au bot votre vote", false).build());
+		Actions.sendMessage(textChannel, Utilities.buildEmbed(textChannel.getJDA().getSelfUser(), Color.GREEN, "Vote du tué du jour").addField("Le vote du maire est ouvert", "Envoyez en mp au bot votre vote", false).build());
 		votes.clear();
 		waitingMember.addAll(users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).collect(Collectors.toList()));
 		waitingAction = s -> {

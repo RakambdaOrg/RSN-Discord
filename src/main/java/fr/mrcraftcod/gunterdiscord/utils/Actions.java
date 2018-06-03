@@ -466,7 +466,7 @@ public class Actions
 	private static String getEmbedForLog(MessageEmbed embed)
 	{
 		StringBuilder builder = new StringBuilder("Embed " + embed.hashCode());
-		builder.append("\n").append("Author: ").append(embed.getAuthor().getName());
+		builder.append("\n").append("Author: ").append(embed.getAuthor() == null ? "<NONE>" : embed.getAuthor().getName());
 		builder.append("\n").append("Title: ").append(embed.getTitle());
 		builder.append("\n").append("Description: ").append(embed.getDescription());
 		builder.append("\n").append("Color: ").append(embed.getColor());
