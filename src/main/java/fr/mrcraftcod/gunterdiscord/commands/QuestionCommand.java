@@ -35,7 +35,7 @@ public class QuestionCommand extends BasicCommand
 		
 		if(args.size() == 0)
 			Actions.replyPrivate(event.getAuthor(), "Merci de poser une question");
-		else if(args.peek().equalsIgnoreCase("message"))
+		else if(args.peek().equalsIgnoreCase("message") || args.peek().equalsIgnoreCase("question"))
 			Actions.replyPrivate(event.getAuthor(), "Merci de poser une question, et pas 'message'");
 		else
 		{
