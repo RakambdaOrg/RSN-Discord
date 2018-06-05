@@ -43,6 +43,7 @@ public class Settings
 			NickLastChangeConfig.class,
 			TrombinoscopeRoleConfig.class,
 			QuestionsChannelConfig.class,
+			QuestionsFinalChannelConfig.class,
 			HangmanRoleConfig.class,
 			WerewolvesChannelConfig.class
 			};
