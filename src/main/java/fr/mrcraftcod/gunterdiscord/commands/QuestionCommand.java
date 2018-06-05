@@ -42,9 +42,9 @@ public class QuestionCommand extends BasicCommand
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
-			builder.setTitle("Nouvelle entrée");
+			builder.setTitle("Nouvelle question");
 			builder.addField("Utilisateur", event.getAuthor().getAsMention(), true);
-			builder.addField("Message", String.join(" ", args), false);
+			builder.addField("Question", String.join(" ", args), false);
 			
 			Message m = Actions.getMessage(new QuestionsChannelConfig().getTextChannel(event.getGuild()), builder.build());
 			m.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
