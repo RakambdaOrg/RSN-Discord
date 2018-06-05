@@ -8,11 +8,11 @@ import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleChannelConfigur
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class QueueChannelConfig extends SingleChannelConfiguration
+public class QuestionsFinalChannelConfig extends SingleChannelConfiguration
 {
 	@Override
 	public String getName()
 	{
-		return "queueChannel";
+		return "questionsFinalChannel";
 	}
 }

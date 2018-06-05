@@ -464,6 +464,17 @@ public class Actions
 	 * Send a message to a channel.
 	 *
 	 * @param channel The channel to send to.
+	 * @param embeds  The messages to send.
+	 */
+	public static void sendMessage(TextChannel channel, List<MessageEmbed> embeds)
+	{
+		embeds.forEach(e -> sendMessage(channel, e));
+	}
+	
+	/**
+	 * Send a message to a channel.
+	 *
+	 * @param channel The channel to send to.
 	 * @param embed   The message to send.
 	 */
 	public static void sendMessage(TextChannel channel, MessageEmbed embed)

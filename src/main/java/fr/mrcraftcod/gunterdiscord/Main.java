@@ -65,6 +65,7 @@ public class Main
 			jda.addEventListener(new LogListener());
 			jda.addEventListener(new AutoRolesListener());
 			jda.addEventListener(new IdeaChannelMessageListener());
+			jda.addEventListener(new QuestionReactionListener());
 			jda.setAutoReconnect(true);
 			jda.getPresence().setGame(Game.playing("g?help pour l'aide"));
 		}

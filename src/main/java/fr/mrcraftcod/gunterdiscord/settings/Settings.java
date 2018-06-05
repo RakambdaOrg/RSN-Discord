@@ -42,7 +42,7 @@ public class Settings
 			NickDelayConfig.class,
 			NickLastChangeConfig.class,
 			TrombinoscopeRoleConfig.class,
-			QueueChannelConfig.class,
+			QuestionsChannelConfig.class,
 			HangmanRoleConfig.class,
 			WerewolvesChannelConfig.class
 			};
