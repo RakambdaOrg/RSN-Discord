@@ -8,7 +8,6 @@ import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -27,25 +26,25 @@ public class Settings
 {
 	private static Path path;
 	private static JSONObject settings;
-	public static final Class<? extends Configuration>[] SETTINGS = new Class[]{
-			BannedRegexConfig.class,
-			ModoRolesConfig.class,
-			OnlyIdeasConfig.class,
-			OnlyImagesConfig.class,
-			PrefixConfig.class,
-			ReportChannelConfig.class,
-			PhotoChannelConfig.class,
-			QuizChannelConfig.class,
-			HangmanChannelConfig.class,
-			PhotoConfig.class,
-			AutoRolesConfig.class,
-			NickDelayConfig.class,
-			NickLastChangeConfig.class,
-			TrombinoscopeRoleConfig.class,
-			QuestionsChannelConfig.class,
-			QuestionsFinalChannelConfig.class,
-			HangmanRoleConfig.class,
-			WerewolvesChannelConfig.class
+	public static final Configuration[] SETTINGS = new Configuration[]{
+			new BannedRegexConfig(),
+			new ModoRolesConfig(),
+			new OnlyIdeasConfig(),
+			new OnlyImagesConfig(),
+			new PrefixConfig(),
+			new ReportChannelConfig(),
+			new PhotoChannelConfig(),
+			new QuizChannelConfig(),
+			new HangmanChannelConfig(),
+			new PhotoConfig(),
+			new AutoRolesConfig(),
+			new NickDelayConfig(),
+			new NickLastChangeConfig(),
+			new TrombinoscopeRoleConfig(),
+			new QuestionsChannelConfig(),
+			new QuestionsFinalChannelConfig(),
+			new HangmanRoleConfig(),
+			new WerewolvesChannelConfig(),
 			};
 	
 	public static Object getObject(Guild guild, String name)
@@ -65,19 +64,9 @@ public class Settings
 	
 	public static Configuration getSettings(String name)
 	{
-		for(Class<? extends Configuration> klass : SETTINGS)
-		{
-			try
-			{
-				Configuration configuration = (Configuration) klass.getConstructors()[0].newInstance();
-				if(configuration.getName().equalsIgnoreCase(name))
-					return configuration;
-			}
-			catch(InstantiationException | InvocationTargetException | IllegalAccessException e)
-			{
-				e.printStackTrace();
-			}
-		}
+		for(Configuration configuration : SETTINGS)
+			if(configuration.getName().equalsIgnoreCase(name))
+				return configuration;
 		return null;
 	}
 	
