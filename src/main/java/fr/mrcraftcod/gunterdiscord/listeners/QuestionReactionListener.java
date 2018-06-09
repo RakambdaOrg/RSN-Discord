@@ -32,10 +32,30 @@ public class QuestionReactionListener extends ListenerAdapter
 						event.getTextChannel().getMessageById(event.getReaction().getMessageIdLong()).queue(m -> {
 							Actions.sendMessage(new QuestionsFinalChannelConfig().getTextChannel(event.getGuild()), m.getEmbeds());
 							Actions.deleteMessage(m);
+							try
+							{
+								m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("Utilisateur")).forEach(e -> Actions.replyPrivate(event.getGuild().getMemberById(Long.parseLong(e.getValue().replaceAll("[^0-9]", ""))).getUser(), "Votre question a été acceptée et transférée à Léo"));
+							}
+							catch(Exception e)
+							{
+								e.printStackTrace();
+							}
 						});
 					}
 					else if(emote == BasicEmotes.CROSS_NO)
-						event.getTextChannel().getMessageById(event.getReaction().getMessageIdLong()).queue(Actions::deleteMessage);
+					{
+						event.getTextChannel().getMessageById(event.getReaction().getMessageIdLong()).queue(m -> {
+							Actions.deleteMessage(m);
+							try
+							{
+								m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("Utilisateur")).forEach(e -> Actions.replyPrivate(event.getGuild().getMemberById(Long.parseLong(e.getValue().replaceAll("[^0-9]", ""))).getUser(), "Votre question a été refusée"));
+							}
+							catch(Exception e)
+							{
+								e.printStackTrace();
+							}
+						});
+					}
 				}
 			}
 		}
