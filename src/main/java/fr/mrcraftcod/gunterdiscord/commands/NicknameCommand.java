@@ -126,7 +126,7 @@ public class NicknameCommand extends BasicCommand
 	public void addHelp(Guild guild, EmbedBuilder builder)
 	{
 		super.addHelp(guild, builder);
-		builder.addField("Optionnel: Utilisateur", "L'utilisateur visé par la suppression (par défaut @me)", false);
+		builder.addField("Optionnel: Utilisateur", "L'utilisateur visé par la modification (par défaut @me)", false);
 		builder.addField("Optionnel: Surnom", "Le nouveau surnom (si aucun n'est précisé le surnom sera réinitialisé)", false);
 	}
 	
