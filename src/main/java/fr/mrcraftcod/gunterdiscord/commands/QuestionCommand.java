@@ -53,7 +53,7 @@ public class QuestionCommand extends BasicCommand
 			Message m = Actions.getMessage(new QuestionsChannelConfig().getTextChannel(event.getGuild()), builder.build());
 			m.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
 			m.addReaction(BasicEmotes.CROSS_NO.getValue()).queue();
-			Actions.replyPrivate(event.getAuthor(), "Ok, ta question a été mise en file d'attente (ID: " + ID + ")");
+			Actions.replyPrivate(event.getAuthor(), "Ok, ta question a été mise en file d'attente (ID: " + ID + "): " + String.join(" ", args));
 		}
 		return CommandResult.SUCCESS;
 	}
