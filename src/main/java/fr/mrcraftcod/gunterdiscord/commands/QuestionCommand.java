@@ -22,6 +22,8 @@ import java.util.List;
  */
 public class QuestionCommand extends BasicCommand
 {
+	private static int NEXT_ID = 0;
+	
 	@Override
 	public String getCommandUsage()
 	{
@@ -39,17 +41,19 @@ public class QuestionCommand extends BasicCommand
 			Actions.replyPrivate(event.getAuthor(), "Merci de poser une question, et pas 'message'");
 		else
 		{
+			int ID = ++NEXT_ID;
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Nouvelle question");
+			builder.addField("ID", "" + ID, true);
 			builder.addField("Utilisateur", event.getAuthor().getAsMention(), true);
 			builder.addField("Question", String.join(" ", args), false);
 			
 			Message m = Actions.getMessage(new QuestionsChannelConfig().getTextChannel(event.getGuild()), builder.build());
 			m.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
 			m.addReaction(BasicEmotes.CROSS_NO.getValue()).queue();
-			Actions.replyPrivate(event.getAuthor(), "Ok, ta question a été mise en file d'attente");
+			Actions.replyPrivate(event.getAuthor(), "Ok, ta question a été mise en file d'attente (ID: " + ID + ")");
 		}
 		return CommandResult.SUCCESS;
 	}

@@ -5,6 +5,8 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.QuestionsFinalChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
+import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
@@ -34,7 +36,10 @@ public class QuestionReactionListener extends ListenerAdapter
 							Actions.deleteMessage(m);
 							try
 							{
-								m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("Utilisateur")).forEach(e -> Actions.replyPrivate(event.getGuild().getMemberById(Long.parseLong(e.getValue().replaceAll("[^0-9]", ""))).getUser(), "Votre question a été acceptée et transférée à Léo"));
+								User user = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("Utilisateur")).map(e -> event.getJDA().getUserById(Long.parseLong(e.getValue().replaceAll("[^0-9]", "")))).findAny().orElse(null);
+								String ID = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("ID")).map(MessageEmbed.Field::getValue).findAny().orElse("");
+								if(user != null)
+									Actions.replyPrivate(user, "Votre question (ID: " + ID + ") a été acceptée et transférée à Léo");
 							}
 							catch(Exception e)
 							{
@@ -48,7 +53,10 @@ public class QuestionReactionListener extends ListenerAdapter
 							Actions.deleteMessage(m);
 							try
 							{
-								m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("Utilisateur")).forEach(e -> Actions.replyPrivate(event.getGuild().getMemberById(Long.parseLong(e.getValue().replaceAll("[^0-9]", ""))).getUser(), "Votre question a été refusée"));
+								User user = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("Utilisateur")).map(e -> event.getJDA().getUserById(Long.parseLong(e.getValue().replaceAll("[^0-9]", "")))).findAny().orElse(null);
+								String ID = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("ID")).map(MessageEmbed.Field::getValue).findAny().orElse("");
+								if(user != null)
+									Actions.replyPrivate(user, "Votre question (ID: " + ID + ") a été refusée");
 							}
 							catch(Exception e)
 							{
