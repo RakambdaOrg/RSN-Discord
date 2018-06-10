@@ -1,9 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.utils;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
+import java.util.stream.Collectors;
 
 /**
  * Formatter for the logger.
@@ -44,6 +46,8 @@ public class LoggerFormatter extends Formatter
 		{
 			stringBuilder.append(" (");
 			stringBuilder.append(record.getThrown().toString());
+			stringBuilder.append("\n");
+			stringBuilder.append(Arrays.stream(record.getThrown().getStackTrace()).map(StackTraceElement::toString).collect(Collectors.joining("\n")));
 			stringBuilder.append(")");
 		}
 		
