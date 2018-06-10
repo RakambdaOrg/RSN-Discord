@@ -24,7 +24,7 @@ public class QuestionReactionListener extends ListenerAdapter
 		super.onMessageReactionAdd(event);
 		try
 		{
-			if(event.getChannel().getIdLong() == new QuestionsChannelConfig().getTextChannel(event.getGuild()).getIdLong())
+			if(new QuestionsChannelConfig().isChannel(event.getTextChannel()))
 			{
 				if(!event.getUser().isBot())
 				{

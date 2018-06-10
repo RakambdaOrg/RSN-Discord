@@ -64,4 +64,34 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration
 		}
 		return null;
 	}
+	
+	/**
+	 * Tells if this config represents the given channel.
+	 *
+	 * @param channel The channel.
+	 *
+	 * @return True if the same channels, false otherwise.
+	 */
+	public boolean isChannel(TextChannel channel)
+	{
+		if(channel == null)
+			return false;
+		return isChannel(channel.getGuild(), channel.getIdLong());
+	}
+	
+	/**
+	 * Tells if this config represents the given channel.
+	 *
+	 * @param guild The guild the channel is in.
+	 * @param ID    The ID of the channel.
+	 *
+	 * @return True if the same channels, false otherwise.
+	 */
+	public boolean isChannel(Guild guild, long ID)
+	{
+		TextChannel channel = getTextChannel(guild);
+		if(channel == null)
+			return false;
+		return ID == channel.getIdLong();
+	}
 }

@@ -77,7 +77,7 @@ public class PhotoGetCommand extends BasicCommand
 			builder.setTitle("L'utilisateur ne fait pas parti du trombinoscope");
 			Actions.reply(event, builder.build());
 		}
-		else if(event.getTextChannel().equals(new PhotoChannelConfig().getTextChannel(event.getGuild())))
+		else if(new PhotoChannelConfig().isChannel(event.getTextChannel()))
 		{
 			List<String> paths = new PhotoConfig().getValue(event.getGuild(), user.getIdLong());
 			if(paths != null && !paths.isEmpty())
