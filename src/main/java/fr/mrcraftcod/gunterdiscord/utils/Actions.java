@@ -207,7 +207,11 @@ public class Actions
 		}
 		catch(IllegalArgumentException e)
 		{
-			Log.warning("User/Role not found", e);
+			Log.warning("User/Role not found " + role, e);
+		}
+		catch(Exception e)
+		{
+			Log.error("Error giving role " + role + " to " + getUserToLog(user), e);
 		}
 	}
 	
