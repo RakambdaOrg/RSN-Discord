@@ -82,6 +82,8 @@ public class Settings
 	
 	public static JSONObject getServerSettings(Guild guild)
 	{
+		if(guild == null)
+			return new JSONObject();
 		JSONObject serverSettings;
 		String id = "" + guild.getIdLong();
 		if(settings.has(id))
