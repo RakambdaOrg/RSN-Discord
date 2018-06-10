@@ -12,7 +12,10 @@ import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.logging.*;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 09/04/2018.
@@ -41,7 +44,7 @@ public class Main
 			ch.setLevel(Level.INFO);
 			ch.setFormatter(new LoggerFormatter());
 			
-			Handler handler = new FileHandler("log.log");
+			FileHandler handler = new FileHandler("log.log", 1024 * 1024 * 10, 7, true);
 			handler.setFormatter(new LoggerFormatter());
 			
 			Log.setAppName("GunterDiscord");
