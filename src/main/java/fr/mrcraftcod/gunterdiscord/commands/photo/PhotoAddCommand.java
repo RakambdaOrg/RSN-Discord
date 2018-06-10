@@ -90,7 +90,12 @@ public class PhotoAddCommand extends BasicCommand
 					Actions.sendMessage(new PhotoChannelConfig().getTextChannel(event.getGuild()), builder.build());
 				}
 				else
+				{
 					Actions.replyPrivate(event.getAuthor(), "L'envoi a échoué");
+					if(saveFile.exists())
+						//noinspection ResultOfMethodCallIgnored
+						saveFile.delete();
+				}
 			}
 		}
 		else
