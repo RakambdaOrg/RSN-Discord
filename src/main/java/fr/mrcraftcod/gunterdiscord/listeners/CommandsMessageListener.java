@@ -63,7 +63,7 @@ public class CommandsMessageListener extends ListenerAdapter
 					{
 						try
 						{
-							Log.info("Executing command `" + command.getName() + " from " + Actions.getUserToLog(event.getAuthor()) + ", args: " + args);
+							Log.info("Executing command `" + cmdText + "`(" + command.getName() + ") from " + Actions.getUserToLog(event.getAuthor()) + ", args: " + args);
 							switch(command.execute(event, args))
 							{
 								case NOT_ALLOWED:

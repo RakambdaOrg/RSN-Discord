@@ -14,7 +14,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 09/04/2018.
@@ -47,39 +46,27 @@ public class Settings
 			new WerewolvesChannelConfig(),
 			};
 	
+	/**
+	 * Get the value as an object.
+	 *
+	 * @param guild The guild.
+	 * @param name  The name of the setting.
+	 *
+	 * @return The object or null if not found.
+	 */
 	public static Object getObject(Guild guild, String name)
 	{
 		JSONObject settings = getServerSettings(guild);
 		return settings.has(name) ? settings.get(name) : null;
 	}
 	
-	public static void init(Path path) throws IOException
-	{
-		Settings.path = path;
-		if(path.toFile().exists())
-			settings = new JSONObject(Files.readAllLines(path).stream().collect(Collectors.joining("")));
-		else
-			settings = new JSONObject(IOUtils.toString(Main.class.getResourceAsStream("/settings/default.json"), "UTF-8"));
-	}
-	
-	public static Configuration getSettings(String name)
-	{
-		for(Configuration configuration : SETTINGS)
-			if(configuration.getName().equalsIgnoreCase(name))
-				return configuration;
-		return null;
-	}
-	
-	public static void save() throws IOException
-	{
-		Files.write(path, Arrays.asList(settings.toString(4).split("\n")), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
-		System.out.println("Config written");
-	}
-	
-	public static void close()
-	{
-	}
-	
+	/**
+	 * Get the settings for the given guild.
+	 *
+	 * @param guild The guild.
+	 *
+	 * @return The settings of the guild.
+	 */
 	public static JSONObject getServerSettings(Guild guild)
 	{
 		if(guild == null)
@@ -95,6 +82,56 @@ public class Settings
 		}
 		return serverSettings == null ? new JSONObject() : serverSettings;
 	}
+	
+	/**
+	 * Init the settings.
+	 *
+	 * @param path The path of the settings to load.
+	 *
+	 * @throws IOException If something went wrong.
+	 */
+	public static void init(Path path) throws IOException
+	{
+		Settings.path = path;
+		if(path.toFile().exists())
+			settings = new JSONObject(String.join("", Files.readAllLines(path)));
+		else
+			settings = new JSONObject(IOUtils.toString(Main.class.getResourceAsStream("/settings/default.json"), "UTF-8"));
+	}
+	
+	/**
+	 * Get a setting based on its name.
+	 *
+	 * @param name The name of the config.
+	 *
+	 * @return The configuration or null if not found.
+	 */
+	public static Configuration getSettings(String name)
+	{
+		for(Configuration configuration : SETTINGS)
+			if(configuration.getName().equalsIgnoreCase(name))
+				return configuration;
+		return null;
+	}
+	
+	/**
+	 * Save the settings to the file.
+	 *
+	 * @throws IOException If something went wrong.
+	 */
+	public static void save() throws IOException
+	{
+		Files.write(path, Arrays.asList(settings.toString(4).split("\n")), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+		System.out.println("Config written");
+	}
+	
+	/**
+	 * Closes the settings.
+	 */
+	public static void close()
+	{
+	}
+	
 	
 	public static JSONArray getArray(Guild guild, String name)
 	{
