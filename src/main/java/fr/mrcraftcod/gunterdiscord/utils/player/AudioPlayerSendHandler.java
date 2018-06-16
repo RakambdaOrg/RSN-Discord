@@ -1,4 +1,4 @@
-package fr.mrcraftcod.gunterdiscord.utils;
+package fr.mrcraftcod.gunterdiscord.utils.player;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
