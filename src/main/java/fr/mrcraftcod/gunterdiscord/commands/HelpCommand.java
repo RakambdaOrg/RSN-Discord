@@ -26,24 +26,6 @@ import java.util.List;
 public class HelpCommand extends BasicCommand
 {
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
-	}
-	
-	@Override
-	public String getName()
-	{
-		return "Help";
-	}
-	
-	@Override
-	public List<String> getCommand()
-	{
-		return List.of("help", "h");
-	}
-	
-	@Override
 	public String getCommandUsage()
 	{
 		return super.getCommandUsage() + " [commande...]";
@@ -101,16 +83,34 @@ public class HelpCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getDescription()
-	{
-		return "Aide des commandes";
-	}
-	
-	@Override
 	public void addHelp(Guild guild, EmbedBuilder builder)
 	{
 		super.addHelp(guild, builder);
 		builder.addField("Optionnel: Commande", "La commande dont on veut l'information (par défaut affiche la liste des commandes)", false);
+	}
+	
+	@Override
+	public int getScope()
+	{
+		return ChannelType.TEXT.getId();
+	}
+	
+	@Override
+	public String getName()
+	{
+		return "Help";
+	}
+	
+	@Override
+	public List<String> getCommand()
+	{
+		return List.of("help", "h");
+	}
+	
+	@Override
+	public String getDescription()
+	{
+		return "Aide des commandes";
 	}
 	
 	@Override

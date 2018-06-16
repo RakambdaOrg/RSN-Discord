@@ -27,37 +27,6 @@ public class AvatarCommand extends BasicCommand
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
-	}
-	
-	@Override
-	public String getName()
-	{
-		return "Avatar";
-	}
-	
-	@Override
-	public List<String> getCommand()
-	{
-		return List.of("avatar");
-	}
-	
-	@Override
-	public String getDescription()
-	{
-		return "Obtient l'avatar d'un utilisateur";
-	}
-	
-	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
-	{
-		super.addHelp(guild, builder);
-		builder.addField("Utilisateur", "L'utilisateur dont on veut l'avatar", false);
-	}
-	
-	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
@@ -80,6 +49,37 @@ public class AvatarCommand extends BasicCommand
 			Actions.reply(event, builder.build());
 		}
 		return CommandResult.SUCCESS;
+	}
+	
+	@Override
+	public void addHelp(Guild guild, EmbedBuilder builder)
+	{
+		super.addHelp(guild, builder);
+		builder.addField("Utilisateur", "L'utilisateur dont on veut l'avatar", false);
+	}
+	
+	@Override
+	public int getScope()
+	{
+		return ChannelType.TEXT.getId();
+	}
+	
+	@Override
+	public String getName()
+	{
+		return "Avatar";
+	}
+	
+	@Override
+	public List<String> getCommand()
+	{
+		return List.of("avatar");
+	}
+	
+	@Override
+	public String getDescription()
+	{
+		return "Obtient l'avatar d'un utilisateur";
 	}
 	
 	@Override

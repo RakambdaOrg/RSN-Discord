@@ -8,7 +8,5 @@ package fr.mrcraftcod.gunterdiscord.commands.generic;
  */
 public enum CommandResult
 {
-	SUCCESS,
-	NOT_ALLOWED,
-	FAILED
+	SUCCESS, NOT_ALLOWED, FAILED
 }

@@ -45,11 +45,11 @@ public enum BasicEmotes
 	 */
 	public static BasicEmotes getEmote(String text)
 	{
-		for(BasicEmotes emote : BasicEmotes.values())
+		for(BasicEmotes emote: BasicEmotes.values())
 		{
 			if(emote.getValue().equalsIgnoreCase(text))
 				return emote;
-			for(String other : emote.getOthers())
+			for(String other: emote.getOthers())
 				if(other.equalsIgnoreCase(text))
 					return emote;
 		}

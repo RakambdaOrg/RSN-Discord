@@ -36,12 +36,6 @@ public class NicknameCommand extends BasicCommand
 		return super.getCommandUsage() + " [@utilisateur] [surnom]";
 	}
 	
-	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
-	}
-	
 	@SuppressWarnings("Duplicates")
 	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
@@ -111,6 +105,26 @@ public class NicknameCommand extends BasicCommand
 	}
 	
 	@Override
+	public void addHelp(Guild guild, EmbedBuilder builder)
+	{
+		super.addHelp(guild, builder);
+		builder.addField("Optionnel: Utilisateur", "L'utilisateur visé par la modification (par défaut @me)", false);
+		builder.addField("Optionnel: Surnom", "Le nouveau surnom (si aucun n'est précisé le surnom sera réinitialisé)", false);
+	}
+	
+	@Override
+	public int getScope()
+	{
+		return ChannelType.TEXT.getId();
+	}
+	
+	@Override
+	public String getName()
+	{
+		return "Surnom";
+	}
+	
+	@Override
 	public List<String> getCommand()
 	{
 		return List.of("nickname", "nick");
@@ -120,20 +134,6 @@ public class NicknameCommand extends BasicCommand
 	public String getDescription()
 	{
 		return "Change le surnom d'un utilisateur";
-	}
-	
-	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
-	{
-		super.addHelp(guild, builder);
-		builder.addField("Optionnel: Utilisateur", "L'utilisateur visé par la modification (par défaut @me)", false);
-		builder.addField("Optionnel: Surnom", "Le nouveau surnom (si aucun n'est précisé le surnom sera réinitialisé)", false);
-	}
-	
-	@Override
-	public String getName()
-	{
-		return "Surnom";
 	}
 	
 	@Override

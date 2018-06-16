@@ -18,6 +18,20 @@ import java.util.List;
 public class StopCommand extends BasicCommand
 {
 	@Override
+	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
+	{
+		super.execute(event, args);
+		if(Utilities.isCreator(event.getMember()))
+		{
+			event.getJDA().shutdownNow();
+			Log.info("BOT STOPPING");
+		}
+		else
+			return CommandResult.NOT_ALLOWED;
+		return CommandResult.SUCCESS;
+	}
+	
+	@Override
 	public int getScope()
 	{
 		return ChannelType.TEXT.getId();
@@ -39,20 +53,6 @@ public class StopCommand extends BasicCommand
 	public String getDescription()
 	{
 		return "Arrête le bot";
-	}
-	
-	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
-		super.execute(event, args);
-		if(Utilities.isCreator(event.getMember()))
-		{
-			event.getJDA().shutdownNow();
-			Log.info("BOT STOPPING");
-		}
-		else
-			return CommandResult.NOT_ALLOWED;
-		return CommandResult.SUCCESS;
 	}
 	
 	@Override

@@ -30,9 +30,10 @@ public class HangmanLetterCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getCommandUsage()
+	public void addHelp(Guild guild, EmbedBuilder builder)
 	{
-		return super.getCommandUsage() + " <lettre>";
+		super.addHelp(guild, builder);
+		builder.addField("Lettre", "La lettre que vous proposez", true);
 	}
 	
 	@Override
@@ -44,16 +45,15 @@ public class HangmanLetterCommand extends BasicCommand
 	}
 	
 	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
+	public String getCommandUsage()
 	{
-		super.addHelp(guild, builder);
-		builder.addField("Lettre", "La lettre que vous proposez", true);
+		return super.getCommandUsage() + " <lettre>";
 	}
 	
 	@Override
-	public int getScope()
+	public AccessLevel getAccessLevel()
 	{
-		return ChannelType.TEXT.getId();
+		return AccessLevel.ALL;
 	}
 	
 	@Override
@@ -75,8 +75,8 @@ public class HangmanLetterCommand extends BasicCommand
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
+	public int getScope()
 	{
-		return AccessLevel.ALL;
+		return ChannelType.TEXT.getId();
 	}
 }

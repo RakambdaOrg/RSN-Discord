@@ -29,12 +29,6 @@ public class HangmanCompositeCommand extends CompositeCommand
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
-	}
-	
-	@Override
 	public String getName()
 	{
 		return "Pendu";
@@ -50,5 +44,11 @@ public class HangmanCompositeCommand extends CompositeCommand
 	public String getDescription()
 	{
 		return "Commandes liées au pendu";
+	}
+	
+	@Override
+	public int getScope()
+	{
+		return ChannelType.TEXT.getId();
 	}
 }

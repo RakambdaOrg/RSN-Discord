@@ -39,6 +39,12 @@ public class PhotoConfig extends MapListConfiguration<Long, String>
 	}
 	
 	@Override
+	public String getName()
+	{
+		return "photo";
+	}
+	
+	@Override
 	protected Function<String, Long> getKeyParser()
 	{
 		return Long::parseLong;
@@ -48,12 +54,6 @@ public class PhotoConfig extends MapListConfiguration<Long, String>
 	protected Function<String, String> getValueParser()
 	{
 		return s -> s;
-	}
-	
-	@Override
-	public String getName()
-	{
-		return "photo";
 	}
 	
 	@Override

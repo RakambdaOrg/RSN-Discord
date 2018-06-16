@@ -34,13 +34,6 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	}
 	
 	/**
-	 * Get the parser to parse back string keys to K.
-	 *
-	 * @return The parser.
-	 */
-	protected abstract Function<String, K> getKeyParser();
-	
-	/**
 	 * Get the map of this configuration.
 	 *
 	 * @param guild The guild.
@@ -58,7 +51,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 		if(map == null)
 			Settings.resetMap(guild, this);
 		else
-			for(String key : map.keySet())
+			for(String key: map.keySet())
 			{
 				K kKey = getKeyParser().apply(key);
 				if(!elements.containsKey(kKey))
@@ -69,13 +62,6 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 			}
 		return elements;
 	}
-	
-	/**
-	 * Get the parser to parse back values to V.
-	 *
-	 * @return The parser.
-	 */
-	protected abstract Function<String, V> getValueParser();
 	
 	/**
 	 * Get the JSON Object.
@@ -94,6 +80,20 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	}
 	
 	/**
+	 * Get the parser to parse back string keys to K.
+	 *
+	 * @return The parser.
+	 */
+	protected abstract Function<String, K> getKeyParser();
+	
+	/**
+	 * Get the parser to parse back values to V.
+	 *
+	 * @return The parser.
+	 */
+	protected abstract Function<String, V> getValueParser();
+	
+	/**
 	 * Add a value to the map list.
 	 *
 	 * @param guild The guild.
@@ -109,22 +109,6 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 			lastValue.get(key).add(value);
 		}
 		Settings.mapListValue(guild, this, key, value);
-	}
-	
-	/**
-	 * Get the matcher to declare objects equals. This is used when deleting a key value.
-	 *
-	 * @return The matcher.
-	 */
-	protected BiFunction<Object, V, Boolean> getMatcher()
-	{
-		return Objects::equals;
-	}
-	
-	@Override
-	public ConfigType getType()
-	{
-		return ConfigType.MAP;
 	}
 	
 	/**
@@ -160,9 +144,25 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 		Settings.deleteKey(guild, this, key);
 	}
 	
+	/**
+	 * Get the matcher to declare objects equals. This is used when deleting a key value.
+	 *
+	 * @return The matcher.
+	 */
+	protected BiFunction<Object, V, Boolean> getMatcher()
+	{
+		return Objects::equals;
+	}
+	
 	@Override
 	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action)
 	{
 		return action == ConfigurationCommand.ChangeConfigType.ADD || action == ConfigurationCommand.ChangeConfigType.REMOVE || action == ConfigurationCommand.ChangeConfigType.SHOW;
+	}
+	
+	@Override
+	public ConfigType getType()
+	{
+		return ConfigType.MAP;
 	}
 }

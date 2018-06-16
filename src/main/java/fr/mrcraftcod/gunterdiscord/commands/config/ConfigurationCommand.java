@@ -45,7 +45,7 @@ public class ConfigurationCommand extends BasicCommand
 		 */
 		public static ChangeConfigType get(String action)
 		{
-			for(ChangeConfigType type : ChangeConfigType.values())
+			for(ChangeConfigType type: ChangeConfigType.values())
 				if(type.name().equalsIgnoreCase(action))
 					return type;
 			return ERROR;

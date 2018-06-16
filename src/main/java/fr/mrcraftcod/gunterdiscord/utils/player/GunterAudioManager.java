@@ -70,7 +70,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener
 			@Override
 			public void loadFailed(FriendlyException throwable)
 			{
-				Log.warning(throwable,"Failed to load audio for channel %s", channel.getName());
+				Log.warning(throwable, "Failed to load audio for channel %s", channel.getName());
 				gunterAudioManager.getTrackScheduler().foundNothing();
 			}
 		});

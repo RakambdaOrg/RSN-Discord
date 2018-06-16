@@ -40,12 +40,6 @@ public class PhotoGetCommand extends BasicCommand
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
-		return List.of("photo", "p", "g", "get");
-	}
-	
-	@Override
 	public String getCommandUsage()
 	{
 		return super.getCommandUsage() + " [@utilisateur] [numéro]";
@@ -129,15 +123,11 @@ public class PhotoGetCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getDescription()
+	public void addHelp(Guild guild, EmbedBuilder builder)
 	{
-		return "Obtient une photo du trombinoscope";
-	}
-	
-	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.ALL;
+		super.addHelp(guild, builder);
+		builder.addField("Optionnel: Utilisateur", "L'utilisateur dont on veut la photo (par défaut @me)", false);
+		builder.addField("Optionnel: Numéro", "Le numéro de la photo à tirer (par défaut aléatoire)", false);
 	}
 	
 	@Override
@@ -153,10 +143,20 @@ public class PhotoGetCommand extends BasicCommand
 	}
 	
 	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
+	public List<String> getCommand()
 	{
-		super.addHelp(guild, builder);
-		builder.addField("Optionnel: Utilisateur", "L'utilisateur dont on veut la photo (par défaut @me)", false);
-		builder.addField("Optionnel: Numéro", "Le numéro de la photo à tirer (par défaut aléatoire)", false);
+		return List.of("photo", "p", "g", "get");
+	}
+	
+	@Override
+	public String getDescription()
+	{
+		return "Obtient une photo du trombinoscope";
+	}
+	
+	@Override
+	public AccessLevel getAccessLevel()
+	{
+		return AccessLevel.ALL;
 	}
 }

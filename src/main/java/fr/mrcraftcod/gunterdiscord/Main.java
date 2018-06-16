@@ -26,10 +26,10 @@ import java.util.logging.LogManager;
  */
 public class Main
 {
+	public static final ZonedDateTime bootTime = ZonedDateTime.now();
 	private static final String SETTINGS_NAME = "settings.json";
 	private static final int WAIT_TIME = 3600;
 	private static JDA jda;
-	public static final ZonedDateTime bootTime = ZonedDateTime.now();
 	
 	/**
 	 * Main entry point.

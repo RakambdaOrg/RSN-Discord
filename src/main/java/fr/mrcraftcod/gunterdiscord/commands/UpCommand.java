@@ -37,15 +37,15 @@ public class UpCommand extends BasicCommand
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
-		return List.of("up");
-	}
-	
-	@Override
 	public String getName()
 	{
 		return "Uptime infos";
+	}
+	
+	@Override
+	public List<String> getCommand()
+	{
+		return List.of("up");
 	}
 	
 	@Override

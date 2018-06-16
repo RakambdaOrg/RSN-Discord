@@ -34,9 +34,8 @@ public abstract class BasicCommand implements Command
 	}
 	
 	@Override
-	public String getCommandUsage()
+	public void addHelp(Guild guild, EmbedBuilder builder)
 	{
-		return getParent() == null || getParent() instanceof CompositeCommand ? "" : getParent().getCommandUsage();
 	}
 	
 	@Override
@@ -48,13 +47,14 @@ public abstract class BasicCommand implements Command
 	}
 	
 	@Override
-	public Command getParent()
+	public String getCommandUsage()
 	{
-		return parent;
+		return getParent() == null || getParent() instanceof CompositeCommand ? "" : getParent().getCommandUsage();
 	}
 	
 	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
+	public Command getParent()
 	{
+		return parent;
 	}
 }

@@ -33,12 +33,6 @@ public class SayCommand extends BasicCommand
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
-	}
-	
-	@Override
 	public void addHelp(Guild guild, EmbedBuilder builder)
 	{
 		super.addHelp(guild, builder);
@@ -46,15 +40,21 @@ public class SayCommand extends BasicCommand
 	}
 	
 	@Override
-	public List<String> getCommand()
+	public int getScope()
 	{
-		return List.of("say");
+		return ChannelType.TEXT.getId();
 	}
 	
 	@Override
 	public String getName()
 	{
 		return "Dire";
+	}
+	
+	@Override
+	public List<String> getCommand()
+	{
+		return List.of("say");
 	}
 	
 	@Override
