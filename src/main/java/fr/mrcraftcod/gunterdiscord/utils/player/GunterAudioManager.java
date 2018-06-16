@@ -49,6 +49,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener
 			@Override
 			public void trackLoaded(AudioTrack track)
 			{
+				Log.info("Added `" + identifier + "` to the audio queue");
 				gunterAudioManager.getTrackScheduler().queue(track);
 			}
 			
