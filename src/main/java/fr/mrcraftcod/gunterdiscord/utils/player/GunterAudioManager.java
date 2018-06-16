@@ -114,13 +114,9 @@ public class GunterAudioManager implements StatusTrackSchedulerListener
 	{
 		ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 		executorService.schedule(() -> {
-			Log.info("Audio manager shutdown - 0");
 			getAudioPlayerManager().shutdown();
-			Log.info("Audio manager shutdown - 1");
 			getAudioManager().setSendingHandler(null);
-			Log.info("Audio manager shutdown - 1.5");
 			getAudioManager().closeAudioConnection();
-			Log.info("Audio manager shutdown - 2");
 			managers.put(channel.getGuild(), null);
 			Log.info("Audio manager shutdown");
 		}, 1, TimeUnit.NANOSECONDS);
