@@ -9,7 +9,7 @@ import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +26,7 @@ public class UpCommand extends BasicCommand
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
-		Actions.sendMessage(event.getTextChannel(), Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Uptime infos").addField("Dernier démarage (heure locale):", Main.bootTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME), false).addField("Temps écoulé", Duration.between(Main.bootTime, LocalDateTime.now()).toString(), false).build());
+		Actions.sendMessage(event.getTextChannel(), Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Uptime infos").addField("Dernier démarage (heure locale):", Main.bootTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME), false).addField("Temps écoulé", Duration.between(Main.bootTime, ZonedDateTime.now()).toString(), false).build());
 		return CommandResult.SUCCESS;
 	}
 	
