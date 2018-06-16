@@ -11,4 +11,5 @@ module fr.mrcraftcod.gunterdiscord {
 	requires org.apache.commons.io;
 	requires java.desktop;
 	requires annotations;
+	requires lavaplayer;
 }

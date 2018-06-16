@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  */
 public class CommandsMessageListener extends ListenerAdapter
 {
-	public static final List<Command> commands = Arrays.asList(new PhotoCompositeCommand(), new HangmanCompositeCommand(), new QuizCompositeCommand(), new ReportCommand(), new ConfigurationCompositeCommand(), new StopCommand(), new HelpCommand(), new AvatarCommand(), new NicknameCommand(), new SayCommand(), new BackdoorCommand(), /*new QuestionCommand(),*/ new WerewolvesCommandComposite());
+	public static final List<Command> commands = Arrays.asList(new PhotoCompositeCommand(), new HangmanCompositeCommand(), new QuizCompositeCommand(), new ReportCommand(), new ConfigurationCompositeCommand(), new StopCommand(), new HelpCommand(), new AvatarCommand(), new NicknameCommand(), new SayCommand(), new BackdoorCommand(), /*new QuestionCommand(),*/ new WerewolvesCommandComposite(), new VoiceDisrupterCommand());
 	
 	/**
 	 * Constructor.
