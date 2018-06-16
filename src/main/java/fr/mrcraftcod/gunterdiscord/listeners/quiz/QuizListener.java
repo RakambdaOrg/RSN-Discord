@@ -80,19 +80,11 @@ public class QuizListener extends ListenerAdapter implements Runnable
 		LinkedList<String> lines = new LinkedList<>();
 		try
 		{
-			lines.addAll(Files.readAllLines(Paths.get(Main.class.getResource("/quiz/questions.csv").toURI())));
+			lines.addAll(Files.readAllLines(Paths.get("./questions.csv")));
 		}
 		catch(Exception e)
 		{
-			Log.error(e, "Error reading assets questions file");
-			try
-			{
-				lines.addAll(Files.readAllLines(Paths.get("./questions.csv")));
-			}
-			catch(Exception e2)
-			{
-				Log.error(e2, "Error reading questions file");
-			}
+			Log.error(e,"Error reading questions file");
 		}
 		
 		if(lines.isEmpty())
@@ -278,7 +270,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 			
 			HashMap<Integer, List<String>> bests = new HashMap<>();
 			List<Integer> bestsScores = scores.values().stream().sorted(Comparator.reverseOrder()).limit(5).collect(Collectors.toList());
-			for(int score : bestsScores)
+			for(int score: bestsScores)
 				bests.put(score, new ArrayList<>());
 			scores.forEach((k, v) -> {
 				if(bests.containsKey(v))
