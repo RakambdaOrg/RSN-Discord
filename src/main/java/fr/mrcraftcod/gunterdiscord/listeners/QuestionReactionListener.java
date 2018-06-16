@@ -69,7 +69,7 @@ public class QuestionReactionListener extends ListenerAdapter
 		}
 		catch(Exception e)
 		{
-			Log.error("", e);
+			Log.error(e, "");
 		}
 	}
 }

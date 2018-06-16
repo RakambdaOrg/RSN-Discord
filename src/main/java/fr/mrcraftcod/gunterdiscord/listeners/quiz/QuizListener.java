@@ -84,14 +84,14 @@ public class QuizListener extends ListenerAdapter implements Runnable
 		}
 		catch(Exception e)
 		{
-			Log.error("Error reading assets questions file", e);
+			Log.error(e, "Error reading assets questions file");
 			try
 			{
 				lines.addAll(Files.readAllLines(Paths.get("./questions.csv")));
 			}
 			catch(Exception e2)
 			{
-				Log.error("Error reading questions file", e2);
+				Log.error(e2, "Error reading questions file");
 			}
 		}
 		
@@ -155,7 +155,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 			}
 			catch(Exception e)
 			{
-				Log.error("Error create a new quiz game", e);
+				Log.error(e, "Error create a new quiz game");
 			}
 			return Optional.empty();
 		});
@@ -199,7 +199,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 			}
 			catch(InterruptedException e)
 			{
-				Log.error("Error sleeping", e);
+				Log.error(e, "Error sleeping");
 			}
 			
 			Actions.sendMessage(quizChannel, "Encore %s!", waitTime.dividedBy(2).toString().replace("PT", ""));
@@ -210,7 +210,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 			}
 			catch(InterruptedException e)
 			{
-				Log.error("Error sleeping", e);
+				Log.error(e, "Error sleeping");
 			}
 			
 			HashMap<Long, Integer> scores = new HashMap<>();
@@ -244,7 +244,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 					}
 					catch(InterruptedException e)
 					{
-						Log.error("Error sleeping", e);
+						Log.error(e, "Error sleeping");
 					}
 					Actions.sendMessage(quizChannel, "Stoooooooooooooopu!");
 					Log.info("Question over, answer was " + question.getCorrectAnswerIndex());
@@ -267,12 +267,12 @@ public class QuizListener extends ListenerAdapter implements Runnable
 					}
 					catch(InterruptedException e)
 					{
-						Log.error("Error sleeping", e);
+						Log.error(e, "Error sleeping");
 					}
 				}
 				catch(Exception e)
 				{
-					Log.error("Error quiz question", e);
+					Log.error(e, "Error quiz question");
 				}
 			}
 			
@@ -294,7 +294,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 		}
 		catch(Exception e)
 		{
-			Log.error("Error quiz", e);
+			Log.error(e, "Error quiz");
 		}
 		quizzes.remove(this);
 		guild.getJDA().removeEventListener(this);
@@ -331,7 +331,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 		}
 		catch(Exception e)
 		{
-			Log.error("", e);
+			Log.error(e, "");
 		}
 	}
 	
@@ -359,7 +359,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 		}
 		catch(Exception e)
 		{
-			Log.error("", e);
+			Log.error(e, "");
 		}
 	}
 	

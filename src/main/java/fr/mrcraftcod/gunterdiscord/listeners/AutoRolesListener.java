@@ -24,7 +24,7 @@ public class AutoRolesListener extends ListenerAdapter
 		}
 		catch(Exception e)
 		{
-			Log.error("Error on user join", e);
+			Log.error(e, "Error on user join");
 		}
 	}
 }

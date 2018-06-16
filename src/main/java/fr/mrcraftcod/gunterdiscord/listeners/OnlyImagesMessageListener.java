@@ -32,7 +32,7 @@ public class OnlyImagesMessageListener extends ListenerAdapter
 		}
 		catch(Exception e)
 		{
-			Log.error("", e);
+			Log.error(e, "");
 		}
 	}
 }

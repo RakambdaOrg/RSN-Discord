@@ -101,7 +101,7 @@ public abstract class ListConfiguration<T> extends Configuration
 		}
 		catch(NullPointerException e)
 		{
-			Log.error("NullPointer", e);
+			Log.error(e, "NullPointer");
 		}
 		return null;
 	}

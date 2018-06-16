@@ -92,7 +92,7 @@ public class PhotoGetCommand extends BasicCommand
 					}
 					catch(Exception e)
 					{
-						Log.warning("Provided photo index isn't an integer", e);
+						Log.warning(e, "Provided photo index isn't an integer");
 					}
 				File file = new File(paths.get(rnd));
 				if(file.exists())

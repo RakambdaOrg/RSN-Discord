@@ -101,7 +101,7 @@ public class ConfigurationCommand extends BasicCommand
 				builder.addField("Raison", e.getMessage(), false);
 				builder.addField("Configuration", configuration.getName(), false);
 				Actions.reply(event, builder.build());
-				Log.error("Error handling configuration change", e);
+				Log.error(e, "Error handling configuration change");
 			}
 		else
 			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Opération impossible").addField("Raison", "Opération " + getType().name() + " impossible sur cette configuration", false).addField("Configuration", configuration.getName(), false).build());

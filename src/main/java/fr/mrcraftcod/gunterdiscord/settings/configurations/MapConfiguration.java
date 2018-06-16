@@ -41,7 +41,7 @@ public abstract class MapConfiguration<K, V> extends Configuration
 		}
 		catch(Exception e)
 		{
-			Log.error("Can't get value " + getName() + " with key " + key, e);
+			Log.error(e, "Can't get value %s with key %s", getName(), key);
 		}
 		return null;
 	}

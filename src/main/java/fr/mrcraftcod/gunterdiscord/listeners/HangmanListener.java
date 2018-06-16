@@ -158,7 +158,7 @@ public class HangmanListener extends ListenerAdapter
 			}
 			catch(Exception e)
 			{
-				Log.error("Error create a new hangman game", e);
+				Log.error(e, "Error create a new hangman game");
 			}
 			return Optional.empty();
 		});
@@ -191,7 +191,7 @@ public class HangmanListener extends ListenerAdapter
 			}
 			catch(InvalidClassException | IllegalArgumentException e)
 			{
-				Log.error("Error getting prefix", e);
+				Log.error(e, "Error getting prefix");
 			}
 			if(lastFuture != null)
 				lastFuture.cancel(true);
@@ -378,7 +378,7 @@ public class HangmanListener extends ListenerAdapter
 		}
 		catch(InterruptedException e)
 		{
-			Log.error("Error sleeping", e);
+			Log.error(e, "Error sleeping");
 		}
 		removeUsers();
 	}
@@ -397,7 +397,7 @@ public class HangmanListener extends ListenerAdapter
 		}
 		catch(IOException e)
 		{
-			Log.error("Error getting random hangman word", e);
+			Log.error(e, "Error getting random hangman word");
 		}
 		return "ERROR";
 	}

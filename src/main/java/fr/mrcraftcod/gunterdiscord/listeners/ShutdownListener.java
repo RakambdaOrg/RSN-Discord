@@ -35,7 +35,7 @@ public class ShutdownListener extends ListenerAdapter
 		}
 		catch(Exception e)
 		{
-			Log.error("", e);
+			Log.error(e, "");
 		}
 		finally
 		{

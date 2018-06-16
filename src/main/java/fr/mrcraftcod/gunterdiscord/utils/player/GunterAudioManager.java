@@ -49,7 +49,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener
 			@Override
 			public void trackLoaded(AudioTrack track)
 			{
-				Log.info("Added `" + identifier + "` to the audio queue");
+				Log.info("Added `%s` to the audio queue on channel %s", identifier, channel.getName());
 				gunterAudioManager.getTrackScheduler().queue(track);
 			}
 			
@@ -63,14 +63,14 @@ public class GunterAudioManager implements StatusTrackSchedulerListener
 			@Override
 			public void noMatches()
 			{
-				Log.warning("Player found nothing");
+				Log.warning("Player found nothing for channel %s", channel.getName());
 				gunterAudioManager.getTrackScheduler().foundNothing();
 			}
 			
 			@Override
 			public void loadFailed(FriendlyException throwable)
 			{
-				Log.warning("Failed to load audio", throwable);
+				Log.warning(throwable,"Failed to load audio for channel %s", channel.getName());
 				gunterAudioManager.getTrackScheduler().foundNothing();
 			}
 		});

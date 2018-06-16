@@ -81,10 +81,10 @@ public class Actions
 				Log.info("Sent message to " + channel.getName() + " : " + text);
 			}
 			else
-				Log.error("Access denied to text channel: " + channel.getAsMention());
+				Log.error("Access denied to text channel: %s", channel.getAsMention());
 		}
 		else
-			Log.warning("Cannot send message to null channel : " + text);
+			Log.warning("Cannot send message to null channel : %s", text);
 	}
 	
 	/**
@@ -142,7 +142,7 @@ public class Actions
 			}
 		}
 		else
-			Log.warning("Cannot send private message to null channel : " + text);
+			Log.warning("Cannot send private message to null channel : %s", text);
 	}
 	
 	/**
@@ -167,7 +167,7 @@ public class Actions
 		if(user != null)
 			user.openPrivateChannel().queue(c -> sendMessage(c, text));
 		else
-			Log.warning("Sent private message to null user : " + text);
+			Log.warning("Sent private message to null user : %s", text);
 	}
 	
 	/**
@@ -207,11 +207,11 @@ public class Actions
 		}
 		catch(IllegalArgumentException e)
 		{
-			Log.warning("User/Role not found " + role, e);
+			Log.warning(e, "User/Role not found " + role);
 		}
 		catch(Exception e)
 		{
-			Log.error("Error giving role " + role + " to " + getUserToLog(user), e);
+			Log.error(e, "Error giving role %s to %s", role, getUserToLog(user));
 		}
 	}
 	
@@ -224,7 +224,7 @@ public class Actions
 	 */
 	public static void giveRole(Guild guild, User user, List<Role> roles)
 	{
-		for(Role role : roles)
+		for(Role role: roles)
 			giveRole(guild, user, role);
 	}
 	
@@ -256,7 +256,7 @@ public class Actions
 		}
 		catch(IllegalArgumentException e)
 		{
-			Log.warning("User/Role not found", e);
+			Log.warning(e, "User/Role not found");
 		}
 	}
 	
@@ -332,7 +332,7 @@ public class Actions
 			Log.info("Sent file " + name + " to " + channel.getName());
 		}
 		else
-			Log.warning("Tried to send file " + name + " to null channel");
+			Log.warning("Tried to send file %s to null channel", name);
 	}
 	
 	/**
@@ -399,7 +399,7 @@ public class Actions
 		}
 		catch(FileNotFoundException e)
 		{
-			Log.error("Error sending file " + file.getAbsolutePath(), e);
+			Log.error(e, "Error sending file %s", file.getAbsolutePath());
 		}
 	}
 	
@@ -461,7 +461,7 @@ public class Actions
 			Log.info("Sent private message to " + getUserToLog(channel.getUser()) + " : " + getEmbedForLog(embed));
 		}
 		else
-			Log.warning("Cannot send private message to null channel : " + getEmbedForLog(embed));
+			Log.warning("Cannot send private message to null channel : %s", getEmbedForLog(embed));
 	}
 	
 	/**
@@ -529,10 +529,10 @@ public class Actions
 				Log.info("Sent message to " + channel.getName() + " : " + getEmbedForLog(embed));
 			}
 			else
-				Log.error("Access denied to text channel: " + channel.getAsMention() + ", when sending: " + getEmbedForLog(embed));
+				Log.error("Access denied to text channel: %s, when sending: %s", channel.getAsMention(), getEmbedForLog(embed));
 		}
 		else
-			Log.warning("Cannot send message to null channel : " + getEmbedForLog(embed));
+			Log.warning("Cannot send message to null channel : %s", getEmbedForLog(embed));
 	}
 	
 	/**
@@ -561,11 +561,11 @@ public class Actions
 		}
 		catch(HierarchyException | InsufficientPermissionException e)
 		{
-			Log.warning("Cannot " + (state ? "" : "un") + "deaf member " + Actions.getUserToLog(member.getUser()));
+			Log.warning("Cannot %sdeaf member %s", (state ? "" : "un"), Actions.getUserToLog(member.getUser()));
 		}
 		catch(Exception e)
 		{
-			Log.error("Error trying to " + (state ? "" : "un") + "deafen member", e);
+			Log.error(e, "Error trying to %sdeafen member %s", (state ? "" : "un"), getUserToLog(member.getUser()));
 		}
 	}
 	
@@ -597,11 +597,11 @@ public class Actions
 		}
 		catch(HierarchyException | InsufficientPermissionException e)
 		{
-			Log.warning("Cannot remove permission for " + Actions.getUserToLog(member.getUser()) + " on " + channel.getName());
+			Log.warning("Cannot remove permission from %s in %s", Actions.getUserToLog(member.getUser()), channel.getName());
 		}
 		catch(Exception e)
 		{
-			Log.warning("Error removing permission for " + Actions.getUserToLog(member.getUser()) + " on " + channel.getName());
+			Log.warning("Error removing permission from %s in %s", Actions.getUserToLog(member.getUser()), channel.getName());
 		}
 	}
 	
@@ -633,11 +633,11 @@ public class Actions
 		}
 		catch(HierarchyException | InsufficientPermissionException e)
 		{
-			Log.warning("Cannot give permission for " + Actions.getUserToLog(member.getUser()) + " on " + channel.getName());
+			Log.warning("Cannot give permission to %s in %s", Actions.getUserToLog(member.getUser()), channel.getName());
 		}
 		catch(Exception e)
 		{
-			Log.warning("Error giving permission for " + Actions.getUserToLog(member.getUser()) + " on " + channel.getName());
+			Log.warning("Error giving permission to %s in %s", Actions.getUserToLog(member.getUser()), channel.getName());
 		}
 	}
 }

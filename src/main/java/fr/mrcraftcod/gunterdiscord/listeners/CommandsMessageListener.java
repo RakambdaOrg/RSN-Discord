@@ -42,7 +42,7 @@ public class CommandsMessageListener extends ListenerAdapter
 		commands.forEach(c -> c.getCommand().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
 		String clash = counts.keySet().stream().filter(k -> counts.get(k) > 1).collect(Collectors.joining(", "));
 		if(clash != null && !clash.isEmpty())
-			Log.error("Command clash: " + clash);
+			Log.error("Command clash: %s", clash);
 	}
 	
 	@Override
@@ -78,7 +78,7 @@ public class CommandsMessageListener extends ListenerAdapter
 						}
 						catch(NotAllowedException e)
 						{
-							Log.error("Error executing command " + command + " (not allowed)", e);
+							Log.error(e, "Error executing command %s (not allowed)", command);
 							EmbedBuilder builder = new EmbedBuilder();
 							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 							builder.setColor(Color.RED);
@@ -87,7 +87,7 @@ public class CommandsMessageListener extends ListenerAdapter
 						}
 						catch(Exception e)
 						{
-							Log.error("Error executing command " + command, e);
+							Log.error(e, "Error executing command %s", command);
 							EmbedBuilder builder = new EmbedBuilder();
 							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 							builder.setColor(Color.RED);
@@ -117,7 +117,7 @@ public class CommandsMessageListener extends ListenerAdapter
 		}
 		catch(Exception e)
 		{
-			Log.error("", e);
+			Log.error(e, "Error handling message");
 		}
 	}
 	
@@ -137,7 +137,7 @@ public class CommandsMessageListener extends ListenerAdapter
 		}
 		catch(InvalidClassException e)
 		{
-			Log.warning("Error testing command", e);
+			Log.warning(e, "Error testing command");
 		}
 		return false;
 	}

@@ -74,11 +74,11 @@ public class Main
 		}
 		catch(IOException e)
 		{
-			Log.error("Couldn't load settings", e);
+			Log.error(e, "Couldn't load settings");
 		}
 		catch(LoginException | InterruptedException e)
 		{
-			Log.error("Couldn't start bot", e);
+			Log.error(e, "Couldn't start bot");
 		}
 		
 		new ConsoleText(jda).start();

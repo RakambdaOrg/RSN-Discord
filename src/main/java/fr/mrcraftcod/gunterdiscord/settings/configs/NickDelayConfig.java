@@ -21,7 +21,7 @@ public class NickDelayConfig extends ValueConfiguration
 		}
 		catch(Exception e)
 		{
-			Log.warning("Error parsing config value for nick delay", e);
+			Log.warning(e, "Error parsing config value for nick delay");
 		}
 	}
 	

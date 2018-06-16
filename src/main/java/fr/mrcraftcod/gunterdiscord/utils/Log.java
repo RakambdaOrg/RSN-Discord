@@ -24,9 +24,24 @@ public class Log
 		log(Level.WARNING, s);
 	}
 	
-	public static void warning(String s, Throwable e)
+	public static void warning(Throwable e, String s)
 	{
-		log(Level.WARNING, s, e);
+		log(Level.WARNING, e, s);
+	}
+	
+	public static void warning(String s, Object... args)
+	{
+		warning(String.format(s, args));
+	}
+	
+	public static void warning(Throwable e, String s, Object... args)
+	{
+		warning(e, String.format(s, args));
+	}
+	
+	public static void info(String s, Object... args)
+	{
+		log(Level.INFO, String.format(s, args));
 	}
 	
 	public static void info(String s)
@@ -39,15 +54,19 @@ public class Log
 		log(Level.SEVERE, s);
 	}
 	
-	public static void error(String s, Throwable e)
+	public static void error(Throwable e, String s)
 	{
-		log(Level.SEVERE, s, e);
+		log(Level.SEVERE, e, s);
 	}
 	
-	public static void error(boolean log, String s, Throwable e)
+	public static void error(Throwable e, String s, Object... args)
 	{
-		if(log)
-			error(s, e);
+		error(e, String.format(s, args));
+	}
+	
+	public static void error(String s, Object... args)
+	{
+		error(String.format(s, args));
 	}
 	
 	public static void log(Level level, String s)
@@ -55,7 +74,7 @@ public class Log
 		getLogger().log(level, s);
 	}
 	
-	public static void log(Level level, String s, Throwable e)
+	public static void log(Level level, Throwable e, String s)
 	{
 		getLogger().log(level, s, e);
 	}

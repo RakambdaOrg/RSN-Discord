@@ -29,7 +29,7 @@ public class LogListener extends ListenerAdapter
 		}
 		catch(Exception e)
 		{
-			Log.error("", e);
+			Log.error(e, "");
 		}
 	}
 	
@@ -46,7 +46,7 @@ public class LogListener extends ListenerAdapter
 		}
 		catch(Exception e)
 		{
-			Log.error("", e);
+			Log.error(e, "");
 		}
 	}
 	
@@ -63,7 +63,7 @@ public class LogListener extends ListenerAdapter
 		}
 		catch(Exception e)
 		{
-			Log.error("", e);
+			Log.error(e, "");
 		}
 	}
 	
@@ -80,7 +80,7 @@ public class LogListener extends ListenerAdapter
 		}
 		catch(Exception e)
 		{
-			Log.error("", e);
+			Log.error(e, "");
 		}
 	}
 }

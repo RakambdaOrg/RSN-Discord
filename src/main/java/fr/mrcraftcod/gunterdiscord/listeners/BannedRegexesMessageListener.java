@@ -53,7 +53,7 @@ public class BannedRegexesMessageListener extends ListenerAdapter
 		}
 		catch(Exception e)
 		{
-			Log.error("", e);
+			Log.error(e, "");
 		}
 	}
 	
