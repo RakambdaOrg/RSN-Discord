@@ -81,7 +81,7 @@ public class YoutubeCommand extends BasicCommand
 	@Override
 	public AccessLevel getAccessLevel()
 	{
-		return AccessLevel.ADMIN;
+		return AccessLevel.ALL;
 	}
 	
 	@Override
