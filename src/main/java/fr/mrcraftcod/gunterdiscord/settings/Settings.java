@@ -42,6 +42,8 @@ public class Settings
 			new QuestionsFinalChannelConfig(),
 			new HangmanRoleConfig(),
 			new WerewolvesChannelConfig(),
+			new YoutubeChannelConfig(),
+			new YoutubeRoleConfig()
 			};
 	private static Path path;
 	private static JSONObject settings;
