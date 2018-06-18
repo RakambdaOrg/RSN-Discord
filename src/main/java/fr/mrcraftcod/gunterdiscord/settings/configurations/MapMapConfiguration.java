@@ -35,27 +35,6 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 	}
 	
 	/**
-	 * Get the parser to parse back string keys to K.
-	 *
-	 * @return The parser.
-	 */
-	protected abstract Function<String, K> getKeyParser();
-	
-	/**
-	 * Get the parser to parse back key string values to W.
-	 *
-	 * @return The parser.
-	 */
-	protected abstract Function<String, V> getKeyValueParser();
-	
-	/**
-	 * Get the parser to parse back string values to W.
-	 *
-	 * @return The parser.
-	 */
-	protected abstract Function<String, W> getValueParser();
-	
-	/**
 	 * Get the map of this configuration.
 	 *
 	 * @param guild The guild.
@@ -73,7 +52,7 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 		if(map == null)
 			Settings.resetMap(guild, this);
 		else
-			for(String key : map.keySet())
+			for(String key: map.keySet())
 			{
 				K kKey = getKeyParser().apply(key);
 				JSONObject value = map.optJSONObject(key);
@@ -98,6 +77,27 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 			throw new IllegalArgumentException("Not a map config");
 		return Settings.getJSONObject(guild, getName());
 	}
+	
+	/**
+	 * Get the parser to parse back string keys to K.
+	 *
+	 * @return The parser.
+	 */
+	protected abstract Function<String, K> getKeyParser();
+	
+	/**
+	 * Get the parser to parse back key string values to W.
+	 *
+	 * @return The parser.
+	 */
+	protected abstract Function<String, V> getKeyValueParser();
+	
+	/**
+	 * Get the parser to parse back string values to W.
+	 *
+	 * @return The parser.
+	 */
+	protected abstract Function<String, W> getValueParser();
 	
 	/**
 	 * Add a value to the map list.
@@ -139,22 +139,6 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 	}
 	
 	/**
-	 * Get the matcher to declare objects equals. This is used when deleting a key value.
-	 *
-	 * @return The matcher.
-	 */
-	protected BiFunction<Object, V, Boolean> getMatcher()
-	{
-		return Objects::equals;
-	}
-	
-	@Override
-	public ConfigType getType()
-	{
-		return ConfigType.MAP;
-	}
-	
-	/**
 	 * Delete a value inside a key.
 	 *
 	 * @param guild The guild.
@@ -186,9 +170,25 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 		Settings.deleteKey(guild, this, key);
 	}
 	
+	/**
+	 * Get the matcher to declare objects equals. This is used when deleting a key value.
+	 *
+	 * @return The matcher.
+	 */
+	protected BiFunction<Object, V, Boolean> getMatcher()
+	{
+		return Objects::equals;
+	}
+	
 	@Override
 	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action)
 	{
 		return action == ConfigurationCommand.ChangeConfigType.ADD || action == ConfigurationCommand.ChangeConfigType.REMOVE || action == ConfigurationCommand.ChangeConfigType.SHOW;
+	}
+	
+	@Override
+	public ConfigType getType()
+	{
+		return ConfigType.MAP;
 	}
 }

@@ -23,8 +23,6 @@ import java.util.function.BiFunction;
  */
 public class Settings
 {
-	private static Path path;
-	private static JSONObject settings;
 	public static final Configuration[] SETTINGS = new Configuration[]{
 			new BannedRegexConfig(),
 			new ModoRolesConfig(),
@@ -44,7 +42,11 @@ public class Settings
 			new QuestionsFinalChannelConfig(),
 			new HangmanRoleConfig(),
 			new WerewolvesChannelConfig(),
+			new YoutubeChannelConfig(),
+			new YoutubeRoleConfig()
 			};
+	private static Path path;
+	private static JSONObject settings;
 	
 	/**
 	 * Get the value as an object.
@@ -108,7 +110,7 @@ public class Settings
 	 */
 	public static Configuration getSettings(String name)
 	{
-		for(Configuration configuration : SETTINGS)
+		for(Configuration configuration: SETTINGS)
 			if(configuration.getName().equalsIgnoreCase(name))
 				return configuration;
 		return null;
@@ -130,12 +132,6 @@ public class Settings
 	 */
 	public static void close()
 	{
-	}
-	
-	
-	public static JSONArray getArray(Guild guild, String name)
-	{
-		return getServerSettings(guild).optJSONArray(name);
 	}
 	
 	public static void setValue(Guild guild, ValueConfiguration configuration, Object value)
@@ -162,6 +158,11 @@ public class Settings
 		if(index != -1)
 			array.remove(index);
 		getServerSettings(guild).put(configuration.getName(), array);
+	}
+	
+	public static JSONArray getArray(Guild guild, String name)
+	{
+		return getServerSettings(guild).optJSONArray(name);
 	}
 	
 	public static <V, K> void mapValue(Guild guild, MapConfiguration configuration, K key, V value)

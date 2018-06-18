@@ -8,6 +8,21 @@ public class Log
 {
 	private static Logger logger;
 	
+	public static void warning(String s, Object... args)
+	{
+		warning(String.format(s, args));
+	}
+	
+	public static void warning(String s)
+	{
+		log(Level.WARNING, s);
+	}
+	
+	public static void log(Level level, String s)
+	{
+		getLogger().log(level, s);
+	}
+	
 	public static Logger getLogger()
 	{
 		return logger != null ? logger : setAppName("MCCUtils");
@@ -19,9 +34,9 @@ public class Log
 		return logger;
 	}
 	
-	public static void warning(String s)
+	public static void warning(Throwable e, String s, Object... args)
 	{
-		log(Level.WARNING, s);
+		warning(e, String.format(s, args));
 	}
 	
 	public static void warning(Throwable e, String s)
@@ -29,14 +44,9 @@ public class Log
 		log(Level.WARNING, e, s);
 	}
 	
-	public static void warning(String s, Object... args)
+	public static void log(Level level, Throwable e, String s)
 	{
-		warning(String.format(s, args));
-	}
-	
-	public static void warning(Throwable e, String s, Object... args)
-	{
-		warning(e, String.format(s, args));
+		getLogger().log(level, s, e);
 	}
 	
 	public static void info(String s, Object... args)
@@ -49,9 +59,9 @@ public class Log
 		log(Level.INFO, s);
 	}
 	
-	public static void error(String s)
+	public static void error(Throwable e, String s, Object... args)
 	{
-		log(Level.SEVERE, s);
+		error(e, String.format(s, args));
 	}
 	
 	public static void error(Throwable e, String s)
@@ -59,23 +69,13 @@ public class Log
 		log(Level.SEVERE, e, s);
 	}
 	
-	public static void error(Throwable e, String s, Object... args)
-	{
-		error(e, String.format(s, args));
-	}
-	
 	public static void error(String s, Object... args)
 	{
 		error(String.format(s, args));
 	}
 	
-	public static void log(Level level, String s)
+	public static void error(String s)
 	{
-		getLogger().log(level, s);
-	}
-	
-	public static void log(Level level, Throwable e, String s)
-	{
-		getLogger().log(level, s, e);
+		log(Level.SEVERE, s);
 	}
 }

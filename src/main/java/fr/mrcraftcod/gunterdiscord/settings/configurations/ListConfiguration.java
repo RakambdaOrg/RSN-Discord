@@ -69,19 +69,6 @@ public abstract class ListConfiguration<T> extends Configuration
 		return elements;
 	}
 	
-	@Override
-	public ConfigType getType()
-	{
-		return ConfigType.LIST;
-	}
-	
-	/**
-	 * Get the parser to parse back values to T.
-	 *
-	 * @return The parser.
-	 */
-	protected abstract Function<String, T> getValueParser();
-	
 	/**
 	 * Get the JSON array.
 	 *
@@ -106,9 +93,22 @@ public abstract class ListConfiguration<T> extends Configuration
 		return null;
 	}
 	
+	/**
+	 * Get the parser to parse back values to T.
+	 *
+	 * @return The parser.
+	 */
+	protected abstract Function<String, T> getValueParser();
+	
 	@Override
 	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action)
 	{
 		return action == ConfigurationCommand.ChangeConfigType.ADD || action == ConfigurationCommand.ChangeConfigType.REMOVE || action == ConfigurationCommand.ChangeConfigType.SHOW;
+	}
+	
+	@Override
+	public ConfigType getType()
+	{
+		return ConfigType.LIST;
 	}
 }

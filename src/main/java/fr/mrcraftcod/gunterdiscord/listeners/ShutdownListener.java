@@ -25,7 +25,7 @@ public class ShutdownListener extends ListenerAdapter
 			QuizListener.stopAll();
 			HangmanListener.stopAll();
 			Settings.save();
-			for(Handler h : Log.getLogger().getHandlers())
+			for(Handler h: Log.getLogger().getHandlers())
 				h.close();
 			Log.info("BOT STOPPED");
 		}

@@ -12,7 +12,7 @@ import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -26,10 +26,10 @@ import java.util.logging.LogManager;
  */
 public class Main
 {
+	public static final ZonedDateTime bootTime = ZonedDateTime.now();
 	private static final String SETTINGS_NAME = "settings.json";
 	private static final int WAIT_TIME = 3600;
 	private static JDA jda;
-	public static final LocalDateTime bootTime = LocalDateTime.now();
 	
 	/**
 	 * Main entry point.

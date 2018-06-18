@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  */
 public class CommandsMessageListener extends ListenerAdapter
 {
-	public static final List<Command> commands = Arrays.asList(new PhotoCompositeCommand(), new HangmanCompositeCommand(), new QuizCompositeCommand(), new ReportCommand(), new ConfigurationCompositeCommand(), new StopCommand(), new HelpCommand(), new AvatarCommand(), new NicknameCommand(), new SayCommand(), new BackdoorCommand(), /*new QuestionCommand(),*/ new WerewolvesCommandComposite(), new VoiceDisrupterCommand(), new UpCommand());
+	public static final List<Command> commands = Arrays.asList(new PhotoCompositeCommand(), new HangmanCompositeCommand(), new QuizCompositeCommand(), new ReportCommand(), new ConfigurationCompositeCommand(), new StopCommand(), new HelpCommand(), new AvatarCommand(), new NicknameCommand(), new SayCommand(), new BackdoorCommand(), /*new QuestionCommand(),*/ new WerewolvesCommandComposite(), new VoiceDisrupterCommand(), new UpCommand(), new YoutubeCommand());
 	
 	/**
 	 * Constructor.
@@ -151,7 +151,7 @@ public class CommandsMessageListener extends ListenerAdapter
 	 */
 	private Command getCommand(String commandText)
 	{
-		for(Command command : commands)
+		for(Command command: commands)
 			if(command.getCommand().contains(commandText.toLowerCase()))
 				return command;
 		return null;

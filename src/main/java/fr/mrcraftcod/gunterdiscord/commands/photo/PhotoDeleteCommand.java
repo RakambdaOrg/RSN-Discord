@@ -34,12 +34,6 @@ public class PhotoDeleteCommand extends BasicCommand
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
-		return List.of("del", "d", "rm", "s");
-	}
-	
-	@Override
 	public String getCommandUsage()
 	{
 		return super.getCommandUsage() + " [@utilisateur] [ID]";
@@ -94,15 +88,11 @@ public class PhotoDeleteCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getDescription()
+	public void addHelp(Guild guild, EmbedBuilder builder)
 	{
-		return "Supprime une ou des photos du trombinoscope";
-	}
-	
-	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.ALL;
+		super.addHelp(guild, builder);
+		builder.addField("Optionnel: Utilisateur", "L'utilisateur visé par la suppression (par défaut @me)", false);
+		builder.addField("Optionnel: ID", "L'ID de la photo à supprimer (si aucun n'est précisé toutes les photos seront supprimées)", false);
 	}
 	
 	@Override
@@ -118,10 +108,20 @@ public class PhotoDeleteCommand extends BasicCommand
 	}
 	
 	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
+	public List<String> getCommand()
 	{
-		super.addHelp(guild, builder);
-		builder.addField("Optionnel: Utilisateur", "L'utilisateur visé par la suppression (par défaut @me)", false);
-		builder.addField("Optionnel: ID", "L'ID de la photo à supprimer (si aucun n'est précisé toutes les photos seront supprimées)", false);
+		return List.of("del", "d", "rm", "s");
+	}
+	
+	@Override
+	public String getDescription()
+	{
+		return "Supprime une ou des photos du trombinoscope";
+	}
+	
+	@Override
+	public AccessLevel getAccessLevel()
+	{
+		return AccessLevel.ALL;
 	}
 }

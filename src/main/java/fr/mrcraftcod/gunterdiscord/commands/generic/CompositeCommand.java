@@ -67,6 +67,12 @@ public abstract class CompositeCommand extends BasicCommand
 	}
 	
 	@Override
+	public void addHelp(Guild guild, EmbedBuilder builder)
+	{
+		builder.addField("Sous-commande", subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false);
+	}
+	
+	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		if(!isAllowed(event.getMember()))
@@ -83,12 +89,6 @@ public abstract class CompositeCommand extends BasicCommand
 				Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Erreur durant l'execution de la commande").addField("Command", getName(), false).addField("Raison", "Argument non valide", false).addField("Arguments disponibles", subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false).build());
 		}
 		return CommandResult.SUCCESS;
-	}
-	
-	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
-	{
-		builder.addField("Sous-commande", subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false);
 	}
 	
 	@Override

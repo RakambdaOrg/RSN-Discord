@@ -28,29 +28,6 @@ public interface Command extends Comparable<Command>
 	}
 	
 	/**
-	 * Get where this command can be executed.
-	 *
-	 * @return The scope or -5 to be accessible everywhere.
-	 *
-	 * @see ChannelType#getId()
-	 */
-	int getScope();
-	
-	/**
-	 * Get the name of the command.
-	 *
-	 * @return The name.
-	 */
-	String getName();
-	
-	/**
-	 * Get the command (what's after the prefix).
-	 *
-	 * @return The command.
-	 */
-	List<String> getCommand();
-	
-	/**
 	 * Add entries into the help menu.
 	 *
 	 * @param guild   The guild.
@@ -77,11 +54,11 @@ public interface Command extends Comparable<Command>
 	}
 	
 	/**
-	 * Get the description of the command.
+	 * Get the level required to execute this command.
 	 *
-	 * @return The description.
+	 * @return The access level.
 	 */
-	String getDescription();
+	AccessLevel getAccessLevel();
 	
 	/**
 	 * Handle the command.
@@ -102,11 +79,32 @@ public interface Command extends Comparable<Command>
 	}
 	
 	/**
+	 * Get the name of the command.
+	 *
+	 * @return The name.
+	 */
+	String getName();
+	
+	/**
+	 * Get the command (what's after the prefix).
+	 *
+	 * @return The command.
+	 */
+	List<String> getCommand();
+	
+	/**
 	 * Get a description of the usage of command.
 	 *
 	 * @return The description.
 	 */
 	String getCommandUsage();
+	
+	/**
+	 * Get the description of the command.
+	 *
+	 * @return The description.
+	 */
+	String getDescription();
 	
 	/**
 	 * Get the parent command.
@@ -116,9 +114,11 @@ public interface Command extends Comparable<Command>
 	Command getParent();
 	
 	/**
-	 * Get the level required to execute this command.
+	 * Get where this command can be executed.
 	 *
-	 * @return The access level.
+	 * @return The scope or -5 to be accessible everywhere.
+	 *
+	 * @see ChannelType#getId()
 	 */
-	AccessLevel getAccessLevel();
+	int getScope();
 }

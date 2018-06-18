@@ -167,6 +167,16 @@ public class WerewolvesListener extends ListenerAdapter
 	}
 	
 	/**
+	 * Get the voice channel associated with this game.
+	 *
+	 * @return The voice channel.
+	 */
+	private VoiceChannel getVoiceChannel()
+	{
+		return voiceChannel;
+	}
+	
+	/**
 	 * Assign roles to members randomly.
 	 */
 	private void assignRoles()
@@ -399,61 +409,6 @@ public class WerewolvesListener extends ListenerAdapter
 		return voiceChannel.getMembers().stream().filter(m -> (m.getNickname() != null && m.getNickname().equals(name)) || m.getUser().getName().equals(name) || m.getUser().getId().equals(name)).findAny().orElse(null);
 	}
 	
-	/**
-	 * Set the current phase.
-	 *
-	 * @param phase The phase to set.
-	 */
-	private void setPhase(WerewolvesPhase phase)
-	{
-		if(phase == WerewolvesPhase.NIGHT)
-		{
-			Actions.sendMessage(textChannel, "Bienvenue dans la nuit!");
-			Actions.deafen(users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).collect(Collectors.toList()), true);
-			roleWerewolves();
-		}
-		else
-		{
-			Actions.sendMessage(textChannel, "Bienvenue dans le jour!");
-			cycle++;
-			Actions.deafen(users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).collect(Collectors.toList()), false);
-			kill(() -> {
-				if(cycle == 1)
-					electMayor(this::electKilled);
-				else
-					electKilled();
-			});
-		}
-	}
-	
-	/**
-	 * Verify if the game has ended.
-	 *
-	 * @return True if ended, false otherwise.
-	 */
-	private boolean verifyEnd()
-	{
-		if(users.isEmpty())
-		{
-			Actions.sendMessage(textChannel, "La partie de loups garous est terminée car plus personne n'est présent");
-			stop();
-			return true;
-		}
-		else if(users.values().stream().filter(r -> r.getKind() == WerewolvesRoleKind.WEREWOLVES).count() < 1)
-		{
-			Actions.sendMessage(textChannel, "La partie de loups garous est terminée car plus aucun villageois n'est présent");
-			stop();
-			return true;
-		}
-		else if(users.values().stream().filter(r -> r.getKind() == WerewolvesRoleKind.VILLAGERS).count() < 1)
-		{
-			Actions.sendMessage(textChannel, "La partie de loups garous est terminée car plus aucun loup-garou n'est présent");
-			stop();
-			return true;
-		}
-		return false;
-	}
-	
 	@Override
 	public void onPrivateMessageReceived(PrivateMessageReceivedEvent event)
 	{
@@ -490,6 +445,34 @@ public class WerewolvesListener extends ListenerAdapter
 	}
 	
 	/**
+	 * Verify if the game has ended.
+	 *
+	 * @return True if ended, false otherwise.
+	 */
+	private boolean verifyEnd()
+	{
+		if(users.isEmpty())
+		{
+			Actions.sendMessage(textChannel, "La partie de loups garous est terminée car plus personne n'est présent");
+			stop();
+			return true;
+		}
+		else if(users.values().stream().filter(r -> r.getKind() == WerewolvesRoleKind.WEREWOLVES).count() < 1)
+		{
+			Actions.sendMessage(textChannel, "La partie de loups garous est terminée car plus aucun villageois n'est présent");
+			stop();
+			return true;
+		}
+		else if(users.values().stream().filter(r -> r.getKind() == WerewolvesRoleKind.VILLAGERS).count() < 1)
+		{
+			Actions.sendMessage(textChannel, "La partie de loups garous est terminée car plus aucun loup-garou n'est présent");
+			stop();
+			return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Stops the game.
 	 */
 	public void stop()
@@ -498,16 +481,6 @@ public class WerewolvesListener extends ListenerAdapter
 		games.remove(this);
 		voiceChannel.getJDA().removeEventListener(this);
 		werewolvesTextChannel.delete().queue();
-	}
-	
-	/**
-	 * Get the voice channel associated with this game.
-	 *
-	 * @return The voice channel.
-	 */
-	private VoiceChannel getVoiceChannel()
-	{
-		return voiceChannel;
 	}
 	
 	/**
@@ -541,5 +514,32 @@ public class WerewolvesListener extends ListenerAdapter
 			waitingMember.clear();
 			waitingMember.add(m);
 		});
+	}
+	
+	/**
+	 * Set the current phase.
+	 *
+	 * @param phase The phase to set.
+	 */
+	private void setPhase(WerewolvesPhase phase)
+	{
+		if(phase == WerewolvesPhase.NIGHT)
+		{
+			Actions.sendMessage(textChannel, "Bienvenue dans la nuit!");
+			Actions.deafen(users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).collect(Collectors.toList()), true);
+			roleWerewolves();
+		}
+		else
+		{
+			Actions.sendMessage(textChannel, "Bienvenue dans le jour!");
+			cycle++;
+			Actions.deafen(users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).collect(Collectors.toList()), false);
+			kill(() -> {
+				if(cycle == 1)
+					electMayor(this::electKilled);
+				else
+					electKilled();
+			});
+		}
 	}
 }

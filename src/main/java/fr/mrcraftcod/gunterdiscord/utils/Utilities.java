@@ -19,46 +19,6 @@ import java.util.stream.Collectors;
 public class Utilities
 {
 	/**
-	 * Tell if the member is a moderator.
-	 *
-	 * @param member The member to test.
-	 *
-	 * @return True if moderator, false otherwise.
-	 */
-	public static boolean isModerator(Member member)
-	{
-		return Utilities.hasRoleIDs(member, new ModoRolesConfig().getAsList(member.getGuild()));
-	}
-	
-	/**
-	 * Tell if the member is an admin.
-	 *
-	 * @param member The member to test.
-	 *
-	 * @return True if admin, false otherwise.
-	 */
-	public static boolean isAdmin(Member member)
-	{
-		for(Role role : member.getRoles())
-			if(role.hasPermission(Permission.ADMINISTRATOR))
-				return true;
-		return false;
-	}
-	
-	/**
-	 * Check if a member have a role.
-	 *
-	 * @param member The member to test.
-	 * @param role   The role to search for.
-	 *
-	 * @return True if the member have the role, false otherwise.
-	 */
-	public static boolean hasRole(Member member, Role role)
-	{
-		return member.getRoles().contains(role);
-	}
-	
-	/**
 	 * Check if a member have a role.
 	 *
 	 * @param member The member to test.
@@ -75,13 +35,13 @@ public class Utilities
 	 * Check if a member have a role.
 	 *
 	 * @param member The member to test.
-	 * @param roles  The roles to search for.
+	 * @param role   The role to search for.
 	 *
 	 * @return True if the member have the role, false otherwise.
 	 */
-	public static boolean hasRoleIDs(Member member, List<Long> roles)
+	public static boolean hasRole(Member member, Role role)
 	{
-		return roles.stream().map(r -> member.getGuild().getRoleById(r)).anyMatch(r -> hasRole(member, r));
+		return member.getRoles().contains(role);
 	}
 	
 	/**
@@ -107,6 +67,46 @@ public class Utilities
 	public static boolean isTeam(Member member)
 	{
 		return isModerator(member) || isAdmin(member);
+	}
+	
+	/**
+	 * Tell if the member is a moderator.
+	 *
+	 * @param member The member to test.
+	 *
+	 * @return True if moderator, false otherwise.
+	 */
+	public static boolean isModerator(Member member)
+	{
+		return Utilities.hasRoleIDs(member, new ModoRolesConfig().getAsList(member.getGuild()));
+	}
+	
+	/**
+	 * Tell if the member is an admin.
+	 *
+	 * @param member The member to test.
+	 *
+	 * @return True if admin, false otherwise.
+	 */
+	public static boolean isAdmin(Member member)
+	{
+		for(Role role: member.getRoles())
+			if(role.hasPermission(Permission.ADMINISTRATOR))
+				return true;
+		return false;
+	}
+	
+	/**
+	 * Check if a member have a role.
+	 *
+	 * @param member The member to test.
+	 * @param roles  The roles to search for.
+	 *
+	 * @return True if the member have the role, false otherwise.
+	 */
+	public static boolean hasRoleIDs(Member member, List<Long> roles)
+	{
+		return roles.stream().map(r -> member.getGuild().getRoleById(r)).anyMatch(r -> hasRole(member, r));
 	}
 	
 	/**

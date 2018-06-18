@@ -58,6 +58,25 @@ public class BannedRegexesMessageListener extends ListenerAdapter
 	}
 	
 	/**
+	 * Find if the text contains a banned word.
+	 *
+	 * @param text The text.
+	 *
+	 * @return The banned word found.
+	 */
+	private String isBanned(Guild guild, String text)
+	{
+		text = text.toLowerCase();
+		for(String regex: new BannedRegexConfig().getAsList(guild))
+		{
+			Matcher matcher = Pattern.compile(regex).matcher(text);
+			if(matcher.matches())
+				return matcher.group(0);
+		}
+		return null;
+	}
+	
+	/**
 	 * Get a word censored.
 	 *
 	 * @param word The word to censor.
@@ -73,24 +92,5 @@ public class BannedRegexesMessageListener extends ListenerAdapter
 			return sb.toString();
 		}
 		return word;
-	}
-	
-	/**
-	 * Find if the text contains a banned word.
-	 *
-	 * @param text The text.
-	 *
-	 * @return The banned word found.
-	 */
-	private String isBanned(Guild guild, String text)
-	{
-		text = text.toLowerCase();
-		for(String regex : new BannedRegexConfig().getAsList(guild))
-		{
-			Matcher matcher = Pattern.compile(regex).matcher(text);
-			if(matcher.matches())
-				return matcher.group(0);
-		}
-		return null;
 	}
 }

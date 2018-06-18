@@ -108,27 +108,6 @@ public class HangmanListener extends ListenerAdapter
 	}
 	
 	/**
-	 * Discover a letter in the word.
-	 *
-	 * @param c The letter to try.
-	 *
-	 * @return The number of letters discovered in teh word.
-	 */
-	private int discoverLetter(char c)
-	{
-		c = Character.toLowerCase(c);
-		int count = 0;
-		if(realWord != null)
-			for(int i = 0; i < realWord.length(); i++)
-				if(matchLetter(realWord.toLowerCase().charAt(i), c))
-				{
-					count++;
-					hiddenWord.replace(i, i + 1, "" + realWord.charAt(i));
-				}
-		return count;
-	}
-	
-	/**
 	 * Get the game for a guild.
 	 *
 	 * @param guild The guild concerned.
@@ -162,6 +141,119 @@ public class HangmanListener extends ListenerAdapter
 			}
 			return Optional.empty();
 		});
+	}
+	
+	/**
+	 * Get the guild of teh game.
+	 *
+	 * @return The guild.
+	 */
+	private Guild getGuild()
+	{
+		return guild;
+	}
+	
+	/**
+	 * Tells if 2 letters are the same.
+	 *
+	 * @param c1 First letter.
+	 * @param c2 Second letter.
+	 *
+	 * @return True if matches, false otherwise.
+	 */
+	private static boolean matchLetter(char c1, char c2)
+	{
+		return mapChar(c1) == mapChar(c2);
+	}
+	
+	/**
+	 * Get a char configurations on its parent.
+	 * For example letters with accent will become the letter without the accent.
+	 *
+	 * @param c The letter.
+	 *
+	 * @return The mapped letter.
+	 */
+	private static char mapChar(char c)
+	{
+		if(c == 'é' || c == 'è' || c == 'ê')
+			return 'e';
+		if(c == 'à' || c == 'â')
+			return 'a';
+		if(c == 'ì' || c == 'î')
+			return 'i';
+		if(c == 'ô' || c == 'ò')
+			return 'o';
+		if(c == 'û' || c == 'ù')
+			return 'u';
+		return c;
+	}
+	
+	/**
+	 * Select a random word.
+	 *
+	 * @return The chosen word.
+	 */
+	private static String selectRandomWord()
+	{
+		try
+		{
+			List<String> words = new ArrayList<>(IOUtils.readLines(Main.class.getResource("/hangman/words.csv").openStream(), Charset.defaultCharset()));
+			return words.get(ThreadLocalRandom.current().nextInt(words.size()));
+		}
+		catch(IOException e)
+		{
+			Log.error(e, "Error getting random hangman word");
+		}
+		return "ERROR";
+	}
+	
+	/**
+	 * Get the word as being hidden.
+	 *
+	 * @param word The word to hide.
+	 *
+	 * @return The hidden word.
+	 */
+	private static StringBuilder genHidden(String word)
+	{
+		StringBuilder str = new StringBuilder();
+		for(char c: word.toCharArray())
+			str.append(keepNotHidden(c) ? c : HIDDEN_CHAR);
+		return str;
+	}
+	
+	/**
+	 * tell if a character should be hidden or not.
+	 *
+	 * @param c The character.
+	 *
+	 * @return True if should not be hidden, false otherwise.
+	 */
+	private static boolean keepNotHidden(char c)
+	{
+		return c == ' ' || c == '-';
+	}
+	
+	/**
+	 * Discover a letter in the word.
+	 *
+	 * @param c The letter to try.
+	 *
+	 * @return The number of letters discovered in teh word.
+	 */
+	private int discoverLetter(char c)
+	{
+		c = Character.toLowerCase(c);
+		int count = 0;
+		if(realWord != null)
+			for(int i = 0; i < realWord.length(); i++)
+				if(matchLetter(realWord.toLowerCase().charAt(i), c))
+				{
+					count++;
+					hiddenWord.replace(i, i + 1, "" + realWord.charAt(i));
+				}
+		return count;
 	}
 	
 	/**
@@ -260,16 +352,6 @@ public class HangmanListener extends ListenerAdapter
 	}
 	
 	/**
-	 * Get the guild of teh game.
-	 *
-	 * @return The guild.
-	 */
-	private Guild getGuild()
-	{
-		return guild;
-	}
-	
-	/**
 	 * Display the current cord with letters tried.
 	 */
 	public void displayWord()
@@ -316,54 +398,6 @@ public class HangmanListener extends ListenerAdapter
 	}
 	
 	/**
-	 * Remove the users from the channel.
-	 */
-	private void removeUsers()
-	{
-		TextChannel channel = new HangmanChannelConfig().getTextChannel(guild);
-		channel.getMembers().stream().filter(m -> m.getUser().getIdLong() != channel.getJDA().getSelfUser().getIdLong()).forEach(member -> channel.getGuild().getController().removeRolesFromMember(member, role).queue());
-		games.remove(this);
-		for(Message message : channel.getIterableHistory().cache(false))
-			message.delete().queue();
-	}
-	
-	/**
-	 * Tells if 2 letters are the same.
-	 *
-	 * @param c1 First letter.
-	 * @param c2 Second letter.
-	 *
-	 * @return True if matches, false otherwise.
-	 */
-	private static boolean matchLetter(char c1, char c2)
-	{
-		return mapChar(c1) == mapChar(c2);
-	}
-	
-	/**
-	 * Get a char configurations on its parent.
-	 * For example letters with accent will become the letter without the accent.
-	 *
-	 * @param c The letter.
-	 *
-	 * @return The mapped letter.
-	 */
-	private static char mapChar(char c)
-	{
-		if(c == 'é' || c == 'è' || c == 'ê')
-			return 'e';
-		if(c == 'à' || c == 'â')
-			return 'a';
-		if(c == 'ì' || c == 'î')
-			return 'i';
-		if(c == 'ô' || c == 'ò')
-			return 'o';
-		if(c == 'û' || c == 'ù')
-			return 'u';
-		return c;
-	}
-	
-	/**
 	 * Delay the ending then remove users and messages.
 	 */
 	private void delayEndGame()
@@ -384,48 +418,14 @@ public class HangmanListener extends ListenerAdapter
 	}
 	
 	/**
-	 * Select a random word.
-	 *
-	 * @return The chosen word.
+	 * Remove the users from the channel.
 	 */
-	private static String selectRandomWord()
+	private void removeUsers()
 	{
-		try
-		{
-			List<String> words = new ArrayList<>(IOUtils.readLines(Main.class.getResource("/hangman/words.csv").openStream(), Charset.defaultCharset()));
-			return words.get(ThreadLocalRandom.current().nextInt(words.size()));
-		}
-		catch(IOException e)
-		{
-			Log.error(e, "Error getting random hangman word");
-		}
-		return "ERROR";
-	}
-	
-	/**
-	 * Get the word as being hidden.
-	 *
-	 * @param word The word to hide.
-	 *
-	 * @return The hidden word.
-	 */
-	private static StringBuilder genHidden(String word)
-	{
-		StringBuilder str = new StringBuilder();
-		for(char c : word.toCharArray())
-			str.append(keepNotHidden(c) ? c : HIDDEN_CHAR);
-		return str;
-	}
-	
-	/**
-	 * tell if a character should be hidden or not.
-	 *
-	 * @param c The character.
-	 *
-	 * @return True if should not be hidden, false otherwise.
-	 */
-	private static boolean keepNotHidden(char c)
-	{
-		return c == ' ' || c == '-';
+		TextChannel channel = new HangmanChannelConfig().getTextChannel(guild);
+		channel.getMembers().stream().filter(m -> m.getUser().getIdLong() != channel.getJDA().getSelfUser().getIdLong()).forEach(member -> channel.getGuild().getController().removeRolesFromMember(member, role).queue());
+		games.remove(this);
+		for(Message message: channel.getIterableHistory().cache(false))
+			message.delete().queue();
 	}
 }

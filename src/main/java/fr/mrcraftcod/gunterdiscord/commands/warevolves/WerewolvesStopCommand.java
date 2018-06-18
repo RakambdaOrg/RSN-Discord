@@ -42,9 +42,9 @@ public class WerewolvesStopCommand extends BasicCommand
 	}
 	
 	@Override
-	public int getScope()
+	public AccessLevel getAccessLevel()
 	{
-		return ChannelType.TEXT.getId();
+		return AccessLevel.ALL;
 	}
 	
 	@Override
@@ -66,8 +66,8 @@ public class WerewolvesStopCommand extends BasicCommand
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
+	public int getScope()
 	{
-		return AccessLevel.ALL;
+		return ChannelType.TEXT.getId();
 	}
 }

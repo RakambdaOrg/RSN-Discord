@@ -64,27 +64,13 @@ public abstract class MapConfiguration<K, V> extends Configuration
 		if(map == null)
 			Settings.resetMap(guild, this);
 		else
-			for(String key : map.keySet())
+			for(String key: map.keySet())
 			{
 				Object value = map.get(key);
 				elements.put(getKeyParser().apply(key), getValueParser().apply(value.toString()));
 			}
 		return elements;
 	}
-	
-	/**
-	 * Get the parser to parse back string keys to K.
-	 *
-	 * @return The parser.
-	 */
-	protected abstract Function<String, K> getKeyParser();
-	
-	/**
-	 * Get the parser to parse back string values to V.
-	 *
-	 * @return The parser.
-	 */
-	protected abstract Function<String, V> getValueParser();
 	
 	/**
 	 * Get the JSON Object.
@@ -102,16 +88,24 @@ public abstract class MapConfiguration<K, V> extends Configuration
 		return Settings.getJSONObject(guild, getName());
 	}
 	
+	/**
+	 * Get the parser to parse back string keys to K.
+	 *
+	 * @return The parser.
+	 */
+	protected abstract Function<String, K> getKeyParser();
+	
+	/**
+	 * Get the parser to parse back string values to V.
+	 *
+	 * @return The parser.
+	 */
+	protected abstract Function<String, V> getValueParser();
+	
 	@Override
 	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action)
 	{
 		return action == ConfigurationCommand.ChangeConfigType.ADD || action == ConfigurationCommand.ChangeConfigType.REMOVE || action == ConfigurationCommand.ChangeConfigType.SHOW;
-	}
-	
-	@Override
-	public ConfigType getType()
-	{
-		return ConfigType.MAP;
 	}
 	
 	@Override
@@ -143,6 +137,12 @@ public abstract class MapConfiguration<K, V> extends Configuration
 				return ConfigurationCommand.ActionResult.OK;
 		}
 		return ConfigurationCommand.ActionResult.ERROR;
+	}
+	
+	@Override
+	public ConfigType getType()
+	{
+		return ConfigType.MAP;
 	}
 	
 	/**

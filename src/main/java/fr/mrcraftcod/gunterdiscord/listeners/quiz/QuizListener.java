@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
 public class QuizListener extends ListenerAdapter implements Runnable
 {
 	private static final ArrayList<QuizListener> quizzes = new ArrayList<>();
-	private Duration waitTime;
 	private final Guild guild;
+	private Duration waitTime;
 	private Message waitingMsg = null;
 	private HashMap<Long, Integer> answers;
 	private LinkedList<Question> questions;
@@ -61,14 +61,6 @@ public class QuizListener extends ListenerAdapter implements Runnable
 	}
 	
 	/**
-	 * Stop all quizzes.
-	 */
-	public static void stopAll()
-	{
-		quizzes.forEach(QuizListener::stop);
-	}
-	
-	/**
 	 * Pick some random questions from the CSV file.
 	 *
 	 * @param amount The maximum number of question.
@@ -84,7 +76,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 		}
 		catch(Exception e)
 		{
-			Log.error(e,"Error reading questions file");
+			Log.error(e, "Error reading questions file");
 		}
 		
 		if(lines.isEmpty())
@@ -111,6 +103,14 @@ public class QuizListener extends ListenerAdapter implements Runnable
 			list.add(new Question(line[0], answers, ID));
 		}
 		return list;
+	}
+	
+	/**
+	 * Stop all quizzes.
+	 */
+	public static void stopAll()
+	{
+		quizzes.forEach(QuizListener::stop);
 	}
 	
 	/**

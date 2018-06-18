@@ -64,6 +64,51 @@ public class Actions
 	 * Send a message to a channel.
 	 *
 	 * @param channel The channel to send to.
+	 * @param text    The message to send.
+	 */
+	public static void sendMessage(PrivateChannel channel, String text)
+	{
+		if(channel != null)
+		{
+			if(channel.getUser().isBot())
+				Log.info("Cannot send private message to bot " + Actions.getUserToLog(channel.getUser()) + " : " + text);
+			else
+			{
+				channel.sendMessage(text).queue();
+				Log.info("Sent private message to " + getUserToLog(channel.getUser()) + " : " + text);
+			}
+		}
+		else
+			Log.warning("Cannot send private message to null channel : %s", text);
+	}
+	
+	/**
+	 * Send a message to a channel.
+	 *
+	 * @param channel The channel to send to.
+	 * @param text    The message to send.
+	 */
+	public static void sendMessage(TextChannel channel, String text)
+	{
+		sendMessage(channel, null, text);
+	}
+	
+	/**
+	 * Get a user in a readable way.
+	 *
+	 * @param user The user to print.
+	 *
+	 * @return The string representing the user.
+	 */
+	public static String getUserToLog(User user)
+	{
+		return user == null ? "NULL" : (user.getName() + "#" + user.getDiscriminator() + " (" + user.getIdLong() + ")");
+	}
+	
+	/**
+	 * Send a message to a channel.
+	 *
+	 * @param channel The channel to send to.
 	 * @param onDone  The action to do when done.
 	 * @param text    The message to send.
 	 */
@@ -85,17 +130,6 @@ public class Actions
 		}
 		else
 			Log.warning("Cannot send message to null channel : %s", text);
-	}
-	
-	/**
-	 * Send a message to a channel.
-	 *
-	 * @param channel The channel to send to.
-	 * @param text    The message to send.
-	 */
-	public static void sendMessage(TextChannel channel, String text)
-	{
-		sendMessage(channel, null, text);
 	}
 	
 	/**
@@ -126,34 +160,24 @@ public class Actions
 	/**
 	 * Send a message to a channel.
 	 *
-	 * @param channel The channel to send to.
-	 * @param text    The message to send.
-	 */
-	public static void sendMessage(PrivateChannel channel, String text)
-	{
-		if(channel != null)
-		{
-			if(channel.getUser().isBot())
-				Log.info("Cannot send private message to bot " + Actions.getUserToLog(channel.getUser()) + " : " + text);
-			else
-			{
-				channel.sendMessage(text).queue();
-				Log.info("Sent private message to " + getUserToLog(channel.getUser()) + " : " + text);
-			}
-		}
-		else
-			Log.warning("Cannot send private message to null channel : %s", text);
-	}
-	
-	/**
-	 * Send a message to a channel.
-	 *
 	 * @param channelID The channel to send to.
 	 * @param text      The message to send.
 	 */
 	public static void sendMessage(long channelID, String text)
 	{
 		sendMessage(Main.getJDA().getTextChannelById(channelID), text);
+	}
+	
+	/**
+	 * Send a message to a user.
+	 *
+	 * @param user   The user to send to.
+	 * @param format The format fo the message.
+	 * @param args   The message parameters.
+	 */
+	public static void replyPrivate(User user, String format, Object... args)
+	{
+		replyPrivate(user, String.format(format, args));
 	}
 	
 	/**
@@ -171,64 +195,6 @@ public class Actions
 	}
 	
 	/**
-	 * Send a message to a user.
-	 *
-	 * @param user   The user to send to.
-	 * @param format The format fo the message.
-	 * @param args   The message parameters.
-	 */
-	public static void replyPrivate(User user, String format, Object... args)
-	{
-		replyPrivate(user, String.format(format, args));
-	}
-	
-	/**
-	 * Give a role to a user.
-	 *
-	 * @param guild The guild the role is in.
-	 * @param user  The user to set the role to.
-	 * @param role  The role to set.
-	 */
-	public static void giveRole(Guild guild, User user, Role role)
-	{
-		try
-		{
-			Member member = guild.getMember(user);
-			if(member.getRoles().contains(role))
-			{
-				Log.info(getUserToLog(user) + " already have role " + role);
-			}
-			else
-			{
-				//noinspection ConstantConditions
-				guild.getController().addSingleRoleToMember(guild.getMember(user), role).queue();
-				Log.info("Added role " + role + " to " + getUserToLog(user));
-			}
-		}
-		catch(IllegalArgumentException e)
-		{
-			Log.warning(e, "User/Role not found " + role);
-		}
-		catch(Exception e)
-		{
-			Log.error(e, "Error giving role %s to %s", role, getUserToLog(user));
-		}
-	}
-	
-	/**
-	 * Give roles to a user.
-	 *
-	 * @param guild The guild the role is in.
-	 * @param user  The user to set the role to.
-	 * @param roles The roles to set.
-	 */
-	public static void giveRole(Guild guild, User user, List<Role> roles)
-	{
-		for(Role role: roles)
-			giveRole(guild, user, role);
-	}
-	
-	/**
 	 * Remove a role from a user.
 	 *
 	 * @param guild The guild the role is in.
@@ -238,6 +204,17 @@ public class Actions
 	public static void removeRole(Guild guild, User user, Role role)
 	{
 		removeRole(guild.getMember(user), role);
+	}
+	
+	/**
+	 * Remove a role from a user.
+	 *
+	 * @param member The user to remove the role from.
+	 * @param role   The role to remove.
+	 */
+	public static void removeRole(Member member, Role role)
+	{
+		removeRole(member.getUser(), role);
 	}
 	
 	/**
@@ -261,17 +238,6 @@ public class Actions
 	}
 	
 	/**
-	 * Remove a role from a user.
-	 *
-	 * @param member The user to remove the role from.
-	 * @param role   The role to remove.
-	 */
-	public static void removeRole(Member member, Role role)
-	{
-		removeRole(member.getUser(), role);
-	}
-	
-	/**
 	 * Remove roles from a user.
 	 *
 	 * @param member The user to remove the roles from.
@@ -280,18 +246,6 @@ public class Actions
 	public static void removeRole(Member member, List<Role> roles)
 	{
 		roles.forEach(r -> removeRole(member, r));
-	}
-	
-	/**
-	 * Get a user in a readable way.
-	 *
-	 * @param user The user to print.
-	 *
-	 * @return The string representing the user.
-	 */
-	public static String getUserToLog(User user)
-	{
-		return user == null ? "NULL" : (user.getName() + "#" + user.getDiscriminator() + " (" + user.getIdLong() + ")");
 	}
 	
 	/**
@@ -415,6 +369,19 @@ public class Actions
 	}
 	
 	/**
+	 * Give roles to a user.
+	 *
+	 * @param guild The guild the role is in.
+	 * @param user  The user to set the role to.
+	 * @param roles The roles to set.
+	 */
+	public static void giveRole(Guild guild, User user, List<Role> roles)
+	{
+		for(Role role: roles)
+			giveRole(guild, user, role);
+	}
+	
+	/**
 	 * Get a role by its ID.
 	 *
 	 * @param guild The guild the role is in.
@@ -425,6 +392,39 @@ public class Actions
 	public static Role getRoleByID(Guild guild, Long role)
 	{
 		return guild.getRoleById(role);
+	}
+	
+	/**
+	 * Give a role to a user.
+	 *
+	 * @param guild The guild the role is in.
+	 * @param user  The user to set the role to.
+	 * @param role  The role to set.
+	 */
+	public static void giveRole(Guild guild, User user, Role role)
+	{
+		try
+		{
+			Member member = guild.getMember(user);
+			if(member.getRoles().contains(role))
+			{
+				Log.info(getUserToLog(user) + " already have role " + role);
+			}
+			else
+			{
+				//noinspection ConstantConditions
+				guild.getController().addSingleRoleToMember(guild.getMember(user), role).queue();
+				Log.info("Added role " + role + " to " + getUserToLog(user));
+			}
+		}
+		catch(IllegalArgumentException e)
+		{
+			Log.warning(e, "User/Role not found " + role);
+		}
+		catch(Exception e)
+		{
+			Log.error(e, "Error giving role %s to %s", role, getUserToLog(user));
+		}
 	}
 	
 	/**
@@ -462,17 +462,6 @@ public class Actions
 		}
 		else
 			Log.warning("Cannot send private message to null channel : %s", getEmbedForLog(embed));
-	}
-	
-	/**
-	 * Send a message to a channel.
-	 *
-	 * @param channel The channel to send to.
-	 * @param embeds  The messages to send.
-	 */
-	public static void sendMessage(TextChannel channel, List<MessageEmbed> embeds)
-	{
-		embeds.forEach(e -> sendMessage(channel, e));
 	}
 	
 	/**
@@ -533,6 +522,17 @@ public class Actions
 		}
 		else
 			Log.warning("Cannot send message to null channel : %s", getEmbedForLog(embed));
+	}
+	
+	/**
+	 * Send a message to a channel.
+	 *
+	 * @param channel The channel to send to.
+	 * @param embeds  The messages to send.
+	 */
+	public static void sendMessage(TextChannel channel, List<MessageEmbed> embeds)
+	{
+		embeds.forEach(e -> sendMessage(channel, e));
 	}
 	
 	/**

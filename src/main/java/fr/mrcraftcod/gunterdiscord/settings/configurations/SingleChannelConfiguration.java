@@ -46,26 +46,6 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration
 	}
 	
 	/**
-	 * Get the text channel.
-	 *
-	 * @param guild The guild.
-	 *
-	 * @return The text channel or null if not found.
-	 */
-	public TextChannel getTextChannel(Guild guild)
-	{
-		try
-		{
-			return guild.getJDA().getTextChannelById(getLong(guild));
-		}
-		catch(InvalidClassException | NoValueDefinedException e)
-		{
-			Log.error(e, "Error getting channel from config");
-		}
-		return null;
-	}
-	
-	/**
 	 * Tells if this config represents the given channel.
 	 *
 	 * @param channel The channel.
@@ -93,5 +73,25 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration
 		if(channel == null)
 			return false;
 		return ID == channel.getIdLong();
+	}
+	
+	/**
+	 * Get the text channel.
+	 *
+	 * @param guild The guild.
+	 *
+	 * @return The text channel or null if not found.
+	 */
+	public TextChannel getTextChannel(Guild guild)
+	{
+		try
+		{
+			return guild.getJDA().getTextChannelById(getLong(guild));
+		}
+		catch(InvalidClassException | NoValueDefinedException e)
+		{
+			Log.error(e, "Error getting channel from config");
+		}
+		return null;
 	}
 }

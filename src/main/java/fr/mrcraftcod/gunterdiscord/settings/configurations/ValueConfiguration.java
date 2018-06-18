@@ -47,6 +47,34 @@ public abstract class ValueConfiguration extends Configuration
 	}
 	
 	/**
+	 * Get the value as an object.
+	 *
+	 * @param guild The guild.
+	 *
+	 * @return The object or null if not found.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a value.
+	 */
+	protected Object getObject(Guild guild) throws IllegalArgumentException
+	{
+		if(getType() != ConfigType.VALUE)
+			throw new IllegalArgumentException("Not a value config");
+		return Settings.getObject(guild, getName());
+	}
+	
+	/**
+	 * Set the value.
+	 *
+	 * @param guild The guild.
+	 * @param value the value to set.
+	 */
+	public void setValue(Guild guild, Object value)
+	{
+		lastValue = value;
+		Settings.setValue(guild, this, value);
+	}
+	
+	/**
 	 * Get the value as a long.
 	 *
 	 * @param guild        The guild.
@@ -92,12 +120,6 @@ public abstract class ValueConfiguration extends Configuration
 		if(value instanceof String)
 			return (String) value;
 		throw new InvalidClassException("Config is not a string: " + value.getClass().getSimpleName());
-	}
-	
-	@Override
-	public ConfigType getType()
-	{
-		return ConfigType.VALUE;
 	}
 	
 	/**
@@ -173,31 +195,9 @@ public abstract class ValueConfiguration extends Configuration
 		return ConfigurationCommand.ActionResult.OK;
 	}
 	
-	/**
-	 * Get the value as an object.
-	 *
-	 * @param guild The guild.
-	 *
-	 * @return The object or null if not found.
-	 *
-	 * @throws IllegalArgumentException If this configuration isn't a value.
-	 */
-	protected Object getObject(Guild guild) throws IllegalArgumentException
+	@Override
+	public ConfigType getType()
 	{
-		if(getType() != ConfigType.VALUE)
-			throw new IllegalArgumentException("Not a value config");
-		return Settings.getObject(guild, getName());
-	}
-	
-	/**
-	 * Set the value.
-	 *
-	 * @param guild The guild.
-	 * @param value the value to set.
-	 */
-	public void setValue(Guild guild, Object value)
-	{
-		lastValue = value;
-		Settings.setValue(guild, this, value);
+		return ConfigType.VALUE;
 	}
 }

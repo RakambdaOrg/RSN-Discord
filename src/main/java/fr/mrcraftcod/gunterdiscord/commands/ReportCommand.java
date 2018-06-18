@@ -29,18 +29,6 @@ public class ReportCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getName()
-	{
-		return "Report";
-	}
-	
-	@Override
-	public List<String> getCommand()
-	{
-		return List.of("report", "r");
-	}
-	
-	@Override
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
@@ -70,15 +58,27 @@ public class ReportCommand extends BasicCommand
 	}
 	
 	@Override
-	public String getDescription()
-	{
-		return "Envoi un message aux modérateurs";
-	}
-	
-	@Override
 	public int getScope()
 	{
 		return ChannelType.TEXT.getId();
+	}
+	
+	@Override
+	public String getName()
+	{
+		return "Report";
+	}
+	
+	@Override
+	public List<String> getCommand()
+	{
+		return List.of("report", "r");
+	}
+	
+	@Override
+	public String getDescription()
+	{
+		return "Envoi un message aux modérateurs";
 	}
 	
 	@Override
