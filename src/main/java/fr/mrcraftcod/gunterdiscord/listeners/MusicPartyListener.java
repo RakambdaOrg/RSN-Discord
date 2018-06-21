@@ -9,6 +9,10 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import fr.mrcraftcod.gunterdiscord.settings.configs.MusicPartyChannelConfig;
+import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.awt.*;
 import java.nio.file.Files;
@@ -72,7 +76,7 @@ public class MusicPartyListener extends ListenerAdapter
 	 */
 	public static Optional<MusicPartyListener> getParty(Guild guild, VoiceChannel voiceChannel)
 	{
-		return getParty(guild, true);
+		return getParty(guild, voiceChannel, true);
 	}
 	
 	/**
@@ -131,10 +135,10 @@ public class MusicPartyListener extends ListenerAdapter
 			bests.put(score, new ArrayList<>());
 		scores.forEach((k, v) -> {
 			if(bests.containsKey(v))
-				bests.get(v).add(jda.getUserById(k).getAsMention());
+				bests.get(v).add(getGuild().getJDA().getUserById(k).getAsMention());
 		});
 	     
-	    EmbedBuilder builder = Utilities.buildEmbed(guild.getJDA().getSelfUser().getUser(), Color.PINK, "Leaderboard");
+	    EmbedBuilder builder = Utilities.buildEmbed(getGuild().getJDA().getSelfUser(), Color.PINK, "Leaderboard");
 	    builder.setDescription("Voici le top des scores");
 	    bests.keySet().stream().sorted(Comparator.reverseOrder()).map(v -> new MessageEmbed.Field("Position " + (1 + bestsScores.indexOf(v)) + " (" + v + " points)", String.join(", ", bests.get(v)), false)).forEach(builder::addField);
 		Actions.sendMessage(musicPartyChannel, builder.build());
