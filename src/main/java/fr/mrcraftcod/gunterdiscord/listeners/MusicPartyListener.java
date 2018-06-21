@@ -35,6 +35,7 @@ public class MusicPartyListener extends ListenerAdapter
 	private HashMap<Long, Integer> answers;
 	private boolean stopped;
 	private final TextChannel musicPartyChannel;
+	private String currentTitle = null;
 	
 	/**
 	 * Constructor.
@@ -147,8 +148,42 @@ public class MusicPartyListener extends ListenerAdapter
 		{
 			if(musicPartyChannel.getIdLong() == event.getMessage().getChannel().getIdLong())
 			{
-			    //TODO check messages
-				GunterAudioManager.play(voiceChannel, arg);
+			    if(Utilities.isModerator(event.getMember())
+			    {
+			        LinkedList<String> args = new LinkedList<>();
+			        args.addAll(event.getMessage().getRawContent().split(" "));
+			        if(args.size() > 1)
+			        {
+			            if(args.poll().equals("mp"))
+			            {
+			                if(args.size() < 2)
+			                    Actions.replyPrivate(event.getAuthor(), "Nombre de parametres incorrecte");
+			                else
+			                {
+			                    GunterAudioManager.play(voiceChannel, args.poll());
+			                    currentTitle = String.joining(args, " ");
+			                    
+			                    EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Nouveau son");
+                        	    builder.setDescription("Essayez de deviner le titre de la musique sous la forme");
+                        	    builder.addField("Pour participez, écrivez votre pensée sous la forme:", "artiste - titre", false);
+                        	    Actions.sendMessage(musicPartyChannel, builder.build());
+			                }
+			            }
+			        }    
+			    }
+			    else
+			    {
+			        if(currentTitle != null & currentTitle.equals(event.getMessage().getRawContent()))
+			        {
+			            EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Son trouvé");
+                        builder.addField("Titre de la musique", currentTitle, false);
+                        Actions.sendMessage(musicPartyChannel, builder.build());
+                        
+                        currentTitle = null;
+                        
+                        answers.compute(event.getAuthor().getIdLong(), (key, value) -> value == null ? 1 : (value + 1));
+			        }
+			    }
 			}
 		}
 		catch(Exception e)
