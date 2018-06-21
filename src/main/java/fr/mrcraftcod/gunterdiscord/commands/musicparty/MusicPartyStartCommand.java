@@ -24,7 +24,7 @@ public class MusicPartyStartCommand extends BasicCommand
 	 *
 	 * @param parent The parent command.
 	 */
-	QuizStartCommand(Command parent)
+	MusicPartyStartCommand(Command parent)
 	{
 		super(parent);
 	}
