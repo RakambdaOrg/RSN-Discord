@@ -29,10 +29,10 @@ import java.util.stream.Collectors;
  */
 public class MusicPartyListener extends ListenerAdapter
 {
-	private static final ArrayList<QuizListener> parties = new ArrayList<>();
+	private static final ArrayList<MusicPartyListener> parties = new ArrayList<>();
 	private final Guild guild;
 	private final VoiceChannel voiceChannel;
-	private HashMap<Long, Integer> answers;
+	private HashMap<Long, Integer> scores;
 	private boolean stopped;
 	private final TextChannel musicPartyChannel;
 	private String currentTitle = null;
@@ -72,7 +72,7 @@ public class MusicPartyListener extends ListenerAdapter
 	 */
 	public static Optional<MusicPartyListener> getParty(Guild guild, VoiceChannel voiceChannel)
 	{
-		return getQuiz(guild, true);
+		return getParty(guild, true);
 	}
 	
 	/**
@@ -188,7 +188,7 @@ public class MusicPartyListener extends ListenerAdapter
                         
                         currentTitle = null;
                         
-                        answers.compute(event.getAuthor().getIdLong(), (key, value) -> value == null ? 1 : (value + 1));
+                        scores.compute(event.getAuthor().getIdLong(), (key, value) -> value == null ? 1 : (value + 1));
 			        }
 			    }
 			}
