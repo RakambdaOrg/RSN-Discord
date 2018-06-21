@@ -124,7 +124,19 @@ public class MusicPartyListener extends ListenerAdapter
 	 */
 	 public void printScores()
 	 {
-	    //TODO Send results
+	     HashMap<Integer, List<String>> bests = new HashMap<>();
+		List<Integer> bestsScores = scores.values().stream().sorted(Comparator.reverseOrder()).distinct().limit(5).collect(Collectors.toList());
+		for(int score: bestsScores)
+			bests.put(score, new ArrayList<>());
+		scores.forEach((k, v) -> {
+			if(bests.containsKey(v))
+				bests.get(v).add(jda.getUserById(k).getAsMention());
+		});
+	     
+	    EmbedBuilder builder = Utilities.buildEmbed(guild.getJDA().getSelfUser().getUser(), Color.PINK, "Le jeu est terminé");
+	    builder.setDescription("Voici le top des scores");
+	    bests.keySet().stream().sorted(Comparator.reverseOrder()).map(v -> new MessageEmbed.Field("Position " + (1 + bestsScores.indexOf(v)) + " (" + v + " points)", String.join(", ", bests.get(v)), false)).forEach(builder::addField);
+		Actions.sendMessage(musicPartyChannel, builder.build());
 	 }
 	 
 	 @Override
