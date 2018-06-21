@@ -167,7 +167,7 @@ public class MusicPartyListener extends ListenerAdapter
     			                else
     			                {
     			                    GunterAudioManager.play(voiceChannel, args.poll());
-    			                    currentTitle = String.joining(args, " ");
+    			                    currentTitle = String.join(" ", args);
     			                    
     			                    EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Nouveau son");
                             	    builder.setDescription("Essayez de deviner le titre de la musique sous la forme");
