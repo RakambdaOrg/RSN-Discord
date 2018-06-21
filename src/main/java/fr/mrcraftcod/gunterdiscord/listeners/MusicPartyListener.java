@@ -34,6 +34,7 @@ public class MusicPartyListener extends ListenerAdapter
 	private final VoiceChannel voiceChannel;
 	private HashMap<Long, Integer> answers;
 	private boolean stopped;
+	private TextChannel musicPartyChannel;
 	
 	/**
 	 * Constructor.
@@ -46,6 +47,7 @@ public class MusicPartyListener extends ListenerAdapter
 		this.guild = guild;
 		this.voiceChannel = voiceChannel;
 		this.stopped = false;
+		this.musicPartyChannel = new MusicPartyChannelConfig().getTextChannel();
 		
 		guild.getJDA().addEventListener(this);
 		parties.add(this);
@@ -124,7 +126,24 @@ public class MusicPartyListener extends ListenerAdapter
 	 */
 	 public void printScores()
 	 {
-	    TextChannel channel = new MusicPartyChannelConfig().getTextChannel(getGuild());
 	    //TODO Send results
 	 }
+	 
+	@Override
+	public void onMessageReceived(MessageReceivedEvent event)
+	{
+		super.onMessageReceived(event);
+		try
+		{
+			if(musicPartyChannel.getIdLong() == event.getMessage().getChannel().getIdLong())
+			{
+				//TODO process messages
+			}
+		}
+		catch(Exception e)
+		{
+			Log.error(e, "");
+		}
+	}
+
 }
