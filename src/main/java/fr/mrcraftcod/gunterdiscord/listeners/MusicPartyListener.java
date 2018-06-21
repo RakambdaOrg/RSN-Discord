@@ -173,7 +173,7 @@ public class MusicPartyListener extends ListenerAdapter
 			    }
 			    else
 			    {
-			        if(currentTitle != null & currentTitle.equals(event.getMessage().getRawContent()))
+			        if(currentTitle != null & currentTitle.equalsIgnoreCase(event.getMessage().getRawContent()))
 			        {
 			            EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Son trouvé");
                         builder.addField("Titre de la musique", currentTitle, false);
