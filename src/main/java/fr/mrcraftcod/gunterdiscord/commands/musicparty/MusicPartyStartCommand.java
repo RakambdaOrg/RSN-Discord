@@ -33,7 +33,8 @@ public class MusicPartyStartCommand extends BasicCommand
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
-		MusicPartyListener.getParty(event.getGuild());
+		//TODO get user voice channel
+		MusicPartyListener.getParty(event.getGuild(), voiceChannel);
 		return CommandResult.SUCCESS;
 	}
 	
