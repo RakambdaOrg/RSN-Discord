@@ -33,8 +33,13 @@ public class MusicPartyStartCommand extends BasicCommand
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
-		//TODO get user voice channel
-		MusicPartyListener.getParty(event.getGuild(), voiceChannel);
+		Member member = event.getGuild().getMember(u);
+		if(member.getVoiceState().inVoiceChannel())
+		{
+			MusicPartyListener.getParty(event.getGuild(), member.getVoiceState().getChannel());
+		}
+		else
+			Actions.reply(event, "Vous devez être dans un channel vocal pour executer cette commande");
 		return CommandResult.SUCCESS;
 	}
 	
