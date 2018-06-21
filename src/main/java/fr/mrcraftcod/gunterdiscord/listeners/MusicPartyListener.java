@@ -44,6 +44,7 @@ public class MusicPartyListener extends ListenerAdapter
 		this.guild = guild;
 		this.voiceChannel = voiceChannel;
 		this.stopped = false;
+		this.scores = new HashMap<>();
 		this.musicPartyChannel = new MusicPartyChannelConfig().getTextChannel(guild);
 		if(musicPartyChannel == null)
 			throw new IllegalStateException("Music party channel not defined");
