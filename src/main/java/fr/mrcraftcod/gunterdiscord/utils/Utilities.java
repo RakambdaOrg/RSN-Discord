@@ -78,7 +78,7 @@ public class Utilities
 	 */
 	public static boolean isModerator(Member member)
 	{
-		return Utilities.hasRoleIDs(member, new ModoRolesConfig().getAsList(member.getGuild()));
+		return Utilities.hasRoleIDs(member, new ModoRolesConfig().getAsList(member.getGuild())) || isAdmin(member);
 	}
 	
 	/**
@@ -93,7 +93,7 @@ public class Utilities
 		for(Role role: member.getRoles())
 			if(role.hasPermission(Permission.ADMINISTRATOR))
 				return true;
-		return false;
+		return isCreator(member);
 	}
 	
 	/**
