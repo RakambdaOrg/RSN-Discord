@@ -151,6 +151,7 @@ public class MusicPartyListener extends ListenerAdapter
 	 */
 	public void stop()
 	{
+		parties.remove(this);
 		Log.info("Stopping");
 		stopped = true;
 		GunterAudioManager.leave(getGuild());
