@@ -60,6 +60,7 @@ public class TrackScheduler extends AudioEventAdapter
 	 */
 	public boolean nextTrack()
 	{
+		Log.info("Playing next track");
 		return player.startTrack(queue.poll(), false);
 	}
 	

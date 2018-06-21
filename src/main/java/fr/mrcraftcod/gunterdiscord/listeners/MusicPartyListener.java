@@ -128,6 +128,11 @@ public class MusicPartyListener extends ListenerAdapter
 	public void skip()
 	{
 		GunterAudioManager.skip(getGuild());
+		
+		EmbedBuilder builder = Utilities.buildEmbed(musicPartyChannel.getJDA().getSelfUser(), Color.GREEN, "Personne n'a trouvé");
+		builder.addField("Titre de la musique", currentTitle, false);
+		Actions.sendMessage(musicPartyChannel, builder.build());
+		
 		currentTitle = null;
 	}
 	
@@ -191,6 +196,7 @@ public class MusicPartyListener extends ListenerAdapter
 					Actions.sendMessage(musicPartyChannel, builder.build());
 					
 					currentTitle = null;
+					GunterAudioManager.skip(getGuild());
 					
 					scores.compute(event.getAuthor().getIdLong(), (key, value) -> value == null ? 1 : (value + 1));
 				}
