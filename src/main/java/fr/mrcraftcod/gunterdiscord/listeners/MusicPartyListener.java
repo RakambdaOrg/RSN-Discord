@@ -34,7 +34,7 @@ public class MusicPartyListener extends ListenerAdapter
 	private final VoiceChannel voiceChannel;
 	private HashMap<Long, Integer> answers;
 	private boolean stopped;
-	private TextChannel musicPartyChannel;
+	private final TextChannel musicPartyChannel;
 	
 	/**
 	 * Constructor.
@@ -47,12 +47,10 @@ public class MusicPartyListener extends ListenerAdapter
 		this.guild = guild;
 		this.voiceChannel = voiceChannel;
 		this.stopped = false;
-		this.musicPartyChannel = new MusicPartyChannelConfig().getTextChannel();
+		this.musicPartyChannel = new MusicPartyChannelConfig().getTextChannel(guild);
 		
 		guild.getJDA().addEventListener(this);
 		parties.add(this);
-		
-		//TODO connect voice
 	}
 	
 	/**
@@ -117,7 +115,7 @@ public class MusicPartyListener extends ListenerAdapter
 	public void stop()
 	{
 		stopped = true;
-		//TODO Disconnect voice
+		GunterAudioManager.leave(getGuild());
 		printScores();
 	}
 	
@@ -129,7 +127,7 @@ public class MusicPartyListener extends ListenerAdapter
 	    //TODO Send results
 	 }
 	 
-	@Override
+	 @Override
 	public void onMessageReceived(MessageReceivedEvent event)
 	{
 		super.onMessageReceived(event);
@@ -137,7 +135,8 @@ public class MusicPartyListener extends ListenerAdapter
 		{
 			if(musicPartyChannel.getIdLong() == event.getMessage().getChannel().getIdLong())
 			{
-				//TODO process messages
+			    //TODO check messages
+				GunterAudioManager.play(voiceChannel, arg);
 			}
 		}
 		catch(Exception e)
@@ -145,5 +144,4 @@ public class MusicPartyListener extends ListenerAdapter
 			Log.error(e, "");
 		}
 	}
-
 }
