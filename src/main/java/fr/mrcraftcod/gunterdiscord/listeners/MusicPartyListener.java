@@ -134,7 +134,7 @@ public class MusicPartyListener extends ListenerAdapter
 				bests.get(v).add(jda.getUserById(k).getAsMention());
 		});
 	     
-	    EmbedBuilder builder = Utilities.buildEmbed(guild.getJDA().getSelfUser().getUser(), Color.PINK, "Le jeu est terminé");
+	    EmbedBuilder builder = Utilities.buildEmbed(guild.getJDA().getSelfUser().getUser(), Color.PINK, "Leaderboard");
 	    builder.setDescription("Voici le top des scores");
 	    bests.keySet().stream().sorted(Comparator.reverseOrder()).map(v -> new MessageEmbed.Field("Position " + (1 + bestsScores.indexOf(v)) + " (" + v + " points)", String.join(", ", bests.get(v)), false)).forEach(builder::addField);
 		Actions.sendMessage(musicPartyChannel, builder.build());
@@ -156,17 +156,24 @@ public class MusicPartyListener extends ListenerAdapter
 			        {
 			            if(args.poll().equals("mp"))
 			            {
-			                if(args.size() < 2)
-			                    Actions.replyPrivate(event.getAuthor(), "Nombre de parametres incorrecte");
+			                if(currentTitle == null)
+			                {
+    			                if(args.size() < 2)
+    			                    Actions.replyPrivate(event.getAuthor(), "Nombre de parametres incorrecte");
+    			                else
+    			                {
+    			                    GunterAudioManager.play(voiceChannel, args.poll());
+    			                    currentTitle = String.joining(args, " ");
+    			                    
+    			                    EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Nouveau son");
+                            	    builder.setDescription("Essayez de deviner le titre de la musique sous la forme");
+                            	    builder.addField("Pour participez, écrivez votre pensée sous la forme:", "artiste - titre", false);
+                            	    Actions.sendMessage(musicPartyChannel, builder.build());
+    			                }
+			                }
 			                else
 			                {
-			                    GunterAudioManager.play(voiceChannel, args.poll());
-			                    currentTitle = String.joining(args, " ");
-			                    
-			                    EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Nouveau son");
-                        	    builder.setDescription("Essayez de deviner le titre de la musique sous la forme");
-                        	    builder.addField("Pour participez, écrivez votre pensée sous la forme:", "artiste - titre", false);
-                        	    Actions.sendMessage(musicPartyChannel, builder.build());
+			                    Actions.replyPrivate(event.getAuthor(), "Veuillez attendre que la musique précédente soit terminée");
 			                }
 			            }
 			        }    
