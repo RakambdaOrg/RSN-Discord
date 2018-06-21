@@ -9,7 +9,7 @@ cache:
   - .m2/repository/
   - target/
 
-verify:
+test:
   stage: verify
   script:
   - mvn $MAVEN_CLI_OPTS verify
