@@ -10,7 +10,7 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-06-21
  */
-public class QuizCompositeCommand extends CompositeCommand
+public class MusicPartyCompositeCommand extends CompositeCommand
 {
 	/**
 	 * Constructor.
