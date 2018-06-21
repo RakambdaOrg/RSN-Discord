@@ -1,29 +1,20 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.Main;
-import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
-import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import fr.mrcraftcod.gunterdiscord.settings.configs.MusicPartyChannelConfig;
-import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
-import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.Log;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.awt.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.time.Duration;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 /**
@@ -45,7 +36,7 @@ public class MusicPartyListener extends ListenerAdapter
 	/**
 	 * Constructor.
 	 *
-	 * @param guild  The guild.
+	 * @param guild        The guild.
 	 * @param voiceChannel The voice channel to play the music in.
 	 */
 	private MusicPartyListener(Guild guild, VoiceChannel voiceChannel)
@@ -70,7 +61,7 @@ public class MusicPartyListener extends ListenerAdapter
 	/**
 	 * Get the current instance of the game.
 	 *
-	 * @param guild  The guild.
+	 * @param guild        The guild.
 	 * @param voiceChannel The voice channel to play the music in.
 	 *
 	 * @return The game of the guild.
@@ -105,6 +96,29 @@ public class MusicPartyListener extends ListenerAdapter
 		});
 	}
 	
+	public void setMusic(MessageReceivedEvent event, LinkedList<String> args)
+	{
+		if(currentTitle == null)
+		{
+			if(args.size() < 2)
+				Actions.replyPrivate(event.getAuthor(), "Nombre de parametres incorrecte");
+			else
+			{
+				GunterAudioManager.play(voiceChannel, args.poll());
+				currentTitle = String.join(" ", args);
+				
+				EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Nouveau son");
+				builder.setDescription("Essayez de deviner le titre de la musique sous la forme");
+				builder.addField("Pour participez, écrivez votre pensée sous la forme:", "artiste - titre", false);
+				Actions.sendMessage(musicPartyChannel, builder.build());
+			}
+		}
+		else
+		{
+			Actions.replyPrivate(event.getAuthor(), "Veuillez attendre que la musique précédente soit terminée");
+		}
+	}
+	
 	/**
 	 * Get the guild.
 	 *
@@ -128,9 +142,9 @@ public class MusicPartyListener extends ListenerAdapter
 	/**
 	 * Prints the scores.
 	 */
-	 public void printScores()
-	 {
-	     HashMap<Integer, List<String>> bests = new HashMap<>();
+	public void printScores()
+	{
+		HashMap<Integer, List<String>> bests = new HashMap<>();
 		List<Integer> bestsScores = scores.values().stream().sorted(Comparator.reverseOrder()).distinct().limit(5).collect(Collectors.toList());
 		for(int score: bestsScores)
 			bests.put(score, new ArrayList<>());
@@ -138,14 +152,14 @@ public class MusicPartyListener extends ListenerAdapter
 			if(bests.containsKey(v))
 				bests.get(v).add(getGuild().getJDA().getUserById(k).getAsMention());
 		});
-	     
-	    EmbedBuilder builder = Utilities.buildEmbed(getGuild().getJDA().getSelfUser(), Color.PINK, "Leaderboard");
-	    builder.setDescription("Voici le top des scores");
-	    bests.keySet().stream().sorted(Comparator.reverseOrder()).map(v -> new MessageEmbed.Field("Position " + (1 + bestsScores.indexOf(v)) + " (" + v + " points)", String.join(", ", bests.get(v)), false)).forEach(builder::addField);
+		
+		EmbedBuilder builder = Utilities.buildEmbed(getGuild().getJDA().getSelfUser(), Color.PINK, "Leaderboard");
+		builder.setDescription("Voici le top des scores");
+		bests.keySet().stream().sorted(Comparator.reverseOrder()).map(v -> new MessageEmbed.Field("Position " + (1 + bestsScores.indexOf(v)) + " (" + v + " points)", String.join(", ", bests.get(v)), false)).forEach(builder::addField);
 		Actions.sendMessage(musicPartyChannel, builder.build());
-	 }
-	 
-	 @Override
+	}
+	
+	@Override
 	public void onMessageReceived(MessageReceivedEvent event)
 	{
 		super.onMessageReceived(event);
@@ -153,48 +167,16 @@ public class MusicPartyListener extends ListenerAdapter
 		{
 			if(musicPartyChannel.getIdLong() == event.getMessage().getChannel().getIdLong())
 			{
-			    if(Utilities.isModerator(event.getMember()))
-			    {
-			        LinkedList<String> args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
-			        if(args.size() > 1)
-			        {
-			            if(args.poll().equals("mp"))
-			            {
-			                if(currentTitle == null)
-			                {
-    			                if(args.size() < 2)
-    			                    Actions.replyPrivate(event.getAuthor(), "Nombre de parametres incorrecte");
-    			                else
-    			                {
-    			                    GunterAudioManager.play(voiceChannel, args.poll());
-    			                    currentTitle = String.join(" ", args);
-    			                    
-    			                    EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Nouveau son");
-                            	    builder.setDescription("Essayez de deviner le titre de la musique sous la forme");
-                            	    builder.addField("Pour participez, écrivez votre pensée sous la forme:", "artiste - titre", false);
-                            	    Actions.sendMessage(musicPartyChannel, builder.build());
-    			                }
-			                }
-			                else
-			                {
-			                    Actions.replyPrivate(event.getAuthor(), "Veuillez attendre que la musique précédente soit terminée");
-			                }
-			            }
-			        }    
-			    }
-			    else
-			    {
-			        if(currentTitle != null & currentTitle.equalsIgnoreCase(event.getMessage().getContentRaw()))
-			        {
-			            EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Son trouvé");
-                        builder.addField("Titre de la musique", currentTitle, false);
-                        Actions.sendMessage(musicPartyChannel, builder.build());
-                        
-                        currentTitle = null;
-                        
-                        scores.compute(event.getAuthor().getIdLong(), (key, value) -> value == null ? 1 : (value + 1));
-			        }
-			    }
+				if(currentTitle != null & currentTitle.equalsIgnoreCase(event.getMessage().getContentRaw()))
+				{
+					EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Son trouvé");
+					builder.addField("Titre de la musique", currentTitle, false);
+					Actions.sendMessage(musicPartyChannel, builder.build());
+					
+					currentTitle = null;
+					
+					scores.compute(event.getAuthor().getIdLong(), (key, value) -> value == null ? 1 : (value + 1));
+				}
 			}
 		}
 		catch(Exception e)

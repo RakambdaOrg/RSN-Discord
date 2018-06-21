@@ -21,6 +21,7 @@ public class MusicPartyCompositeCommand extends CompositeCommand
 		addSubCommand(new MusicPartyStartCommand(this));
 		addSubCommand(new MusicPartyStopCommand(this));
 		addSubCommand(new  MusicPartyScoreCommand(this));
+		addSubCommand(new MusicPartyMusicCommand(this));
 	}
 	
 	@Override
