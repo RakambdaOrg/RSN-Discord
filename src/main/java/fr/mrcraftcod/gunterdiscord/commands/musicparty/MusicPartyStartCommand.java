@@ -7,6 +7,8 @@ import fr.mrcraftcod.gunterdiscord.listeners.MusicPartyListener;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.*;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,7 +35,7 @@ public class MusicPartyStartCommand extends BasicCommand
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
-		Member member = event.getGuild().getMember(u);
+		Member member = event.getMember();
 		if(member.getVoiceState().inVoiceChannel())
 		{
 			MusicPartyListener.getParty(event.getGuild(), member.getVoiceState().getChannel());
