@@ -13,6 +13,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import fr.mrcraftcod.gunterdiscord.settings.configs.MusicPartyChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.awt.*;
 import java.nio.file.Files;
@@ -154,8 +155,7 @@ public class MusicPartyListener extends ListenerAdapter
 			{
 			    if(Utilities.isModerator(event.getMember()))
 			    {
-			        LinkedList<String> args = new LinkedList<>();
-			        args.addAll(event.getMessage().getRawContent().split(" "));
+			        LinkedList<String> args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 			        if(args.size() > 1)
 			        {
 			            if(args.poll().equals("mp"))
@@ -184,7 +184,7 @@ public class MusicPartyListener extends ListenerAdapter
 			    }
 			    else
 			    {
-			        if(currentTitle != null & currentTitle.equalsIgnoreCase(event.getMessage().getRawContent()))
+			        if(currentTitle != null & currentTitle.equalsIgnoreCase(event.getMessage().getContentRaw()))
 			        {
 			            EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Son trouvé");
                         builder.addField("Titre de la musique", currentTitle, false);
