@@ -148,7 +148,7 @@ public class MusicPartyListener extends ListenerAdapter
 		{
 			if(musicPartyChannel.getIdLong() == event.getMessage().getChannel().getIdLong())
 			{
-			    if(Utilities.isModerator(event.getMember())
+			    if(Utilities.isModerator(event.getMember()))
 			    {
 			        LinkedList<String> args = new LinkedList<>();
 			        args.addAll(event.getMessage().getRawContent().split(" "));
