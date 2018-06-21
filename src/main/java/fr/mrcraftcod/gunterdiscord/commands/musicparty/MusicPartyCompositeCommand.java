@@ -20,6 +20,7 @@ public class MusicPartyCompositeCommand extends CompositeCommand
 		super();
 		addSubCommand(new MusicPartyStartCommand(this));
 		addSubCommand(new MusicPartyStopCommand(this));
+		addSubCommand(new  MusicPartyScoreCommand(this));
 	}
 	
 	@Override
