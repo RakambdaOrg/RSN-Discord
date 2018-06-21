@@ -10,6 +10,6 @@ cache:
   - target/
 
 build:
-  stage: verify
+  stage: build
   script:
   - mvn $MAVEN_CLI_OPTS verify
