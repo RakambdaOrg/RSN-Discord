@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-06-21
  */
-public class MusicPartyListener extends ListenerAdapter implements Runnable
+public class MusicPartyListener extends ListenerAdapter
 {
 	private static final ArrayList<QuizListener> parties = new ArrayList<>();
 	private final Guild guild;
