@@ -1,4 +1,4 @@
-package fr.mrcraftcod.gunterdiscord.commands.quiz;
+package fr.mrcraftcod.gunterdiscord.commands.musicparty;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.CompositeCommand;
 import net.dv8tion.jda.core.entities.ChannelType;
