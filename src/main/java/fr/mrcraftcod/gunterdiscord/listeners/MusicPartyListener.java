@@ -114,7 +114,7 @@ public class MusicPartyListener extends ListenerAdapter
 				currentTitle = String.join(" ", args);
 				
 				EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Nouveau son");
-				builder.setDescription("Essayez de deviner le titre de la musique sous la forme");
+				builder.setDescription("Essayez de deviner le titre");
 				builder.addField("Pour participez, écrivez votre pensée sous la forme:", "artiste - titre", false);
 				Actions.sendMessage(musicPartyChannel, builder.build());
 			}
@@ -123,6 +123,12 @@ public class MusicPartyListener extends ListenerAdapter
 		{
 			Actions.replyPrivate(event.getAuthor(), "Veuillez attendre que la musique précédente soit terminée");
 		}
+	}
+	
+	public void skip()
+	{
+		GunterAudioManager.skip(getGuild());
+		currentTitle = null;
 	}
 	
 	/**
