@@ -31,7 +31,7 @@ public class MusicPartyStopCommand extends BasicCommand
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
-		MusicPartyListener.getParty(event.getGuild(), false).ifPresent(MusicPartyListener::stop);
+		MusicPartyListener.getParty(event.getGuild(), null, false).ifPresent(MusicPartyListener::stop);
 		return CommandResult.SUCCESS;
 	}
 	
