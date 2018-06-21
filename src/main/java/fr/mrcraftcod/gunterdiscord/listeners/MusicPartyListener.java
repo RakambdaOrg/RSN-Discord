@@ -43,7 +43,7 @@ public class MusicPartyListener extends ListenerAdapter
 	 * @param guild  The guild.
 	 * @param voiceChannel The voice channel to play the music in.
 	 */
-	private QuizListener(Guild guild, VoiceChannel voiceChannel)
+	private MusicPartyListener(Guild guild, VoiceChannel voiceChannel)
 	{
 		this.guild = guild;
 		this.voiceChannel = voiceChannel;
