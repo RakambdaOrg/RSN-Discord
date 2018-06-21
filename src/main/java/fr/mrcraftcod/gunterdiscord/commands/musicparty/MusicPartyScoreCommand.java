@@ -62,6 +62,6 @@ public class MusicPartyScoreCommand extends BasicCommand
 	@Override
 	public AccessLevel getAccessLevel()
 	{
-		return AccessLevel.MODERATOR;
+		return AccessLevel.ALL;
 	}
 }

@@ -45,6 +45,8 @@ public class MusicPartyListener extends ListenerAdapter
 		this.voiceChannel = voiceChannel;
 		this.stopped = false;
 		this.musicPartyChannel = new MusicPartyChannelConfig().getTextChannel(guild);
+		if(musicPartyChannel == null)
+			throw new IllegalStateException("Music party channel not defined");
 		
 		guild.getJDA().addEventListener(this);
 		parties.add(this);
@@ -98,6 +100,7 @@ public class MusicPartyListener extends ListenerAdapter
 	
 	public void setMusic(MessageReceivedEvent event, LinkedList<String> args)
 	{
+		Log.info("Setting party music");
 		if(currentTitle == null)
 		{
 			if(args.size() < 2)
@@ -134,6 +137,7 @@ public class MusicPartyListener extends ListenerAdapter
 	 */
 	public void stop()
 	{
+		Log.info("Stopping");
 		stopped = true;
 		GunterAudioManager.leave(getGuild());
 		printScores();
@@ -144,6 +148,8 @@ public class MusicPartyListener extends ListenerAdapter
 	 */
 	public void printScores()
 	{
+		Log.info("Print music party scores");
+		
 		HashMap<Integer, List<String>> bests = new HashMap<>();
 		List<Integer> bestsScores = scores.values().stream().sorted(Comparator.reverseOrder()).distinct().limit(5).collect(Collectors.toList());
 		for(int score: bestsScores)
@@ -167,8 +173,10 @@ public class MusicPartyListener extends ListenerAdapter
 		{
 			if(musicPartyChannel.getIdLong() == event.getMessage().getChannel().getIdLong())
 			{
-				if(currentTitle != null & currentTitle.equalsIgnoreCase(event.getMessage().getContentRaw()))
+				if(currentTitle != null && currentTitle.equalsIgnoreCase(event.getMessage().getContentRaw()))
 				{
+					Log.info(Actions.getUserToLog(event.getAuthor()) + " found the music `" + currentTitle + "`");
+					
 					EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Son trouvé");
 					builder.addField("Titre de la musique", currentTitle, false);
 					Actions.sendMessage(musicPartyChannel, builder.build());

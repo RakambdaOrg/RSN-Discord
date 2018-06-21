@@ -4,11 +4,9 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.MusicPartyListener;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.*;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +36,7 @@ public class MusicPartyStartCommand extends BasicCommand
 		Member member = event.getMember();
 		if(member.getVoiceState().inVoiceChannel())
 		{
-			MusicPartyListener.getParty(event.getGuild(), member.getVoiceState().getChannel());
+			MusicPartyListener.getParty(event.getGuild(), member.getVoiceState().getChannel()).ifPresent(g -> Actions.reply(event, "Event started"));
 		}
 		else
 			Actions.reply(event, "Vous devez être dans un channel vocal pour executer cette commande");

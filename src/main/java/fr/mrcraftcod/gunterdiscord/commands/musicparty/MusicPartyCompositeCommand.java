@@ -51,6 +51,6 @@ public class MusicPartyCompositeCommand extends CompositeCommand
 	@Override
 	public AccessLevel getAccessLevel()
 	{
-		return AccessLevel.MODERATOR;
+		return AccessLevel.ALL;
 	}
 }
