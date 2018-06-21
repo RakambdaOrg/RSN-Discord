@@ -118,7 +118,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener
 			getAudioPlayerManager().shutdown();
 			getAudioManager().setSendingHandler(null);
 			getAudioManager().closeAudioConnection();
-			managers.put(channel.getGuild(), null);
+			managers.remove(channel.getGuild());
 			Log.info("Audio manager shutdown");
 		}, 1, TimeUnit.NANOSECONDS);
 		executorService.shutdown();

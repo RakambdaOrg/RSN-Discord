@@ -42,6 +42,8 @@ public class MusicPartyListener extends ListenerAdapter
 	private MusicPartyListener(Guild guild, VoiceChannel voiceChannel)
 	{
 		this.guild = guild;
+		if(guild == null)
+			throw new IllegalStateException("Guild cannot be null");
 		this.voiceChannel = voiceChannel;
 		this.stopped = false;
 		this.scores = new HashMap<>();
