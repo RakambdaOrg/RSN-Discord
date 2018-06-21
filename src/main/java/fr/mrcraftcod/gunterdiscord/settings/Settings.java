@@ -43,7 +43,8 @@ public class Settings
 			new HangmanRoleConfig(),
 			new WerewolvesChannelConfig(),
 			new YoutubeChannelConfig(),
-			new YoutubeRoleConfig()
+			new YoutubeRoleConfig(),
+			new MusicPartyChannelConfig()
 			};
 	private static Path path;
 	private static JSONObject settings;

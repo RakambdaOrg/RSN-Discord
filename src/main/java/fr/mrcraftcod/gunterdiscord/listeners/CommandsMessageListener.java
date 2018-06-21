@@ -7,6 +7,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
 import fr.mrcraftcod.gunterdiscord.commands.hangman.HangmanCompositeCommand;
 import fr.mrcraftcod.gunterdiscord.commands.photo.PhotoCompositeCommand;
 import fr.mrcraftcod.gunterdiscord.commands.quiz.QuizCompositeCommand;
+import fr.mrcraftcod.gunterdiscord.commands.musicparty.MusicPartyCompositeCommand;
 import fr.mrcraftcod.gunterdiscord.commands.warevolves.WerewolvesCommandComposite;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
  */
 public class CommandsMessageListener extends ListenerAdapter
 {
-	public static final List<Command> commands = Arrays.asList(new PhotoCompositeCommand(), new HangmanCompositeCommand(), new QuizCompositeCommand(), new ReportCommand(), new ConfigurationCompositeCommand(), new StopCommand(), new HelpCommand(), new AvatarCommand(), new NicknameCommand(), new SayCommand(), new BackdoorCommand(), /*new QuestionCommand(),*/ new WerewolvesCommandComposite(), new VoiceDisrupterCommand(), new UpCommand(), new YoutubeCommand());
+	public static final List<Command> commands = Arrays.asList(new PhotoCompositeCommand(), new HangmanCompositeCommand(), new QuizCompositeCommand(), new ReportCommand(), new ConfigurationCompositeCommand(), new StopCommand(), new HelpCommand(), new AvatarCommand(), new NicknameCommand(), new SayCommand(), new BackdoorCommand(), /*new QuestionCommand(),*/ new WerewolvesCommandComposite(), new VoiceDisrupterCommand(), new UpCommand(), new YoutubeCommand(), new MusicPartyCompositeCommand());
 	
 	/**
 	 * Constructor.
