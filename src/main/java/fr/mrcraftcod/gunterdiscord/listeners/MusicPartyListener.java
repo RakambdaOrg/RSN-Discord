@@ -1,4 +1,4 @@
-package fr.mrcraftcod.gunterdiscord.listeners.quiz;
+package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
