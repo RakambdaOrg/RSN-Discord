@@ -134,6 +134,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 	@Override
 	public void onTrackEnd(AudioTrack track)
 	{
+		Log.info("MusicParty track ended");
 		if(currentMusic != null)
 		{
 			EmbedBuilder builder = Utilities.buildEmbed(musicPartyChannel.getJDA().getSelfUser(), Color.RED, "Vous êtes mauvais");
@@ -154,6 +155,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		Actions.sendMessage(musicPartyChannel, builder.build());
 		
 		currentMusic = musics.stream().filter(m -> track.equals(m.getTrack())).findFirst().orElse(null);
+		Log.info("MusicParty track started: %s", currentMusic);
 	}
 	
 	/**

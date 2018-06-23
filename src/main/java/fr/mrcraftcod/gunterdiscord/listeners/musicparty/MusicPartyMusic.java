@@ -26,4 +26,10 @@ public class MusicPartyMusic
 	{
 		return track;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return getTitle();
+	}
 }
