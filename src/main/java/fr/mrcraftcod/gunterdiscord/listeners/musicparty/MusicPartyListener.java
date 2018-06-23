@@ -106,6 +106,21 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 	}
 	
 	@Override
+	public void onTrackEnd(AudioTrack track)
+	{
+		Log.info("MusicParty track ended");
+		if(!currentFound && currentMusic != null)
+		{
+			EmbedBuilder builder = Utilities.buildEmbed(musicPartyChannel.getJDA().getSelfUser(), Color.RED, "Vous êtes mauvais");
+			builder.addField("Titre de la musique", currentMusic.getTitle(), false);
+			builder.addField("Lien", currentMusic.getTrack().getInfo().uri, false);
+			Actions.sendMessage(musicPartyChannel, builder.build());
+		}
+		currentMessage = null;
+		currentMusic = null;
+	}
+	
+	@Override
 	public void onTrackStart(AudioTrack track)
 	{
 		Log.info("New track is starting: %s", track.getIdentifier());
@@ -114,6 +129,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		EmbedBuilder builder = Utilities.buildEmbed(musicPartyChannel.getJDA().getSelfUser(), Color.GREEN, "Nouveau son");
 		builder.setDescription("Essayez de deviner le titre");
 		builder.addField("Pour participer:", "Ecrivez le titre de la vidéo qui est en cours", false);
+		builder.addField("Titre:", censorName(track.getInfo().title), false);
 		Actions.sendMessage(musicPartyChannel, builder.build());
 		
 		currentFound = false;
@@ -136,18 +152,9 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		stop();
 	}
 	
-	@Override
-	public void onTrackEnd(AudioTrack track)
+	private String censorName(String name)
 	{
-		Log.info("MusicParty track ended");
-		if(!currentFound && currentMusic != null)
-		{
-			EmbedBuilder builder = Utilities.buildEmbed(musicPartyChannel.getJDA().getSelfUser(), Color.RED, "Vous êtes mauvais");
-			builder.addField("Titre de la musique", currentMusic.getTitle(), false);
-			Actions.sendMessage(musicPartyChannel, builder.build());
-		}
-		currentMessage = null;
-		currentMusic = null;
+		return name.replaceAll("[A-Za-z0-9]", "*");
 	}
 	
 	/**
@@ -230,6 +237,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 					
 					EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Son trouvé");
 					builder.addField("Titre de la musique", currentMusic.getTitle(), false);
+					builder.addField("Lien", currentMusic.getTrack().getInfo().uri, false);
 					builder.addField("Reaction:", "Ajouter une réaction pour passer la musique (a " + REQUIRED_TO_SKIP + " je la passe)", false);
 					currentMessage = Actions.getMessage(musicPartyChannel, builder.build());
 					currentMessage.addReaction(BasicEmotes.THUMB_UP.getValue()).complete();
