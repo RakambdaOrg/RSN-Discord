@@ -105,15 +105,6 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		});
 	}
 	
-	public void addMusic(MessageReceivedEvent event, LinkedList<String> args)
-	{
-		Log.info("Setting party music");
-		if(args.size() < 1)
-			Actions.replyPrivate(event.getAuthor(), "Nombre de paramètres incorrecte");
-		else
-			args.forEach(url -> GunterAudioManager.play(voiceChannel, this, track -> Actions.replyPrivate(event.getAuthor(), "Votre musique a bien été ajoutée dans la file et porte le titre: `" + track.getInfo().title + "`"), url));
-	}
-	
 	@Override
 	public void onTrackStart(AudioTrack track)
 	{
@@ -128,6 +119,15 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		currentFound = false;
 		currentMusic = new MusicPartyMusic(track);
 		Log.info("MusicParty track started: %s", currentMusic);
+	}
+	
+	public void addMusic(MessageReceivedEvent event, LinkedList<String> args)
+	{
+		Log.info("Setting party music");
+		if(args.size() < 1)
+			Actions.replyPrivate(event.getAuthor(), "Nombre de paramètres incorrecte");
+		else
+			args.forEach(url -> GunterAudioManager.play(voiceChannel, this, track -> Actions.replyPrivate(event.getAuthor(), "Votre musique a bien été ajoutée dans la file et porte le titre: `" + track.getInfo().title + "`"), url));
 	}
 	
 	@Override
@@ -150,11 +150,6 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		currentMusic = null;
 	}
 	
-	public void skip()
-	{
-		GunterAudioManager.skip(getGuild());
-	}
-	
 	/**
 	 * Stop the quiz.
 	 */
@@ -164,6 +159,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		Log.info("Stopping");
 		stopped = true;
 		GunterAudioManager.leave(getGuild());
+		Actions.sendMessage(musicPartyChannel, "Fin de la partie!");
 		printScores();
 	}
 	
@@ -189,6 +185,16 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		Actions.sendMessage(musicPartyChannel, builder.build());
 	}
 	
+	/**
+	 * Get the guild.
+	 *
+	 * @return The guild.
+	 */
+	private Guild getGuild()
+	{
+		return guild;
+	}
+	
 	@Override
 	public void onGuildMessageReactionAdd(GuildMessageReactionAddEvent event)
 	{
@@ -205,14 +211,9 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		}
 	}
 	
-	/**
-	 * Get the guild.
-	 *
-	 * @return The guild.
-	 */
-	private Guild getGuild()
+	public void skip()
 	{
-		return guild;
+		GunterAudioManager.skip(getGuild());
 	}
 	
 	@Override
