@@ -61,7 +61,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener
 				@Override
 				public void trackLoaded(AudioTrack track)
 				{
-					Log.info("Added `%s` to the audio queue on channel %s", ident, channel.getName());
+					Log.info("Added `%s` to the audio queue on channel `%s`", ident, channel.getName());
 					gunterAudioManager.getTrackScheduler().queue(track);
 					onTrackAdded.accept(track);
 				}
@@ -69,6 +69,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener
 				@Override
 				public void playlistLoaded(AudioPlaylist playlist)
 				{
+					Log.info("Added `%s`(%d) to the audio queue on channel `%s`", ident, playlist.getTracks().size(), channel.getName());
 					for(AudioTrack track: playlist.getTracks())
 					{
 						gunterAudioManager.getTrackScheduler().queue(track);
@@ -79,14 +80,14 @@ public class GunterAudioManager implements StatusTrackSchedulerListener
 				@Override
 				public void noMatches()
 				{
-					Log.warning("Player found nothing for channel %s", channel.getName());
+					Log.warning("Player found nothing for channel `%s`", channel.getName());
 					gunterAudioManager.getTrackScheduler().foundNothing();
 				}
 				
 				@Override
 				public void loadFailed(FriendlyException throwable)
 				{
-					Log.warning(throwable, "Failed to load audio for channel %s", channel.getName());
+					Log.warning(throwable, "Failed to load audio for channel `%s`", channel.getName());
 					gunterAudioManager.getTrackScheduler().foundNothing();
 				}
 			});
@@ -112,6 +113,16 @@ public class GunterAudioManager implements StatusTrackSchedulerListener
 		});
 	}
 	
+	public AudioPlayerManager getAudioPlayerManager()
+	{
+		return audioPlayerManager;
+	}
+	
+	private TrackScheduler getTrackScheduler()
+	{
+		return trackScheduler;
+	}
+	
 	public static void skip(Guild guild)
 	{
 		if(managers.containsKey(guild))
@@ -121,16 +132,6 @@ public class GunterAudioManager implements StatusTrackSchedulerListener
 	private void skip()
 	{
 		trackScheduler.nextTrack();
-	}
-	
-	public AudioPlayerManager getAudioPlayerManager()
-	{
-		return audioPlayerManager;
-	}
-	
-	private TrackScheduler getTrackScheduler()
-	{
-		return trackScheduler;
 	}
 	
 	public static void leave(Guild guild)
@@ -163,14 +164,14 @@ public class GunterAudioManager implements StatusTrackSchedulerListener
 	{
 	}
 	
-	public void addListener(StatusTrackSchedulerListener listener)
-	{
-		trackScheduler.addStatusTrackSchedulerListener(listener);
-	}
-	
 	public AudioManager getAudioManager()
 	{
 		return audioManager;
+	}
+	
+	public void addListener(StatusTrackSchedulerListener listener)
+	{
+		trackScheduler.addStatusTrackSchedulerListener(listener);
 	}
 	
 	public AudioPlayer getAudioPlayer()

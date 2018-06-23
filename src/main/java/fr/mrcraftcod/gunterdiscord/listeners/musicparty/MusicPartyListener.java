@@ -27,14 +27,13 @@ import java.util.stream.Collectors;
 public class MusicPartyListener extends ListenerAdapter implements StatusTrackSchedulerListener
 {
 	private static final ArrayList<MusicPartyListener> parties = new ArrayList<>();
+	private static final int REQUIRED_TO_SKIP = 5;
 	private final Guild guild;
 	private final VoiceChannel voiceChannel;
-	private HashMap<Long, Integer> scores;
-	private final List<MusicPartyMusic> musics;
-	private boolean stopped;
 	private final TextChannel musicPartyChannel;
+	private HashMap<Long, Integer> scores;
+	private boolean stopped;
 	private MusicPartyMusic currentMusic = null;
-	private static final int REQUIRED_TO_SKIP = 5;
 	private boolean currentFound = false;
 	private Message currentMessage = null;
 	
@@ -55,7 +54,6 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		this.musicPartyChannel = new MusicPartyChannelConfig().getTextChannel(guild);
 		if(musicPartyChannel == null)
 			throw new IllegalStateException("Music party channel not defined");
-		this.musics = new LinkedList<>();
 		
 		guild.getJDA().addEventListener(this);
 		parties.add(this);
@@ -113,21 +111,23 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		if(args.size() < 1)
 			Actions.replyPrivate(event.getAuthor(), "Nombre de paramètres incorrecte");
 		else
-		{
-			args.forEach(url -> GunterAudioManager.play(voiceChannel, this, track -> {
-				MusicPartyMusic musicPartyMusic = new MusicPartyMusic(track);
-				musics.add(musicPartyMusic);
-				Actions.replyPrivate(event.getAuthor(), "Votre musique a bien été ajoutée dans la file et porte le titre: `" + musicPartyMusic.getTitle() + "`");
-				Log.info("New music added to the party: %s", musicPartyMusic);
-				Log.info("Tracks available:\n%s", musics.stream().map(t -> t.getTrack().getIdentifier() + " -> " + t.getTitle()).collect(Collectors.joining("\n")));
-				printScores();
-			}, url));
-		}
+			args.forEach(url -> GunterAudioManager.play(voiceChannel, this, track -> Actions.replyPrivate(event.getAuthor(), "Votre musique a bien été ajoutée dans la file et porte le titre: `" + track.getInfo().title + "`"), url));
 	}
 	
-	public void skip()
+	@Override
+	public void onTrackStart(AudioTrack track)
 	{
-		GunterAudioManager.skip(getGuild());
+		Log.info("New track is starting: %s", track.getIdentifier());
+		printScores();
+		
+		EmbedBuilder builder = Utilities.buildEmbed(musicPartyChannel.getJDA().getSelfUser(), Color.GREEN, "Nouveau son");
+		builder.setDescription("Essayez de deviner le titre");
+		builder.addField("Pour participer:", "Ecrivez le titre de la vidéo qui est en cours", false);
+		Actions.sendMessage(musicPartyChannel, builder.build());
+		
+		currentFound = false;
+		currentMusic = new MusicPartyMusic(track);
+		Log.info("MusicParty track started: %s", currentMusic);
 	}
 	
 	@Override
@@ -145,37 +145,14 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 			EmbedBuilder builder = Utilities.buildEmbed(musicPartyChannel.getJDA().getSelfUser(), Color.RED, "Vous êtes mauvais");
 			builder.addField("Titre de la musique", currentMusic.getTitle(), false);
 			Actions.sendMessage(musicPartyChannel, builder.build());
-			musics.remove(currentMusic);
 		}
 		currentMessage = null;
 		currentMusic = null;
 	}
 	
-	@Override
-	public void onTrackStart(AudioTrack track)
+	public void skip()
 	{
-		Log.info("New track is starting: %s", track.getIdentifier());
-		Log.info("Tracks available: %s", musics.stream().map(t -> t.getTrack().getIdentifier() + " -> " + t.getTitle()).collect(Collectors.joining(" | ")));
-		printScores();
-		
-		EmbedBuilder builder = Utilities.buildEmbed(musicPartyChannel.getJDA().getSelfUser(), Color.GREEN, "Nouveau son");
-		builder.setDescription("Essayez de deviner le titre");
-		builder.addField("Pour participez:", "Ecrivez le titre de la vidéo qui est en cours", false);
-		Actions.sendMessage(musicPartyChannel, builder.build());
-		
-		currentFound = false;
-		currentMusic = musics.stream().filter(m -> track.getIdentifier().equals(m.getTrack().getIdentifier())).findFirst().orElse(null);
-		Log.info("MusicParty track started: %s", currentMusic);
-	}
-	
-	/**
-	 * Get the guild.
-	 *
-	 * @return The guild.
-	 */
-	private Guild getGuild()
-	{
-		return guild;
+		GunterAudioManager.skip(getGuild());
 	}
 	
 	/**
@@ -226,6 +203,16 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 				}
 			});
 		}
+	}
+	
+	/**
+	 * Get the guild.
+	 *
+	 * @return The guild.
+	 */
+	private Guild getGuild()
+	{
+		return guild;
 	}
 	
 	@Override
