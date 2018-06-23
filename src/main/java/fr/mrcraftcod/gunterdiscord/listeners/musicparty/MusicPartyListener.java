@@ -118,6 +118,9 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 				MusicPartyMusic musicPartyMusic = new MusicPartyMusic(track);
 				musics.add(musicPartyMusic);
 				Actions.replyPrivate(event.getAuthor(), "Votre musique a bien été ajoutée dans la file et porte le titre: `" + musicPartyMusic.getTitle() + "`");
+				Log.info("New music added to the party: %s", musicPartyMusic);
+				Log.info("Tracks available:\n%s", musics.stream().map(t -> t.getTrack().getIdentifier() + " -> " + t.getTitle()).collect(Collectors.joining("\n")));
+				printScores();
 			}, url));
 		}
 	}
@@ -142,6 +145,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 			EmbedBuilder builder = Utilities.buildEmbed(musicPartyChannel.getJDA().getSelfUser(), Color.RED, "Vous êtes mauvais");
 			builder.addField("Titre de la musique", currentMusic.getTitle(), false);
 			Actions.sendMessage(musicPartyChannel, builder.build());
+			musics.remove(currentMusic);
 		}
 		currentMessage = null;
 		currentMusic = null;
