@@ -154,7 +154,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 	
 	private String censorName(String name)
 	{
-		return name.replaceAll("[A-Za-z0-9]", "*");
+		return name.replaceAll("[A-Za-z0-9]", "?");
 	}
 	
 	/**
