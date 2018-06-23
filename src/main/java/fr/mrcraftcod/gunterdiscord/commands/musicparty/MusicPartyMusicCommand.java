@@ -6,6 +6,8 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.musicparty.MusicPartyListener;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +34,11 @@ public class MusicPartyMusicCommand extends BasicCommand
 	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
 	{
 		super.execute(event, args);
-		MusicPartyListener.getParty(event.getGuild(), null, false).ifPresentOrElse(p -> p.addMusic(event, args), () -> Actions.reply(event, "Aucun évènement de ce type en cours"));
+		VoiceChannel channel = null;
+		Member member = event.getMember();
+		if(member.getVoiceState().inVoiceChannel())
+			channel = member.getVoiceState().getChannel();
+		MusicPartyListener.getParty(event.getGuild(), channel, channel != null).ifPresentOrElse(p -> p.addMusic(event, args), () -> Actions.reply(event, "Aucun évènement de ce type en cours"));
 		return CommandResult.SUCCESS;
 	}
 	
