@@ -243,8 +243,6 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 					currentMessage.addReaction(BasicEmotes.THUMB_UP.getValue()).complete();
 					
 					currentFound = true;
-					GunterAudioManager.skip(getGuild());
-					
 					scores.compute(event.getAuthor().getIdLong(), (key, value) -> value == null ? 1 : (value + 1));
 				}
 			}
