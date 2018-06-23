@@ -1,10 +1,12 @@
-package fr.mrcraftcod.gunterdiscord.listeners;
+package fr.mrcraftcod.gunterdiscord.listeners.musicparty;
 
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.mrcraftcod.gunterdiscord.settings.configs.MusicPartyChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.StatusTrackSchedulerListener;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageEmbed;
@@ -23,15 +25,16 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-06-21
  */
-public class MusicPartyListener extends ListenerAdapter
+public class MusicPartyListener extends ListenerAdapter implements StatusTrackSchedulerListener
 {
 	private static final ArrayList<MusicPartyListener> parties = new ArrayList<>();
 	private final Guild guild;
 	private final VoiceChannel voiceChannel;
 	private HashMap<Long, Integer> scores;
+	private final List<MusicPartyMusic> musics;
 	private boolean stopped;
 	private final TextChannel musicPartyChannel;
-	private String currentTitle = null;
+	private MusicPartyMusic currentMusic = null;
 	
 	/**
 	 * Constructor.
@@ -50,6 +53,7 @@ public class MusicPartyListener extends ListenerAdapter
 		this.musicPartyChannel = new MusicPartyChannelConfig().getTextChannel(guild);
 		if(musicPartyChannel == null)
 			throw new IllegalStateException("Music party channel not defined");
+		this.musics = new LinkedList<>();
 		
 		guild.getJDA().addEventListener(this);
 		parties.add(this);
@@ -101,39 +105,55 @@ public class MusicPartyListener extends ListenerAdapter
 		});
 	}
 	
-	public void setMusic(MessageReceivedEvent event, LinkedList<String> args)
+	public void addMusic(MessageReceivedEvent event, LinkedList<String> args)
 	{
 		Log.info("Setting party music");
-		if(currentTitle == null)
-		{
-			if(args.size() < 2)
-				Actions.replyPrivate(event.getAuthor(), "Nombre de parametres incorrecte");
-			else
-			{
-				GunterAudioManager.play(voiceChannel, args.poll());
-				currentTitle = String.join(" ", args);
-				
-				EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Nouveau son");
-				builder.setDescription("Essayez de deviner le titre");
-				builder.addField("Pour participez, écrivez votre pensée sous la forme:", "artiste - titre", false);
-				Actions.sendMessage(musicPartyChannel, builder.build());
-			}
-		}
+		if(args.size() < 1)
+			Actions.replyPrivate(event.getAuthor(), "Nombre de paramètres incorrecte");
 		else
 		{
-			Actions.replyPrivate(event.getAuthor(), "Veuillez attendre que la musique précédente soit terminée");
+			args.forEach(url -> GunterAudioManager.play(voiceChannel, this, track -> {
+				MusicPartyMusic musicPartyMusic = new MusicPartyMusic(track);
+				musics.add(musicPartyMusic);
+				Actions.replyPrivate(event.getAuthor(), "Votre musique a bien été ajoutée dans la file et porte le titre: `" + musicPartyMusic.getTitle() + "`");
+			}, url));
 		}
 	}
 	
 	public void skip()
 	{
 		GunterAudioManager.skip(getGuild());
+	}
+	
+	@Override
+	public void onTrackSchedulerEmpty()
+	{
+		stop();
+	}
+	
+	@Override
+	public void onTrackEnd(AudioTrack track)
+	{
+		if(currentMusic != null)
+		{
+			EmbedBuilder builder = Utilities.buildEmbed(musicPartyChannel.getJDA().getSelfUser(), Color.RED, "Vous êtes mauvais");
+			builder.addField("Titre de la musique", currentMusic.getTitle(), false);
+			Actions.sendMessage(musicPartyChannel, builder.build());
+		}
+		currentMusic = null;
+	}
+	
+	@Override
+	public void onTrackStart(AudioTrack track)
+	{
+		printScores();
 		
-		EmbedBuilder builder = Utilities.buildEmbed(musicPartyChannel.getJDA().getSelfUser(), Color.GREEN, "Personne n'a trouvé");
-		builder.addField("Titre de la musique", currentTitle, false);
+		EmbedBuilder builder = Utilities.buildEmbed(musicPartyChannel.getJDA().getSelfUser(), Color.GREEN, "Nouveau son");
+		builder.setDescription("Essayez de deviner le titre");
+		builder.addField("Pour participez:", "Ecrivez le titre de la vidéo qui est en cours", false);
 		Actions.sendMessage(musicPartyChannel, builder.build());
 		
-		currentTitle = null;
+		currentMusic = musics.stream().filter(m -> track.equals(m.getTrack())).findFirst().orElse(null);
 	}
 	
 	/**
@@ -174,7 +194,7 @@ public class MusicPartyListener extends ListenerAdapter
 				bests.get(v).add(getGuild().getJDA().getUserById(k).getAsMention());
 		});
 		
-		EmbedBuilder builder = Utilities.buildEmbed(getGuild().getJDA().getSelfUser(), Color.PINK, "Leaderboard");
+		EmbedBuilder builder = Utilities.buildEmbed(getGuild().getJDA().getSelfUser(), Color.PINK, "Podium");
 		builder.setDescription("Voici le top des scores");
 		bests.keySet().stream().sorted(Comparator.reverseOrder()).map(v -> new MessageEmbed.Field("Position " + (1 + bestsScores.indexOf(v)) + " (" + v + " points)", String.join(", ", bests.get(v)), false)).forEach(builder::addField);
 		Actions.sendMessage(musicPartyChannel, builder.build());
@@ -188,15 +208,14 @@ public class MusicPartyListener extends ListenerAdapter
 		{
 			if(musicPartyChannel.getIdLong() == event.getMessage().getChannel().getIdLong())
 			{
-				if(currentTitle != null && currentTitle.equalsIgnoreCase(event.getMessage().getContentRaw()))
+				if(currentMusic != null && currentMusic.getTitle().equalsIgnoreCase(event.getMessage().getContentRaw()))
 				{
-					Log.info(Actions.getUserToLog(event.getAuthor()) + " found the music `" + currentTitle + "`");
+					Log.info(Actions.getUserToLog(event.getAuthor()) + " found the music `" + currentMusic.getTitle() + "`");
 					
 					EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Son trouvé");
-					builder.addField("Titre de la musique", currentTitle, false);
+					builder.addField("Titre de la musique", currentMusic.getTitle(), false);
 					Actions.sendMessage(musicPartyChannel, builder.build());
 					
-					currentTitle = null;
 					GunterAudioManager.skip(getGuild());
 					
 					scores.compute(event.getAuthor().getIdLong(), (key, value) -> value == null ? 1 : (value + 1));

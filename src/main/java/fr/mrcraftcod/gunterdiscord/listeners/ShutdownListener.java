@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
+import fr.mrcraftcod.gunterdiscord.listeners.musicparty.MusicPartyListener;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
