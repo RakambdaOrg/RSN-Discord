@@ -150,6 +150,8 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 	@Override
 	public void onTrackStart(AudioTrack track)
 	{
+		Log.info("New track is starting: %s", track.getIdentifier());
+		Log.info("Tracks available: %s", musics.stream().map(t -> t.getTrack().getIdentifier() + " -> " + t.getTitle()).collect(Collectors.joining(" | ")));
 		printScores();
 		
 		EmbedBuilder builder = Utilities.buildEmbed(musicPartyChannel.getJDA().getSelfUser(), Color.GREEN, "Nouveau son");
@@ -158,7 +160,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		Actions.sendMessage(musicPartyChannel, builder.build());
 		
 		currentFound = false;
-		currentMusic = musics.stream().filter(m -> track.equals(m.getTrack())).findFirst().orElse(null);
+		currentMusic = musics.stream().filter(m -> track.getIdentifier().equals(m.getTrack().getIdentifier())).findFirst().orElse(null);
 		Log.info("MusicParty track started: %s", currentMusic);
 	}
 	
