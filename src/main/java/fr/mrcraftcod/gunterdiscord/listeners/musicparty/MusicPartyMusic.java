@@ -30,6 +30,6 @@ public class MusicPartyMusic
 	@Override
 	public String toString()
 	{
-		return getTitle();
+		return String.format("%s (author: %s, length: %f, )", getTitle(), getTrack().getInfo().author, getTrack().getInfo().length, getTrack().getInfo().identifier);
 	}
 }

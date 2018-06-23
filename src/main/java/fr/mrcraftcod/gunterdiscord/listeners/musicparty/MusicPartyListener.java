@@ -3,16 +3,15 @@ package fr.mrcraftcod.gunterdiscord.listeners.musicparty;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.mrcraftcod.gunterdiscord.settings.configs.MusicPartyChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
 import fr.mrcraftcod.gunterdiscord.utils.player.StatusTrackSchedulerListener;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.awt.*;
 import java.util.*;
@@ -35,6 +34,9 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 	private boolean stopped;
 	private final TextChannel musicPartyChannel;
 	private MusicPartyMusic currentMusic = null;
+	private static final int REQUIRED_TO_SKIP = 5;
+	private boolean currentFound = false;
+	private Message currentMessage = null;
 	
 	/**
 	 * Constructor.
@@ -135,12 +137,13 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 	public void onTrackEnd(AudioTrack track)
 	{
 		Log.info("MusicParty track ended");
-		if(currentMusic != null)
+		if(!currentFound && currentMusic != null)
 		{
 			EmbedBuilder builder = Utilities.buildEmbed(musicPartyChannel.getJDA().getSelfUser(), Color.RED, "Vous êtes mauvais");
 			builder.addField("Titre de la musique", currentMusic.getTitle(), false);
 			Actions.sendMessage(musicPartyChannel, builder.build());
 		}
+		currentMessage = null;
 		currentMusic = null;
 	}
 	
@@ -154,6 +157,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		builder.addField("Pour participez:", "Ecrivez le titre de la vidéo qui est en cours", false);
 		Actions.sendMessage(musicPartyChannel, builder.build());
 		
+		currentFound = false;
 		currentMusic = musics.stream().filter(m -> track.equals(m.getTrack())).findFirst().orElse(null);
 		Log.info("MusicParty track started: %s", currentMusic);
 	}
@@ -203,6 +207,22 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 	}
 	
 	@Override
+	public void onGuildMessageReactionAdd(GuildMessageReactionAddEvent event)
+	{
+		super.onGuildMessageReactionAdd(event);
+		if(currentMessage != null && getGuild().equals(event.getGuild()) && musicPartyChannel.getIdLong() == event.getChannel().getIdLong() && currentMessage.getIdLong() == event.getMessageIdLong())
+		{
+			musicPartyChannel.getMessageById(currentMessage.getIdLong()).queue(m -> {
+				if(m.getReactions().size() > REQUIRED_TO_SKIP)
+				{
+					Log.info("Enough reactions to skip");
+					skip();
+				}
+			});
+		}
+	}
+	
+	@Override
 	public void onMessageReceived(MessageReceivedEvent event)
 	{
 		super.onMessageReceived(event);
@@ -210,14 +230,17 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		{
 			if(musicPartyChannel.getIdLong() == event.getMessage().getChannel().getIdLong())
 			{
-				if(currentMusic != null && currentMusic.getTitle().equalsIgnoreCase(event.getMessage().getContentRaw()))
+				if(currentMusic != null && !currentFound && currentMusic.getTitle().equalsIgnoreCase(event.getMessage().getContentRaw()))
 				{
 					Log.info(Actions.getUserToLog(event.getAuthor()) + " found the music `" + currentMusic.getTitle() + "`");
 					
 					EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Son trouvé");
 					builder.addField("Titre de la musique", currentMusic.getTitle(), false);
-					Actions.sendMessage(musicPartyChannel, builder.build());
+					builder.addField("Reaction:", "Ajouter une réaction pour passer la musique (a " + REQUIRED_TO_SKIP + " je la passe)", false);
+					currentMessage = Actions.getMessage(musicPartyChannel, builder.build());
+					currentMessage.addReaction(BasicEmotes.THUMB_UP.getValue()).complete();
 					
+					currentFound = true;
 					GunterAudioManager.skip(getGuild());
 					
 					scores.compute(event.getAuthor().getIdLong(), (key, value) -> value == null ? 1 : (value + 1));
