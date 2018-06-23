@@ -143,6 +143,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener
 	@Override
 	public void onTrackSchedulerEmpty()
 	{
+		Log.info("Scheduler is empty");
 		ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 		executorService.schedule(() -> {
 			getAudioPlayerManager().shutdown();
