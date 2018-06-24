@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
+import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.core.events.self.SelfUpdateNameEvent;
@@ -82,5 +83,12 @@ public class LogListener extends ListenerAdapter
 		{
 			Log.error(e, "");
 		}
+	}
+	
+	@Override
+	public void onGenericEvent(Event event)
+	{
+		super.onGenericEvent(event);
+		Log.info("Event -> ", event);
 	}
 }
