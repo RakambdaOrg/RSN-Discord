@@ -2,7 +2,7 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
-import net.dv8tion.jda.core.events.Event;
+import net.dv8tion.jda.core.events.guild.voice.GuildVoiceGuildMuteEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.core.events.self.SelfUpdateNameEvent;
@@ -86,9 +86,13 @@ public class LogListener extends ListenerAdapter
 	}
 	
 	@Override
-	public void onGenericEvent(Event event)
+	public void onGuildVoiceGuildMute(GuildVoiceGuildMuteEvent event)
 	{
-		super.onGenericEvent(event);
-		Log.info("Event -> %s // %s", event, event.getClass().getSimpleName());
+		super.onGuildVoiceGuildMute(event);
+		if(event.getMember().getUser().getIdLong() == event.getJDA().getSelfUser().getIdLong())
+		{
+			event.getGuild().getController().setMute(event.getMember(), false).queue();
+			event.getGuild().getController().setDeafen(event.getMember(), false).queue();
+		}
 	}
 }
