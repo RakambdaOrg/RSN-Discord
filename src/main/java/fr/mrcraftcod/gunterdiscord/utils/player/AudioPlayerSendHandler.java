@@ -21,7 +21,7 @@ public class AudioPlayerSendHandler implements AudioSendHandler
 	public AudioPlayerSendHandler(AudioPlayer audioPlayer)
 	{
 		this.audioPlayer = audioPlayer;
-		audioPlayer.setVolume(100);
+		audioPlayer.setVolume(75);
 	}
 	
 	@Override

@@ -1,8 +1,10 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
+import fr.mrcraftcod.gunterdiscord.listeners.musicparty.MusicPartyListener;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
+import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
 import net.dv8tion.jda.core.events.ShutdownEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.io.IOException;
@@ -24,6 +26,8 @@ public class ShutdownListener extends ListenerAdapter
 		{
 			QuizListener.stopAll();
 			HangmanListener.stopAll();
+			MusicPartyListener.stopAll();
+			event.getJDA().getGuilds().forEach(GunterAudioManager::leave);
 			Settings.save();
 			for(Handler h: Log.getLogger().getHandlers())
 				h.close();

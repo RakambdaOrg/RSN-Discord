@@ -1,5 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.utils.player;
 
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
  *
@@ -9,4 +11,8 @@ package fr.mrcraftcod.gunterdiscord.utils.player;
 public interface StatusTrackSchedulerListener
 {
 	void onTrackSchedulerEmpty();
+	
+	void onTrackEnd(AudioTrack track);
+	
+	void onTrackStart(AudioTrack track);
 }

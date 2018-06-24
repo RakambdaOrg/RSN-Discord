@@ -5,8 +5,8 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -20,7 +20,7 @@ public class TrackScheduler extends AudioEventAdapter
 {
 	private final AudioPlayer player;
 	private final BlockingQueue<AudioTrack> queue;
-	private List<StatusTrackSchedulerListener> listeners;
+	private Set<StatusTrackSchedulerListener> listeners;
 	
 	/**
 	 * @param player The audio player this scheduler uses
@@ -29,7 +29,7 @@ public class TrackScheduler extends AudioEventAdapter
 	{
 		this.player = player;
 		this.queue = new LinkedBlockingQueue<>();
-		this.listeners = new ArrayList<>();
+		this.listeners = new LinkedHashSet<>();
 	}
 	
 	/**
@@ -44,8 +44,17 @@ public class TrackScheduler extends AudioEventAdapter
 	}
 	
 	@Override
+	public void onTrackStart(AudioPlayer player, AudioTrack track)
+	{
+		super.onTrackStart(player, track);
+		listeners.forEach(l -> l.onTrackStart(track));
+	}
+	
+	@Override
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason)
 	{
+		super.onTrackEnd(player, track, endReason);
+		listeners.forEach(l -> l.onTrackEnd(track));
 		Log.info("Next track");
 		if(endReason.mayStartNext)
 			if(!nextTrack())
@@ -55,11 +64,9 @@ public class TrackScheduler extends AudioEventAdapter
 			}
 	}
 	
-	/**
-	 * Start the next track, stopping the current one if it is playing.
-	 */
 	public boolean nextTrack()
 	{
+		Log.info("Playing next track");
 		return player.startTrack(queue.poll(), false);
 	}
 	
