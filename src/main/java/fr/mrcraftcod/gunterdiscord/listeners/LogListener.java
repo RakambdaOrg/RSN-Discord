@@ -89,6 +89,6 @@ public class LogListener extends ListenerAdapter
 	public void onGenericEvent(Event event)
 	{
 		super.onGenericEvent(event);
-		Log.info("Event -> ", event);
+		Log.info("Event -> %s // %s", event, event.getClass().getSimpleName());
 	}
 }
