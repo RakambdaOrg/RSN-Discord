@@ -57,7 +57,7 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 				K kKey = getKeyParser().apply(key);
 				JSONObject value = map.optJSONObject(key);
 				if(value != null)
-					elements.put(kKey, value.keySet().stream().collect(Collectors.toMap(k -> getKeyValueParser().apply(k), k -> getValueParser().apply(value.getString(k)))));
+					elements.put(kKey, value.keySet().stream().collect(Collectors.toMap(k -> getKeyValueParser().apply(k), k -> getValueParser().apply(value.get(k).toString()))));
 			}
 		return elements;
 	}
