@@ -19,7 +19,6 @@ import java.io.InvalidClassException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -30,15 +29,29 @@ import java.util.stream.Collectors;
  */
 public class CommandsMessageListener extends ListenerAdapter
 {
-	public static final List<Command> commands = Arrays.asList(
+	public static final Command[] commands = new Command[]{
 			// new PhotoCompositeCommand(),
 			// new HangmanCompositeCommand(),
 			// new QuizCompositeCommand(),
-			new ReportCommand(), new ConfigurationCompositeCommand(), new HelpCommand(), new AvatarCommand(), new NicknameCommand(), new SayCommand(), new BackdoorCommand(), new QuestionCommand(),
+			new ReportCommand(),
+			new ConfigurationCompositeCommand(),
+			new HelpCommand(),
+			new AvatarCommand(),
+			new NicknameCommand(),
+			new SayCommand(),
+			new BackdoorCommand(),
+			new QuestionCommand(),
 			// new WerewolvesCommandComposite(),
-			new AnnoyCommand(), new UpCommand(), new YoutubeCommand(),
+			new AnnoyCommand(),
+			new UpCommand(),
+			new YoutubeCommand(),
 			// new MusicPartyCompositeCommand(),
-			new WarnCommand(), new DoubleWarnCommand(), new MegaWarnCommand(), new StopCommand());
+			new WarnCommand(),
+			new DoubleWarnCommand(),
+			new MegaWarnCommand(),
+			new StopCommand(),
+			new TimeCommand()
+	};
 	
 	/**
 	 * Constructor.
@@ -46,7 +59,7 @@ public class CommandsMessageListener extends ListenerAdapter
 	public CommandsMessageListener()
 	{
 		HashMap<String, Integer> counts = new HashMap<>();
-		commands.forEach(c -> c.getCommand().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
+		Arrays.asList(commands).forEach(c -> c.getCommand().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
 		String clash = counts.keySet().stream().filter(k -> counts.get(k) > 1).collect(Collectors.joining(", "));
 		if(clash != null && !clash.isEmpty())
 			Log.error("Command clash: %s", clash);
@@ -158,7 +171,7 @@ public class CommandsMessageListener extends ListenerAdapter
 	 */
 	private Command getCommand(String commandText)
 	{
-		for(Command command: commands)
+		for(Command command : commands)
 			if(command.getCommand().contains(commandText.toLowerCase()))
 				return command;
 		return null;
