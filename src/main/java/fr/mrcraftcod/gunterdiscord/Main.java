@@ -31,8 +31,8 @@ public class Main
 {
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
 	private static final String SETTINGS_NAME = "settings.json";
-	private static final long SCHEDULED_DELAY = 100;
-	private static final long SCHEDULED_PERIOD = 3600;
+	private static final long SCHEDULED_DELAY = 10;
+	private static final long SCHEDULED_PERIOD = 60;
 	private static JDA jda;
 	private static ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 	
