@@ -19,7 +19,7 @@ import java.util.Objects;
  * @author Thomas Couchoud
  * @since 2018-06-16
  */
-public class VoiceDisrupterCommand extends BasicCommand
+public class AnnoyCommand extends BasicCommand
 {
 	@Override
 	public String getCommandUsage()

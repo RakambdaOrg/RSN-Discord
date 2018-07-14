@@ -209,27 +209,27 @@ public class Actions
 	/**
 	 * Remove a role from a user.
 	 *
-	 * @param member The user to remove the role from.
-	 * @param role   The role to remove.
-	 */
-	public static void removeRole(Member member, Role role)
-	{
-		removeRole(member.getUser(), role);
-	}
-	
-	/**
-	 * Remove a role from a user.
-	 *
 	 * @param user The user to remove the role from.
 	 * @param role The role to remove.
 	 */
 	public static void removeRole(User user, Role role)
 	{
+		removeRole(role.getGuild().getMember(user), role);
+	}
+	
+	/**
+	 * Remove a role from a user.
+	 *
+	 * @param member The user to remove the role from.
+	 * @param role   The role to remove.
+	 */
+	public static void removeRole(Member member, Role role)
+	{
 		try
 		{
 			//noinspection ConstantConditions
-			role.getGuild().getController().removeSingleRoleFromMember(role.getGuild().getMember(user), role).queue();
-			Log.info("Removed role " + role + " from " + getUserToLog(user));
+			member.getGuild().getController().removeSingleRoleFromMember(member, role).queue();
+			Log.info("Removed role " + role + " from " + getUserToLog(member.getUser()));
 		}
 		catch(IllegalArgumentException e)
 		{
@@ -377,7 +377,7 @@ public class Actions
 	 */
 	public static void giveRole(Guild guild, User user, List<Role> roles)
 	{
-		for(Role role: roles)
+		for(Role role : roles)
 			giveRole(guild, user, role);
 	}
 	

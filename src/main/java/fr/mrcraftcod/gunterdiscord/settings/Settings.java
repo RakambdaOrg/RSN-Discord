@@ -24,27 +24,30 @@ import java.util.function.BiFunction;
 public class Settings
 {
 	public static final Configuration[] SETTINGS = new Configuration[]{
-			new BannedRegexConfig(),
+			// new BannedRegexConfig(),
 			new ModoRolesConfig(),
 			new OnlyIdeasConfig(),
-			new OnlyImagesConfig(),
+			// new OnlyImagesConfig(),
 			new PrefixConfig(),
 			new ReportChannelConfig(),
-			new PhotoChannelConfig(),
-			new QuizChannelConfig(),
-			new HangmanChannelConfig(),
-			new PhotoConfig(),
+			// new PhotoChannelConfig(),
+			// new QuizChannelConfig(),
+			// new HangmanChannelConfig(),
+			// new PhotoConfig(),
 			new AutoRolesConfig(),
 			new NickDelayConfig(),
-			new NickLastChangeConfig(),
-			new TrombinoscopeRoleConfig(),
+			// new NickLastChangeConfig(),
+			// new TrombinoscopeRoleConfig(),
 			new QuestionsChannelConfig(),
 			new QuestionsFinalChannelConfig(),
-			new HangmanRoleConfig(),
-			new WerewolvesChannelConfig(),
-			new YoutubeChannelConfig(),
+			// new HangmanRoleConfig(),
+			// new WerewolvesChannelConfig(),
+			// new YoutubeChannelConfig(),
 			new YoutubeRoleConfig(),
-			new MusicPartyChannelConfig()
+			new MusicPartyChannelConfig(),
+			new WarnRoleConfig(),
+			new DoubleWarnRoleConfig(),
+			new MegaWarnRoleConfig()
 			};
 	private static Path path;
 	private static JSONObject settings;

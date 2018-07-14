@@ -39,7 +39,7 @@ public class QuestionReactionListener extends ListenerAdapter
 								User user = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("Utilisateur")).map(e -> event.getJDA().getUserById(Long.parseLong(e.getValue().replaceAll("[^0-9]", "")))).findAny().orElse(null);
 								String ID = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("ID")).map(MessageEmbed.Field::getValue).findAny().orElse("");
 								if(user != null)
-									Actions.replyPrivate(user, "Votre question (ID: " + ID + ") a été acceptée et transférée à Léo");
+									Actions.replyPrivate(user, "Votre question (ID: " + ID + ") a été acceptée et transférée");
 							}
 							catch(Exception e)
 							{
