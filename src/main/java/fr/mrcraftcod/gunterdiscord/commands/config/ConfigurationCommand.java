@@ -123,6 +123,7 @@ public class ConfigurationCommand extends BasicCommand
 			Configuration configuration = Settings.getSettings(args.pop());
 			if(configuration != null)
 			{
+				List<String> beforeArgs = new LinkedList<>(args);
 				if(processWithValue(event, configuration, args) == ActionResult.ERROR)
 				{
 					EmbedBuilder builder = new EmbedBuilder();
@@ -142,7 +143,8 @@ public class ConfigurationCommand extends BasicCommand
 					builder.setColor(Color.GREEN);
 					builder.setTitle("Valeur changée");
 					builder.setDescription("Commande: " + getName());
-					builder.addField("Configuration", configuration.getName(), false);
+					builder.addField("Configuration:", configuration.getName(), false);
+					builder.addField("Valeur:", beforeArgs.toString(), false);
 					Actions.reply(event, builder.build());
 					Log.info("Config value " + configuration.getName() + " changed");
 				}
