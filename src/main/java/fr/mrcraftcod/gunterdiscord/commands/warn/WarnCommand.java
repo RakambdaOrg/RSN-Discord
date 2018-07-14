@@ -49,7 +49,7 @@ public class WarnCommand extends BasicCommand
 			else
 			{
 				Actions.giveRole(event.getGuild(), user, role);
-				new RemoveRoleConfig().addValue(event.getGuild(), user.getIdLong(), role.getIdLong(), System.currentTimeMillis() + new WarnTimeConfig().getLong(event.getGuild(), 1) * 24 * 60 * 60 * 1000L);
+				new RemoveRoleConfig().addValue(event.getGuild(), user.getIdLong(), role.getIdLong(), System.currentTimeMillis() + new WarnTimeConfig().getInt(event.getGuild(), 1) * 24 * 60 * 60 * 1000L);
 				builder.setColor(Color.GREEN);
 				builder.addField("Congratulations", user.getAsMention() + " à rejoint le role " + role.getAsMention() + " pour une durée de 1 semaine", false);
 			}
