@@ -34,6 +34,7 @@ public class ScheduledRunner implements Runnable
 		{
 			Log.info("Processing guild %s", guild.getName());
 			Map<Long, Map<Long, Long>> guildConfig = config.getAsMap(guild);
+			Log.info("Map is %s", guildConfig.toString());
 			for(Long userID : guildConfig.keySet())
 			{
 				Member member = guild.getMemberById(userID);
