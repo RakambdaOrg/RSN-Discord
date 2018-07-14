@@ -87,7 +87,7 @@ public class WarnCommand extends BasicCommand
 	@Override
 	public List<String> getCommand()
 	{
-		return List.of("doublewarn", "dwarn");
+		return List.of("warn", "warn");
 	}
 	
 	@Override

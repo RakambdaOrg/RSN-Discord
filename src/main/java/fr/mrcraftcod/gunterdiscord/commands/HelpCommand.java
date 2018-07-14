@@ -74,7 +74,7 @@ public class HelpCommand extends BasicCommand
 			else
 			{
 				builder.setColor(Color.ORANGE);
-				builder.addField(prefix + args.get(0), "Cette commande n'existe pas ou vous n'y avez pas accès", false);
+				builder.addField(prefix + args.poll(), "Cette commande n'existe pas ou vous n'y avez pas accès", false);
 			}
 			Actions.reply(event, builder.build());
 		}
