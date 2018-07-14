@@ -13,6 +13,6 @@ public class MegaWarnRoleConfig extends SingleRoleConfiguration
 	@Override
 	public String getName()
 	{
-		return "megaRole";
+		return "megaWarnRole";
 	}
 }
