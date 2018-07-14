@@ -36,13 +36,13 @@ public class Settings
 			// new PhotoConfig(),
 			new AutoRolesConfig(),
 			new NickDelayConfig(),
-			// new NickLastChangeConfig(),
+			new NickLastChangeConfig(),
 			// new TrombinoscopeRoleConfig(),
 			new QuestionsChannelConfig(),
 			new QuestionsFinalChannelConfig(),
 			// new HangmanRoleConfig(),
 			// new WerewolvesChannelConfig(),
-			// new YoutubeChannelConfig(),
+			new YoutubeChannelConfig(),
 			new YoutubeRoleConfig(),
 			new MusicPartyChannelConfig(),
 			new WarnRoleConfig(),
@@ -50,7 +50,8 @@ public class Settings
 			new MegaWarnRoleConfig(),
 			new WarnTimeConfig(),
 			new DoubleWarnTimeConfig(),
-			new MegaWarnTimeConfig()
+			new MegaWarnTimeConfig(),
+			new RemoveRoleConfig()
 			};
 	private static Path path;
 	private static JSONObject settings;
