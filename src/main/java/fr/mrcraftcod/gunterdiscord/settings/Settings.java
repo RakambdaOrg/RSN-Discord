@@ -52,7 +52,7 @@ public class Settings
 			new DoubleWarnTimeConfig(),
 			new MegaWarnTimeConfig(),
 			new RemoveRoleConfig()
-			};
+	};
 	private static Path path;
 	private static JSONObject settings;
 	
@@ -118,7 +118,7 @@ public class Settings
 	 */
 	public static Configuration getSettings(String name)
 	{
-		for(Configuration configuration: SETTINGS)
+		for(Configuration configuration : SETTINGS)
 			if(configuration.getName().equalsIgnoreCase(name))
 				return configuration;
 		return null;
@@ -246,7 +246,10 @@ public class Settings
 			}
 			if(index != -1)
 				array.remove(index);
-			map.put(key.toString(), array);
+			if(array.length() == 0)
+				map.remove(key.toString());
+			else
+				map.put(key.toString(), array);
 		}
 	}
 	
@@ -291,6 +294,12 @@ public class Settings
 			return;
 		JSONObject map2 = map.optJSONObject(key.toString());
 		if(map2 != null)
+		{
 			map2.remove(value.toString());
+			if(map2.length() == 0)
+			{
+				map.remove(key.toString());
+			}
+		}
 	}
 }

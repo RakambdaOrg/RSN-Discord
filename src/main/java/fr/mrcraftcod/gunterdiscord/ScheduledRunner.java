@@ -46,6 +46,7 @@ public class ScheduledRunner implements Runnable
 					if(currentTime - userGuildConfig.get(roleID) >= 0)
 					{
 						Actions.removeRole(member, guild.getRoleById(roleID));
+						config.deleteKeyValue(guild, userID, roleID);
 					}
 				}
 			}
