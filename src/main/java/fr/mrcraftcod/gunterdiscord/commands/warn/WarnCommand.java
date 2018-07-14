@@ -48,10 +48,11 @@ public class WarnCommand extends BasicCommand
 			}
 			else
 			{
+				double duration = new WarnTimeConfig().getDouble(event.getGuild(), 1);
 				Actions.giveRole(event.getGuild(), user, role);
-				new RemoveRoleConfig().addValue(event.getGuild(), user.getIdLong(), role.getIdLong(), (long) (System.currentTimeMillis() + new WarnTimeConfig().getDouble(event.getGuild(), 1) * 24 * 60 * 60 * 1000L));
+				new RemoveRoleConfig().addValue(event.getGuild(), user.getIdLong(), role.getIdLong(), (long) (System.currentTimeMillis() + duration * 24 * 60 * 60 * 1000L));
 				builder.setColor(Color.GREEN);
-				builder.addField("Congratulations", user.getAsMention() + " à rejoint le role " + role.getAsMention() + " pour une durée de 1 semaine", false);
+				builder.addField("Congratulations", user.getAsMention() + " à rejoint le role " + role.getAsMention() + " pour une durée de " + duration + " jour(s)", false);
 			}
 			Actions.reply(event, builder.build());
 		}
