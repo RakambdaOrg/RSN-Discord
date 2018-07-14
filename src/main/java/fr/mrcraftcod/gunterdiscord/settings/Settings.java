@@ -47,7 +47,10 @@ public class Settings
 			new MusicPartyChannelConfig(),
 			new WarnRoleConfig(),
 			new DoubleWarnRoleConfig(),
-			new MegaWarnRoleConfig()
+			new MegaWarnRoleConfig(),
+			new WarnTimeConfig(),
+			new DoubleWarnTimeConfig(),
+			new MegaWarnTimeConfig()
 			};
 	private static Path path;
 	private static JSONObject settings;
