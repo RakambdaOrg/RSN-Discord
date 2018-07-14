@@ -124,7 +124,8 @@ public class ConfigurationCommand extends BasicCommand
 			if(configuration != null)
 			{
 				List<String> beforeArgs = new LinkedList<>(args);
-				if(processWithValue(event, configuration, args) == ActionResult.ERROR)
+				ActionResult result = processWithValue(event, configuration, args);
+				if(result == ActionResult.ERROR)
 				{
 					EmbedBuilder builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
@@ -135,6 +136,9 @@ public class ConfigurationCommand extends BasicCommand
 					builder.addField("Configuration", configuration.getName(), false);
 					Actions.reply(event, builder.build());
 					Log.error("Error handling configuration change");
+				}
+				else if(result == ActionResult.NONE)
+				{
 				}
 				else
 				{
