@@ -17,7 +17,7 @@ public class WarnTimeConfig extends ValueConfiguration
 	{
 		try
 		{
-			super.setValue(guild, Integer.parseInt(value.toString()));
+			super.setValue(guild, Double.parseDouble(value.toString()));
 		}
 		catch(Exception e)
 		{

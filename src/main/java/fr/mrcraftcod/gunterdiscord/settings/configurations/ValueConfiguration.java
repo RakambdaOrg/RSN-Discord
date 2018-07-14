@@ -195,6 +195,30 @@ public abstract class ValueConfiguration extends Configuration
 		return ConfigurationCommand.ActionResult.OK;
 	}
 	
+	/**
+	 * Get the value as a double.
+	 *
+	 * @param guild        The guild.
+	 * @param defaultValue The default value to return if none was found.
+	 *
+	 * @return The string.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a value.
+	 * @throws InvalidClassException    If this configuration isn't a long.
+	 */
+	public double getDouble(Guild guild, long defaultValue) throws InvalidClassException
+	{
+		Object value = lastValue == null ? getObject(guild) : lastValue;
+		if(value == null)
+		{
+			setValue(guild, defaultValue);
+			return defaultValue;
+		}
+		if(value instanceof Double)
+			return (Double) value;
+		throw new InvalidClassException("Config is not a double: " + value.getClass().getSimpleName());
+	}
+	
 	@Override
 	public ConfigType getType()
 	{
