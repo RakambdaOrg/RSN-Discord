@@ -41,10 +41,11 @@ public class ScheduledRunner implements Runnable
 				Log.info("Processing user %s", Actions.getUserToLog(member.getUser()));
 				Map<Long, Long> userGuildConfig = guildConfig.get(userID);
 				Log.info("User map is %s", userGuildConfig.toString());
+				Log.info("User map key is %s", userGuildConfig.keySet().toString());
 				for(Long roleID : userGuildConfig.keySet())
 				{
 					long diff = currentTime - userGuildConfig.get(roleID);
-					Log.info("Processing role %d, diff is: %d", roleID);
+					Log.info("Processing role %d, diff is: %d", roleID, diff);
 					if(currentTime - userGuildConfig.get(roleID) >= 0)
 					{
 						Actions.removeRole(member, guild.getRoleById(roleID));
