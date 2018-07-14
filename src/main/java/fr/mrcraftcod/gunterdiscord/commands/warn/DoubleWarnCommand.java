@@ -2,8 +2,8 @@ package fr.mrcraftcod.gunterdiscord.commands.warn;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
+import fr.mrcraftcod.gunterdiscord.settings.configs.DoubleWarnRoleConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.RemoveRoleConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.WarnRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -39,7 +39,7 @@ public class DoubleWarnCommand extends BasicCommand
 		if(event.getMessage().getMentionedUsers().size() > 0)
 		{
 			User user = event.getMessage().getMentionedUsers().get(0);
-			Role role = new WarnRoleConfig().getRole(event.getGuild());
+			Role role = new DoubleWarnRoleConfig().getRole(event.getGuild());
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 			if(role == null)
@@ -49,6 +49,7 @@ public class DoubleWarnCommand extends BasicCommand
 			}
 			else
 			{
+				Actions.giveRole(event.getGuild(), user, role);
 				new RemoveRoleConfig().addValue(event.getGuild(), user.getIdLong(), role.getIdLong(), System.currentTimeMillis() + DURATION);
 				builder.setColor(Color.GREEN);
 				builder.addField("Congratulations", user.getAsMention() + " à rejoint le role " + role.getAsMention() + " pour une durée de 2 semaines", false);
