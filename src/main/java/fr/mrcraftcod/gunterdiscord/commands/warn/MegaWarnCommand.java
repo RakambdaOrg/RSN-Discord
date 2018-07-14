@@ -49,6 +49,7 @@ public class MegaWarnCommand extends BasicCommand
 			}
 			else
 			{
+				Actions.giveRole(event.getGuild(), user, role);
 				new RemoveRoleConfig().addValue(event.getGuild(), user.getIdLong(), role.getIdLong(), System.currentTimeMillis() + DURATION);
 				builder.setColor(Color.GREEN);
 				builder.addField("Congratulations", user.getAsMention() + " à rejoint le role " + role.getAsMention() + " pour une durée de 4 semaines", false);
