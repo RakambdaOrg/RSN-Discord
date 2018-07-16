@@ -90,7 +90,7 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration
 		}
 		catch(InvalidClassException | NoValueDefinedException e)
 		{
-			Log.error(e, "Error getting channel from config");
+			Log.info("Error getting channel from config, value isn't set");
 		}
 		return null;
 	}
