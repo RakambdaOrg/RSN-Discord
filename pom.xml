@@ -90,7 +90,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>3.7.0_382</version>
+            <version>3.6.0_356</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
