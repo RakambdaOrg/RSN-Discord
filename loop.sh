@@ -3,7 +3,7 @@ cd /home/ubuntu/Gunter-Discord/
 while :
 do
 	git pull
-	mvn package
+	mvn clean package -U
 	java -jar target/GunterDiscord.jar
 done
 

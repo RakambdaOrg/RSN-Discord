@@ -91,12 +91,6 @@
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
             <version>3.7.0_382</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>opus-java</artifactId>
-                    <groupId>net.dv8tion</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
