@@ -37,7 +37,7 @@ public class QuestionReactionListener extends ListenerAdapter
 					if(emote == BasicEmotes.CHECK_OK)
 					{
 						event.getTextChannel().getMessageById(event.getReaction().getMessageIdLong()).queue(m -> {
-							List<Message> messagesSent = Actions.getMessage(new QuestionsFinalChannelConfig().getTextChannel(event.getGuild()), m.getEmbeds().stream().map(Utilities::buildEmbed).map(mess -> mess.addField("Approved by", event.getUser().getAsMention(), false)).map(EmbedBuilder::build).collect(Collectors.toList()));
+							List<Message> messagesSent = Actions.getMessage(new QuestionsFinalChannelConfig().getTextChannel(event.getGuild()), m.getEmbeds().stream().map(Utilities::buildEmbed).map(mess -> mess.addField("Approved by", event.getUser().getAsMention(), false).setTimestamp(m.getCreationTime())).map(EmbedBuilder::build).collect(Collectors.toList()));
 							messagesSent.forEach(mess -> mess.addReaction(BasicEmotes.CHECK_OK.getValue()).queue());
 							Actions.deleteMessage(m);
 							try
