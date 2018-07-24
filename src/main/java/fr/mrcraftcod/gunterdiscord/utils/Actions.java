@@ -640,4 +640,9 @@ public class Actions
 			Log.warning("Error giving permission to %s in %s", Actions.getUserToLog(member.getUser()), channel.getName());
 		}
 	}
+	
+	public static List<Message> getMessage(TextChannel channel, List<MessageEmbed> embeds)
+	{
+		return embeds.stream().map(embed -> getMessage(channel, embed)).collect(Collectors.toList());
+	}
 }

@@ -5,10 +5,15 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.QuestionsFinalChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -32,7 +37,8 @@ public class QuestionReactionListener extends ListenerAdapter
 					if(emote == BasicEmotes.CHECK_OK)
 					{
 						event.getTextChannel().getMessageById(event.getReaction().getMessageIdLong()).queue(m -> {
-							Actions.sendMessage(new QuestionsFinalChannelConfig().getTextChannel(event.getGuild()), m.getEmbeds());
+							List<Message> messagesSent = Actions.getMessage(new QuestionsFinalChannelConfig().getTextChannel(event.getGuild()), m.getEmbeds().stream().map(Utilities::buildEmbed).map(mess -> mess.addField("Approved by", event.getUser().getAsMention(), false)).map(EmbedBuilder::build).collect(Collectors.toList()));
+							messagesSent.forEach(mess -> mess.addReaction(BasicEmotes.CHECK_OK.getValue()).queue());
 							Actions.deleteMessage(m);
 							try
 							{
@@ -65,6 +71,12 @@ public class QuestionReactionListener extends ListenerAdapter
 						});
 					}
 				}
+			}
+			else if(new QuestionsFinalChannelConfig().isChannel(event.getTextChannel()))
+			{
+				BasicEmotes emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
+				if(emote == BasicEmotes.CHECK_OK)
+					event.getChannel().getMessageById(event.getMessageId()).queue(Actions::deleteMessage);
 			}
 		}
 		catch(Exception e)

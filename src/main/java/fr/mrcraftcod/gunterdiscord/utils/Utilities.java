@@ -178,4 +178,13 @@ public class Utilities
 		builder.setTitle(title);
 		return builder;
 	}
+	
+	public static EmbedBuilder buildEmbed(MessageEmbed messageEmbed)
+	{
+		EmbedBuilder builder = buildEmbed(null, messageEmbed.getColor(), messageEmbed.getTitle());
+		builder.setAuthor(messageEmbed.getAuthor().getName(), messageEmbed.getAuthor().getUrl(), messageEmbed.getAuthor().getIconUrl());
+		builder.setDescription(messageEmbed.getDescription());
+		messageEmbed.getFields().forEach(builder::addField);
+		return builder;
+	}
 }
