@@ -256,7 +256,12 @@ public class Actions
 	public static void deleteMessage(Message message)
 	{
 		message.delete().queue();
-		Log.info("Deleted message from " + getUserToLog(message.getAuthor()) + " : " + message.getContentRaw());
+		Log.info("Deleted message from " + getUserToLog(message.getAuthor()) + " : " + getMessageForLog(message));
+	}
+	
+	private static String getMessageForLog(Message message)
+	{
+		return message.getContentRaw() + " => " + message.getEmbeds().stream().map(Actions::getEmbedForLog).collect(Collectors.joining(" | "));
 	}
 	
 	/**
