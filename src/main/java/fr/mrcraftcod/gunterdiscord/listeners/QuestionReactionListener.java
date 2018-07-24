@@ -74,9 +74,12 @@ public class QuestionReactionListener extends ListenerAdapter
 			}
 			else if(new QuestionsFinalChannelConfig().isChannel(event.getTextChannel()))
 			{
-				BasicEmotes emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
-				if(emote == BasicEmotes.CHECK_OK)
-					event.getChannel().getMessageById(event.getMessageId()).queue(Actions::deleteMessage);
+				if(!event.getUser().isBot())
+				{
+					BasicEmotes emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
+					if(emote == BasicEmotes.CHECK_OK)
+						event.getChannel().getMessageById(event.getMessageId()).queue(Actions::deleteMessage);
+				}
 			}
 		}
 		catch(Exception e)
