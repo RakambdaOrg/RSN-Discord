@@ -27,7 +27,7 @@ public class Settings
 			// new BannedRegexConfig(),
 			new ModoRolesConfig(),
 			new OnlyIdeasConfig(),
-			// new OnlyImagesConfig(),
+			new OnlyImagesConfig(),
 			new PrefixConfig(),
 			new ReportChannelConfig(),
 			// new PhotoChannelConfig(),

@@ -70,7 +70,7 @@ public class Main
 			jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).buildBlocking();
 			jda.addEventListener(new CommandsMessageListener());
 			// jda.addEventListener(new BannedRegexesMessageListener());
-			// jda.addEventListener(new OnlyImagesMessageListener());
+			jda.addEventListener(new OnlyImagesMessageListener());
 			jda.addEventListener(new ShutdownListener());
 			jda.addEventListener(new LogListener());
 			jda.addEventListener(new AutoRolesListener());
