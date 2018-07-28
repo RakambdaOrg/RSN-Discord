@@ -8,11 +8,9 @@ import fr.mrcraftcod.gunterdiscord.settings.configurations.MultipleChannelConfig
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class OnlyImagesConfig extends MultipleChannelConfiguration
-{
+public class OnlyImagesConfig extends MultipleChannelConfiguration{
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "onlyImage";
 	}
 }

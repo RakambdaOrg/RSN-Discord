@@ -18,14 +18,11 @@ import java.util.LinkedList;
  * @author Thomas Couchoud
  * @since 2018-05-12
  */
-public abstract class SingleRoleConfiguration extends ValueConfiguration
-{
+public abstract class SingleRoleConfiguration extends ValueConfiguration{
 	@SuppressWarnings("Duplicates")
 	@Override
-	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args)
-	{
-		if(action == ConfigurationCommand.ChangeConfigType.SHOW)
-		{
+	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args){
+		if(action == ConfigurationCommand.ChangeConfigType.SHOW){
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
@@ -34,10 +31,10 @@ public abstract class SingleRoleConfiguration extends ValueConfiguration
 			Actions.reply(event, builder.build());
 			return ConfigurationCommand.ActionResult.NONE;
 		}
-		if(args.size() < 1)
+		if(args.size() < 1){
 			return ConfigurationCommand.ActionResult.ERROR;
-		switch(action)
-		{
+		}
+		switch(action){
 			case SET:
 				setValue(event.getGuild(), event.getMessage().getMentionedRoles().get(0).getIdLong());
 				return ConfigurationCommand.ActionResult.OK;
@@ -52,14 +49,11 @@ public abstract class SingleRoleConfiguration extends ValueConfiguration
 	 *
 	 * @return The role or null if not found.
 	 */
-	public Role getRole(Guild guild)
-	{
-		try
-		{
+	public Role getRole(Guild guild){
+		try{
 			return guild.getJDA().getRoleById(getLong(guild));
 		}
-		catch(InvalidClassException | NoValueDefinedException e)
-		{
+		catch(InvalidClassException | NoValueDefinedException e){
 			Log.error(guild, "Error getting role from config", e);
 		}
 		return null;

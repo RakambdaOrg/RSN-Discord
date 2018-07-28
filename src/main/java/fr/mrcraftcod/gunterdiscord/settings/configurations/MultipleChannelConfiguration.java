@@ -15,14 +15,11 @@ import java.util.function.Function;
  * @author Thomas Couchoud
  * @since 2018-05-12
  */
-public abstract class MultipleChannelConfiguration extends ListConfiguration<Long>
-{
+public abstract class MultipleChannelConfiguration extends ListConfiguration<Long>{
 	@SuppressWarnings("Duplicates")
 	@Override
-	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args) throws Exception
-	{
-		if(action == ConfigurationCommand.ChangeConfigType.SHOW)
-		{
+	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args){
+		if(action == ConfigurationCommand.ChangeConfigType.SHOW){
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
@@ -31,10 +28,10 @@ public abstract class MultipleChannelConfiguration extends ListConfiguration<Lon
 			Actions.reply(event, builder.build());
 			return ConfigurationCommand.ActionResult.NONE;
 		}
-		if(args.size() < 1)
+		if(args.size() < 1){
 			return ConfigurationCommand.ActionResult.ERROR;
-		switch(action)
-		{
+		}
+		switch(action){
 			case ADD:
 				addValue(event.getGuild(), event.getMessage().getMentionedChannels().get(0).getIdLong());
 				return ConfigurationCommand.ActionResult.OK;
@@ -46,8 +43,7 @@ public abstract class MultipleChannelConfiguration extends ListConfiguration<Lon
 	}
 	
 	@Override
-	protected Function<String, Long> getValueParser()
-	{
+	protected Function<String, Long> getValueParser(){
 		return Long::parseLong;
 	}
 }

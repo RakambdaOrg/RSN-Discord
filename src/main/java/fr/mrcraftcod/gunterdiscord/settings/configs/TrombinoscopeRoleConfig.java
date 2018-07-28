@@ -8,11 +8,9 @@ import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleRoleConfigurati
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class TrombinoscopeRoleConfig extends SingleRoleConfiguration
-{
+public class TrombinoscopeRoleConfig extends SingleRoleConfiguration{
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "trombinoscopeRole";
 	}
 }

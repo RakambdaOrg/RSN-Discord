@@ -8,7 +8,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
  * @author Thomas Couchoud
  * @since 2018-06-23
  */
-public class MusicPartyMusic{
+class MusicPartyMusic{
 	private final AudioTrack track;
 	
 	/**

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -15,13 +16,12 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2017-05-21
  */
-public class LoggerFormatter extends Formatter
-{
+public class LoggerFormatter extends Formatter{
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSSS");
+	private static final Pattern PACKAGES = Pattern.compile("^fr\\.mrcraftcod\\.gunterdiscord(/fr\\.mrcraftcod\\.gunterdiscord)?\\.?");
 	
 	@Override
-	public String format(LogRecord record)
-	{
+	public String format(LogRecord record){
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(record.getLevel().getLocalizedName());
 		stringBuilder.append(": ");
@@ -29,20 +29,20 @@ public class LoggerFormatter extends Formatter
 		stringBuilder.append(" ");
 		int stackIndex;
 		StackTraceElement trace = null;
-		for(stackIndex = 0; stackIndex < Thread.currentThread().getStackTrace().length; stackIndex++)
-		{
+		for(stackIndex = 0; stackIndex < Thread.currentThread().getStackTrace().length; stackIndex++){
 			trace = Thread.currentThread().getStackTrace()[stackIndex];
-			if(trace.getClassName().startsWith("fr.mrcraftcod.gunterdiscord") && !trace.getClassName().startsWith("fr.mrcraftcod.gunterdiscord.utils.LoggerFormatter") && !trace.getClassName().startsWith("fr.mrcraftcod.gunterdiscord.utils.Log"))
+			if(trace.getClassName().startsWith("fr.mrcraftcod.gunterdiscord") && !trace.getClassName().startsWith("fr.mrcraftcod.gunterdiscord.utils.LoggerFormatter") && !trace.getClassName().startsWith("fr.mrcraftcod.gunterdiscord.utils.Log")){
 				break;
+			}
 		}
-		if(trace != null)
-			stringBuilder.append(trace.toString().replaceAll("^fr\\.mrcraftcod\\.gunterdiscord(/fr\\.mrcraftcod\\.gunterdiscord)?\\.?", ""));
+		if(trace != null){
+			stringBuilder.append(PACKAGES.matcher(trace.toString()).replaceAll(""));
+		}
 		
 		stringBuilder.append(" -> ");
 		
 		stringBuilder.append(record.getMessage());
-		if(record.getThrown() != null)
-		{
+		if(record.getThrown() != null){
 			stringBuilder.append(" (");
 			stringBuilder.append(record.getThrown().toString());
 			stringBuilder.append("\n");

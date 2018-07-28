@@ -8,8 +8,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
  * @author Thomas Couchoud
  * @since 2018-06-16
  */
-public interface StatusTrackSchedulerListener
-{
+public interface StatusTrackSchedulerListener{
 	void onTrackSchedulerEmpty();
 	
 	void onTrackEnd(AudioTrack track);

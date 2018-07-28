@@ -8,11 +8,9 @@ import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleRoleConfigurati
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class HangmanRoleConfig extends SingleRoleConfiguration
-{
+public class HangmanRoleConfig extends SingleRoleConfiguration{
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "hangmanRole";
 	}
 }

@@ -16,6 +16,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 public class MusicPartyListener extends ListenerAdapter implements StatusTrackSchedulerListener{
 	private static final ArrayList<MusicPartyListener> parties = new ArrayList<>();
 	private static final int REQUIRED_TO_SKIP = 5;
+	private static final Pattern CENSOR_CHAR = Pattern.compile("[A-Za-z0-9]");
 	private final Guild guild;
 	private final VoiceChannel voiceChannel;
 	private final TextChannel musicPartyChannel;
@@ -144,7 +146,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 	
 	@Override
 	public void onTrackStart(AudioTrack track){
-		Log.info(getGuild(), "New track is starting: %s", track.getIdentifier());
+		Log.info(getGuild(), "New track is starting: {}", track.getIdentifier());
 		printScores();
 		
 		EmbedBuilder builder = Utilities.buildEmbed(musicPartyChannel.getJDA().getSelfUser(), Color.GREEN, "Nouveau son");
@@ -155,7 +157,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		
 		currentFound = false;
 		currentMusic = new MusicPartyMusic(track);
-		Log.info(getGuild(), "MusicParty track started: %s", currentMusic);
+		Log.info(getGuild(), "MusicParty track started: {}", currentMusic);
 	}
 	
 	/**
@@ -165,8 +167,8 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 	 *
 	 * @return The censored name.
 	 */
-	private String censorName(String name){
-		return name.replaceAll("[A-Za-z0-9]", "?");
+	private static String censorName(String name){
+		return CENSOR_CHAR.matcher(name).replaceAll("?");
 	}
 	
 	/**

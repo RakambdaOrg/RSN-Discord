@@ -5,6 +5,7 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
+import net.dv8tion.jda.core.entities.Guild;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
@@ -16,17 +17,18 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author Thomas Couchoud
  * @since 2018-06-16
  */
-public class TrackScheduler extends AudioEventAdapter
-{
+class TrackScheduler extends AudioEventAdapter{
 	private final AudioPlayer player;
 	private final BlockingQueue<AudioTrack> queue;
-	private Set<StatusTrackSchedulerListener> listeners;
+	private final Guild guild;
+	private final Set<StatusTrackSchedulerListener> listeners;
 	
 	/**
+	 * @param guild  The guild the scheduler is for.
 	 * @param player The audio player this scheduler uses
 	 */
-	public TrackScheduler(AudioPlayer player)
-	{
+	public TrackScheduler(Guild guild, AudioPlayer player){
+		this.guild = guild;
 		this.player = player;
 		this.queue = new LinkedBlockingQueue<>();
 		this.listeners = new LinkedHashSet<>();
@@ -37,48 +39,48 @@ public class TrackScheduler extends AudioEventAdapter
 	 *
 	 * @param track The track to play or add to queue.
 	 */
-	public void queue(AudioTrack track)
-	{
-		if(!player.startTrack(track, true))
+	public void queue(AudioTrack track){
+		if(!player.startTrack(track, true)){
 			queue.offer(track);
+		}
 	}
 	
 	@Override
-	public void onTrackStart(AudioPlayer player, AudioTrack track)
-	{
+	public void onTrackStart(AudioPlayer player, AudioTrack track){
 		super.onTrackStart(player, track);
 		listeners.forEach(l -> l.onTrackStart(track));
 	}
 	
 	@Override
-	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason)
-	{
+	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason){
 		super.onTrackEnd(player, track, endReason);
 		listeners.forEach(l -> l.onTrackEnd(track));
-		Log.info("Next track");
-		if(endReason.mayStartNext)
-			if(!nextTrack())
-			{
-				Log.info("Playlist ended - " + listeners.size());
+		Log.info(getGuild(), "Next track");
+		if(endReason.mayStartNext){
+			if(!nextTrack()){
+				Log.info(getGuild(), "Playlist ended, listeners: {}", listeners.size());
 				listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty);
 			}
+		}
 	}
 	
-	public boolean nextTrack()
-	{
-		Log.info("Playing next track");
+	public Guild getGuild(){
+		return guild;
+	}
+	
+	public boolean nextTrack(){
+		Log.info(getGuild(), "Playing next track");
 		return player.startTrack(queue.poll(), false);
 	}
 	
-	public void addStatusTrackSchedulerListener(StatusTrackSchedulerListener statusTrackSchedulerListener)
-	{
+	public void addStatusTrackSchedulerListener(StatusTrackSchedulerListener statusTrackSchedulerListener){
 		listeners.add(statusTrackSchedulerListener);
 	}
 	
-	public void foundNothing()
-	{
-		Log.info("Scheduler nothing found (track: " + player.getPlayingTrack() + ", queue:" + queue.size() + ")");
-		if(player.getPlayingTrack() == null && queue.isEmpty())
+	public void foundNothing(){
+		Log.info(getGuild(), "Scheduler nothing found (track: {}, queue: {})", player.getPlayingTrack(), queue.size());
+		if(player.getPlayingTrack() == null && queue.isEmpty()){
 			listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty);
+		}
 	}
 }

@@ -8,11 +8,9 @@ import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleRoleConfigurati
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class MegaWarnRoleConfig extends SingleRoleConfiguration
-{
+public class MegaWarnRoleConfig extends SingleRoleConfiguration{
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "megaWarnRole";
 	}
 }

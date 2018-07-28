@@ -9,12 +9,10 @@ import java.util.Scanner;
  * @author Thomas Couchoud
  * @since 2018-05-29
  */
-public class ConsoleText extends Thread
-{
+public class ConsoleText extends Thread{
 	private final JDA jda;
 	
-	public ConsoleText(JDA jda)
-	{
+	public ConsoleText(JDA jda){
 		super();
 		this.jda = jda;
 		setDaemon(true);
@@ -22,16 +20,17 @@ public class ConsoleText extends Thread
 	}
 	
 	@Override
-	public void run()
-	{
-		Scanner sc = new Scanner(System.in);
-		while(true)
-		{
-			String line = sc.nextLine();
-			if(line == null)
-				continue;
-			if(line.startsWith("stop"))
-				jda.shutdownNow();
+	public void run(){
+		try(Scanner sc = new Scanner(System.in)){
+			while(true){
+				String line = sc.nextLine();
+				if(line == null){
+					continue;
+				}
+				if(line.startsWith("stop")){
+					jda.shutdownNow();
+				}
+			}
 		}
 	}
 }

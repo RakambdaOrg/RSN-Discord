@@ -8,11 +8,9 @@ import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleRoleConfigurati
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class DoubleWarnRoleConfig extends SingleRoleConfiguration
-{
+public class DoubleWarnRoleConfig extends SingleRoleConfiguration{
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "doubleWarnRole";
 	}
 }

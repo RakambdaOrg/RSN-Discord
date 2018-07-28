@@ -8,11 +8,9 @@ import fr.mrcraftcod.gunterdiscord.settings.configurations.MultipleRoleConfigura
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class ModoRolesConfig extends MultipleRoleConfiguration
-{
+public class ModoRolesConfig extends MultipleRoleConfiguration{
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "modoRoles";
 	}
 }

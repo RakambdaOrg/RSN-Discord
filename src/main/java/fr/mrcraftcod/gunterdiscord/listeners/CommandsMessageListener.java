@@ -28,8 +28,7 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-09
  */
-public class CommandsMessageListener extends ListenerAdapter
-{
+public class CommandsMessageListener extends ListenerAdapter{
 	public static final Command[] commands = new Command[]{
 			// new PhotoCompositeCommand(),
 			// new HangmanCompositeCommand(),
@@ -57,36 +56,29 @@ public class CommandsMessageListener extends ListenerAdapter
 	/**
 	 * Constructor.
 	 */
-	public CommandsMessageListener()
-	{
+	public CommandsMessageListener(){
 		HashMap<String, Integer> counts = new HashMap<>();
 		Arrays.asList(commands).forEach(c -> c.getCommand().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
 		String clash = counts.keySet().stream().filter(k -> counts.get(k) > 1).collect(Collectors.joining(", "));
-		if(clash != null && !clash.isEmpty())
+		if(clash != null && !clash.isEmpty()){
 			Log.error(null, "Command clash: {}", clash);
+		}
 	}
 	
 	@Override
-	public void onMessageReceived(MessageReceivedEvent event)
-	{
+	public void onMessageReceived(MessageReceivedEvent event){
 		super.onMessageReceived(event);
-		try
-		{
-			if(isCommand(event.getGuild(), event.getMessage().getContentRaw()))
-			{
+		try{
+			if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
 				Actions.deleteMessage(event.getMessage());
 				LinkedList<String> args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 				String cmdText = args.pop().substring(new PrefixConfig().getString(event.getGuild(), "g?").length());
 				Command command = getCommand(cmdText);
-				if(command != null)
-				{
-					if(command.getScope() == -5 || command.getScope() == event.getChannel().getType().getId())
-					{
-						try
-						{
+				if(command != null){
+					if(command.getScope() == -5 || command.getScope() == event.getChannel().getType().getId()){
+						try{
 							Log.info(event.getGuild(), "Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(), Utilities.getUserToLog(event.getAuthor()), args);
-							switch(command.execute(event, args))
-							{
+							switch(command.execute(event, args)){
 								case NOT_ALLOWED:
 									Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Vous n'etes par autorisé à utiliser cette commande");
 									break;
@@ -97,8 +89,7 @@ public class CommandsMessageListener extends ListenerAdapter
 								case SUCCESS:
 							}
 						}
-						catch(NotAllowedException e)
-						{
+						catch(NotAllowedException e){
 							Log.error(event.getGuild(), "Error executing command {} (not allowed)", command, e);
 							EmbedBuilder builder = new EmbedBuilder();
 							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
@@ -106,8 +97,7 @@ public class CommandsMessageListener extends ListenerAdapter
 							builder.setTitle("Vous n'avez pas accès à cette commande.");
 							Actions.reply(event, builder.build());
 						}
-						catch(Exception e)
-						{
+						catch(Exception e){
 							Log.error(event.getGuild(), "Error executing command {}", command, e);
 							EmbedBuilder builder = new EmbedBuilder();
 							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
@@ -116,8 +106,7 @@ public class CommandsMessageListener extends ListenerAdapter
 							Actions.reply(event, builder.build());
 						}
 					}
-					else
-					{
+					else{
 						EmbedBuilder builder = new EmbedBuilder();
 						builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 						builder.setColor(Color.ORANGE);
@@ -125,8 +114,7 @@ public class CommandsMessageListener extends ListenerAdapter
 						Actions.reply(event, builder.build());
 					}
 				}
-				else
-				{
+				else{
 					EmbedBuilder builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.ORANGE);
@@ -136,8 +124,7 @@ public class CommandsMessageListener extends ListenerAdapter
 				}
 			}
 		}
-		catch(Exception e)
-		{
+		catch(Exception e){
 			Log.error(event.getGuild(), "Error handling message", e);
 		}
 	}
@@ -150,14 +137,11 @@ public class CommandsMessageListener extends ListenerAdapter
 	 *
 	 * @return True if a command, false otherwise.
 	 */
-	private boolean isCommand(Guild guild, String text)
-	{
-		try
-		{
+	private static boolean isCommand(Guild guild, String text){
+		try{
 			return text.startsWith(new PrefixConfig().getString(guild, "g?"));
 		}
-		catch(InvalidClassException e)
-		{
+		catch(InvalidClassException e){
 			Log.warning(guild, "Error testing command", e);
 		}
 		return false;
@@ -170,11 +154,12 @@ public class CommandsMessageListener extends ListenerAdapter
 	 *
 	 * @return The command or null if not found.
 	 */
-	private Command getCommand(String commandText)
-	{
-		for(Command command : commands)
-			if(command.getCommand().contains(commandText.toLowerCase()))
+	private static Command getCommand(String commandText){
+		for(Command command : commands){
+			if(command.getCommand().contains(commandText.toLowerCase())){
 				return command;
+			}
+		}
 		return null;
 	}
 }

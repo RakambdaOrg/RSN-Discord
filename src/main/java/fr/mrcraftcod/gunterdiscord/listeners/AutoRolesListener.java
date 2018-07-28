@@ -12,18 +12,14 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
  * @author Thomas Couchoud
  * @since 2018-05-12
  */
-public class AutoRolesListener extends ListenerAdapter
-{
+public class AutoRolesListener extends ListenerAdapter{
 	@Override
-	public void onGuildMemberJoin(GuildMemberJoinEvent event)
-	{
+	public void onGuildMemberJoin(GuildMemberJoinEvent event){
 		super.onGuildMemberJoin(event);
-		try
-		{
+		try{
 			Actions.giveRole(event.getMember(), new AutoRolesConfig().getAsList(event.getGuild()));
 		}
-		catch(Exception e)
-		{
+		catch(Exception e){
 			Log.error(event.getGuild(), "Error on user join", e);
 		}
 	}

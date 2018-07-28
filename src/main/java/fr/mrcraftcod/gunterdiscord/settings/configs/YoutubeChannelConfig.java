@@ -9,23 +9,19 @@ import java.util.function.Function;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class YoutubeChannelConfig extends MapConfiguration<Long, String>
-{
+public class YoutubeChannelConfig extends MapConfiguration<Long, String>{
 	@Override
-	protected Function<String, Long> getKeyParser()
-	{
+	protected Function<String, Long> getKeyParser(){
 		return Long::parseLong;
 	}
 	
 	@Override
-	protected Function<String, String> getValueParser()
-	{
+	protected Function<String, String> getValueParser(){
 		return s -> s;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "youtubeChannel";
 	}
 }

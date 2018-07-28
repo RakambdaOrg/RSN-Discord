@@ -15,37 +15,30 @@ import java.util.Map;
  * @author Thomas Couchoud
  * @since 2018-07-14
  */
-public class ScheduledRunner implements Runnable
-{
+public class ScheduledRunner implements Runnable{
 	private final JDA jda;
 	
-	public ScheduledRunner(JDA jda)
-	{
+	public ScheduledRunner(JDA jda){
 		Log.info(null, "Creating scheduled runner");
 		this.jda = jda;
 	}
 	
 	@Override
-	public void run()
-	{
+	public void run(){
 		Log.info(null, "Starting scheduled runner");
 		long currentTime = System.currentTimeMillis();
 		RemoveRoleConfig config = new RemoveRoleConfig();
-		for(Guild guild : jda.getGuilds())
-		{
-			Log.info(guild, "Processing guild %s", guild.getName());
+		for(Guild guild : jda.getGuilds()){
+			Log.info(guild, "Processing guild {}", guild.getName());
 			Map<Long, Map<Long, Long>> guildConfig = config.getAsMap(guild);
-			for(Long userID : guildConfig.keySet())
-			{
+			for(Long userID : guildConfig.keySet()){
 				Member member = guild.getMemberById(userID);
-				Log.info(guild, "Processing user %s", Utilities.getUserToLog(member.getUser()));
+				Log.info(guild, "Processing user {}", Utilities.getUserToLog(member.getUser()));
 				Map<Long, Long> userGuildConfig = guildConfig.get(userID);
-				for(Long roleID : userGuildConfig.keySet())
-				{
+				for(Long roleID : userGuildConfig.keySet()){
 					long diff = currentTime - userGuildConfig.get(roleID);
-					Log.info(guild, "Processing role %d, diff is: %d", roleID, diff);
-					if(currentTime - userGuildConfig.get(roleID) >= 0)
-					{
+					Log.info(guild, "Processing role {}, diff is: {}", roleID, diff);
+					if(currentTime - userGuildConfig.get(roleID) >= 0){
 						Actions.removeRole(member, guild.getRoleById(roleID));
 						config.deleteKeyValue(guild, userID, roleID);
 					}

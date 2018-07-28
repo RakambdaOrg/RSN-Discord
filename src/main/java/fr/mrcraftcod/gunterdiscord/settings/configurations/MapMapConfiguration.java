@@ -18,19 +18,18 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public abstract class MapMapConfiguration<K, V, W> extends Configuration
-{
-	private Map<K, Map<V, W>> lastValue = null;
+public abstract class MapMapConfiguration<K, V, W> extends Configuration{
+	private final Map<K, Map<V, W>> lastValue = null;
 	
 	/**
 	 * Get the list of values from the given key.
 	 *
-	 * @param key The key to get.
+	 * @param guild The guild to get the value from.
+	 * @param key   The key to get.
 	 *
 	 * @return The values or null if not found.
 	 */
-	public Map<V, W> getValue(Guild guild, K key)
-	{
+	public Map<V, W> getValue(Guild guild, K key){
 		return getAsMap(guild).get(key);
 	}
 	
@@ -43,22 +42,21 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
-	public Map<K, Map<V, W>> getAsMap(Guild guild) throws IllegalArgumentException
-	{
-		if(lastValue != null)
-			return lastValue;
+	public Map<K, Map<V, W>> getAsMap(Guild guild) throws IllegalArgumentException{
 		Map<K, Map<V, W>> elements = new HashMap<>();
 		JSONObject map = getObjectMap(guild);
-		if(map == null)
+		if(map == null){
 			Settings.resetMap(guild, this);
-		else
-			for(String key: map.keySet())
-			{
+		}
+		else{
+			for(String key : map.keySet()){
 				K kKey = getKeyParser().apply(key);
 				JSONObject value = map.optJSONObject(key);
-				if(value != null)
+				if(value != null){
 					elements.put(kKey, value.keySet().stream().collect(Collectors.toMap(k -> getKeyValueParser().apply(k), k -> getValueParser().apply(value.get(k).toString()))));
+				}
 			}
+		}
 		return elements;
 	}
 	
@@ -71,10 +69,10 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
-	private JSONObject getObjectMap(Guild guild) throws IllegalArgumentException
-	{
-		if(getType() != ConfigType.MAP)
+	private JSONObject getObjectMap(Guild guild) throws IllegalArgumentException{
+		if(getType() != ConfigType.MAP){
 			throw new IllegalArgumentException("Not a map config");
+		}
 		return Settings.getJSONObject(guild, getName());
 	}
 	
@@ -107,18 +105,11 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 	 * @param value       The second key key.
 	 * @param insideValue The value inside the second map.
 	 */
-	public void addValue(Guild guild, K key, V value, W insideValue)
-	{
-		if(value == null || insideValue == null)
+	public void addValue(Guild guild, K key, V value, W insideValue){
+		if(value == null || insideValue == null){
 			addValue(guild, key);
-		else
-		{
-			if(lastValue != null)
-			{
-				if(!lastValue.containsKey(key))
-					lastValue.put(key, new HashMap<>());
-				lastValue.get(key).put(value, insideValue);
-			}
+		}
+		else{
 			Settings.mapMapValue(guild, this, key, value, insideValue);
 		}
 	}
@@ -129,12 +120,7 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 	 * @param guild The guild.
 	 * @param key   The key to add into.
 	 */
-	public void addValue(Guild guild, K key)
-	{
-		if(lastValue != null && !lastValue.containsKey(key))
-		{
-			lastValue.put(key, new HashMap<>());
-		}
+	public void addValue(Guild guild, K key){
 		Settings.mapMapValue(guild, this, key);
 	}
 	
@@ -145,15 +131,12 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 	 * @param key   The key.
 	 * @param value The value.
 	 */
-	public void deleteKeyValue(Guild guild, K key, V value)
-	{
-		if(value == null)
+	public void deleteKeyValue(Guild guild, K key, V value){
+		if(value == null){
 			deleteKey(guild, key);
-		else
-		{
-			if(lastValue != null && lastValue.containsKey(key))
-				lastValue.get(key).remove(value);
-			Settings.deleteKey(guild, this, key, value, getMatcher());
+		}
+		else{
+			Settings.deleteKey(guild, this, key, value);
 		}
 	}
 	
@@ -163,11 +146,18 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 	 * @param guild The guild.
 	 * @param key   The key.
 	 */
-	public void deleteKey(Guild guild, K key)
-	{
-		if(lastValue != null)
-			lastValue.remove(key);
+	public void deleteKey(Guild guild, K key){
 		Settings.deleteKey(guild, this, key);
+	}
+	
+	@Override
+	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action){
+		return action == ConfigurationCommand.ChangeConfigType.ADD || action == ConfigurationCommand.ChangeConfigType.REMOVE || action == ConfigurationCommand.ChangeConfigType.SHOW;
+	}
+	
+	@Override
+	public ConfigType getType(){
+		return ConfigType.MAP;
 	}
 	
 	/**
@@ -175,20 +165,7 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration
 	 *
 	 * @return The matcher.
 	 */
-	protected BiFunction<Object, V, Boolean> getMatcher()
-	{
+	protected BiFunction<Object, V, Boolean> getMatcher(){
 		return Objects::equals;
-	}
-	
-	@Override
-	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action)
-	{
-		return action == ConfigurationCommand.ChangeConfigType.ADD || action == ConfigurationCommand.ChangeConfigType.REMOVE || action == ConfigurationCommand.ChangeConfigType.SHOW;
-	}
-	
-	@Override
-	public ConfigType getType()
-	{
-		return ConfigType.MAP;
 	}
 }

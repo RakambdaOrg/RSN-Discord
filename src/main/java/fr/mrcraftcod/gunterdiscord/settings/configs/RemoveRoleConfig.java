@@ -17,13 +17,10 @@ import java.util.function.Function;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class RemoveRoleConfig extends MapMapConfiguration<Long, Long, Long>
-{
+public class RemoveRoleConfig extends MapMapConfiguration<Long, Long, Long>{
 	@Override
-	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args)
-	{
-		if(action == ConfigurationCommand.ChangeConfigType.SHOW)
-		{
+	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args){
+		if(action == ConfigurationCommand.ChangeConfigType.SHOW){
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
@@ -37,26 +34,22 @@ public class RemoveRoleConfig extends MapMapConfiguration<Long, Long, Long>
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "removeRole";
 	}
 	
 	@Override
-	protected Function<String, Long> getKeyParser()
-	{
+	protected Function<String, Long> getKeyParser(){
 		return Long::parseLong;
 	}
 	
 	@Override
-	protected Function<String, Long> getKeyValueParser()
-	{
+	protected Function<String, Long> getKeyValueParser(){
 		return Long::parseLong;
 	}
 	
 	@Override
-	protected Function<String, Long> getValueParser()
-	{
+	protected Function<String, Long> getValueParser(){
 		return Long::parseLong;
 	}
 }

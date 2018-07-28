@@ -15,14 +15,11 @@ import java.util.function.Function;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class BannedRegexConfig extends ListConfiguration<String>
-{
+public class BannedRegexConfig extends ListConfiguration<String>{
 	@SuppressWarnings("Duplicates")
 	@Override
-	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args) throws Exception
-	{
-		if(action == ConfigurationCommand.ChangeConfigType.SHOW)
-		{
+	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args){
+		if(action == ConfigurationCommand.ChangeConfigType.SHOW){
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
@@ -31,10 +28,10 @@ public class BannedRegexConfig extends ListConfiguration<String>
 			Actions.reply(event, builder.build());
 			return ConfigurationCommand.ActionResult.NONE;
 		}
-		if(args.size() < 1)
+		if(args.size() < 1){
 			return ConfigurationCommand.ActionResult.ERROR;
-		switch(action)
-		{
+		}
+		switch(action){
 			case ADD:
 				addValue(event.getGuild(), args.poll());
 				return ConfigurationCommand.ActionResult.OK;
@@ -46,14 +43,12 @@ public class BannedRegexConfig extends ListConfiguration<String>
 	}
 	
 	@Override
-	public String getName()
-	{
-		return "bannedRegexes";
+	public String getName(){
+		return "bannedRegex";
 	}
 	
 	@Override
-	protected Function<String, String> getValueParser()
-	{
+	protected Function<String, String> getValueParser(){
 		return s -> s;
 	}
 }

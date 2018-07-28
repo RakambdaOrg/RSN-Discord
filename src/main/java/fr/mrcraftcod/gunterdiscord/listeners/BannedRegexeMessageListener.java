@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class BannedRegexesMessageListener extends ListenerAdapter{
+public class BannedRegexeMessageListener extends ListenerAdapter{
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event){
 		super.onMessageReceived(event);
@@ -38,7 +38,7 @@ public class BannedRegexesMessageListener extends ListenerAdapter{
 	 * @param event   The event.
 	 * @param message The message to check.
 	 */
-	private void verify(GenericMessageEvent event, Message message){
+	private static void verify(GenericMessageEvent event, Message message){
 		try{
 			if(!Utilities.isTeam(message.getMember())){
 				String word = isBanned(event.getGuild(), message.getContentRaw());
@@ -59,11 +59,11 @@ public class BannedRegexesMessageListener extends ListenerAdapter{
 	 * Find if the text contains a banned word.
 	 *
 	 * @param guild The guild to get the banned words from.
-	 * @param text The text.
+	 * @param text  The text.
 	 *
 	 * @return The banned word found.
 	 */
-	private String isBanned(Guild guild, String text){
+	private static String isBanned(Guild guild, String text){
 		text = text.toLowerCase();
 		for(String regex : new BannedRegexConfig().getAsList(guild)){
 			Matcher matcher = Pattern.compile(regex).matcher(text);
@@ -81,7 +81,7 @@ public class BannedRegexesMessageListener extends ListenerAdapter{
 	 *
 	 * @return The censored word.
 	 */
-	private String getCensoredWord(String word){
+	private static String getCensoredWord(String word){
 		if(word.length() > 2){
 			StringBuilder sb = new StringBuilder(word);
 			sb.replace(1, word.length() - 1, "********************************************");

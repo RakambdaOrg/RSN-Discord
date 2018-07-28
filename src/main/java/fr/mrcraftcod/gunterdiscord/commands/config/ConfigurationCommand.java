@@ -33,7 +33,7 @@ public class ConfigurationCommand extends BasicCommand{
 	 * Actions available.
 	 */
 	public enum ChangeConfigType{
-		ADD, REMOVE, SET, SHOW, ERROR;
+		ADD, REMOVE, SET, SHOW, ERROR
 	}
 	
 	/**

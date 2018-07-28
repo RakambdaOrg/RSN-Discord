@@ -16,9 +16,8 @@ import java.util.function.Function;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public abstract class MapListConfiguration<K, V> extends Configuration
-{
-	private Map<K, ArrayList<V>> lastValue = null;
+public abstract class MapListConfiguration<K, V> extends Configuration{
+	private final Map<K, ArrayList<V>> lastValue = null;
 	
 	/**
 	 * Get the list of values from the given key.
@@ -28,8 +27,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	 *
 	 * @return The values or null if not found.
 	 */
-	public List<V> getValue(Guild guild, K key)
-	{
+	public List<V> getValue(Guild guild, K key){
 		return getAsMap(guild).get(key);
 	}
 	
@@ -42,24 +40,24 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
-	public Map<K, ArrayList<V>> getAsMap(Guild guild) throws IllegalArgumentException
-	{
-		if(lastValue != null)
-			return lastValue;
+	public Map<K, ArrayList<V>> getAsMap(Guild guild) throws IllegalArgumentException{
 		Map<K, ArrayList<V>> elements = new HashMap<>();
 		JSONObject map = getObjectMap(guild);
-		if(map == null)
+		if(map == null){
 			Settings.resetMap(guild, this);
-		else
-			for(String key: map.keySet())
-			{
+		}
+		else{
+			for(String key : map.keySet()){
 				K kKey = getKeyParser().apply(key);
-				if(!elements.containsKey(kKey))
+				if(!elements.containsKey(kKey)){
 					elements.put(kKey, new ArrayList<>());
+				}
 				JSONArray value = map.optJSONArray(key);
-				if(value != null)
+				if(value != null){
 					value.toList().stream().map(val -> getValueParser().apply(val.toString())).forEach(o -> elements.get(kKey).add(o));
+				}
 			}
+		}
 		return elements;
 	}
 	
@@ -72,10 +70,10 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
-	private JSONObject getObjectMap(Guild guild) throws IllegalArgumentException
-	{
-		if(getType() != ConfigType.MAP)
+	private JSONObject getObjectMap(Guild guild) throws IllegalArgumentException{
+		if(getType() != ConfigType.MAP){
 			throw new IllegalArgumentException("Not a map config");
+		}
 		return Settings.getJSONObject(guild, getName());
 	}
 	
@@ -100,14 +98,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	 * @param key   The key to add into.
 	 * @param value The value to add at the key.
 	 */
-	public void addValue(Guild guild, K key, V value)
-	{
-		if(lastValue != null)
-		{
-			if(!lastValue.containsKey(key))
-				lastValue.put(key, new ArrayList<>());
-			lastValue.get(key).add(value);
-		}
+	public void addValue(Guild guild, K key, V value){
 		Settings.mapListValue(guild, this, key, value);
 	}
 	
@@ -119,14 +110,11 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	 * @param value The value.
 	 */
 	@SuppressWarnings("Duplicates")
-	public void deleteKeyValue(Guild guild, K key, V value)
-	{
-		if(value == null)
+	public void deleteKeyValue(Guild guild, K key, V value){
+		if(value == null){
 			deleteKey(guild, key);
-		else
-		{
-			if(lastValue != null && lastValue.containsKey(key))
-				lastValue.get(key).remove(value);
+		}
+		else{
 			Settings.deleteKey(guild, this, key, value, getMatcher());
 		}
 	}
@@ -137,10 +125,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	 * @param guild The guild.
 	 * @param key   The key.
 	 */
-	public void deleteKey(Guild guild, K key)
-	{
-		if(lastValue != null)
-			lastValue.remove(key);
+	public void deleteKey(Guild guild, K key){
 		Settings.deleteKey(guild, this, key);
 	}
 	
@@ -149,20 +134,17 @@ public abstract class MapListConfiguration<K, V> extends Configuration
 	 *
 	 * @return The matcher.
 	 */
-	protected BiFunction<Object, V, Boolean> getMatcher()
-	{
+	protected BiFunction<Object, V, Boolean> getMatcher(){
 		return Objects::equals;
 	}
 	
 	@Override
-	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action)
-	{
+	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action){
 		return action == ConfigurationCommand.ChangeConfigType.ADD || action == ConfigurationCommand.ChangeConfigType.REMOVE || action == ConfigurationCommand.ChangeConfigType.SHOW;
 	}
 	
 	@Override
-	public ConfigType getType()
-	{
+	public ConfigType getType(){
 		return ConfigType.MAP;
 	}
 }

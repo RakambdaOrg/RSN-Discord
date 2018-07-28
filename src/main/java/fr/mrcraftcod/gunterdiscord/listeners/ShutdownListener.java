@@ -9,7 +9,6 @@ import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
 import net.dv8tion.jda.core.events.ShutdownEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.io.IOException;
-import java.util.logging.Handler;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 09/04/2018.
@@ -17,34 +16,26 @@ import java.util.logging.Handler;
  * @author Thomas Couchoud
  * @since 2018-04-09
  */
-public class ShutdownListener extends ListenerAdapter
-{
+public class ShutdownListener extends ListenerAdapter{
 	@Override
-	public void onShutdown(ShutdownEvent event)
-	{
+	public void onShutdown(ShutdownEvent event){
 		super.onShutdown(event);
-		try
-		{
+		try{
 			Main.close();
 			QuizListener.stopAll();
 			HangmanListener.stopAll();
 			MusicPartyListener.stopAll();
 			event.getJDA().getGuilds().forEach(GunterAudioManager::leave);
 			Settings.save();
-			for(Handler h: Log.getLogger().getHandlers())
-				h.close();
-			Log.info("BOT STOPPED");
+			Log.info(null, "BOT STOPPED");
 		}
-		catch(IOException e)
-		{
+		catch(IOException e){
 			e.printStackTrace();
 		}
-		catch(Exception e)
-		{
-			Log.error(e, "");
+		catch(Exception e){
+			Log.error(null, "", e);
 		}
-		finally
-		{
+		finally{
 			Settings.close();
 		}
 	}

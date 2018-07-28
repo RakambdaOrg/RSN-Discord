@@ -15,82 +15,63 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
  * @author Thomas Couchoud
  * @since 2018-05-06
  */
-public class LogListener extends ListenerAdapter
-{
+public class LogListener extends ListenerAdapter{
 	@Override
-	public void onUserUpdateName(UserUpdateNameEvent event)
-	{
+	public void onUserUpdateName(UserUpdateNameEvent event){
 		super.onUserUpdateName(event);
-		try
-		{
+		try{
 			Log.info(null, "User {} changed name of {} `{}` to `{}`", Utilities.getUserToLog(event.getUser()), Utilities.getUserToLog(event.getEntity()), event.getOldName(), event.getNewName());
 		}
-		catch(NullPointerException ignored)
-		{
+		catch(NullPointerException ignored){
 		}
-		catch(Exception e)
-		{
+		catch(Exception e){
 			Log.error(null, "", e);
 		}
 	}
 	
 	@Override
-	public void onSelfUpdateName(SelfUpdateNameEvent event)
-	{
+	public void onSelfUpdateName(SelfUpdateNameEvent event){
 		super.onSelfUpdateName(event);
-		try
-		{
+		try{
 			Log.info(null, "User {} changed name `{}` to `{}`", Utilities.getUserToLog(event.getEntity()), event.getOldName(), event.getNewName());
 		}
-		catch(NullPointerException ignored)
-		{
+		catch(NullPointerException ignored){
 		}
-		catch(Exception e)
-		{
+		catch(Exception e){
 			Log.error(null, "", e);
 		}
 	}
 	
 	@Override
-	public void onMessageReactionAdd(MessageReactionAddEvent event)
-	{
+	public void onMessageReactionAdd(MessageReactionAddEvent event){
 		super.onMessageReactionAdd(event);
-		try
-		{
+		try{
 			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> Log.info(event.getGuild(), "New reaction {} from `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), Utilities.getUserToLog(event.getUser()), event.getReaction().getTextChannel().getName(), m.getContentRaw().replace("\n", "{n}"), Utilities.getUserToLog(m.getAuthor())));
 		}
-		catch(NullPointerException ignored)
-		{
+		catch(NullPointerException ignored){
 		}
-		catch(Exception e)
-		{
+		catch(Exception e){
 			Log.error(event.getGuild(), "", e);
 		}
 	}
 	
 	@Override
-	public void onMessageReactionRemove(MessageReactionRemoveEvent event)
-	{
+	public void onMessageReactionRemove(MessageReactionRemoveEvent event){
 		super.onMessageReactionRemove(event);
-		try
-		{
+		try{
 			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> Log.info(event.getGuild(), "Reaction {} removed by `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), Utilities.getUserToLog(event.getUser()), event.getReaction().getTextChannel().getName(), m.getContentRaw().replace("\n", "{n}"), Utilities.getUserToLog(m.getAuthor())));
 		}
-		catch(NullPointerException ignored)
-		{
+		catch(NullPointerException ignored){
 		}
-		catch(Exception e)
-		{
+		catch(Exception e){
 			Log.error(event.getGuild(), "", e);
 		}
 	}
 	
 	@Override
-	public void onGuildVoiceGuildMute(GuildVoiceGuildMuteEvent event)
-	{
+	public void onGuildVoiceGuildMute(GuildVoiceGuildMuteEvent event){
 		super.onGuildVoiceGuildMute(event);
-		if(event.getMember().getUser().getIdLong() == event.getJDA().getSelfUser().getIdLong())
-		{
+		if(event.getMember().getUser().getIdLong() == event.getJDA().getSelfUser().getIdLong()){
 			Log.info(event.getGuild(), "Unmuting bot");
 			event.getGuild().getController().setMute(event.getMember(), false).queue();
 			event.getGuild().getController().setDeafen(event.getMember(), false).queue();

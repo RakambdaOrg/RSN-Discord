@@ -21,9 +21,8 @@ import java.util.function.Function;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public abstract class MapConfiguration<K, V> extends Configuration
-{
-	private Map<K, V> lastValue = null;
+public abstract class MapConfiguration<K, V> extends Configuration{
+	private final Map<K, V> lastValue = null;
 	
 	/**
 	 * Get the value from the given key.
@@ -33,15 +32,12 @@ public abstract class MapConfiguration<K, V> extends Configuration
 	 *
 	 * @return The value or null if not found.
 	 */
-	public V getValue(Guild guild, K key)
-	{
-		try
-		{
+	public V getValue(Guild guild, K key){
+		try{
 			return getAsMap(guild).get(key);
 		}
-		catch(Exception e)
-		{
-			Log.error(e, "Can't get value %s with key %s", getName(), key);
+		catch(Exception e){
+			Log.error(guild, "Can't get value {} with key {}", getName(), key, e);
 		}
 		return null;
 	}
@@ -55,20 +51,18 @@ public abstract class MapConfiguration<K, V> extends Configuration
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
-	public Map<K, V> getAsMap(Guild guild) throws IllegalArgumentException
-	{
-		if(lastValue != null)
-			return lastValue;
+	public Map<K, V> getAsMap(Guild guild) throws IllegalArgumentException{
 		Map<K, V> elements = new HashMap<>();
 		JSONObject map = getObjectMap(guild);
-		if(map == null)
+		if(map == null){
 			Settings.resetMap(guild, this);
-		else
-			for(String key: map.keySet())
-			{
+		}
+		else{
+			for(String key : map.keySet()){
 				Object value = map.get(key);
 				elements.put(getKeyParser().apply(key), getValueParser().apply(value.toString()));
 			}
+		}
 		return elements;
 	}
 	
@@ -81,10 +75,10 @@ public abstract class MapConfiguration<K, V> extends Configuration
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
-	private JSONObject getObjectMap(Guild guild) throws IllegalArgumentException
-	{
-		if(getType() != ConfigType.MAP)
+	private JSONObject getObjectMap(Guild guild) throws IllegalArgumentException{
+		if(getType() != ConfigType.MAP){
 			throw new IllegalArgumentException("Not a map config");
+		}
 		return Settings.getJSONObject(guild, getName());
 	}
 	
@@ -103,16 +97,13 @@ public abstract class MapConfiguration<K, V> extends Configuration
 	protected abstract Function<String, V> getValueParser();
 	
 	@Override
-	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action)
-	{
+	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action){
 		return action == ConfigurationCommand.ChangeConfigType.ADD || action == ConfigurationCommand.ChangeConfigType.REMOVE || action == ConfigurationCommand.ChangeConfigType.SHOW;
 	}
 	
 	@Override
-	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args) throws Exception
-	{
-		if(action == ConfigurationCommand.ChangeConfigType.SHOW)
-		{
+	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args){
+		if(action == ConfigurationCommand.ChangeConfigType.SHOW){
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
@@ -123,16 +114,17 @@ public abstract class MapConfiguration<K, V> extends Configuration
 			return ConfigurationCommand.ActionResult.NONE;
 		}
 		
-		switch(action)
-		{
+		switch(action){
 			case ADD:
-				if(args.size() < 2)
+				if(args.size() < 2){
 					return ConfigurationCommand.ActionResult.ERROR;
+				}
 				addValue(event.getGuild(), getKeyParser().apply(args.poll()), getValueParser().apply(args.poll()));
 				return ConfigurationCommand.ActionResult.OK;
 			case REMOVE:
-				if(args.size() < 1)
+				if(args.size() < 1){
 					return ConfigurationCommand.ActionResult.ERROR;
+				}
 				deleteKey(event.getGuild(), getKeyParser().apply(args.poll()));
 				return ConfigurationCommand.ActionResult.OK;
 		}
@@ -140,8 +132,7 @@ public abstract class MapConfiguration<K, V> extends Configuration
 	}
 	
 	@Override
-	public ConfigType getType()
-	{
+	public ConfigType getType(){
 		return ConfigType.MAP;
 	}
 	
@@ -152,10 +143,7 @@ public abstract class MapConfiguration<K, V> extends Configuration
 	 * @param key   The key to add into.
 	 * @param value The value to set at the key.
 	 */
-	public void addValue(Guild guild, K key, V value)
-	{
-		if(lastValue != null)
-			lastValue.put(key, value);
+	public void addValue(Guild guild, K key, V value){
 		Settings.mapValue(guild, this, key, value);
 	}
 	
@@ -165,10 +153,7 @@ public abstract class MapConfiguration<K, V> extends Configuration
 	 * @param guild The guild.
 	 * @param key   The key.
 	 */
-	public void deleteKey(Guild guild, K key)
-	{
-		if(lastValue != null)
-			lastValue.remove(key);
+	public void deleteKey(Guild guild, K key){
 		Settings.deleteKey(guild, this, key);
 	}
 }

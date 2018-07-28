@@ -8,11 +8,9 @@ import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleChannelConfigur
  * @author Thomas Couchoud
  * @since 2018-06-21
  */
-public class MusicPartyChannelConfig extends SingleChannelConfiguration
-{
+public class MusicPartyChannelConfig extends SingleChannelConfiguration{
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "musicPartyChannel";
 	}
 }

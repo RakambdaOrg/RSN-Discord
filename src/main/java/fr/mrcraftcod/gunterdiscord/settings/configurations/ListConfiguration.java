@@ -16,9 +16,8 @@ import java.util.function.Function;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public abstract class ListConfiguration<T> extends Configuration
-{
-	private List<T> lastValue = null;
+public abstract class ListConfiguration<T> extends Configuration{
+	private final List<T> lastValue = null;
 	
 	/**
 	 * Add a value to the list.
@@ -26,10 +25,7 @@ public abstract class ListConfiguration<T> extends Configuration
 	 * @param guild The guild.
 	 * @param value The value to add.
 	 */
-	public void addValue(Guild guild, T value)
-	{
-		if(lastValue != null)
-			lastValue.add(value);
+	public void addValue(Guild guild, T value){
 		Settings.addValue(guild, this, value);
 	}
 	
@@ -39,10 +35,7 @@ public abstract class ListConfiguration<T> extends Configuration
 	 * @param guild The guild.
 	 * @param value The value to remove.
 	 */
-	public void removeValue(Guild guild, T value)
-	{
-		if(lastValue != null)
-			lastValue.remove(value);
+	public void removeValue(Guild guild, T value){
 		Settings.removeValue(guild, this, value);
 	}
 	
@@ -55,17 +48,17 @@ public abstract class ListConfiguration<T> extends Configuration
 	 *
 	 * @throws IllegalArgumentException If the configuration isn't a list.
 	 */
-	public List<T> getAsList(Guild guild) throws IllegalArgumentException
-	{
-		if(lastValue != null)
-			return lastValue;
+	public List<T> getAsList(Guild guild) throws IllegalArgumentException{
 		List<T> elements = new LinkedList<>();
 		JSONArray array = getObjectList(guild);
-		if(array == null)
+		if(array == null){
 			Settings.resetList(guild, this);
-		else
-			for(int i = 0; i < array.length(); i++)
+		}
+		else{
+			for(int i = 0; i < array.length(); i++){
 				elements.add(getValueParser().apply(array.get(i).toString()));
+			}
+		}
 		return elements;
 	}
 	
@@ -78,17 +71,15 @@ public abstract class ListConfiguration<T> extends Configuration
 	 *
 	 * @throws IllegalArgumentException If the configuration isn't a list.
 	 */
-	private JSONArray getObjectList(Guild guild) throws IllegalArgumentException
-	{
-		if(getType() != ConfigType.LIST)
+	private JSONArray getObjectList(Guild guild) throws IllegalArgumentException{
+		if(getType() != ConfigType.LIST){
 			throw new IllegalArgumentException("Not a list config");
-		try
-		{
+		}
+		try{
 			return Settings.getArray(guild, getName());
 		}
-		catch(NullPointerException e)
-		{
-			Log.error(e, "NullPointer");
+		catch(NullPointerException e){
+			Log.error(guild, "NullPointer", e);
 		}
 		return null;
 	}
@@ -101,14 +92,12 @@ public abstract class ListConfiguration<T> extends Configuration
 	protected abstract Function<String, T> getValueParser();
 	
 	@Override
-	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action)
-	{
+	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action){
 		return action == ConfigurationCommand.ChangeConfigType.ADD || action == ConfigurationCommand.ChangeConfigType.REMOVE || action == ConfigurationCommand.ChangeConfigType.SHOW;
 	}
 	
 	@Override
-	public ConfigType getType()
-	{
+	public ConfigType getType(){
 		return ConfigType.LIST;
 	}
 }

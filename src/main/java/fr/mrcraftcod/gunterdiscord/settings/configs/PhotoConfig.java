@@ -19,13 +19,10 @@ import java.util.function.Function;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class PhotoConfig extends MapListConfiguration<Long, String>
-{
+public class PhotoConfig extends MapListConfiguration<Long, String>{
 	@Override
-	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args)
-	{
-		if(action == ConfigurationCommand.ChangeConfigType.SHOW)
-		{
+	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args){
+		if(action == ConfigurationCommand.ChangeConfigType.SHOW){
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
@@ -39,26 +36,22 @@ public class PhotoConfig extends MapListConfiguration<Long, String>
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "photo";
 	}
 	
 	@Override
-	protected Function<String, Long> getKeyParser()
-	{
+	protected Function<String, Long> getKeyParser(){
 		return Long::parseLong;
 	}
 	
 	@Override
-	protected Function<String, String> getValueParser()
-	{
+	protected Function<String, String> getValueParser(){
 		return s -> s;
 	}
 	
 	@Override
-	protected BiFunction<Object, String, Boolean> getMatcher()
-	{
+	protected BiFunction<Object, String, Boolean> getMatcher(){
 		return (o1, o2) -> o1.toString().contains(o2);
 	}
 }

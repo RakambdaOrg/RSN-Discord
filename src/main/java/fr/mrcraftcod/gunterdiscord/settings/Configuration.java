@@ -10,13 +10,11 @@ import java.util.LinkedList;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public abstract class Configuration
-{
+public abstract class Configuration{
 	/**
 	 * The type of the configuration.
 	 */
-	public enum ConfigType
-	{
+	public enum ConfigType{
 		VALUE, LIST, MAP
 	}
 	

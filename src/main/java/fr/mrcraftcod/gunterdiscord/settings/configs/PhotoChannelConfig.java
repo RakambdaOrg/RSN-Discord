@@ -8,11 +8,9 @@ import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleChannelConfigur
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class PhotoChannelConfig extends SingleChannelConfiguration
-{
+public class PhotoChannelConfig extends SingleChannelConfiguration{
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "photoChannel";
 	}
 }

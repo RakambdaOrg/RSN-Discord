@@ -22,8 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @author Thomas Couchoud
  * @since 2018-04-09
  */
-public class Main
-{
+public class Main{
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
 	private static final String SETTINGS_NAME = "settings.json";
 	private static final long SCHEDULED_DELAY = 60;
@@ -36,15 +35,13 @@ public class Main
 	 *
 	 * @param args Not used.
 	 */
-	public static void main(String[] args)
-	{
+	public static void main(String[] args){
 		
-		try
-		{
+		try{
 			Settings.init(Paths.get(new File(SETTINGS_NAME).toURI()));
 			jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).buildBlocking();
 			jda.addEventListener(new CommandsMessageListener());
-			// jda.addEventListener(new BannedRegexesMessageListener());
+			// jda.addEventListener(new BannedRegexeMessageListener());
 			jda.addEventListener(new OnlyImagesMessageListener());
 			jda.addEventListener(new ShutdownListener());
 			jda.addEventListener(new LogListener());
@@ -56,20 +53,17 @@ public class Main
 			
 			executorService.scheduleAtFixedRate(new ScheduledRunner(jda), SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
 		}
-		catch(IOException e)
-		{
+		catch(IOException e){
 			Log.error(null, "Couldn't load settings", e);
 		}
-		catch(LoginException | InterruptedException e)
-		{
+		catch(LoginException | InterruptedException e){
 			Log.error(null, "Couldn't start bot", e);
 		}
 		
 		new ConsoleText(jda).start();
 	}
 	
-	public static void close()
-	{
+	public static void close(){
 		executorService.shutdownNow();
 	}
 	
@@ -78,8 +72,7 @@ public class Main
 	 *
 	 * @return The JDA.
 	 */
-	public static JDA getJDA()
-	{
+	public static JDA getJDA(){
 		return jda;
 	}
 }

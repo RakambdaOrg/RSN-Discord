@@ -18,14 +18,11 @@ import java.util.LinkedList;
  * @author Thomas Couchoud
  * @since 2018-05-04
  */
-public abstract class SingleChannelConfiguration extends ValueConfiguration
-{
+public abstract class SingleChannelConfiguration extends ValueConfiguration{
 	@SuppressWarnings("Duplicates")
 	@Override
-	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args)
-	{
-		if(action == ConfigurationCommand.ChangeConfigType.SHOW)
-		{
+	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args){
+		if(action == ConfigurationCommand.ChangeConfigType.SHOW){
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
@@ -34,10 +31,10 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration
 			Actions.reply(event, builder.build());
 			return ConfigurationCommand.ActionResult.NONE;
 		}
-		if(args.size() < 1)
+		if(args.size() < 1){
 			return ConfigurationCommand.ActionResult.ERROR;
-		switch(action)
-		{
+		}
+		switch(action){
 			case SET:
 				setValue(event.getGuild(), event.getMessage().getMentionedChannels().get(0).getIdLong());
 				return ConfigurationCommand.ActionResult.OK;
@@ -52,10 +49,10 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration
 	 *
 	 * @return True if the same channels, false otherwise.
 	 */
-	public boolean isChannel(TextChannel channel)
-	{
-		if(channel == null)
+	public boolean isChannel(TextChannel channel){
+		if(channel == null){
 			return false;
+		}
 		return isChannel(channel.getGuild(), channel.getIdLong());
 	}
 	
@@ -67,11 +64,11 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration
 	 *
 	 * @return True if the same channels, false otherwise.
 	 */
-	public boolean isChannel(Guild guild, long ID)
-	{
+	public boolean isChannel(Guild guild, long ID){
 		TextChannel channel = getTextChannel(guild);
-		if(channel == null)
+		if(channel == null){
 			return false;
+		}
 		return ID == channel.getIdLong();
 	}
 	
@@ -82,15 +79,12 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration
 	 *
 	 * @return The text channel or null if not found.
 	 */
-	public TextChannel getTextChannel(Guild guild)
-	{
-		try
-		{
+	public TextChannel getTextChannel(Guild guild){
+		try{
 			return guild.getJDA().getTextChannelById(getLong(guild));
 		}
-		catch(InvalidClassException | NoValueDefinedException e)
-		{
-			Log.info("Error getting channel from config, value isn't set");
+		catch(InvalidClassException | NoValueDefinedException e){
+			Log.info(guild, "Error getting channel from config, value isn't set");
 		}
 		return null;
 	}

@@ -12,22 +12,17 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class IdeaChannelMessageListener extends ListenerAdapter
-{
+public class IdeaChannelMessageListener extends ListenerAdapter{
 	@Override
-	public void onMessageReceived(MessageReceivedEvent event)
-	{
+	public void onMessageReceived(MessageReceivedEvent event){
 		super.onMessageReceived(event);
-		try
-		{
-			if(new OnlyIdeasConfig().getAsList(event.getGuild()).contains(event.getMessage().getChannel().getIdLong()))
-			{
+		try{
+			if(new OnlyIdeasConfig().getAsList(event.getGuild()).contains(event.getMessage().getChannel().getIdLong())){
 				event.getMessage().addReaction(BasicEmotes.THUMB_UP.getValue()).complete();
 				event.getMessage().addReaction(BasicEmotes.THUMB_DOWN.getValue()).complete();
 			}
 		}
-		catch(Exception e)
-		{
+		catch(Exception e){
 			Log.error(event.getGuild(), "", e);
 		}
 	}

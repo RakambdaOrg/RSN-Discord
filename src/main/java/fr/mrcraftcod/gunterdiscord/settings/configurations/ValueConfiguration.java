@@ -18,8 +18,7 @@ import java.util.LinkedList;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public abstract class ValueConfiguration extends Configuration
-{
+public abstract class ValueConfiguration extends Configuration{
 	private Object lastValue = null;
 	
 	/**
@@ -33,16 +32,15 @@ public abstract class ValueConfiguration extends Configuration
 	 * @throws IllegalArgumentException If this configuration isn't a value.
 	 * @throws InvalidClassException    If this configuration isn't an integer.
 	 */
-	public int getInt(Guild guild, int defaultValue) throws InvalidClassException
-	{
+	public int getInt(Guild guild, int defaultValue) throws InvalidClassException{
 		Object value = lastValue == null ? getObject(guild) : lastValue;
-		if(value == null)
-		{
+		if(value == null){
 			setValue(guild, defaultValue);
 			return defaultValue;
 		}
-		if(value instanceof Integer)
+		if(value instanceof Integer){
 			return (Integer) value;
+		}
 		throw new InvalidClassException("Config is not a long: " + value.getClass().getSimpleName());
 	}
 	
@@ -55,10 +53,10 @@ public abstract class ValueConfiguration extends Configuration
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a value.
 	 */
-	protected Object getObject(Guild guild) throws IllegalArgumentException
-	{
-		if(getType() != ConfigType.VALUE)
+	protected Object getObject(Guild guild) throws IllegalArgumentException{
+		if(getType() != ConfigType.VALUE){
 			throw new IllegalArgumentException("Not a value config");
+		}
 		return Settings.getObject(guild, getName());
 	}
 	
@@ -68,8 +66,7 @@ public abstract class ValueConfiguration extends Configuration
 	 * @param guild The guild.
 	 * @param value the value to set.
 	 */
-	public void setValue(Guild guild, Object value)
-	{
+	public void setValue(Guild guild, Object value){
 		lastValue = value;
 		Settings.setValue(guild, this, value);
 	}
@@ -85,16 +82,15 @@ public abstract class ValueConfiguration extends Configuration
 	 * @throws IllegalArgumentException If this configuration isn't a value.
 	 * @throws InvalidClassException    If this configuration isn't a long.
 	 */
-	public long getLong(Guild guild, long defaultValue) throws InvalidClassException
-	{
+	public long getLong(Guild guild, long defaultValue) throws InvalidClassException{
 		Object value = lastValue == null ? getObject(guild) : lastValue;
-		if(value == null)
-		{
+		if(value == null){
 			setValue(guild, defaultValue);
 			return defaultValue;
 		}
-		if(value instanceof Long)
+		if(value instanceof Long){
 			return (Long) value;
+		}
 		throw new InvalidClassException("Config is not a long: " + value.getClass().getSimpleName());
 	}
 	
@@ -109,16 +105,15 @@ public abstract class ValueConfiguration extends Configuration
 	 * @throws IllegalArgumentException If this configuration isn't a value.
 	 * @throws InvalidClassException    If this configuration isn't a string.
 	 */
-	public String getString(Guild guild, String defaultValue) throws InvalidClassException, IllegalArgumentException
-	{
+	public String getString(Guild guild, String defaultValue) throws InvalidClassException, IllegalArgumentException{
 		Object value = lastValue == null ? getObject(guild) : lastValue;
-		if(value == null)
-		{
+		if(value == null){
 			setValue(guild, defaultValue);
 			return defaultValue;
 		}
-		if(value instanceof String)
+		if(value instanceof String){
 			return (String) value;
+		}
 		throw new InvalidClassException("Config is not a string: " + value.getClass().getSimpleName());
 	}
 	
@@ -133,13 +128,14 @@ public abstract class ValueConfiguration extends Configuration
 	 * @throws InvalidClassException    If this configuration isn't a string.
 	 * @throws NoValueDefinedException  If no value exists for this config.
 	 */
-	public long getLong(Guild guild) throws InvalidClassException, IllegalArgumentException, NoValueDefinedException
-	{
+	public long getLong(Guild guild) throws InvalidClassException, IllegalArgumentException, NoValueDefinedException{
 		Object value = lastValue == null ? getObject(guild) : lastValue;
-		if(value == null)
+		if(value == null){
 			throw new NoValueDefinedException(this);
-		if(value instanceof Long)
+		}
+		if(value instanceof Long){
 			return (Long) value;
+		}
 		throw new InvalidClassException("Config is not a long: " + value.getClass().getSimpleName());
 	}
 	
@@ -154,28 +150,26 @@ public abstract class ValueConfiguration extends Configuration
 	 * @throws InvalidClassException    If this configuration isn't a string.
 	 * @throws NoValueDefinedException  If no value exists for this config.
 	 */
-	public String getString(Guild guild) throws InvalidClassException, IllegalArgumentException, NoValueDefinedException
-	{
+	public String getString(Guild guild) throws InvalidClassException, IllegalArgumentException, NoValueDefinedException{
 		Object value = lastValue == null ? getObject(guild) : lastValue;
-		if(value == null)
+		if(value == null){
 			throw new NoValueDefinedException(this);
-		if(value instanceof String)
+		}
+		if(value instanceof String){
 			return (String) value;
+		}
 		throw new InvalidClassException("Config is not a string: " + value.getClass().getSimpleName());
 	}
 	
 	@Override
-	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action)
-	{
+	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action){
 		return action == ConfigurationCommand.ChangeConfigType.SET || action == ConfigurationCommand.ChangeConfigType.SHOW;
 	}
 	
 	@SuppressWarnings("Duplicates")
 	@Override
-	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args)
-	{
-		if(action == ConfigurationCommand.ChangeConfigType.SHOW)
-		{
+	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args){
+		if(action == ConfigurationCommand.ChangeConfigType.SHOW){
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
@@ -184,15 +178,20 @@ public abstract class ValueConfiguration extends Configuration
 			Actions.reply(event, builder.build());
 			return ConfigurationCommand.ActionResult.NONE;
 		}
-		if(args.size() < 1)
+		if(args.size() < 1){
 			return ConfigurationCommand.ActionResult.ERROR;
-		switch(action)
-		{
+		}
+		switch(action){
 			case SET:
 				setValue(event.getGuild(), args.poll());
 				return ConfigurationCommand.ActionResult.OK;
 		}
 		return ConfigurationCommand.ActionResult.OK;
+	}
+	
+	@Override
+	public ConfigType getType(){
+		return ConfigType.VALUE;
 	}
 	
 	/**
@@ -206,22 +205,15 @@ public abstract class ValueConfiguration extends Configuration
 	 * @throws IllegalArgumentException If this configuration isn't a value.
 	 * @throws InvalidClassException    If this configuration isn't a long.
 	 */
-	public double getDouble(Guild guild, long defaultValue) throws InvalidClassException
-	{
+	public double getDouble(Guild guild, long defaultValue) throws InvalidClassException{
 		Object value = lastValue == null ? getObject(guild) : lastValue;
-		if(value == null)
-		{
+		if(value == null){
 			setValue(guild, defaultValue);
 			return defaultValue;
 		}
-		if(value instanceof Double)
+		if(value instanceof Double){
 			return (Double) value;
+		}
 		throw new InvalidClassException("Config is not a double: " + value.getClass().getSimpleName());
-	}
-	
-	@Override
-	public ConfigType getType()
-	{
-		return ConfigType.VALUE;
 	}
 }

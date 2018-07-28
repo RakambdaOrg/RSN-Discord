@@ -8,11 +8,9 @@ import fr.mrcraftcod.gunterdiscord.settings.configurations.ValueConfiguration;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class PrefixConfig extends ValueConfiguration
-{
+public class PrefixConfig extends ValueConfiguration{
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "prefix";
 	}
 }

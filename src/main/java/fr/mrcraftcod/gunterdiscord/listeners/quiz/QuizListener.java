@@ -32,10 +32,10 @@ import java.util.stream.Collectors;
 public class QuizListener extends ListenerAdapter implements Runnable{
 	private static final ArrayList<QuizListener> quizzes = new ArrayList<>();
 	private final Guild guild;
-	private Duration waitTime;
+	private final Duration waitTime;
+	private final LinkedList<Question> questions;
 	private Message waitingMsg = null;
 	private HashMap<Long, Integer> answers;
-	private LinkedList<Question> questions;
 	private boolean stopped;
 	
 	/**
@@ -331,7 +331,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	 *
 	 * @return The choice selected.
 	 */
-	private int mapEmote(BasicEmotes name){
+	private static int mapEmote(BasicEmotes name){
 		return name == null ? -1 : name.name().toLowerCase().charAt(0) - 'a';
 	}
 }

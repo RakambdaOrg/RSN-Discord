@@ -16,8 +16,7 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
-public class Utilities
-{
+public class Utilities{
 	/**
 	 * Check if a member have a role.
 	 *
@@ -26,8 +25,7 @@ public class Utilities
 	 *
 	 * @return True if the member have the role, false otherwise.
 	 */
-	public static boolean hasRole(Member member, List<Role> roles)
-	{
+	public static boolean hasRole(Member member, List<Role> roles){
 		return roles.stream().anyMatch(r -> hasRole(member, r));
 	}
 	
@@ -39,8 +37,7 @@ public class Utilities
 	 *
 	 * @return True if the member have the role, false otherwise.
 	 */
-	public static boolean hasRole(Member member, Role role)
-	{
+	public static boolean hasRole(Member member, Role role){
 		return member.getRoles().contains(role);
 	}
 	
@@ -52,8 +49,7 @@ public class Utilities
 	 *
 	 * @return The role or null if not found.
 	 */
-	public static List<Role> getRole(Guild guild, String name)
-	{
+	public static List<Role> getRole(Guild guild, String name){
 		return guild.getJDA().getRoles().stream().filter(r -> r.getName().equalsIgnoreCase(name)).filter(r -> r.getGuild().equals(guild)).collect(Collectors.toList());
 	}
 	
@@ -64,8 +60,7 @@ public class Utilities
 	 *
 	 * @return True if part of the team, false otherwise.
 	 */
-	public static boolean isTeam(Member member)
-	{
+	public static boolean isTeam(Member member){
 		return isModerator(member) || isAdmin(member);
 	}
 	
@@ -76,8 +71,7 @@ public class Utilities
 	 *
 	 * @return True if moderator, false otherwise.
 	 */
-	public static boolean isModerator(Member member)
-	{
+	public static boolean isModerator(Member member){
 		return Utilities.hasRoleIDs(member, new ModoRolesConfig().getAsList(member.getGuild())) || isAdmin(member);
 	}
 	
@@ -88,11 +82,12 @@ public class Utilities
 	 *
 	 * @return True if admin, false otherwise.
 	 */
-	public static boolean isAdmin(Member member)
-	{
-		for(Role role: member.getRoles())
-			if(role.hasPermission(Permission.ADMINISTRATOR))
+	public static boolean isAdmin(Member member){
+		for(Role role : member.getRoles()){
+			if(role.hasPermission(Permission.ADMINISTRATOR)){
 				return true;
+			}
+		}
 		return isCreator(member);
 	}
 	
@@ -104,8 +99,7 @@ public class Utilities
 	 *
 	 * @return True if the member have the role, false otherwise.
 	 */
-	public static boolean hasRoleIDs(Member member, List<Long> roles)
-	{
+	public static boolean hasRoleIDs(Member member, List<Long> roles){
 		return roles.stream().map(r -> member.getGuild().getRoleById(r)).anyMatch(r -> hasRole(member, r));
 	}
 	
@@ -116,11 +110,11 @@ public class Utilities
 	 *
 	 * @return The mention, or empty string if not found.
 	 */
-	public static String getEmoteMention(String name)
-	{
+	public static String getEmoteMention(String name){
 		List<Emote> emotes = Main.getJDA().getEmotesByName(name, true);
-		if(emotes.size() < 1)
+		if(emotes.size() < 1){
 			return "";
+		}
 		return emotes.get(0).getAsMention();
 	}
 	
@@ -131,8 +125,7 @@ public class Utilities
 	 *
 	 * @return The members that have this role.
 	 */
-	public static List<Member> getMembersRole(Role role)
-	{
+	public static List<Member> getMembersRole(Role role){
 		return role.getGuild().getMembersWithRoles(role);
 	}
 	
@@ -143,8 +136,7 @@ public class Utilities
 	 *
 	 * @return The members that have this role.
 	 */
-	public static List<Member> getMembersRole(List<Role> roles)
-	{
+	public static List<Member> getMembersRole(List<Role> roles){
 		return roles.stream().map(Utilities::getMembersRole).flatMap(Collection::stream).collect(Collectors.toList());
 	}
 	
@@ -155,9 +147,16 @@ public class Utilities
 	 *
 	 * @return True if the creator, false otherwise.
 	 */
-	public static boolean isCreator(Member member)
-	{
+	public static boolean isCreator(Member member){
 		return member.getUser().getIdLong() == 170119951498084352L;
+	}
+	
+	public static EmbedBuilder buildEmbed(MessageEmbed messageEmbed){
+		EmbedBuilder builder = buildEmbed(null, messageEmbed.getColor(), messageEmbed.getTitle());
+		builder.setAuthor(messageEmbed.getAuthor().getName(), messageEmbed.getAuthor().getUrl(), messageEmbed.getAuthor().getIconUrl());
+		builder.setDescription(messageEmbed.getDescription());
+		messageEmbed.getFields().forEach(builder::addField);
+		return builder;
 	}
 	
 	/**
@@ -169,11 +168,11 @@ public class Utilities
 	 *
 	 * @return The builder.
 	 */
-	public static EmbedBuilder buildEmbed(User author, Color color, String title)
-	{
+	public static EmbedBuilder buildEmbed(User author, Color color, String title){
 		EmbedBuilder builder = new EmbedBuilder();
-		if(author != null)
+		if(author != null){
 			builder.setAuthor(author.getName(), null, author.getAvatarUrl());
+		}
 		builder.setColor(color);
 		builder.setTitle(title);
 		return builder;
@@ -186,13 +185,11 @@ public class Utilities
 	 *
 	 * @return The string representing the user.
 	 */
-	public static String getUserToLog(User user)
-	{
+	public static String getUserToLog(User user){
 		return user == null ? "NULL" : (user.getName() + "#" + user.getDiscriminator() + " (" + user.getIdLong() + ")");
 	}
 	
-	public static String getGuildToLog(Guild guild)
-	{
+	public static String getGuildToLog(Guild guild){
 		return guild.getName();
 	}
 	
@@ -203,8 +200,7 @@ public class Utilities
 	 *
 	 * @return The text.
 	 */
-	static String getEmbedForLog(MessageEmbed embed)
-	{
+	static String getEmbedForLog(MessageEmbed embed){
 		StringBuilder builder = new StringBuilder("Embed " + embed.hashCode());
 		builder.append("\n").append("Author: ").append(embed.getAuthor() == null ? "<NONE>" : embed.getAuthor().getName());
 		builder.append("\n").append("Title: ").append(embed.getTitle());

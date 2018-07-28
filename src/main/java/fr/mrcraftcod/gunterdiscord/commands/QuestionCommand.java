@@ -22,7 +22,7 @@ import java.util.List;
  * @since 2018-04-12
  */
 public class QuestionCommand extends BasicCommand{
-	private static int NEXT_ID = 0;
+	private static int nextId = 0;
 	
 	@Override
 	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
@@ -41,7 +41,7 @@ public class QuestionCommand extends BasicCommand{
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Merci de poser une question, et pas 'message'");
 		}
 		else{
-			int ID = ++NEXT_ID;
+			int ID = ++nextId;
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);

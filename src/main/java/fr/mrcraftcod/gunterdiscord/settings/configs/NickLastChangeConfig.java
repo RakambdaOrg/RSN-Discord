@@ -9,23 +9,19 @@ import java.util.function.Function;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class NickLastChangeConfig extends MapConfiguration<Long, Long>
-{
+public class NickLastChangeConfig extends MapConfiguration<Long, Long>{
 	@Override
-	protected Function<String, Long> getKeyParser()
-	{
+	protected Function<String, Long> getKeyParser(){
 		return Long::parseLong;
 	}
 	
 	@Override
-	protected Function<String, Long> getValueParser()
-	{
+	protected Function<String, Long> getValueParser(){
 		return Long::parseLong;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "nickLastChange";
 	}
 }

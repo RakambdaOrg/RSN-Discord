@@ -8,8 +8,7 @@ import java.util.HashMap;
  * @author Thomas Couchoud
  * @since 2018-04-19
  */
-class Question
-{
+class Question{
 	private final String question;
 	private final HashMap<Integer, String> answers;
 	private final int correctAnswer;
@@ -21,8 +20,7 @@ class Question
 	 * @param answers       The answers available.
 	 * @param correctAnswer The index of teh correct answer.
 	 */
-	Question(String question, HashMap<Integer, String> answers, int correctAnswer)
-	{
+	Question(String question, HashMap<Integer, String> answers, int correctAnswer){
 		this.question = question;
 		this.answers = answers;
 		this.correctAnswer = correctAnswer;
@@ -33,8 +31,7 @@ class Question
 	 *
 	 * @return The answers.
 	 */
-	HashMap<Integer, String> getAnswers()
-	{
+	HashMap<Integer, String> getAnswers(){
 		return answers;
 	}
 	
@@ -43,8 +40,7 @@ class Question
 	 *
 	 * @return The index of the correct answer.
 	 */
-	int getCorrectAnswerIndex()
-	{
+	int getCorrectAnswerIndex(){
 		return correctAnswer;
 	}
 	
@@ -53,8 +49,7 @@ class Question
 	 *
 	 * @return The question.
 	 */
-	String getQuestion()
-	{
+	String getQuestion(){
 		return question;
 	}
 }

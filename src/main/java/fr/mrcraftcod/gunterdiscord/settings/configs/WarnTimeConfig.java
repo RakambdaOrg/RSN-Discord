@@ -10,24 +10,19 @@ import net.dv8tion.jda.core.entities.Guild;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class WarnTimeConfig extends ValueConfiguration
-{
+public class WarnTimeConfig extends ValueConfiguration{
 	@Override
-	public void setValue(Guild guild, Object value)
-	{
-		try
-		{
+	public void setValue(Guild guild, Object value){
+		try{
 			super.setValue(guild, Double.parseDouble(value.toString()));
 		}
-		catch(Exception e)
-		{
-			Log.warning(e, "Error parsing config value for warn time");
+		catch(Exception e){
+			Log.warning(guild, "Error parsing config value for warn time", e);
 		}
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "warnTime";
 	}
 }
