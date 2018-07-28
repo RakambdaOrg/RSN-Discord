@@ -179,12 +179,42 @@ public class Utilities
 		return builder;
 	}
 	
-	public static EmbedBuilder buildEmbed(MessageEmbed messageEmbed)
+	/**
+	 * Get a user in a readable way.
+	 *
+	 * @param user The user to print.
+	 *
+	 * @return The string representing the user.
+	 */
+	public static String getUserToLog(User user)
 	{
-		EmbedBuilder builder = buildEmbed(null, messageEmbed.getColor(), messageEmbed.getTitle());
-		builder.setAuthor(messageEmbed.getAuthor().getName(), messageEmbed.getAuthor().getUrl(), messageEmbed.getAuthor().getIconUrl());
-		builder.setDescription(messageEmbed.getDescription());
-		messageEmbed.getFields().forEach(builder::addField);
-		return builder;
+		return user == null ? "NULL" : (user.getName() + "#" + user.getDiscriminator() + " (" + user.getIdLong() + ")");
+	}
+	
+	public static String getGuildToLog(Guild guild)
+	{
+		return guild.getName();
+	}
+	
+	/**
+	 * Transform an embed into text.
+	 *
+	 * @param embed The embed.
+	 *
+	 * @return The text.
+	 */
+	static String getEmbedForLog(MessageEmbed embed)
+	{
+		StringBuilder builder = new StringBuilder("Embed " + embed.hashCode());
+		builder.append("\n").append("Author: ").append(embed.getAuthor() == null ? "<NONE>" : embed.getAuthor().getName());
+		builder.append("\n").append("Title: ").append(embed.getTitle());
+		builder.append("\n").append("Description: ").append(embed.getDescription());
+		builder.append("\n").append("Color: ").append(embed.getColor());
+		embed.getFields().forEach(f -> {
+			builder.append("\n").append("FIELD:");
+			builder.append("\n\t").append("Name: ").append(f.getName());
+			builder.append("\n\t").append("Value: ").append(f.getValue());
+		});
+		return builder.toString();
 	}
 }

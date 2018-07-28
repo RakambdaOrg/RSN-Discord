@@ -15,6 +15,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.io.File;
 import java.util.LinkedList;
@@ -27,70 +28,63 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
-public class PhotoGetCommand extends BasicCommand
-{
+public class PhotoGetCommand extends BasicCommand{
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	PhotoGetCommand(Command parent)
-	{
+	PhotoGetCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public String getCommandUsage()
-	{
-		return super.getCommandUsage() + " [@utilisateur] [numéro]";
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField("Optionnel: Utilisateur", "L'utilisateur dont on veut la photo (par défaut @me)", false);
+		builder.addField("Optionnel: Numéro", "Le numéro de la photo à tirer (par défaut aléatoire)", false);
 	}
 	
-	@SuppressWarnings("Duplicates")
 	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		Actions.deleteMessage(event.getMessage());
-		if(super.execute(event, args) == CommandResult.NOT_ALLOWED)
+		if(super.execute(event, args) == CommandResult.NOT_ALLOWED){
 			return CommandResult.NOT_ALLOWED;
+		}
 		User user;
 		List<User> users = event.getMessage().getMentionedUsers();
-		if(users.size() > 0)
-		{
+		if(users.size() > 0){
 			user = users.get(0);
 			args.poll();
 		}
-		else
+		else{
 			user = event.getAuthor();
+		}
 		
 		Member member = event.getGuild().getMember(user);
-		if(member == null || !Utilities.hasRole(member, new TrombinoscopeRoleConfig().getRole(event.getGuild())))
-		{
+		if(member == null || !Utilities.hasRole(member, new TrombinoscopeRoleConfig().getRole(event.getGuild()))){
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
 			builder.setTitle("L'utilisateur ne fait pas parti du trombinoscope");
 			Actions.reply(event, builder.build());
 		}
-		else if(new PhotoChannelConfig().isChannel(event.getTextChannel()))
-		{
+		else if(new PhotoChannelConfig().isChannel(event.getTextChannel())){
 			List<String> paths = new PhotoConfig().getValue(event.getGuild(), user.getIdLong());
-			if(paths != null && !paths.isEmpty())
-			{
+			if(paths != null && !paths.isEmpty()){
 				boolean randomGen = true;
 				int rnd = ThreadLocalRandom.current().nextInt(paths.size());
-				if(args.peek() != null)
-					try
-					{
+				if(args.peek() != null){
+					try{
 						rnd = Math.max(0, Math.min(paths.size(), Integer.parseInt(args.pop())) - 1);
 						randomGen = false;
 					}
-					catch(Exception e)
-					{
-						Log.warning(e, "Provided photo index isn't an integer");
+					catch(Exception e){
+						Log.warning(event.getGuild(), "Provided photo index isn't an integer", e);
 					}
+				}
 				File file = new File(paths.get(rnd));
-				if(file.exists())
-				{
+				if(file.exists()){
 					String ID = file.getName().substring(0, file.getName().lastIndexOf("."));
 					EmbedBuilder builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
@@ -101,8 +95,7 @@ public class PhotoGetCommand extends BasicCommand
 					Actions.reply(event, builder.build());
 					Actions.sendFile(event.getTextChannel(), file);
 				}
-				else
-				{
+				else{
 					EmbedBuilder builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.RED);
@@ -110,8 +103,7 @@ public class PhotoGetCommand extends BasicCommand
 					Actions.reply(event, builder.build());
 				}
 			}
-			else
-			{
+			else{
 				EmbedBuilder builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.setColor(Color.ORANGE);
@@ -123,40 +115,32 @@ public class PhotoGetCommand extends BasicCommand
 	}
 	
 	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
-	{
-		super.addHelp(guild, builder);
-		builder.addField("Optionnel: Utilisateur", "L'utilisateur dont on veut la photo (par défaut @me)", false);
-		builder.addField("Optionnel: Numéro", "Le numéro de la photo à tirer (par défaut aléatoire)", false);
+	public String getCommandUsage(){
+		return super.getCommandUsage() + " [@utilisateur] [numéro]";
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
+	public AccessLevel getAccessLevel(){
+		return AccessLevel.ALL;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Photo";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("photo", "p", "g", "get");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Obtient une photo du trombinoscope";
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.ALL;
+	public int getScope(){
+		return ChannelType.TEXT.getId();
 	}
 }

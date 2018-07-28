@@ -6,6 +6,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.HangmanListener;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,53 +16,45 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-05-27
  */
-public class HangmanSkipCommand extends BasicCommand
-{
+public class HangmanSkipCommand extends BasicCommand{
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	HangmanSkipCommand(Command parent)
-	{
+	HangmanSkipCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		HangmanListener.getGame(event.getGuild(), false).ifPresent(h -> h.voteSkip(event.getMember()));
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
+	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Passer pendu";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("skip", "s");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Passe son tour au pendu";
 	}
 	
 	@Override
-	public int getScope()
-	{
+	public int getScope(){
 		return ChannelType.TEXT.getId();
 	}
 }

@@ -10,13 +10,11 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-05-26
  */
-public class PhotoCompositeCommand extends CompositeCommand
-{
+public class PhotoCompositeCommand extends CompositeCommand{
 	/**
 	 * Constructor.
 	 */
-	public PhotoCompositeCommand()
-	{
+	public PhotoCompositeCommand(){
 		super();
 		addSubCommand(new PhotoGetCommand(this));
 		addSubCommand(new PhotoDeleteCommand(this));
@@ -25,32 +23,27 @@ public class PhotoCompositeCommand extends CompositeCommand
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
+	public AccessLevel getAccessLevel(){
+		return AccessLevel.ALL;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Trombinoscope";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("photo");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Point d'entré des fonctionnalitées du trombinoscope";
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.ALL;
+	public int getScope(){
+		return ChannelType.TEXT.getId();
 	}
 }

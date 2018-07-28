@@ -9,6 +9,7 @@ import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,57 +19,50 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-06-21
  */
-public class MusicPartyMusicCommand extends BasicCommand
-{
+public class MusicPartyMusicCommand extends BasicCommand{
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	MusicPartyMusicCommand(Command parent)
-	{
+	MusicPartyMusicCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		VoiceChannel channel = null;
 		Member member = event.getMember();
-		if(member.getVoiceState().inVoiceChannel())
+		if(member.getVoiceState().inVoiceChannel()){
 			channel = member.getVoiceState().getChannel();
+		}
 		MusicPartyListener.getParty(event.getGuild(), channel, channel != null).ifPresentOrElse(p -> p.addMusic(event, args), () -> Actions.reply(event, "Aucun évènement de ce type en cours"));
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
+	public AccessLevel getAccessLevel(){
 		return AccessLevel.MODERATOR;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Add a music";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("music");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Add a music to the party";
 	}
 	
 	@Override
-	public int getScope()
-	{
+	public int getScope(){
 		return ChannelType.TEXT.getId();
 	}
 }

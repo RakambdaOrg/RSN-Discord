@@ -17,13 +17,11 @@ import static fr.mrcraftcod.gunterdiscord.commands.generic.Command.AccessLevel.*
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public interface Command extends Comparable<Command>
-{
+public interface Command extends Comparable<Command>{
 	/**
 	 * The level required to access a command.
 	 */
-	enum AccessLevel
-	{
+	enum AccessLevel{
 		ADMIN, MODERATOR, ALL, CREATOR
 	}
 	
@@ -33,7 +31,7 @@ public interface Command extends Comparable<Command>
 	 * @param guild   The guild.
 	 * @param builder The help menu.
 	 */
-	void addHelp(Guild guild, EmbedBuilder builder);
+	void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder);
 	
 	/**
 	 * Tell if a member is allowed to run the command.
@@ -42,14 +40,16 @@ public interface Command extends Comparable<Command>
 	 *
 	 * @return True if allowed, false otherwise.
 	 */
-	default boolean isAllowed(Member member)
-	{
-		if(getAccessLevel() == ALL)
+	default boolean isAllowed(Member member){
+		if(getAccessLevel() == ALL){
 			return true;
-		if(getAccessLevel() == MODERATOR && Utilities.isModerator(member))
+		}
+		if(getAccessLevel() == MODERATOR && Utilities.isModerator(member)){
 			return true;
-		if(getAccessLevel() == ADMIN && Utilities.isAdmin(member))
+		}
+		if(getAccessLevel() == ADMIN && Utilities.isAdmin(member)){
 			return true;
+		}
 		return Utilities.isCreator(member);
 	}
 	
@@ -70,11 +70,10 @@ public interface Command extends Comparable<Command>
 	 *
 	 * @throws Exception If something bad happened.
 	 */
-	CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception;
+	CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception;
 	
 	@Override
-	default int compareTo(@NotNull Command o)
-	{
+	default int compareTo(@NotNull Command o){
 		return getName().compareTo(o.getName());
 	}
 	

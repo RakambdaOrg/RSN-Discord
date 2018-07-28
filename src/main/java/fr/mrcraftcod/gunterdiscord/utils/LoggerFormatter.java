@@ -23,7 +23,6 @@ public class LoggerFormatter extends Formatter
 	public String format(LogRecord record)
 	{
 		StringBuilder stringBuilder = new StringBuilder();
-		
 		stringBuilder.append(record.getLevel().getLocalizedName());
 		stringBuilder.append(": ");
 		stringBuilder.append(dateFormat.format(new Date(record.getMillis())));

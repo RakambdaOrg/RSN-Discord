@@ -19,59 +19,57 @@ import java.util.regex.Pattern;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class BannedRegexesMessageListener extends ListenerAdapter
-{
+public class BannedRegexesMessageListener extends ListenerAdapter{
 	@Override
-	public void onMessageReceived(MessageReceivedEvent event)
-	{
+	public void onMessageReceived(MessageReceivedEvent event){
 		super.onMessageReceived(event);
 		verify(event, event.getMessage());
 	}
 	
 	@Override
-	public void onMessageUpdate(MessageUpdateEvent event)
-	{
+	public void onMessageUpdate(MessageUpdateEvent event){
 		super.onMessageUpdate(event);
 		verify(event, event.getMessage());
 	}
 	
-	private void verify(GenericMessageEvent event, Message message)
-	{
-		try
-		{
-			if(!Utilities.isTeam(message.getMember()))
-			{
+	/**
+	 * Verify a message.
+	 *
+	 * @param event   The event.
+	 * @param message The message to check.
+	 */
+	private void verify(GenericMessageEvent event, Message message){
+		try{
+			if(!Utilities.isTeam(message.getMember())){
 				String word = isBanned(event.getGuild(), message.getContentRaw());
-				if(word != null)
-				{
+				if(word != null){
 					Actions.deleteMessage(message);
 					Actions.reply(event, "Attention " + message.getAuthor().getAsMention() + ", l'utilisation de mot prohibés va finir par te bruler le derrière.");
-					Actions.replyPrivate(message.getAuthor(), "Restes poli s'il te plait :). Le mot " + getCensoredWord(word) + " est prohibé.");
-					Log.info("Banned message from user " + Actions.getUserToLog(message.getAuthor()) + " for word `" + word + "` : " + message.getContentRaw());
+					Actions.replyPrivate(event.getGuild(), message.getAuthor(), "Restes poli s'il te plait :). Le mot " + getCensoredWord(word) + " est prohibé.");
+					Log.info(event.getGuild(), "Banned message from user " + Utilities.getUserToLog(message.getAuthor()) + " for word `" + word + "` : " + message.getContentRaw());
 				}
 			}
 		}
-		catch(Exception e)
-		{
-			Log.error(e, "");
+		catch(Exception e){
+			Log.error(event.getGuild(), "", e);
 		}
 	}
 	
 	/**
 	 * Find if the text contains a banned word.
 	 *
+	 * @param guild The guild to get the banned words from.
 	 * @param text The text.
 	 *
 	 * @return The banned word found.
 	 */
-	private String isBanned(Guild guild, String text)
-	{
+	private String isBanned(Guild guild, String text){
 		text = text.toLowerCase();
-		for(String regex: new BannedRegexConfig().getAsList(guild))
-		{
+		for(String regex : new BannedRegexConfig().getAsList(guild)){
 			Matcher matcher = Pattern.compile(regex).matcher(text);
-			if(matcher.matches())
+			if(matcher.matches()){
 				return matcher.group(0);
+			}
 		}
 		return null;
 	}
@@ -83,10 +81,8 @@ public class BannedRegexesMessageListener extends ListenerAdapter
 	 *
 	 * @return The censored word.
 	 */
-	private String getCensoredWord(String word)
-	{
-		if(word.length() > 2)
-		{
+	private String getCensoredWord(String word){
+		if(word.length() > 2){
 			StringBuilder sb = new StringBuilder(word);
 			sb.replace(1, word.length() - 1, "********************************************");
 			return sb.toString();

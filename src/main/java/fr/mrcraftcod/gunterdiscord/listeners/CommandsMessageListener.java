@@ -6,10 +6,11 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
 import fr.mrcraftcod.gunterdiscord.commands.warn.DoubleWarnCommand;
 import fr.mrcraftcod.gunterdiscord.commands.warn.MegaWarnCommand;
-import fr.mrcraftcod.gunterdiscord.commands.warn.WarnCommand;
+import fr.mrcraftcod.gunterdiscord.commands.warn.NormalWarnCommand;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -46,7 +47,7 @@ public class CommandsMessageListener extends ListenerAdapter
 			new UpCommand(),
 			new YoutubeCommand(),
 			// new MusicPartyCompositeCommand(),
-			new WarnCommand(),
+			new NormalWarnCommand(),
 			new DoubleWarnCommand(),
 			new MegaWarnCommand(),
 			new StopCommand(),
@@ -62,7 +63,7 @@ public class CommandsMessageListener extends ListenerAdapter
 		Arrays.asList(commands).forEach(c -> c.getCommand().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
 		String clash = counts.keySet().stream().filter(k -> counts.get(k) > 1).collect(Collectors.joining(", "));
 		if(clash != null && !clash.isEmpty())
-			Log.error("Command clash: %s", clash);
+			Log.error(null, "Command clash: {}", clash);
 	}
 	
 	@Override
@@ -83,14 +84,14 @@ public class CommandsMessageListener extends ListenerAdapter
 					{
 						try
 						{
-							Log.info("Executing command `" + cmdText + "`(" + command.getName() + ") from " + Actions.getUserToLog(event.getAuthor()) + ", args: " + args);
+							Log.info(event.getGuild(), "Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(), Utilities.getUserToLog(event.getAuthor()), args);
 							switch(command.execute(event, args))
 							{
 								case NOT_ALLOWED:
-									Actions.replyPrivate(event.getAuthor(), "Vous n'etes par autorisé à utiliser cette commande");
+									Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Vous n'etes par autorisé à utiliser cette commande");
 									break;
 								case FAILED:
-									Actions.replyPrivate(event.getAuthor(), "Une erreur est survenue");
+									Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Une erreur est survenue");
 									break;
 								default:
 								case SUCCESS:
@@ -98,7 +99,7 @@ public class CommandsMessageListener extends ListenerAdapter
 						}
 						catch(NotAllowedException e)
 						{
-							Log.error(e, "Error executing command %s (not allowed)", command);
+							Log.error(event.getGuild(), "Error executing command {} (not allowed)", command, e);
 							EmbedBuilder builder = new EmbedBuilder();
 							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 							builder.setColor(Color.RED);
@@ -107,7 +108,7 @@ public class CommandsMessageListener extends ListenerAdapter
 						}
 						catch(Exception e)
 						{
-							Log.error(e, "Error executing command %s", command);
+							Log.error(event.getGuild(), "Error executing command {}", command, e);
 							EmbedBuilder builder = new EmbedBuilder();
 							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 							builder.setColor(Color.RED);
@@ -137,7 +138,7 @@ public class CommandsMessageListener extends ListenerAdapter
 		}
 		catch(Exception e)
 		{
-			Log.error(e, "Error handling message");
+			Log.error(event.getGuild(), "Error handling message", e);
 		}
 	}
 	
@@ -157,7 +158,7 @@ public class CommandsMessageListener extends ListenerAdapter
 		}
 		catch(InvalidClassException e)
 		{
-			Log.warning(e, "Error testing command");
+			Log.warning(guild, "Error testing command", e);
 		}
 		return false;
 	}

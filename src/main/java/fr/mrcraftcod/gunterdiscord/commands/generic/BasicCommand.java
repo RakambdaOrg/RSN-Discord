@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.commands.generic;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 
 /**
@@ -11,15 +12,13 @@ import java.util.LinkedList;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
-public abstract class BasicCommand implements Command
-{
+public abstract class BasicCommand implements Command{
 	private final Command parent;
 	
 	/**
 	 * Constructor.
 	 */
-	public BasicCommand()
-	{
+	protected BasicCommand(){
 		this(null);
 	}
 	
@@ -28,33 +27,29 @@ public abstract class BasicCommand implements Command
 	 *
 	 * @param parent The parent command.
 	 */
-	public BasicCommand(Command parent)
-	{
+	protected BasicCommand(Command parent){
 		this.parent = parent;
 	}
 	
 	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
-	{
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 	}
 	
 	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
-		if(!isAllowed(event.getMember()))
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+		if(!isAllowed(event.getMember())){
 			throw new NotAllowedException();
+		}
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
-	public String getCommandUsage()
-	{
+	public String getCommandUsage(){
 		return getParent() == null || getParent() instanceof CompositeCommand ? "" : getParent().getCommandUsage();
 	}
 	
 	@Override
-	public Command getParent()
-	{
+	public Command getParent(){
 		return parent;
 	}
 }

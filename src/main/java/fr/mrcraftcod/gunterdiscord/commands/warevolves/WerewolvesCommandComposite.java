@@ -10,42 +10,38 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-05-31
  */
-public class WerewolvesCommandComposite extends CompositeCommand
-{
-	public WerewolvesCommandComposite()
-	{
+public class WerewolvesCommandComposite extends CompositeCommand{
+	/**
+	 * Constructor.
+	 */
+	public WerewolvesCommandComposite(){
 		super();
 		addSubCommand(new WerewolvesStartCommand(this));
 		addSubCommand(new WerewolvesStopCommand(this));
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
+	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Loups-garous";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("werewolves", "ww");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Commande pour `Les Loups-garous de Thiercelieux`";
 	}
 	
 	@Override
-	public int getScope()
-	{
+	public int getScope(){
 		return ChannelType.TEXT.getId();
 	}
 }

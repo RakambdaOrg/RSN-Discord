@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceGuildMuteEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
@@ -23,14 +23,14 @@ public class LogListener extends ListenerAdapter
 		super.onUserUpdateName(event);
 		try
 		{
-			Log.info("User " + Actions.getUserToLog(event.getUser()) + " changed name of " + Actions.getUserToLog(event.getEntity()) + " `" + event.getOldName() + "` to `" + event.getNewName() + "`");
+			Log.info(null, "User {} changed name of {} `{}` to `{}`", Utilities.getUserToLog(event.getUser()), Utilities.getUserToLog(event.getEntity()), event.getOldName(), event.getNewName());
 		}
 		catch(NullPointerException ignored)
 		{
 		}
 		catch(Exception e)
 		{
-			Log.error(e, "");
+			Log.error(null, "", e);
 		}
 	}
 	
@@ -40,14 +40,14 @@ public class LogListener extends ListenerAdapter
 		super.onSelfUpdateName(event);
 		try
 		{
-			Log.info("User " + Actions.getUserToLog(event.getSelfUser()) + " changed name `" + event.getOldName() + "` to `" + event.getNewName() + "`");
+			Log.info(null, "User {} changed name `{}` to `{}`", Utilities.getUserToLog(event.getEntity()), event.getOldName(), event.getNewName());
 		}
 		catch(NullPointerException ignored)
 		{
 		}
 		catch(Exception e)
 		{
-			Log.error(e, "");
+			Log.error(null, "", e);
 		}
 	}
 	
@@ -57,14 +57,14 @@ public class LogListener extends ListenerAdapter
 		super.onMessageReactionAdd(event);
 		try
 		{
-			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> Log.info("New reaction " + event.getReaction().getReactionEmote().getName() + " from `" + Actions.getUserToLog(event.getUser()) + "` in " + event.getReaction().getTextChannel().getName() + " on `" + m.getContentRaw().replace("\n", "{n}") + "` whose author is " + Actions.getUserToLog(m.getAuthor())));
+			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> Log.info(event.getGuild(), "New reaction {} from `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), Utilities.getUserToLog(event.getUser()), event.getReaction().getTextChannel().getName(), m.getContentRaw().replace("\n", "{n}"), Utilities.getUserToLog(m.getAuthor())));
 		}
 		catch(NullPointerException ignored)
 		{
 		}
 		catch(Exception e)
 		{
-			Log.error(e, "");
+			Log.error(event.getGuild(), "", e);
 		}
 	}
 	
@@ -74,14 +74,14 @@ public class LogListener extends ListenerAdapter
 		super.onMessageReactionRemove(event);
 		try
 		{
-			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> Log.info("Reaction " + event.getReaction().getReactionEmote().getName() + " removed by `" + Actions.getUserToLog(event.getUser()) + "` in " + event.getReaction().getTextChannel().getName() + " on `" + m.getContentRaw().replace("\n", "{n}") + "` whose author is " + Actions.getUserToLog(m.getAuthor())));
+			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> Log.info(event.getGuild(), "Reaction {} removed by `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), Utilities.getUserToLog(event.getUser()), event.getReaction().getTextChannel().getName(), m.getContentRaw().replace("\n", "{n}"), Utilities.getUserToLog(m.getAuthor())));
 		}
 		catch(NullPointerException ignored)
 		{
 		}
 		catch(Exception e)
 		{
-			Log.error(e, "");
+			Log.error(event.getGuild(), "", e);
 		}
 	}
 	
@@ -91,7 +91,7 @@ public class LogListener extends ListenerAdapter
 		super.onGuildVoiceGuildMute(event);
 		if(event.getMember().getUser().getIdLong() == event.getJDA().getSelfUser().getIdLong())
 		{
-			Log.info("Unmuting bot");
+			Log.info(event.getGuild(), "Unmuting bot");
 			event.getGuild().getController().setMute(event.getMember(), false).queue();
 			event.getGuild().getController().setDeafen(event.getMember(), false).queue();
 		}

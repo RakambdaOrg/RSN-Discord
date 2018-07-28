@@ -12,6 +12,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -24,39 +25,21 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-05-27
  */
-public class ConfigurationCommand extends BasicCommand
-{
+public class ConfigurationCommand extends BasicCommand{
 	private final ChangeConfigType type;
 	private final List<String> commands;
 	
 	/**
 	 * Actions available.
 	 */
-	public enum ChangeConfigType
-	{
+	public enum ChangeConfigType{
 		ADD, REMOVE, SET, SHOW, ERROR;
-		
-		/**
-		 * Get an action by its name.
-		 *
-		 * @param action The action to find.
-		 *
-		 * @return The action or ERROR if not found.
-		 */
-		public static ChangeConfigType get(String action)
-		{
-			for(ChangeConfigType type: ChangeConfigType.values())
-				if(type.name().equalsIgnoreCase(action))
-					return type;
-			return ERROR;
-		}
 	}
 	
 	/**
 	 * The result of a setting action.
 	 */
-	public enum ActionResult
-	{
+	public enum ActionResult{
 		OK, NONE, ERROR
 	}
 	
@@ -67,8 +50,7 @@ public class ConfigurationCommand extends BasicCommand
 	 * @param type     The operation that will be done on the configuration.
 	 * @param commands The commands to call this command.
 	 */
-	ConfigurationCommand(Command parent, ChangeConfigType type, List<String> commands)
-	{
+	ConfigurationCommand(Command parent, ChangeConfigType type, List<String> commands){
 		super(parent);
 		this.type = type;
 		this.commands = commands;
@@ -83,16 +65,13 @@ public class ConfigurationCommand extends BasicCommand
 	 *
 	 * @return The result that happened.
 	 */
-	private ActionResult processWithValue(MessageReceivedEvent event, Configuration configuration, LinkedList<String> args)
-	{
-		if(configuration.isActionAllowed(getType()))
-			try
-			{
-				Log.info("Handling change " + getType().name() + " on config " + configuration + " with parameters " + args);
+	private ActionResult processWithValue(MessageReceivedEvent event, Configuration configuration, LinkedList<String> args){
+		if(configuration.isActionAllowed(getType())){
+			try{
+				Log.info(event.getGuild(), "Handling change {} on config {} with parameters {}", getType().name(), configuration, args);
 				return configuration.handleChange(event, getType(), args);
 			}
-			catch(Exception e)
-			{
+			catch(Exception e){
 				EmbedBuilder builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.setColor(Color.RED);
@@ -101,32 +80,31 @@ public class ConfigurationCommand extends BasicCommand
 				builder.addField("Raison", e.getMessage(), false);
 				builder.addField("Configuration", configuration.getName(), false);
 				Actions.reply(event, builder.build());
-				Log.error(e, "Error handling configuration change");
+				Log.error(event.getGuild(), "Error handling configuration change", e);
 			}
-		else
+		}
+		else{
 			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Opération impossible").addField("Raison", "Opération " + getType().name() + " impossible sur cette configuration", false).addField("Configuration", configuration.getName(), false).build());
+		}
 		return ActionResult.ERROR;
 	}
 	
 	@Override
-	public String getCommandUsage()
-	{
-		return super.getCommandUsage() + " <configuration> [valeur]";
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField("Configuration", "Le nom de la configuration", false);
+		builder.addField("Optionnel: Valeur", "Paramètres de la sous commande", false);
 	}
 	
 	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		if(args.size() > 0)
-		{
+		if(args.size() > 0){
 			Configuration configuration = Settings.getSettings(args.pop());
-			if(configuration != null)
-			{
+			if(configuration != null){
 				List<String> beforeArgs = new LinkedList<>(args);
 				ActionResult result = processWithValue(event, configuration, args);
-				if(result == ActionResult.ERROR)
-				{
+				if(result == ActionResult.ERROR){
 					EmbedBuilder builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.RED);
@@ -135,13 +113,9 @@ public class ConfigurationCommand extends BasicCommand
 					builder.addField("Raison", "C'est compliqué", false);
 					builder.addField("Configuration", configuration.getName(), false);
 					Actions.reply(event, builder.build());
-					Log.error("Error handling configuration change");
+					Log.error(event.getGuild(), "Error handling configuration change");
 				}
-				else if(result == ActionResult.NONE)
-				{
-				}
-				else
-				{
+				else if(result != ActionResult.NONE){
 					EmbedBuilder builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.GREEN);
@@ -150,11 +124,10 @@ public class ConfigurationCommand extends BasicCommand
 					builder.addField("Configuration:", configuration.getName(), false);
 					builder.addField("Valeur:", beforeArgs.toString(), false);
 					Actions.reply(event, builder.build());
-					Log.info("Config value " + configuration.getName() + " changed");
+					Log.info(event.getGuild(), "Config value {} changed", configuration.getName());
 				}
 			}
-			else
-			{
+			else{
 				EmbedBuilder builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.setColor(Color.ORANGE);
@@ -163,8 +136,7 @@ public class ConfigurationCommand extends BasicCommand
 				Actions.reply(event, builder.build());
 			}
 		}
-		else
-		{
+		else{
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.ORANGE);
@@ -175,41 +147,33 @@ public class ConfigurationCommand extends BasicCommand
 	}
 	
 	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
-	{
-		super.addHelp(guild, builder);
-		builder.addField("Configuration", "Le nom de la configuration", false);
-		builder.addField("Optionnel: Valeur", "Paramètres de la sous commande", false);
+	public String getCommandUsage(){
+		return super.getCommandUsage() + " <configuration> [valeur]";
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
+	public AccessLevel getAccessLevel(){
+		return AccessLevel.ADMIN;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Opération " + getType().name();
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return commands;
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Effectue une opération " + getType().name() + " sur cette configuration";
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.ADMIN;
+	public int getScope(){
+		return ChannelType.TEXT.getId();
 	}
 	
 	/**
@@ -217,8 +181,7 @@ public class ConfigurationCommand extends BasicCommand
 	 *
 	 * @return The type.
 	 */
-	private ChangeConfigType getType()
-	{
+	private ChangeConfigType getType(){
 		return type;
 	}
 }

@@ -10,45 +10,38 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
-public class QuizCompositeCommand extends CompositeCommand
-{
+public class QuizCompositeCommand extends CompositeCommand{
 	/**
 	 * Constructor.
 	 */
-	public QuizCompositeCommand()
-	{
+	public QuizCompositeCommand(){
 		super();
 		addSubCommand(new QuizStartCommand(this));
 		addSubCommand(new QuizStopCommand(this));
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
+	public AccessLevel getAccessLevel(){
+		return AccessLevel.MODERATOR;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Quiz";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("quiz");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Management of the quiz";
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.MODERATOR;
+	public int getScope(){
+		return ChannelType.TEXT.getId();
 	}
 }

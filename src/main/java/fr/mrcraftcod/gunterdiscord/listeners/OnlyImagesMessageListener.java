@@ -26,13 +26,13 @@ public class OnlyImagesMessageListener extends ListenerAdapter
 				if(!Utilities.isTeam(event.getMember()))
 				{
 					Actions.deleteMessage(event.getMessage());
-					Actions.replyPrivate(event.getAuthor(), "Le channel %s est pour les images seulement.", event.getChannel().getName());
+					Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Le channel %s est pour les images seulement.", event.getChannel().getName());
 				}
 			}
 		}
 		catch(Exception e)
 		{
-			Log.error(e, "");
+			Log.error(event.getGuild(), "", e);
 		}
 	}
 }

@@ -3,7 +3,6 @@ package fr.mrcraftcod.gunterdiscord;
 import fr.mrcraftcod.gunterdiscord.listeners.*;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
-import fr.mrcraftcod.gunterdiscord.utils.LoggerFormatter;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -16,10 +15,6 @@ import java.time.ZonedDateTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 09/04/2018.
@@ -43,26 +38,6 @@ public class Main
 	 */
 	public static void main(String[] args)
 	{
-		try
-		{
-			LogManager.getLogManager().reset();
-			
-			ConsoleHandler ch = new ConsoleHandler();
-			ch.setLevel(Level.INFO);
-			ch.setFormatter(new LoggerFormatter());
-			
-			FileHandler handler = new FileHandler("log.log", 1024 * 1024 * 10, 7, true);
-			handler.setFormatter(new LoggerFormatter());
-			
-			Log.setAppName("GunterDiscord");
-			Log.getLogger().addHandler(handler);
-			Log.getLogger().addHandler(ch);
-		}
-		catch(IOException e)
-		{
-			System.out.println("Error setting up logger");
-			e.printStackTrace();
-		}
 		
 		try
 		{
@@ -83,11 +58,11 @@ public class Main
 		}
 		catch(IOException e)
 		{
-			Log.error(e, "Couldn't load settings");
+			Log.error(null, "Couldn't load settings", e);
 		}
 		catch(LoginException | InterruptedException e)
 		{
-			Log.error(e, "Couldn't start bot");
+			Log.error(null, "Couldn't start bot", e);
 		}
 		
 		new ConsoleText(jda).start();

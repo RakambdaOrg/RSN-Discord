@@ -10,6 +10,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,66 +22,58 @@ import java.util.Optional;
  * @author Thomas Couchoud
  * @since 2018-05-27
  */
-public class HangmanJoinCommand extends BasicCommand
-{
+public class HangmanJoinCommand extends BasicCommand{
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	HangmanJoinCommand(Command parent)
-	{
+	HangmanJoinCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		Role role = new HangmanRoleConfig().getRole(event.getGuild());
-		if(role == null)
+		if(role == null){
 			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.RED, "Erreur").addField("Raison", "Le role du pendu n'est pas configuré", false).build());
-		else if(!Utilities.hasRole(event.getMember(), role))
-		{
+		}
+		else if(!Utilities.hasRole(event.getMember(), role)){
 			Optional<HangmanListener> game = HangmanListener.getGame(event.getGuild());
-			if(game.isPresent())
-			{
+			if(game.isPresent()){
 				Actions.giveRole(event.getGuild(), event.getAuthor(), role);
 				game.get().onPlayerJoin(event.getMember());
 			}
-			else
+			else{
 				return CommandResult.FAILED;
+			}
 		}
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
+	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Rejoindre pendu";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("join", "j");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Rejoins une partie de pendu";
 	}
 	
 	@Override
-	public int getScope()
-	{
+	public int getScope(){
 		return ChannelType.TEXT.getId();
 	}
 }

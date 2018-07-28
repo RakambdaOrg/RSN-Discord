@@ -9,6 +9,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,21 +20,18 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-05-26
  */
-public class PhotoListCommand extends BasicCommand
-{
+public class PhotoListCommand extends BasicCommand{
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	PhotoListCommand(Command parent)
-	{
+	PhotoListCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		EmbedBuilder builder = new EmbedBuilder();
 		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
@@ -45,32 +43,27 @@ public class PhotoListCommand extends BasicCommand
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
+	public AccessLevel getAccessLevel(){
+		return AccessLevel.ALL;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Liste";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("l", "list");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Obtient la liste des participants du trombinoscope";
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.ALL;
+	public int getScope(){
+		return ChannelType.TEXT.getId();
 	}
 }

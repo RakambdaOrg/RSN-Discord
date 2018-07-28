@@ -9,6 +9,7 @@ import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -19,70 +20,63 @@ import java.util.Objects;
  * @author Thomas Couchoud
  * @since 2018-06-16
  */
-public class AnnoyCommand extends BasicCommand
-{
+public class AnnoyCommand extends BasicCommand{
 	@Override
-	public String getCommandUsage()
-	{
-		return super.getCommandUsage() + " <@utilisateur>";
-	}
-	
-	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
-		super.execute(event, args);
-		String arg1 = args.poll();
-		if(Objects.equals(arg1, "stop"))
-			GunterAudioManager.leave(event.getGuild());
-		else
-			event.getMessage().getMentionedUsers().stream().findAny().ifPresentOrElse(u -> {
-				
-				Member member = event.getGuild().getMember(u);
-				if(member.getVoiceState().inVoiceChannel())
-				{
-					String identifier = String.join(" ", args).trim();
-					GunterAudioManager.play(member.getVoiceState().getChannel(), identifier.equals("") ? "https://www.youtube.com/watch?v=J4X2b-CEGNg" : identifier);
-				}
-				else
-					Actions.reply(event, "Cet utilisateur n'est pas dans un channel vocal");
-			}, () -> Actions.reply(event, "Merci de mentionner un utilisateur valide"));
-		return CommandResult.SUCCESS;
-	}
-	
-	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
-	{
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("utilisateur", "L'utilisateur que le bot tentera de rejoindre", false);
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+		super.execute(event, args);
+		String arg1 = args.poll();
+		if(Objects.equals(arg1, "stop")){
+			GunterAudioManager.leave(event.getGuild());
+		}
+		else{
+			event.getMessage().getMentionedUsers().stream().findAny().ifPresentOrElse(u -> {
+				
+				Member member = event.getGuild().getMember(u);
+				if(member.getVoiceState().inVoiceChannel()){
+					String identifier = String.join(" ", args).trim();
+					GunterAudioManager.play(member.getVoiceState().getChannel(), identifier.equals("") ? "https://www.youtube.com/watch?v=J4X2b-CEGNg" : identifier);
+				}
+				else{
+					Actions.reply(event, "Cet utilisateur n'est pas dans un channel vocal");
+				}
+			}, () -> Actions.reply(event, "Merci de mentionner un utilisateur valide"));
+		}
+		return CommandResult.SUCCESS;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getCommandUsage(){
+		return super.getCommandUsage() + " <@utilisateur>";
+	}
+	
+	@Override
+	public AccessLevel getAccessLevel(){
+		return AccessLevel.ADMIN;
+	}
+	
+	@Override
+	public String getName(){
 		return "Fais chier";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("annoy");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Rejoins un channel et fait du bruit";
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.ADMIN;
+	public int getScope(){
+		return ChannelType.TEXT.getId();
 	}
 }

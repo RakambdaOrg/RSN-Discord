@@ -10,10 +10,11 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public class HangmanCompositeCommand extends CompositeCommand
-{
-	public HangmanCompositeCommand()
-	{
+public class HangmanCompositeCommand extends CompositeCommand{
+	/**
+	 * Constructor.
+	 */
+	public HangmanCompositeCommand(){
 		super();
 		addSubCommand(new HangmanJoinCommand(this));
 		addSubCommand(new HangmanLeaveCommand(this));
@@ -23,32 +24,27 @@ public class HangmanCompositeCommand extends CompositeCommand
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
+	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Pendu";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("pendu");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Commandes liées au pendu";
 	}
 	
 	@Override
-	public int getScope()
-	{
+	public int getScope(){
 		return ChannelType.TEXT.getId();
 	}
 }

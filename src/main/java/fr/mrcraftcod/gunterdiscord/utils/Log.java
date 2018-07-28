@@ -1,81 +1,52 @@
 package fr.mrcraftcod.gunterdiscord.utils;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import net.dv8tion.jda.core.entities.Guild;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.HashMap;
+import java.util.Objects;
 
 @SuppressWarnings("JavaDoc")
 public class Log
 {
-	private static Logger logger;
+	private static HashMap<Guild, Logger> loggers = new HashMap<>();
 	
-	public static void warning(String s, Object... args)
+	public static void warning(Guild g, String s, Object... args)
 	{
-		warning(String.format(s, args));
+		getLogger(g).warn(s, args);
 	}
 	
-	public static void warning(String s)
+	public static void warning(Guild g, String s)
 	{
-		log(Level.WARNING, s);
+		getLogger(g).warn(s);
 	}
 	
-	public static void log(Level level, String s)
+	public static Logger getLogger(Guild g)
 	{
-		getLogger().log(level, s);
+		return loggers.computeIfAbsent(g, g2 -> {
+			if(Objects.nonNull(g2))
+				return LoggerFactory.getLogger(g2.getName());
+			return LoggerFactory.getLogger("No Guild");
+		});
 	}
 	
-	public static Logger getLogger()
+	public static void info(Guild g, String s, Object... args)
 	{
-		return logger != null ? logger : setAppName("MCCUtils");
+		getLogger(g).info(s, args);
 	}
 	
-	public static Logger setAppName(String name)
+	public static void info(Guild g, String s)
 	{
-		logger = Logger.getLogger(name);
-		return logger;
+		getLogger(g).info(s);
 	}
 	
-	public static void warning(Throwable e, String s, Object... args)
+	public static void error(Guild g, String s, Object... args)
 	{
-		warning(e, String.format(s, args));
+		getLogger(g).error(s, args);
 	}
 	
-	public static void warning(Throwable e, String s)
+	public static void error(Guild g, String s)
 	{
-		log(Level.WARNING, e, s);
-	}
-	
-	public static void log(Level level, Throwable e, String s)
-	{
-		getLogger().log(level, s, e);
-	}
-	
-	public static void info(String s, Object... args)
-	{
-		log(Level.INFO, String.format(s, args));
-	}
-	
-	public static void info(String s)
-	{
-		log(Level.INFO, s);
-	}
-	
-	public static void error(Throwable e, String s, Object... args)
-	{
-		error(e, String.format(s, args));
-	}
-	
-	public static void error(Throwable e, String s)
-	{
-		log(Level.SEVERE, e, s);
-	}
-	
-	public static void error(String s, Object... args)
-	{
-		error(String.format(s, args));
-	}
-	
-	public static void error(String s)
-	{
-		log(Level.SEVERE, s);
+		getLogger(g).error(s);
 	}
 }

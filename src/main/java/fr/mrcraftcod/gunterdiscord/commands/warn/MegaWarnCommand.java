@@ -1,19 +1,9 @@
 package fr.mrcraftcod.gunterdiscord.commands.warn;
 
-import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.MegaWarnRoleConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.MegaWarnTimeConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.RemoveRoleConfig;
-import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import java.awt.*;
-import java.util.LinkedList;
+import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleRoleConfiguration;
+import fr.mrcraftcod.gunterdiscord.settings.configurations.ValueConfiguration;
 import java.util.List;
 
 /**
@@ -22,84 +12,24 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public class MegaWarnCommand extends BasicCommand
-{
+public class MegaWarnCommand extends WarnCommand{
 	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
-	{
-		super.addHelp(guild, builder);
-		builder.addField("Utilisateur", "L'utilisateur à warn", false);
+	public String getName(){
+		return "Mega warn";
 	}
 	
 	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
-		super.execute(event, args);
-		if(event.getMessage().getMentionedUsers().size() > 0)
-		{
-			User user = event.getMessage().getMentionedUsers().get(0);
-			Role role = new MegaWarnRoleConfig().getRole(event.getGuild());
-			EmbedBuilder builder = new EmbedBuilder();
-			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
-			if(role == null)
-			{
-				builder.setColor(Color.RED);
-				builder.addField("Erreur", "Merci de configurer le role à donner", true);
-			}
-			else
-			{
-				double duration = new MegaWarnTimeConfig().getDouble(event.getGuild(), 3);
-				Actions.giveRole(event.getGuild(), user, role);
-				new RemoveRoleConfig().addValue(event.getGuild(), user.getIdLong(), role.getIdLong(), (long) (System.currentTimeMillis() + duration * 24 * 60 * 60 * 1000L));
-				builder.setColor(Color.GREEN);
-				builder.addField("Congratulations", user.getAsMention() + " à rejoint le role " + role.getAsMention() + " pour une durée de " + duration + " jour(s)", false);
-			}
-			Actions.reply(event, builder.build());
-		}
-		else
-		{
-			EmbedBuilder builder = new EmbedBuilder();
-			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-			builder.setColor(Color.RED);
-			builder.addField("Erreur", "Merci de mentionner un utilisateur", true);
-			Actions.reply(event, builder.build());
-		}
-		return CommandResult.SUCCESS;
-	}
-	
-	@Override
-	public String getCommandUsage()
-	{
-		return super.getCommandUsage() + " <@utilisateur>";
-	}
-	
-	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.MODERATOR;
-	}
-	
-	@Override
-	public String getName()
-	{
-		return "Warn";
-	}
-	
-	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("megawarn", "mwarn");
 	}
 	
 	@Override
-	public String getDescription()
-	{
-		return "Warn un utilisateur (en donnant un role) pendant 4 semaines";
+	protected SingleRoleConfiguration getRoleConfig(){
+		return new MegaWarnRoleConfig();
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
+	protected ValueConfiguration getTimeConfig(){
+		return new MegaWarnTimeConfig();
 	}
 }

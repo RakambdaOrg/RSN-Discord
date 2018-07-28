@@ -81,7 +81,7 @@ public class HangmanListener extends ListenerAdapter
 			}
 			catch(InterruptedException e)
 			{
-				Log.error("Error sleeping");
+				Log.error(guild, "Error sleeping");
 			}
 			realWord = selectRandomWord();
 			hiddenWord = genHidden(realWord);
@@ -96,13 +96,13 @@ public class HangmanListener extends ListenerAdapter
 		}).start();
 		guild.getJDA().addEventListener(this);
 		games.add(this);
-		Log.info("Crated hangman game");
+		Log.info(guild, "Crated hangman game");
 	}
 	
 	/**
 	 * Stop all running games.
 	 */
-	public static void stopAll()
+	static void stopAll()
 	{
 		games.forEach(HangmanListener::delayEndGame);
 	}
@@ -137,7 +137,7 @@ public class HangmanListener extends ListenerAdapter
 			}
 			catch(Exception e)
 			{
-				Log.error(e, "Error create a new hangman game");
+				Log.error(guild, "Error create a new hangman game", e);
 			}
 			return Optional.empty();
 		});
@@ -194,7 +194,7 @@ public class HangmanListener extends ListenerAdapter
 	 *
 	 * @return The chosen word.
 	 */
-	private static String selectRandomWord()
+	private String selectRandomWord()
 	{
 		try
 		{
@@ -203,7 +203,7 @@ public class HangmanListener extends ListenerAdapter
 		}
 		catch(IOException e)
 		{
-			Log.error(e, "Error getting random hangman word");
+			Log.error(getGuild(), "Error getting random hangman word", e);
 		}
 		return "ERROR";
 	}
@@ -283,7 +283,7 @@ public class HangmanListener extends ListenerAdapter
 			}
 			catch(InvalidClassException | IllegalArgumentException e)
 			{
-				Log.error(e, "Error getting prefix");
+				Log.error(getGuild(), "Error getting prefix", e);
 			}
 			if(lastFuture != null)
 				lastFuture.cancel(true);
@@ -402,7 +402,7 @@ public class HangmanListener extends ListenerAdapter
 	 */
 	private void delayEndGame()
 	{
-		Log.info("Ending hangman game");
+		Log.info(getGuild(), "Ending hangman game");
 		guild.getJDA().removeEventListener(this);
 		waitingUser = null;
 		executor.shutdownNow();
@@ -412,7 +412,7 @@ public class HangmanListener extends ListenerAdapter
 		}
 		catch(InterruptedException e)
 		{
-			Log.error(e, "Error sleeping");
+			Log.error(getGuild(), "Error sleeping", e);
 		}
 		removeUsers();
 	}

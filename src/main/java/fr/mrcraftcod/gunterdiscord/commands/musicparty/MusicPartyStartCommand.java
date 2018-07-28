@@ -8,6 +8,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,59 +18,51 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-06-21
  */
-public class MusicPartyStartCommand extends BasicCommand
-{
+public class MusicPartyStartCommand extends BasicCommand{
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	MusicPartyStartCommand(Command parent)
-	{
+	MusicPartyStartCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		Member member = event.getMember();
-		if(member.getVoiceState().inVoiceChannel())
-		{
+		if(member.getVoiceState().inVoiceChannel()){
 			MusicPartyListener.getParty(event.getGuild(), member.getVoiceState().getChannel()).ifPresent(g -> Actions.reply(event, "Event started"));
 		}
-		else
+		else{
 			Actions.reply(event, "Vous devez être dans un channel vocal pour executer cette commande");
+		}
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
+	public AccessLevel getAccessLevel(){
+		return AccessLevel.MODERATOR;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Start a music party";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("start");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Start a music party";
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.MODERATOR;
+	public int getScope(){
+		return ChannelType.TEXT.getId();
 	}
 }

@@ -60,7 +60,7 @@ public abstract class SingleRoleConfiguration extends ValueConfiguration
 		}
 		catch(InvalidClassException | NoValueDefinedException e)
 		{
-			Log.error(e, "Error getting role from config");
+			Log.error(guild, "Error getting role from config", e);
 		}
 		return null;
 	}

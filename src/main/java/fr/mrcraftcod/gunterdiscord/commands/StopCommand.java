@@ -6,6 +6,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,49 +16,42 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public class StopCommand extends BasicCommand
-{
+public class StopCommand extends BasicCommand{
 	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		if(Utilities.isCreator(event.getMember()))
-		{
+		if(Utilities.isCreator(event.getMember())){
 			event.getJDA().shutdownNow();
-			Log.info("BOT STOPPING");
+			Log.info(event.getGuild(), "BOT STOPPING");
 		}
-		else
+		else{
 			return CommandResult.NOT_ALLOWED;
+		}
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
+	public AccessLevel getAccessLevel(){
+		return AccessLevel.ADMIN;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Stop";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("stop");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Arrête le bot";
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.ADMIN;
+	public int getScope(){
+		return ChannelType.TEXT.getId();
 	}
 }

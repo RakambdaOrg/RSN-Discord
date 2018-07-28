@@ -5,6 +5,7 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.QuizChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import fr.mrcraftcod.gunterdiscord.utils.Log;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
@@ -28,8 +29,7 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-19
  */
-public class QuizListener extends ListenerAdapter implements Runnable
-{
+public class QuizListener extends ListenerAdapter implements Runnable{
 	private static final ArrayList<QuizListener> quizzes = new ArrayList<>();
 	private final Guild guild;
 	private Duration waitTime;
@@ -45,8 +45,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 	 * @param amount The amount of questions to add.
 	 * @param delay  The delay before starting the quiz.
 	 */
-	private QuizListener(Guild guild, int amount, int delay)
-	{
+	private QuizListener(Guild guild, int amount, int delay){
 		this.guild = guild;
 		this.stopped = false;
 		waitTime = Duration.ofSeconds(delay);
@@ -67,27 +66,25 @@ public class QuizListener extends ListenerAdapter implements Runnable
 	 *
 	 * @return The questions.
 	 */
-	private LinkedList<Question> generateQuestions(int amount)
-	{
+	private LinkedList<Question> generateQuestions(int amount){
 		LinkedList<String> lines = new LinkedList<>();
-		try
-		{
+		try{
 			lines.addAll(Files.readAllLines(Paths.get("./questions.csv")));
 		}
-		catch(Exception e)
-		{
-			Log.error(e, "Error reading questions file");
+		catch(Exception e){
+			Log.error(getGuild(), "Error reading questions file", e);
 		}
 		
-		if(lines.isEmpty())
+		if(lines.isEmpty()){
 			throw new IllegalStateException("No questions found");
+		}
 		
 		Collections.shuffle(lines);
 		LinkedList<Question> list = new LinkedList<>();
-		for(int i = 0; i < amount; i++)
-		{
-			if(lines.size() < 1)
+		for(int i = 0; i < amount; i++){
+			if(lines.size() < 1){
 				break;
+			}
 			String[] line = lines.pop().split(",");
 			String correctAnswer = line[1];
 			
@@ -95,21 +92,32 @@ public class QuizListener extends ListenerAdapter implements Runnable
 			Collections.shuffle(answersList);
 			int ID = ThreadLocalRandom.current().nextInt(0, answersList.size() + 1);
 			HashMap<Integer, String> answers = new HashMap<>();
-			for(int j = 0; j < answersList.size() + 1; j++)
-				if(j == ID)
+			for(int j = 0; j < answersList.size() + 1; j++){
+				if(j == ID){
 					answers.put(j, correctAnswer);
-				else
+				}
+				else{
 					answers.put(j, answersList.get(j - (j > ID ? 1 : 0)));
+				}
+			}
 			list.add(new Question(line[0], answers, ID));
 		}
 		return list;
 	}
 	
 	/**
+	 * Get the guild.
+	 *
+	 * @return The guild.
+	 */
+	private Guild getGuild(){
+		return guild;
+	}
+	
+	/**
 	 * Stop all quizzes.
 	 */
-	public static void stopAll()
-	{
+	public static void stopAll(){
 		quizzes.forEach(QuizListener::stop);
 	}
 	
@@ -122,8 +130,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 	 *
 	 * @return The game of the guild.
 	 */
-	public static Optional<QuizListener> getQuiz(Guild guild, int amount, int delay)
-	{
+	public static Optional<QuizListener> getQuiz(Guild guild, int amount, int delay){
 		return getQuiz(guild, amount, delay, true);
 	}
 	
@@ -137,81 +144,61 @@ public class QuizListener extends ListenerAdapter implements Runnable
 	 *
 	 * @return The game of the guild.
 	 */
-	public static Optional<QuizListener> getQuiz(Guild guild, int amount, int delay, boolean shouldCreate)
-	{
+	public static Optional<QuizListener> getQuiz(Guild guild, int amount, int delay, boolean shouldCreate){
 		return quizzes.stream().filter(q -> q.getGuild().getIdLong() == guild.getIdLong()).findAny().or(() -> {
-			try
-			{
-				if(shouldCreate)
+			try{
+				if(shouldCreate){
 					return Optional.of(new QuizListener(guild, amount, delay));
+				}
 			}
-			catch(Exception e)
-			{
-				Log.error(e, "Error create a new quiz game");
+			catch(Exception e){
+				Log.error(guild, "Error create a new quiz game", e);
 			}
 			return Optional.empty();
 		});
 	}
 	
 	/**
-	 * Get the guild.
-	 *
-	 * @return The guild.
-	 */
-	private Guild getGuild()
-	{
-		return guild;
-	}
-	
-	/**
 	 * Stop the quiz.
 	 */
-	public void stop()
-	{
+	public void stop(){
 		stopped = true;
 	}
 	
 	@Override
-	public void run()
-	{
+	public void run(){
 		int QUESTION_TIME = 20;
-		try
-		{
+		try{
 			JDA jda = Main.getJDA();
 			jda.getPresence().setGame(Game.playing("The Kwizzz"));
 			TextChannel quizChannel = new QuizChannelConfig().getTextChannel(guild);
 			
-			if(quizChannel == null)
+			if(quizChannel == null){
 				return;
+			}
 			
 			Actions.sendMessage(quizChannel, "Ok @here, j'espère que vous êtes aussi chaud que mon chalumeau pour un petit kwizzz!\nLe principe est simple: une question va apparaitre avec un set de réponses possibles. Vous pouvez répondre à la question en ajoutant une réaction avec la lettre corespondante. Le temps limite pour répondre est de %ds.\n" + "Chaque bonne réponse vous donnera 1 point.\n\nOn commence dans %s!", QUESTION_TIME, waitTime.toString().replace("PT", ""));
-			try
-			{
+			try{
 				Thread.sleep((waitTime.getSeconds() / 2) * 1000);
 			}
-			catch(InterruptedException e)
-			{
-				Log.error(e, "Error sleeping");
+			catch(InterruptedException e){
+				Log.error(getGuild(), "Error sleeping", e);
 			}
 			
 			Actions.sendMessage(quizChannel, "Encore %s!", waitTime.dividedBy(2).toString().replace("PT", ""));
 			
-			try
-			{
+			try{
 				Thread.sleep((waitTime.getSeconds() / 2) * 1000);
 			}
-			catch(InterruptedException e)
-			{
-				Log.error(e, "Error sleeping");
+			catch(InterruptedException e){
+				Log.error(guild, "Error sleeping", e);
 			}
 			
 			HashMap<Long, Integer> scores = new HashMap<>();
 			int i = 0;
-			while(!stopped && questions.size() > 0)
-			{
+			while(!stopped && questions.size() > 0){
 				i++;
-				try
-				{
+				try{
 					Question question = questions.pop();
 					List<Character> emotes = new ArrayList<>();
 					EmbedBuilder builder = new EmbedBuilder();
@@ -230,51 +217,48 @@ public class QuizListener extends ListenerAdapter implements Runnable
 					waitingMsg = questionMessage;
 					emotes.forEach(e -> questionMessage.addReaction(BasicEmotes.getEmote("" + e).getValue()).queue());
 					
-					try
-					{
+					try{
 						Thread.sleep(QUESTION_TIME * 1000);
 					}
-					catch(InterruptedException e)
-					{
-						Log.error(e, "Error sleeping");
+					catch(InterruptedException e){
+						Log.error(guild, "Error sleeping", e);
 					}
 					Actions.sendMessage(quizChannel, "Stoooooooooooooopu!");
-					Log.info("Question over, answer was " + question.getCorrectAnswerIndex());
+					Log.info(getGuild(), "Question over, answer was {}", question.getCorrectAnswerIndex());
 					waitingMsg = null;
 					answers.forEach((k, v) -> {
-						if(v == question.getCorrectAnswerIndex())
-						{
+						if(v == question.getCorrectAnswerIndex()){
 							int newScore = scores.getOrDefault(k, 0) + 1;
 							scores.put(k, newScore);
-							Log.info(k + " +1 pt - now: " + newScore);
+							Log.info(getGuild(), "{} +1 pt - now: {}", k, newScore);
 						}
-						else if(!scores.containsKey(k))
+						else if(!scores.containsKey(k)){
 							scores.put(k, 0);
+						}
 					});
 					answers = null;
 					
-					try
-					{
+					try{
 						Thread.sleep(5 * 1000);
 					}
-					catch(InterruptedException e)
-					{
-						Log.error(e, "Error sleeping");
+					catch(InterruptedException e){
+						Log.error(getGuild(), "Error sleeping", e);
 					}
 				}
-				catch(Exception e)
-				{
-					Log.error(e, "Error quiz question");
+				catch(Exception e){
+					Log.error(getGuild(), "Error quiz question", e);
 				}
 			}
 			
 			HashMap<Integer, List<String>> bests = new HashMap<>();
 			List<Integer> bestsScores = scores.values().stream().sorted(Comparator.reverseOrder()).limit(5).collect(Collectors.toList());
-			for(int score: bestsScores)
+			for(int score : bestsScores){
 				bests.put(score, new ArrayList<>());
+			}
 			scores.forEach((k, v) -> {
-				if(bests.containsKey(v))
+				if(bests.containsKey(v)){
 					bests.get(v).add(jda.getUserById(k).getAsMention());
+				}
 			});
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(quizChannel.getJDA().getSelfUser().getName(), null, quizChannel.getJDA().getSelfUser().getAvatarUrl());
@@ -284,74 +268,59 @@ public class QuizListener extends ListenerAdapter implements Runnable
 			bests.keySet().stream().sorted(Comparator.reverseOrder()).map(v -> new MessageEmbed.Field("Position " + (1 + bestsScores.indexOf(v)) + " (" + v + " points)", String.join(", ", bests.get(v)), false)).forEach(builder::addField);
 			Actions.sendMessage(quizChannel, builder.build());
 		}
-		catch(Exception e)
-		{
-			Log.error(e, "Error quiz");
+		catch(Exception e){
+			Log.error(getGuild(), "Error quiz", e);
 		}
 		quizzes.remove(this);
 		guild.getJDA().removeEventListener(this);
 	}
 	
 	@Override
-	public void onMessageReactionAdd(MessageReactionAddEvent event)
-	{
+	public void onMessageReactionAdd(MessageReactionAddEvent event){
 		super.onMessageReactionAdd(event);
-		try
-		{
-			if(event.getGuild().getIdLong() == getGuild().getIdLong() && waitingMsg != null && event.getMessageIdLong() == waitingMsg.getIdLong() && event.getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong())
-			{
-				if(answers != null)
-				{
+		try{
+			if(event.getGuild().getIdLong() == getGuild().getIdLong() && waitingMsg != null && event.getMessageIdLong() == waitingMsg.getIdLong() && event.getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong()){
+				if(answers != null){
 					BasicEmotes emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
-					if(emote == null)
-					{
+					if(emote == null){
 						event.getReaction().removeReaction(event.getUser()).queue();
-						Actions.replyPrivate(event.getUser(), "Merci de n'utilser que les lettres.");
+						Actions.replyPrivate(event.getGuild(), event.getUser(), "Merci de n'utilser que les lettres.");
 					}
-					else
-					{
-						if(answers.containsKey(event.getUser().getIdLong()))
-						{
+					else{
+						if(answers.containsKey(event.getUser().getIdLong())){
 							event.getReaction().removeReaction(event.getUser()).queue();
-							Actions.replyPrivate(event.getUser(), "Merci de ne mettre qu'une seule réaction par question.");
+							Actions.replyPrivate(event.getGuild(), event.getUser(), "Merci de ne mettre qu'une seule réaction par question.");
 						}
-						else
+						else{
 							answers.put(event.getUser().getIdLong(), mapEmote(emote));
+						}
 					}
 				}
 			}
 		}
-		catch(Exception e)
-		{
-			Log.error(e, "");
+		catch(Exception e){
+			Log.error(getGuild(), "", e);
 		}
 	}
 	
 	@Override
-	public void onMessageReactionRemove(MessageReactionRemoveEvent event)
-	{
+	public void onMessageReactionRemove(MessageReactionRemoveEvent event){
 		super.onMessageReactionRemove(event);
-		try
-		{
-			if(event.getGuild().getIdLong() == getGuild().getIdLong() && waitingMsg != null && event.getMessageIdLong() == waitingMsg.getIdLong())
-			{
-				if(answers != null)
-				{
-					if(answers.containsKey(event.getUser().getIdLong()))
-					{
+		try{
+			if(event.getGuild().getIdLong() == getGuild().getIdLong() && waitingMsg != null && event.getMessageIdLong() == waitingMsg.getIdLong()){
+				if(answers != null){
+					if(answers.containsKey(event.getUser().getIdLong())){
 						BasicEmotes emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
-						if(answers.get(event.getUser().getIdLong()) == mapEmote(emote))
-						{
+						if(answers.get(event.getUser().getIdLong()) == mapEmote(emote)){
 							answers.remove(event.getUser().getIdLong());
-							Log.info("User " + event.getUser().getAsMention() + " removed answer");
+							Log.info(event.getGuild(), "User {} removed answer", Utilities.getUserToLog(event.getUser()));
 						}
 					}
 				}
 			}
 		}
-		catch(Exception e)
-		{
-			Log.error(e, "");
+		catch(Exception e){
+			Log.error(event.getGuild(), "", e);
 		}
 	}
 	
@@ -362,8 +331,7 @@ public class QuizListener extends ListenerAdapter implements Runnable
 	 *
 	 * @return The choice selected.
 	 */
-	private int mapEmote(BasicEmotes name)
-	{
+	private int mapEmote(BasicEmotes name){
 		return name == null ? -1 : name.name().toLowerCase().charAt(0) - 'a';
 	}
 }

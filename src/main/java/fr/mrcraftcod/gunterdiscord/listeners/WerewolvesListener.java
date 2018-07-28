@@ -415,7 +415,7 @@ public class WerewolvesListener extends ListenerAdapter
 		super.onPrivateMessageReceived(event);
 		if(waitingMember != null && waitingMember.stream().anyMatch(m -> m.getUser().getIdLong() == event.getAuthor().getIdLong()))
 		{
-			Log.info("Werewolves: " + Actions.getUserToLog(event.getAuthor()) + " said `" + event.getMessage().getContentRaw() + "`");
+			Log.info("Werewolves: " + Utilities.getUserToLog(event.getAuthor()) + " said `" + event.getMessage().getContentRaw() + "`");
 			if(waitingAction != null)
 				waitingAction.apply(event.getMessage());
 		}
@@ -429,7 +429,7 @@ public class WerewolvesListener extends ListenerAdapter
 		{
 			users.put(event.getMember(), WerewolvesRole.SPECTATOR);
 			event.getGuild().getController().setMute(event.getMember(), true).queue();
-			Log.info("Werewolves: User " + Actions.getUserToLog(event.getMember().getUser()) + " joined as spectator");
+			Log.info("Werewolves: User " + Utilities.getUserToLog(event.getMember().getUser()) + " joined as spectator");
 		}
 	}
 	

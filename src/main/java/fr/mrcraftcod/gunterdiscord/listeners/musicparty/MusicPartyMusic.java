@@ -8,28 +8,38 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
  * @author Thomas Couchoud
  * @since 2018-06-23
  */
-public class MusicPartyMusic
-{
+public class MusicPartyMusic{
 	private final AudioTrack track;
 	
-	public MusicPartyMusic(AudioTrack track)
-	{
+	/**
+	 * Constructor.
+	 *
+	 * @param track The track.
+	 */
+	MusicPartyMusic(AudioTrack track){
 		this.track = track;
 	}
 	
-	public String getTitle()
-	{
+	@Override
+	public String toString(){
+		return String.format("%s (author: %s, length: %d, id: %s)", getTitle(), getTrack().getInfo().author, getTrack().getInfo().length, getTrack().getInfo().identifier);
+	}
+	
+	/**
+	 * Get the title of the track.
+	 *
+	 * @return The title.
+	 */
+	public String getTitle(){
 		return getTrack().getInfo().title;
 	}
 	
-	public AudioTrack getTrack()
-	{
+	/**
+	 * Get the track.
+	 *
+	 * @return The track.
+	 */
+	public AudioTrack getTrack(){
 		return track;
-	}
-	
-	@Override
-	public String toString()
-	{
-		return String.format("%s (author: %s, length: %f, )", getTitle(), getTrack().getInfo().author, getTrack().getInfo().length, getTrack().getInfo().identifier);
 	}
 }

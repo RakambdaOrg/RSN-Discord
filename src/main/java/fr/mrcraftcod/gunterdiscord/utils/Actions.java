@@ -6,11 +6,13 @@ import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
 import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
+import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -35,7 +37,7 @@ public class Actions
 	 * @param format The message format.
 	 * @param args   The message parameters.
 	 */
-	public static void reply(GenericMessageEvent event, String format, Object... args)
+	public static void reply(@NotNull GenericMessageEvent event, @NotNull String format, Object... args)
 	{
 		reply(event, String.format(format, args));
 	}
@@ -47,12 +49,12 @@ public class Actions
 	 * @param text  The text to send.
 	 */
 	@SuppressWarnings("Duplicates")
-	public static void reply(GenericMessageEvent event, String text)
+	public static void reply(@NotNull GenericMessageEvent event, String text)
 	{
 		switch(event.getChannelType())
 		{
 			case PRIVATE:
-				sendMessage(event.getPrivateChannel(), text);
+				sendMessage(event.getGuild(), event.getPrivateChannel(), text);
 				break;
 			case TEXT:
 				sendMessage(event.getTextChannel(), text);
@@ -63,23 +65,19 @@ public class Actions
 	/**
 	 * Send a message to a channel.
 	 *
+	 * @param guild   The guild that initiated the event.
 	 * @param channel The channel to send to.
 	 * @param text    The message to send.
 	 */
-	public static void sendMessage(PrivateChannel channel, String text)
+	public static void sendMessage(Guild guild, @NotNull PrivateChannel channel, String text)
 	{
-		if(channel != null)
-		{
-			if(channel.getUser().isBot())
-				Log.info("Cannot send private message to bot " + Actions.getUserToLog(channel.getUser()) + " : " + text);
-			else
-			{
-				channel.sendMessage(text).queue();
-				Log.info("Sent private message to " + getUserToLog(channel.getUser()) + " : " + text);
-			}
-		}
+		if(channel.getUser().isBot())
+			Log.info(guild, "Cannot send private message to bot {} : {}", Utilities.getUserToLog(channel.getUser()), text);
 		else
-			Log.warning("Cannot send private message to null channel : %s", text);
+		{
+			channel.sendMessage(text).queue();
+			Log.info(guild, "Sent private message to {} : {}", Utilities.getUserToLog(channel.getUser()), text);
+		}
 	}
 	
 	/**
@@ -88,21 +86,9 @@ public class Actions
 	 * @param channel The channel to send to.
 	 * @param text    The message to send.
 	 */
-	public static void sendMessage(TextChannel channel, String text)
+	public static void sendMessage(@NotNull TextChannel channel, String text)
 	{
 		sendMessage(channel, null, text);
-	}
-	
-	/**
-	 * Get a user in a readable way.
-	 *
-	 * @param user The user to print.
-	 *
-	 * @return The string representing the user.
-	 */
-	public static String getUserToLog(User user)
-	{
-		return user == null ? "NULL" : (user.getName() + "#" + user.getDiscriminator() + " (" + user.getIdLong() + ")");
 	}
 	
 	/**
@@ -113,23 +99,18 @@ public class Actions
 	 * @param text    The message to send.
 	 */
 	@SuppressWarnings("Duplicates")
-	public static void sendMessage(TextChannel channel, Consumer<Message> onDone, String text)
+	public static void sendMessage(@NotNull TextChannel channel, Consumer<Message> onDone, String text)
 	{
-		if(channel != null)
+		if(channel.canTalk())
 		{
-			if(channel.canTalk())
-			{
-				if(onDone != null)
-					channel.sendMessage(text).queue(onDone);
-				else
-					channel.sendMessage(text).queue();
-				Log.info("Sent message to " + channel.getName() + " : " + text);
-			}
+			if(onDone != null)
+				channel.sendMessage(text).queue(onDone);
 			else
-				Log.error("Access denied to text channel: %s", channel.getAsMention());
+				channel.sendMessage(text).queue();
+			Log.info(channel.getGuild(), "Sent message to {} : {}", channel.getName(), text);
 		}
 		else
-			Log.warning("Cannot send message to null channel : %s", text);
+			Log.error(channel.getGuild(), "Access denied to text channel: {}", channel.getAsMention());
 	}
 	
 	/**
@@ -139,7 +120,7 @@ public class Actions
 	 * @param format  The format fo the message.
 	 * @param args    The message parameters.
 	 */
-	public static void sendMessage(TextChannel channel, String format, Object... args)
+	public static void sendMessage(@NotNull TextChannel channel, @NotNull String format, Object... args)
 	{
 		sendMessage(channel, String.format(format, args));
 	}
@@ -152,58 +133,34 @@ public class Actions
 	 * @param format  The format fo the message.
 	 * @param args    The message parameters.
 	 */
-	public static void sendMessage(TextChannel channel, Consumer<Message> onDone, String format, Object... args)
+	public static void sendMessage(@NotNull TextChannel channel, Consumer<Message> onDone, @NotNull String format, Object... args)
 	{
 		sendMessage(channel, onDone, String.format(format, args));
 	}
 	
 	/**
-	 * Send a message to a channel.
-	 *
-	 * @param channelID The channel to send to.
-	 * @param text      The message to send.
-	 */
-	public static void sendMessage(long channelID, String text)
-	{
-		sendMessage(Main.getJDA().getTextChannelById(channelID), text);
-	}
-	
-	/**
 	 * Send a message to a user.
 	 *
+	 * @param guild  The guild that initiated the event.
 	 * @param user   The user to send to.
 	 * @param format The format fo the message.
 	 * @param args   The message parameters.
 	 */
-	public static void replyPrivate(User user, String format, Object... args)
+	public static void replyPrivate(Guild guild, @NotNull User user, String format, Object... args)
 	{
-		replyPrivate(user, String.format(format, args));
+		replyPrivate(guild, user, String.format(format, args));
 	}
 	
 	/**
 	 * Send a message to a user.
 	 *
-	 * @param user The user to send to.
-	 * @param text The message to send.
+	 * @param guild The guild that initiated the event.
+	 * @param user  The user to send to.
+	 * @param text  The message to send.
 	 */
-	public static void replyPrivate(User user, String text)
+	public static void replyPrivate(Guild guild, @NotNull User user, String text)
 	{
-		if(user != null)
-			user.openPrivateChannel().queue(c -> sendMessage(c, text));
-		else
-			Log.warning("Sent private message to null user : %s", text);
-	}
-	
-	/**
-	 * Remove a role from a user.
-	 *
-	 * @param guild The guild the role is in.
-	 * @param user  The user to remove the role from.
-	 * @param role  The role to remove.
-	 */
-	public static void removeRole(Guild guild, User user, Role role)
-	{
-		removeRole(guild.getMember(user), role);
+		user.openPrivateChannel().queue(channel -> sendMessage(guild, channel, text));
 	}
 	
 	/**
@@ -212,9 +169,9 @@ public class Actions
 	 * @param user The user to remove the role from.
 	 * @param role The role to remove.
 	 */
-	public static void removeRole(User user, Role role)
+	public static void removeRole(User user, @NotNull Role role)
 	{
-		removeRole(role.getGuild().getMember(user), role);
+		Optional.ofNullable(role.getGuild().getMember(user)).ifPresentOrElse(member -> removeRole(member, role), () -> Log.info(role.getGuild(), "Couldn't find {} in guild {}", Utilities.getUserToLog(user), Utilities.getGuildToLog(role.getGuild())));
 	}
 	
 	/**
@@ -223,17 +180,17 @@ public class Actions
 	 * @param member The user to remove the role from.
 	 * @param role   The role to remove.
 	 */
-	public static void removeRole(Member member, Role role)
+	public static void removeRole(@NotNull Member member, Role role)
 	{
 		try
 		{
 			//noinspection ConstantConditions
 			member.getGuild().getController().removeSingleRoleFromMember(member, role).queue();
-			Log.info("Removed role " + role + " from " + getUserToLog(member.getUser()));
+			Log.info(member.getGuild(), "Removed role {} from {}", role, Utilities.getUserToLog(member.getUser()));
 		}
 		catch(IllegalArgumentException e)
 		{
-			Log.warning(e, "User/Role not found");
+			Log.warning(member.getGuild(), "User/Role not found", e);
 		}
 	}
 	
@@ -243,9 +200,9 @@ public class Actions
 	 * @param member The user to remove the roles from.
 	 * @param roles  The roles to remove.
 	 */
-	public static void removeRole(Member member, List<Role> roles)
+	public static void removeRole(Member member, @NotNull List<Role> roles)
 	{
-		roles.forEach(r -> removeRole(member, r));
+		roles.forEach(role -> removeRole(member, role));
 	}
 	
 	/**
@@ -253,10 +210,10 @@ public class Actions
 	 *
 	 * @param message The message to delete.
 	 */
-	public static void deleteMessage(Message message)
+	public static void deleteMessage(@NotNull Message message)
 	{
 		message.delete().queue();
-		Log.info("Deleted message from " + getUserToLog(message.getAuthor()) + " : " + getMessageForLog(message));
+		Log.info(message.getGuild(), "Deleted message from {} : {}", Utilities.getUserToLog(message.getAuthor()), message.getContentRaw());
 	}
 	
 	private static String getMessageForLog(Message message)
@@ -271,7 +228,7 @@ public class Actions
 	 * @param resource The resource to send.
 	 * @param name     The name of the file.
 	 */
-	public static void sendFile(TextChannel channel, String resource, String name)
+	public static void sendFile(@NotNull TextChannel channel, String resource, String name)
 	{
 		sendFile(channel, Main.class.getResourceAsStream(resource), name);
 	}
@@ -283,15 +240,10 @@ public class Actions
 	 * @param stream  The data to send.
 	 * @param name    The name of the file.
 	 */
-	public static void sendFile(TextChannel channel, InputStream stream, String name)
+	public static void sendFile(@NotNull TextChannel channel, InputStream stream, String name)
 	{
-		if(channel != null)
-		{
-			channel.sendFile(stream, name).queue();
-			Log.info("Sent file " + name + " to " + channel.getName());
-		}
-		else
-			Log.warning("Tried to send file %s to null channel", name);
+		channel.sendFile(stream, name).queue();
+		Log.info(channel.getGuild(), "Sent file {} to {}", name, channel.getName());
 	}
 	
 	/**
@@ -303,7 +255,7 @@ public class Actions
 	 *
 	 * @return The message sent or null fi there was a problem.
 	 */
-	public static Message getMessage(TextChannel channel, String format, Object... args)
+	public static Message getMessage(@NotNull TextChannel channel, @NotNull String format, Object... args)
 	{
 		return getMessage(channel, String.format(format, args));
 	}
@@ -316,14 +268,10 @@ public class Actions
 	 *
 	 * @return The message sent or null fi there was a problem.
 	 */
-	public static Message getMessage(TextChannel channel, String text)
+	public static Message getMessage(@NotNull TextChannel channel, String text)
 	{
-		if(channel != null)
-		{
-			Log.info("Sent message to " + channel.getName() + " : " + text);
-			return channel.sendMessage(text).complete();
-		}
-		return null;
+		Log.info(channel.getGuild(), "Sent message to {} : {}", channel.getName(), text);
+		return channel.sendMessage(text).complete();
 	}
 	
 	/**
@@ -334,14 +282,10 @@ public class Actions
 	 *
 	 * @return The message sent or null fi there was a problem.
 	 */
-	public static Message getMessage(TextChannel channel, MessageEmbed embed)
+	public static Message getMessage(@NotNull TextChannel channel, MessageEmbed embed)
 	{
-		if(channel != null)
-		{
-			Log.info("Sent message to " + channel.getName() + " : " + embed);
-			return channel.sendMessage(embed).complete();
-		}
-		return null;
+		Log.info(channel.getGuild(), "Sent message to {} : {}", channel.getName(), embed);
+		return channel.sendMessage(embed).complete();
 	}
 	
 	/**
@@ -350,7 +294,7 @@ public class Actions
 	 * @param channel The channel to send to.
 	 * @param file    The file to send.
 	 */
-	public static void sendFile(TextChannel channel, File file)
+	public static void sendFile(@NotNull TextChannel channel, @NotNull File file)
 	{
 		try
 		{
@@ -358,7 +302,7 @@ public class Actions
 		}
 		catch(FileNotFoundException e)
 		{
-			Log.error(e, "Error sending file %s", file.getAbsolutePath());
+			Log.error(channel.getGuild(), "Error sending file {}", file.getAbsolutePath(), e);
 		}
 	}
 	
@@ -368,22 +312,20 @@ public class Actions
 	 * @param member The member.
 	 * @param roles  The roles IDs.
 	 */
-	public static void giveRole(Member member, List<Long> roles)
+	public static void giveRole(@NotNull Member member, @NotNull List<Long> roles)
 	{
-		giveRole(member.getGuild(), member.getUser(), roles.stream().map(r -> getRoleByID(member.getGuild(), r)).collect(Collectors.toList()));
+		giveRole(member.getUser(), roles.stream().map(r -> getRoleByID(member.getGuild(), r)).collect(Collectors.toList()));
 	}
 	
 	/**
 	 * Give roles to a user.
 	 *
-	 * @param guild The guild the role is in.
 	 * @param user  The user to set the role to.
 	 * @param roles The roles to set.
 	 */
-	public static void giveRole(Guild guild, User user, List<Role> roles)
+	public static void giveRole(@NotNull User user, @NotNull List<Role> roles)
 	{
-		for(Role role : roles)
-			giveRole(guild, user, role);
+		roles.forEach(role -> giveRole(role.getGuild(), user, role));
 	}
 	
 	/**
@@ -394,7 +336,7 @@ public class Actions
 	 *
 	 * @return The role or null if not found.
 	 */
-	public static Role getRoleByID(Guild guild, Long role)
+	public static Role getRoleByID(@NotNull Guild guild, Long role)
 	{
 		return guild.getRoleById(role);
 	}
@@ -406,29 +348,29 @@ public class Actions
 	 * @param user  The user to set the role to.
 	 * @param role  The role to set.
 	 */
-	public static void giveRole(Guild guild, User user, Role role)
+	public static void giveRole(@NotNull Guild guild, @NotNull User user, Role role)
 	{
 		try
 		{
 			Member member = guild.getMember(user);
 			if(member.getRoles().contains(role))
 			{
-				Log.info(getUserToLog(user) + " already have role " + role);
+				Log.info(guild, "{} already have role {}", Utilities.getUserToLog(user), role);
 			}
 			else
 			{
 				//noinspection ConstantConditions
 				guild.getController().addSingleRoleToMember(guild.getMember(user), role).queue();
-				Log.info("Added role " + role + " to " + getUserToLog(user));
+				Log.info(guild, "Added role {} to {}", role, Utilities.getUserToLog(user));
 			}
 		}
 		catch(IllegalArgumentException e)
 		{
-			Log.warning(e, "User/Role not found " + role);
+			Log.warning(guild, "User/Role not found {}", role, e);
 		}
 		catch(Exception e)
 		{
-			Log.error(e, "Error giving role %s to %s", role, getUserToLog(user));
+			Log.error(guild, "Error giving role {} to {}", role, Utilities.getUserToLog(user), e);
 		}
 	}
 	
@@ -439,12 +381,12 @@ public class Actions
 	 * @param embed The message to send.
 	 */
 	@SuppressWarnings("Duplicates")
-	public static void reply(GenericMessageEvent event, MessageEmbed embed)
+	public static void reply(@NotNull GenericMessageEvent event, MessageEmbed embed)
 	{
 		switch(event.getChannelType())
 		{
 			case PRIVATE:
-				sendMessage(event.getPrivateChannel(), embed);
+				sendPrivateMessage(event.getGuild(), event.getPrivateChannel(), embed);
 				break;
 			case TEXT:
 				sendMessage(event.getTextChannel(), embed);
@@ -455,18 +397,19 @@ public class Actions
 	/**
 	 * Send a message to a channel.
 	 *
+	 * @param guild   The guild the event is from.
 	 * @param channel The channel to send to.
 	 * @param embed   The message to send.
 	 */
-	public static void sendMessage(PrivateChannel channel, MessageEmbed embed)
+	public static void sendPrivateMessage(Guild guild, PrivateChannel channel, MessageEmbed embed)
 	{
 		if(channel != null)
 		{
 			channel.sendMessage(embed).queue();
-			Log.info("Sent private message to " + getUserToLog(channel.getUser()) + " : " + getEmbedForLog(embed));
+			Log.info(guild, "Sent private message to {} : {}", Utilities.getUserToLog(channel.getUser()), Utilities.getEmbedForLog(embed));
 		}
 		else
-			Log.warning("Cannot send private message to null channel : %s", getEmbedForLog(embed));
+			Log.warning(guild, "Cannot send private message to null channel : %s", Utilities.getEmbedForLog(embed));
 	}
 	
 	/**
@@ -475,31 +418,9 @@ public class Actions
 	 * @param channel The channel to send to.
 	 * @param embed   The message to send.
 	 */
-	public static void sendMessage(TextChannel channel, MessageEmbed embed)
+	public static void sendMessage(@NotNull TextChannel channel, MessageEmbed embed)
 	{
 		sendMessage(channel, null, embed);
-	}
-	
-	/**
-	 * Transform an embed into text.
-	 *
-	 * @param embed The embed.
-	 *
-	 * @return The text.
-	 */
-	private static String getEmbedForLog(MessageEmbed embed)
-	{
-		StringBuilder builder = new StringBuilder("Embed " + embed.hashCode());
-		builder.append("\n").append("Author: ").append(embed.getAuthor() == null ? "<NONE>" : embed.getAuthor().getName());
-		builder.append("\n").append("Title: ").append(embed.getTitle());
-		builder.append("\n").append("Description: ").append(embed.getDescription());
-		builder.append("\n").append("Color: ").append(embed.getColor());
-		embed.getFields().forEach(f -> {
-			builder.append("\n").append("FIELD:");
-			builder.append("\n\t").append("Name: ").append(f.getName());
-			builder.append("\n\t").append("Value: ").append(f.getValue());
-		});
-		return builder.toString();
 	}
 	
 	/**
@@ -510,23 +431,18 @@ public class Actions
 	 * @param embed   The message to send.
 	 */
 	@SuppressWarnings("Duplicates")
-	public static void sendMessage(TextChannel channel, Consumer<Message> onDone, MessageEmbed embed)
+	public static void sendMessage(@NotNull TextChannel channel, Consumer<Message> onDone, MessageEmbed embed)
 	{
-		if(channel != null)
+		if(channel.canTalk())
 		{
-			if(channel.canTalk())
-			{
-				if(onDone != null)
-					channel.sendMessage(embed).queue(onDone);
-				else
-					channel.sendMessage(embed).queue();
-				Log.info("Sent message to " + channel.getName() + " : " + getEmbedForLog(embed));
-			}
+			if(onDone != null)
+				channel.sendMessage(embed).queue(onDone);
 			else
-				Log.error("Access denied to text channel: %s, when sending: %s", channel.getAsMention(), getEmbedForLog(embed));
+				channel.sendMessage(embed).queue();
+			Log.info(channel.getGuild(), "Sent message to {} : {}", channel.getName(), Utilities.getEmbedForLog(embed));
 		}
 		else
-			Log.warning("Cannot send message to null channel : %s", getEmbedForLog(embed));
+			Log.error(channel.getGuild(), "Access denied to text channel: {}, when sending: {}", channel.getAsMention(), Utilities.getEmbedForLog(embed));
 	}
 	
 	/**
@@ -535,7 +451,7 @@ public class Actions
 	 * @param channel The channel to send to.
 	 * @param embeds  The messages to send.
 	 */
-	public static void sendMessage(TextChannel channel, List<MessageEmbed> embeds)
+	public static void sendMessage(@NotNull TextChannel channel, @NotNull List<MessageEmbed> embeds)
 	{
 		embeds.forEach(e -> sendMessage(channel, e));
 	}
@@ -546,7 +462,7 @@ public class Actions
 	 * @param members The member to set deaf.
 	 * @param state   True if deaf, false is not deaf.
 	 */
-	public static void deafen(List<Member> members, boolean state)
+	public static void deafen(@NotNull List<Member> members, boolean state)
 	{
 		members.forEach(m -> deafen(m, state));
 	}
@@ -557,20 +473,20 @@ public class Actions
 	 * @param member The member to set deaf.
 	 * @param state  True if deaf, false is not deaf.
 	 */
-	private static void deafen(Member member, boolean state)
+	private static void deafen(@NotNull Member member, boolean state)
 	{
 		try
 		{
 			member.getGuild().getController().setDeafen(member, state).queue();
-			Log.info("Member " + Actions.getUserToLog(member.getUser()) + " is now " + (state ? "" : "un") + "deaf");
+			Log.info(member.getGuild(), "Member {} is now {}deaf", Utilities.getUserToLog(member.getUser()), state ? "" : "un");
 		}
 		catch(HierarchyException | InsufficientPermissionException e)
 		{
-			Log.warning("Cannot %sdeaf member %s", (state ? "" : "un"), Actions.getUserToLog(member.getUser()));
+			Log.warning(member.getGuild(), "Cannot {}deaf member {}", state ? "" : "un", Utilities.getUserToLog(member.getUser()));
 		}
 		catch(Exception e)
 		{
-			Log.error(e, "Error trying to %sdeafen member %s", (state ? "" : "un"), getUserToLog(member.getUser()));
+			Log.error(member.getGuild(), "Error trying to {}deafen member {}", state ? "" : "un", Utilities.getUserToLog(member.getUser()), e);
 		}
 	}
 	
@@ -581,7 +497,7 @@ public class Actions
 	 * @param channel    The channel it'll apply to.
 	 * @param permission The permission to remove.
 	 */
-	public static void denyPermission(List<Member> members, Channel channel, Permission permission)
+	public static void denyPermission(@NotNull List<Member> members, @NotNull Channel channel, @NotNull Permission permission)
 	{
 		members.forEach(m -> denyPermission(m, channel, permission));
 	}
@@ -593,20 +509,20 @@ public class Actions
 	 * @param channel    The channel it'll apply to.
 	 * @param permission The permission to remove.
 	 */
-	public static void denyPermission(Member member, Channel channel, Permission permission)
+	public static void denyPermission(@NotNull Member member, @NotNull Channel channel, @NotNull Permission permission)
 	{
 		try
 		{
 			channel.putPermissionOverride(member).setDeny(permission).queue();
-			Log.info(Actions.getUserToLog(member.getUser()) + " no longer have permission " + permission.name() + " on " + channel.getName());
+			Log.info(member.getGuild(), "{} no longer have permission {} on {}", Utilities.getUserToLog(member.getUser()), permission.name(), channel.getName());
 		}
 		catch(HierarchyException | InsufficientPermissionException e)
 		{
-			Log.warning("Cannot remove permission from %s in %s", Actions.getUserToLog(member.getUser()), channel.getName());
+			Log.warning(member.getGuild(), "Cannot remove permission from {} in {}", Utilities.getUserToLog(member.getUser()), channel.getName());
 		}
 		catch(Exception e)
 		{
-			Log.warning("Error removing permission from %s in %s", Actions.getUserToLog(member.getUser()), channel.getName());
+			Log.warning(member.getGuild(), "Error removing permission from {} in {}", Utilities.getUserToLog(member.getUser()), channel.getName(), e);
 		}
 	}
 	
@@ -617,7 +533,7 @@ public class Actions
 	 * @param channel    The channel it'll apply to.
 	 * @param permission The permission to give.
 	 */
-	public static void allowPermission(List<Member> members, Channel channel, Permission permission)
+	public static void allowPermission(@NotNull List<Member> members, @NotNull Channel channel, @NotNull Permission permission)
 	{
 		members.forEach(m -> allowPermission(m, channel, permission));
 	}
@@ -629,20 +545,20 @@ public class Actions
 	 * @param channel    The channel it'll apply to.
 	 * @param permission The permission to give.
 	 */
-	public static void allowPermission(Member member, Channel channel, Permission permission)
+	public static void allowPermission(@NotNull Member member, @NotNull Channel channel, @NotNull Permission permission)
 	{
 		try
 		{
 			channel.putPermissionOverride(member).setAllow(permission).queue();
-			Log.info(Actions.getUserToLog(member.getUser()) + " now have permission " + permission.name() + " on " + channel.getName());
+			Log.info(member.getGuild(), "{} now have permission {} on {}", Utilities.getUserToLog(member.getUser()), permission.getName(), channel.getName());
 		}
 		catch(HierarchyException | InsufficientPermissionException e)
 		{
-			Log.warning("Cannot give permission to %s in %s", Actions.getUserToLog(member.getUser()), channel.getName());
+			Log.warning(member.getGuild(), "Cannot give permission to {} in {}", Utilities.getUserToLog(member.getUser()), channel.getName());
 		}
 		catch(Exception e)
 		{
-			Log.warning("Error giving permission to %s in %s", Actions.getUserToLog(member.getUser()), channel.getName());
+			Log.warning(member.getGuild(), "Error giving permission to {} in {}", Utilities.getUserToLog(member.getUser()), channel.getName(), e);
 		}
 	}
 	

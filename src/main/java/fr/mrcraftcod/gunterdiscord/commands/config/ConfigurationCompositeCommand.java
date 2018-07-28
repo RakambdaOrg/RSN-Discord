@@ -12,10 +12,11 @@ import static fr.mrcraftcod.gunterdiscord.commands.generic.Command.AccessLevel.A
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
-public class ConfigurationCompositeCommand extends CompositeCommand
-{
-	public ConfigurationCompositeCommand()
-	{
+public class ConfigurationCompositeCommand extends CompositeCommand{
+	/**
+	 * Constructor.
+	 */
+	public ConfigurationCompositeCommand(){
 		super();
 		addSubCommand(new ConfigurationCommand(this, ADD, List.of("add", "a")));
 		addSubCommand(new ConfigurationCommand(this, REMOVE, List.of("remove", "r")));
@@ -24,32 +25,27 @@ public class ConfigurationCompositeCommand extends CompositeCommand
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
+	public AccessLevel getAccessLevel(){
+		return ADMIN;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Config";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("config");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Modifie la configuration du bot";
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return ADMIN;
+	public int getScope(){
+		return ChannelType.TEXT.getId();
 	}
 }

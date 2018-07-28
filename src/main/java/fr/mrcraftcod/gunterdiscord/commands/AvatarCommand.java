@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,20 +19,17 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public class AvatarCommand extends BasicCommand
-{
+public class AvatarCommand extends BasicCommand{
 	@Override
-	public String getCommandUsage()
-	{
-		return super.getCommandUsage() + " <@utilisateur>";
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField("Utilisateur", "L'utilisateur dont on veut l'avatar", false);
 	}
 	
 	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		if(event.getMessage().getMentionedUsers().size() > 0)
-		{
+		if(event.getMessage().getMentionedUsers().size() > 0){
 			User user = event.getMessage().getMentionedUsers().get(0);
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setColor(Color.GREEN);
@@ -40,8 +38,7 @@ public class AvatarCommand extends BasicCommand
 			builder.setImage(user.getAvatarUrl());
 			Actions.reply(event, builder.build());
 		}
-		else
-		{
+		else{
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
@@ -52,39 +49,32 @@ public class AvatarCommand extends BasicCommand
 	}
 	
 	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
-	{
-		super.addHelp(guild, builder);
-		builder.addField("Utilisateur", "L'utilisateur dont on veut l'avatar", false);
+	public String getCommandUsage(){
+		return super.getCommandUsage() + " <@utilisateur>";
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
+	public AccessLevel getAccessLevel(){
+		return AccessLevel.ALL;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Avatar";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("avatar");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Obtient l'avatar d'un utilisateur";
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.ALL;
+	public int getScope(){
+		return ChannelType.TEXT.getId();
 	}
 }

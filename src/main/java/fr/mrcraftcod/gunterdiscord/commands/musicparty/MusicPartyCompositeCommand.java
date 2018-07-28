@@ -10,48 +10,41 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-06-21
  */
-public class MusicPartyCompositeCommand extends CompositeCommand
-{
+public class MusicPartyCompositeCommand extends CompositeCommand{
 	/**
 	 * Constructor.
 	 */
-	public MusicPartyCompositeCommand()
-	{
+	public MusicPartyCompositeCommand(){
 		super();
 		addSubCommand(new MusicPartyStartCommand(this));
 		addSubCommand(new MusicPartyStopCommand(this));
-		addSubCommand(new  MusicPartyScoreCommand(this));
+		addSubCommand(new MusicPartyScoreCommand(this));
 		addSubCommand(new MusicPartyMusicCommand(this));
 		addSubCommand(new MusicPartySkipCommand(this));
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
+	public AccessLevel getAccessLevel(){
+		return AccessLevel.ALL;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Fete de la musique";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("mp");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Commandes pour le jeu de la fete de la musique";
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.ALL;
+	public int getScope(){
+		return ChannelType.TEXT.getId();
 	}
 }

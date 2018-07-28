@@ -28,7 +28,7 @@ public class IdeaChannelMessageListener extends ListenerAdapter
 		}
 		catch(Exception e)
 		{
-			Log.error(e, "");
+			Log.error(event.getGuild(), "", e);
 		}
 	}
 }

@@ -13,6 +13,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
+import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -26,28 +27,25 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public class NicknameCommand extends BasicCommand
-{
+public class NicknameCommand extends BasicCommand{
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	
 	@Override
-	public String getCommandUsage()
-	{
-		return super.getCommandUsage() + " [@utilisateur] [surnom]";
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField("Optionnel: Utilisateur", "L'utilisateur visé par la modification (par défaut @me)", false);
+		builder.addField("Optionnel: Surnom", "Le nouveau surnom (si aucun n'est précisé le surnom sera réinitialisé)", false);
 	}
 	
 	@SuppressWarnings("Duplicates")
 	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		Member member;
-		if(event.getMessage().getMentionedUsers().size() > 0)
-		{
+		if(event.getMessage().getMentionedUsers().size() > 0){
 			args.pop();
 			member = event.getGuild().getMember(event.getMessage().getMentionedUsers().get(0));
-			if(event.getAuthor().getIdLong() != member.getUser().getIdLong() && !Utilities.isTeam(event.getMember()))
-			{
+			if(event.getAuthor().getIdLong() != member.getUser().getIdLong() && !Utilities.isTeam(event.getMember())){
 				EmbedBuilder builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.addField("Utilisateur", member.getAsMention(), true);
@@ -57,14 +55,14 @@ public class NicknameCommand extends BasicCommand
 				return CommandResult.SUCCESS;
 			}
 		}
-		else
+		else{
 			member = event.getMember();
+		}
 		String oldName = member.getNickname();
 		Long lastChangeRaw = new NickLastChangeConfig().getValue(event.getGuild(), member.getUser().getIdLong());
 		Date lastChange = new Date(lastChangeRaw == null ? 0 : lastChangeRaw);
 		Duration delay = Duration.ofMinutes(new NickDelayConfig().getInt(event.getGuild(), 6 * 60));
-		if(!Utilities.isTeam(event.getMember()) && (lastChange.getTime() + delay.getSeconds() * 1000) >= new Date().getTime())
-		{
+		if(!Utilities.isTeam(event.getMember()) && (lastChange.getTime() + delay.getSeconds() * 1000) >= new Date().getTime()){
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
@@ -75,27 +73,26 @@ public class NicknameCommand extends BasicCommand
 			builder.setTimestamp(new Date().toInstant());
 			Actions.reply(event, builder.build());
 		}
-		else
-		{
+		else{
 			String newName;
-			if(args.size() == 0)
+			if(args.size() == 0){
 				newName = null;
-			else
+			}
+			else{
 				newName = String.join(" ", args);
+			}
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.addField("Ancien surnom", oldName == null ? "*AUCUN*" : oldName, true);
 			builder.addField("Nouveau surnom", newName == null ? "*AUCUN*" : newName, true);
 			builder.addField("Utilisateur", member.getAsMention(), true);
-			try
-			{
+			try{
 				member.getGuild().getController().setNickname(member, newName).complete();
 				builder.setColor(Color.GREEN);
 				new NickLastChangeConfig().addValue(event.getGuild(), member.getUser().getIdLong(), new Date().getTime());
-				Log.info(Actions.getUserToLog(event.getAuthor()) + " renamed " + Actions.getUserToLog(member.getUser()) + " from `" + oldName + "` to `" + newName + "`");
+				Log.info(event.getGuild(), "{} renamed {} from `{}` to `{}`", Utilities.getUserToLog(event.getAuthor()), Utilities.getUserToLog(member.getUser()), oldName, newName);
 			}
-			catch(HierarchyException e)
-			{
+			catch(HierarchyException e){
 				builder.setColor(Color.RED);
 				builder.setTitle("T'as cru changer le nom d'un mec plus haut que moi?!");
 			}
@@ -105,40 +102,32 @@ public class NicknameCommand extends BasicCommand
 	}
 	
 	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
-	{
-		super.addHelp(guild, builder);
-		builder.addField("Optionnel: Utilisateur", "L'utilisateur visé par la modification (par défaut @me)", false);
-		builder.addField("Optionnel: Surnom", "Le nouveau surnom (si aucun n'est précisé le surnom sera réinitialisé)", false);
+	public String getCommandUsage(){
+		return super.getCommandUsage() + " [@utilisateur] [surnom]";
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
+	public AccessLevel getAccessLevel(){
+		return AccessLevel.ALL;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Surnom";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("nickname", "nick");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Change le surnom d'un utilisateur";
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.ALL;
+	public int getScope(){
+		return ChannelType.TEXT.getId();
 	}
 }

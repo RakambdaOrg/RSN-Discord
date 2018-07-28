@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,85 +18,73 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-05-27
  */
-public class QuizStartCommand extends BasicCommand
-{
+public class QuizStartCommand extends BasicCommand{
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	QuizStartCommand(Command parent)
-	{
+	QuizStartCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public String getCommandUsage()
-	{
-		return super.getCommandUsage() + " [quantité] [délais]";
-	}
-	
-	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
-		super.execute(event, args);
-		int amount = Integer.MAX_VALUE;
-		int delay = 60;
-		if(!args.isEmpty())
-			try
-			{
-				amount = Integer.parseInt(args.poll());
-			}
-			catch(Exception ignored)
-			{
-			}
-		if(!args.isEmpty())
-			try
-			{
-				delay = Integer.parseInt(args.poll());
-			}
-			catch(Exception ignored)
-			{
-			}
-		QuizListener.getQuiz(event.getGuild(), amount, delay);
-		return CommandResult.SUCCESS;
-	}
-	
-	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
-	{
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Optionnel: Quantité", "Le nombre de questions (par défaut le maximum disponible)", false);
 		builder.addField("Optionnel: Délais", "Le délais en secondes avant de commencer le quiz (par défaut 60 secondes)", false);
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+		super.execute(event, args);
+		int amount = Integer.MAX_VALUE;
+		int delay = 60;
+		if(!args.isEmpty()){
+			try{
+				amount = Integer.parseInt(args.poll());
+			}
+			catch(Exception ignored){
+			}
+		}
+		if(!args.isEmpty()){
+			try{
+				delay = Integer.parseInt(args.poll());
+			}
+			catch(Exception ignored){
+			}
+		}
+		QuizListener.getQuiz(event.getGuild(), amount, delay);
+		return CommandResult.SUCCESS;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getCommandUsage(){
+		return super.getCommandUsage() + " [quantité] [délais]";
+	}
+	
+	@Override
+	public AccessLevel getAccessLevel(){
+		return AccessLevel.MODERATOR;
+	}
+	
+	@Override
+	public String getName(){
 		return "Start quiz";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("start");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Start a new quiz";
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.MODERATOR;
+	public int getScope(){
+		return ChannelType.TEXT.getId();
 	}
 }

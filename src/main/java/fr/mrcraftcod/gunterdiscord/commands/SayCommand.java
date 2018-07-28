@@ -7,6 +7,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,56 +17,47 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public class SayCommand extends BasicCommand
-{
+public class SayCommand extends BasicCommand{
 	@Override
-	public String getCommandUsage()
-	{
-		return super.getCommandUsage() + " <message...>";
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField("Message", "Le message à dire", false);
 	}
 	
 	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		Actions.reply(event, String.join(" ", args));
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
-	{
-		super.addHelp(guild, builder);
-		builder.addField("Message", "Le message à dire", false);
+	public String getCommandUsage(){
+		return super.getCommandUsage() + " <message...>";
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
+	public AccessLevel getAccessLevel(){
+		return AccessLevel.ADMIN;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Dire";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("say");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Envoie un message en tant que le bot";
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.ADMIN;
+	public int getScope(){
+		return ChannelType.TEXT.getId();
 	}
 }

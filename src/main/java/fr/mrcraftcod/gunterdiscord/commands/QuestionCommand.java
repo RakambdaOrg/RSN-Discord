@@ -10,6 +10,7 @@ import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,27 +21,26 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public class QuestionCommand extends BasicCommand
-{
+public class QuestionCommand extends BasicCommand{
 	private static int NEXT_ID = 0;
 	
 	@Override
-	public String getCommandUsage()
-	{
-		return super.getCommandUsage() + " <message...>";
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField("Message", "La question que vous souhaitez poser", false);
 	}
 	
 	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		
-		if(args.size() == 0)
-			Actions.replyPrivate(event.getAuthor(), "Merci de poser une question");
-		else if(args.peek().equalsIgnoreCase("message") || args.peek().equalsIgnoreCase("question"))
-			Actions.replyPrivate(event.getAuthor(), "Merci de poser une question, et pas 'message'");
-		else
-		{
+		if(args.size() == 0){
+			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Merci de poser une question");
+		}
+		else if(args.peek().equalsIgnoreCase("message") || args.peek().equalsIgnoreCase("question")){
+			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Merci de poser une question, et pas 'message'");
+		}
+		else{
 			int ID = ++NEXT_ID;
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
@@ -53,45 +53,38 @@ public class QuestionCommand extends BasicCommand
 			Message m = Actions.getMessage(new QuestionsChannelConfig().getTextChannel(event.getGuild()), builder.build());
 			m.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
 			m.addReaction(BasicEmotes.CROSS_NO.getValue()).queue();
-			Actions.replyPrivate(event.getAuthor(), "Ok, ta question a été mise en file d'attente (ID: " + ID + "): " + String.join(" ", args));
+			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Ok, ta question a été mise en file d'attente (ID: " + ID + "): " + String.join(" ", args));
 		}
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
-	{
-		super.addHelp(guild, builder);
-		builder.addField("Message", "La question que vous souhaitez poser", false);
+	public String getCommandUsage(){
+		return super.getCommandUsage() + " <message...>";
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
+	public AccessLevel getAccessLevel(){
+		return AccessLevel.ALL;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "FAQ";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("question", "q");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Pose une question pour la FAQ";
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.ALL;
+	public int getScope(){
+		return ChannelType.TEXT.getId();
 	}
 }

@@ -12,6 +12,7 @@ import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -24,21 +25,18 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public class HelpCommand extends BasicCommand
-{
+public class HelpCommand extends BasicCommand{
 	@Override
-	public String getCommandUsage()
-	{
-		return super.getCommandUsage() + " [commande...]";
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField("Optionnel: Commande", "La commande dont on veut l'information (par défaut affiche la liste des commandes)", false);
 	}
 	
 	@Override
-	public CommandResult execute(MessageReceivedEvent event, LinkedList<String> args) throws Exception
-	{
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		String prefix = new PrefixConfig().getString(event.getGuild(), "");
-		if(args.size() < 1)
-		{
+		if(args.size() < 1){
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setColor(Color.GREEN);
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
@@ -46,22 +44,20 @@ public class HelpCommand extends BasicCommand
 			Arrays.stream(CommandsMessageListener.commands).filter(c -> c.isAllowed(event.getMember())).map(s -> new MessageEmbed.Field(prefix + s.getCommand().get(0), s.getDescription(), false)).sorted(Comparator.comparing(MessageEmbed.Field::getName)).forEach(builder::addField);
 			Actions.reply(event, builder.build());
 		}
-		else
-		{
+		else{
 			Command command = Arrays.stream(CommandsMessageListener.commands).filter(s -> s.getCommand().contains(args.get(0).toLowerCase())).filter(c -> c.isAllowed(event.getMember())).findAny().orElse(null);
 			args.poll();
-			while(!args.isEmpty() && command instanceof CompositeCommand)
-			{
+			while(!args.isEmpty() && command instanceof CompositeCommand){
 				Command command2 = ((CompositeCommand) command).getSubCommand(args.get(0).toLowerCase());
-				if(command2 == null)
+				if(command2 == null){
 					break;
+				}
 				command = command2;
 				args.poll();
 			}
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-			if(command != null)
-			{
+			if(command != null){
 				builder.setColor(Color.GREEN);
 				builder.setTitle(getName());
 				builder.addField("Nom", command.getName(), true);
@@ -72,8 +68,7 @@ public class HelpCommand extends BasicCommand
 				builder.addField("", "Paramètres", false);
 				command.addHelp(event.getGuild(), builder);
 			}
-			else
-			{
+			else{
 				builder.setColor(Color.ORANGE);
 				builder.addField(prefix + args.poll(), "Cette commande n'existe pas ou vous n'y avez pas accès", false);
 			}
@@ -84,39 +79,32 @@ public class HelpCommand extends BasicCommand
 	}
 	
 	@Override
-	public void addHelp(Guild guild, EmbedBuilder builder)
-	{
-		super.addHelp(guild, builder);
-		builder.addField("Optionnel: Commande", "La commande dont on veut l'information (par défaut affiche la liste des commandes)", false);
+	public String getCommandUsage(){
+		return super.getCommandUsage() + " [commande...]";
 	}
 	
 	@Override
-	public int getScope()
-	{
-		return ChannelType.TEXT.getId();
+	public AccessLevel getAccessLevel(){
+		return AccessLevel.ALL;
 	}
 	
 	@Override
-	public String getName()
-	{
+	public String getName(){
 		return "Help";
 	}
 	
 	@Override
-	public List<String> getCommand()
-	{
+	public List<String> getCommand(){
 		return List.of("help", "h");
 	}
 	
 	@Override
-	public String getDescription()
-	{
+	public String getDescription(){
 		return "Aide des commandes";
 	}
 	
 	@Override
-	public AccessLevel getAccessLevel()
-	{
-		return AccessLevel.ALL;
+	public int getScope(){
+		return ChannelType.TEXT.getId();
 	}
 }
