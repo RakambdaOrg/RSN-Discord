@@ -3,8 +3,9 @@ GunterDiscord.iml
 target
 settings.json
 pictures/
+all.log.*
+all.log
 log.log
-log.log.lck
-log.*
+log.log.*
 /questions.csv
 /settings2.json
