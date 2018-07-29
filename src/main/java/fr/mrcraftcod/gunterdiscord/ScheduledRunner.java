@@ -6,6 +6,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
+import java.time.Duration;
 import java.util.Map;
 import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
@@ -37,7 +38,7 @@ public class ScheduledRunner implements Runnable{
 				Map<Long, Long> userGuildConfig = guildConfig.get(userID);
 				for(Long roleID : userGuildConfig.keySet()){
 					long diff = currentTime - userGuildConfig.get(roleID);
-					getLogger(guild).info("Processing role {}, diff is: {}", roleID, diff);
+					getLogger(guild).info("Processing role {}, diff is: {}", roleID, Duration.ofMillis(diff));
 					if(currentTime - userGuildConfig.get(roleID) >= 0){
 						Actions.removeRole(member, guild.getRoleById(roleID));
 						config.deleteKeyValue(guild, userID, roleID);
