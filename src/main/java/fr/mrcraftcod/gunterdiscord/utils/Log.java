@@ -42,4 +42,8 @@ public class Log{
 	public static void error(Guild g, String s){
 		getLogger(g).error(s);
 	}
+	
+	public static void debug(Guild guild, String format, Object... args){
+		getLogger(guild).debug(format, args);
+	}
 }

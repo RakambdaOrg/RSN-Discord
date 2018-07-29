@@ -84,7 +84,7 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration{
 			return guild.getJDA().getTextChannelById(getLong(guild));
 		}
 		catch(InvalidClassException | NoValueDefinedException e){
-			Log.info(guild, "Error getting channel from config, value isn't set");
+			Log.debug(guild, "Error getting channel {} from config, value isn't set", getName());
 		}
 		return null;
 	}
