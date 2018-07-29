@@ -19,7 +19,7 @@ import java.awt.*;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
-import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
+import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.

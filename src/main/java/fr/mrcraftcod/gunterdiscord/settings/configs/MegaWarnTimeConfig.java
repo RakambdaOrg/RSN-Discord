@@ -2,7 +2,7 @@ package fr.mrcraftcod.gunterdiscord.settings.configs;
 
 import fr.mrcraftcod.gunterdiscord.settings.configurations.ValueConfiguration;
 import net.dv8tion.jda.core.entities.Guild;
-import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
+import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)

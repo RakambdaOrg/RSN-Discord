@@ -2,7 +2,7 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceGuildMuteEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
+import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
