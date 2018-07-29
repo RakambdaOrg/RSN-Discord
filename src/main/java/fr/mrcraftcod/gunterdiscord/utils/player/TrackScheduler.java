@@ -55,7 +55,7 @@ class TrackScheduler extends AudioEventAdapter{
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason){
 		super.onTrackEnd(player, track, endReason);
 		listeners.forEach(l -> l.onTrackEnd(track));
-		getLogger(getGuild()).info("Next track");
+		getLogger(getGuild()).info("Track ended: {}", track.getIdentifier());
 		if(endReason.mayStartNext){
 			if(!nextTrack()){
 				getLogger(getGuild()).info("Playlist ended, listeners: {}", listeners.size());
