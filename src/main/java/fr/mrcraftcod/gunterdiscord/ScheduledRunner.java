@@ -37,9 +37,9 @@ public class ScheduledRunner implements Runnable{
 				getLogger(guild).info("Processing user {}", Utilities.getUserToLog(member.getUser()));
 				Map<Long, Long> userGuildConfig = guildConfig.get(userID);
 				for(Long roleID : userGuildConfig.keySet()){
-					long diff = currentTime - userGuildConfig.get(roleID);
-					getLogger(guild).info("Processing role {}, diff is: {}", roleID, Duration.ofMillis(diff));
-					if(currentTime - userGuildConfig.get(roleID) >= 0){
+					Duration diff = Duration.ofMillis(userGuildConfig.get(roleID) - currentTime);
+					getLogger(guild).info("Processing role {}, diff is: {}", roleID, diff);
+					if(diff.isNegative()){
 						Actions.removeRole(member, guild.getRoleById(roleID));
 						config.deleteKeyValue(guild, userID, roleID);
 					}
