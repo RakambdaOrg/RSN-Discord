@@ -91,6 +91,9 @@ public abstract class ValueConfiguration extends Configuration{
 		if(value instanceof Long){
 			return (Long) value;
 		}
+		if(value instanceof Integer){
+			return (Integer) value;
+		}
 		throw new InvalidClassException("Config is not a long: " + value.getClass().getSimpleName());
 	}
 	
@@ -135,6 +138,9 @@ public abstract class ValueConfiguration extends Configuration{
 		}
 		if(value instanceof Long){
 			return (Long) value;
+		}
+		if(value instanceof Integer){
+			return (Integer) value;
 		}
 		throw new InvalidClassException("Config is not a long: " + value.getClass().getSimpleName());
 	}
@@ -213,6 +219,12 @@ public abstract class ValueConfiguration extends Configuration{
 		}
 		if(value instanceof Double){
 			return (Double) value;
+		}
+		if(value instanceof Long){
+			return (Long) value;
+		}
+		if(value instanceof Integer){
+			return (Integer) value;
 		}
 		throw new InvalidClassException("Config is not a double: " + value.getClass().getSimpleName());
 	}
