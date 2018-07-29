@@ -2,10 +2,10 @@ package fr.mrcraftcod.gunterdiscord;
 
 import fr.mrcraftcod.gunterdiscord.settings.configs.RemoveRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Role;
 import java.time.Duration;
 import java.util.Map;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -30,17 +30,18 @@ public class ScheduledRunner implements Runnable{
 		long currentTime = System.currentTimeMillis();
 		RemoveRoleConfig config = new RemoveRoleConfig();
 		for(Guild guild : jda.getGuilds()){
-			getLogger(guild).info("Processing guild {}", guild.getName());
+			getLogger(guild).info("Processing guild {}", guild);
 			Map<Long, Map<Long, Long>> guildConfig = config.getAsMap(guild);
 			for(Long userID : guildConfig.keySet()){
 				Member member = guild.getMemberById(userID);
-				getLogger(guild).info("Processing user {}", Utilities.getUserToLog(member.getUser()));
+				getLogger(guild).info("Processing user {}", member);
 				Map<Long, Long> userGuildConfig = guildConfig.get(userID);
 				for(Long roleID : userGuildConfig.keySet()){
 					Duration diff = Duration.ofMillis(userGuildConfig.get(roleID) - currentTime);
-					getLogger(guild).info("Processing role {}, diff is: {}", roleID, diff);
+					Role role = guild.getRoleById(roleID);
+					getLogger(guild).info("Processing role {}, diff is: {}", role, diff);
 					if(diff.isNegative()){
-						Actions.removeRole(member, guild.getRoleById(roleID));
+						Actions.removeRole(member, role);
 						config.deleteKeyValue(guild, userID, roleID);
 					}
 				}
