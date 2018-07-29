@@ -9,7 +9,6 @@ import fr.mrcraftcod.gunterdiscord.commands.warn.MegaWarnCommand;
 import fr.mrcraftcod.gunterdiscord.commands.warn.NormalWarnCommand;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
@@ -21,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 09/04/2018.
@@ -61,7 +61,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 		Arrays.asList(commands).forEach(c -> c.getCommand().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
 		String clash = counts.keySet().stream().filter(k -> counts.get(k) > 1).collect(Collectors.joining(", "));
 		if(clash != null && !clash.isEmpty()){
-			Log.error(null, "Command clash: {}", clash);
+			getLogger(null).error("Command clash: {}", clash);
 		}
 	}
 	
@@ -77,7 +77,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 				if(command != null){
 					if(command.getScope() == -5 || command.getScope() == event.getChannel().getType().getId()){
 						try{
-							Log.info(event.getGuild(), "Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(), Utilities.getUserToLog(event.getAuthor()), args);
+							getLogger(event.getGuild()).info("Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(), Utilities.getUserToLog(event.getAuthor()), args);
 							switch(command.execute(event, args)){
 								case NOT_ALLOWED:
 									Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Vous n'etes par autorisé à utiliser cette commande");
@@ -90,7 +90,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 							}
 						}
 						catch(NotAllowedException e){
-							Log.error(event.getGuild(), "Error executing command {} (not allowed)", command, e);
+							getLogger(event.getGuild()).error("Error executing command {} (not allowed)", command, e);
 							EmbedBuilder builder = new EmbedBuilder();
 							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 							builder.setColor(Color.RED);
@@ -98,7 +98,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 							Actions.reply(event, builder.build());
 						}
 						catch(Exception e){
-							Log.error(event.getGuild(), "Error executing command {}", command, e);
+							getLogger(event.getGuild()).error("Error executing command {}", command, e);
 							EmbedBuilder builder = new EmbedBuilder();
 							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 							builder.setColor(Color.RED);
@@ -125,7 +125,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 			}
 		}
 		catch(Exception e){
-			Log.error(event.getGuild(), "Error handling message", e);
+			getLogger(event.getGuild()).error("Error handling message", e);
 		}
 	}
 	
@@ -142,7 +142,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 			return text.startsWith(new PrefixConfig().getString(guild, "g?"));
 		}
 		catch(InvalidClassException e){
-			Log.warning(guild, "Error testing command", e);
+			getLogger(guild).warn("Error testing command", e);
 		}
 		return false;
 	}

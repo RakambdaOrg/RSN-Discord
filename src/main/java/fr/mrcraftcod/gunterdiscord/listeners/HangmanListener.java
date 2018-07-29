@@ -6,7 +6,6 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.HangmanChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.HangmanRoleConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.OnlineStatus;
@@ -24,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -79,7 +79,7 @@ public class HangmanListener extends ListenerAdapter{
 				Thread.sleep(5000);
 			}
 			catch(InterruptedException e){
-				Log.error(guild, "Error sleeping");
+				getLogger(guild).error("Error sleeping");
 			}
 			realWord = selectRandomWord();
 			hiddenWord = genHidden(realWord);
@@ -96,7 +96,7 @@ public class HangmanListener extends ListenerAdapter{
 		}).start();
 		guild.getJDA().addEventListener(this);
 		games.add(this);
-		Log.info(guild, "Crated hangman game");
+		getLogger(guild).info("Crated hangman game");
 	}
 	
 	/**
@@ -133,7 +133,7 @@ public class HangmanListener extends ListenerAdapter{
 				}
 			}
 			catch(Exception e){
-				Log.error(guild, "Error create a new hangman game", e);
+				getLogger(guild).error("Error create a new hangman game", e);
 			}
 			return Optional.empty();
 		});
@@ -224,7 +224,7 @@ public class HangmanListener extends ListenerAdapter{
 			return words.get(ThreadLocalRandom.current().nextInt(words.size()));
 		}
 		catch(IOException e){
-			Log.error(getGuild(), "Error getting random hangman word", e);
+			getLogger(getGuild()).error("Error getting random hangman word", e);
 		}
 		return "ERROR";
 	}
@@ -273,7 +273,7 @@ public class HangmanListener extends ListenerAdapter{
 				Actions.sendMessage(channel, "L'élu est %s, c'est a lui d'indiquer la lettre que vous avez choisit grâce à la commande %spendu l <lettre>\n", member.getAsMention(), new PrefixConfig().getString(guild, "g?"));
 			}
 			catch(InvalidClassException | IllegalArgumentException e){
-				Log.error(getGuild(), "Error getting prefix", e);
+				getLogger(getGuild()).error("Error getting prefix", e);
 			}
 			if(lastFuture != null){
 				lastFuture.cancel(true);
@@ -385,7 +385,7 @@ public class HangmanListener extends ListenerAdapter{
 	 * Delay the ending then remove users and messages.
 	 */
 	private void delayEndGame(){
-		Log.info(getGuild(), "Ending hangman game");
+		getLogger(getGuild()).info("Ending hangman game");
 		guild.getJDA().removeEventListener(this);
 		waitingUser = null;
 		executor.shutdownNow();
@@ -393,7 +393,7 @@ public class HangmanListener extends ListenerAdapter{
 			Thread.sleep(10000);
 		}
 		catch(InterruptedException e){
-			Log.error(getGuild(), "Error sleeping", e);
+			getLogger(getGuild()).error("Error sleeping", e);
 		}
 		removeUsers();
 	}

@@ -2,7 +2,6 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.settings.configs.BannedRegexConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
@@ -12,6 +11,7 @@ import net.dv8tion.jda.core.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -46,12 +46,12 @@ public class BannedRegexeMessageListener extends ListenerAdapter{
 					Actions.deleteMessage(message);
 					Actions.reply(event, "Attention " + message.getAuthor().getAsMention() + ", l'utilisation de mot prohibés va finir par te bruler le derrière.");
 					Actions.replyPrivate(event.getGuild(), message.getAuthor(), "Restes poli s'il te plait :). Le mot " + getCensoredWord(word) + " est prohibé.");
-					Log.info(event.getGuild(), "Banned message from user " + Utilities.getUserToLog(message.getAuthor()) + " for word `" + word + "` : " + message.getContentRaw());
+					getLogger(event.getGuild()).info("Banned message from user " + Utilities.getUserToLog(message.getAuthor()) + " for word `" + word + "` : " + message.getContentRaw());
 				}
 			}
 		}
 		catch(Exception e){
-			Log.error(event.getGuild(), "", e);
+			getLogger(event.getGuild()).error("", e);
 		}
 	}
 	

@@ -19,8 +19,6 @@ import java.util.stream.Collectors;
  * @since 2018-04-15
  */
 public abstract class MapMapConfiguration<K, V, W> extends Configuration{
-	private final Map<K, Map<V, W>> lastValue = null;
-	
 	/**
 	 * Get the list of values from the given key.
 	 *

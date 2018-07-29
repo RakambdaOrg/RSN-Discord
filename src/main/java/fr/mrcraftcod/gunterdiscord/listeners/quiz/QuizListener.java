@@ -4,7 +4,6 @@ import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.settings.configs.QuizChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
@@ -22,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -60,6 +60,59 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	}
 	
 	/**
+	 * Get the current instance of the game.
+	 *
+	 * @param guild        The guild.
+	 * @param amount       The amount of questions.
+	 * @param shouldCreate If a new game should be created if not found.
+	 * @param delay        The delay before starting the quiz.
+	 *
+	 * @return The game of the guild.
+	 */
+	public static Optional<QuizListener> getQuiz(Guild guild, int amount, int delay, boolean shouldCreate){
+		return quizzes.stream().filter(q -> q.getGuild().getIdLong() == guild.getIdLong()).findAny().or(() -> {
+			try{
+				if(shouldCreate){
+					return Optional.of(new QuizListener(guild, amount, delay));
+				}
+			}
+			catch(Exception e){
+				getLogger(guild).error("Error create a new quiz game", e);
+			}
+			return Optional.empty();
+		});
+	}
+	
+	/**
+	 * Get the guild.
+	 *
+	 * @return The guild.
+	 */
+	private Guild getGuild(){
+		return guild;
+	}
+	
+	/**
+	 * Stop all quizzes.
+	 */
+	public static void stopAll(){
+		quizzes.forEach(QuizListener::stop);
+	}
+	
+	/**
+	 * Get the current instance of the game.
+	 *
+	 * @param guild  The guild.
+	 * @param amount The amount of questions.
+	 * @param delay  The delay before starting the quiz.
+	 *
+	 * @return The game of the guild.
+	 */
+	public static Optional<QuizListener> getQuiz(Guild guild, int amount, int delay){
+		return getQuiz(guild, amount, delay, true);
+	}
+	
+	/**
 	 * Pick some random questions from the CSV file.
 	 *
 	 * @param amount The maximum number of question.
@@ -72,7 +125,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 			lines.addAll(Files.readAllLines(Paths.get("./questions.csv")));
 		}
 		catch(Exception e){
-			Log.error(getGuild(), "Error reading questions file", e);
+			getLogger(getGuild()).error( "Error reading questions file", e);
 		}
 		
 		if(lines.isEmpty()){
@@ -106,59 +159,6 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	}
 	
 	/**
-	 * Get the guild.
-	 *
-	 * @return The guild.
-	 */
-	private Guild getGuild(){
-		return guild;
-	}
-	
-	/**
-	 * Stop all quizzes.
-	 */
-	public static void stopAll(){
-		quizzes.forEach(QuizListener::stop);
-	}
-	
-	/**
-	 * Get the current instance of the game.
-	 *
-	 * @param guild  The guild.
-	 * @param amount The amount of questions.
-	 * @param delay  The delay before starting the quiz.
-	 *
-	 * @return The game of the guild.
-	 */
-	public static Optional<QuizListener> getQuiz(Guild guild, int amount, int delay){
-		return getQuiz(guild, amount, delay, true);
-	}
-	
-	/**
-	 * Get the current instance of the game.
-	 *
-	 * @param guild        The guild.
-	 * @param amount       The amount of questions.
-	 * @param shouldCreate If a new game should be created if not found.
-	 * @param delay        The delay before starting the quiz.
-	 *
-	 * @return The game of the guild.
-	 */
-	public static Optional<QuizListener> getQuiz(Guild guild, int amount, int delay, boolean shouldCreate){
-		return quizzes.stream().filter(q -> q.getGuild().getIdLong() == guild.getIdLong()).findAny().or(() -> {
-			try{
-				if(shouldCreate){
-					return Optional.of(new QuizListener(guild, amount, delay));
-				}
-			}
-			catch(Exception e){
-				Log.error(guild, "Error create a new quiz game", e);
-			}
-			return Optional.empty();
-		});
-	}
-	
-	/**
 	 * Stop the quiz.
 	 */
 	public void stop(){
@@ -182,7 +182,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 				Thread.sleep((waitTime.getSeconds() / 2) * 1000);
 			}
 			catch(InterruptedException e){
-				Log.error(getGuild(), "Error sleeping", e);
+				getLogger(getGuild()).error( "Error sleeping", e);
 			}
 			
 			Actions.sendMessage(quizChannel, "Encore %s!", waitTime.dividedBy(2).toString().replace("PT", ""));
@@ -191,7 +191,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 				Thread.sleep((waitTime.getSeconds() / 2) * 1000);
 			}
 			catch(InterruptedException e){
-				Log.error(guild, "Error sleeping", e);
+				getLogger(guild).error( "Error sleeping", e);
 			}
 			
 			HashMap<Long, Integer> scores = new HashMap<>();
@@ -221,16 +221,16 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 						Thread.sleep(QUESTION_TIME * 1000);
 					}
 					catch(InterruptedException e){
-						Log.error(guild, "Error sleeping", e);
+						getLogger(guild).error( "Error sleeping", e);
 					}
 					Actions.sendMessage(quizChannel, "Stoooooooooooooopu!");
-					Log.info(getGuild(), "Question over, answer was {}", question.getCorrectAnswerIndex());
+					getLogger(getGuild()).info("Question over, answer was {}", question.getCorrectAnswerIndex());
 					waitingMsg = null;
 					answers.forEach((k, v) -> {
 						if(v == question.getCorrectAnswerIndex()){
 							int newScore = scores.getOrDefault(k, 0) + 1;
 							scores.put(k, newScore);
-							Log.info(getGuild(), "{} +1 pt - now: {}", k, newScore);
+							getLogger(getGuild()).info("{} +1 pt - now: {}", k, newScore);
 						}
 						else if(!scores.containsKey(k)){
 							scores.put(k, 0);
@@ -242,11 +242,11 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 						Thread.sleep(5 * 1000);
 					}
 					catch(InterruptedException e){
-						Log.error(getGuild(), "Error sleeping", e);
+						getLogger(getGuild()).error("Error sleeping", e);
 					}
 				}
 				catch(Exception e){
-					Log.error(getGuild(), "Error quiz question", e);
+					getLogger(getGuild()).error( "Error quiz question", e);
 				}
 			}
 			
@@ -269,7 +269,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 			Actions.sendMessage(quizChannel, builder.build());
 		}
 		catch(Exception e){
-			Log.error(getGuild(), "Error quiz", e);
+			getLogger(getGuild()).error( "Error quiz", e);
 		}
 		quizzes.remove(this);
 		guild.getJDA().removeEventListener(this);
@@ -299,7 +299,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 			}
 		}
 		catch(Exception e){
-			Log.error(getGuild(), "", e);
+			getLogger(getGuild()).error( "", e);
 		}
 	}
 	
@@ -313,14 +313,14 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 						BasicEmotes emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
 						if(answers.get(event.getUser().getIdLong()) == mapEmote(emote)){
 							answers.remove(event.getUser().getIdLong());
-							Log.info(event.getGuild(), "User {} removed answer", Utilities.getUserToLog(event.getUser()));
+							getLogger(event.getGuild()).info( "User {} removed answer", Utilities.getUserToLog(event.getUser()));
 						}
 					}
 				}
 			}
 		}
 		catch(Exception e){
-			Log.error(event.getGuild(), "", e);
+			getLogger(event.getGuild()).error( "", e);
 		}
 	}
 	

@@ -4,7 +4,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.mrcraftcod.gunterdiscord.settings.configs.MusicPartyChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
 import fr.mrcraftcod.gunterdiscord.utils.player.StatusTrackSchedulerListener;
@@ -18,6 +17,7 @@ import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -95,7 +95,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 				}
 			}
 			catch(Exception e){
-				Log.error(guild, "Error create a new music party game", e);
+				getLogger(guild).error("Error create a new music party game", e);
 			}
 			return Optional.empty();
 		});
@@ -117,7 +117,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 	 * @param args  The songs to add.
 	 */
 	public void addMusic(MessageReceivedEvent event, LinkedList<String> args){
-		Log.info(getGuild(), "Setting party music");
+		getLogger(getGuild()).info("Setting party music");
 		if(args.size() < 1){
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Nombre de paramètres incorrecte");
 		}
@@ -133,7 +133,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 	
 	@Override
 	public void onTrackEnd(AudioTrack track){
-		Log.info(getGuild(), "MusicParty track ended");
+		getLogger(getGuild()).info("MusicParty track ended");
 		if(!currentFound && currentMusic != null){
 			EmbedBuilder builder = Utilities.buildEmbed(musicPartyChannel.getJDA().getSelfUser(), Color.RED, "Vous êtes mauvais");
 			builder.addField("Titre de la musique", currentMusic.getTitle(), false);
@@ -146,7 +146,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 	
 	@Override
 	public void onTrackStart(AudioTrack track){
-		Log.info(getGuild(), "New track is starting: {}", track.getIdentifier());
+		getLogger(getGuild()).info("New track is starting: {}", track.getIdentifier());
 		printScores();
 		
 		EmbedBuilder builder = Utilities.buildEmbed(musicPartyChannel.getJDA().getSelfUser(), Color.GREEN, "Nouveau son");
@@ -157,7 +157,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		
 		currentFound = false;
 		currentMusic = new MusicPartyMusic(track);
-		Log.info(getGuild(), "MusicParty track started: {}", currentMusic);
+		getLogger(getGuild()).info("MusicParty track started: {}", currentMusic);
 	}
 	
 	/**
@@ -172,21 +172,10 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 	}
 	
 	/**
-	 * Stop the quiz.
-	 */
-	public void stop(){
-		parties.remove(this);
-		Log.info(getGuild(), "Stopping music party");
-		GunterAudioManager.leave(getGuild());
-		Actions.sendMessage(musicPartyChannel, "Fin de la partie!");
-		printScores();
-	}
-	
-	/**
 	 * Prints the scores.
 	 */
 	public void printScores(){
-		Log.info(getGuild(), "Print music party scores");
+		getLogger(getGuild()).info("Print music party scores");
 		
 		HashMap<Integer, List<String>> bests = new HashMap<>();
 		List<Integer> bestsScores = scores.values().stream().sorted(Comparator.reverseOrder()).distinct().limit(5).collect(Collectors.toList());
@@ -205,13 +194,24 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		Actions.sendMessage(musicPartyChannel, builder.build());
 	}
 	
+	/**
+	 * Stop the quiz.
+	 */
+	public void stop(){
+		parties.remove(this);
+		getLogger(getGuild()).info("Stopping music party");
+		GunterAudioManager.leave(getGuild());
+		Actions.sendMessage(musicPartyChannel, "Fin de la partie!");
+		printScores();
+	}
+	
 	@Override
 	public void onGuildMessageReactionAdd(GuildMessageReactionAddEvent event){
 		super.onGuildMessageReactionAdd(event);
 		if(currentMessage != null && getGuild().equals(event.getGuild()) && musicPartyChannel.getIdLong() == event.getChannel().getIdLong() && currentMessage.getIdLong() == event.getMessageIdLong()){
 			musicPartyChannel.getMessageById(currentMessage.getIdLong()).queue(m -> {
 				if(m.getReactions().size() > REQUIRED_TO_SKIP){
-					Log.info(getGuild(), "Enough reactions to skip");
+					getLogger(getGuild()).info("Enough reactions to skip");
 					skip();
 				}
 			});
@@ -231,7 +231,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		try{
 			if(musicPartyChannel.getIdLong() == event.getMessage().getChannel().getIdLong()){
 				if(currentMusic != null && !currentFound && currentMusic.getTitle().equalsIgnoreCase(event.getMessage().getContentRaw())){
-					Log.info(getGuild(), "{} found the music `{}`", Utilities.getUserToLog(event.getAuthor()), currentMusic.getTitle());
+					getLogger(getGuild()).info("{} found the music `{}`", Utilities.getUserToLog(event.getAuthor()), currentMusic.getTitle());
 					
 					EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Son trouvé");
 					builder.addField("Titre de la musique", currentMusic.getTitle(), false);
@@ -246,7 +246,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 			}
 		}
 		catch(Exception e){
-			Log.error(getGuild(), "", e);
+			getLogger(getGuild()).error("", e);
 		}
 	}
 }

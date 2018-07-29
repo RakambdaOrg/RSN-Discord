@@ -4,7 +4,6 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.QuestionsChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.QuestionsFinalChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
@@ -15,6 +14,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -76,7 +76,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 			}
 		}
 		catch(Exception e){
-			Log.error(event.getGuild(), "", e);
+			getLogger(event.getGuild()).error("", e);
 		}
 	}
 }

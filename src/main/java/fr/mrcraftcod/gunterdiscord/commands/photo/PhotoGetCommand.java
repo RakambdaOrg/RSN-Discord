@@ -7,7 +7,6 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.TrombinoscopeRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -21,6 +20,7 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
@@ -80,7 +80,7 @@ public class PhotoGetCommand extends BasicCommand{
 						randomGen = false;
 					}
 					catch(Exception e){
-						Log.warning(event.getGuild(), "Provided photo index isn't an integer", e);
+						getLogger(event.getGuild()).warn("Provided photo index isn't an integer", e);
 					}
 				}
 				File file = new File(paths.get(rnd));

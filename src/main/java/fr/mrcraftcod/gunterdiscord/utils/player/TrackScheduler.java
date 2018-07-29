@@ -4,12 +4,12 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.entities.Guild;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -55,10 +55,10 @@ class TrackScheduler extends AudioEventAdapter{
 	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason){
 		super.onTrackEnd(player, track, endReason);
 		listeners.forEach(l -> l.onTrackEnd(track));
-		Log.info(getGuild(), "Next track");
+		getLogger(getGuild()).info("Next track");
 		if(endReason.mayStartNext){
 			if(!nextTrack()){
-				Log.info(getGuild(), "Playlist ended, listeners: {}", listeners.size());
+				getLogger(getGuild()).info("Playlist ended, listeners: {}", listeners.size());
 				listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty);
 			}
 		}
@@ -69,7 +69,7 @@ class TrackScheduler extends AudioEventAdapter{
 	}
 	
 	public boolean nextTrack(){
-		Log.info(getGuild(), "Playing next track");
+		getLogger(getGuild()).info("Playing next track");
 		return player.startTrack(queue.poll(), false);
 	}
 	
@@ -78,7 +78,7 @@ class TrackScheduler extends AudioEventAdapter{
 	}
 	
 	public void foundNothing(){
-		Log.info(getGuild(), "Scheduler nothing found (track: {}, queue: {})", player.getPlayingTrack(), queue.size());
+		getLogger(getGuild()).info("Scheduler nothing found (track: {}, queue: {})", player.getPlayingTrack(), queue.size());
 		if(player.getPlayingTrack() == null && queue.isEmpty()){
 			listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty);
 		}

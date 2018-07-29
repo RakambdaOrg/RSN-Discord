@@ -2,13 +2,13 @@ package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
@@ -22,7 +22,7 @@ public class StopCommand extends BasicCommand{
 		super.execute(event, args);
 		if(Utilities.isCreator(event.getMember())){
 			event.getJDA().shutdownNow();
-			Log.info(event.getGuild(), "BOT STOPPING");
+			getLogger(event.getGuild()).info("BOT STOPPING");
 		}
 		else{
 			return CommandResult.NOT_ALLOWED;

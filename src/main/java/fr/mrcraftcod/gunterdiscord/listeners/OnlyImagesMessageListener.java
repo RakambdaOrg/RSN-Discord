@@ -2,10 +2,10 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.settings.configs.OnlyImagesConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -26,7 +26,7 @@ public class OnlyImagesMessageListener extends ListenerAdapter{
 			}
 		}
 		catch(Exception e){
-			Log.error(event.getGuild(), "", e);
+			getLogger(event.getGuild()).error("", e);
 		}
 	}
 }

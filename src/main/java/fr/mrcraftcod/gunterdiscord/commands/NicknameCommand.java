@@ -5,7 +5,6 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.NickDelayConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.NickLastChangeConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -20,6 +19,7 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
@@ -90,7 +90,7 @@ public class NicknameCommand extends BasicCommand{
 				member.getGuild().getController().setNickname(member, newName).complete();
 				builder.setColor(Color.GREEN);
 				new NickLastChangeConfig().addValue(event.getGuild(), member.getUser().getIdLong(), new Date().getTime());
-				Log.info(event.getGuild(), "{} renamed {} from `{}` to `{}`", Utilities.getUserToLog(event.getAuthor()), Utilities.getUserToLog(member.getUser()), oldName, newName);
+				getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", Utilities.getUserToLog(event.getAuthor()), Utilities.getUserToLog(member.getUser()), oldName, newName);
 			}
 			catch(HierarchyException e){
 				builder.setColor(Color.RED);

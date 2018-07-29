@@ -3,7 +3,6 @@ package fr.mrcraftcod.gunterdiscord.settings.configurations;
 import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Role;
@@ -11,6 +10,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
 import java.io.InvalidClassException;
 import java.util.LinkedList;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/05/2018.
@@ -54,7 +54,7 @@ public abstract class SingleRoleConfiguration extends ValueConfiguration{
 			return guild.getJDA().getRoleById(getLong(guild));
 		}
 		catch(InvalidClassException | NoValueDefinedException e){
-			Log.error(guild, "Error getting role from config", e);
+			getLogger(guild).error("Error getting role from config", e);
 		}
 		return null;
 	}

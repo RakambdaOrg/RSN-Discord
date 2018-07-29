@@ -8,7 +8,6 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.managers.AudioManager;
@@ -17,6 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -54,14 +54,14 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			gunterAudioManager.getAudioPlayerManager().loadItem(ident, new AudioLoadResultHandler(){
 				@Override
 				public void trackLoaded(AudioTrack track){
-					Log.info(channel.getGuild(), "Added `{}` to the audio queue on channel `{}`", ident, channel.getName());
+					getLogger(channel.getGuild()).info("Added `{}` to the audio queue on channel `{}`", ident, channel.getName());
 					gunterAudioManager.getTrackScheduler().queue(track);
 					onTrackAdded.accept(track);
 				}
 				
 				@Override
 				public void playlistLoaded(AudioPlaylist playlist){
-					Log.info(channel.getGuild(), "Added `{}`({}) to the audio queue on channel `{}`", ident, playlist.getTracks().size(), channel.getName());
+					getLogger(channel.getGuild()).info("Added `{}`({}) to the audio queue on channel `{}`", ident, playlist.getTracks().size(), channel.getName());
 					for(AudioTrack track : playlist.getTracks()){
 						gunterAudioManager.getTrackScheduler().queue(track);
 						onTrackAdded.accept(track);
@@ -70,13 +70,13 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 				
 				@Override
 				public void noMatches(){
-					Log.warning(channel.getGuild(), "Player found nothing for channel `{}`", channel.getName());
+					getLogger(channel.getGuild()).warn("Player found nothing for channel `{}`", channel.getName());
 					gunterAudioManager.getTrackScheduler().foundNothing();
 				}
 				
 				@Override
 				public void loadFailed(FriendlyException throwable){
-					Log.warning(channel.getGuild(), "Failed to load audio for channel `{}`", channel.getName(), throwable);
+					getLogger(channel.getGuild()).warn("Failed to load audio for channel `{}`", channel.getName(), throwable);
 					gunterAudioManager.getTrackScheduler().foundNothing();
 				}
 			});
@@ -98,7 +98,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			if(listener != null){
 				trackScheduler.addStatusTrackSchedulerListener(listener);
 			}
-			Log.info(channel.getGuild(), "Audio manager Created");
+			getLogger(channel.getGuild()).info("Audio manager Created");
 			return gunterAudioManager;
 		});
 	}
@@ -129,14 +129,14 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	
 	@Override
 	public void onTrackSchedulerEmpty(){
-		Log.info(getChannel().getGuild(), "Scheduler is empty");
+		getLogger(getChannel().getGuild()).info("Scheduler is empty");
 		ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 		executorService.schedule(() -> {
 			getAudioPlayerManager().shutdown();
 			getAudioManager().setSendingHandler(null);
 			getAudioManager().closeAudioConnection();
 			managers.remove(channel.getGuild());
-			Log.info(getChannel().getGuild(), "Audio manager shutdown");
+			getLogger(getChannel().getGuild()).info("Audio manager shutdown");
 		}, 1, TimeUnit.NANOSECONDS);
 		executorService.shutdown();
 	}

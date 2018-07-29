@@ -7,7 +7,6 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.TrombinoscopeRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -20,6 +19,7 @@ import java.awt.*;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
@@ -85,7 +85,7 @@ public class PhotoAddCommand extends BasicCommand{
 					Actions.replyPrivate(event.getGuild(), event.getAuthor(), "L'envoi a échoué");
 					if(saveFile.exists()){
 						if(!saveFile.delete()){
-							Log.warning(event.getGuild(), "Error deleting file {}", saveFile.getAbsolutePath());
+							getLogger(event.getGuild()).warn("Error deleting file {}", saveFile.getAbsolutePath());
 						}
 					}
 				}

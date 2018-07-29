@@ -2,7 +2,6 @@ package fr.mrcraftcod.gunterdiscord;
 
 import fr.mrcraftcod.gunterdiscord.listeners.*;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -15,6 +14,7 @@ import java.time.ZonedDateTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 09/04/2018.
@@ -54,10 +54,10 @@ public class Main{
 			executorService.scheduleAtFixedRate(new ScheduledRunner(jda), SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
 		}
 		catch(IOException e){
-			Log.error(null, "Couldn't load settings", e);
+			getLogger(null).error("Couldn't load settings", e);
 		}
 		catch(LoginException | InterruptedException e){
-			Log.error(null, "Couldn't start bot", e);
+			getLogger(null).error("Couldn't start bot", e);
 		}
 		
 		new ConsoleText(jda).start();

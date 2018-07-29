@@ -1,8 +1,8 @@
 package fr.mrcraftcod.gunterdiscord.settings.configs;
 
 import fr.mrcraftcod.gunterdiscord.settings.configurations.ValueConfiguration;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.entities.Guild;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -17,7 +17,7 @@ public class DoubleWarnTimeConfig extends ValueConfiguration{
 			super.setValue(guild, Double.parseDouble(value.toString()));
 		}
 		catch(Exception e){
-			Log.warning(guild, "Error parsing config value for double warn time", e);
+			getLogger(guild).warn("Error parsing config value for double warn time", e);
 		}
 	}
 	

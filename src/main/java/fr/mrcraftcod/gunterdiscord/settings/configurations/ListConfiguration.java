@@ -3,12 +3,12 @@ package fr.mrcraftcod.gunterdiscord.settings.configurations;
 import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.Configuration;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.entities.Guild;
 import org.json.JSONArray;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -17,8 +17,6 @@ import java.util.function.Function;
  * @since 2018-04-15
  */
 public abstract class ListConfiguration<T> extends Configuration{
-	private final List<T> lastValue = null;
-	
 	/**
 	 * Add a value to the list.
 	 *
@@ -79,7 +77,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 			return Settings.getArray(guild, getName());
 		}
 		catch(NullPointerException e){
-			Log.error(guild, "NullPointer", e);
+			getLogger(guild).error("NullPointer", e);
 		}
 		return null;
 	}

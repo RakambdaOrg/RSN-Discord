@@ -17,8 +17,6 @@ import java.util.function.Function;
  * @since 2018-04-15
  */
 public abstract class MapListConfiguration<K, V> extends Configuration{
-	private final Map<K, ArrayList<V>> lastValue = null;
-	
 	/**
 	 * Get the list of values from the given key.
 	 *

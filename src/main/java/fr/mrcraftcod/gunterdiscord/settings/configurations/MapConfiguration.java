@@ -4,7 +4,6 @@ import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.Configuration;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -14,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Function;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -22,8 +22,6 @@ import java.util.function.Function;
  * @since 2018-04-15
  */
 public abstract class MapConfiguration<K, V> extends Configuration{
-	private final Map<K, V> lastValue = null;
-	
 	/**
 	 * Get the value from the given key.
 	 *
@@ -37,7 +35,7 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 			return getAsMap(guild).get(key);
 		}
 		catch(Exception e){
-			Log.error(guild, "Can't get value {} with key {}", getName(), key, e);
+			getLogger(guild).error("Can't get value {} with key {}", getName(), key, e);
 		}
 		return null;
 	}

@@ -2,7 +2,6 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.settings.configs.WerewolvesChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
@@ -17,6 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -171,7 +171,7 @@ public class WerewolvesListener extends ListenerAdapter{
 	 * Assign roles to members randomly.
 	 */
 	private void assignRoles(){
-		Log.info(getVoiceChannel().getGuild(), "Werewolves: assigning roles");
+		getLogger(getVoiceChannel().getGuild()).info("Werewolves: assigning roles");
 		LinkedList<WerewolvesRole> roles = new LinkedList<>();
 		roles.add(WerewolvesRole.SEER);
 		roles.add(WerewolvesRole.HUNTER);
@@ -188,7 +188,7 @@ public class WerewolvesListener extends ListenerAdapter{
 	 * @param runnable What to do when the election is done.
 	 */
 	private void electMayor(Runnable runnable){
-		Log.info(getVoiceChannel().getGuild(), "Werewolves: voting mayor");
+		getLogger(getVoiceChannel().getGuild()).info("Werewolves: voting mayor");
 		Actions.sendMessage(textChannel, Utilities.buildEmbed(textChannel.getJDA().getSelfUser(), Color.GREEN, "Vote du maire").addField("Le vote du maire est ouvert", "Envoyez en mp au bot votre vote", false).build());
 		votes.clear();
 		waitingMember.addAll(users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).collect(Collectors.toList()));
@@ -230,7 +230,7 @@ public class WerewolvesListener extends ListenerAdapter{
 	 * Elect who is killed this day.
 	 */
 	private void electKilled(){
-		Log.info(getVoiceChannel().getGuild(), "Werewolves: voting kill");
+		getLogger(getVoiceChannel().getGuild()).info("Werewolves: voting kill");
 		Actions.sendMessage(textChannel, Utilities.buildEmbed(textChannel.getJDA().getSelfUser(), Color.GREEN, "Vote du tué du jour").addField("Le vote du maire est ouvert", "Envoyez en mp au bot votre vote", false).build());
 		votes.clear();
 		waitingMember.addAll(users.keySet().stream().filter(m -> users.get(m).getKind() != WerewolvesRoleKind.SPECIAL).collect(Collectors.toList()));
@@ -274,7 +274,7 @@ public class WerewolvesListener extends ListenerAdapter{
 			users.put(m, WerewolvesRole.SPECTATOR);
 			Actions.replyPrivate(getVoiceChannel().getGuild(), m.getUser(), "Vous êtes mort");
 			if(users.get(m).isMayor()){
-				Log.info(getVoiceChannel().getGuild(), "Werewolves: mayor is dead");
+				getLogger(getVoiceChannel().getGuild()).info("Werewolves: mayor is dead");
 				Actions.sendMessage(textChannel, "Votre maire est mort, nous attendons un nouveau maire");
 				Actions.replyPrivate(getVoiceChannel().getGuild(), m.getUser(), "Veuillez désigner un nouveau maire");
 				run.set(false);
@@ -393,7 +393,7 @@ public class WerewolvesListener extends ListenerAdapter{
 	public void onPrivateMessageReceived(PrivateMessageReceivedEvent event){
 		super.onPrivateMessageReceived(event);
 		if(waitingMember != null && waitingMember.stream().anyMatch(m -> m.getUser().getIdLong() == event.getAuthor().getIdLong())){
-			Log.info(getVoiceChannel().getGuild(), "Werewolves: {} said `{}`", Utilities.getUserToLog(event.getAuthor()), event.getMessage().getContentRaw());
+			getLogger(getVoiceChannel().getGuild()).info("Werewolves: {} said `{}`", Utilities.getUserToLog(event.getAuthor()), event.getMessage().getContentRaw());
 			if(waitingAction != null){
 				waitingAction.apply(event.getMessage());
 			}
@@ -406,7 +406,7 @@ public class WerewolvesListener extends ListenerAdapter{
 		if(event.getChannelJoined().getIdLong() == voiceChannel.getIdLong()){
 			users.put(event.getMember(), WerewolvesRole.SPECTATOR);
 			event.getGuild().getController().setMute(event.getMember(), true).queue();
-			Log.info(getVoiceChannel().getGuild(), "Werewolves: User {} joined as spectator", Utilities.getUserToLog(event.getMember().getUser()));
+			getLogger(getVoiceChannel().getGuild()).info("Werewolves: User {} joined as spectator", Utilities.getUserToLog(event.getMember().getUser()));
 		}
 	}
 	
@@ -447,7 +447,7 @@ public class WerewolvesListener extends ListenerAdapter{
 	 * Stops the game.
 	 */
 	public void stop(){
-		Log.info(getVoiceChannel().getGuild(), "Werewolves: stopping");
+		getLogger(getVoiceChannel().getGuild()).info("Werewolves: stopping");
 		games.remove(this);
 		voiceChannel.getJDA().removeEventListener(this);
 		werewolvesTextChannel.delete().queue();

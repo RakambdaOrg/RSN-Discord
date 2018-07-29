@@ -4,11 +4,11 @@ import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.listeners.musicparty.MusicPartyListener;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
-import fr.mrcraftcod.gunterdiscord.utils.Log;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
 import net.dv8tion.jda.core.events.ShutdownEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.io.IOException;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 09/04/2018.
@@ -27,13 +27,13 @@ public class ShutdownListener extends ListenerAdapter{
 			MusicPartyListener.stopAll();
 			event.getJDA().getGuilds().forEach(GunterAudioManager::leave);
 			Settings.save();
-			Log.info(null, "BOT STOPPED");
+			getLogger(null).info("BOT STOPPED");
 		}
 		catch(IOException e){
 			e.printStackTrace();
 		}
 		catch(Exception e){
-			Log.error(null, "", e);
+			getLogger(null).error("", e);
 		}
 		finally{
 			Settings.close();
