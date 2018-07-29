@@ -6,6 +6,7 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.RemoveRoleConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleRoleConfiguration;
 import fr.mrcraftcod.gunterdiscord.settings.configurations.ValueConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
@@ -15,6 +16,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.LinkedList;
+import static fr.mrcraftcod.gunterdiscord.utils.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
@@ -47,6 +49,7 @@ public abstract class WarnCommand extends BasicCommand{
 				new RemoveRoleConfig().addValue(event.getGuild(), user.getIdLong(), role.getIdLong(), (long) (System.currentTimeMillis() + duration * 24 * 60 * 60 * 1000L));
 				builder.setColor(Color.GREEN);
 				builder.addField("Congratulations", user.getAsMention() + " à rejoint le role " + role.getAsMention() + " pour une durée de " + duration + " jour(s)", false);
+				getLogger(event.getGuild()).info("{} warned {} for {} days with role {}", Utilities.getUserToLog(event.getAuthor()), Utilities.getUserToLog(user), duration, role);
 			}
 			Actions.reply(event, builder.build());
 		}
@@ -54,7 +57,7 @@ public abstract class WarnCommand extends BasicCommand{
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
-			builder.addField("Erreur", "Merci de mentionner un utilisateur", true);
+			builder.addField("Erreur", "Merci de mentionner un utilisateur a warn", true);
 			Actions.reply(event, builder.build());
 		}
 		return CommandResult.SUCCESS;
