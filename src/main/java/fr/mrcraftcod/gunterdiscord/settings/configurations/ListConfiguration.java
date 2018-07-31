@@ -83,6 +83,18 @@ public abstract class ListConfiguration<T> extends Configuration{
 	}
 	
 	/**
+	 * Tell if an element is inside the list.
+	 *
+	 * @param guild The guild to fetch the values for.
+	 * @param value The value to test.
+	 *
+	 * @return True if the value is inside, false otherwise.
+	 */
+	public boolean contains(Guild guild, T value){
+		return getAsList(guild).contains(value);
+	}
+	
+	/**
 	 * Get the parser to parse back values to T.
 	 *
 	 * @return The parser.

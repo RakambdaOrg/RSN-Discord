@@ -49,11 +49,11 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration{
 	 *
 	 * @return True if the same channels, false otherwise.
 	 */
-	public boolean isChannel(TextChannel channel){
+	public boolean isTextChannel(TextChannel channel){
 		if(channel == null){
 			return false;
 		}
-		return isChannel(channel.getGuild(), channel.getIdLong());
+		return isTextChannel(channel.getGuild(), channel.getIdLong());
 	}
 	
 	/**
@@ -64,7 +64,7 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration{
 	 *
 	 * @return True if the same channels, false otherwise.
 	 */
-	public boolean isChannel(Guild guild, long ID){
+	public boolean isTextChannel(Guild guild, long ID){
 		TextChannel channel = getTextChannel(guild);
 		if(channel == null){
 			return false;

@@ -213,4 +213,15 @@ public class Utilities{
 		});
 		return builder.toString();
 	}
+	
+	/**
+	 * Get a member in a readable way.
+	 *
+	 * @param member The member to print.
+	 *
+	 * @return The string representing the member.
+	 */
+	public static String getMemberToLog(Member member){
+		return member == null ? "NULL" : getUserToLog(member.getUser());
+	}
 }

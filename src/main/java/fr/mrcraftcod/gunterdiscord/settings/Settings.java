@@ -49,7 +49,8 @@ public class Settings{
 			new WarnTimeConfig(),
 			new DoubleWarnTimeConfig(),
 			new MegaWarnTimeConfig(),
-			new RemoveRoleConfig()
+			new RemoveRoleConfig(),
+			new VoiceTextChannelsConfig()
 	};
 	private static Path path;
 	private static JSONObject settings;

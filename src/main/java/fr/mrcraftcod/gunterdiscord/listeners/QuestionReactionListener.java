@@ -29,7 +29,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 	public void onMessageReactionAdd(MessageReactionAddEvent event){
 		super.onMessageReactionAdd(event);
 		try{
-			if(new QuestionsChannelConfig().isChannel(event.getTextChannel())){
+			if(new QuestionsChannelConfig().isTextChannel(event.getTextChannel())){
 				if(!event.getUser().isBot()){
 					BasicEmotes emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
 					if(emote == BasicEmotes.CHECK_OK){
@@ -66,7 +66,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 					}
 				}
 			}
-			else if(new QuestionsFinalChannelConfig().isChannel(event.getTextChannel())){
+			else if(new QuestionsFinalChannelConfig().isTextChannel(event.getTextChannel())){
 				if(!event.getUser().isBot()){
 					BasicEmotes emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
 					if(emote == BasicEmotes.CHECK_OK){
