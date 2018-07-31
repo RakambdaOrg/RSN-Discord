@@ -2,7 +2,6 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.settings.configs.VoiceTextChannelsConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceJoinEvent;
@@ -38,7 +37,7 @@ public class VoiceTextChannelsListener extends ListenerAdapter{
 				});
 				
 				channel.putPermissionOverride(event.getMember()).setAllow(Permission.MESSAGE_READ).queue();
-				Actions.sendMessage(channel, "%s a rejoint le channel", Utilities.getMemberToLog(event.getMember()));
+				Actions.sendMessage(channel, "%s a rejoint le channel", event.getMember().getAsMention());
 			}
 		}
 		catch(Exception e){
@@ -50,11 +49,10 @@ public class VoiceTextChannelsListener extends ListenerAdapter{
 	public void onGuildVoiceLeave(GuildVoiceLeaveEvent event){
 		super.onGuildVoiceLeave(event);
 		try{
-			
 			TextChannel channel = CHANNELS.get(event.getChannelLeft().getIdLong());
 			if(Objects.nonNull(channel)){
 				channel.putPermissionOverride(event.getMember()).setDeny(Permission.MESSAGE_READ).queue();
-				if(channel.getMembers().isEmpty()){
+				if(event.getChannelLeft().getMembers().isEmpty()){
 					channel.delete().reason("No more users in the vocal").queue();
 				}
 			}
