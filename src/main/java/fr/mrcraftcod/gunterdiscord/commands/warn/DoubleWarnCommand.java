@@ -2,8 +2,9 @@ package fr.mrcraftcod.gunterdiscord.commands.warn;
 
 import fr.mrcraftcod.gunterdiscord.settings.configs.DoubleWarnRoleConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.DoubleWarnTimeConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configurations.DoubleValueConfiguration;
 import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleRoleConfiguration;
-import fr.mrcraftcod.gunterdiscord.settings.configurations.ValueConfiguration;
+import net.dv8tion.jda.core.entities.Guild;
 import java.util.List;
 
 /**
@@ -14,6 +15,16 @@ import java.util.List;
  */
 public class DoubleWarnCommand extends WarnCommand{
 	@Override
+	protected SingleRoleConfiguration getRoleConfig(Guild guild){
+		return new DoubleWarnRoleConfig(guild);
+	}
+	
+	@Override
+	protected DoubleValueConfiguration getTimeConfig(Guild guild){
+		return new DoubleWarnTimeConfig(guild);
+	}
+	
+	@Override
 	public String getName(){
 		return "Double warn";
 	}
@@ -21,15 +32,5 @@ public class DoubleWarnCommand extends WarnCommand{
 	@Override
 	public List<String> getCommand(){
 		return List.of("doublewarn", "dwarn");
-	}
-	
-	@Override
-	protected SingleRoleConfiguration getRoleConfig(){
-		return new DoubleWarnRoleConfig();
-	}
-	
-	@Override
-	protected ValueConfiguration getTimeConfig(){
-		return new DoubleWarnTimeConfig();
 	}
 }

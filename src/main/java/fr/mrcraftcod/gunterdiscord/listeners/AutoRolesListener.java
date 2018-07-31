@@ -17,7 +17,7 @@ public class AutoRolesListener extends ListenerAdapter{
 	public void onGuildMemberJoin(GuildMemberJoinEvent event){
 		super.onGuildMemberJoin(event);
 		try{
-			Actions.giveRole(event.getMember(), new AutoRolesConfig().getAsList(event.getGuild()));
+			Actions.giveRole(event.getUser(), new AutoRolesConfig(event.getGuild()).getAsList());
 		}
 		catch(Exception e){
 			getLogger(event.getGuild()).error("Error on user join", e);

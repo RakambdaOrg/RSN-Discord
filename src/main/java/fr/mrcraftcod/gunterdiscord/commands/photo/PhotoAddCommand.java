@@ -71,15 +71,15 @@ public class PhotoAddCommand extends BasicCommand{
 				//noinspection ResultOfMethodCallIgnored
 				saveFile.getParentFile().mkdirs();
 				if(attachment.download(saveFile) && attachment.getSize() == saveFile.length()){
-					new PhotoConfig().addValue(event.getGuild(), user.getIdLong(), saveFile.getPath());
-					Actions.giveRole(event.getGuild(), user, new TrombinoscopeRoleConfig().getRole(event.getGuild()));
+					new PhotoConfig(event.getGuild()).addValue(user.getIdLong(), saveFile.getPath());
+					Actions.giveRole(event.getGuild(), user, new TrombinoscopeRoleConfig(event.getGuild()).getObject());
 					EmbedBuilder builder = new EmbedBuilder();
 					builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 					builder.setColor(Color.GREEN);
 					builder.setTitle("Nouvelle photo");
 					builder.addField("Utilisateur", user.getAsMention(), true);
 					builder.addField("ID", "" + event.getMessage().getCreationTime().toEpochSecond(), true);
-					Actions.sendMessage(new PhotoChannelConfig().getTextChannel(event.getGuild()), builder.build());
+					Actions.sendMessage(new PhotoChannelConfig(event.getGuild()).getObject(), builder.build());
 				}
 				else{
 					Actions.replyPrivate(event.getGuild(), event.getAuthor(), "L'envoi a échoué");

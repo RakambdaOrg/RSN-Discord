@@ -15,7 +15,6 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.apache.commons.io.IOUtils;
 import java.awt.*;
 import java.io.IOException;
-import java.io.InvalidClassException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,23 +52,22 @@ public class HangmanListener extends ListenerAdapter{
 	 *
 	 * @param guild The guild the game is in.
 	 *
-	 * @throws InvalidClassException   If something went wrong.
 	 * @throws NoValueDefinedException If something went wrong.
 	 */
-	private HangmanListener(Guild guild) throws InvalidClassException, NoValueDefinedException{
+	private HangmanListener(Guild guild) throws NoValueDefinedException{
 		this.guild = guild;
 		executor = Executors.newSingleThreadScheduledExecutor();
 		hangStage = 0;
 		playerCount = 0;
 		hiddenWord = new StringBuilder();
 		realWord = "";
-		role = new HangmanRoleConfig().getRole(guild);
+		role = new HangmanRoleConfig(guild).getObject();
 		if(role == null){
 			throw new IllegalStateException("Hangman role doesn't exists");
 		}
 		badTry = new ArrayList<>();
-		String prefix = new PrefixConfig().getString(guild);
-		TextChannel channel = new HangmanChannelConfig().getTextChannel(guild);
+		String prefix = new PrefixConfig(guild).getObject();
+		TextChannel channel = new HangmanChannelConfig(guild).getObject();
 		if(channel == null){
 			throw new IllegalStateException("Hangman channel doesn't exists");
 		}
@@ -254,15 +252,15 @@ public class HangmanListener extends ListenerAdapter{
 	 * Display the hangman in the chat.
 	 */
 	private void displayHangman(){
-		Actions.sendFile(new HangmanChannelConfig().getTextChannel(guild), "/hangman/level_" + hangStage + ".png", hangStage + ".png");
+		Actions.sendFile(new HangmanChannelConfig(guild).getObject(null), "/hangman/level_" + hangStage + ".png", hangStage + ".png");
 	}
 	
 	/**
 	 * Pick a random user to say a letter.
 	 */
 	private void pickRandomUser(){
-		TextChannel channel = new HangmanChannelConfig().getTextChannel(guild);
-		List<Member> members = Utilities.getMembersRole(role);
+		TextChannel channel = new HangmanChannelConfig(guild).getObject(null);
+		List<Member> members = Utilities.getMembersWithRole(role);
 		if(members.size() > 1){
 			members = members.stream().filter(member -> member.getUser().getIdLong() != waitingUser.getIdLong()).collect(Collectors.toList());
 		}
@@ -270,9 +268,9 @@ public class HangmanListener extends ListenerAdapter{
 			Member member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
 			waitingUser = member.getUser();
 			try{
-				Actions.sendMessage(channel, "L'élu est %s, c'est a lui d'indiquer la lettre que vous avez choisit grâce à la commande %spendu l <lettre>\n", member.getAsMention(), new PrefixConfig().getString(guild, "g?"));
+				Actions.sendMessage(channel, "L'élu est %s, c'est a lui d'indiquer la lettre que vous avez choisit grâce à la commande %spendu l <lettre>\n", member.getAsMention(), new PrefixConfig(guild).getObject("g?"));
 			}
-			catch(InvalidClassException | IllegalArgumentException e){
+			catch(IllegalArgumentException e){
 				getLogger(getGuild()).error("Error getting prefix", e);
 			}
 			if(lastFuture != null){
@@ -304,7 +302,7 @@ public class HangmanListener extends ListenerAdapter{
 	 */
 	public void guess(Member member, char letter){
 		if(waitingUser != null && member.getUser().getIdLong() == waitingUser.getIdLong()){
-			TextChannel channel = new HangmanChannelConfig().getTextChannel(guild);
+			TextChannel channel = new HangmanChannelConfig(guild).getObject(null);
 			Actions.sendMessage(channel, "La lettre choisie est %c.", letter);
 			int changed = discoverLetter(letter);
 			if(changed <= 0){
@@ -341,7 +339,7 @@ public class HangmanListener extends ListenerAdapter{
 	 * Display the current cord with letters tried.
 	 */
 	public void displayWord(){
-		Actions.sendMessage(new HangmanChannelConfig().getTextChannel(guild), "Lettres déjà essayées: %s\nVoici le mot: %s", badTry, hiddenWord);
+		Actions.sendMessage(new HangmanChannelConfig(guild).getObject(null), "Lettres déjà essayées: %s\nVoici le mot: %s", badTry, hiddenWord);
 	}
 	
 	/**
@@ -357,7 +355,7 @@ public class HangmanListener extends ListenerAdapter{
 		builder.setTitle("Un nouveau joueur a rejoint la partie!");
 		builder.setDescription("Pour les règles regardes le message pinné.");
 		builder.addField("Utilisateur", member.getUser().getAsMention(), false);
-		Actions.sendMessage(new HangmanChannelConfig().getTextChannel(member.getGuild()), builder.build());
+		Actions.sendMessage(new HangmanChannelConfig(guild).getObject(null), builder.build());
 	}
 	
 	@Override
@@ -402,7 +400,7 @@ public class HangmanListener extends ListenerAdapter{
 	 * Remove the users from the channel.
 	 */
 	private void removeUsers(){
-		TextChannel channel = new HangmanChannelConfig().getTextChannel(guild);
+		TextChannel channel = new HangmanChannelConfig(guild).getObject(null);
 		channel.getMembers().stream().filter(m -> m.getUser().getIdLong() != channel.getJDA().getSelfUser().getIdLong()).forEach(member -> channel.getGuild().getController().removeRolesFromMember(member, role).queue());
 		games.remove(this);
 		for(Message message : channel.getIterableHistory().cache(false)){

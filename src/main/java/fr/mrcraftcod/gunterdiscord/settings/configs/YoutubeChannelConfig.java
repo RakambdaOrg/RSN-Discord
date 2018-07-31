@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.settings.configs;
 
 import fr.mrcraftcod.gunterdiscord.settings.configurations.MapConfiguration;
+import net.dv8tion.jda.core.entities.Guild;
 import java.util.function.Function;
 
 /**
@@ -10,6 +11,15 @@ import java.util.function.Function;
  * @since 2018-04-15
  */
 public class YoutubeChannelConfig extends MapConfiguration<Long, String>{
+	/**
+	 * Constructor.
+	 *
+	 * @param guild The guild for this config.
+	 */
+	public YoutubeChannelConfig(Guild guild){
+		super(guild);
+	}
+	
 	@Override
 	protected Function<String, Long> getKeyParser(){
 		return Long::parseLong;

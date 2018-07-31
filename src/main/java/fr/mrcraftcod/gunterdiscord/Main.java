@@ -41,7 +41,7 @@ public class Main{
 			Settings.init(Paths.get(new File(SETTINGS_NAME).toURI()));
 			jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).buildBlocking();
 			jda.addEventListener(new CommandsMessageListener());
-			// jda.addEventListener(new BannedRegexeMessageListener());
+			// jda.addEventListener(new BannedRegexMessageListener());
 			jda.addEventListener(new OnlyImagesMessageListener());
 			jda.addEventListener(new ShutdownListener());
 			jda.addEventListener(new LogListener());

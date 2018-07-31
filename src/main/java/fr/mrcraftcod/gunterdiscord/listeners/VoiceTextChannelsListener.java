@@ -28,7 +28,7 @@ public class VoiceTextChannelsListener extends ListenerAdapter{
 	public void onGuildVoiceJoin(GuildVoiceJoinEvent event){
 		super.onGuildVoiceJoin(event);
 		try{
-			if(new VoiceTextChannelsConfig().contains(event.getGuild(), event.getChannelJoined().getIdLong())){
+			if(new VoiceTextChannelsConfig(event.getGuild()).getAsList().contains(event.getChannelJoined().getIdLong())){
 				TextChannel channel = CHANNELS.computeIfAbsent(event.getChannelJoined().getIdLong(), id -> {
 					ChannelAction creator = event.getGuild().getController().createTextChannel(event.getChannelJoined().getName());
 					creator.setParent(event.getChannelJoined().getParent());

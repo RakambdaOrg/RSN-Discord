@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.settings.configs;
 
 import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleChannelConfiguration;
+import net.dv8tion.jda.core.entities.Guild;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -9,6 +10,15 @@ import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleChannelConfigur
  * @since 2018-04-15
  */
 public class QuizChannelConfig extends SingleChannelConfiguration{
+	/**
+	 * Constructor.
+	 *
+	 * @param guild The guild for this config.
+	 */
+	public QuizChannelConfig(Guild guild){
+		super(guild);
+	}
+	
 	@Override
 	public String getName(){
 		return "quizChannel";

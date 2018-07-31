@@ -15,7 +15,6 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.awt.*;
-import java.io.InvalidClassException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -72,7 +71,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 			if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
 				Actions.deleteMessage(event.getMessage());
 				LinkedList<String> args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
-				String cmdText = args.pop().substring(new PrefixConfig().getString(event.getGuild(), "g?").length());
+				String cmdText = args.pop().substring(new PrefixConfig(event.getGuild()).getObject("g?").length());
 				Command command = getCommand(cmdText);
 				if(command != null){
 					if(command.getScope() == -5 || command.getScope() == event.getChannel().getType().getId()){
@@ -138,13 +137,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 	 * @return True if a command, false otherwise.
 	 */
 	private static boolean isCommand(Guild guild, String text){
-		try{
-			return text.startsWith(new PrefixConfig().getString(guild, "g?"));
-		}
-		catch(InvalidClassException e){
-			getLogger(guild).warn("Error testing command", e);
-		}
-		return false;
+		return text.startsWith(new PrefixConfig(guild).getObject("g?"));
 	}
 	
 	/**

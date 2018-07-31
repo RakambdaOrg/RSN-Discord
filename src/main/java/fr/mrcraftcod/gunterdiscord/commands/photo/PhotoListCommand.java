@@ -37,7 +37,7 @@ public class PhotoListCommand extends BasicCommand{
 		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 		builder.setColor(Color.GREEN);
 		builder.setTitle("Participants du trombinoscope");
-		Utilities.getMembersRole(new TrombinoscopeRoleConfig().getRole(event.getGuild())).stream().map(u -> u.getUser().getName()).forEach(u -> builder.addField("", u, false));
+		Utilities.getMembersWithRole(new TrombinoscopeRoleConfig(event.getGuild()).getObject()).stream().map(u -> u.getUser().getName()).forEach(u -> builder.addField("", u, false));
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;
 	}

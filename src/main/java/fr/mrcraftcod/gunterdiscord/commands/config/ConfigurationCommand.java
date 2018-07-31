@@ -13,6 +13,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -63,7 +64,7 @@ public class ConfigurationCommand extends BasicCommand{
 			Configuration configuration = Settings.getSettings(args.pop());
 			if(configuration != null){
 				List<String> beforeArgs = new LinkedList<>(args);
-				ActionResult result = processWithValue(event, configuration, args);
+				ActionResult result = processWithValue(event, configuration.getClass(), args);
 				if(result == ActionResult.ERROR){
 					EmbedBuilder builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
@@ -122,26 +123,32 @@ public class ConfigurationCommand extends BasicCommand{
 	 *
 	 * @return The result that happened.
 	 */
-	private ActionResult processWithValue(MessageReceivedEvent event, Configuration configuration, LinkedList<String> args){
-		if(configuration.isActionAllowed(getType())){
-			try{
-				getLogger(event.getGuild()).info("Handling change {} on config {} with parameters {}", getType().name(), configuration, args);
-				return configuration.handleChange(event, getType(), args);
+	private ActionResult processWithValue(MessageReceivedEvent event, Class<? extends Configuration> configuration, LinkedList<String> args){
+		try{
+			Configuration configInstance = configuration.getConstructor(Guild.class).newInstance(event.getGuild());
+			if(configInstance.getAllowedActions().contains(getType())){
+				try{
+					getLogger(event.getGuild()).info("Handling change {} on config {} with parameters {}", getType().name(), configuration, args);
+					return configInstance.handleChange(event, getType(), args);
+				}
+				catch(Exception e){
+					EmbedBuilder builder = new EmbedBuilder();
+					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+					builder.setColor(Color.RED);
+					builder.setTitle("Erreur durant l'opération");
+					builder.setDescription("Commande: " + getName());
+					builder.addField("Raison", e.getMessage(), false);
+					builder.addField("Configuration", configuration.getName(), false);
+					Actions.reply(event, builder.build());
+					getLogger(event.getGuild()).error("Error handling configuration change", e);
+				}
 			}
-			catch(Exception e){
-				EmbedBuilder builder = new EmbedBuilder();
-				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-				builder.setColor(Color.RED);
-				builder.setTitle("Erreur durant l'opération");
-				builder.setDescription("Commande: " + getName());
-				builder.addField("Raison", e.getMessage(), false);
-				builder.addField("Configuration", configuration.getName(), false);
-				Actions.reply(event, builder.build());
-				getLogger(event.getGuild()).error("Error handling configuration change", e);
+			else{
+				Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Opération impossible").addField("Raison", "Opération " + getType().name() + " impossible sur cette configuration", false).addField("Configuration", configuration.getName(), false).build());
 			}
 		}
-		else{
-			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Opération impossible").addField("Raison", "Opération " + getType().name() + " impossible sur cette configuration", false).addField("Configuration", configuration.getName(), false).build());
+		catch(InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e){
+			getLogger(event.getGuild()).error("Error instantiating config", e);
 		}
 		return ActionResult.ERROR;
 	}

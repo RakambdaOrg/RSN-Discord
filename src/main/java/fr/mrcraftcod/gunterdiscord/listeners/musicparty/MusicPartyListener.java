@@ -50,7 +50,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 		}
 		this.voiceChannel = voiceChannel;
 		this.scores = new HashMap<>();
-		this.musicPartyChannel = new MusicPartyChannelConfig().getTextChannel(guild);
+		this.musicPartyChannel = new MusicPartyChannelConfig(guild).getObject(null);
 		if(musicPartyChannel == null){
 			throw new IllegalStateException("Music party channel not defined");
 		}

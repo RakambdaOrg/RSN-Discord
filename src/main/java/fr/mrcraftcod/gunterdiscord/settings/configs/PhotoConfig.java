@@ -4,6 +4,7 @@ import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.configurations.MapListConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
@@ -20,6 +21,15 @@ import java.util.function.Function;
  * @since 2018-04-15
  */
 public class PhotoConfig extends MapListConfiguration<Long, String>{
+	/**
+	 * Constructor.
+	 *
+	 * @param guild The guild for this config.
+	 */
+	public PhotoConfig(Guild guild){
+		super(guild);
+	}
+	
 	@Override
 	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args){
 		if(action == ConfigurationCommand.ChangeConfigType.SHOW){
@@ -27,7 +37,7 @@ public class PhotoConfig extends MapListConfiguration<Long, String>{
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Valeurs de " + getName());
-			Map<Long, ArrayList<String>> map = getAsMap(event.getGuild());
+			Map<Long, ArrayList<String>> map = getAsMap();
 			map.keySet().stream().map(k -> new MessageEmbed.Field(k.toString(), map.get(k).toString(), false)).forEach(builder::addField);
 			Actions.reply(event, builder.build());
 			return ConfigurationCommand.ActionResult.NONE;

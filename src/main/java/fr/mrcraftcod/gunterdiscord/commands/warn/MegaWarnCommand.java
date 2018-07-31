@@ -2,8 +2,9 @@ package fr.mrcraftcod.gunterdiscord.commands.warn;
 
 import fr.mrcraftcod.gunterdiscord.settings.configs.MegaWarnRoleConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.MegaWarnTimeConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configurations.DoubleValueConfiguration;
 import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleRoleConfiguration;
-import fr.mrcraftcod.gunterdiscord.settings.configurations.ValueConfiguration;
+import net.dv8tion.jda.core.entities.Guild;
 import java.util.List;
 
 /**
@@ -14,6 +15,16 @@ import java.util.List;
  */
 public class MegaWarnCommand extends WarnCommand{
 	@Override
+	protected SingleRoleConfiguration getRoleConfig(Guild guild){
+		return new MegaWarnRoleConfig(guild);
+	}
+	
+	@Override
+	protected DoubleValueConfiguration getTimeConfig(Guild guild){
+		return new MegaWarnTimeConfig(guild);
+	}
+	
+	@Override
 	public String getName(){
 		return "Mega warn";
 	}
@@ -21,15 +32,5 @@ public class MegaWarnCommand extends WarnCommand{
 	@Override
 	public List<String> getCommand(){
 		return List.of("megawarn", "mwarn");
-	}
-	
-	@Override
-	protected SingleRoleConfiguration getRoleConfig(){
-		return new MegaWarnRoleConfig();
-	}
-	
-	@Override
-	protected ValueConfiguration getTimeConfig(){
-		return new MegaWarnTimeConfig();
 	}
 }

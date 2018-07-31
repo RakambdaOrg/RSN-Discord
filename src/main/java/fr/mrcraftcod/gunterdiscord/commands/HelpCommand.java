@@ -35,7 +35,7 @@ public class HelpCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		String prefix = new PrefixConfig().getString(event.getGuild(), "");
+		String prefix = new PrefixConfig(event.getGuild()).getObject("");
 		if(args.size() < 1){
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setColor(Color.GREEN);

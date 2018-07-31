@@ -1,6 +1,5 @@
-package fr.mrcraftcod.gunterdiscord.settings.configs;
+package fr.mrcraftcod.gunterdiscord.settings.configurations;
 
-import fr.mrcraftcod.gunterdiscord.settings.configurations.ListConfiguration;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.function.BiFunction;
@@ -12,20 +11,14 @@ import java.util.function.Function;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class BannedRegexConfig extends ListConfiguration<String>{
-	
+public abstract class IntegerValueConfiguration extends ValueConfiguration<Integer>{
 	/**
 	 * Constructor.
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public BannedRegexConfig(Guild guild){
+	protected IntegerValueConfiguration(Guild guild){
 		super(guild);
-	}
-	
-	@Override
-	public String getName(){
-		return "bannedRegex";
 	}
 	
 	@Override
@@ -34,12 +27,12 @@ public class BannedRegexConfig extends ListConfiguration<String>{
 	}
 	
 	@Override
-	protected Function<String, String> getValueParser(){
-		return s -> s;
+	protected Function<String, Integer> getConfigParser(){
+		return Integer::parseInt;
 	}
 	
 	@Override
-	protected Function<String, String> getConfigParser(){
-		return s -> s;
+	protected Function<Integer, String> getValueParser(){
+		return Object::toString;
 	}
 }

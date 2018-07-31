@@ -72,7 +72,7 @@ public class Utilities{
 	 * @return True if moderator, false otherwise.
 	 */
 	public static boolean isModerator(Member member){
-		return Utilities.hasRoleIDs(member, new ModoRolesConfig().getAsList(member.getGuild())) || isAdmin(member);
+		return Utilities.hasRole(member, new ModoRolesConfig(member.getGuild()).getAsList()) || isAdmin(member);
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public class Utilities{
 	 *
 	 * @return The members that have this role.
 	 */
-	public static List<Member> getMembersRole(Role role){
+	public static List<Member> getMembersWithRole(Role role){
 		return role.getGuild().getMembersWithRoles(role);
 	}
 	
@@ -136,8 +136,8 @@ public class Utilities{
 	 *
 	 * @return The members that have this role.
 	 */
-	public static List<Member> getMembersRole(List<Role> roles){
-		return roles.stream().map(Utilities::getMembersRole).flatMap(Collection::stream).collect(Collectors.toList());
+	public static List<Member> getMembersWithRole(List<Role> roles){
+		return roles.stream().map(Utilities::getMembersWithRole).flatMap(Collection::stream).collect(Collectors.toList());
 	}
 	
 	/**

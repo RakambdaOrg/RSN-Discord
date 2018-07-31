@@ -58,9 +58,9 @@ public class PhotoDeleteCommand extends BasicCommand{
 			
 			if(user.getIdLong() != event.getAuthor().getIdLong()){
 				if(Utilities.isModerator(event.getMember()) || Utilities.isAdmin(event.getMember())){
-					new PhotoConfig().deleteKeyValue(event.getGuild(), user.getIdLong(), args.poll());
-					if(new PhotoConfig().getValue(event.getGuild(), user.getIdLong()).isEmpty()){
-						Actions.removeRole(user, new TrombinoscopeRoleConfig().getRole(event.getGuild()));
+					new PhotoConfig(event.getGuild()).deleteKeyValue(user.getIdLong(), args.poll());
+					if(new PhotoConfig(event.getGuild()).getValue(user.getIdLong()).isEmpty()){
+						Actions.removeRole(user, new TrombinoscopeRoleConfig(event.getGuild()).getObject());
 					}
 					Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Photos de %s supprimées", user.getAsMention());
 				}
@@ -69,16 +69,16 @@ public class PhotoDeleteCommand extends BasicCommand{
 				}
 			}
 			else{
-				new PhotoConfig().deleteKeyValue(event.getGuild(), user.getIdLong(), args.poll());
-				if(new PhotoConfig().getValue(event.getGuild(), user.getIdLong()).isEmpty()){
-					Actions.removeRole(user, new TrombinoscopeRoleConfig().getRole(event.getGuild()));
+				new PhotoConfig(event.getGuild()).deleteKeyValue(user.getIdLong(), args.poll());
+				if(new PhotoConfig(event.getGuild()).getValue(user.getIdLong()).isEmpty()){
+					Actions.removeRole(user, new TrombinoscopeRoleConfig(event.getGuild()).getObject());
 				}
 				Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Photos supprimées");
 			}
 		}
 		else{
-			new PhotoConfig().deleteKey(event.getGuild(), event.getAuthor().getIdLong());
-			Actions.removeRole(event.getAuthor(), new TrombinoscopeRoleConfig().getRole(event.getGuild()));
+			new PhotoConfig(event.getGuild()).deleteKey(event.getAuthor().getIdLong());
+			Actions.removeRole(event.getAuthor(), new TrombinoscopeRoleConfig(event.getGuild()).getObject());
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Photos supprimées");
 		}
 		return CommandResult.SUCCESS;

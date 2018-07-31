@@ -62,15 +62,15 @@ public class PhotoGetCommand extends BasicCommand{
 		}
 		
 		Member member = event.getGuild().getMember(user);
-		if(member == null || !Utilities.hasRole(member, new TrombinoscopeRoleConfig().getRole(event.getGuild()))){
+		if(member == null || !Utilities.hasRole(member, new TrombinoscopeRoleConfig(event.getGuild()).getObject())){
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
 			builder.setTitle("L'utilisateur ne fait pas parti du trombinoscope");
 			Actions.reply(event, builder.build());
 		}
-		else if(new PhotoChannelConfig().isTextChannel(event.getTextChannel())){
-			List<String> paths = new PhotoConfig().getValue(event.getGuild(), user.getIdLong());
+		else if(new PhotoChannelConfig(event.getGuild()).isChannel(event.getTextChannel())){
+			List<String> paths = new PhotoConfig(event.getGuild()).getValue(user.getIdLong());
 			if(paths != null && !paths.isEmpty()){
 				boolean randomGen = true;
 				int rnd = ThreadLocalRandom.current().nextInt(paths.size());

@@ -35,13 +35,13 @@ public class YoutubeCommand extends BasicCommand{
 		if(event.getMessage().getMentionedMembers().size() > 0){
 			args.poll();
 			Member member = event.getMessage().getMentionedMembers().get(0);
-			if(Utilities.hasRole(member, new YoutubeRoleConfig().getRole(event.getGuild()))){
+			if(Utilities.hasRole(member, new YoutubeRoleConfig(event.getGuild()).getObject())){
 				String URL = args.poll();
 				if(URL != null){
 					if(Utilities.isAdmin(event.getMember())){
 						try{
 							URL url = new URL(URL);
-							new YoutubeChannelConfig().addValue(event.getGuild(), member.getUser().getIdLong(), url.toString());
+							new YoutubeChannelConfig(event.getGuild()).addValue(member.getUser().getIdLong(), url.toString());
 						}
 						catch(Exception e){
 							e.printStackTrace();
@@ -53,7 +53,7 @@ public class YoutubeCommand extends BasicCommand{
 					}
 				}
 				else{
-					Actions.reply(event, "La chaine de %s est disponible ici: %s", member.getAsMention(), new YoutubeChannelConfig().getValue(event.getGuild(), member.getUser().getIdLong()));
+					Actions.reply(event, "La chaine de %s est disponible ici: %s", member.getAsMention(), new YoutubeChannelConfig(event.getGuild()).getValue(member.getUser().getIdLong()));
 				}
 			}
 			else{

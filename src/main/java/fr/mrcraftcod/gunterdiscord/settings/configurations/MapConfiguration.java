@@ -9,10 +9,9 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.json.JSONObject;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+import static fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand.ChangeConfigType.*;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -23,16 +22,24 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public abstract class MapConfiguration<K, V> extends Configuration{
 	/**
+	 * Constructor.
+	 *
+	 * @param guild The guild for this config.
+	 */
+	protected MapConfiguration(Guild guild){
+		super(guild);
+	}
+	
+	/**
 	 * Get the value from the given key.
 	 *
-	 * @param guild The guild.
 	 * @param key   The key to get.
 	 *
 	 * @return The value or null if not found.
 	 */
-	public V getValue(Guild guild, K key){
+	public V getValue(K key){
 		try{
-			return getAsMap(guild).get(key);
+			return getAsMap().get(key);
 		}
 		catch(Exception e){
 			getLogger(guild).error("Can't get value {} with key {}", getName(), key, e);
@@ -43,15 +50,13 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 	/**
 	 * Get the map of this configuration.
 	 *
-	 * @param guild The guild.
-	 *
 	 * @return The map.
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
-	public Map<K, V> getAsMap(Guild guild) throws IllegalArgumentException{
+	public Map<K, V> getAsMap() throws IllegalArgumentException{
 		Map<K, V> elements = new HashMap<>();
-		JSONObject map = getObjectMap(guild);
+		JSONObject map = getObjectMap();
 		if(map == null){
 			Settings.resetMap(guild, this);
 		}
@@ -67,13 +72,11 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 	/**
 	 * Get the JSON Object.
 	 *
-	 * @param guild The guild.
-	 *
 	 * @return The JSON object.
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
-	private JSONObject getObjectMap(Guild guild) throws IllegalArgumentException{
+	private JSONObject getObjectMap() throws IllegalArgumentException{
 		if(getType() != ConfigType.MAP){
 			throw new IllegalArgumentException("Not a map config");
 		}
@@ -95,18 +98,13 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 	protected abstract Function<String, V> getValueParser();
 	
 	@Override
-	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action){
-		return action == ConfigurationCommand.ChangeConfigType.ADD || action == ConfigurationCommand.ChangeConfigType.REMOVE || action == ConfigurationCommand.ChangeConfigType.SHOW;
-	}
-	
-	@Override
 	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args){
-		if(action == ConfigurationCommand.ChangeConfigType.SHOW){
+		if(action == SHOW){
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Valeurs de " + getName());
-			Map<K, V> map = getAsMap(event.getGuild());
+			Map<K, V> map = getAsMap();
 			map.keySet().stream().map(k -> k + " -> " + map.get(k)).forEach(o -> builder.addField("", o, false));
 			Actions.reply(event, builder.build());
 			return ConfigurationCommand.ActionResult.NONE;
@@ -117,16 +115,21 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 				if(args.size() < 2){
 					return ConfigurationCommand.ActionResult.ERROR;
 				}
-				addValue(event.getGuild(), getKeyParser().apply(args.poll()), getValueParser().apply(args.poll()));
+				addValue(getKeyParser().apply(args.poll()), getValueParser().apply(args.poll()));
 				return ConfigurationCommand.ActionResult.OK;
 			case REMOVE:
 				if(args.size() < 1){
 					return ConfigurationCommand.ActionResult.ERROR;
 				}
-				deleteKey(event.getGuild(), getKeyParser().apply(args.poll()));
+				deleteKey(getKeyParser().apply(args.poll()));
 				return ConfigurationCommand.ActionResult.OK;
 		}
 		return ConfigurationCommand.ActionResult.ERROR;
+	}
+	
+	@Override
+	public Collection<ConfigurationCommand.ChangeConfigType> getAllowedActions(){
+		return Set.of(ADD, SHOW, REMOVE);
 	}
 	
 	@Override
@@ -137,21 +140,19 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 	/**
 	 * Add a value to the map.
 	 *
-	 * @param guild The guild.
 	 * @param key   The key to add into.
 	 * @param value The value to set at the key.
 	 */
-	public void addValue(Guild guild, K key, V value){
+	public void addValue(K key, V value){
 		Settings.mapValue(guild, this, key, value);
 	}
 	
 	/**
 	 * Delete the key.
 	 *
-	 * @param guild The guild.
 	 * @param key   The key.
 	 */
-	public void deleteKey(Guild guild, K key){
+	public void deleteKey(K key){
 		Settings.deleteKey(guild, this, key);
 	}
 }

@@ -19,7 +19,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public class BannedRegexeMessageListener extends ListenerAdapter{
+public class BannedRegexMessageListener extends ListenerAdapter{
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event){
 		super.onMessageReceived(event);
@@ -65,7 +65,7 @@ public class BannedRegexeMessageListener extends ListenerAdapter{
 	 */
 	private static String isBanned(Guild guild, String text){
 		text = text.toLowerCase();
-		for(String regex : new BannedRegexConfig().getAsList(guild)){
+		for(String regex : new BannedRegexConfig(guild).getAsList()){
 			Matcher matcher = Pattern.compile(regex).matcher(text);
 			if(matcher.matches()){
 				return matcher.group(0);
