@@ -54,6 +54,7 @@ public class VoiceTextChannelsListener extends ListenerAdapter{
 				channel.putPermissionOverride(event.getMember()).setDeny(Permission.MESSAGE_READ).queue();
 				if(event.getChannelLeft().getMembers().isEmpty()){
 					channel.delete().reason("No more users in the vocal").queue();
+					CHANNELS.remove(event.getChannelLeft().getIdLong());
 				}
 			}
 		}
