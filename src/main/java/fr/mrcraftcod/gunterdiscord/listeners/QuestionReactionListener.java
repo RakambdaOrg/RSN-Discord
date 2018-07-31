@@ -45,7 +45,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 									User user = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("Utilisateur")).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e.getValue()).replaceAll("")))).findAny().orElse(null);
 									String ID = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("ID")).map(MessageEmbed.Field::getValue).findAny().orElse("");
 									if(user != null){
-										Actions.replyPrivate(event.getGuild(), user, "Votre question (ID: {}) a été acceptée et transférée", ID);
+										Actions.replyPrivate(event.getGuild(), user, "Votre question (ID: %s) a été acceptée et transférée", ID);
 									}
 								}
 								catch(Exception e){
@@ -64,7 +64,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 								User user = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("Utilisateur")).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e.getValue()).replaceAll("")))).findAny().orElse(null);
 								String ID = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("ID")).map(MessageEmbed.Field::getValue).findAny().orElse("");
 								if(user != null){
-									Actions.replyPrivate(event.getGuild(), user, "Votre question (ID: {}) a été refusée", ID);
+									Actions.replyPrivate(event.getGuild(), user, "Votre question (ID: %s) a été refusée", ID);
 								}
 							}
 							catch(Exception e){
