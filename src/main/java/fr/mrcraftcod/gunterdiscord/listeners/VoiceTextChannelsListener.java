@@ -68,7 +68,8 @@ public class VoiceTextChannelsListener extends ListenerAdapter{
 	/**
 	 * Handle things when a user joins a channel.
 	 *
-	 * @param event The event.
+	 * @param event        The event.
+	 * @param voiceChannel The voice channel joined.
 	 */
 	private static void joinVoice(GenericGuildVoiceEvent event, VoiceChannel voiceChannel){
 		if(new VoiceTextChannelsConfig(event.getGuild()).contains(voiceChannel.getIdLong())){
