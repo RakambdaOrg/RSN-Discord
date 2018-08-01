@@ -2,14 +2,13 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.settings.configs.ModoRolesConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.VoiceTextChannelsAssociationConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.VoiceTextChannelsConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.events.guild.voice.GuildVoiceJoinEvent;
-import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
-import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
-import net.dv8tion.jda.core.events.guild.voice.GuildVoiceUpdateEvent;
+import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.core.events.guild.voice.*;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.requests.restaction.ChannelAction;
 import java.util.List;
@@ -22,6 +21,29 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-07-31
  */
 public class VoiceTextChannelsListener extends ListenerAdapter{
+	@Override
+	public void onGuildVoiceJoin(GuildVoiceJoinEvent event){
+		super.onGuildVoiceJoin(event);
+		try{
+			joinVoice(event, event.getChannelJoined());
+		}
+		catch(Exception e){
+			getLogger(event.getGuild()).error("", e);
+		}
+	}
+	
+	@Override
+	public void onGuildVoiceMove(GuildVoiceMoveEvent event){
+		super.onGuildVoiceMove(event);
+		try{
+			leaveVoice(event);
+			joinVoice(event, event.getChannelJoined());
+		}
+		catch(Exception e){
+			getLogger(event.getGuild()).error("", e);
+		}
+	}
+	
 	/**
 	 * Handle things when a user leaves a channel.
 	 *
@@ -43,14 +65,35 @@ public class VoiceTextChannelsListener extends ListenerAdapter{
 		}
 	}
 	
-	@Override
-	public void onGuildVoiceMove(GuildVoiceMoveEvent event){
-		super.onGuildVoiceMove(event);
-		try{
-			leaveVoice(event);
-		}
-		catch(Exception e){
-			getLogger(event.getGuild()).error("", e);
+	/**
+	 * Handle things when a user joins a channel.
+	 *
+	 * @param event The event.
+	 */
+	private static void joinVoice(GenericGuildVoiceEvent event, VoiceChannel voiceChannel){
+		if(new VoiceTextChannelsConfig(event.getGuild()).contains(voiceChannel.getIdLong())){
+			VoiceTextChannelsAssociationConfig config = new VoiceTextChannelsAssociationConfig(event.getGuild());
+			TextChannel channel = null;
+			Long channelID = config.getValue(voiceChannel.getIdLong());
+			if(channelID != null){
+				channel = event.getGuild().getTextChannelById(channelID);
+			}
+			
+			if(channel == null){
+				ChannelAction creator = event.getGuild().getController().createTextChannel(voiceChannel.getName());
+				creator.setParent(voiceChannel.getParent());
+				creator.setTopic("Channel pour les utilisateurs du vocal du même nom");
+				creator.addPermissionOverride(event.getGuild().getPublicRole(), List.of(), List.of(Permission.MESSAGE_READ));
+				for(Role role : new ModoRolesConfig(event.getGuild()).getAsList()){
+					creator.addPermissionOverride(role, List.of(Permission.MESSAGE_READ), List.of());
+				}
+				channel = (TextChannel) creator.complete();
+				config.addValue(voiceChannel.getIdLong(), channel.getIdLong());
+				getLogger(event.getGuild()).info("Text channel {} created", channel);
+			}
+			
+			channel.putPermissionOverride(event.getMember()).setAllow(Permission.MESSAGE_READ).queue();
+			Actions.sendMessage(channel, "%s a rejoint le channel", event.getMember().getAsMention());
 		}
 	}
 	
@@ -59,38 +102,6 @@ public class VoiceTextChannelsListener extends ListenerAdapter{
 		super.onGuildVoiceLeave(event);
 		try{
 			leaveVoice(event);
-		}
-		catch(Exception e){
-			getLogger(event.getGuild()).error("", e);
-		}
-	}
-	
-	@Override
-	public void onGuildVoiceJoin(GuildVoiceJoinEvent event){
-		super.onGuildVoiceJoin(event);
-		try{
-			VoiceTextChannelsAssociationConfig config = new VoiceTextChannelsAssociationConfig(event.getGuild());
-			TextChannel channel = null;
-			Long channelID = config.getValue(event.getChannelJoined().getIdLong());
-			if(channelID != null){
-				channel = event.getGuild().getTextChannelById(channelID);
-			}
-			
-			if(channel == null){
-				ChannelAction creator = event.getGuild().getController().createTextChannel(event.getChannelJoined().getName());
-				creator.setParent(event.getChannelJoined().getParent());
-				creator.setTopic("Channel pour les utilisateurs du vocal du même nom");
-				creator.addPermissionOverride(event.getGuild().getPublicRole(), List.of(), List.of(Permission.MESSAGE_READ));
-				for(Role role : new ModoRolesConfig(event.getGuild()).getAsList()){
-					creator.addPermissionOverride(role, List.of(Permission.MESSAGE_READ), List.of());
-				}
-				channel = (TextChannel) creator.complete();
-				config.addValue(event.getChannelJoined().getIdLong(), channel.getIdLong());
-				getLogger(event.getGuild()).info("Text channel {} created", channel);
-			}
-			
-			channel.putPermissionOverride(event.getMember()).setAllow(Permission.MESSAGE_READ).queue();
-			Actions.sendMessage(channel, "%s a rejoint le channel", event.getMember().getAsMention());
 		}
 		catch(Exception e){
 			getLogger(event.getGuild()).error("", e);
