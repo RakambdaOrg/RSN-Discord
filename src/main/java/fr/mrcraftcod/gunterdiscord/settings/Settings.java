@@ -50,7 +50,8 @@ public class Settings{
 			new DoubleWarnTimeConfig(null),
 			new MegaWarnTimeConfig(null),
 			new RemoveRoleConfig(null),
-			new VoiceTextChannelsConfig(null)
+			new VoiceTextChannelsConfig(null),
+			new VoiceTextChannelsAssociationConfig(null)
 	};
 	private static Path path;
 	private static JSONObject settings;
