@@ -3,11 +3,20 @@ package fr.mrcraftcod.gunterdiscord.settings.configurations;
 import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.Configuration;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
+import java.awt.*;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import static fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand.ChangeConfigType.*;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -18,58 +27,118 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public abstract class ListConfiguration<T> extends Configuration{
 	/**
+	 * Constructor.
+	 *
+	 * @param guild The guild for this config.
+	 */
+	protected ListConfiguration(Guild guild){
+		super(guild);
+	}
+	
+	/**
 	 * Add a value to the list.
 	 *
-	 * @param guild The guild.
 	 * @param value The value to add.
 	 */
-	public void addValue(Guild guild, T value){
+	public void addValue(@NotNull T value){
+		addRawValue(getValueParser().apply(value));
+	}
+	
+	/**
+	 * Add a value to the list.
+	 *
+	 * @param value The value to add.
+	 */
+	private void addRawValue(String value){
 		Settings.addValue(guild, this, value);
+	}
+	
+	/**
+	 * Get a parser to convert an object to its config representation.
+	 *
+	 * @return The parser.
+	 */
+	protected abstract Function<T, String> getValueParser();
+	
+	/**
+	 * Remove a value from the list.
+	 *
+	 * @param value The value to remove.
+	 */
+	public void removeValue(@NotNull T value){
+		removeRawValue(getValueParser().apply(value));
 	}
 	
 	/**
 	 * Remove a value from the list.
 	 *
-	 * @param guild The guild.
 	 * @param value The value to remove.
 	 */
-	public void removeValue(Guild guild, T value){
+	private void removeRawValue(String value){
 		Settings.removeValue(guild, this, value);
+	}
+	
+	@Override
+	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args){
+		if(action == ConfigurationCommand.ChangeConfigType.SHOW){
+			EmbedBuilder builder = new EmbedBuilder();
+			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+			builder.setColor(Color.GREEN);
+			builder.setTitle("Valeurs de " + getName());
+			getAsList().stream().map(Object::toString).forEach(o -> builder.addField("", o, false));
+			Actions.reply(event, builder.build());
+			return ConfigurationCommand.ActionResult.NONE;
+		}
+		if(args.size() < 1){
+			return ConfigurationCommand.ActionResult.ERROR;
+		}
+		switch(action){
+			case ADD:
+				addRawValue(getMessageParser().apply(event, args.poll()));
+				return ConfigurationCommand.ActionResult.OK;
+			case REMOVE:
+				removeRawValue(getMessageParser().apply(event, args.poll()));
+				return ConfigurationCommand.ActionResult.OK;
+		}
+		return ConfigurationCommand.ActionResult.ERROR;
 	}
 	
 	/**
 	 * Get a list of the values.
 	 *
-	 * @param guild The guild.
-	 *
 	 * @return The values list.
 	 *
 	 * @throws IllegalArgumentException If the configuration isn't a list.
 	 */
-	public List<T> getAsList(Guild guild) throws IllegalArgumentException{
+	public List<T> getAsList() throws IllegalArgumentException{
 		List<T> elements = new LinkedList<>();
-		JSONArray array = getObjectList(guild);
+		JSONArray array = getObjectList();
 		if(array == null){
 			Settings.resetList(guild, this);
 		}
 		else{
 			for(int i = 0; i < array.length(); i++){
-				elements.add(getValueParser().apply(array.get(i).toString()));
+				elements.add(getConfigParser().apply(array.get(i).toString()));
 			}
 		}
 		return elements;
 	}
 	
 	/**
-	 * Get the JSON array.
+	 * Get the parser to parse values from a message to T.
 	 *
-	 * @param guild The guild.
+	 * @return The parser.
+	 */
+	protected abstract BiFunction<MessageReceivedEvent, String, String> getMessageParser();
+	
+	/**
+	 * Get the JSON array.
 	 *
 	 * @return The JSON array.
 	 *
 	 * @throws IllegalArgumentException If the configuration isn't a list.
 	 */
-	private JSONArray getObjectList(Guild guild) throws IllegalArgumentException{
+	private JSONArray getObjectList() throws IllegalArgumentException{
 		if(getType() != ConfigType.LIST){
 			throw new IllegalArgumentException("Not a list config");
 		}
@@ -84,14 +153,12 @@ public abstract class ListConfiguration<T> extends Configuration{
 	
 	/**
 	 * Tell if an element is inside the list.
-	 *
-	 * @param guild The guild to fetch the values for.
 	 * @param value The value to test.
 	 *
 	 * @return True if the value is inside, false otherwise.
 	 */
-	public boolean contains(Guild guild, T value){
-		return getAsList(guild).contains(value);
+	public boolean contains(T value){
+		return getAsList().contains(value);
 	}
 	
 	/**
@@ -99,11 +166,11 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @return The parser.
 	 */
-	protected abstract Function<String, T> getValueParser();
+	protected abstract Function<String, T> getConfigParser();
 	
 	@Override
-	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action){
-		return action == ConfigurationCommand.ChangeConfigType.ADD || action == ConfigurationCommand.ChangeConfigType.REMOVE || action == ConfigurationCommand.ChangeConfigType.SHOW;
+	public Collection<ConfigurationCommand.ChangeConfigType> getAllowedActions(){
+		return Set.of(ADD, REMOVE, SHOW);
 	}
 	
 	@Override

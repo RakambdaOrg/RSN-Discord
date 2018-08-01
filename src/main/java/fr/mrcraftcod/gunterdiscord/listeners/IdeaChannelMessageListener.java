@@ -17,7 +17,7 @@ public class IdeaChannelMessageListener extends ListenerAdapter{
 	public void onMessageReceived(MessageReceivedEvent event){
 		super.onMessageReceived(event);
 		try{
-			if(new OnlyIdeasConfig().getAsList(event.getGuild()).contains(event.getMessage().getChannel().getIdLong())){
+			if(new OnlyIdeasConfig(event.getGuild()).contains(event.getMessage().getTextChannel())){
 				event.getMessage().addReaction(BasicEmotes.THUMB_UP.getValue()).complete();
 				event.getMessage().addReaction(BasicEmotes.THUMB_DOWN.getValue()).complete();
 			}

@@ -50,7 +50,7 @@ public class QuestionCommand extends BasicCommand{
 			builder.addField("Utilisateur", event.getAuthor().getAsMention(), true);
 			builder.addField("Question", String.join(" ", args), false);
 			
-			Message m = Actions.getMessage(new QuestionsChannelConfig().getTextChannel(event.getGuild()), builder.build());
+			Message m = Actions.getMessage(new QuestionsChannelConfig(event.getGuild()).getObject(), builder.build());
 			m.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
 			m.addReaction(BasicEmotes.CROSS_NO.getValue()).queue();
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Ok, ta question a été mise en file d'attente (ID: " + ID + "): " + String.join(" ", args));

@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
+import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.WerewolvesChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
@@ -105,14 +106,11 @@ public class WerewolvesListener extends ListenerAdapter{
 	 *
 	 * @throws IllegalStateException The the game couldn't be created.
 	 */
-	private WerewolvesListener(VoiceChannel channel) throws IllegalStateException{
+	private WerewolvesListener(VoiceChannel channel) throws IllegalStateException, NoValueDefinedException{
 		if(channel.getMembers().size() < MIN_PLAYER){
 			throw new IllegalStateException("Pas assez de joueurs");
 		}
-		textChannel = new WerewolvesChannelConfig().getTextChannel(channel.getGuild());
-		if(textChannel == null){
-			throw new IllegalStateException("Le channel n'est pas configuré");
-		}
+		textChannel = new WerewolvesChannelConfig(channel.getGuild()).getObject();
 		cycle = 0;
 		votes = new HashMap<>();
 		games.add(this);
@@ -152,7 +150,12 @@ public class WerewolvesListener extends ListenerAdapter{
 	public static Optional<WerewolvesListener> getGame(VoiceChannel channel, boolean create) throws IllegalStateException{
 		return games.stream().filter(h -> h.getVoiceChannel().getIdLong() == channel.getIdLong()).findAny().or(() -> {
 			if(create){
-				return Optional.of(new WerewolvesListener(channel));
+				try{
+					return Optional.of(new WerewolvesListener(channel));
+				}
+				catch(NoValueDefinedException e){
+					getLogger(channel.getGuild()).error("Couldn't create a werewolves game", e);
+				}
 			}
 			return Optional.empty();
 		});

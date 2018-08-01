@@ -59,9 +59,9 @@ public class NicknameCommand extends BasicCommand{
 			member = event.getMember();
 		}
 		String oldName = member.getNickname();
-		Long lastChangeRaw = new NickLastChangeConfig().getValue(event.getGuild(), member.getUser().getIdLong());
+		Long lastChangeRaw = new NickLastChangeConfig(event.getGuild()).getValue(member.getUser().getIdLong());
 		Date lastChange = new Date(lastChangeRaw == null ? 0 : lastChangeRaw);
-		Duration delay = Duration.ofMinutes(new NickDelayConfig().getInt(event.getGuild(), 6 * 60));
+		Duration delay = Duration.ofMinutes(new NickDelayConfig(event.getGuild()).getObject(6 * 60));
 		if(!Utilities.isTeam(event.getMember()) && (lastChange.getTime() + delay.getSeconds() * 1000) >= new Date().getTime()){
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
@@ -89,7 +89,7 @@ public class NicknameCommand extends BasicCommand{
 			try{
 				member.getGuild().getController().setNickname(member, newName).complete();
 				builder.setColor(Color.GREEN);
-				new NickLastChangeConfig().addValue(event.getGuild(), member.getUser().getIdLong(), new Date().getTime());
+				new NickLastChangeConfig(event.getGuild()).addValue(member.getUser().getIdLong(), new Date().getTime());
 				getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", Utilities.getUserToLog(event.getAuthor()), Utilities.getUserToLog(member.getUser()), oldName, newName);
 			}
 			catch(HierarchyException e){

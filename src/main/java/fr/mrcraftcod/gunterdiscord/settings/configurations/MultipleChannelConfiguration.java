@@ -1,12 +1,9 @@
 package fr.mrcraftcod.gunterdiscord.settings.configurations;
 
-import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
-import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import java.awt.*;
-import java.util.LinkedList;
-import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -15,35 +12,34 @@ import java.util.function.Function;
  * @author Thomas Couchoud
  * @since 2018-05-12
  */
-public abstract class MultipleChannelConfiguration extends ListConfiguration<Long>{
-	@SuppressWarnings("Duplicates")
-	@Override
-	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args){
-		if(action == ConfigurationCommand.ChangeConfigType.SHOW){
-			EmbedBuilder builder = new EmbedBuilder();
-			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-			builder.setColor(Color.GREEN);
-			builder.setTitle("Valeurs de " + getName());
-			getAsList(event.getGuild()).stream().map(c -> event.getJDA().getTextChannelById(c)).filter(Objects::nonNull).forEach(o -> builder.addField("", "#" + o.getName(), false));
-			Actions.reply(event, builder.build());
-			return ConfigurationCommand.ActionResult.NONE;
-		}
-		if(args.size() < 1){
-			return ConfigurationCommand.ActionResult.ERROR;
-		}
-		switch(action){
-			case ADD:
-				addValue(event.getGuild(), event.getMessage().getMentionedChannels().get(0).getIdLong());
-				return ConfigurationCommand.ActionResult.OK;
-			case REMOVE:
-				removeValue(event.getGuild(), event.getMessage().getMentionedChannels().get(0).getIdLong());
-				return ConfigurationCommand.ActionResult.OK;
-		}
-		return ConfigurationCommand.ActionResult.ERROR;
+public abstract class MultipleChannelConfiguration extends ListConfiguration<TextChannel>{
+	
+	/**
+	 * Constructor.
+	 *
+	 * @param guild The guild for this config.
+	 */
+	protected MultipleChannelConfiguration(Guild guild){
+		super(guild);
 	}
 	
 	@Override
-	protected Function<String, Long> getValueParser(){
-		return Long::parseLong;
+	protected Function<TextChannel, String> getValueParser(){
+		return channel -> "" + channel.getIdLong();
+	}
+	
+	@Override
+	protected BiFunction<MessageReceivedEvent, String, String> getMessageParser(){
+		return (event, arg) -> {
+			if(event.getMessage().getMentionedChannels().isEmpty()){
+				throw new IllegalStateException("Please mention a channel");
+			}
+			return "" + event.getMessage().getMentionedChannels().get(0).getIdLong();
+		};
+	}
+	
+	@Override
+	protected Function<String, TextChannel> getConfigParser(){
+		return guild::getTextChannelById;
 	}
 }

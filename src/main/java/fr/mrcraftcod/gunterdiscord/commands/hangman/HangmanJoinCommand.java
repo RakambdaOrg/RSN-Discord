@@ -35,7 +35,7 @@ public class HangmanJoinCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		Role role = new HangmanRoleConfig().getRole(event.getGuild());
+		Role role = new HangmanRoleConfig(event.getGuild()).getObject();
 		if(role == null){
 			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.RED, "Erreur").addField("Raison", "Le role du pendu n'est pas configuré", false).build());
 		}

@@ -1,7 +1,9 @@
 package fr.mrcraftcod.gunterdiscord.settings;
 
 import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import java.util.Collection;
 import java.util.LinkedList;
 
 /**
@@ -11,6 +13,8 @@ import java.util.LinkedList;
  * @since 2018-04-15
  */
 public abstract class Configuration{
+	protected final Guild guild;
+	
 	/**
 	 * The type of the configuration.
 	 */
@@ -19,13 +23,11 @@ public abstract class Configuration{
 	}
 	
 	/**
-	 * Tells if the given action is allowed.
+	 * Constructor.
 	 *
-	 * @param action The action.
-	 *
-	 * @return True if allowed, false otherwise.
+	 * @param guild The guild for this config.
 	 */
-	public abstract boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action);
+	protected Configuration(Guild guild){this.guild = guild;}
 	
 	/**
 	 * Handle the changes requested.
@@ -39,6 +41,13 @@ public abstract class Configuration{
 	 * @throws Exception If anything too bad happened.
 	 */
 	public abstract ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args) throws Exception;
+	
+	/**
+	 * Define what actions can be performed.
+	 *
+	 * @return A collection of actions.
+	 */
+	public abstract Collection<ConfigurationCommand.ChangeConfigType> getAllowedActions();
 	
 	/**
 	 * Get the name of this configuration.

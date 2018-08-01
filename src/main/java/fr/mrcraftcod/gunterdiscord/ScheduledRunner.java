@@ -28,10 +28,10 @@ public class ScheduledRunner implements Runnable{
 	public void run(){
 		getLogger(null).info("Starting scheduled runner");
 		long currentTime = System.currentTimeMillis();
-		RemoveRoleConfig config = new RemoveRoleConfig();
 		for(Guild guild : jda.getGuilds()){
+			RemoveRoleConfig config = new RemoveRoleConfig(guild);
 			getLogger(guild).info("Processing guild {}", guild);
-			Map<Long, Map<Long, Long>> guildConfig = config.getAsMap(guild);
+			Map<Long, Map<Long, Long>> guildConfig = config.getAsMap();
 			for(Long userID : guildConfig.keySet()){
 				Member member = guild.getMemberById(userID);
 				getLogger(guild).info("Processing user {}", member);
@@ -42,7 +42,7 @@ public class ScheduledRunner implements Runnable{
 					getLogger(guild).info("Processing role {}, diff is: {}", role, diff);
 					if(diff.isNegative()){
 						Actions.removeRole(member, role);
-						config.deleteKeyValue(guild, userID, roleID);
+						config.deleteKeyValue(userID, roleID);
 					}
 				}
 			}

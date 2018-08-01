@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import static fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand.ChangeConfigType.*;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -18,29 +19,35 @@ import java.util.function.Function;
  */
 public abstract class MapListConfiguration<K, V> extends Configuration{
 	/**
+	 * Constructor.
+	 *
+	 * @param guild The guild for this config.
+	 */
+	protected MapListConfiguration(Guild guild){
+		super(guild);
+	}
+	
+	/**
 	 * Get the list of values from the given key.
 	 *
-	 * @param guild The guild.
 	 * @param key   The key to get.
 	 *
 	 * @return The values or null if not found.
 	 */
-	public List<V> getValue(Guild guild, K key){
-		return getAsMap(guild).get(key);
+	public List<V> getValue(K key){
+		return getAsMap().get(key);
 	}
 	
 	/**
 	 * Get the map of this configuration.
 	 *
-	 * @param guild The guild.
-	 *
 	 * @return The map.
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
-	public Map<K, ArrayList<V>> getAsMap(Guild guild) throws IllegalArgumentException{
+	public Map<K, ArrayList<V>> getAsMap() throws IllegalArgumentException{
 		Map<K, ArrayList<V>> elements = new HashMap<>();
-		JSONObject map = getObjectMap(guild);
+		JSONObject map = getObjectMap();
 		if(map == null){
 			Settings.resetMap(guild, this);
 		}
@@ -62,13 +69,11 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	/**
 	 * Get the JSON Object.
 	 *
-	 * @param guild The guild.
-	 *
 	 * @return The JSON object.
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
-	private JSONObject getObjectMap(Guild guild) throws IllegalArgumentException{
+	private JSONObject getObjectMap() throws IllegalArgumentException{
 		if(getType() != ConfigType.MAP){
 			throw new IllegalArgumentException("Not a map config");
 		}
@@ -92,25 +97,22 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	/**
 	 * Add a value to the map list.
 	 *
-	 * @param guild The guild.
 	 * @param key   The key to add into.
 	 * @param value The value to add at the key.
 	 */
-	public void addValue(Guild guild, K key, V value){
+	public void addValue(K key, V value){
 		Settings.mapListValue(guild, this, key, value);
 	}
 	
 	/**
 	 * Delete a value inside a key.
 	 *
-	 * @param guild The guild.
 	 * @param key   The key.
 	 * @param value The value.
 	 */
-	@SuppressWarnings("Duplicates")
-	public void deleteKeyValue(Guild guild, K key, V value){
+	public void deleteKeyValue(K key, V value){
 		if(value == null){
-			deleteKey(guild, key);
+			deleteKey(key);
 		}
 		else{
 			Settings.deleteKey(guild, this, key, value, getMatcher());
@@ -120,10 +122,9 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	/**
 	 * Delete the key.
 	 *
-	 * @param guild The guild.
 	 * @param key   The key.
 	 */
-	public void deleteKey(Guild guild, K key){
+	public void deleteKey(K key){
 		Settings.deleteKey(guild, this, key);
 	}
 	
@@ -137,8 +138,8 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	}
 	
 	@Override
-	public boolean isActionAllowed(ConfigurationCommand.ChangeConfigType action){
-		return action == ConfigurationCommand.ChangeConfigType.ADD || action == ConfigurationCommand.ChangeConfigType.REMOVE || action == ConfigurationCommand.ChangeConfigType.SHOW;
+	public Collection<ConfigurationCommand.ChangeConfigType> getAllowedActions(){
+		return Set.of(ADD, REMOVE, SHOW);
 	}
 	
 	@Override

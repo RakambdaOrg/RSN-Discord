@@ -4,6 +4,7 @@ import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.configurations.MapMapConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
@@ -18,6 +19,15 @@ import java.util.function.Function;
  * @since 2018-04-15
  */
 public class RemoveRoleConfig extends MapMapConfiguration<Long, Long, Long>{
+	/**
+	 * Constructor.
+	 *
+	 * @param guild The guild for this config.
+	 */
+	public RemoveRoleConfig(Guild guild){
+		super(guild);
+	}
+	
 	@Override
 	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args){
 		if(action == ConfigurationCommand.ChangeConfigType.SHOW){
@@ -25,7 +35,7 @@ public class RemoveRoleConfig extends MapMapConfiguration<Long, Long, Long>{
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Valeurs de " + getName());
-			Map<Long, Map<Long, Long>> map = getAsMap(event.getGuild());
+			Map<Long, Map<Long, Long>> map = getAsMap();
 			map.keySet().stream().map(k -> new MessageEmbed.Field(k.toString(), map.get(k).toString(), false)).forEach(builder::addField);
 			Actions.reply(event, builder.build());
 			return ConfigurationCommand.ActionResult.NONE;
@@ -39,12 +49,12 @@ public class RemoveRoleConfig extends MapMapConfiguration<Long, Long, Long>{
 	}
 	
 	@Override
-	protected Function<String, Long> getKeyParser(){
+	protected Function<String, Long> getFirstKeyParser(){
 		return Long::parseLong;
 	}
 	
 	@Override
-	protected Function<String, Long> getKeyValueParser(){
+	protected Function<String, Long> getSecondKeyParser(){
 		return Long::parseLong;
 	}
 	

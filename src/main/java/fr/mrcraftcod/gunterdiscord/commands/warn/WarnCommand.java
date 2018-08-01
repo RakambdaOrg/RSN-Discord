@@ -3,8 +3,8 @@ package fr.mrcraftcod.gunterdiscord.commands.warn;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.RemoveRoleConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configurations.DoubleValueConfiguration;
 import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleRoleConfiguration;
-import fr.mrcraftcod.gunterdiscord.settings.configurations.ValueConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -36,7 +36,7 @@ public abstract class WarnCommand extends BasicCommand{
 		super.execute(event, args);
 		if(event.getMessage().getMentionedUsers().size() > 0){
 			User user = event.getMessage().getMentionedUsers().get(0);
-			Role role = getRoleConfig().getRole(event.getGuild());
+			Role role = getRoleConfig(event.getGuild()).getObject();
 			EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 			if(role == null){
@@ -44,9 +44,9 @@ public abstract class WarnCommand extends BasicCommand{
 				builder.addField("Erreur", "Merci de configurer le role à donner", true);
 			}
 			else{
-				double duration = getTimeConfig().getDouble(event.getGuild(), 1);
+				double duration = getTimeConfig(event.getGuild()).getObject(1D);
 				Actions.giveRole(event.getGuild(), user, role);
-				new RemoveRoleConfig().addValue(event.getGuild(), user.getIdLong(), role.getIdLong(), (long) (System.currentTimeMillis() + duration * 24 * 60 * 60 * 1000L));
+				new RemoveRoleConfig(event.getGuild()).addValue(user.getIdLong(), role.getIdLong(), (long) (System.currentTimeMillis() + duration * 24 * 60 * 60 * 1000L));
 				builder.setColor(Color.GREEN);
 				builder.addField("Congratulations", user.getAsMention() + " à rejoint le role " + role.getAsMention() + " pour une durée de " + duration + " jour(s)", false);
 				getLogger(event.getGuild()).info("{} warned {} for {} days with role {}", Utilities.getUserToLog(event.getAuthor()), Utilities.getUserToLog(user), duration, role);
@@ -66,16 +66,18 @@ public abstract class WarnCommand extends BasicCommand{
 	/**
 	 * Get the configuration of the role to apply.
 	 *
+	 * @param guild The guild of the event.
 	 * @return The config.
 	 */
-	protected abstract SingleRoleConfiguration getRoleConfig();
+	protected abstract SingleRoleConfiguration getRoleConfig(Guild guild);
 	
 	/**
 	 * Get the configuration of the length for the role to be applied.
 	 *
+	 * @param guild The guild of the event.
 	 * @return The config.
 	 */
-	protected abstract ValueConfiguration getTimeConfig();
+	protected abstract DoubleValueConfiguration getTimeConfig(Guild guild);
 	
 	@Override
 	public String getCommandUsage(){

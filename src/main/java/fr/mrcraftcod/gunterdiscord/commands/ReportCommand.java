@@ -30,7 +30,7 @@ public class ReportCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		TextChannel channel = new ReportChannelConfig().getTextChannel(event.getGuild());
+		TextChannel channel = new ReportChannelConfig(event.getGuild()).getObject();
 		if(channel == null){
 			return CommandResult.FAILED;
 		}
