@@ -1,6 +1,5 @@
 package fr.mrcraftcod.gunterdiscord.settings.configurations;
 
-import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -45,17 +44,11 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration<Text
 	 * @return True if the same channels, false otherwise.
 	 */
 	public boolean isChannel(long ID){
-		try{
-			TextChannel channel = getObject();
-			if(channel == null){
-				return false;
-			}
-			return ID == channel.getIdLong();
+		TextChannel channel = getObject(null);
+		if(channel == null){
+			return false;
 		}
-		catch(NoValueDefinedException e){
-			e.printStackTrace();
-		}
-		return false;
+		return ID == channel.getIdLong();
 	}
 	
 	@Override
