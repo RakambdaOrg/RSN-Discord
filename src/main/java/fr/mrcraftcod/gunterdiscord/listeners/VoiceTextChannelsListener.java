@@ -61,6 +61,7 @@ public class VoiceTextChannelsListener extends ListenerAdapter{
 				}
 				else{
 					channel.putPermissionOverride(event.getMember()).setDeny(Permission.MESSAGE_READ).queue();
+					Actions.sendMessage(channel, "%s est parti", event.getMember().getAsMention());
 				}
 			}
 		}
@@ -95,7 +96,7 @@ public class VoiceTextChannelsListener extends ListenerAdapter{
 			else{
 				channel.putPermissionOverride(event.getMember()).setAllow(Permission.MESSAGE_READ).queue();
 			}
-			Actions.sendMessage(channel, "%s a rejoint le channel", event.getMember().getAsMention());
+			Actions.sendMessage(channel, "%s#%s a rejoint le channel", event.getMember().getUser().getName(), event.getMember().getUser().getDiscriminator());
 		}
 	}
 	
