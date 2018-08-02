@@ -5,7 +5,6 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.VoiceTextChannelsAssociation
 import fr.mrcraftcod.gunterdiscord.settings.configs.VoiceTextChannelsConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.guild.voice.*;
@@ -55,11 +54,13 @@ public class VoiceTextChannelsListener extends ListenerAdapter{
 		if(channelID != null){
 			TextChannel channel = event.getGuild().getTextChannelById(channelID);
 			if(channel != null){
-				channel.putPermissionOverride(event.getMember()).setDeny(Permission.MESSAGE_READ).queue();
 				if(event.getChannelLeft().getMembers().isEmpty()){
 					channel.delete().reason("No more users in the vocal").queue();
 					config.deleteKey(event.getChannelLeft().getIdLong());
 					getLogger(event.getGuild()).info("Text channel {} deleted", channel);
+				}
+				else{
+					channel.putPermissionOverride(event.getMember()).setDeny(Permission.MESSAGE_READ).queue();
 				}
 			}
 		}
@@ -85,15 +86,15 @@ public class VoiceTextChannelsListener extends ListenerAdapter{
 				creator.setParent(voiceChannel.getParent());
 				creator.setTopic("Channel pour les utilisateurs du vocal du même nom");
 				creator.addPermissionOverride(event.getGuild().getPublicRole(), List.of(), List.of(Permission.MESSAGE_READ));
-				for(Role role : new ModoRolesConfig(event.getGuild()).getAsList()){
-					creator.addPermissionOverride(role, List.of(Permission.MESSAGE_READ), List.of());
-				}
+				new ModoRolesConfig(event.getGuild()).getAsList().forEach(role -> creator.addPermissionOverride(role, List.of(Permission.MESSAGE_READ), List.of()));
+				creator.addPermissionOverride(event.getMember(), List.of(Permission.MESSAGE_READ), List.of());
 				channel = (TextChannel) creator.complete();
 				config.addValue(voiceChannel.getIdLong(), channel.getIdLong());
 				getLogger(event.getGuild()).info("Text channel {} created", channel);
 			}
-			
-			channel.putPermissionOverride(event.getMember()).setAllow(Permission.MESSAGE_READ).queue();
+			else{
+				channel.putPermissionOverride(event.getMember()).setAllow(Permission.MESSAGE_READ).queue();
+			}
 			Actions.sendMessage(channel, "%s a rejoint le channel", event.getMember().getAsMention());
 		}
 	}
