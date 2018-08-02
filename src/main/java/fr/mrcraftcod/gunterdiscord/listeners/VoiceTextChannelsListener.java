@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.guild.voice.*;
+import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.requests.restaction.ChannelAction;
 import java.util.List;
@@ -26,6 +27,9 @@ public class VoiceTextChannelsListener extends ListenerAdapter{
 		try{
 			joinVoice(event, event.getChannelJoined());
 		}
+		catch(InsufficientPermissionException e){
+		
+		}
 		catch(Exception e){
 			getLogger(event.getGuild()).error("", e);
 		}
@@ -37,6 +41,9 @@ public class VoiceTextChannelsListener extends ListenerAdapter{
 		try{
 			leaveVoice(event);
 			joinVoice(event, event.getChannelJoined());
+		}
+		catch(InsufficientPermissionException e){
+		
 		}
 		catch(Exception e){
 			getLogger(event.getGuild()).error("", e);
@@ -105,6 +112,9 @@ public class VoiceTextChannelsListener extends ListenerAdapter{
 		super.onGuildVoiceLeave(event);
 		try{
 			leaveVoice(event);
+		}
+		catch(InsufficientPermissionException e){
+		
 		}
 		catch(Exception e){
 			getLogger(event.getGuild()).error("", e);
