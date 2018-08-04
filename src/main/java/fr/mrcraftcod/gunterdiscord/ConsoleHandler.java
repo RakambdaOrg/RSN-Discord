@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord;
 
 import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.Guild;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Scanner;
@@ -37,12 +38,14 @@ public class ConsoleHandler extends Thread{
 				if(arg1.equalsIgnoreCase("stop")){
 					jda.shutdownNow();
 				}
-				else if(arg1.equalsIgnoreCase("quit")){
+				else if(arg1.equalsIgnoreCase("leave")){
 					if(args.isEmpty()){
 						getLogger(null).warn("Please pass the guild as an argument");
 					}
 					else{
-						jda.getGuildById(args.poll()).leave().queue();
+						Guild guild = jda.getGuildById(args.poll());
+						guild.leave().queue();
+						getLogger(null).info("Guild {} left", guild);
 					}
 				}
 			}
