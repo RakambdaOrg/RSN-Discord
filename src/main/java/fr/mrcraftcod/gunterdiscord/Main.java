@@ -29,6 +29,7 @@ public class Main{
 	private static final long SCHEDULED_PERIOD = 3600;
 	private static JDA jda;
 	private static ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+	private static ConsoleHandler consoleHandler;
 	
 	/**
 	 * Main entry point.
@@ -61,11 +62,13 @@ public class Main{
 			getLogger(null).error("Couldn't start bot", e);
 		}
 		
-		new ConsoleText(jda).start();
+		consoleHandler = new ConsoleHandler(jda);
+		consoleHandler.start();
 	}
 	
 	public static void close(){
 		executorService.shutdownNow();
+		consoleHandler.close();
 	}
 	
 	/**
