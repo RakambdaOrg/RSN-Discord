@@ -103,6 +103,18 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		});
 	}
 	
+	public static void pause(Guild guild){
+		if(managers.containsKey(guild)){
+			managers.get(guild).getAudioPlayer().setPaused(true);
+		}
+	}
+	
+	public static void resume(Guild guild){
+		if(managers.containsKey(guild)){
+			managers.get(guild).getAudioPlayer().setPaused(false);
+		}
+	}
+	
 	private AudioPlayerManager getAudioPlayerManager(){
 		return audioPlayerManager;
 	}

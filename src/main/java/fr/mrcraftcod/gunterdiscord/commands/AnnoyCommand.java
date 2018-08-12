@@ -34,6 +34,12 @@ public class AnnoyCommand extends BasicCommand{
 		if(Objects.equals(arg1, "stop")){
 			GunterAudioManager.leave(event.getGuild());
 		}
+		else if(Objects.equals(arg1, "pause")){
+			GunterAudioManager.pause(event.getGuild());
+		}
+		else if(Objects.equals(arg1, "resume")){
+			GunterAudioManager.resume(event.getGuild());
+		}
 		else{
 			event.getMessage().getMentionedUsers().stream().findAny().ifPresentOrElse(u -> {
 				
