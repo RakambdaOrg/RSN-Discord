@@ -29,7 +29,7 @@ public class Settings{
 			new PrefixConfig(null),
 			new ReportChannelConfig(null),
 			// new PhotoChannelConfig(null),
-			// new QuizChannelConfig(null),
+			new QuizChannelConfig(null),
 			// new HangmanChannelConfig(null),
 			// new PhotoConfig(null),
 			new AutoRolesConfig(null),

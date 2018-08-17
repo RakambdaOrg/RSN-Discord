@@ -138,7 +138,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 			if(lines.size() < 1){
 				break;
 			}
-			String[] line = lines.pop().split(",");
+			String[] line = lines.pop().split("[,;]");
 			String correctAnswer = line[1];
 			
 			List<String> answersList = Arrays.stream(line, 2, line.length).filter(l -> l != null && !l.trim().equalsIgnoreCase("")).collect(Collectors.toList());
