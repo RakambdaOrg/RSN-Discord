@@ -11,6 +11,7 @@ import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.exceptions.ErrorResponseException;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
 import org.jetbrains.annotations.NotNull;
 import java.awt.*;
@@ -95,6 +96,11 @@ public class NicknameCommand extends BasicCommand{
 			catch(HierarchyException e){
 				builder.setColor(Color.RED);
 				builder.setTitle("T'as cru changer le nom d'un mec plus haut que moi?!");
+			}
+			catch(ErrorResponseException e){
+				builder.setColor(Color.RED);
+				builder.setTitle("Ce pseudo n'est pas valide");
+				builder.addField("Raison", e.getMeaning(), false);
 			}
 			Actions.reply(event, builder.build());
 		}
