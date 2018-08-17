@@ -13,6 +13,7 @@ import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.awt.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.*;
@@ -121,11 +122,12 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	 */
 	private LinkedList<Question> generateQuestions(int amount){
 		LinkedList<String> lines = new LinkedList<>();
+		Path questionPath = Paths.get("./questions.csv").normalize().toAbsolutePath();
 		try{
-			lines.addAll(Files.readAllLines(Paths.get("./questions.csv")));
+			lines.addAll(Files.readAllLines(questionPath));
 		}
 		catch(Exception e){
-			getLogger(getGuild()).error( "Error reading questions file", e);
+			getLogger(getGuild()).error("Error reading questions file {}", questionPath, e);
 		}
 		
 		if(lines.isEmpty()){
