@@ -1,6 +1,7 @@
-package fr.mrcraftcod.gunterdiscord.commands;
+package fr.mrcraftcod.gunterdiscord.commands.music;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
@@ -18,53 +19,61 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-06-16
  */
-public class AnnoyCommand extends BasicCommand{
+public class StartMusicCommand extends BasicCommand{
+	/**
+	 * Constructor.
+	 *
+	 * @param parent The parent command.
+	 */
+	public StartMusicCommand(Command parent){
+		super(parent);
+	}
+	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("utilisateur", "L'utilisateur que le bot tentera de rejoindre", false);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		args.poll();
-		event.getMessage().getMentionedUsers().stream().findAny().ifPresentOrElse(u -> {
-			final var member = event.getGuild().getMember(u);
-			if(member.getVoiceState().inVoiceChannel()){
-				final var identifier = String.join(" ", args).trim();
-				GunterAudioManager.play(member.getVoiceState().getChannel(), identifier.equals("") ? "https://www.youtube.com/watch?v=J4X2b-CEGNg" : identifier);
-			}
-			else{
-				Actions.reply(event, "Cet utilisateur n'est pas dans un channel vocal");
-			}
-		}, () -> Actions.reply(event, "Merci de mentionner un utilisateur valide"));
+		if(args.isEmpty()){
+			Actions.reply(event, "Merci de donner un lien");
+		}
+		if(event.getMember().getVoiceState().inVoiceChannel()){
+			String identifier = String.join(" ", args).trim();
+			GunterAudioManager.play(event.getMember().getVoiceState().getChannel(), identifier);
+		}
+		else{
+			Actions.reply(event, "Cet utilisateur n'est pas dans un channel vocal");
+		}
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " <@utilisateur>";
+		return super.getCommandUsage() + " <lien>";
 	}
 	
 	@Override
 	public AccessLevel getAccessLevel(){
-		return AccessLevel.ADMIN;
+		return AccessLevel.ALL;
 	}
 	
 	@Override
 	public String getName(){
-		return "Fais chier";
+		return "Ajouter musique";
 	}
 	
 	@Override
 	public List<String> getCommand(){
-		return List.of("annoy");
+		return List.of("add", "a");
 	}
 	
 	@Override
 	public String getDescription(){
-		return "Rejoins un channel et fait du bruit";
+		return "Ajoute une musique dans la liste";
 	}
 	
 	@Override

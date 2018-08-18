@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands.hangman;
 
-import fr.mrcraftcod.gunterdiscord.commands.generic.CompositeCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.core.entities.ChannelType;
 import java.util.List;
 
@@ -10,11 +10,11 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public class HangmanCompositeCommand extends CompositeCommand{
+public class HangmanCommandComposite extends CommandComposite{
 	/**
 	 * Constructor.
 	 */
-	public HangmanCompositeCommand(){
+	public HangmanCommandComposite(){
 		super();
 		addSubCommand(new HangmanJoinCommand(this));
 		addSubCommand(new HangmanLeaveCommand(this));

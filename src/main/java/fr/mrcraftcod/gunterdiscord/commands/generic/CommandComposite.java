@@ -17,13 +17,13 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-05-26
  */
-public abstract class CompositeCommand extends BasicCommand{
+public abstract class CommandComposite extends BasicCommand{
 	private final LinkedHashSet<Command> subCommands;
 	
 	/**
 	 * Constructor.
 	 */
-	protected CompositeCommand(){
+	protected CommandComposite(){
 		super();
 		subCommands = new LinkedHashSet<>();
 	}

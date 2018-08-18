@@ -1,10 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.commands.*;
-import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCompositeCommand;
+import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
-import fr.mrcraftcod.gunterdiscord.commands.quiz.QuizCompositeCommand;
+import fr.mrcraftcod.gunterdiscord.commands.music.MusicCommandComposite;
+import fr.mrcraftcod.gunterdiscord.commands.quiz.QuizCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.warn.DoubleWarnCommand;
 import fr.mrcraftcod.gunterdiscord.commands.warn.MegaWarnCommand;
 import fr.mrcraftcod.gunterdiscord.commands.warn.NormalWarnCommand;
@@ -30,11 +31,11 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public class CommandsMessageListener extends ListenerAdapter{
 	public static final Command[] commands = new Command[]{
-			// new PhotoCompositeCommand(),
-			// new HangmanCompositeCommand(),
-			new QuizCompositeCommand(),
+			// new PhotoCommandComposite(),
+			// new HangmanCommandComposite(),
+			new QuizCommandComposite(),
 			new ReportCommand(),
-			new ConfigurationCompositeCommand(),
+			new ConfigurationCommandComposite(),
 			new HelpCommand(),
 			new AvatarCommand(),
 			new NicknameCommand(),
@@ -45,10 +46,11 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new AnnoyCommand(),
 			new UpCommand(),
 			new YoutubeCommand(),
-			// new MusicPartyCompositeCommand(),
+			// new MusicPartyCommandComposite(),
 			new NormalWarnCommand(),
 			new DoubleWarnCommand(),
 			new MegaWarnCommand(),
+			new MusicCommandComposite(),
 			new StopCommand(),
 			new TimeCommand()
 	};

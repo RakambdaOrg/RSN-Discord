@@ -45,7 +45,7 @@ public abstract class BasicCommand implements Command{
 	
 	@Override
 	public String getCommandUsage(){
-		return getParent() == null || getParent() instanceof CompositeCommand ? "" : getParent().getCommandUsage();
+		return getParent() == null || getParent() instanceof CommandComposite ? "" : getParent().getCommandUsage();
 	}
 	
 	@Override

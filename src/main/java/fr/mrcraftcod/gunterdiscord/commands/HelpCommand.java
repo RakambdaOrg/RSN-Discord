@@ -1,8 +1,8 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CompositeCommand;
 import fr.mrcraftcod.gunterdiscord.listeners.CommandsMessageListener;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
@@ -46,8 +46,8 @@ public class HelpCommand extends BasicCommand{
 		else{
 			var command = Arrays.stream(CommandsMessageListener.commands).filter(s -> s.getCommand().contains(args.get(0).toLowerCase())).filter(c -> c.isAllowed(event.getMember())).findAny().orElse(null);
 			args.poll();
-			while(!args.isEmpty() && command instanceof CompositeCommand){
-				final var command2 = ((CompositeCommand) command).getSubCommand(args.get(0).toLowerCase());
+			while(!args.isEmpty() && command instanceof CommandComposite){
+				final var command2 = ((CommandComposite) command).getSubCommand(args.get(0).toLowerCase());
 				if(command2 == null){
 					break;
 				}
