@@ -37,7 +37,6 @@ public class Main{
 	 * @param args Not used.
 	 */
 	public static void main(String[] args){
-		
 		try{
 			Settings.init(Paths.get(new File(SETTINGS_NAME).toURI()));
 			jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).buildBlocking();

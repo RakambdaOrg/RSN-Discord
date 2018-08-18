@@ -15,6 +15,7 @@ import java.awt.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.*;
 import java.util.List;
@@ -252,14 +253,14 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 				}
 			}
 			
-			HashMap<Integer, List<String>> bests = new HashMap<>();
-			List<Integer> bestsScores = scores.values().stream().sorted(Comparator.reverseOrder()).limit(5).collect(Collectors.toList());
-			for(int score : bestsScores){
-				bests.put(score, new ArrayList<>());
+			HashMap<Integer, List<User>> allPositions = new HashMap<>();
+			List<Integer> allScores = scores.values().stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+			for(int score : allScores){
+				allPositions.put(score, new ArrayList<>());
 			}
 			scores.forEach((k, v) -> {
-				if(bests.containsKey(v)){
-					bests.get(v).add(jda.getUserById(k).getAsMention());
+				if(allPositions.containsKey(v)){
+					allPositions.get(v).add(jda.getUserById(k));
 				}
 			});
 			EmbedBuilder builder = new EmbedBuilder();
@@ -267,8 +268,15 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 			builder.setColor(Color.PINK);
 			builder.setTitle("Le jeu est terminé!");
 			builder.setDescription("Voici le top des scores:");
-			bests.keySet().stream().sorted(Comparator.reverseOrder()).map(v -> new MessageEmbed.Field("Position " + (1 + bestsScores.indexOf(v)) + " (" + v + " points)", String.join(", ", bests.get(v)), false)).forEach(builder::addField);
+			allPositions.keySet().stream().sorted(Comparator.reverseOrder()).limit(3).map(v -> new MessageEmbed.Field("Position " + (1 + allScores.indexOf(v)) + " (" + v + " points)", allPositions.get(v).stream().map(User::getAsMention).collect(Collectors.joining(", ")), false)).forEach(builder::addField);
 			Actions.sendMessage(quizChannel, builder.build());
+			
+			allPositions.keySet().forEach(score -> {
+				int position = 1 + allScores.indexOf(score);
+				String format = "Vous avez terminé à la position {0} avec {1} points" + (allPositions.get(score).size() > 1 ? ", vous partagez cette place avec {2} autre personne(s)" : "") + ".";
+				String message = MessageFormat.format(format, position, score, allPositions.get(score).size() - 1);
+				allPositions.get(score).forEach(user -> Actions.replyPrivate(getGuild(), user, message));
+			});
 		}
 		catch(Exception e){
 			getLogger(getGuild()).error( "Error quiz", e);
