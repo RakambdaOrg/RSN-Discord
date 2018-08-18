@@ -15,7 +15,7 @@ public class MegaWarnTimeConfig extends DoubleValueConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public MegaWarnTimeConfig(Guild guild){
+	public MegaWarnTimeConfig(final Guild guild){
 		super(guild);
 	}
 	

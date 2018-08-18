@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord;
 
 import fr.mrcraftcod.gunterdiscord.listeners.*;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -28,7 +29,7 @@ public class Main{
 	private static final long SCHEDULED_DELAY = 60;
 	private static final long SCHEDULED_PERIOD = 3600;
 	private static JDA jda;
-	private static ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 	private static ConsoleHandler consoleHandler;
 	
 	/**
@@ -36,7 +37,7 @@ public class Main{
 	 *
 	 * @param args Not used.
 	 */
-	public static void main(String[] args){
+	public static void main(final String[] args){
 		try{
 			Settings.init(Paths.get(new File(SETTINGS_NAME).toURI()));
 			jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).buildBlocking();
@@ -54,20 +55,27 @@ public class Main{
 			
 			executorService.scheduleAtFixedRate(new ScheduledRunner(jda), SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
 		}
-		catch(IOException e){
+		catch(final IOException e){
 			getLogger(null).error("Couldn't load settings", e);
 		}
-		catch(LoginException | InterruptedException e){
+		catch(final LoginException | InterruptedException e){
 			getLogger(null).error("Couldn't start bot", e);
 		}
 		
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			executorService.shutdownNow();
+			consoleHandler.close();
+			try{
+				Settings.save();
+			}
+			catch(final IOException e){
+				Log.getLogger(null).error("Error saving settings", e);
+			}
+			Settings.close();
+		}));
+		
 		consoleHandler = new ConsoleHandler(jda);
 		consoleHandler.start();
-	}
-	
-	public static void close(){
-		executorService.shutdownNow();
-		consoleHandler.close();
 	}
 	
 	/**

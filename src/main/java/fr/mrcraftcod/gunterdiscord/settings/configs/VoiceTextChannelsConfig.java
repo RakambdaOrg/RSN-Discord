@@ -18,7 +18,7 @@ public class VoiceTextChannelsConfig extends ListConfiguration<Long>{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public VoiceTextChannelsConfig(Guild guild){
+	public VoiceTextChannelsConfig(final Guild guild){
 		super(guild);
 	}
 	

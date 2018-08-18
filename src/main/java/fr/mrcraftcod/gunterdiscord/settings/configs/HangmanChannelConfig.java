@@ -15,7 +15,7 @@ public class HangmanChannelConfig extends SingleChannelConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public HangmanChannelConfig(Guild guild){
+	public HangmanChannelConfig(final Guild guild){
 		super(guild);
 	}
 	

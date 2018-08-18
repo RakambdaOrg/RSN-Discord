@@ -11,7 +11,6 @@ import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -33,26 +32,26 @@ public class PhotoAddCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	PhotoAddCommand(Command parent){
+	PhotoAddCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Optionnel: Utilisateur", "L'utilisateur représenté par la photo (par défaut @me)", false);
 	}
 	
 	@SuppressWarnings("Duplicates")
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		Actions.deleteMessage(event.getMessage());
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED){
 			return CommandResult.NOT_ALLOWED;
 		}
 		if(event.getMessage().getAttachments().size() > 0){
-			User user;
-			List<User> users = event.getMessage().getMentionedUsers();
+			final User user;
+			final var users = event.getMessage().getMentionedUsers();
 			if(users.size() > 0){
 				user = users.get(0);
 				args.poll();
@@ -65,15 +64,15 @@ public class PhotoAddCommand extends BasicCommand{
 				Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Vous ne pouvez pas ajouter une image pour quelqu'un d'autre");
 			}
 			else{
-				Message.Attachment attachment = event.getMessage().getAttachments().get(0);
-				String ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
-				File saveFile = new File("./pictures/" + user.getIdLong() + "/", event.getMessage().getCreationTime().toEpochSecond() + ext);
+				final var attachment = event.getMessage().getAttachments().get(0);
+				final var ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
+				final var saveFile = new File("./pictures/" + user.getIdLong() + "/", event.getMessage().getCreationTime().toEpochSecond() + ext);
 				//noinspection ResultOfMethodCallIgnored
 				saveFile.getParentFile().mkdirs();
 				if(attachment.download(saveFile) && attachment.getSize() == saveFile.length()){
 					new PhotoConfig(event.getGuild()).addValue(user.getIdLong(), saveFile.getPath());
 					Actions.giveRole(event.getGuild(), user, new TrombinoscopeRoleConfig(event.getGuild()).getObject());
-					EmbedBuilder builder = new EmbedBuilder();
+					final var builder = new EmbedBuilder();
 					builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 					builder.setColor(Color.GREEN);
 					builder.setTitle("Nouvelle photo");

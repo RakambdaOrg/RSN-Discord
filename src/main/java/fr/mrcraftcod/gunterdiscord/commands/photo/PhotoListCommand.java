@@ -26,14 +26,14 @@ public class PhotoListCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	PhotoListCommand(Command parent){
+	PhotoListCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		EmbedBuilder builder = new EmbedBuilder();
+		final var builder = new EmbedBuilder();
 		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 		builder.setColor(Color.GREEN);
 		builder.setTitle("Participants du trombinoscope");

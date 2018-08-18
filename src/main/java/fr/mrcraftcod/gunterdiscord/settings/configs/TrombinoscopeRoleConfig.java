@@ -15,7 +15,7 @@ public class TrombinoscopeRoleConfig extends SingleRoleConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public TrombinoscopeRoleConfig(Guild guild){
+	public TrombinoscopeRoleConfig(final Guild guild){
 		super(guild);
 	}
 	

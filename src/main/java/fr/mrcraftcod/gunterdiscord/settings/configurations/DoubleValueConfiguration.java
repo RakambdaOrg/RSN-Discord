@@ -17,7 +17,7 @@ public abstract class DoubleValueConfiguration extends ValueConfiguration<Double
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected DoubleValueConfiguration(Guild guild){
+	protected DoubleValueConfiguration(final Guild guild){
 		super(guild);
 	}
 	

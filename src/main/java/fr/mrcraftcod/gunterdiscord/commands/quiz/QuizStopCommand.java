@@ -22,12 +22,12 @@ public class QuizStopCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	QuizStopCommand(Command parent){
+	QuizStopCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		QuizListener.getQuiz(event.getGuild(), 0, 2, false).ifPresent(QuizListener::stop);
 		return CommandResult.SUCCESS;

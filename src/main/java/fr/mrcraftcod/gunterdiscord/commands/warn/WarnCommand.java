@@ -10,8 +10,6 @@ import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.*;
@@ -26,25 +24,25 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public abstract class WarnCommand extends BasicCommand{
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Utilisateur", "L'utilisateur à warn", false);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(event.getMessage().getMentionedUsers().size() > 0){
-			User user = event.getMessage().getMentionedUsers().get(0);
-			Role role = getRoleConfig(event.getGuild()).getObject();
-			EmbedBuilder builder = new EmbedBuilder();
+			final var user = event.getMessage().getMentionedUsers().get(0);
+			final var role = getRoleConfig(event.getGuild()).getObject();
+			final var builder = new EmbedBuilder();
 			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 			if(role == null){
 				builder.setColor(Color.RED);
 				builder.addField("Erreur", "Merci de configurer le role à donner", true);
 			}
 			else{
-				double duration = getTimeConfig(event.getGuild()).getObject(1D);
+				final double duration = getTimeConfig(event.getGuild()).getObject(1D);
 				Actions.giveRole(event.getGuild(), user, role);
 				new RemoveRoleConfig(event.getGuild()).addValue(user.getIdLong(), role.getIdLong(), (long) (System.currentTimeMillis() + duration * 24 * 60 * 60 * 1000L));
 				builder.setColor(Color.GREEN);
@@ -54,7 +52,7 @@ public abstract class WarnCommand extends BasicCommand{
 			Actions.reply(event, builder.build());
 		}
 		else{
-			EmbedBuilder builder = new EmbedBuilder();
+			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
 			builder.addField("Erreur", "Merci de mentionner un utilisateur a warn", true);

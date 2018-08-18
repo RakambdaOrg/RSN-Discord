@@ -17,7 +17,7 @@ public abstract class StringValueConfiguration extends ValueConfiguration<String
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected StringValueConfiguration(Guild guild){
+	protected StringValueConfiguration(final Guild guild){
 		super(guild);
 	}
 	

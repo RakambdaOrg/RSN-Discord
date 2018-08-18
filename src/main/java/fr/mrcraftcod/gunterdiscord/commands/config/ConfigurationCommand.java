@@ -51,22 +51,29 @@ public class ConfigurationCommand extends BasicCommand{
 	 * @param type     The operation that will be done on the configuration.
 	 * @param commands The commands to call this command.
 	 */
-	ConfigurationCommand(Command parent, ChangeConfigType type, List<String> commands){
+	ConfigurationCommand(final Command parent, final ChangeConfigType type, final List<String> commands){
 		super(parent);
 		this.type = type;
 		this.commands = commands;
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField("Configuration", "Le nom de la configuration", false);
+		builder.addField("Optionnel: Valeur", "Paramètres de la sous commande", false);
+	}
+	
+	@Override
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.size() > 0){
-			Configuration configuration = Settings.getSettings(args.pop());
+			final var configuration = Settings.getSettings(args.pop());
 			if(configuration != null){
-				List<String> beforeArgs = new LinkedList<>(args);
-				ActionResult result = processWithValue(event, configuration.getClass(), args);
+				final List<String> beforeArgs = new LinkedList<>(args);
+				final var result = processWithValue(event, configuration.getClass(), args);
 				if(result == ActionResult.ERROR){
-					EmbedBuilder builder = new EmbedBuilder();
+					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.RED);
 					builder.setTitle("Erreur durant l'opération");
@@ -77,7 +84,7 @@ public class ConfigurationCommand extends BasicCommand{
 					getLogger(event.getGuild()).error("Error handling configuration change");
 				}
 				else if(result != ActionResult.NONE){
-					EmbedBuilder builder = new EmbedBuilder();
+					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.GREEN);
 					builder.setTitle("Valeur changée");
@@ -89,7 +96,7 @@ public class ConfigurationCommand extends BasicCommand{
 				}
 			}
 			else{
-				EmbedBuilder builder = new EmbedBuilder();
+				final var builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.setColor(Color.ORANGE);
 				builder.setTitle("Configuration non trouvée");
@@ -98,20 +105,13 @@ public class ConfigurationCommand extends BasicCommand{
 			}
 		}
 		else{
-			EmbedBuilder builder = new EmbedBuilder();
+			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.ORANGE);
 			builder.setTitle("Merci de renseigner le nom de la configuration à changer");
 			Actions.reply(event, builder.build());
 		}
 		return CommandResult.SUCCESS;
-	}
-	
-	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
-		super.addHelp(guild, builder);
-		builder.addField("Configuration", "Le nom de la configuration", false);
-		builder.addField("Optionnel: Valeur", "Paramètres de la sous commande", false);
 	}
 	
 	/**
@@ -123,16 +123,16 @@ public class ConfigurationCommand extends BasicCommand{
 	 *
 	 * @return The result that happened.
 	 */
-	private ActionResult processWithValue(MessageReceivedEvent event, Class<? extends Configuration> configuration, LinkedList<String> args){
+	private ActionResult processWithValue(final MessageReceivedEvent event, final Class<? extends Configuration> configuration, final LinkedList<String> args){
 		try{
-			Configuration configInstance = configuration.getConstructor(Guild.class).newInstance(event.getGuild());
+			final var configInstance = configuration.getConstructor(Guild.class).newInstance(event.getGuild());
 			if(configInstance.getAllowedActions().contains(getType())){
 				try{
 					getLogger(event.getGuild()).info("Handling change {} on config {} with parameters {}", getType().name(), configuration, args);
 					return configInstance.handleChange(event, getType(), args);
 				}
-				catch(Exception e){
-					EmbedBuilder builder = new EmbedBuilder();
+				catch(final Exception e){
+					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.RED);
 					builder.setTitle("Erreur durant l'opération");
@@ -147,7 +147,7 @@ public class ConfigurationCommand extends BasicCommand{
 				Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Opération impossible").addField("Raison", "Opération " + getType().name() + " impossible sur cette configuration", false).addField("Configuration", configuration.getName(), false).build());
 			}
 		}
-		catch(InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e){
+		catch(final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e){
 			getLogger(event.getGuild()).error("Error instantiating config", e);
 		}
 		return ActionResult.ERROR;

@@ -25,20 +25,8 @@ public class Utilities{
 	 *
 	 * @return True if the member have the role, false otherwise.
 	 */
-	public static boolean hasRole(Member member, List<Role> roles){
+	public static boolean hasRole(final Member member, final List<Role> roles){
 		return roles.stream().anyMatch(r -> hasRole(member, r));
-	}
-	
-	/**
-	 * Check if a member have a role.
-	 *
-	 * @param member The member to test.
-	 * @param role   The role to search for.
-	 *
-	 * @return True if the member have the role, false otherwise.
-	 */
-	public static boolean hasRole(Member member, Role role){
-		return member.getRoles().contains(role);
 	}
 	
 	/**
@@ -49,7 +37,7 @@ public class Utilities{
 	 *
 	 * @return The role or null if not found.
 	 */
-	public static List<Role> getRole(Guild guild, String name){
+	public static List<Role> getRole(final Guild guild, final String name){
 		return guild.getJDA().getRoles().stream().filter(r -> r.getName().equalsIgnoreCase(name)).filter(r -> r.getGuild().equals(guild)).collect(Collectors.toList());
 	}
 	
@@ -60,7 +48,7 @@ public class Utilities{
 	 *
 	 * @return True if part of the team, false otherwise.
 	 */
-	public static boolean isTeam(Member member){
+	public static boolean isTeam(final Member member){
 		return isModerator(member) || isAdmin(member);
 	}
 	
@@ -71,7 +59,7 @@ public class Utilities{
 	 *
 	 * @return True if moderator, false otherwise.
 	 */
-	public static boolean isModerator(Member member){
+	public static boolean isModerator(final Member member){
 		return Utilities.hasRole(member, new ModoRolesConfig(member.getGuild()).getAsList()) || isAdmin(member);
 	}
 	
@@ -82,13 +70,8 @@ public class Utilities{
 	 *
 	 * @return True if admin, false otherwise.
 	 */
-	public static boolean isAdmin(Member member){
-		for(Role role : member.getRoles()){
-			if(role.hasPermission(Permission.ADMINISTRATOR)){
-				return true;
-			}
-		}
-		return isCreator(member);
+	public static boolean isAdmin(final Member member){
+		return member.getRoles().stream().anyMatch(role -> role.hasPermission(Permission.ADMINISTRATOR)) || isCreator(member);
 	}
 	
 	/**
@@ -99,8 +82,20 @@ public class Utilities{
 	 *
 	 * @return True if the member have the role, false otherwise.
 	 */
-	public static boolean hasRoleIDs(Member member, List<Long> roles){
+	public static boolean hasRoleIDs(final Member member, final List<Long> roles){
 		return roles.stream().map(r -> member.getGuild().getRoleById(r)).anyMatch(r -> hasRole(member, r));
+	}
+	
+	/**
+	 * Check if a member have a role.
+	 *
+	 * @param member The member to test.
+	 * @param role   The role to search for.
+	 *
+	 * @return True if the member have the role, false otherwise.
+	 */
+	public static boolean hasRole(final Member member, final Role role){
+		return member.getRoles().contains(role);
 	}
 	
 	/**
@@ -110,8 +105,8 @@ public class Utilities{
 	 *
 	 * @return The mention, or empty string if not found.
 	 */
-	public static String getEmoteMention(String name){
-		List<Emote> emotes = Main.getJDA().getEmotesByName(name, true);
+	public static String getEmoteMention(final String name){
+		final var emotes = Main.getJDA().getEmotesByName(name, true);
 		if(emotes.size() < 1){
 			return "";
 		}
@@ -125,7 +120,7 @@ public class Utilities{
 	 *
 	 * @return The members that have this role.
 	 */
-	public static List<Member> getMembersWithRole(Role role){
+	public static List<Member> getMembersWithRole(final Role role){
 		return role.getGuild().getMembersWithRoles(role);
 	}
 	
@@ -136,7 +131,7 @@ public class Utilities{
 	 *
 	 * @return The members that have this role.
 	 */
-	public static List<Member> getMembersWithRole(List<Role> roles){
+	public static List<Member> getMembersWithRole(final List<Role> roles){
 		return roles.stream().map(Utilities::getMembersWithRole).flatMap(Collection::stream).collect(Collectors.toList());
 	}
 	
@@ -147,12 +142,19 @@ public class Utilities{
 	 *
 	 * @return True if the creator, false otherwise.
 	 */
-	public static boolean isCreator(Member member){
+	public static boolean isCreator(final Member member){
 		return member.getUser().getIdLong() == 170119951498084352L;
 	}
 	
-	public static EmbedBuilder buildEmbed(MessageEmbed messageEmbed){
-		EmbedBuilder builder = buildEmbed(null, messageEmbed.getColor(), messageEmbed.getTitle());
+	/**
+	 * Builds a embed builder from a message embed.
+	 *
+	 * @param messageEmbed The message embed to build from.
+	 *
+	 * @return An embed builder.
+	 */
+	public static EmbedBuilder buildEmbed(final MessageEmbed messageEmbed){
+		final var builder = buildEmbed(null, messageEmbed.getColor(), messageEmbed.getTitle());
 		builder.setAuthor(messageEmbed.getAuthor().getName(), messageEmbed.getAuthor().getUrl(), messageEmbed.getAuthor().getIconUrl());
 		builder.setDescription(messageEmbed.getDescription());
 		messageEmbed.getFields().forEach(builder::addField);
@@ -168,8 +170,8 @@ public class Utilities{
 	 *
 	 * @return The builder.
 	 */
-	public static EmbedBuilder buildEmbed(User author, Color color, String title){
-		EmbedBuilder builder = new EmbedBuilder();
+	public static EmbedBuilder buildEmbed(final User author, final Color color, final String title){
+		final var builder = new EmbedBuilder();
 		if(author != null){
 			builder.setAuthor(author.getName(), null, author.getAvatarUrl());
 		}
@@ -179,17 +181,13 @@ public class Utilities{
 	}
 	
 	/**
-	 * Get a user in a readable way.
+	 * Get a guild in a readable way.
 	 *
-	 * @param user The user to print.
+	 * @param guild The guild to print.
 	 *
-	 * @return The string representing the user.
+	 * @return The string representing the guild.
 	 */
-	public static String getUserToLog(User user){
-		return user == null ? "NULL" : (user.getName() + "#" + user.getDiscriminator() + " (" + user.getIdLong() + ")");
-	}
-	
-	public static String getGuildToLog(Guild guild){
+	public static String getGuildToLog(final Guild guild){
 		return guild.getName();
 	}
 	
@@ -200,8 +198,8 @@ public class Utilities{
 	 *
 	 * @return The text.
 	 */
-	static String getEmbedForLog(MessageEmbed embed){
-		StringBuilder builder = new StringBuilder("Embed " + embed.hashCode());
+	static String getEmbedForLog(final MessageEmbed embed){
+		final var builder = new StringBuilder("Embed " + embed.hashCode());
 		builder.append("\n").append("Author: ").append(embed.getAuthor() == null ? "<NONE>" : embed.getAuthor().getName());
 		builder.append("\n").append("Title: ").append(embed.getTitle());
 		builder.append("\n").append("Description: ").append(embed.getDescription());
@@ -221,7 +219,18 @@ public class Utilities{
 	 *
 	 * @return The string representing the member.
 	 */
-	public static String getMemberToLog(Member member){
+	public static String getMemberToLog(final Member member){
 		return member == null ? "NULL" : getUserToLog(member.getUser());
+	}
+	
+	/**
+	 * Get a user in a readable way.
+	 *
+	 * @param user The user to print.
+	 *
+	 * @return The string representing the user.
+	 */
+	public static String getUserToLog(final User user){
+		return user == null ? "NULL" : (user.getName() + "#" + user.getDiscriminator() + " (" + user.getIdLong() + ")");
 	}
 }

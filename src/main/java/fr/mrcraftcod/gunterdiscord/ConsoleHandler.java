@@ -1,7 +1,6 @@
 package fr.mrcraftcod.gunterdiscord;
 
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Guild;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Scanner;
@@ -13,11 +12,16 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-05-29
  */
-public class ConsoleHandler extends Thread{
+class ConsoleHandler extends Thread{
 	private final JDA jda;
 	private boolean stop;
 	
-	public ConsoleHandler(JDA jda){
+	/**
+	 * Constructor.
+	 *
+	 * @param jda The JDA object.
+	 */
+	ConsoleHandler(final JDA jda){
 		super();
 		this.jda = jda;
 		this.stop = false;
@@ -27,14 +31,14 @@ public class ConsoleHandler extends Thread{
 	
 	@Override
 	public void run(){
-		try(Scanner sc = new Scanner(System.in)){
+		try(final var sc = new Scanner(System.in)){
 			while(!stop){
-				String line = sc.nextLine();
-				LinkedList<String> args = new LinkedList<>(Arrays.asList(line.split(" ")));
+				final var line = sc.nextLine();
+				final var args = new LinkedList<>(Arrays.asList(line.split(" ")));
 				if(args.isEmpty()){
 					continue;
 				}
-				String arg1 = args.poll();
+				final var arg1 = args.poll();
 				if(arg1.equalsIgnoreCase("stop")){
 					jda.shutdownNow();
 				}
@@ -43,7 +47,7 @@ public class ConsoleHandler extends Thread{
 						getLogger(null).warn("Please pass the guild as an argument");
 					}
 					else{
-						Guild guild = jda.getGuildById(args.poll());
+						final var guild = jda.getGuildById(args.poll());
 						guild.leave().queue();
 						getLogger(null).info("Guild {} left", guild);
 					}
@@ -52,7 +56,10 @@ public class ConsoleHandler extends Thread{
 		}
 	}
 	
-	public void close(){
+	/**
+	 * Close the console handler.
+	 */
+	void close(){
 		this.stop = true;
 	}
 }

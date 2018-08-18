@@ -18,7 +18,7 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration<Text
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected SingleChannelConfiguration(Guild guild){
+	protected SingleChannelConfiguration(final Guild guild){
 		super(guild);
 	}
 	
@@ -29,7 +29,7 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration<Text
 	 *
 	 * @return True if the same channels, false otherwise.
 	 */
-	public boolean isChannel(TextChannel channel){
+	public boolean isChannel(final TextChannel channel){
 		if(channel == null){
 			return false;
 		}
@@ -43,8 +43,8 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration<Text
 	 *
 	 * @return True if the same channels, false otherwise.
 	 */
-	public boolean isChannel(long ID){
-		TextChannel channel = getObject(null);
+	public boolean isChannel(final long ID){
+		final var channel = getObject(null);
 		if(channel == null){
 			return false;
 		}

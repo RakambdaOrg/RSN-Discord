@@ -14,7 +14,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public class IdeaChannelMessageListener extends ListenerAdapter{
 	@Override
-	public void onMessageReceived(MessageReceivedEvent event){
+	public void onMessageReceived(final MessageReceivedEvent event){
 		super.onMessageReceived(event);
 		try{
 			if(new OnlyIdeasConfig(event.getGuild()).contains(event.getMessage().getTextChannel())){
@@ -22,7 +22,7 @@ public class IdeaChannelMessageListener extends ListenerAdapter{
 				event.getMessage().addReaction(BasicEmotes.THUMB_DOWN.getValue()).complete();
 			}
 		}
-		catch(Exception e){
+		catch(final Exception e){
 			getLogger(event.getGuild()).error("", e);
 		}
 	}

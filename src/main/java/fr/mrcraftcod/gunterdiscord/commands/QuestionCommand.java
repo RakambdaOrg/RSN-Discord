@@ -8,7 +8,6 @@ import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.*;
@@ -25,13 +24,13 @@ public class QuestionCommand extends BasicCommand{
 	private static int nextId = 0;
 	
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Message", "La question que vous souhaitez poser", false);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		
 		if(args.size() == 0){
@@ -41,8 +40,8 @@ public class QuestionCommand extends BasicCommand{
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Merci de poser une question, et pas 'message'");
 		}
 		else{
-			int ID = ++nextId;
-			EmbedBuilder builder = new EmbedBuilder();
+			final var ID = ++nextId;
+			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Nouvelle question");
@@ -50,7 +49,7 @@ public class QuestionCommand extends BasicCommand{
 			builder.addField("Utilisateur", event.getAuthor().getAsMention(), true);
 			builder.addField("Question", String.join(" ", args), false);
 			
-			Message m = Actions.getMessage(new QuestionsChannelConfig(event.getGuild()).getObject(), builder.build());
+			final var m = Actions.getMessage(new QuestionsChannelConfig(event.getGuild()).getObject(), builder.build());
 			m.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
 			m.addReaction(BasicEmotes.CROSS_NO.getValue()).queue();
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Ok, ta question a été mise en file d'attente (ID: " + ID + "): " + String.join(" ", args));

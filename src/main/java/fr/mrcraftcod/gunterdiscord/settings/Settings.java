@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.settings;
 import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.settings.configs.*;
 import fr.mrcraftcod.gunterdiscord.settings.configurations.*;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.core.entities.Guild;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
@@ -13,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.function.BiFunction;
+import java.util.stream.IntStream;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 09/04/2018.
@@ -64,8 +66,8 @@ public class Settings{
 	 *
 	 * @return The object or null if not found.
 	 */
-	public static Object getObject(Guild guild, String name){
-		JSONObject settings = getServerSettings(guild);
+	public static Object getObject(final Guild guild, final String name){
+		final var settings = getServerSettings(guild);
 		return settings.has(name) ? settings.get(name) : null;
 	}
 	
@@ -76,12 +78,12 @@ public class Settings{
 	 *
 	 * @return The settings of the guild.
 	 */
-	private static JSONObject getServerSettings(Guild guild){
+	private static JSONObject getServerSettings(final Guild guild){
 		if(guild == null){
 			return new JSONObject();
 		}
-		JSONObject serverSettings;
-		String id = "" + guild.getIdLong();
+		final JSONObject serverSettings;
+		final var id = "" + guild.getIdLong();
 		if(settings.has(id)){
 			serverSettings = settings.optJSONObject(id);
 		}
@@ -99,7 +101,7 @@ public class Settings{
 	 *
 	 * @throws IOException If something went wrong.
 	 */
-	public static void init(Path path) throws IOException{
+	public static void init(final Path path) throws IOException{
 		Settings.path = path;
 		if(path.toFile().exists()){
 			settings = new JSONObject(String.join("", Files.readAllLines(path)));
@@ -116,13 +118,8 @@ public class Settings{
 	 *
 	 * @return The configuration or null if not found.
 	 */
-	public static Configuration getSettings(String name){
-		for(Configuration configuration : SETTINGS){
-			if(configuration.getName().equalsIgnoreCase(name)){
-				return configuration;
-			}
-		}
-		return null;
+	public static Configuration getSettings(final String name){
+		return Arrays.stream(SETTINGS).filter(configuration -> configuration.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
 	}
 	
 	/**
@@ -132,7 +129,7 @@ public class Settings{
 	 */
 	public static void save() throws IOException{
 		Files.write(path, Arrays.asList(settings.toString(4).split("\n")), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
-		System.out.println("Config written");
+		Log.getLogger(null).info("Config written");
 	}
 	
 	/**
@@ -148,7 +145,7 @@ public class Settings{
 	 * @param configuration The configuration.
 	 * @param value         The value to set.
 	 */
-	public static void setValue(Guild guild, ValueConfiguration configuration, Object value){
+	public static void setValue(final Guild guild, final ValueConfiguration configuration, final Object value){
 		getServerSettings(guild).put(configuration.getName(), value);
 	}
 	
@@ -160,7 +157,7 @@ public class Settings{
 	 * @param value         The value to add.
 	 * @param <T>           The type of the value.
 	 */
-	public static <T> void addValue(Guild guild, ListConfiguration configuration, T value){
+	public static <T> void addValue(final Guild guild, final ListConfiguration configuration, final T value){
 		getServerSettings(guild).append(configuration.getName(), value);
 	}
 	
@@ -170,7 +167,7 @@ public class Settings{
 	 * @param guild         The guild concerned.
 	 * @param configuration The configuration to clear.
 	 */
-	public static void resetList(Guild guild, ListConfiguration configuration){
+	public static void resetList(final Guild guild, final ListConfiguration configuration){
 		getServerSettings(guild).put(configuration.getName(), new JSONArray());
 	}
 	
@@ -182,12 +179,12 @@ public class Settings{
 	 * @param value         The value to remove.
 	 * @param <T>           The type of the value.
 	 */
-	public static <T> void removeValue(Guild guild, ListConfiguration configuration, T value){
-		JSONArray array = getArray(guild, configuration.getName());
+	public static <T> void removeValue(final Guild guild, final ListConfiguration configuration, final T value){
+		final var array = getArray(guild, configuration.getName());
 		if(array == null){
 			return;
 		}
-		int index = array.toList().indexOf(value);
+		final var index = array.toList().indexOf(value);
 		if(index != -1){
 			array.remove(index);
 		}
@@ -202,7 +199,7 @@ public class Settings{
 	 *
 	 * @return The array or null.
 	 */
-	public static JSONArray getArray(Guild guild, String name){
+	public static JSONArray getArray(final Guild guild, final String name){
 		return getServerSettings(guild).optJSONArray(name);
 	}
 	
@@ -216,8 +213,8 @@ public class Settings{
 	 * @param <K>           The type of the key.
 	 * @param <V>           They type of the value.
 	 */
-	public static <K, V> void mapValue(Guild guild, MapConfiguration configuration, K key, V value){
-		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
+	public static <K, V> void mapValue(final Guild guild, final MapConfiguration configuration, final K key, final V value){
+		var map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null){
 			map = new JSONObject();
 		}
@@ -233,8 +230,8 @@ public class Settings{
 	 * @param key           The key to delete.
 	 * @param <K>           The type of the key.
 	 */
-	public static <K> void deleteKey(Guild guild, MapConfiguration configuration, K key){
-		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
+	public static <K> void deleteKey(final Guild guild, final MapConfiguration configuration, final K key){
+		final var map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null){
 			return;
 		}
@@ -249,7 +246,7 @@ public class Settings{
 	 *
 	 * @return The object or null.
 	 */
-	public static JSONObject getJSONObject(Guild guild, String name){
+	public static JSONObject getJSONObject(final Guild guild, final String name){
 		return getServerSettings(guild).optJSONObject(name);
 	}
 	
@@ -259,7 +256,7 @@ public class Settings{
 	 * @param guild         The guild concerned.
 	 * @param configuration The configuration.
 	 */
-	public static void resetMap(Guild guild, MapConfiguration configuration){
+	public static void resetMap(final Guild guild, final MapConfiguration configuration){
 		getServerSettings(guild).put(configuration.getName(), new JSONObject());
 	}
 	
@@ -269,7 +266,7 @@ public class Settings{
 	 * @param guild         The guild concerned.
 	 * @param configuration The configuration.
 	 */
-	public static void resetMap(Guild guild, MapListConfiguration configuration){
+	public static void resetMap(final Guild guild, final MapListConfiguration configuration){
 		getServerSettings(guild).put(configuration.getName(), new JSONObject());
 	}
 	
@@ -283,8 +280,8 @@ public class Settings{
 	 * @param <K>           The type of the key.
 	 * @param <V>           The type of the value.
 	 */
-	public static <K, V> void mapListValue(Guild guild, MapListConfiguration configuration, K key, V value){
-		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
+	public static <K, V> void mapListValue(final Guild guild, final MapListConfiguration configuration, final K key, final V value){
+		var map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null){
 			map = new JSONObject();
 		}
@@ -301,8 +298,8 @@ public class Settings{
 	 * @param <K>           The type of the key.
 	 * @param <V>           The type of the value.
 	 */
-	public static <K, V> void deleteKey(Guild guild, MapListConfiguration<K, V> configuration, K key){
-		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
+	public static <K, V> void deleteKey(final Guild guild, final MapListConfiguration<K, V> configuration, final K key){
+		final var map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null){
 			return;
 		}
@@ -320,20 +317,14 @@ public class Settings{
 	 * @param <K>           The type of the key.
 	 * @param <V>           The type of the value.
 	 */
-	public static <K, V> void deleteKey(Guild guild, MapListConfiguration configuration, K key, V value, BiFunction<Object, V, Boolean> matcher){
-		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
+	public static <K, V> void deleteKey(final Guild guild, final MapListConfiguration configuration, final K key, final V value, final BiFunction<Object, V, Boolean> matcher){
+		final var map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null){
 			return;
 		}
-		JSONArray array = map.optJSONArray(key.toString());
+		final var array = map.optJSONArray(key.toString());
 		if(array != null){
-			int index = -1;
-			for(int i = 0; i < array.length(); i++){
-				if(matcher.apply(array.get(i), value)){
-					index = i;
-					break;
-				}
-			}
+			final var index = IntStream.range(0, array.length()).filter(i -> matcher.apply(array.get(i), value)).findFirst().orElse(-1);
 			if(index != -1){
 				array.remove(index);
 			}
@@ -354,8 +345,8 @@ public class Settings{
 	 * @param key           The key of the map.
 	 * @param <K>           The type of the key.
 	 */
-	public static <K> void mapMapValue(Guild guild, MapMapConfiguration configuration, K key){
-		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
+	public static <K> void mapMapValue(final Guild guild, final MapMapConfiguration configuration, final K key){
+		var map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null){
 			map = new JSONObject();
 		}
@@ -377,8 +368,8 @@ public class Settings{
 	 * @param <V>           The type of the second key.
 	 * @param <W>           The type of the value.
 	 */
-	public static <K, V, W> void mapMapValue(Guild guild, MapMapConfiguration configuration, K key, V value, W insideValue){
-		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
+	public static <K, V, W> void mapMapValue(final Guild guild, final MapMapConfiguration configuration, final K key, final V value, final W insideValue){
+		var map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null){
 			map = new JSONObject();
 		}
@@ -397,8 +388,8 @@ public class Settings{
 	 * @param key           The key.
 	 * @param <K>           The type of the key.
 	 */
-	public static <K> void deleteKey(Guild guild, MapMapConfiguration configuration, K key){
-		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
+	public static <K> void deleteKey(final Guild guild, final MapMapConfiguration configuration, final K key){
+		final var map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null){
 			return;
 		}
@@ -411,7 +402,7 @@ public class Settings{
 	 * @param guild         The guild concerned.
 	 * @param configuration The configuration.
 	 */
-	public static void resetMap(Guild guild, MapMapConfiguration configuration){
+	public static void resetMap(final Guild guild, final MapMapConfiguration configuration){
 		getServerSettings(guild).put(configuration.getName(), new JSONObject());
 	}
 	
@@ -425,12 +416,12 @@ public class Settings{
 	 * @param <K>           The type of the key.
 	 * @param <V>           The type of the second key..
 	 */
-	public static <K, V> void deleteKey(Guild guild, MapMapConfiguration configuration, K key, V value){
-		JSONObject map = getServerSettings(guild).optJSONObject(configuration.getName());
+	public static <K, V> void deleteKey(final Guild guild, final MapMapConfiguration configuration, final K key, final V value){
+		final var map = getServerSettings(guild).optJSONObject(configuration.getName());
 		if(map == null){
 			return;
 		}
-		JSONObject map2 = map.optJSONObject(key.toString());
+		final var map2 = map.optJSONObject(key.toString());
 		if(map2 != null){
 			map2.remove(value.toString());
 			if(map2.length() == 0){

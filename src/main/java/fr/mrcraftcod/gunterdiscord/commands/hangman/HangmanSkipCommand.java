@@ -22,12 +22,12 @@ public class HangmanSkipCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	HangmanSkipCommand(Command parent){
+	HangmanSkipCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		HangmanListener.getGame(event.getGuild(), false).ifPresent(h -> h.voteSkip(event.getMember()));
 		return CommandResult.SUCCESS;

@@ -16,7 +16,7 @@ public class NickLastChangeConfig extends MapConfiguration<Long, Long>{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public NickLastChangeConfig(Guild guild){
+	public NickLastChangeConfig(final Guild guild){
 		super(guild);
 	}
 	

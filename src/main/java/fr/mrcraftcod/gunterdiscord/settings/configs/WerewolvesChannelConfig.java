@@ -15,7 +15,7 @@ public class WerewolvesChannelConfig extends SingleChannelConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public WerewolvesChannelConfig(Guild guild){
+	public WerewolvesChannelConfig(final Guild guild){
 		super(guild);
 	}
 	

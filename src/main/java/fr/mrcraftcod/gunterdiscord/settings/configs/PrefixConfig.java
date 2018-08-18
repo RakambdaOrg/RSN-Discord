@@ -15,7 +15,7 @@ public class PrefixConfig extends StringValueConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public PrefixConfig(Guild guild){
+	public PrefixConfig(final Guild guild){
 		super(guild);
 	}
 	

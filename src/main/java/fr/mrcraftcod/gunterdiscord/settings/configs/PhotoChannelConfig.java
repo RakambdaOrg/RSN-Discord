@@ -15,7 +15,7 @@ public class PhotoChannelConfig extends SingleChannelConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public PhotoChannelConfig(Guild guild){
+	public PhotoChannelConfig(final Guild guild){
 		super(guild);
 	}
 	

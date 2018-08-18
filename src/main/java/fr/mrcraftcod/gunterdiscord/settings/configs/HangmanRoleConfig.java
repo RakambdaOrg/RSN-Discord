@@ -15,7 +15,7 @@ public class HangmanRoleConfig extends SingleRoleConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public HangmanRoleConfig(Guild guild){
+	public HangmanRoleConfig(final Guild guild){
 		super(guild);
 	}
 	

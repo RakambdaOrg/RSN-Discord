@@ -8,13 +8,11 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.HangmanRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -28,19 +26,19 @@ public class HangmanJoinCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	HangmanJoinCommand(Command parent){
+	HangmanJoinCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		Role role = new HangmanRoleConfig(event.getGuild()).getObject();
+		final var role = new HangmanRoleConfig(event.getGuild()).getObject();
 		if(role == null){
 			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.RED, "Erreur").addField("Raison", "Le role du pendu n'est pas configuré", false).build());
 		}
 		else if(!Utilities.hasRole(event.getMember(), role)){
-			Optional<HangmanListener> game = HangmanListener.getGame(event.getGuild());
+			final var game = HangmanListener.getGame(event.getGuild());
 			if(game.isPresent()){
 				Actions.giveRole(event.getGuild(), event.getAuthor(), role);
 				game.get().onPlayerJoin(event.getMember());

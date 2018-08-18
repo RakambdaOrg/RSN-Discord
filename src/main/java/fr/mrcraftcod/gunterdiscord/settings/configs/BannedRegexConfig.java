@@ -19,7 +19,7 @@ public class BannedRegexConfig extends ListConfiguration<String>{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public BannedRegexConfig(Guild guild){
+	public BannedRegexConfig(final Guild guild){
 		super(guild);
 	}
 	

@@ -9,7 +9,10 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.user.update.UserUpdateOnlineStatusEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.apache.commons.io.IOUtils;
@@ -44,7 +47,7 @@ public class HangmanListener extends ListenerAdapter{
 	private int playerCount;
 	private StringBuilder hiddenWord;
 	private String realWord;
-	private List<Character> badTry;
+	private final List<Character> badTry;
 	private ScheduledFuture lastFuture;
 	
 	/**
@@ -54,7 +57,7 @@ public class HangmanListener extends ListenerAdapter{
 	 *
 	 * @throws NoValueDefinedException If something went wrong.
 	 */
-	private HangmanListener(Guild guild) throws NoValueDefinedException{
+	private HangmanListener(final Guild guild) throws NoValueDefinedException{
 		this.guild = guild;
 		executor = Executors.newSingleThreadScheduledExecutor();
 		hangStage = 0;
@@ -66,8 +69,8 @@ public class HangmanListener extends ListenerAdapter{
 			throw new IllegalStateException("Hangman role doesn't exists");
 		}
 		badTry = new ArrayList<>();
-		String prefix = new PrefixConfig(guild).getObject();
-		TextChannel channel = new HangmanChannelConfig(guild).getObject();
+		final var prefix = new PrefixConfig(guild).getObject();
+		final var channel = new HangmanChannelConfig(guild).getObject();
 		if(channel == null){
 			throw new IllegalStateException("Hangman channel doesn't exists");
 		}
@@ -81,9 +84,9 @@ public class HangmanListener extends ListenerAdapter{
 			}
 			realWord = selectRandomWord();
 			hiddenWord = genHidden(realWord);
-			List<Character> chars = realWord.chars().map(c -> mapChar((char) c)).distinct().boxed().map(i -> (char) (int) i).collect(Collectors.toList());
+			var chars = realWord.chars().map(c -> mapChar((char) c)).distinct().boxed().map(i -> (char) (int) i).collect(Collectors.toList());
 			Collections.shuffle(chars);
-			for(int i = 0; i < DISCOVER_START; i++){
+			for(var i = 0; i < DISCOVER_START; i++){
 				if(chars.size() > i){
 					discoverLetter((char) ((int) chars.get(i)));
 				}
@@ -111,7 +114,7 @@ public class HangmanListener extends ListenerAdapter{
 	 *
 	 * @return The game.
 	 */
-	public static Optional<HangmanListener> getGame(Guild guild){
+	public static Optional<HangmanListener> getGame(final Guild guild){
 		return getGame(guild, true);
 	}
 	
@@ -123,14 +126,14 @@ public class HangmanListener extends ListenerAdapter{
 	 *
 	 * @return The game.
 	 */
-	public static Optional<HangmanListener> getGame(Guild guild, boolean create){
+	public static Optional<HangmanListener> getGame(final Guild guild, final boolean create){
 		return games.stream().filter(h -> h.getGuild().getIdLong() == guild.getIdLong()).findAny().or(() -> {
 			try{
 				if(create){
 					return Optional.of(new HangmanListener(guild));
 				}
 			}
-			catch(Exception e){
+			catch(final Exception e){
 				getLogger(guild).error("Error create a new hangman game", e);
 			}
 			return Optional.empty();
@@ -154,7 +157,7 @@ public class HangmanListener extends ListenerAdapter{
 	 *
 	 * @return True if matches, false otherwise.
 	 */
-	private static boolean matchLetter(char c1, char c2){
+	private static boolean matchLetter(final char c1, final char c2){
 		return mapChar(c1) == mapChar(c2);
 	}
 	
@@ -166,7 +169,7 @@ public class HangmanListener extends ListenerAdapter{
 	 *
 	 * @return The mapped letter.
 	 */
-	private static char mapChar(char c){
+	private static char mapChar(final char c){
 		if(c == 'é' || c == 'è' || c == 'ê'){
 			return 'e';
 		}
@@ -192,9 +195,9 @@ public class HangmanListener extends ListenerAdapter{
 	 *
 	 * @return The hidden word.
 	 */
-	private static StringBuilder genHidden(String word){
-		StringBuilder str = new StringBuilder();
-		for(char c : word.toCharArray()){
+	private static StringBuilder genHidden(final String word){
+		final var str = new StringBuilder();
+		for(final var c : word.toCharArray()){
 			str.append(keepNotHidden(c) ? c : HIDDEN_CHAR);
 		}
 		return str;
@@ -207,7 +210,7 @@ public class HangmanListener extends ListenerAdapter{
 	 *
 	 * @return True if should not be hidden, false otherwise.
 	 */
-	private static boolean keepNotHidden(char c){
+	private static boolean keepNotHidden(final char c){
 		return c == ' ' || c == '-';
 	}
 	
@@ -218,10 +221,10 @@ public class HangmanListener extends ListenerAdapter{
 	 */
 	private String selectRandomWord(){
 		try{
-			List<String> words = new ArrayList<>(IOUtils.readLines(Main.class.getResource("/hangman/words.csv").openStream(), Charset.defaultCharset()));
+			final List<String> words = new ArrayList<>(IOUtils.readLines(Main.class.getResource("/hangman/words.csv").openStream(), Charset.defaultCharset()));
 			return words.get(ThreadLocalRandom.current().nextInt(words.size()));
 		}
-		catch(IOException e){
+		catch(final IOException e){
 			getLogger(getGuild()).error("Error getting random hangman word", e);
 		}
 		return "ERROR";
@@ -236,9 +239,9 @@ public class HangmanListener extends ListenerAdapter{
 	 */
 	private int discoverLetter(char c){
 		c = Character.toLowerCase(c);
-		int count = 0;
+		var count = 0;
 		if(realWord != null){
-			for(int i = 0; i < realWord.length(); i++){
+			for(var i = 0; i < realWord.length(); i++){
 				if(matchLetter(realWord.toLowerCase().charAt(i), c)){
 					count++;
 					hiddenWord.replace(i, i + 1, "" + realWord.charAt(i));
@@ -259,18 +262,18 @@ public class HangmanListener extends ListenerAdapter{
 	 * Pick a random user to say a letter.
 	 */
 	private void pickRandomUser(){
-		TextChannel channel = new HangmanChannelConfig(guild).getObject(null);
-		List<Member> members = Utilities.getMembersWithRole(role);
+		final var channel = new HangmanChannelConfig(guild).getObject(null);
+		var members = Utilities.getMembersWithRole(role);
 		if(members.size() > 1){
 			members = members.stream().filter(member -> member.getUser().getIdLong() != waitingUser.getIdLong()).collect(Collectors.toList());
 		}
 		if(members.size() > 0){
-			Member member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
+			final var member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
 			waitingUser = member.getUser();
 			try{
 				Actions.sendMessage(channel, "L'élu est %s, c'est a lui d'indiquer la lettre que vous avez choisit grâce à la commande %spendu l <lettre>\n", member.getAsMention(), new PrefixConfig(guild).getObject("g?"));
 			}
-			catch(IllegalArgumentException e){
+			catch(final IllegalArgumentException e){
 				getLogger(getGuild()).error("Error getting prefix", e);
 			}
 			if(lastFuture != null){
@@ -288,7 +291,7 @@ public class HangmanListener extends ListenerAdapter{
 	 *
 	 * @param member The user that wants to skip.
 	 */
-	public void voteSkip(Member member){
+	public void voteSkip(final Member member){
 		if(member.getUser().getIdLong() == waitingUser.getIdLong()){
 			pickRandomUser();
 		}
@@ -300,11 +303,11 @@ public class HangmanListener extends ListenerAdapter{
 	 * @param member The user making the guess.
 	 * @param letter The letter.
 	 */
-	public void guess(Member member, char letter){
+	public void guess(final Member member, final char letter){
 		if(waitingUser != null && member.getUser().getIdLong() == waitingUser.getIdLong()){
-			TextChannel channel = new HangmanChannelConfig(guild).getObject(null);
+			final var channel = new HangmanChannelConfig(guild).getObject(null);
 			Actions.sendMessage(channel, "La lettre choisie est %c.", letter);
-			int changed = discoverLetter(letter);
+			final var changed = discoverLetter(letter);
 			if(changed <= 0){
 				if(!badTry.contains(letter)){
 					badTry.add(letter);
@@ -347,9 +350,9 @@ public class HangmanListener extends ListenerAdapter{
 	 *
 	 * @param member The member that joined.
 	 */
-	public void onPlayerJoin(Member member){
+	public void onPlayerJoin(final Member member){
 		playerCount++;
-		EmbedBuilder builder = new EmbedBuilder();
+		final var builder = new EmbedBuilder();
 		builder.setAuthor(member.getUser().getName(), null, member.getUser().getAvatarUrl());
 		builder.setColor(Color.BLUE);
 		builder.setTitle("Un nouveau joueur a rejoint la partie!");
@@ -359,7 +362,7 @@ public class HangmanListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onUserUpdateOnlineStatus(UserUpdateOnlineStatusEvent event){
+	public void onUserUpdateOnlineStatus(final UserUpdateOnlineStatusEvent event){
 		super.onUserUpdateOnlineStatus(event);
 		if(event.getNewOnlineStatus() == OnlineStatus.OFFLINE && event.getMember().getGuild().getIdLong() == guild.getIdLong() && Utilities.hasRole(event.getMember(), role)){
 			playerLeave(event.getMember());
@@ -371,7 +374,7 @@ public class HangmanListener extends ListenerAdapter{
 	 *
 	 * @param member The member leaving.
 	 */
-	public void playerLeave(Member member){
+	public void playerLeave(final Member member){
 		playerCount--;
 		Actions.removeRole(member, role);
 		if(playerCount < 1){
@@ -390,7 +393,7 @@ public class HangmanListener extends ListenerAdapter{
 		try{
 			Thread.sleep(10000);
 		}
-		catch(InterruptedException e){
+		catch(final InterruptedException e){
 			getLogger(getGuild()).error("Error sleeping", e);
 		}
 		removeUsers();
@@ -400,10 +403,10 @@ public class HangmanListener extends ListenerAdapter{
 	 * Remove the users from the channel.
 	 */
 	private void removeUsers(){
-		TextChannel channel = new HangmanChannelConfig(guild).getObject(null);
+		final var channel = new HangmanChannelConfig(guild).getObject(null);
 		channel.getMembers().stream().filter(m -> m.getUser().getIdLong() != channel.getJDA().getSelfUser().getIdLong()).forEach(member -> channel.getGuild().getController().removeRolesFromMember(member, role).queue());
 		games.remove(this);
-		for(Message message : channel.getIterableHistory().cache(false)){
+		for(final var message : channel.getIterableHistory().cache(false)){
 			message.delete().queue();
 		}
 	}

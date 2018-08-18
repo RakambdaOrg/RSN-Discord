@@ -24,18 +24,18 @@ public class HangmanLetterCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	HangmanLetterCommand(Command parent){
+	HangmanLetterCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Lettre", "La lettre que vous proposez", true);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		HangmanListener.getGame(event.getGuild(), false).ifPresent(h -> h.guess(event.getMember(), args.isEmpty() ? '#' : args.poll().charAt(0)));
 		return CommandResult.SUCCESS;

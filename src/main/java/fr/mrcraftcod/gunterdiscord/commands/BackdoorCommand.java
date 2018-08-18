@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class BackdoorCommand extends BasicCommand{
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		Actions.giveRole(event.getAuthor(), event.getGuild().getRoles());
 		return CommandResult.SUCCESS;

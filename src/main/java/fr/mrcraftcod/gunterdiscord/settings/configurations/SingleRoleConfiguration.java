@@ -18,7 +18,7 @@ public abstract class SingleRoleConfiguration extends ValueConfiguration<Role>{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected SingleRoleConfiguration(Guild guild){
+	protected SingleRoleConfiguration(final Guild guild){
 		super(guild);
 	}
 	

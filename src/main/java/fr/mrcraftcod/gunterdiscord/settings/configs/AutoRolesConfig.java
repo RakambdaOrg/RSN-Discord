@@ -15,7 +15,7 @@ public class AutoRolesConfig extends MultipleRoleConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public AutoRolesConfig(Guild guild){
+	public AutoRolesConfig(final Guild guild){
 		super(guild);
 	}
 	

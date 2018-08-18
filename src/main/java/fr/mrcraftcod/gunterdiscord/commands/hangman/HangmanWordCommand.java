@@ -22,12 +22,12 @@ public class HangmanWordCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	HangmanWordCommand(Command parent){
+	HangmanWordCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		HangmanListener.getGame(event.getGuild(), false).ifPresent(HangmanListener::displayWord);
 		return CommandResult.SUCCESS;

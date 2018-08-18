@@ -6,7 +6,6 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.musicparty.MusicPartyListener;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
@@ -24,14 +23,14 @@ public class MusicPartyStartCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	MusicPartyStartCommand(Command parent){
+	MusicPartyStartCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		Member member = event.getMember();
+		final var member = event.getMember();
 		if(member.getVoiceState().inVoiceChannel()){
 			MusicPartyListener.getParty(event.getGuild(), member.getVoiceState().getChannel()).ifPresent(g -> Actions.reply(event, "Event started"));
 		}

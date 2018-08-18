@@ -13,7 +13,6 @@ import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.managers.AudioManager;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -32,7 +31,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	private final TrackScheduler trackScheduler;
 	private final VoiceChannel channel;
 	
-	private GunterAudioManager(VoiceChannel channel, AudioManager audioManager, AudioPlayerManager audioPlayerManager, AudioPlayer audioPlayer, TrackScheduler trackScheduler){
+	private GunterAudioManager(final VoiceChannel channel, final AudioManager audioManager, final AudioPlayerManager audioPlayerManager, final AudioPlayer audioPlayer, final TrackScheduler trackScheduler){
 		this.channel = channel;
 		this.audioManager = audioManager;
 		this.audioPlayerManager = audioPlayerManager;
@@ -40,29 +39,29 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		this.trackScheduler = trackScheduler;
 	}
 	
-	public static void play(VoiceChannel channel, String... identifier){
+	public static void play(final VoiceChannel channel, final String... identifier){
 		play(channel, null, identifier);
 	}
 	
-	private static void play(VoiceChannel channel, StatusTrackSchedulerListener listener, String... identifier){
+	private static void play(final VoiceChannel channel, final StatusTrackSchedulerListener listener, final String... identifier){
 		play(channel, listener, track -> {}, identifier);
 	}
 	
-	public static void play(VoiceChannel channel, StatusTrackSchedulerListener listener, Consumer<AudioTrack> onTrackAdded, String... identifier){
-		GunterAudioManager gunterAudioManager = getGunterPlayerManager(channel, listener);
-		for(String ident : identifier){
+	public static void play(final VoiceChannel channel, final StatusTrackSchedulerListener listener, final Consumer<AudioTrack> onTrackAdded, final String... identifier){
+		final var gunterAudioManager = getGunterPlayerManager(channel, listener);
+		for(final var ident : identifier){
 			gunterAudioManager.getAudioPlayerManager().loadItem(ident, new AudioLoadResultHandler(){
 				@Override
-				public void trackLoaded(AudioTrack track){
+				public void trackLoaded(final AudioTrack track){
 					getLogger(channel.getGuild()).info("Added `{}` to the audio queue on channel `{}`", ident, channel.getName());
 					gunterAudioManager.getTrackScheduler().queue(track);
 					onTrackAdded.accept(track);
 				}
 				
 				@Override
-				public void playlistLoaded(AudioPlaylist playlist){
+				public void playlistLoaded(final AudioPlaylist playlist){
 					getLogger(channel.getGuild()).info("Added `{}`({}) to the audio queue on channel `{}`", ident, playlist.getTracks().size(), channel.getName());
-					for(AudioTrack track : playlist.getTracks()){
+					for(final var track : playlist.getTracks()){
 						gunterAudioManager.getTrackScheduler().queue(track);
 						onTrackAdded.accept(track);
 					}
@@ -75,7 +74,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 				}
 				
 				@Override
-				public void loadFailed(FriendlyException throwable){
+				public void loadFailed(final FriendlyException throwable){
 					getLogger(channel.getGuild()).warn("Failed to load audio for channel `{}`", channel.getName(), throwable);
 					gunterAudioManager.getTrackScheduler().foundNothing();
 				}
@@ -83,17 +82,17 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		}
 	}
 	
-	private static GunterAudioManager getGunterPlayerManager(VoiceChannel channel, StatusTrackSchedulerListener listener){
+	private static GunterAudioManager getGunterPlayerManager(final VoiceChannel channel, final StatusTrackSchedulerListener listener){
 		return managers.computeIfAbsent(channel.getGuild(), g -> {
-			AudioManager audioManager = channel.getGuild().getAudioManager();
+			final var audioManager = channel.getGuild().getAudioManager();
 			audioManager.openAudioConnection(channel);
-			AudioPlayerManager audioPlayerManager = new DefaultAudioPlayerManager();
+			final AudioPlayerManager audioPlayerManager = new DefaultAudioPlayerManager();
 			AudioSourceManagers.registerRemoteSources(audioPlayerManager);
-			AudioPlayer audioPlayer = audioPlayerManager.createPlayer();
+			final var audioPlayer = audioPlayerManager.createPlayer();
 			audioManager.setSendingHandler(new AudioPlayerSendHandler(audioPlayer));
-			TrackScheduler trackScheduler = new TrackScheduler(channel.getGuild(), audioPlayer);
+			final var trackScheduler = new TrackScheduler(channel.getGuild(), audioPlayer);
 			audioPlayer.addListener(trackScheduler);
-			GunterAudioManager gunterAudioManager = new GunterAudioManager(channel, audioManager, audioPlayerManager, audioPlayer, trackScheduler);
+			final var gunterAudioManager = new GunterAudioManager(channel, audioManager, audioPlayerManager, audioPlayer, trackScheduler);
 			trackScheduler.addStatusTrackSchedulerListener(gunterAudioManager);
 			if(listener != null){
 				trackScheduler.addStatusTrackSchedulerListener(listener);
@@ -103,13 +102,13 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		});
 	}
 	
-	public static void pause(Guild guild){
+	public static void pause(final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).getAudioPlayer().setPaused(true);
 		}
 	}
 	
-	public static void resume(Guild guild){
+	public static void resume(final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).getAudioPlayer().setPaused(false);
 		}
@@ -123,7 +122,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		return trackScheduler;
 	}
 	
-	public static void skip(Guild guild){
+	public static void skip(final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).skip();
 		}
@@ -133,7 +132,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		trackScheduler.nextTrack();
 	}
 	
-	public static void leave(Guild guild){
+	public static void leave(final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).onTrackSchedulerEmpty();
 		}
@@ -142,7 +141,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	@Override
 	public void onTrackSchedulerEmpty(){
 		getLogger(getChannel().getGuild()).info("Scheduler is empty");
-		ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+		final var executorService = Executors.newSingleThreadScheduledExecutor();
 		executorService.schedule(() -> {
 			getAudioPlayerManager().shutdown();
 			getAudioManager().setSendingHandler(null);
@@ -154,11 +153,11 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	}
 	
 	@Override
-	public void onTrackEnd(AudioTrack track){
+	public void onTrackEnd(final AudioTrack track){
 	}
 	
 	@Override
-	public void onTrackStart(AudioTrack track){
+	public void onTrackStart(final AudioTrack track){
 	}
 	
 	private VoiceChannel getChannel(){
@@ -169,7 +168,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		return audioManager;
 	}
 	
-	public void addListener(StatusTrackSchedulerListener listener){
+	public void addListener(final StatusTrackSchedulerListener listener){
 		trackScheduler.addStatusTrackSchedulerListener(listener);
 	}
 	

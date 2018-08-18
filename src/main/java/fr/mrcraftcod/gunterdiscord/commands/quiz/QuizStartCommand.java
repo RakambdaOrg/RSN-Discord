@@ -24,34 +24,34 @@ public class QuizStartCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	QuizStartCommand(Command parent){
+	QuizStartCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Optionnel: Quantité", "Le nombre de questions (par défaut le maximum disponible)", false);
 		builder.addField("Optionnel: Délais", "Le délais en secondes avant de commencer le quiz (par défaut 60 secondes)", false);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		int amount = Integer.MAX_VALUE;
-		int delay = 60;
+		var amount = Integer.MAX_VALUE;
+		var delay = 60;
 		if(!args.isEmpty()){
 			try{
 				amount = Integer.parseInt(args.poll());
 			}
-			catch(Exception ignored){
+			catch(final Exception ignored){
 			}
 		}
 		if(!args.isEmpty()){
 			try{
 				delay = Integer.parseInt(args.poll());
 			}
-			catch(Exception ignored){
+			catch(final Exception ignored){
 			}
 		}
 		QuizListener.getQuiz(event.getGuild(), amount, delay);

@@ -16,7 +16,7 @@ public class YoutubeChannelConfig extends MapConfiguration<Long, String>{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public YoutubeChannelConfig(Guild guild){
+	public YoutubeChannelConfig(final Guild guild){
 		super(guild);
 	}
 	

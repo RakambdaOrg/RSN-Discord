@@ -20,7 +20,7 @@ class Question{
 	 * @param answers       The answers available.
 	 * @param correctAnswer The index of teh correct answer.
 	 */
-	Question(String question, HashMap<Integer, String> answers, int correctAnswer){
+	Question(final String question, final HashMap<Integer, String> answers, final int correctAnswer){
 		this.question = question;
 		this.answers = answers;
 		this.correctAnswer = correctAnswer;

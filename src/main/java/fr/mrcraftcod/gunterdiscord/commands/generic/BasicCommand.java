@@ -27,16 +27,16 @@ public abstract class BasicCommand implements Command{
 	 *
 	 * @param parent The parent command.
 	 */
-	protected BasicCommand(Command parent){
+	protected BasicCommand(final Command parent){
 		this.parent = parent;
 	}
 	
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		if(!isAllowed(event.getMember())){
 			throw new NotAllowedException();
 		}

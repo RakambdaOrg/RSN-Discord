@@ -15,12 +15,12 @@ import java.util.List;
  */
 public class NormalWarnCommand extends WarnCommand{
 	@Override
-	protected SingleRoleConfiguration getRoleConfig(Guild guild){
+	protected SingleRoleConfiguration getRoleConfig(final Guild guild){
 		return new WarnRoleConfig(guild);
 	}
 	
 	@Override
-	protected DoubleValueConfiguration getTimeConfig(Guild guild){
+	protected DoubleValueConfiguration getTimeConfig(final Guild guild){
 		return new WarnTimeConfig(guild);
 	}
 	

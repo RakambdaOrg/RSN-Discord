@@ -16,7 +16,7 @@ public class VoiceTextChannelsAssociationConfig extends MapConfiguration<Long, L
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public VoiceTextChannelsAssociationConfig(Guild guild){
+	public VoiceTextChannelsAssociationConfig(final Guild guild){
 		super(guild);
 	}
 	

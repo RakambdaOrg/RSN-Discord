@@ -3,11 +3,7 @@ package fr.mrcraftcod.gunterdiscord;
 import fr.mrcraftcod.gunterdiscord.settings.configs.RemoveRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Role;
 import java.time.Duration;
-import java.util.Map;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -16,10 +12,15 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-07-14
  */
-public class ScheduledRunner implements Runnable{
+class ScheduledRunner implements Runnable{
 	private final JDA jda;
 	
-	public ScheduledRunner(JDA jda){
+	/**
+	 * Constructor.
+	 *
+	 * @param jda The JDA object.
+	 */
+	ScheduledRunner(final JDA jda){
 		getLogger(null).info("Creating scheduled runner");
 		this.jda = jda;
 	}
@@ -27,18 +28,18 @@ public class ScheduledRunner implements Runnable{
 	@Override
 	public void run(){
 		getLogger(null).info("Starting scheduled runner");
-		long currentTime = System.currentTimeMillis();
-		for(Guild guild : jda.getGuilds()){
-			RemoveRoleConfig config = new RemoveRoleConfig(guild);
+		final var currentTime = System.currentTimeMillis();
+		for(final var guild : jda.getGuilds()){
+			final var config = new RemoveRoleConfig(guild);
 			getLogger(guild).info("Processing guild {}", guild);
-			Map<Long, Map<Long, Long>> guildConfig = config.getAsMap();
-			for(Long userID : guildConfig.keySet()){
-				Member member = guild.getMemberById(userID);
+			final var guildConfig = config.getAsMap();
+			for(final var userID : guildConfig.keySet()){
+				final var member = guild.getMemberById(userID);
 				getLogger(guild).info("Processing user {}", member);
-				Map<Long, Long> userGuildConfig = guildConfig.get(userID);
-				for(Long roleID : userGuildConfig.keySet()){
-					Duration diff = Duration.ofMillis(userGuildConfig.get(roleID) - currentTime);
-					Role role = guild.getRoleById(roleID);
+				final var userGuildConfig = guildConfig.get(userID);
+				for(final var roleID : userGuildConfig.keySet()){
+					final var diff = Duration.ofMillis(userGuildConfig.get(roleID) - currentTime);
+					final var role = guild.getRoleById(roleID);
 					getLogger(guild).info("Processing role {}, diff is: {}", role, diff);
 					if(diff.isNegative()){
 						Actions.removeRole(member, role);

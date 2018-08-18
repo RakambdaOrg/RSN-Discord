@@ -17,7 +17,7 @@ public enum BasicEmotes{
 	 *
 	 * @param name The representation of the emote.
 	 */
-	BasicEmotes(String name){
+	BasicEmotes(final String name){
 		this.name = name;
 		this.others = new String[]{};
 	}
@@ -28,7 +28,7 @@ public enum BasicEmotes{
 	 * @param name   The representation of the emote.
 	 * @param others The other representations of the emote.
 	 */
-	BasicEmotes(String name, String... others){
+	BasicEmotes(final String name, final String... others){
 		this.name = name;
 		this.others = others;
 	}
@@ -40,12 +40,12 @@ public enum BasicEmotes{
 	 *
 	 * @return The emote, or null if non were found.
 	 */
-	public static BasicEmotes getEmote(String text){
-		for(BasicEmotes emote : BasicEmotes.values()){
+	public static BasicEmotes getEmote(final String text){
+		for(final var emote : BasicEmotes.values()){
 			if(emote.getValue().equalsIgnoreCase(text)){
 				return emote;
 			}
-			for(String other : emote.getOthers()){
+			for(final var other : emote.getOthers()){
 				if(other.equalsIgnoreCase(text)){
 					return emote;
 				}

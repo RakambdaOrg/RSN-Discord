@@ -18,7 +18,7 @@ public abstract class MultipleRoleConfiguration extends ListConfiguration<Role>{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected MultipleRoleConfiguration(Guild guild){
+	protected MultipleRoleConfiguration(final Guild guild){
 		super(guild);
 	}
 	

@@ -8,9 +8,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -26,18 +24,18 @@ public class PhotoConfig extends MapListConfiguration<Long, String>{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public PhotoConfig(Guild guild){
+	public PhotoConfig(final Guild guild){
 		super(guild);
 	}
 	
 	@Override
-	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args){
+	public ConfigurationCommand.ActionResult handleChange(final MessageReceivedEvent event, final ConfigurationCommand.ChangeConfigType action, final LinkedList<String> args){
 		if(action == ConfigurationCommand.ChangeConfigType.SHOW){
-			EmbedBuilder builder = new EmbedBuilder();
+			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Valeurs de " + getName());
-			Map<Long, ArrayList<String>> map = getAsMap();
+			final var map = getAsMap();
 			map.keySet().stream().map(k -> new MessageEmbed.Field(k.toString(), map.get(k).toString(), false)).forEach(builder::addField);
 			Actions.reply(event, builder.build());
 			return ConfigurationCommand.ActionResult.NONE;

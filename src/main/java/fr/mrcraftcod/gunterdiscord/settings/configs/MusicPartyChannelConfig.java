@@ -15,7 +15,7 @@ public class MusicPartyChannelConfig extends SingleChannelConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public MusicPartyChannelConfig(Guild guild){
+	public MusicPartyChannelConfig(final Guild guild){
 		super(guild);
 	}
 	

@@ -10,7 +10,6 @@ import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.guild.voice.*;
 import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import net.dv8tion.jda.core.requests.restaction.ChannelAction;
 import java.util.List;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -22,30 +21,28 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public class VoiceTextChannelsListener extends ListenerAdapter{
 	@Override
-	public void onGuildVoiceJoin(GuildVoiceJoinEvent event){
+	public void onGuildVoiceJoin(final GuildVoiceJoinEvent event){
 		super.onGuildVoiceJoin(event);
 		try{
 			joinVoice(event, event.getChannelJoined());
 		}
-		catch(InsufficientPermissionException e){
-		
+		catch(final InsufficientPermissionException ignored){
 		}
-		catch(Exception e){
+		catch(final Exception e){
 			getLogger(event.getGuild()).error("", e);
 		}
 	}
 	
 	@Override
-	public void onGuildVoiceMove(GuildVoiceMoveEvent event){
+	public void onGuildVoiceMove(final GuildVoiceMoveEvent event){
 		super.onGuildVoiceMove(event);
 		try{
 			leaveVoice(event);
 			joinVoice(event, event.getChannelJoined());
 		}
-		catch(InsufficientPermissionException e){
-		
+		catch(final InsufficientPermissionException ignored){
 		}
-		catch(Exception e){
+		catch(final Exception e){
 			getLogger(event.getGuild()).error("", e);
 		}
 	}
@@ -55,11 +52,11 @@ public class VoiceTextChannelsListener extends ListenerAdapter{
 	 *
 	 * @param event The event.
 	 */
-	private static void leaveVoice(GuildVoiceUpdateEvent event){
-		VoiceTextChannelsAssociationConfig config = new VoiceTextChannelsAssociationConfig(event.getGuild());
-		Long channelID = config.getValue(event.getChannelLeft().getIdLong());
+	private static void leaveVoice(final GuildVoiceUpdateEvent event){
+		final var config = new VoiceTextChannelsAssociationConfig(event.getGuild());
+		final var channelID = config.getValue(event.getChannelLeft().getIdLong());
 		if(channelID != null){
-			TextChannel channel = event.getGuild().getTextChannelById(channelID);
+			final var channel = event.getGuild().getTextChannelById(channelID);
 			if(channel != null){
 				if(event.getChannelLeft().getMembers().isEmpty()){
 					channel.delete().reason("No more users in the vocal").queue();
@@ -74,29 +71,38 @@ public class VoiceTextChannelsListener extends ListenerAdapter{
 		}
 	}
 	
+	@Override
+	public void onGuildVoiceLeave(final GuildVoiceLeaveEvent event){
+		super.onGuildVoiceLeave(event);
+		try{
+			leaveVoice(event);
+		}
+		catch(final InsufficientPermissionException ignored){
+		}
+		catch(final Exception e){
+			getLogger(event.getGuild()).error("", e);
+		}
+	}
+	
 	/**
 	 * Handle things when a user joins a channel.
 	 *
 	 * @param event        The event.
 	 * @param voiceChannel The voice channel joined.
 	 */
-	private static void joinVoice(GenericGuildVoiceEvent event, VoiceChannel voiceChannel){
+	private static void joinVoice(final GenericGuildVoiceEvent event, final VoiceChannel voiceChannel){
 		if(new VoiceTextChannelsConfig(event.getGuild()).contains(voiceChannel.getIdLong())){
-			VoiceTextChannelsAssociationConfig config = new VoiceTextChannelsAssociationConfig(event.getGuild());
+			final var config = new VoiceTextChannelsAssociationConfig(event.getGuild());
 			TextChannel channel = null;
-			Long channelID = config.getValue(voiceChannel.getIdLong());
+			final var channelID = config.getValue(voiceChannel.getIdLong());
 			if(channelID != null){
 				channel = event.getGuild().getTextChannelById(channelID);
 			}
 			
 			if(channel == null){
-				ChannelAction creator = event.getGuild().getController().createTextChannel(voiceChannel.getName());
-				creator.setParent(voiceChannel.getParent());
-				creator.setTopic("Channel pour les utilisateurs du vocal du même nom");
-				creator.addPermissionOverride(event.getGuild().getPublicRole(), List.of(), List.of(Permission.MESSAGE_READ));
-				new ModoRolesConfig(event.getGuild()).getAsList().forEach(role -> creator.addPermissionOverride(role, List.of(Permission.MESSAGE_READ), List.of()));
-				creator.addPermissionOverride(event.getMember(), List.of(Permission.MESSAGE_READ), List.of());
-				channel = (TextChannel) creator.complete();
+				final var creator = event.getGuild().getController().createTextChannel(voiceChannel.getName()).setParent(voiceChannel.getParent()).setTopic("Channel pour les utilisateurs du vocal du même nom").addPermissionOverride(event.getGuild().getPublicRole(), List.of(), List.of(Permission.MESSAGE_READ));
+				new ModoRolesConfig(event.getGuild()).getAsList().forEach(role -> creator.addPermissionOverride(role, List.of(Permission.MESSAGE_READ), List.of()).queue());
+				channel = (TextChannel) creator.addPermissionOverride(event.getMember(), List.of(Permission.MESSAGE_READ), List.of()).complete();
 				config.addValue(voiceChannel.getIdLong(), channel.getIdLong());
 				getLogger(event.getGuild()).info("Text channel {} created", channel);
 			}
@@ -104,20 +110,6 @@ public class VoiceTextChannelsListener extends ListenerAdapter{
 				channel.putPermissionOverride(event.getMember()).setAllow(Permission.MESSAGE_READ).queue();
 			}
 			Actions.sendMessage(channel, "%s#%s a rejoint le channel", event.getMember().getUser().getName(), event.getMember().getUser().getDiscriminator());
-		}
-	}
-	
-	@Override
-	public void onGuildVoiceLeave(GuildVoiceLeaveEvent event){
-		super.onGuildVoiceLeave(event);
-		try{
-			leaveVoice(event);
-		}
-		catch(InsufficientPermissionException e){
-		
-		}
-		catch(Exception e){
-			getLogger(event.getGuild()).error("", e);
 		}
 	}
 }

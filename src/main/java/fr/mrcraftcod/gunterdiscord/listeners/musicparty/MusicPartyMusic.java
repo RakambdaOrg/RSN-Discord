@@ -16,7 +16,7 @@ class MusicPartyMusic{
 	 *
 	 * @param track The track.
 	 */
-	MusicPartyMusic(AudioTrack track){
+	MusicPartyMusic(final AudioTrack track){
 		this.track = track;
 	}
 	
