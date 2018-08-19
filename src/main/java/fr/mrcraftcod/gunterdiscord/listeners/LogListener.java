@@ -87,7 +87,7 @@ public class LogListener extends ListenerAdapter{
 		super.onMessageReceived(event);
 		try{
 			if(event.getChannel().getIdLong() != 480662257555210242L && event.getMessage().getMentionedMembers().stream().anyMatch(Utilities::isCreator)){
-				final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, "Rak a été taggé!");
+				final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, String.format("Rak a été taggé par %s!", event.getAuthor().getAsMention()));
 				builder.addField("Message", event.getMessage().getContentRaw(), false);
 				Actions.sendMessage(event.getGuild().getTextChannelById(480662257555210242L), builder.build());
 			}
