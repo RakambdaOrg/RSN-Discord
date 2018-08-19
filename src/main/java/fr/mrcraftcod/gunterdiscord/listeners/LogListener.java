@@ -10,6 +10,7 @@ import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.core.events.self.SelfUpdateNameEvent;
 import net.dv8tion.jda.core.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import java.awt.*;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -86,7 +87,9 @@ public class LogListener extends ListenerAdapter{
 		super.onMessageReceived(event);
 		try{
 			if(event.getChannel().getIdLong() != 480662257555210242L && event.getMessage().getMentionedMembers().stream().anyMatch(Utilities::isCreator)){
-				Actions.sendMessage(event.getGuild().getTextChannelById(480662257555210242L), event.getMessage().getContentRaw());
+				final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, "Rak a été taggé!");
+				builder.addField("Message", event.getMessage().getContentRaw(), false);
+				Actions.sendMessage(event.getGuild().getTextChannelById(480662257555210242L), builder.build());
 			}
 		}
 		catch(final Exception e){
