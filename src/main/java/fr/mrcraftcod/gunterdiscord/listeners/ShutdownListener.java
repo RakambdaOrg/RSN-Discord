@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
+import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.listeners.musicparty.MusicPartyListener;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
@@ -18,6 +19,7 @@ public class ShutdownListener extends ListenerAdapter{
 	public void onShutdown(final ShutdownEvent event){
 		super.onShutdown(event);
 		try{
+			Main.close();
 			QuizListener.stopAll();
 			HangmanListener.stopAll();
 			MusicPartyListener.stopAll();
