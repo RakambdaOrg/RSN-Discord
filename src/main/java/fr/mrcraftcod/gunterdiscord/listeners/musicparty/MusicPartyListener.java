@@ -121,7 +121,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Nombre de paramètres incorrecte");
 		}
 		else{
-			args.forEach(url -> GunterAudioManager.play(voiceChannel, this, track -> Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Votre musique a bien été ajoutée dans la file et porte le titre: `" + track.getInfo().title + "`"), url));
+			args.forEach(url -> GunterAudioManager.play(event.getAuthor(), voiceChannel, this, track -> Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Votre musique a bien été ajoutée dans la file et porte le titre: `" + track.getInfo().title + "`"), url));
 		}
 	}
 	
