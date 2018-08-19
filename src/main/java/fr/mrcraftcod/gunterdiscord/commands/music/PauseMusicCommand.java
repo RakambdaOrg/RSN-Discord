@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.commands.music;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -37,6 +38,7 @@ public class PauseMusicCommand extends BasicCommand{
 	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		GunterAudioManager.pause(event.getGuild());
+		Actions.reply(event, "%s a mis en pause la musique", event.getAuthor().getAsMention());
 		return CommandResult.SUCCESS;
 	}
 	

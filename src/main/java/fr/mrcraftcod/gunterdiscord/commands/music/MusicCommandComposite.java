@@ -21,6 +21,7 @@ public class MusicCommandComposite extends CommandComposite{
 		addSubCommand(new StopMusicCommand(this));
 		addSubCommand(new PauseMusicCommand(this));
 		addSubCommand(new ResumeMusicCommand(this));
+		addSubCommand(new NowPlayingMusicCommand(this));
 	}
 	
 	@Override

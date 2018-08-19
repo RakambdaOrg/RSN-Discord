@@ -12,6 +12,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.managers.AudioManager;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -71,12 +72,14 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 				public void noMatches(){
 					getLogger(channel.getGuild()).warn("Player found nothing for channel `{}`", channel.getName());
 					gunterAudioManager.getTrackScheduler().foundNothing();
+					onTrackAdded.accept(null);
 				}
 				
 				@Override
 				public void loadFailed(final FriendlyException throwable){
 					getLogger(channel.getGuild()).warn("Failed to load audio for channel `{}`", channel.getName(), throwable);
 					gunterAudioManager.getTrackScheduler().foundNothing();
+					onTrackAdded.accept(null);
 				}
 			});
 		}
@@ -112,6 +115,13 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		if(managers.containsKey(guild)){
 			managers.get(guild).getAudioPlayer().setPaused(false);
 		}
+	}
+	
+	public static Optional<AudioTrack> currentTrack(Guild guild){
+		if(managers.containsKey(guild)){
+			return Optional.ofNullable(managers.get(guild).getAudioPlayer().getPlayingTrack());
+		}
+		return Optional.empty();
 	}
 	
 	private AudioPlayerManager getAudioPlayerManager(){

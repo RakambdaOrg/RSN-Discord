@@ -43,10 +43,10 @@ public class StartMusicCommand extends BasicCommand{
 		}
 		if(event.getMember().getVoiceState().inVoiceChannel()){
 			String identifier = String.join(" ", args).trim();
-			GunterAudioManager.play(event.getMember().getVoiceState().getChannel(), identifier);
+			GunterAudioManager.play(event.getMember().getVoiceState().getChannel(), null, track -> Actions.reply(event, "%s a ajouté %s", event.getAuthor().getAsMention(), track.getInfo().title), identifier);
 		}
 		else{
-			Actions.reply(event, "Cet utilisateur n'est pas dans un channel vocal");
+			Actions.reply(event, "Vous devez être dans un channel vocal");
 		}
 		return CommandResult.SUCCESS;
 	}
