@@ -15,7 +15,7 @@ public class YoutubeRoleConfig extends SingleRoleConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public YoutubeRoleConfig(Guild guild){
+	public YoutubeRoleConfig(final Guild guild){
 		super(guild);
 	}
 	

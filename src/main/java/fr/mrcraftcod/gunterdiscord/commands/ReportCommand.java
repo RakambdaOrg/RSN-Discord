@@ -7,7 +7,6 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.*;
@@ -22,20 +21,20 @@ import java.util.List;
  */
 public class ReportCommand extends BasicCommand{
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Raison", "La raison du report", false);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		TextChannel channel = new ReportChannelConfig(event.getGuild()).getObject();
+		final var channel = new ReportChannelConfig(event.getGuild()).getObject();
 		if(channel == null){
 			return CommandResult.FAILED;
 		}
 		else{
-			EmbedBuilder builder = new EmbedBuilder();
+			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.ORANGE);
 			builder.setTitle("Nouveau report");

@@ -15,7 +15,7 @@ public class MegaWarnRoleConfig extends SingleRoleConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public MegaWarnRoleConfig(Guild guild){
+	public MegaWarnRoleConfig(final Guild guild){
 		super(guild);
 	}
 	

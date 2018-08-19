@@ -22,12 +22,12 @@ public class HangmanLeaveCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	HangmanLeaveCommand(Command parent){
+	HangmanLeaveCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		HangmanListener.getGame(event.getGuild(), false).ifPresent(h -> h.playerLeave(event.getMember()));
 		return CommandResult.SUCCESS;

@@ -15,7 +15,7 @@ public class DoubleWarnRoleConfig extends SingleRoleConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public DoubleWarnRoleConfig(Guild guild){
+	public DoubleWarnRoleConfig(final Guild guild){
 		super(guild);
 	}
 	

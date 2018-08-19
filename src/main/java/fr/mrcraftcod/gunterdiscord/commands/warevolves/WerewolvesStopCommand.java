@@ -25,12 +25,12 @@ public class WerewolvesStopCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	WerewolvesStopCommand(Command parent){
+	WerewolvesStopCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(event.getMember().getVoiceState().inVoiceChannel()){
 			WerewolvesListener.getGame(event.getMember().getVoiceState().getChannel(), false).ifPresent(WerewolvesListener::stop);

@@ -15,7 +15,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public class OnlyImagesMessageListener extends ListenerAdapter{
 	@Override
-	public void onMessageReceived(MessageReceivedEvent event){
+	public void onMessageReceived(final MessageReceivedEvent event){
 		super.onMessageReceived(event);
 		try{
 			if(new OnlyImagesConfig(event.getGuild()).contains(event.getMessage().getTextChannel()) && event.getMessage().getAttachments().size() < 1){
@@ -25,7 +25,7 @@ public class OnlyImagesMessageListener extends ListenerAdapter{
 				}
 			}
 		}
-		catch(Exception e){
+		catch(final Exception e){
 			getLogger(event.getGuild()).error("", e);
 		}
 	}

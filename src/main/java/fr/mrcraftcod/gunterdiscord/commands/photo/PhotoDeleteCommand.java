@@ -28,26 +28,26 @@ public class PhotoDeleteCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	PhotoDeleteCommand(Command parent){
+	PhotoDeleteCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Optionnel: Utilisateur", "L'utilisateur visé par la suppression (par défaut @me)", false);
 		builder.addField("Optionnel: ID", "L'ID de la photo à supprimer (si aucun n'est précisé toutes les photos seront supprimées)", false);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		Actions.deleteMessage(event.getMessage());
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED){
 			return CommandResult.NOT_ALLOWED;
 		}
 		if(args.size() > 0){
-			User user;
-			List<User> users = event.getMessage().getMentionedUsers();
+			final User user;
+			final var users = event.getMessage().getMentionedUsers();
 			if(users.size() > 0){
 				user = users.get(0);
 				args.poll();

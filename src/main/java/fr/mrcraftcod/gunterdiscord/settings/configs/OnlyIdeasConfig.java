@@ -15,7 +15,7 @@ public class OnlyIdeasConfig extends MultipleChannelConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public OnlyIdeasConfig(Guild guild){
+	public OnlyIdeasConfig(final Guild guild){
 		super(guild);
 	}
 	

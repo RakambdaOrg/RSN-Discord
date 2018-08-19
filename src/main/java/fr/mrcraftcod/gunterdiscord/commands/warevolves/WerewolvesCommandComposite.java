@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands.warevolves;
 
-import fr.mrcraftcod.gunterdiscord.commands.generic.CompositeCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.core.entities.ChannelType;
 import java.util.List;
 
@@ -10,7 +10,7 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-05-31
  */
-public class WerewolvesCommandComposite extends CompositeCommand{
+public class WerewolvesCommandComposite extends CommandComposite{
 	/**
 	 * Constructor.
 	 */

@@ -15,7 +15,7 @@ public class ModoRolesConfig extends MultipleRoleConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public ModoRolesConfig(Guild guild){
+	public ModoRolesConfig(final Guild guild){
 		super(guild);
 	}
 	

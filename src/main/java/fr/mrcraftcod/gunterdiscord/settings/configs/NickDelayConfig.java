@@ -15,7 +15,7 @@ public class NickDelayConfig extends IntegerValueConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public NickDelayConfig(Guild guild){
+	public NickDelayConfig(final Guild guild){
 		super(guild);
 	}
 	

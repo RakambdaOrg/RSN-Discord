@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands.musicparty;
 
-import fr.mrcraftcod.gunterdiscord.commands.generic.CompositeCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.core.entities.ChannelType;
 import java.util.List;
 
@@ -10,11 +10,11 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-06-21
  */
-public class MusicPartyCompositeCommand extends CompositeCommand{
+public class MusicPartyCommandComposite extends CommandComposite{
 	/**
 	 * Constructor.
 	 */
-	public MusicPartyCompositeCommand(){
+	public MusicPartyCommandComposite(){
 		super();
 		addSubCommand(new MusicPartyStartCommand(this));
 		addSubCommand(new MusicPartyStopCommand(this));

@@ -25,18 +25,18 @@ public class WerewolvesStartCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	WerewolvesStartCommand(Command parent){
+	WerewolvesStartCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(event.getMember().getVoiceState().inVoiceChannel()){
 			try{
 				WerewolvesListener.getGame(event.getMember().getVoiceState().getChannel()).ifPresentOrElse(g -> {}, () -> Actions.reply(event, "Impossible de créer la partie, êtes vous bien au moins %d joueurs dans le vocal?", WerewolvesListener.MIN_PLAYER));
 			}
-			catch(Exception e){
+			catch(final Exception e){
 				Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.RED, "Erreur").addField("Raison", e.getMessage(), false).build());
 			}
 		}

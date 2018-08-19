@@ -19,7 +19,7 @@ public abstract class MultipleChannelConfiguration extends ListConfiguration<Tex
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected MultipleChannelConfiguration(Guild guild){
+	protected MultipleChannelConfiguration(final Guild guild){
 		super(guild);
 	}
 	

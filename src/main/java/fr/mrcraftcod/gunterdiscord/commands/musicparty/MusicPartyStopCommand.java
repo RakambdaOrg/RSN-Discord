@@ -23,12 +23,12 @@ public class MusicPartyStopCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	MusicPartyStopCommand(Command parent){
+	MusicPartyStopCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		MusicPartyListener.getParty(event.getGuild(), null, false).ifPresentOrElse(MusicPartyListener::stop, () -> Actions.reply(event, "Aucun évènement de ce type en cours"));
 		return CommandResult.SUCCESS;

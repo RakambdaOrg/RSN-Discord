@@ -1,9 +1,8 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
-import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CompositeCommand;
 import fr.mrcraftcod.gunterdiscord.listeners.CommandsMessageListener;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
@@ -27,17 +26,17 @@ import java.util.List;
  */
 public class HelpCommand extends BasicCommand{
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Optionnel: Commande", "La commande dont on veut l'information (par défaut affiche la liste des commandes)", false);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		String prefix = new PrefixConfig(event.getGuild()).getObject("");
+		final var prefix = new PrefixConfig(event.getGuild()).getObject("");
 		if(args.size() < 1){
-			EmbedBuilder builder = new EmbedBuilder();
+			final var builder = new EmbedBuilder();
 			builder.setColor(Color.GREEN);
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setTitle("Commandes disponibles");
@@ -45,17 +44,17 @@ public class HelpCommand extends BasicCommand{
 			Actions.reply(event, builder.build());
 		}
 		else{
-			Command command = Arrays.stream(CommandsMessageListener.commands).filter(s -> s.getCommand().contains(args.get(0).toLowerCase())).filter(c -> c.isAllowed(event.getMember())).findAny().orElse(null);
+			var command = Arrays.stream(CommandsMessageListener.commands).filter(s -> s.getCommand().contains(args.get(0).toLowerCase())).filter(c -> c.isAllowed(event.getMember())).findAny().orElse(null);
 			args.poll();
-			while(!args.isEmpty() && command instanceof CompositeCommand){
-				Command command2 = ((CompositeCommand) command).getSubCommand(args.get(0).toLowerCase());
+			while(!args.isEmpty() && command instanceof CommandComposite){
+				final var command2 = ((CommandComposite) command).getSubCommand(args.get(0).toLowerCase());
 				if(command2 == null){
 					break;
 				}
 				command = command2;
 				args.poll();
 			}
-			EmbedBuilder builder = new EmbedBuilder();
+			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			if(command != null){
 				builder.setColor(Color.GREEN);

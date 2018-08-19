@@ -26,7 +26,7 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected MapConfiguration(Guild guild){
+	protected MapConfiguration(final Guild guild){
 		super(guild);
 	}
 	
@@ -37,11 +37,11 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 	 *
 	 * @return The value or null if not found.
 	 */
-	public V getValue(K key){
+	public V getValue(final K key){
 		try{
 			return getAsMap().get(key);
 		}
-		catch(Exception e){
+		catch(final Exception e){
 			getLogger(guild).error("Can't get value {} with key {}", getName(), key, e);
 		}
 		return null;
@@ -55,14 +55,14 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
 	public Map<K, V> getAsMap() throws IllegalArgumentException{
-		Map<K, V> elements = new HashMap<>();
-		JSONObject map = getObjectMap();
+		final Map<K, V> elements = new HashMap<>();
+		final var map = getObjectMap();
 		if(map == null){
 			Settings.resetMap(guild, this);
 		}
 		else{
-			for(String key : map.keySet()){
-				Object value = map.get(key);
+			for(final var key : map.keySet()){
+				final var value = map.get(key);
 				elements.put(getKeyParser().apply(key), getValueParser().apply(value.toString()));
 			}
 		}
@@ -98,13 +98,13 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 	protected abstract Function<String, V> getValueParser();
 	
 	@Override
-	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args){
+	public ConfigurationCommand.ActionResult handleChange(final MessageReceivedEvent event, final ConfigurationCommand.ChangeConfigType action, final LinkedList<String> args){
 		if(action == SHOW){
-			EmbedBuilder builder = new EmbedBuilder();
+			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Valeurs de " + getName());
-			Map<K, V> map = getAsMap();
+			final var map = getAsMap();
 			map.keySet().stream().map(k -> k + " -> " + map.get(k)).forEach(o -> builder.addField("", o, false));
 			Actions.reply(event, builder.build());
 			return ConfigurationCommand.ActionResult.NONE;
@@ -143,7 +143,7 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 	 * @param key   The key to add into.
 	 * @param value The value to set at the key.
 	 */
-	public void addValue(K key, V value){
+	public void addValue(final K key, final V value){
 		Settings.mapValue(guild, this, key, value);
 	}
 	
@@ -152,7 +152,7 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 	 *
 	 * @param key   The key.
 	 */
-	public void deleteKey(K key){
+	public void deleteKey(final K key){
 		Settings.deleteKey(guild, this, key);
 	}
 }

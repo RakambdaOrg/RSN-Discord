@@ -6,10 +6,10 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.YoutubeChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.YoutubeRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.net.URL;
@@ -24,27 +24,27 @@ import java.util.List;
  */
 public class YoutubeCommand extends BasicCommand{
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Message", "Le message à dire", false);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(event.getMessage().getMentionedMembers().size() > 0){
 			args.poll();
-			Member member = event.getMessage().getMentionedMembers().get(0);
+			final var member = event.getMessage().getMentionedMembers().get(0);
 			if(Utilities.hasRole(member, new YoutubeRoleConfig(event.getGuild()).getObject())){
-				String URL = args.poll();
-				if(URL != null){
+				final var strUrl = args.poll();
+				if(strUrl != null){
 					if(Utilities.isAdmin(event.getMember())){
 						try{
-							URL url = new URL(URL);
+							final var url = new URL(strUrl);
 							new YoutubeChannelConfig(event.getGuild()).addValue(member.getUser().getIdLong(), url.toString());
 						}
-						catch(Exception e){
-							e.printStackTrace();
+						catch(final Exception e){
+							Log.getLogger(event.getGuild()).warn("Provided YouTube link isn't valid {}", strUrl);
 							Actions.reply(event, "Le lien n'est pas valide");
 						}
 					}

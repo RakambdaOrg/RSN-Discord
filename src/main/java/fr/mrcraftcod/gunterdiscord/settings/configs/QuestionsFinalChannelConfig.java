@@ -15,7 +15,7 @@ public class QuestionsFinalChannelConfig extends SingleChannelConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public QuestionsFinalChannelConfig(Guild guild){
+	public QuestionsFinalChannelConfig(final Guild guild){
 		super(guild);
 	}
 	

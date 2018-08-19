@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands.photo;
 
-import fr.mrcraftcod.gunterdiscord.commands.generic.CompositeCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.core.entities.ChannelType;
 import java.util.List;
 
@@ -10,11 +10,11 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-05-26
  */
-public class PhotoCompositeCommand extends CompositeCommand{
+public class PhotoCommandComposite extends CommandComposite{
 	/**
 	 * Constructor.
 	 */
-	public PhotoCompositeCommand(){
+	public PhotoCommandComposite(){
 		super();
 		addSubCommand(new PhotoGetCommand(this));
 		addSubCommand(new PhotoDeleteCommand(this));

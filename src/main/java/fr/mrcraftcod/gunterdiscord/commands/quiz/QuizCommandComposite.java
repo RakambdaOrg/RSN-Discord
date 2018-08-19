@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands.quiz;
 
-import fr.mrcraftcod.gunterdiscord.commands.generic.CompositeCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.core.entities.ChannelType;
 import java.util.List;
 
@@ -10,11 +10,11 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
-public class QuizCompositeCommand extends CompositeCommand{
+public class QuizCommandComposite extends CommandComposite{
 	/**
 	 * Constructor.
 	 */
-	public QuizCompositeCommand(){
+	public QuizCommandComposite(){
 		super();
 		addSubCommand(new QuizStartCommand(this));
 		addSubCommand(new QuizStopCommand(this));

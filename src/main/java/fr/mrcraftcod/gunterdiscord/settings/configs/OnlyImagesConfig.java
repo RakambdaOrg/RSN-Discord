@@ -15,7 +15,7 @@ public class OnlyImagesConfig extends MultipleChannelConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public OnlyImagesConfig(Guild guild){
+	public OnlyImagesConfig(final Guild guild){
 		super(guild);
 	}
 	

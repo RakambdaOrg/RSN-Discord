@@ -15,7 +15,7 @@ public class DoubleWarnTimeConfig extends DoubleValueConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public DoubleWarnTimeConfig(Guild guild){
+	public DoubleWarnTimeConfig(final Guild guild){
 		super(guild);
 	}
 

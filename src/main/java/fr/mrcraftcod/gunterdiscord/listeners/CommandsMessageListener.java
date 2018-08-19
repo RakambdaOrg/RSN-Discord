@@ -1,10 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.commands.*;
-import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCompositeCommand;
+import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
-import fr.mrcraftcod.gunterdiscord.commands.quiz.QuizCompositeCommand;
+import fr.mrcraftcod.gunterdiscord.commands.music.MusicCommandComposite;
+import fr.mrcraftcod.gunterdiscord.commands.quiz.QuizCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.warn.DoubleWarnCommand;
 import fr.mrcraftcod.gunterdiscord.commands.warn.MegaWarnCommand;
 import fr.mrcraftcod.gunterdiscord.commands.warn.NormalWarnCommand;
@@ -30,11 +31,11 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public class CommandsMessageListener extends ListenerAdapter{
 	public static final Command[] commands = new Command[]{
-			// new PhotoCompositeCommand(),
-			// new HangmanCompositeCommand(),
-			new QuizCompositeCommand(),
+			// new PhotoCommandComposite(),
+			// new HangmanCommandComposite(),
+			new QuizCommandComposite(),
 			new ReportCommand(),
-			new ConfigurationCompositeCommand(),
+			new ConfigurationCommandComposite(),
 			new HelpCommand(),
 			new AvatarCommand(),
 			new NicknameCommand(),
@@ -45,10 +46,11 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new AnnoyCommand(),
 			new UpCommand(),
 			new YoutubeCommand(),
-			// new MusicPartyCompositeCommand(),
+			// new MusicPartyCommandComposite(),
 			new NormalWarnCommand(),
 			new DoubleWarnCommand(),
 			new MegaWarnCommand(),
+			new MusicCommandComposite(),
 			new StopCommand(),
 			new TimeCommand()
 	};
@@ -57,23 +59,23 @@ public class CommandsMessageListener extends ListenerAdapter{
 	 * Constructor.
 	 */
 	public CommandsMessageListener(){
-		HashMap<String, Integer> counts = new HashMap<>();
+		final HashMap<String, Integer> counts = new HashMap<>();
 		Arrays.asList(commands).forEach(c -> c.getCommand().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
-		String clash = counts.keySet().stream().filter(k -> counts.get(k) > 1).collect(Collectors.joining(", "));
+		final var clash = counts.keySet().stream().filter(k -> counts.get(k) > 1).collect(Collectors.joining(", "));
 		if(clash != null && !clash.isEmpty()){
 			getLogger(null).error("Command clash: {}", clash);
 		}
 	}
 	
 	@Override
-	public void onMessageReceived(MessageReceivedEvent event){
+	public void onMessageReceived(final MessageReceivedEvent event){
 		super.onMessageReceived(event);
 		try{
 			if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
 				Actions.deleteMessage(event.getMessage());
-				LinkedList<String> args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
-				String cmdText = args.pop().substring(new PrefixConfig(event.getGuild()).getObject("g?").length());
-				Command command = getCommand(cmdText);
+				final var args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
+				final var cmdText = args.pop().substring(new PrefixConfig(event.getGuild()).getObject("g?").length());
+				final var command = getCommand(cmdText);
 				if(command != null){
 					if(command.getScope() == -5 || command.getScope() == event.getChannel().getType().getId()){
 						try{
@@ -89,17 +91,17 @@ public class CommandsMessageListener extends ListenerAdapter{
 								case SUCCESS:
 							}
 						}
-						catch(NotAllowedException e){
+						catch(final NotAllowedException e){
 							getLogger(event.getGuild()).error("Error executing command {} (not allowed)", command, e);
-							EmbedBuilder builder = new EmbedBuilder();
+							final var builder = new EmbedBuilder();
 							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 							builder.setColor(Color.RED);
 							builder.setTitle("Vous n'avez pas accès à cette commande.");
 							Actions.reply(event, builder.build());
 						}
-						catch(Exception e){
+						catch(final Exception e){
 							getLogger(event.getGuild()).error("Error executing command {}", command, e);
-							EmbedBuilder builder = new EmbedBuilder();
+							final var builder = new EmbedBuilder();
 							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 							builder.setColor(Color.RED);
 							builder.setTitle("Cette fonctionnalité doit encore être configuré. Veuillez en avertir un modérateur.");
@@ -107,7 +109,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 						}
 					}
 					else{
-						EmbedBuilder builder = new EmbedBuilder();
+						final var builder = new EmbedBuilder();
 						builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 						builder.setColor(Color.ORANGE);
 						builder.setTitle("Cette commande ne s'exécute pas dans ce type de channel");
@@ -115,7 +117,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 					}
 				}
 				else{
-					EmbedBuilder builder = new EmbedBuilder();
+					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.ORANGE);
 					builder.setTitle("Commande non trouvée");
@@ -124,7 +126,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 				}
 			}
 		}
-		catch(Exception e){
+		catch(final Exception e){
 			getLogger(event.getGuild()).error("Error handling message", e);
 		}
 	}
@@ -137,7 +139,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 	 *
 	 * @return True if a command, false otherwise.
 	 */
-	private static boolean isCommand(Guild guild, String text){
+	private static boolean isCommand(final Guild guild, final String text){
 		return text.startsWith(new PrefixConfig(guild).getObject("g?"));
 	}
 	
@@ -148,12 +150,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 	 *
 	 * @return The command or null if not found.
 	 */
-	private static Command getCommand(String commandText){
-		for(Command command : commands){
-			if(command.getCommand().contains(commandText.toLowerCase())){
-				return command;
-			}
-		}
-		return null;
+	private static Command getCommand(final String commandText){
+		return Arrays.stream(commands).filter(command -> command.getCommand().contains(commandText.toLowerCase())).findFirst().orElse(null);
 	}
 }

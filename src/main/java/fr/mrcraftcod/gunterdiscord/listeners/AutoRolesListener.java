@@ -14,12 +14,12 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public class AutoRolesListener extends ListenerAdapter{
 	@Override
-	public void onGuildMemberJoin(GuildMemberJoinEvent event){
+	public void onGuildMemberJoin(final GuildMemberJoinEvent event){
 		super.onGuildMemberJoin(event);
 		try{
 			Actions.giveRole(event.getUser(), new AutoRolesConfig(event.getGuild()).getAsList());
 		}
-		catch(Exception e){
+		catch(final Exception e){
 			getLogger(event.getGuild()).error("Error on user join", e);
 		}
 	}

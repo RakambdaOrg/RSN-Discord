@@ -17,7 +17,7 @@ class AudioPlayerSendHandler implements AudioSendHandler{
 	/**
 	 * @param audioPlayer Audio player to wrap.
 	 */
-	public AudioPlayerSendHandler(AudioPlayer audioPlayer){
+	AudioPlayerSendHandler(final AudioPlayer audioPlayer){
 		this.audioPlayer = audioPlayer;
 		audioPlayer.setVolume(75);
 	}
@@ -35,7 +35,7 @@ class AudioPlayerSendHandler implements AudioSendHandler{
 		if(lastFrame == null){
 			lastFrame = audioPlayer.provide();
 		}
-		byte[] data = lastFrame != null ? lastFrame.getData() : null;
+		final var data = lastFrame != null ? lastFrame.getData() : null;
 		lastFrame = null;
 		return data;
 	}

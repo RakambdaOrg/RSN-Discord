@@ -11,7 +11,6 @@ import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -34,25 +33,25 @@ public class PhotoGetCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	PhotoGetCommand(Command parent){
+	PhotoGetCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Optionnel: Utilisateur", "L'utilisateur dont on veut la photo (par défaut @me)", false);
 		builder.addField("Optionnel: Numéro", "Le numéro de la photo à tirer (par défaut aléatoire)", false);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		Actions.deleteMessage(event.getMessage());
 		if(super.execute(event, args) == CommandResult.NOT_ALLOWED){
 			return CommandResult.NOT_ALLOWED;
 		}
-		User user;
-		List<User> users = event.getMessage().getMentionedUsers();
+		final User user;
+		final var users = event.getMessage().getMentionedUsers();
 		if(users.size() > 0){
 			user = users.get(0);
 			args.poll();
@@ -61,32 +60,32 @@ public class PhotoGetCommand extends BasicCommand{
 			user = event.getAuthor();
 		}
 		
-		Member member = event.getGuild().getMember(user);
+		final var member = event.getGuild().getMember(user);
 		if(member == null || !Utilities.hasRole(member, new TrombinoscopeRoleConfig(event.getGuild()).getObject())){
-			EmbedBuilder builder = new EmbedBuilder();
+			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
 			builder.setTitle("L'utilisateur ne fait pas parti du trombinoscope");
 			Actions.reply(event, builder.build());
 		}
 		else if(new PhotoChannelConfig(event.getGuild()).isChannel(event.getTextChannel())){
-			List<String> paths = new PhotoConfig(event.getGuild()).getValue(user.getIdLong());
+			final var paths = new PhotoConfig(event.getGuild()).getValue(user.getIdLong());
 			if(paths != null && !paths.isEmpty()){
-				boolean randomGen = true;
-				int rnd = ThreadLocalRandom.current().nextInt(paths.size());
+				var randomGen = true;
+				var rnd = ThreadLocalRandom.current().nextInt(paths.size());
 				if(args.peek() != null){
 					try{
 						rnd = Math.max(0, Math.min(paths.size(), Integer.parseInt(args.pop())) - 1);
 						randomGen = false;
 					}
-					catch(Exception e){
+					catch(final Exception e){
 						getLogger(event.getGuild()).warn("Provided photo index isn't an integer", e);
 					}
 				}
-				File file = new File(paths.get(rnd));
+				final var file = new File(paths.get(rnd));
 				if(file.exists()){
-					String ID = file.getName().substring(0, file.getName().lastIndexOf("."));
-					EmbedBuilder builder = new EmbedBuilder();
+					final var ID = file.getName().substring(0, file.getName().lastIndexOf("."));
+					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.GREEN);
 					builder.addField("Sélection", String.format("%d/%d%s", rnd + 1, paths.size(), randomGen ? " aléatoire" : ""), true);
@@ -96,7 +95,7 @@ public class PhotoGetCommand extends BasicCommand{
 					Actions.sendFile(event.getTextChannel(), file);
 				}
 				else{
-					EmbedBuilder builder = new EmbedBuilder();
+					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.RED);
 					builder.setTitle("Image non trouvée");
@@ -104,7 +103,7 @@ public class PhotoGetCommand extends BasicCommand{
 				}
 			}
 			else{
-				EmbedBuilder builder = new EmbedBuilder();
+				final var builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.setColor(Color.ORANGE);
 				builder.setTitle("Cet utilisateur n'a pas d'images");

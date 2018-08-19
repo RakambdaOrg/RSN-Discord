@@ -4,7 +4,6 @@ import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.Configuration;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import net.dv8tion.jda.core.entities.Guild;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -23,7 +22,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected MapListConfiguration(Guild guild){
+	protected MapListConfiguration(final Guild guild){
 		super(guild);
 	}
 	
@@ -34,7 +33,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	 *
 	 * @return The values or null if not found.
 	 */
-	public List<V> getValue(K key){
+	public List<V> getValue(final K key){
 		return getAsMap().get(key);
 	}
 	
@@ -46,18 +45,18 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
 	public Map<K, ArrayList<V>> getAsMap() throws IllegalArgumentException{
-		Map<K, ArrayList<V>> elements = new HashMap<>();
-		JSONObject map = getObjectMap();
+		final Map<K, ArrayList<V>> elements = new HashMap<>();
+		final var map = getObjectMap();
 		if(map == null){
 			Settings.resetMap(guild, this);
 		}
 		else{
-			for(String key : map.keySet()){
-				K kKey = getKeyParser().apply(key);
+			for(final var key : map.keySet()){
+				final var kKey = getKeyParser().apply(key);
 				if(!elements.containsKey(kKey)){
 					elements.put(kKey, new ArrayList<>());
 				}
-				JSONArray value = map.optJSONArray(key);
+				final var value = map.optJSONArray(key);
 				if(value != null){
 					value.toList().stream().map(val -> getValueParser().apply(val.toString())).forEach(o -> elements.get(kKey).add(o));
 				}
@@ -100,7 +99,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	 * @param key   The key to add into.
 	 * @param value The value to add at the key.
 	 */
-	public void addValue(K key, V value){
+	public void addValue(final K key, final V value){
 		Settings.mapListValue(guild, this, key, value);
 	}
 	
@@ -110,7 +109,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	 * @param key   The key.
 	 * @param value The value.
 	 */
-	public void deleteKeyValue(K key, V value){
+	public void deleteKeyValue(final K key, final V value){
 		if(value == null){
 			deleteKey(key);
 		}
@@ -124,7 +123,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	 *
 	 * @param key   The key.
 	 */
-	public void deleteKey(K key){
+	public void deleteKey(final K key){
 		Settings.deleteKey(guild, this, key);
 	}
 	

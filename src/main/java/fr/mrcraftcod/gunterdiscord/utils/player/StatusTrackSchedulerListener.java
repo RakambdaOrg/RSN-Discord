@@ -9,9 +9,22 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
  * @since 2018-06-16
  */
 public interface StatusTrackSchedulerListener{
+	/**
+	 * Called when the queue is completed.
+	 */
 	void onTrackSchedulerEmpty();
 	
+	/**
+	 * Called when a track ends.
+	 *
+	 * @param track The track that ended.
+	 */
 	void onTrackEnd(AudioTrack track);
 	
+	/**
+	 * Called when a track starts.
+	 *
+	 * @param track The track that started.
+	 */
 	void onTrackStart(AudioTrack track);
 }

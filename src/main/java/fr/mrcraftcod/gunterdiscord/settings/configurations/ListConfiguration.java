@@ -31,7 +31,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected ListConfiguration(Guild guild){
+	protected ListConfiguration(final Guild guild){
 		super(guild);
 	}
 	
@@ -40,7 +40,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @param value The value to add.
 	 */
-	public void addValue(@NotNull T value){
+	public void addValue(@NotNull final T value){
 		addRawValue(getValueParser().apply(value));
 	}
 	
@@ -49,7 +49,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @param value The value to add.
 	 */
-	private void addRawValue(String value){
+	private void addRawValue(final String value){
 		Settings.addValue(guild, this, value);
 	}
 	
@@ -65,7 +65,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @param value The value to remove.
 	 */
-	public void removeValue(@NotNull T value){
+	public void removeValue(@NotNull final T value){
 		removeRawValue(getValueParser().apply(value));
 	}
 	
@@ -74,14 +74,14 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @param value The value to remove.
 	 */
-	private void removeRawValue(String value){
+	private void removeRawValue(final String value){
 		Settings.removeValue(guild, this, value);
 	}
 	
 	@Override
-	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args){
+	public ConfigurationCommand.ActionResult handleChange(final MessageReceivedEvent event, final ConfigurationCommand.ChangeConfigType action, final LinkedList<String> args){
 		if(action == ConfigurationCommand.ChangeConfigType.SHOW){
-			EmbedBuilder builder = new EmbedBuilder();
+			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Valeurs de " + getName());
@@ -111,13 +111,13 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 * @throws IllegalArgumentException If the configuration isn't a list.
 	 */
 	public List<T> getAsList() throws IllegalArgumentException{
-		List<T> elements = new LinkedList<>();
-		JSONArray array = getObjectList();
+		final List<T> elements = new LinkedList<>();
+		final var array = getObjectList();
 		if(array == null){
 			Settings.resetList(guild, this);
 		}
 		else{
-			for(int i = 0; i < array.length(); i++){
+			for(var i = 0; i < array.length(); i++){
 				elements.add(getConfigParser().apply(array.get(i).toString()));
 			}
 		}
@@ -145,7 +145,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 		try{
 			return Settings.getArray(guild, getName());
 		}
-		catch(NullPointerException e){
+		catch(final NullPointerException e){
 			getLogger(guild).error("NullPointer", e);
 		}
 		return null;
@@ -157,7 +157,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @return True if the value is inside, false otherwise.
 	 */
-	public boolean contains(T value){
+	public boolean contains(final T value){
 		return getAsList().contains(value);
 	}
 	

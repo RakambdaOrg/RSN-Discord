@@ -15,7 +15,7 @@ public class WarnRoleConfig extends SingleRoleConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public WarnRoleConfig(Guild guild){
+	public WarnRoleConfig(final Guild guild){
 		super(guild);
 	}
 	

@@ -23,7 +23,7 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected MapMapConfiguration(Guild guild){
+	protected MapMapConfiguration(final Guild guild){
 		super(guild);
 	}
 	
@@ -33,7 +33,7 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 	 *
 	 * @return The values or null if not found.
 	 */
-	public Map<V, W> getValue(K key){
+	public Map<V, W> getValue(final K key){
 		return getAsMap().get(key);
 	}
 	
@@ -46,15 +46,15 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
 	public Map<K, Map<V, W>> getAsMap() throws IllegalArgumentException{
-		Map<K, Map<V, W>> elements = new HashMap<>();
-		JSONObject map = getObjectMap();
+		final Map<K, Map<V, W>> elements = new HashMap<>();
+		final var map = getObjectMap();
 		if(map == null){
 			Settings.resetMap(guild, this);
 		}
 		else{
-			for(String key : map.keySet()){
-				K kKey = getFirstKeyParser().apply(key);
-				JSONObject value = map.optJSONObject(key);
+			for(final var key : map.keySet()){
+				final var kKey = getFirstKeyParser().apply(key);
+				final var value = map.optJSONObject(key);
 				if(value != null){
 					elements.put(kKey, value.keySet().stream().collect(Collectors.toMap(k -> getSecondKeyParser().apply(k), k -> getValueParser().apply(value.get(k).toString()))));
 				}
@@ -105,7 +105,7 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 	 * @param value       The second key key.
 	 * @param insideValue The value inside the second map.
 	 */
-	public void addValue(K key, V value, W insideValue){
+	public void addValue(final K key, final V value, final W insideValue){
 		if(value == null || insideValue == null){
 			addValue(key);
 		}
@@ -119,7 +119,7 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 	 *
 	 * @param key   The key to add into.
 	 */
-	public void addValue(K key){
+	public void addValue(final K key){
 		Settings.mapMapValue(guild, this, key);
 	}
 	
@@ -129,7 +129,7 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 	 * @param key   The key.
 	 * @param value The value.
 	 */
-	public void deleteKeyValue(K key, V value){
+	public void deleteKeyValue(final K key, final V value){
 		if(value == null){
 			deleteKey( key);
 		}
@@ -143,7 +143,7 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 	 *
 	 * @param key   The key.
 	 */
-	public void deleteKey(K key){
+	public void deleteKey(final K key){
 		Settings.deleteKey(guild, this, key);
 	}
 	

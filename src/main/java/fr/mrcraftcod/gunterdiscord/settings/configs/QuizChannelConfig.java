@@ -15,7 +15,7 @@ public class QuizChannelConfig extends SingleChannelConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public QuizChannelConfig(Guild guild){
+	public QuizChannelConfig(final Guild guild){
 		super(guild);
 	}
 	

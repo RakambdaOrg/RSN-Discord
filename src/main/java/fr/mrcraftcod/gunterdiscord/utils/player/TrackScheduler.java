@@ -27,7 +27,7 @@ class TrackScheduler extends AudioEventAdapter{
 	 * @param guild  The guild the scheduler is for.
 	 * @param player The audio player this scheduler uses
 	 */
-	public TrackScheduler(Guild guild, AudioPlayer player){
+	TrackScheduler(final Guild guild, final AudioPlayer player){
 		this.guild = guild;
 		this.player = player;
 		this.queue = new LinkedBlockingQueue<>();
@@ -39,20 +39,20 @@ class TrackScheduler extends AudioEventAdapter{
 	 *
 	 * @param track The track to play or add to queue.
 	 */
-	public void queue(AudioTrack track){
+	public void queue(final AudioTrack track){
 		if(!player.startTrack(track, true)){
 			queue.offer(track);
 		}
 	}
 	
 	@Override
-	public void onTrackStart(AudioPlayer player, AudioTrack track){
+	public void onTrackStart(final AudioPlayer player, final AudioTrack track){
 		super.onTrackStart(player, track);
 		listeners.forEach(l -> l.onTrackStart(track));
 	}
 	
 	@Override
-	public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason){
+	public void onTrackEnd(final AudioPlayer player, final AudioTrack track, final AudioTrackEndReason endReason){
 		super.onTrackEnd(player, track, endReason);
 		listeners.forEach(l -> l.onTrackEnd(track));
 		getLogger(getGuild()).info("Track ended: {}", track.getIdentifier());
@@ -64,20 +64,35 @@ class TrackScheduler extends AudioEventAdapter{
 		}
 	}
 	
-	public Guild getGuild(){
+	/**
+	 * Get the guild the scheduler is associated to.
+	 *
+	 * @return The guild.
+	 */
+	private Guild getGuild(){
 		return guild;
 	}
 	
-	public boolean nextTrack(){
+	/**
+	 * Tell if a track is available next.
+	 *
+	 * @return True if a track is available, false else.
+	 */
+	boolean nextTrack(){
 		getLogger(getGuild()).info("Playing next track");
 		return player.startTrack(queue.poll(), false);
 	}
 	
-	public void addStatusTrackSchedulerListener(StatusTrackSchedulerListener statusTrackSchedulerListener){
+	/**
+	 * Add a StatusTrackListener.
+	 *
+	 * @param statusTrackSchedulerListener The listener to add.
+	 */
+	void addStatusTrackSchedulerListener(final StatusTrackSchedulerListener statusTrackSchedulerListener){
 		listeners.add(statusTrackSchedulerListener);
 	}
 	
-	public void foundNothing(){
+	void foundNothing(){
 		getLogger(getGuild()).info("Scheduler nothing found (track: {}, queue: {})", player.getPlayingTrack(), queue.size());
 		if(player.getPlayingTrack() == null && queue.isEmpty()){
 			listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty);

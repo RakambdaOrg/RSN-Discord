@@ -17,7 +17,7 @@ public abstract class IntegerValueConfiguration extends ValueConfiguration<Integ
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected IntegerValueConfiguration(Guild guild){
+	protected IntegerValueConfiguration(final Guild guild){
 		super(guild);
 	}
 	

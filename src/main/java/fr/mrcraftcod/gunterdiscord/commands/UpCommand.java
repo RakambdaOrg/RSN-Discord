@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class UpCommand extends BasicCommand{
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		Actions.sendMessage(event.getTextChannel(), Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Uptime infos").addField("Dernier démarage (heure locale):", Main.bootTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME), false).addField("Temps écoulé", Duration.between(Main.bootTime, ZonedDateTime.now()).toString(), false).build());
 		return CommandResult.SUCCESS;

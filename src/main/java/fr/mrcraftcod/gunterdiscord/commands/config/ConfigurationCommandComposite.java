@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands.config;
 
-import fr.mrcraftcod.gunterdiscord.commands.generic.CompositeCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.core.entities.ChannelType;
 import java.util.List;
 import static fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand.ChangeConfigType.*;
@@ -12,16 +12,17 @@ import static fr.mrcraftcod.gunterdiscord.commands.generic.Command.AccessLevel.A
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
-public class ConfigurationCompositeCommand extends CompositeCommand{
+public class ConfigurationCommandComposite extends CommandComposite{
 	/**
 	 * Constructor.
 	 */
-	public ConfigurationCompositeCommand(){
+	public ConfigurationCommandComposite(){
 		super();
 		addSubCommand(new ConfigurationCommand(this, ADD, List.of("add", "a")));
 		addSubCommand(new ConfigurationCommand(this, REMOVE, List.of("remove", "r")));
 		addSubCommand(new ConfigurationCommand(this, SET, List.of("set", "s")));
 		addSubCommand(new ConfigurationCommand(this, SHOW, List.of("show", "l")));
+		addSubCommand(new ListConfigurationCommand(this));
 	}
 	
 	@Override

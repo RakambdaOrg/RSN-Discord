@@ -32,7 +32,7 @@ public class NicknameCommand extends BasicCommand{
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Optionnel: Utilisateur", "L'utilisateur visé par la modification (par défaut @me)", false);
 		builder.addField("Optionnel: Surnom", "Le nouveau surnom (si aucun n'est précisé le surnom sera réinitialisé)", false);
@@ -40,14 +40,14 @@ public class NicknameCommand extends BasicCommand{
 	
 	@SuppressWarnings("Duplicates")
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		Member member;
+		final Member member;
 		if(event.getMessage().getMentionedUsers().size() > 0){
 			args.pop();
 			member = event.getGuild().getMember(event.getMessage().getMentionedUsers().get(0));
 			if(event.getAuthor().getIdLong() != member.getUser().getIdLong() && !Utilities.isTeam(event.getMember())){
-				EmbedBuilder builder = new EmbedBuilder();
+				final var builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.addField("Utilisateur", member.getAsMention(), true);
 				builder.setTitle("T'es cru changer le nom d'un autre mec alors que t'es pas du staff?!");
@@ -59,12 +59,12 @@ public class NicknameCommand extends BasicCommand{
 		else{
 			member = event.getMember();
 		}
-		String oldName = member.getNickname();
-		Long lastChangeRaw = new NickLastChangeConfig(event.getGuild()).getValue(member.getUser().getIdLong());
-		Date lastChange = new Date(lastChangeRaw == null ? 0 : lastChangeRaw);
-		Duration delay = Duration.ofMinutes(new NickDelayConfig(event.getGuild()).getObject(6 * 60));
+		final var oldName = member.getNickname();
+		final var lastChangeRaw = new NickLastChangeConfig(event.getGuild()).getValue(member.getUser().getIdLong());
+		final var lastChange = new Date(lastChangeRaw == null ? 0 : lastChangeRaw);
+		final var delay = Duration.ofMinutes(new NickDelayConfig(event.getGuild()).getObject(6 * 60));
 		if(!Utilities.isTeam(event.getMember()) && (lastChange.getTime() + delay.getSeconds() * 1000) >= new Date().getTime()){
-			EmbedBuilder builder = new EmbedBuilder();
+			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
 			builder.addField("Ancien surnom", oldName == null ? "*AUCUN*" : oldName, true);
@@ -75,14 +75,14 @@ public class NicknameCommand extends BasicCommand{
 			Actions.reply(event, builder.build());
 		}
 		else{
-			String newName;
+			final String newName;
 			if(args.size() == 0){
 				newName = null;
 			}
 			else{
 				newName = String.join(" ", args);
 			}
-			EmbedBuilder builder = new EmbedBuilder();
+			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.addField("Ancien surnom", oldName == null ? "*AUCUN*" : oldName, true);
 			builder.addField("Nouveau surnom", newName == null ? "*AUCUN*" : newName, true);
@@ -93,11 +93,11 @@ public class NicknameCommand extends BasicCommand{
 				new NickLastChangeConfig(event.getGuild()).addValue(member.getUser().getIdLong(), new Date().getTime());
 				getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", Utilities.getUserToLog(event.getAuthor()), Utilities.getUserToLog(member.getUser()), oldName, newName);
 			}
-			catch(HierarchyException e){
+			catch(final HierarchyException e){
 				builder.setColor(Color.RED);
 				builder.setTitle("T'as cru changer le nom d'un mec plus haut que moi?!");
 			}
-			catch(ErrorResponseException e){
+			catch(final ErrorResponseException e){
 				builder.setColor(Color.RED);
 				builder.setTitle("Ce pseudo n'est pas valide");
 				builder.addField("Raison", e.getMeaning(), false);

@@ -15,7 +15,7 @@ public class ReportChannelConfig extends SingleChannelConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public ReportChannelConfig(Guild guild){
+	public ReportChannelConfig(final Guild guild){
 		super(guild);
 	}
 	

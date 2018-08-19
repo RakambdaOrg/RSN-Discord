@@ -31,14 +31,14 @@ public abstract class ValueConfiguration<T> extends Configuration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected ValueConfiguration(Guild guild){
+	ValueConfiguration(final Guild guild){
 		super(guild);
 	}
 	
 	@Override
-	public ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args) throws NoValueDefinedException{
+	public ConfigurationCommand.ActionResult handleChange(final MessageReceivedEvent event, final ConfigurationCommand.ChangeConfigType action, final LinkedList<String> args) throws NoValueDefinedException{
 		if(action == SHOW){
-			EmbedBuilder builder = new EmbedBuilder();
+			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Valeur de " + getName());
@@ -69,7 +69,7 @@ public abstract class ValueConfiguration<T> extends Configuration{
 		if(getType() != ConfigType.VALUE){
 			throw new IllegalArgumentException("Not a value config");
 		}
-		Object obj = Settings.getObject(guild, getName());
+		final var obj = Settings.getObject(guild, getName());
 		if(Objects.isNull(obj)){
 			throw new NoValueDefinedException(this);
 		}
@@ -81,7 +81,7 @@ public abstract class ValueConfiguration<T> extends Configuration{
 	 *
 	 * @param value the value to set.
 	 */
-	private void setRawValue(String value){
+	private void setRawValue(final String value){
 		Settings.setValue(guild, this, value);
 	}
 	
@@ -113,11 +113,11 @@ public abstract class ValueConfiguration<T> extends Configuration{
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a value.
 	 */
-	public T getObject(T defaultValue) throws IllegalArgumentException{
+	public T getObject(final T defaultValue) throws IllegalArgumentException{
 		try{
 			return getObject();
 		}
-		catch(NoValueDefinedException e){
+		catch(final NoValueDefinedException e){
 			return defaultValue;
 		}
 	}
@@ -127,7 +127,7 @@ public abstract class ValueConfiguration<T> extends Configuration{
 	 *
 	 * @param value the value to set.
 	 */
-	public void setValue(@NotNull T value){
+	public void setValue(@NotNull final T value){
 		setRawValue(getValueParser().apply(value));
 	}
 	

@@ -6,7 +6,6 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.*;
@@ -21,17 +20,17 @@ import java.util.List;
  */
 public class AvatarCommand extends BasicCommand{
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Utilisateur", "L'utilisateur dont on veut l'avatar", false);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(event.getMessage().getMentionedUsers().size() > 0){
-			User user = event.getMessage().getMentionedUsers().get(0);
-			EmbedBuilder builder = new EmbedBuilder();
+			final var user = event.getMessage().getMentionedUsers().get(0);
+			final var builder = new EmbedBuilder();
 			builder.setColor(Color.GREEN);
 			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 			builder.addField("URL", user.getAvatarUrl(), true);
@@ -39,7 +38,7 @@ public class AvatarCommand extends BasicCommand{
 			Actions.reply(event, builder.build());
 		}
 		else{
-			EmbedBuilder builder = new EmbedBuilder();
+			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
 			builder.addField("Erreur", "Merci de mentionner un utilisateur", true);

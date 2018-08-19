@@ -27,7 +27,7 @@ public abstract class Configuration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected Configuration(Guild guild){this.guild = guild;}
+	protected Configuration(final Guild guild){this.guild = guild;}
 	
 	/**
 	 * Handle the changes requested.
