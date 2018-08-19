@@ -25,20 +25,26 @@ public class ResumeMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	public ResumeMusicCommand(Command parent){
+	ResumeMusicCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		GunterAudioManager.resume(event.getGuild());
-		Actions.reply(event, "%s a relancé la musique", event.getAuthor().getAsMention());
+		switch(GunterAudioManager.resume(event.getGuild())){
+			case NO_MUSIC:
+				Actions.reply(event, "%s, aucune musique n'est en cours", event.getAuthor().getAsMention());
+				break;
+			case OK:
+				Actions.reply(event, "%s a relancé la musique", event.getAuthor().getAsMention());
+				break;
+		}
 		return CommandResult.SUCCESS;
 	}
 	

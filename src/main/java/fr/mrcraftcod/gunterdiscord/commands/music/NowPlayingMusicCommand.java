@@ -29,19 +29,19 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	public NowPlayingMusicCommand(Command parent){
+	NowPlayingMusicCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, "En cours de diffusion");
+		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, "En cours de diffusion");
 		GunterAudioManager.currentTrack(event.getGuild()).ifPresentOrElse(track -> {
 			builder.addField("Titre", track.getInfo().title, false);
 			builder.addField("Position", String.format("%s %s / %s", buildBar(track.getPosition(), track.getDuration()), getDuration(track.getPosition()), getDuration(track.getDuration())), false);
@@ -54,14 +54,14 @@ public class NowPlayingMusicCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
-	private String buildBar(double current, double total){
-		var charCount = 10;
+	private String buildBar(double current, final double total){
+		final var charCount = 10;
 		if(current > total){
 			current = total;
 		}
-		StringBuilder sb = new StringBuilder();
+		final var sb = new StringBuilder();
 		IntStream.range(0, charCount).forEach(i -> sb.append('='));
-		int replaceIndex = (int) ((current / total) * charCount);
+		final var replaceIndex = (int) ((current / total) * charCount);
 		sb.replace(replaceIndex, replaceIndex + 1, "O");
 		return sb.toString();
 	}
@@ -73,8 +73,8 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	 *
 	 * @return A readable version of this duration.
 	 */
-	static String getDuration(long time){
-		var duration = Duration.ofMillis(time);
+	static String getDuration(final long time){
+		final var duration = Duration.ofMillis(time);
 		if(duration.toHoursPart() > 0){
 			return String.format("%02d:%02d:%02d", duration.toHoursPart(), duration.toMinutesPart(), duration.toSecondsPart());
 		}

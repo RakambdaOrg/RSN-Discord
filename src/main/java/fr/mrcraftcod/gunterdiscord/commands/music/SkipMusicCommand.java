@@ -19,13 +19,13 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-06-16
  */
-public class StopMusicCommand extends BasicCommand{
+public class SkipMusicCommand extends BasicCommand{
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	StopMusicCommand(final Command parent){
+	SkipMusicCommand(final Command parent){
 		super(parent);
 	}
 	
@@ -37,12 +37,12 @@ public class StopMusicCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		switch(GunterAudioManager.leave(event.getGuild())){
+		switch(GunterAudioManager.skip(event.getGuild())){
 			case NO_MUSIC:
 				Actions.reply(event, "%s, aucune musique n'est en cours", event.getAuthor().getAsMention());
 				break;
 			case OK:
-				Actions.reply(event, "%s a arrêté la musique", event.getAuthor().getAsMention());
+				Actions.reply(event, "%s a passé la musique en cours", event.getAuthor().getAsMention());
 				break;
 		}
 		return CommandResult.SUCCESS;
@@ -60,17 +60,17 @@ public class StopMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Stopper musique";
+		return "Passer musique";
 	}
 	
 	@Override
 	public List<String> getCommand(){
-		return List.of("stop", "s");
+		return List.of("skip");
 	}
 	
 	@Override
 	public String getDescription(){
-		return "Arrête la musique";
+		return "Passe la musique actuelle";
 	}
 	
 	@Override

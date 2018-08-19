@@ -23,10 +23,11 @@ public class MusicCommandComposite extends CommandComposite{
 		addSubCommand(new ResumeMusicCommand(this));
 		addSubCommand(new NowPlayingMusicCommand(this));
 		addSubCommand(new SeekMusicCommand(this));
+		addSubCommand(new SkipMusicCommand(this));
 	}
 	
 	@Override
-	public boolean isAllowed(Member member){
+	public boolean isAllowed(final Member member){
 		return Utilities.isTeam(member);
 	}
 	

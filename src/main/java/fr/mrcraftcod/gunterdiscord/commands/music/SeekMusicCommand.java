@@ -30,37 +30,46 @@ public class SeekMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	public SeekMusicCommand(Command parent){
+	SeekMusicCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Temps", "Le temps à mettre, sous la forme hh:mm:ss ou mm:ss ou ss", false);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.isEmpty()){
 			Actions.reply(event, "Merci de donner le temps souhaité");
 		}
 		else{
-			var time = parseTime(event.getGuild(), args.poll());
+			final var time = parseTime(event.getGuild(), args.poll());
 			if(time < 0){
-				Actions.reply(event, "Le format est incorrecte");
+				Actions.reply(event, "Le format est incorrect");
 			}
 			else{
-				GunterAudioManager.seek(event.getGuild(), time);
-				Actions.reply(event, "%s a positioné la musique à %s", event.getAuthor().getAsMention(), NowPlayingMusicCommand.getDuration(time));
+				switch(GunterAudioManager.seek(event.getGuild(), time)){
+					case NO_MUSIC:
+						Actions.reply(event, "%s, aucune musique n'est en cours", event.getAuthor().getAsMention());
+						break;
+					case OK:
+						Actions.reply(event, "%s a positioné la musique à %s", event.getAuthor().getAsMention(), NowPlayingMusicCommand.getDuration(time));
+						break;
+					case IMPOSSIBLE:
+						Actions.reply(event, "%s, le temps de cette musique ne peut être changé", event.getAuthor().getAsMention());
+						break;
+				}
 			}
 		}
 		return CommandResult.SUCCESS;
 	}
 	
-	private long parseTime(Guild guild, String time){
-		var matcher = TIME_PATTERN.matcher(time);
+	private long parseTime(final Guild guild, final String time){
+		final var matcher = TIME_PATTERN.matcher(time);
 		if(!matcher.matches()){
 			return -1;
 		}
@@ -71,14 +80,14 @@ public class SeekMusicCommand extends BasicCommand{
 		return duration * 1000;
 	}
 	
-	private int getAsInt(Guild guild, String str){
+	private int getAsInt(final Guild guild, final String str){
 		if(Objects.isNull(str) || str.isEmpty()){
 			return 0;
 		}
 		try{
 			return Integer.parseInt(str);
 		}
-		catch(Exception e){
+		catch(final Exception e){
 			Log.getLogger(guild).error("Error paring {} into int", str, e);
 		}
 		return 0;

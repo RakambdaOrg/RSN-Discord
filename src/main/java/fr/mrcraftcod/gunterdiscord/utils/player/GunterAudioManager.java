@@ -105,63 +105,74 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		});
 	}
 	
-	public static void seek(Guild guild, long time){
+	public static MusicActionResponse seek(final Guild guild, final long time){
 		if(managers.containsKey(guild)){
-			var track = currentTrack(guild).orElseThrow(() -> new IllegalStateException("Aucune musique ne joue"));
-			if(track.isSeekable()){
-				managers.get(guild).getAudioPlayer().getPlayingTrack().setPosition(time);
-			}
-			else{
-				throw new IllegalStateException("La musique ne peut pas être modifiée");
+			final var track = currentTrack(guild);
+			if(track.isPresent()){
+				if(track.get().isSeekable()){
+					track.get().setPosition(time);
+				}
+				else{
+					return MusicActionResponse.IMPOSSIBLE;
+				}
 			}
 		}
+		return MusicActionResponse.NO_MUSIC;
 	}
 	
 	public AudioPlayer getAudioPlayer(){
 		return audioPlayer;
 	}
 	
-	public static void pause(final Guild guild){
-		if(managers.containsKey(guild)){
-			managers.get(guild).getAudioPlayer().setPaused(true);
-		}
-	}
-	
-	private AudioPlayerManager getAudioPlayerManager(){
-		return audioPlayerManager;
-	}
-	
-	public static void resume(final Guild guild){
-		if(managers.containsKey(guild)){
-			managers.get(guild).getAudioPlayer().setPaused(false);
-		}
-	}
-	
-	private TrackScheduler getTrackScheduler(){
-		return trackScheduler;
-	}
-	
-	public static Optional<AudioTrack> currentTrack(Guild guild){
+	public static Optional<AudioTrack> currentTrack(final Guild guild){
 		if(managers.containsKey(guild)){
 			return Optional.ofNullable(managers.get(guild).getAudioPlayer().getPlayingTrack());
 		}
 		return Optional.empty();
 	}
 	
-	public static void skip(final Guild guild){
+	private AudioPlayerManager getAudioPlayerManager(){
+		return audioPlayerManager;
+	}
+	
+	public static MusicActionResponse pause(final Guild guild){
+		if(managers.containsKey(guild)){
+			managers.get(guild).getAudioPlayer().setPaused(true);
+			return MusicActionResponse.OK;
+		}
+		return MusicActionResponse.NO_MUSIC;
+	}
+	
+	private TrackScheduler getTrackScheduler(){
+		return trackScheduler;
+	}
+	
+	public static MusicActionResponse resume(final Guild guild){
+		if(managers.containsKey(guild)){
+			managers.get(guild).getAudioPlayer().setPaused(false);
+			return MusicActionResponse.OK;
+		}
+		return MusicActionResponse.NO_MUSIC;
+	}
+	
+	public static MusicActionResponse skip(final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).skip();
+			return MusicActionResponse.OK;
 		}
+		return MusicActionResponse.NO_MUSIC;
 	}
 	
 	private void skip(){
 		trackScheduler.nextTrack();
 	}
 	
-	public static void leave(final Guild guild){
+	public static MusicActionResponse leave(final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).onTrackSchedulerEmpty();
+			return MusicActionResponse.OK;
 		}
+		return MusicActionResponse.NO_MUSIC;
 	}
 	
 	@Override

@@ -12,6 +12,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -25,25 +26,32 @@ public class StartMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	public StartMusicCommand(Command parent){
+	StartMusicCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("utilisateur", "L'utilisateur que le bot tentera de rejoindre", false);
+		builder.addField("lien", "Le lien de la musique", false);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.isEmpty()){
 			Actions.reply(event, "Merci de donner un lien");
 		}
 		if(event.getMember().getVoiceState().inVoiceChannel()){
-			String identifier = String.join(" ", args).trim();
-			GunterAudioManager.play(event.getMember().getVoiceState().getChannel(), null, track -> Actions.reply(event, "%s a ajouté %s", event.getAuthor().getAsMention(), track.getInfo().title), identifier);
+			final var identifier = String.join(" ", args).trim();
+			GunterAudioManager.play(event.getMember().getVoiceState().getChannel(), null, track -> {
+				if(Objects.isNull(track)){
+					Actions.reply(event, "%s, musique inconnue", event.getAuthor().getAsMention());
+				}
+				else{
+					Actions.reply(event, "%s a ajouté %s", event.getAuthor().getAsMention(), track.getInfo().title);
+				}
+			}, identifier);
 		}
 		else{
 			Actions.reply(event, "Vous devez être dans un channel vocal");

@@ -25,20 +25,26 @@ public class PauseMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	public PauseMusicCommand(Command parent){
+	PauseMusicCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		GunterAudioManager.pause(event.getGuild());
-		Actions.reply(event, "%s a mis en pause la musique", event.getAuthor().getAsMention());
+		switch(GunterAudioManager.pause(event.getGuild())){
+			case NO_MUSIC:
+				Actions.reply(event, "%s, aucune musique n'est en cours", event.getAuthor().getAsMention());
+				break;
+			case OK:
+				Actions.reply(event, "%s a mis en pause la musique", event.getAuthor().getAsMention());
+				break;
+		}
 		return CommandResult.SUCCESS;
 	}
 	
