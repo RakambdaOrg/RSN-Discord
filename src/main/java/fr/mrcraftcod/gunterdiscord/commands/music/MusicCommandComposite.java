@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.music;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
+import fr.mrcraftcod.gunterdiscord.settings.configs.DJRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Member;
@@ -28,7 +29,7 @@ public class MusicCommandComposite extends CommandComposite{
 	
 	@Override
 	public boolean isAllowed(final Member member){
-		return Utilities.isTeam(member);
+		return Utilities.isTeam(member) || Utilities.hasRole(member, new DJRoleConfig(member.getGuild()).getObject(null));
 	}
 	
 	@Override

@@ -53,7 +53,8 @@ public class Settings{
 			new MegaWarnTimeConfig(null),
 			new RemoveRoleConfig(null),
 			new VoiceTextChannelsConfig(null),
-			new VoiceTextChannelsAssociationConfig(null)
+			new VoiceTextChannelsAssociationConfig(null),
+			new DJRoleConfig(null)
 	};
 	private static Path path;
 	private static JSONObject settings;
