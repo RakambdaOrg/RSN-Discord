@@ -63,8 +63,6 @@ public class Main{
 		}
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			executorService.shutdownNow();
-			consoleHandler.close();
 			try{
 				Settings.save();
 			}
@@ -76,6 +74,14 @@ public class Main{
 		
 		consoleHandler = new ConsoleHandler(jda);
 		consoleHandler.start();
+	}
+	
+	/**
+	 * Close executors.
+	 */
+	public static void close(){
+		executorService.shutdownNow();
+		consoleHandler.close();
 	}
 	
 	/**

@@ -85,7 +85,7 @@ public class LogListener extends ListenerAdapter{
 	public void onMessageReceived(final MessageReceivedEvent event){
 		super.onMessageReceived(event);
 		try{
-			if(event.getMessage().getMentionedMembers().stream().anyMatch(Utilities::isCreator)){
+			if(event.getChannel().getIdLong() != 480662257555210242L && event.getMessage().getMentionedMembers().stream().anyMatch(Utilities::isCreator)){
 				Actions.sendMessage(event.getGuild().getTextChannelById(480662257555210242L), event.getMessage().getContentRaw());
 			}
 		}
