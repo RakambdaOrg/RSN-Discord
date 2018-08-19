@@ -1,16 +1,12 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
-import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceGuildMuteEvent;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.core.events.self.SelfUpdateNameEvent;
 import net.dv8tion.jda.core.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import java.awt.*;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -79,21 +75,6 @@ public class LogListener extends ListenerAdapter{
 			getLogger(event.getGuild()).info("Unmuting bot");
 			event.getGuild().getController().setMute(event.getMember(), false).queue();
 			event.getGuild().getController().setDeafen(event.getMember(), false).queue();
-		}
-	}
-	
-	@Override
-	public void onMessageReceived(final MessageReceivedEvent event){
-		super.onMessageReceived(event);
-		try{
-			if(event.getChannel().getIdLong() != 480662257555210242L && event.getMessage().getMentionedMembers().stream().anyMatch(Utilities::isCreator)){
-				final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, String.format("Rak a été taggé par %s!", event.getAuthor().getAsMention()));
-				builder.addField("Message", event.getMessage().getContentRaw(), false);
-				Actions.sendMessage(event.getGuild().getTextChannelById(480662257555210242L), builder.build());
-			}
-		}
-		catch(final Exception e){
-			Log.getLogger(event.getGuild()).error("", e);
 		}
 	}
 }
