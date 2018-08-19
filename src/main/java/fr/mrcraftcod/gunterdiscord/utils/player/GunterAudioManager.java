@@ -105,10 +105,30 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		});
 	}
 	
+	public static void seek(Guild guild, long time){
+		if(managers.containsKey(guild)){
+			var track = currentTrack(guild).orElseThrow(() -> new IllegalStateException("Aucune musique ne joue"));
+			if(track.isSeekable()){
+				managers.get(guild).getAudioPlayer().getPlayingTrack().setPosition(time);
+			}
+			else{
+				throw new IllegalStateException("La musique ne peut pas être modifiée");
+			}
+		}
+	}
+	
+	public AudioPlayer getAudioPlayer(){
+		return audioPlayer;
+	}
+	
 	public static void pause(final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).getAudioPlayer().setPaused(true);
 		}
+	}
+	
+	private AudioPlayerManager getAudioPlayerManager(){
+		return audioPlayerManager;
 	}
 	
 	public static void resume(final Guild guild){
@@ -117,19 +137,15 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		}
 	}
 	
+	private TrackScheduler getTrackScheduler(){
+		return trackScheduler;
+	}
+	
 	public static Optional<AudioTrack> currentTrack(Guild guild){
 		if(managers.containsKey(guild)){
 			return Optional.ofNullable(managers.get(guild).getAudioPlayer().getPlayingTrack());
 		}
 		return Optional.empty();
-	}
-	
-	private AudioPlayerManager getAudioPlayerManager(){
-		return audioPlayerManager;
-	}
-	
-	private TrackScheduler getTrackScheduler(){
-		return trackScheduler;
 	}
 	
 	public static void skip(final Guild guild){
@@ -180,9 +196,5 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	
 	public void addListener(final StatusTrackSchedulerListener listener){
 		trackScheduler.addStatusTrackSchedulerListener(listener);
-	}
-	
-	public AudioPlayer getAudioPlayer(){
-		return audioPlayer;
 	}
 }

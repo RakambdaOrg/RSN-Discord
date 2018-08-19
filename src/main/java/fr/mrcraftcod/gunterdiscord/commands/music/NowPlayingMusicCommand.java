@@ -73,7 +73,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	 *
 	 * @return A readable version of this duration.
 	 */
-	private static String getDuration(long time){
+	static String getDuration(long time){
 		var duration = Duration.ofMillis(time);
 		if(duration.toHoursPart() > 0){
 			return String.format("%02d:%02d:%02d", duration.toHoursPart(), duration.toMinutesPart(), duration.toSecondsPart());
