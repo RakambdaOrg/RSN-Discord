@@ -22,6 +22,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		addSubCommand(new ConfigurationCommand(this, REMOVE, List.of("remove", "r")));
 		addSubCommand(new ConfigurationCommand(this, SET, List.of("set", "s")));
 		addSubCommand(new ConfigurationCommand(this, SHOW, List.of("show", "l")));
+		addSubCommand(new ListConfigurationCommand(this));
 	}
 	
 	@Override
