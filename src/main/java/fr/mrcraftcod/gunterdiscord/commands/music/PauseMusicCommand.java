@@ -49,11 +49,6 @@ public class PauseMusicCommand extends BasicCommand{
 	}
 	
 	@Override
-	public String getCommandUsage(){
-		return super.getCommandUsage();
-	}
-	
-	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}

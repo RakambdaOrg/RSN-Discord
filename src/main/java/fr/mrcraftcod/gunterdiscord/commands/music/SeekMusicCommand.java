@@ -4,11 +4,13 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
@@ -94,8 +96,8 @@ public class SeekMusicCommand extends BasicCommand{
 	}
 	
 	@Override
-	public String getCommandUsage(){
-		return super.getCommandUsage();
+	public boolean isAllowed(final Member member){
+		return Utilities.isTeam(member) || GunterAudioManager.isRequester(member.getGuild(), member.getUser());
 	}
 	
 	@Override
@@ -106,6 +108,11 @@ public class SeekMusicCommand extends BasicCommand{
 	@Override
 	public String getName(){
 		return "Temps musique";
+	}
+	
+	@Override
+	public String getCommandUsage(){
+		return super.getCommandUsage() + "<temps>";
 	}
 	
 	@Override

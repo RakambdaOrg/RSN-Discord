@@ -1,7 +1,10 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceGuildMuteEvent;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.core.events.self.SelfUpdateNameEvent;
@@ -75,6 +78,19 @@ public class LogListener extends ListenerAdapter{
 			getLogger(event.getGuild()).info("Unmuting bot");
 			event.getGuild().getController().setMute(event.getMember(), false).queue();
 			event.getGuild().getController().setDeafen(event.getMember(), false).queue();
+		}
+	}
+	
+	@Override
+	public void onMessageReceived(final MessageReceivedEvent event){
+		super.onMessageReceived(event);
+		try{
+			if(event.getMessage().getMentionedMembers().stream().anyMatch(Utilities::isCreator)){
+				Actions.sendMessage(event.getGuild().getTextChannelById(0L), event.getMessage().getContentRaw());
+			}
+		}
+		catch(final Exception e){
+			Log.getLogger(event.getGuild()).error("", e);
 		}
 	}
 }

@@ -44,7 +44,7 @@ public class StartMusicCommand extends BasicCommand{
 		}
 		if(event.getMember().getVoiceState().inVoiceChannel()){
 			final var identifier = String.join(" ", args).trim();
-			GunterAudioManager.play(event.getMember().getVoiceState().getChannel(), null, track -> {
+			GunterAudioManager.play(event.getAuthor(), event.getMember().getVoiceState().getChannel(), null, track -> {
 				if(Objects.isNull(track)){
 					Actions.reply(event, "%s, musique inconnue", event.getAuthor().getAsMention());
 				}

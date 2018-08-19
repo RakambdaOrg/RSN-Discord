@@ -11,6 +11,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -32,8 +33,14 @@ public class AnnoyCommand extends BasicCommand{
 		event.getMessage().getMentionedUsers().stream().findAny().ifPresentOrElse(u -> {
 			final var member = event.getGuild().getMember(u);
 			if(member.getVoiceState().inVoiceChannel()){
-				final var identifier = String.join(" ", args).trim();
-				GunterAudioManager.play(member.getVoiceState().getChannel(), identifier.equals("") ? "https://www.youtube.com/watch?v=J4X2b-CEGNg" : identifier);
+				final var botChannel = GunterAudioManager.currentAudioChannel(event.getGuild());
+				if(Objects.isNull(botChannel) || Objects.equals(botChannel, member.getVoiceState().getChannel())){
+					final var identifier = String.join(" ", args).trim();
+					GunterAudioManager.play(event.getAuthor(), member.getVoiceState().getChannel(), identifier.equals("") ? "https://www.youtube.com/watch?v=J4X2b-CEGNg" : identifier);
+				}
+				else{
+					Actions.reply(event, "Désolé, l'utilisateur est dans un autre channel que moi");
+				}
 			}
 			else{
 				Actions.reply(event, "Cet utilisateur n'est pas dans un channel vocal");

@@ -8,10 +8,14 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.RequesterTrackUserField;
+import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.managers.AudioManager;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -40,21 +44,24 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		this.trackScheduler = trackScheduler;
 	}
 	
-	public static void play(final VoiceChannel channel, final String... identifier){
-		play(channel, null, identifier);
+	public static void play(final User requester, final VoiceChannel channel, final String... identifier){
+		play(requester, channel, null, identifier);
 	}
 	
-	private static void play(final VoiceChannel channel, final StatusTrackSchedulerListener listener, final String... identifier){
-		play(channel, listener, track -> {}, identifier);
+	private static void play(final User requester, final VoiceChannel channel, final StatusTrackSchedulerListener listener, final String... identifier){
+		play(requester, channel, listener, track -> {}, identifier);
 	}
 	
-	public static void play(final VoiceChannel channel, final StatusTrackSchedulerListener listener, final Consumer<AudioTrack> onTrackAdded, final String... identifier){
+	public static void play(final User requester, final VoiceChannel channel, final StatusTrackSchedulerListener listener, final Consumer<AudioTrack> onTrackAdded, final String... identifier){
 		final var gunterAudioManager = getGunterPlayerManager(channel, listener);
 		for(final var ident : identifier){
 			gunterAudioManager.getAudioPlayerManager().loadItem(ident, new AudioLoadResultHandler(){
 				@Override
 				public void trackLoaded(final AudioTrack track){
 					getLogger(channel.getGuild()).info("Added `{}` to the audio queue on channel `{}`", ident, channel.getName());
+					final var userData = new TrackUserFields();
+					new RequesterTrackUserField().fill(userData, requester);
+					track.setUserData(userData);
 					gunterAudioManager.getTrackScheduler().queue(track);
 					onTrackAdded.accept(track);
 				}
@@ -62,7 +69,10 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 				@Override
 				public void playlistLoaded(final AudioPlaylist playlist){
 					getLogger(channel.getGuild()).info("Added `{}`({}) to the audio queue on channel `{}`", ident, playlist.getTracks().size(), channel.getName());
+					final var userData = new TrackUserFields();
+					new RequesterTrackUserField().fill(userData, requester);
 					for(final var track : playlist.getTracks()){
+						track.setUserData(userData);
 						gunterAudioManager.getTrackScheduler().queue(track);
 						onTrackAdded.accept(track);
 					}
@@ -118,6 +128,27 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			}
 		}
 		return MusicActionResponse.NO_MUSIC;
+	}
+	
+	public static boolean isRequester(final Guild guild, final User user){
+		if(managers.containsKey(guild)){
+			return currentTrack(guild).map(track -> {
+				if(track.getUserData() instanceof TrackUserFields){
+					return Objects.equals(user, new RequesterTrackUserField().getOrDefault((TrackUserFields) track.getUserData(), null));
+				}
+				else{
+					return false;
+				}
+			}).orElse(false);
+		}
+		return false;
+	}
+	
+	public static VoiceChannel currentAudioChannel(final Guild guild){
+		if(managers.containsKey(guild)){
+			return managers.get(guild).getChannel();
+		}
+		return null;
 	}
 	
 	public AudioPlayer getAudioPlayer(){

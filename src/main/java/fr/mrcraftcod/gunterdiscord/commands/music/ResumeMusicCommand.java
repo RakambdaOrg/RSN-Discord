@@ -49,11 +49,6 @@ public class ResumeMusicCommand extends BasicCommand{
 	}
 	
 	@Override
-	public String getCommandUsage(){
-		return super.getCommandUsage();
-	}
-	
-	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
