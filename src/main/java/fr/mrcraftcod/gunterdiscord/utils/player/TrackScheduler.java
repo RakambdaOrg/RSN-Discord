@@ -6,6 +6,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.core.entities.Guild;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -41,7 +42,9 @@ class TrackScheduler extends AudioEventAdapter{
 	 */
 	public void queue(final AudioTrack track){
 		if(!player.startTrack(track, true)){
-			queue.offer(track);
+			if(queue.stream().noneMatch(track2 -> Objects.equals(track2.getInfo().identifier, track.getInfo().identifier))){
+				queue.offer(track);
+			}
 		}
 	}
 	
