@@ -52,7 +52,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		play(requester, channel, listener, track -> {}, identifier);
 	}
 	
-	public static void play(final User requester, final VoiceChannel channel, final StatusTrackSchedulerListener listener, final Consumer<AudioTrack> onTrackAdded, final String... identifier){
+	public static void play(final User requester, final VoiceChannel channel, final StatusTrackSchedulerListener listener, final Consumer<Object> onTrackAdded, final String... identifier){
 		final var gunterAudioManager = getGunterPlayerManager(channel, listener);
 		for(final var ident : identifier){
 			gunterAudioManager.getAudioPlayerManager().loadItem(ident, new AudioLoadResultHandler(){
@@ -69,12 +69,17 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 				@Override
 				public void playlistLoaded(final AudioPlaylist playlist){
 					getLogger(channel.getGuild()).info("Added `{}`({}) to the audio queue on channel `{}`", ident, playlist.getTracks().size(), channel.getName());
-					final var userData = new TrackUserFields();
-					new RequesterTrackUserField().fill(userData, requester);
-					for(final var track : playlist.getTracks()){
-						track.setUserData(userData);
-						gunterAudioManager.getTrackScheduler().queue(track);
-						onTrackAdded.accept(track);
+					if(playlist.getTracks().size() > 10){
+						onTrackAdded.accept("Vous tentez d'ajouter plus de 10 musiques à la fois, annulé");
+					}
+					else{
+						final var userData = new TrackUserFields();
+						new RequesterTrackUserField().fill(userData, requester);
+						for(final var track : playlist.getTracks()){
+							track.setUserData(userData);
+							gunterAudioManager.getTrackScheduler().queue(track);
+							onTrackAdded.accept(track);
+						}
 					}
 				}
 				
@@ -82,14 +87,14 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 				public void noMatches(){
 					getLogger(channel.getGuild()).warn("Player found nothing for channel `{}`", channel.getName());
 					gunterAudioManager.getTrackScheduler().foundNothing();
-					onTrackAdded.accept(null);
+					onTrackAdded.accept("Aucune musique trouvée");
 				}
 				
 				@Override
 				public void loadFailed(final FriendlyException throwable){
 					getLogger(channel.getGuild()).warn("Failed to load audio for channel `{}`", channel.getName(), throwable);
 					gunterAudioManager.getTrackScheduler().foundNothing();
-					onTrackAdded.accept(null);
+					onTrackAdded.accept("Erreur pendant le chargement");
 				}
 			});
 		}

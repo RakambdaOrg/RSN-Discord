@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands.music;
 
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
@@ -48,8 +49,11 @@ public class StartMusicCommand extends BasicCommand{
 				if(Objects.isNull(track)){
 					Actions.reply(event, "%s, musique inconnue", event.getAuthor().getAsMention());
 				}
+				else if(track instanceof AudioTrack){
+					Actions.reply(event, "%s a ajouté %s", event.getAuthor().getAsMention(), ((AudioTrack) track).getInfo().title);
+				}
 				else{
-					Actions.reply(event, "%s a ajouté %s", event.getAuthor().getAsMention(), track.getInfo().title);
+					Actions.reply(event, track.toString());
 				}
 			}, identifier);
 		}
