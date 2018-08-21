@@ -49,7 +49,7 @@ public class Main{
 			jda.addEventListener(new AutoRolesListener());
 			jda.addEventListener(new IdeaChannelMessageListener());
 			jda.addEventListener(new QuestionReactionListener());
-			jda.addEventListener(new VoiceTextChannelsListener());
+			// jda.addEventListener(new VoiceTextChannelsListener());
 			jda.setAutoReconnect(true);
 			jda.getPresence().setGame(Game.playing("g?help pour l'aide"));
 			
