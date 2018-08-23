@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands.music;
 
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -34,6 +36,7 @@ public class StartMusicCommand extends BasicCommand{
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("lien", "Le lien de la musique", false);
+		builder.addField("saut", "Nombre de liens à sauter avant de commencer à prendre les liens d'une playlist", false);
 	}
 	
 	@Override
@@ -42,16 +45,27 @@ public class StartMusicCommand extends BasicCommand{
 		if(args.isEmpty()){
 			Actions.reply(event, "Merci de donner un lien");
 		}
-		if(event.getMember().getVoiceState().inVoiceChannel()){
-			final var identifier = String.join(" ", args).trim();
+		else if(event.getMember().getVoiceState().inVoiceChannel()){
+			final var identifier = args.poll().trim();
+			var skipCount = Optional.ofNullable(args.poll()).map(value -> {
+				try{
+					return Integer.parseInt(value);
+				}
+				catch(Exception ignored){
+				}
+				return 0;
+			}).filter(value -> value >= 0).orElse(0);
 			GunterAudioManager.play(event.getAuthor(), event.getMember().getVoiceState().getChannel(), null, track -> {
 				if(Objects.isNull(track)){
 					Actions.reply(event, "%s, musique inconnue", event.getAuthor().getAsMention());
 				}
-				else{
-					Actions.reply(event, "%s a ajouté %s", event.getAuthor().getAsMention(), track.getInfo().title);
+				else if(track instanceof AudioTrack){
+					Actions.reply(event, "%s a ajouté %s", event.getAuthor().getAsMention(), ((AudioTrack) track).getInfo().title);
 				}
-			}, identifier);
+				else{
+					Actions.reply(event, track.toString());
+				}
+			}, skipCount, identifier);
 		}
 		else{
 			Actions.reply(event, "Vous devez être dans un channel vocal");
@@ -61,7 +75,7 @@ public class StartMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " <lien>";
+		return super.getCommandUsage() + " <lien> [saut]";
 	}
 	
 	@Override

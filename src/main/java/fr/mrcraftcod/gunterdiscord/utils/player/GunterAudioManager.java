@@ -49,10 +49,10 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	}
 	
 	private static void play(final User requester, final VoiceChannel channel, final StatusTrackSchedulerListener listener, final String... identifier){
-		play(requester, channel, listener, track -> {}, identifier);
+		play(requester, channel, listener, track -> {}, 0, identifier);
 	}
 	
-	public static void play(final User requester, final VoiceChannel channel, final StatusTrackSchedulerListener listener, final Consumer<AudioTrack> onTrackAdded, final String... identifier){
+	public static void play(final User requester, final VoiceChannel channel, final StatusTrackSchedulerListener listener, final Consumer<Object> onTrackAdded, final int skipCount, final String... identifier){
 		final var gunterAudioManager = getGunterPlayerManager(channel, listener);
 		for(final var ident : identifier){
 			gunterAudioManager.getAudioPlayerManager().loadItem(ident, new AudioLoadResultHandler(){
@@ -71,25 +71,25 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 					getLogger(channel.getGuild()).info("Added `{}`({}) to the audio queue on channel `{}`", ident, playlist.getTracks().size(), channel.getName());
 					final var userData = new TrackUserFields();
 					new RequesterTrackUserField().fill(userData, requester);
-					for(final var track : playlist.getTracks()){
+					playlist.getTracks().stream().skip(skipCount).limit(10).forEach(track -> {
 						track.setUserData(userData);
 						gunterAudioManager.getTrackScheduler().queue(track);
 						onTrackAdded.accept(track);
-					}
+					});
 				}
 				
 				@Override
 				public void noMatches(){
 					getLogger(channel.getGuild()).warn("Player found nothing for channel `{}`", channel.getName());
 					gunterAudioManager.getTrackScheduler().foundNothing();
-					onTrackAdded.accept(null);
+					onTrackAdded.accept("Aucune musique trouvée");
 				}
 				
 				@Override
 				public void loadFailed(final FriendlyException throwable){
 					getLogger(channel.getGuild()).warn("Failed to load audio for channel `{}`", channel.getName(), throwable);
 					gunterAudioManager.getTrackScheduler().foundNothing();
-					onTrackAdded.accept(null);
+					onTrackAdded.accept("Erreur pendant le chargement");
 				}
 			});
 		}
@@ -115,6 +115,14 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		});
 	}
 	
+	private AudioPlayerManager getAudioPlayerManager(){
+		return audioPlayerManager;
+	}
+	
+	private TrackScheduler getTrackScheduler(){
+		return trackScheduler;
+	}
+	
 	public static MusicActionResponse seek(final Guild guild, final long time){
 		if(managers.containsKey(guild)){
 			final var track = currentTrack(guild);
@@ -128,6 +136,17 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			}
 		}
 		return MusicActionResponse.NO_MUSIC;
+	}
+	
+	public static Optional<AudioTrack> currentTrack(final Guild guild){
+		if(managers.containsKey(guild)){
+			return Optional.ofNullable(managers.get(guild).getAudioPlayer().getPlayingTrack());
+		}
+		return Optional.empty();
+	}
+	
+	public AudioPlayer getAudioPlayer(){
+		return audioPlayer;
 	}
 	
 	public static boolean isRequester(final Guild guild, final User user){
@@ -151,19 +170,8 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		return null;
 	}
 	
-	public AudioPlayer getAudioPlayer(){
-		return audioPlayer;
-	}
-	
-	public static Optional<AudioTrack> currentTrack(final Guild guild){
-		if(managers.containsKey(guild)){
-			return Optional.ofNullable(managers.get(guild).getAudioPlayer().getPlayingTrack());
-		}
-		return Optional.empty();
-	}
-	
-	private AudioPlayerManager getAudioPlayerManager(){
-		return audioPlayerManager;
+	private VoiceChannel getChannel(){
+		return channel;
 	}
 	
 	public static MusicActionResponse pause(final Guild guild){
@@ -172,10 +180,6 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			return MusicActionResponse.OK;
 		}
 		return MusicActionResponse.NO_MUSIC;
-	}
-	
-	private TrackScheduler getTrackScheduler(){
-		return trackScheduler;
 	}
 	
 	public static MusicActionResponse resume(final Guild guild){
@@ -226,10 +230,6 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	
 	@Override
 	public void onTrackStart(final AudioTrack track){
-	}
-	
-	private VoiceChannel getChannel(){
-		return channel;
 	}
 	
 	private AudioManager getAudioManager(){
