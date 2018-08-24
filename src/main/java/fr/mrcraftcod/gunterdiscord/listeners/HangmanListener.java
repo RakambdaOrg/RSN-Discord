@@ -103,7 +103,7 @@ public class HangmanListener extends ListenerAdapter{
 	/**
 	 * Stop all running games.
 	 */
-	static void stopAll(){
+	public static void stopAll(){
 		games.forEach(HangmanListener::delayEndGame);
 	}
 	

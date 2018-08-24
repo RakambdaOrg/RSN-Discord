@@ -18,13 +18,14 @@ public class MusicCommandComposite extends CommandComposite{
 	 * Constructor.
 	 */
 	public MusicCommandComposite(){
-		addSubCommand(new StartMusicCommand(this));
+		addSubCommand(new AddMusicCommand(this));
 		addSubCommand(new StopMusicCommand(this));
 		addSubCommand(new PauseMusicCommand(this));
 		addSubCommand(new ResumeMusicCommand(this));
 		addSubCommand(new NowPlayingMusicCommand(this));
 		addSubCommand(new SeekMusicCommand(this));
 		addSubCommand(new SkipMusicCommand(this));
+		addSubCommand(new QueueMusicCommand(this));
 	}
 	
 	@Override

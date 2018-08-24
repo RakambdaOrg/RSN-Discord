@@ -1,8 +1,11 @@
 package fr.mrcraftcod.gunterdiscord;
 
 import fr.mrcraftcod.gunterdiscord.listeners.*;
+import fr.mrcraftcod.gunterdiscord.listeners.musicparty.MusicPartyListener;
+import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
+import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -80,6 +83,11 @@ public class Main{
 	 * Close executors.
 	 */
 	public static void close(){
+		QuizListener.stopAll();
+		HangmanListener.stopAll();
+		MusicPartyListener.stopAll();
+		GunterAudioManager.stopAll();
+		
 		executorService.shutdownNow();
 		consoleHandler.close();
 	}
