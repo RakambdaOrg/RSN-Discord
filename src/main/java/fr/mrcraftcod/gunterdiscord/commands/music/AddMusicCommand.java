@@ -22,13 +22,13 @@ import java.util.Optional;
  * @author Thomas Couchoud
  * @since 2018-06-16
  */
-public class StartMusicCommand extends BasicCommand{
+public class AddMusicCommand extends BasicCommand{
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	StartMusicCommand(final Command parent){
+	AddMusicCommand(final Command parent){
 		super(parent);
 	}
 	
@@ -36,7 +36,6 @@ public class StartMusicCommand extends BasicCommand{
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("lien", "Le lien de la musique", false);
-		builder.addField("saut", "Nombre de liens à sauter avant de commencer à prendre les liens d'une playlist", false);
 	}
 	
 	@Override
@@ -55,6 +54,14 @@ public class StartMusicCommand extends BasicCommand{
 				}
 				return 0;
 			}).filter(value -> value >= 0).orElse(0);
+			var maxTracks = Optional.ofNullable(args.poll()).map(value -> {
+				try{
+					return Integer.parseInt(value);
+				}
+				catch(Exception ignored){
+				}
+				return 10;
+			}).filter(value -> value >= 0).orElse(10);
 			GunterAudioManager.play(event.getAuthor(), event.getMember().getVoiceState().getChannel(), null, track -> {
 				if(Objects.isNull(track)){
 					Actions.reply(event, "%s, musique inconnue", event.getAuthor().getAsMention());
@@ -65,7 +72,7 @@ public class StartMusicCommand extends BasicCommand{
 				else{
 					Actions.reply(event, track.toString());
 				}
-			}, skipCount, identifier);
+			}, skipCount, maxTracks, identifier);
 		}
 		else{
 			Actions.reply(event, "Vous devez être dans un channel vocal");
@@ -75,7 +82,7 @@ public class StartMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " <lien> [saut]";
+		return super.getCommandUsage() + " <lien>";
 	}
 	
 	@Override

@@ -8,17 +8,14 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import fr.mrcraftcod.gunterdiscord.utils.player.sourcemanagers.httpfolder.HttpFolderAudioSourceManager;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.RequesterTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.managers.AudioManager;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 import java.util.function.Consumer;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -49,10 +46,10 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	}
 	
 	private static void play(final User requester, final VoiceChannel channel, final StatusTrackSchedulerListener listener, final String... identifier){
-		play(requester, channel, listener, track -> {}, 0, identifier);
+		play(requester, channel, listener, track -> {}, 0, 10, identifier);
 	}
 	
-	public static void play(final User requester, final VoiceChannel channel, final StatusTrackSchedulerListener listener, final Consumer<Object> onTrackAdded, final int skipCount, final String... identifier){
+	public static void play(final User requester, final VoiceChannel channel, final StatusTrackSchedulerListener listener, final Consumer<Object> onTrackAdded, final int skipCount, final int maxTracks, final String... identifier){
 		final var gunterAudioManager = getGunterPlayerManager(channel, listener);
 		for(final var ident : identifier){
 			gunterAudioManager.getAudioPlayerManager().loadItem(ident, new AudioLoadResultHandler(){
@@ -71,7 +68,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 					getLogger(channel.getGuild()).info("Added `{}`({}) to the audio queue on channel `{}`", ident, playlist.getTracks().size(), channel.getName());
 					final var userData = new TrackUserFields();
 					new RequesterTrackUserField().fill(userData, requester);
-					playlist.getTracks().stream().skip(skipCount).limit(10).forEach(track -> {
+					playlist.getTracks().stream().skip(skipCount).limit(maxTracks).forEach(track -> {
 						track.setUserData(userData);
 						gunterAudioManager.getTrackScheduler().queue(track);
 						onTrackAdded.accept(track);
@@ -110,6 +107,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			if(listener != null){
 				trackScheduler.addStatusTrackSchedulerListener(listener);
 			}
+			audioPlayerManager.registerSourceManager(new HttpFolderAudioSourceManager());
 			getLogger(channel.getGuild()).info("Audio manager Created");
 			return gunterAudioManager;
 		});
@@ -121,6 +119,55 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	
 	private TrackScheduler getTrackScheduler(){
 		return trackScheduler;
+	}
+	
+	public static Collection<AudioTrack> getQueue(Guild guild){
+		if(managers.containsKey(guild)){
+			return managers.get(guild).getTrackScheduler().getQueue();
+		}
+		return List.of();
+	}
+	
+	public static void stopAll(){
+		for(Guild guild : managers.keySet()){
+			leave(guild);
+		}
+	}
+	
+	public static MusicActionResponse leave(final Guild guild){
+		if(managers.containsKey(guild)){
+			var manager = managers.get(guild);
+			manager.getTrackScheduler().empty();
+			manager.getAudioPlayer().stopTrack();
+			return MusicActionResponse.OK;
+		}
+		return MusicActionResponse.NO_MUSIC;
+	}
+	
+	@Override
+	public void onTrackSchedulerEmpty(){
+		getLogger(getChannel().getGuild()).info("Scheduler is empty");
+		getAudioPlayerManager().shutdown();
+		getAudioManager().setSendingHandler(null);
+		getAudioManager().closeAudioConnection();
+		managers.remove(channel.getGuild());
+		getLogger(getChannel().getGuild()).info("Audio manager shutdown");
+	}
+	
+	private VoiceChannel getChannel(){
+		return channel;
+	}
+	
+	private AudioManager getAudioManager(){
+		return audioManager;
+	}
+	
+	@Override
+	public void onTrackEnd(final AudioTrack track){
+	}
+	
+	@Override
+	public void onTrackStart(final AudioTrack track){
 	}
 	
 	public static MusicActionResponse seek(final Guild guild, final long time){
@@ -170,10 +217,6 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		return null;
 	}
 	
-	private VoiceChannel getChannel(){
-		return channel;
-	}
-	
 	public static MusicActionResponse pause(final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).getAudioPlayer().setPaused(true);
@@ -200,40 +243,6 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	
 	private void skip(){
 		trackScheduler.nextTrack();
-	}
-	
-	public static MusicActionResponse leave(final Guild guild){
-		if(managers.containsKey(guild)){
-			managers.get(guild).onTrackSchedulerEmpty();
-			return MusicActionResponse.OK;
-		}
-		return MusicActionResponse.NO_MUSIC;
-	}
-	
-	@Override
-	public void onTrackSchedulerEmpty(){
-		getLogger(getChannel().getGuild()).info("Scheduler is empty");
-		final var executorService = Executors.newSingleThreadScheduledExecutor();
-		executorService.schedule(() -> {
-			getAudioPlayerManager().shutdown();
-			getAudioManager().setSendingHandler(null);
-			getAudioManager().closeAudioConnection();
-			managers.remove(channel.getGuild());
-			getLogger(getChannel().getGuild()).info("Audio manager shutdown");
-		}, 1, TimeUnit.NANOSECONDS);
-		executorService.shutdown();
-	}
-	
-	@Override
-	public void onTrackEnd(final AudioTrack track){
-	}
-	
-	@Override
-	public void onTrackStart(final AudioTrack track){
-	}
-	
-	private AudioManager getAudioManager(){
-		return audioManager;
 	}
 	
 	public void addListener(final StatusTrackSchedulerListener listener){

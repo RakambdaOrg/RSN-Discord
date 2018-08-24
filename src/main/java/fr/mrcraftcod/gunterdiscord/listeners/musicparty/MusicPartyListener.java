@@ -131,7 +131,7 @@ public class MusicPartyListener extends ListenerAdapter implements StatusTrackSc
 				else{
 					Actions.replyPrivate(event.getGuild(), event.getAuthor(), track.toString());
 				}
-			}, 0, url));
+			}, 0, Integer.MAX_VALUE, url));
 		}
 	}
 	

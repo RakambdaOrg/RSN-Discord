@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
+import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
@@ -21,7 +22,8 @@ public class StopCommand extends BasicCommand{
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(Utilities.isCreator(event.getMember())){
-			event.getJDA().shutdownNow();
+			Main.close();
+			event.getJDA().shutdown();
 			getLogger(event.getGuild()).info("BOT STOPPING");
 		}
 		else{

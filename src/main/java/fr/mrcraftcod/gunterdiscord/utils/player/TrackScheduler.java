@@ -5,6 +5,7 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.core.entities.Guild;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -65,6 +66,14 @@ class TrackScheduler extends AudioEventAdapter{
 				listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty);
 			}
 		}
+	}
+	
+	public void empty(){
+		queue.clear();
+	}
+	
+	public Collection<AudioTrack> getQueue(){
+		return queue;
 	}
 	
 	/**
