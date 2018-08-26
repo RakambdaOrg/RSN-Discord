@@ -6,15 +6,19 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.RequesterTrackUserField;
+import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 /**
@@ -43,7 +47,9 @@ public class NowPlayingMusicCommand extends BasicCommand{
 		super.execute(event, args);
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, "En cours de diffusion");
 		GunterAudioManager.currentTrack(event.getGuild()).ifPresentOrElse(track -> {
+			var requester = Optional.ofNullable(new RequesterTrackUserField().getOrDefault(track.getUserData(TrackUserFields.class), null)).map(User::getAsMention).orElse("Inconnu");
 			builder.addField("Titre", track.getInfo().title, false);
+			builder.addField("Demandé par", requester, false);
 			builder.addField("Position", String.format("%s %s / %s", buildBar(track.getPosition(), track.getDuration()), getDuration(track.getPosition()), getDuration(track.getDuration())), false);
 		}, () -> {
 			builder.setColor(Color.RED);
