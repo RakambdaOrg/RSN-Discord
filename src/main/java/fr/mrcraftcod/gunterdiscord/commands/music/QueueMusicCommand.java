@@ -11,13 +11,12 @@ import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.IMentionable;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -48,7 +47,7 @@ public class QueueMusicCommand extends BasicCommand{
 		EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, "File d'attente des musiques (10 max)");
 		GunterAudioManager.getQueue(event.getGuild()).stream().limit(10).forEach(track -> {
 			var userData = track.getUserData(TrackUserFields.class);
-			builder.addField("Position " + position.addAndGet(1), track.getInfo().title + "\nDemandé par: " + Optional.ofNullable(new RequesterTrackUserField().getOrDefault(userData, null)).map(IMentionable::getAsMention).orElse("Inconnu"), false);
+			builder.addField("Position " + position.addAndGet(1), track.getInfo().title + "\nDemandé par: " + userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Inconnu"), false);
 		});
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;

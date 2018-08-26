@@ -45,7 +45,7 @@ public class MusicCommandComposite extends CommandComposite{
 	
 	@Override
 	public List<String> getCommand(){
-		return List.of("music");
+		return List.of("music", "m");
 	}
 	
 	@Override

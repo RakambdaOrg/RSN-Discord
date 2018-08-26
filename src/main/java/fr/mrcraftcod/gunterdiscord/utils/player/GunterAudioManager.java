@@ -58,7 +58,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 				public void trackLoaded(final AudioTrack track){
 					getLogger(channel.getGuild()).info("Added `{}` to the audio queue on channel `{}`", ident, channel.getName());
 					final var userData = new TrackUserFields();
-					new RequesterTrackUserField().fill(userData, requester);
+					userData.fill(new RequesterTrackUserField(), requester);
 					track.setUserData(userData);
 					gunterAudioManager.getTrackScheduler().queue(track);
 					onTrackAdded.accept(track);
@@ -68,7 +68,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 				public void playlistLoaded(final AudioPlaylist playlist){
 					getLogger(channel.getGuild()).info("Added `{}`({}) to the audio queue on channel `{}`", ident, playlist.getTracks().size(), channel.getName());
 					final var userData = new TrackUserFields();
-					new RequesterTrackUserField().fill(userData, requester);
+					userData.fill(new RequesterTrackUserField(), requester);
 					playlist.getTracks().stream().skip(skipCount).limit(maxTracks).forEach(track -> {
 						track.setUserData(userData);
 						gunterAudioManager.getTrackScheduler().queue(track);
@@ -202,7 +202,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		if(managers.containsKey(guild)){
 			return currentTrack(guild).map(track -> {
 				if(track.getUserData() instanceof TrackUserFields){
-					return Objects.equals(user, new RequesterTrackUserField().getOrDefault((TrackUserFields) track.getUserData(), null));
+					return Objects.equals(user, track.getUserData(TrackUserFields.class).getOrDefault(new RequesterTrackUserField(), null));
 				}
 				else{
 					return false;
