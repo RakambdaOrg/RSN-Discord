@@ -18,6 +18,7 @@ import net.dv8tion.jda.core.managers.AudioManager;
 import java.util.*;
 import java.util.function.Consumer;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
+import static fr.mrcraftcod.gunterdiscord.utils.player.MusicActionResponse.*;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -139,9 +140,9 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			var manager = managers.get(guild);
 			manager.getTrackScheduler().empty();
 			manager.getAudioPlayer().stopTrack();
-			return MusicActionResponse.OK;
+			return OK;
 		}
-		return MusicActionResponse.NO_MUSIC;
+		return NO_MUSIC;
 	}
 	
 	@Override
@@ -176,13 +177,14 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			if(track.isPresent()){
 				if(track.get().isSeekable()){
 					track.get().setPosition(time);
+					return OK;
 				}
 				else{
-					return MusicActionResponse.IMPOSSIBLE;
+					return IMPOSSIBLE;
 				}
 			}
 		}
-		return MusicActionResponse.NO_MUSIC;
+		return NO_MUSIC;
 	}
 	
 	public static Optional<AudioTrack> currentTrack(final Guild guild){
@@ -220,25 +222,25 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	public static MusicActionResponse pause(final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).getAudioPlayer().setPaused(true);
-			return MusicActionResponse.OK;
+			return OK;
 		}
-		return MusicActionResponse.NO_MUSIC;
+		return NO_MUSIC;
 	}
 	
 	public static MusicActionResponse resume(final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).getAudioPlayer().setPaused(false);
-			return MusicActionResponse.OK;
+			return OK;
 		}
-		return MusicActionResponse.NO_MUSIC;
+		return NO_MUSIC;
 	}
 	
 	public static MusicActionResponse skip(final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).skip();
-			return MusicActionResponse.OK;
+			return OK;
 		}
-		return MusicActionResponse.NO_MUSIC;
+		return NO_MUSIC;
 	}
 	
 	private void skip(){
