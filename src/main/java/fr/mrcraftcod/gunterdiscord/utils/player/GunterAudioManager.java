@@ -8,6 +8,7 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import fr.mrcraftcod.gunterdiscord.utils.player.sourcemanagers.httpfolder.HttpFolderAudioSourceManager;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.RequesterTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
@@ -62,20 +63,20 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 					final var userData = new TrackUserFields();
 					userData.fill(new RequesterTrackUserField(), requester);
 					track.setUserData(userData);
-					gunterAudioManager.getTrackScheduler().queue(track);
-					onTrackAdded.accept(track);
+					try{
+						gunterAudioManager.getTrackScheduler().queue(track);
+						onTrackAdded.accept(track);
+					}
+					catch(Exception e){
+						Log.getLogger(channel.getGuild()).warn("Error loading song", e);
+						onTrackAdded.accept("Erreur lors de l'ajout: " + e.getMessage());
+					}
 				}
 				
 				@Override
 				public void playlistLoaded(final AudioPlaylist playlist){
-					getLogger(channel.getGuild()).info("Added `{}`({}) to the audio queue on channel `{}`", ident, playlist.getTracks().size(), channel.getName());
-					final var userData = new TrackUserFields();
-					userData.fill(new RequesterTrackUserField(), requester);
-					playlist.getTracks().stream().skip(skipCount).limit(maxTracks).forEach(track -> {
-						track.setUserData(userData);
-						gunterAudioManager.getTrackScheduler().queue(track);
-						onTrackAdded.accept(track);
-					});
+					getLogger(channel.getGuild()).info("Added `{}`(size: {}) to the audio queue on channel `{}`", ident, playlist.getTracks().size(), channel.getName());
+					playlist.getTracks().stream().skip(skipCount).limit(maxTracks).forEach(this::trackLoaded);
 				}
 				
 				@Override
@@ -207,6 +208,10 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		return null;
 	}
 	
+	public AudioPlayer getAudioPlayer(){
+		return audioPlayer;
+	}
+	
 	public static MusicActionResponse pause(final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).getAudioPlayer().setPaused(true);
@@ -249,10 +254,6 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	
 	@Override
 	public void onTrackStart(final AudioTrack track){
-	}
-	
-	public AudioPlayer getAudioPlayer(){
-		return audioPlayer;
 	}
 	
 	public void addListener(final StatusTrackSchedulerListener listener){
