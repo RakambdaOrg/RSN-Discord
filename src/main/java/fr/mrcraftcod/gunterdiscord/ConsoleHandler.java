@@ -40,6 +40,7 @@ class ConsoleHandler extends Thread{
 				}
 				final var arg1 = args.poll();
 				if(arg1.equalsIgnoreCase("stop")){
+					Main.close();
 					jda.shutdownNow();
 				}
 				else if(arg1.equalsIgnoreCase("leave")){

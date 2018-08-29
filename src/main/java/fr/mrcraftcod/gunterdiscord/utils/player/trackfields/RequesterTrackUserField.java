@@ -8,9 +8,9 @@ import net.dv8tion.jda.core.entities.User;
  * @author Thomas Couchoud
  * @since 2018-08-19
  */
-public class RequesterTrackUserField extends AudioTrackUserFields<User>{
+public class RequesterTrackUserField implements AudioTrackUserFields<User>{
 	@Override
-	protected String getName(){
+	public String getName(){
 		return "requester";
 	}
 }

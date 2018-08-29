@@ -8,6 +8,7 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import fr.mrcraftcod.gunterdiscord.utils.player.sourcemanagers.httpfolder.HttpFolderAudioSourceManager;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.RequesterTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
@@ -16,8 +17,11 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.managers.AudioManager;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
+import static fr.mrcraftcod.gunterdiscord.utils.player.MusicActionResponse.*;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -57,22 +61,22 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 				public void trackLoaded(final AudioTrack track){
 					getLogger(channel.getGuild()).info("Added `{}` to the audio queue on channel `{}`", ident, channel.getName());
 					final var userData = new TrackUserFields();
-					new RequesterTrackUserField().fill(userData, requester);
+					userData.fill(new RequesterTrackUserField(), requester);
 					track.setUserData(userData);
-					gunterAudioManager.getTrackScheduler().queue(track);
-					onTrackAdded.accept(track);
+					try{
+						gunterAudioManager.getTrackScheduler().queue(track);
+						onTrackAdded.accept(track);
+					}
+					catch(Exception e){
+						Log.getLogger(channel.getGuild()).warn("Error loading song", e);
+						onTrackAdded.accept("Erreur lors de l'ajout: " + e.getMessage());
+					}
 				}
 				
 				@Override
 				public void playlistLoaded(final AudioPlaylist playlist){
-					getLogger(channel.getGuild()).info("Added `{}`({}) to the audio queue on channel `{}`", ident, playlist.getTracks().size(), channel.getName());
-					final var userData = new TrackUserFields();
-					new RequesterTrackUserField().fill(userData, requester);
-					playlist.getTracks().stream().skip(skipCount).limit(maxTracks).forEach(track -> {
-						track.setUserData(userData);
-						gunterAudioManager.getTrackScheduler().queue(track);
-						onTrackAdded.accept(track);
-					});
+					getLogger(channel.getGuild()).info("Added `{}`(size: {}) to the audio queue on channel `{}`", ident, playlist.getTracks().size(), channel.getName());
+					playlist.getTracks().stream().skip(skipCount).limit(maxTracks).forEach(this::trackLoaded);
 				}
 				
 				@Override
@@ -139,35 +143,25 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			var manager = managers.get(guild);
 			manager.getTrackScheduler().empty();
 			manager.getAudioPlayer().stopTrack();
-			return MusicActionResponse.OK;
+			return OK;
 		}
-		return MusicActionResponse.NO_MUSIC;
+		return NO_MUSIC;
 	}
 	
 	@Override
 	public void onTrackSchedulerEmpty(){
 		getLogger(getChannel().getGuild()).info("Scheduler is empty");
-		getAudioPlayerManager().shutdown();
-		getAudioManager().setSendingHandler(null);
-		getAudioManager().closeAudioConnection();
-		managers.remove(channel.getGuild());
-		getLogger(getChannel().getGuild()).info("Audio manager shutdown");
-	}
-	
-	private VoiceChannel getChannel(){
-		return channel;
-	}
-	
-	private AudioManager getAudioManager(){
-		return audioManager;
-	}
-	
-	@Override
-	public void onTrackEnd(final AudioTrack track){
-	}
-	
-	@Override
-	public void onTrackStart(final AudioTrack track){
+		var executor = Executors.newScheduledThreadPool(1);
+		executor.schedule(() -> {
+			getAudioPlayerManager().shutdown();
+			getAudioManager().setSendingHandler(null);
+			if(getAudioManager().isConnected()){
+				getAudioManager().closeAudioConnection();
+			}
+			managers.remove(channel.getGuild());
+			getLogger(getChannel().getGuild()).info("Audio manager shutdown");
+		}, 2, TimeUnit.SECONDS);
+		executor.shutdown();
 	}
 	
 	public static MusicActionResponse seek(final Guild guild, final long time){
@@ -176,13 +170,14 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			if(track.isPresent()){
 				if(track.get().isSeekable()){
 					track.get().setPosition(time);
+					return OK;
 				}
 				else{
-					return MusicActionResponse.IMPOSSIBLE;
+					return IMPOSSIBLE;
 				}
 			}
 		}
-		return MusicActionResponse.NO_MUSIC;
+		return NO_MUSIC;
 	}
 	
 	public static Optional<AudioTrack> currentTrack(final Guild guild){
@@ -192,15 +187,11 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		return Optional.empty();
 	}
 	
-	public AudioPlayer getAudioPlayer(){
-		return audioPlayer;
-	}
-	
 	public static boolean isRequester(final Guild guild, final User user){
 		if(managers.containsKey(guild)){
 			return currentTrack(guild).map(track -> {
 				if(track.getUserData() instanceof TrackUserFields){
-					return Objects.equals(user, new RequesterTrackUserField().getOrDefault((TrackUserFields) track.getUserData(), null));
+					return Objects.equals(user, track.getUserData(TrackUserFields.class).getOrDefault(new RequesterTrackUserField(), null));
 				}
 				else{
 					return false;
@@ -217,32 +208,52 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		return null;
 	}
 	
+	public AudioPlayer getAudioPlayer(){
+		return audioPlayer;
+	}
+	
 	public static MusicActionResponse pause(final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).getAudioPlayer().setPaused(true);
-			return MusicActionResponse.OK;
+			return OK;
 		}
-		return MusicActionResponse.NO_MUSIC;
+		return NO_MUSIC;
 	}
 	
 	public static MusicActionResponse resume(final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).getAudioPlayer().setPaused(false);
-			return MusicActionResponse.OK;
+			return OK;
 		}
-		return MusicActionResponse.NO_MUSIC;
+		return NO_MUSIC;
 	}
 	
 	public static MusicActionResponse skip(final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).skip();
-			return MusicActionResponse.OK;
+			return OK;
 		}
-		return MusicActionResponse.NO_MUSIC;
+		return NO_MUSIC;
 	}
 	
 	private void skip(){
 		trackScheduler.nextTrack();
+	}
+	
+	private VoiceChannel getChannel(){
+		return channel;
+	}
+	
+	private AudioManager getAudioManager(){
+		return audioManager;
+	}
+	
+	@Override
+	public void onTrackEnd(final AudioTrack track){
+	}
+	
+	@Override
+	public void onTrackStart(final AudioTrack track){
 	}
 	
 	public void addListener(final StatusTrackSchedulerListener listener){

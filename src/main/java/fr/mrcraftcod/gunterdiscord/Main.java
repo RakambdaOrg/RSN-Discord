@@ -90,6 +90,14 @@ public class Main{
 		
 		executorService.shutdownNow();
 		consoleHandler.close();
+		
+		try{
+			Settings.save();
+		}
+		catch(IOException e){
+			Log.getLogger(null).error("Error saving configuration", e);
+		}
+		Settings.close();
 	}
 	
 	/**

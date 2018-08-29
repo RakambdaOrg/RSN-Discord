@@ -10,7 +10,9 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -63,7 +65,8 @@ class TrackScheduler extends AudioEventAdapter{
 		if(endReason.mayStartNext){
 			if(!nextTrack()){
 				getLogger(getGuild()).info("Playlist ended, listeners: {}", listeners.size());
-				listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty);
+				var executor = Executors.newSingleThreadScheduledExecutor();
+				executor.schedule(() -> listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty), 5, TimeUnit.SECONDS);
 			}
 		}
 	}
