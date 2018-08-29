@@ -65,7 +65,7 @@ public class QueueMusicCommand extends BasicCommand{
 	
 	@Override
 	public List<String> getCommand(){
-		return List.of("queue");
+		return List.of("queue", "q");
 	}
 	
 	@Override
