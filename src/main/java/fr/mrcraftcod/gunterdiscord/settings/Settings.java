@@ -54,7 +54,9 @@ public class Settings{
 			new RemoveRoleConfig(null),
 			new VoiceTextChannelsConfig(null),
 			new VoiceTextChannelsAssociationConfig(null),
-			new DJRoleConfig(null)
+			new DJRoleConfig(null),
+			new NameLastChangeConfig(null),
+			new EnableNameChangeLimitConfig(null)
 	};
 	private static Path path;
 	private static JSONObject settings;

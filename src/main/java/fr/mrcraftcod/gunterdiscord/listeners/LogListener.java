@@ -1,6 +1,12 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
+import fr.mrcraftcod.gunterdiscord.settings.configs.EnableNameChangeLimitConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.MegaWarnRoleConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.NameLastChangeConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.RemoveRoleConfig;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceGuildMuteEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
@@ -34,6 +40,21 @@ public class LogListener extends ListenerAdapter{
 		super.onSelfUpdateName(event);
 		try{
 			getLogger(null).info("User {} changed name `{}` to `{}`", Utilities.getUserToLog(event.getEntity()), event.getOldName(), event.getNewName());
+			for(Guild guild : event.getEntity().getMutualGuilds()){
+				if(new EnableNameChangeLimitConfig(guild).getObject(false)){
+					var config = new NameLastChangeConfig(guild);
+					var diff = System.currentTimeMillis() - config.getAsMap().getOrDefault(event.getEntity().getIdLong(), 0L);
+					if(diff < 3600000){
+						var warnRole = new MegaWarnRoleConfig(guild).getObject();
+						var removeRoleConfig = new RemoveRoleConfig(guild);
+						var currentRoleRemove = removeRoleConfig.getAsMap().keySet().stream().filter(k -> k == event.getEntity().getIdLong()).map(removeRoleConfig::getValue).map(map -> map.getOrDefault(warnRole.getIdLong(), 0L)).findFirst().orElse(0L);
+						Actions.giveRole(guild, event.getEntity(), warnRole);
+						removeRoleConfig.addValue(event.getEntity().getIdLong(), warnRole.getIdLong(), Math.max(currentRoleRemove, System.currentTimeMillis() + 6 * 60 * 60 * 1000L));
+						Actions.replyPrivate(guild, event.getEntity(), "Vous avez été warn dans le serveur `%s` car vous avez changé de nom trop souvent.", guild.getName());
+					}
+					config.addValue(event.getEntity().getIdLong(), System.currentTimeMillis());
+				}
+			}
 		}
 		catch(final NullPointerException ignored){
 		}
