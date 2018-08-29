@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.core.entities.Guild;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -72,6 +73,7 @@ class TrackScheduler extends AudioEventAdapter{
 	}
 	
 	public void empty(){
+		Log.getLogger(getGuild()).info("Cleared track scheduler");
 		queue.clear();
 	}
 	

@@ -140,17 +140,13 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	
 	public static MusicActionResponse leave(final Guild guild){
 		if(managers.containsKey(guild)){
-			var manager = managers.get(guild);
-			manager.getTrackScheduler().empty();
-			manager.getAudioPlayer().stopTrack();
+			managers.get(guild).close();
 			return OK;
 		}
 		return NO_MUSIC;
 	}
 	
-	@Override
-	public void onTrackSchedulerEmpty(){
-		getLogger(getChannel().getGuild()).info("Scheduler is empty");
+	private void close(){
 		var executor = Executors.newScheduledThreadPool(1);
 		executor.schedule(() -> {
 			getAudioPlayerManager().shutdown();
@@ -162,6 +158,12 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			getLogger(getChannel().getGuild()).info("Audio manager shutdown");
 		}, 2, TimeUnit.SECONDS);
 		executor.shutdown();
+	}
+	
+	@Override
+	public void onTrackSchedulerEmpty(){
+		getLogger(getChannel().getGuild()).info("Scheduler is empty");
+		close();
 	}
 	
 	public static MusicActionResponse seek(final Guild guild, final long time){
