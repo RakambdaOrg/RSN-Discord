@@ -16,6 +16,8 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.managers.AudioManager;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 import static fr.mrcraftcod.gunterdiscord.utils.player.MusicActionResponse.*;
@@ -148,27 +150,17 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	@Override
 	public void onTrackSchedulerEmpty(){
 		getLogger(getChannel().getGuild()).info("Scheduler is empty");
-		getAudioPlayerManager().shutdown();
-		getAudioManager().setSendingHandler(null);
-		getAudioManager().closeAudioConnection();
-		managers.remove(channel.getGuild());
-		getLogger(getChannel().getGuild()).info("Audio manager shutdown");
-	}
-	
-	private VoiceChannel getChannel(){
-		return channel;
-	}
-	
-	private AudioManager getAudioManager(){
-		return audioManager;
-	}
-	
-	@Override
-	public void onTrackEnd(final AudioTrack track){
-	}
-	
-	@Override
-	public void onTrackStart(final AudioTrack track){
+		var executor = Executors.newScheduledThreadPool(1);
+		executor.schedule(() -> {
+			getAudioPlayerManager().shutdown();
+			getAudioManager().setSendingHandler(null);
+			if(getAudioManager().isConnected()){
+				getAudioManager().closeAudioConnection();
+			}
+			managers.remove(channel.getGuild());
+			getLogger(getChannel().getGuild()).info("Audio manager shutdown");
+		}, 10, TimeUnit.SECONDS);
+		executor.shutdown();
 	}
 	
 	public static MusicActionResponse seek(final Guild guild, final long time){
@@ -192,10 +184,6 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			return Optional.ofNullable(managers.get(guild).getAudioPlayer().getPlayingTrack());
 		}
 		return Optional.empty();
-	}
-	
-	public AudioPlayer getAudioPlayer(){
-		return audioPlayer;
 	}
 	
 	public static boolean isRequester(final Guild guild, final User user){
@@ -245,6 +233,26 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	
 	private void skip(){
 		trackScheduler.nextTrack();
+	}
+	
+	private VoiceChannel getChannel(){
+		return channel;
+	}
+	
+	private AudioManager getAudioManager(){
+		return audioManager;
+	}
+	
+	@Override
+	public void onTrackEnd(final AudioTrack track){
+	}
+	
+	@Override
+	public void onTrackStart(final AudioTrack track){
+	}
+	
+	public AudioPlayer getAudioPlayer(){
+		return audioPlayer;
 	}
 	
 	public void addListener(final StatusTrackSchedulerListener listener){
