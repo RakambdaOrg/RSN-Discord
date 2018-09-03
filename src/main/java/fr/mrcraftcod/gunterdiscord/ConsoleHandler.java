@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord;
 import net.dv8tion.jda.core.JDA;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -31,6 +32,7 @@ class ConsoleHandler extends Thread{
 	
 	@Override
 	public void run(){
+		final var quitList = List.of("stop", "quit");
 		try(final var sc = new Scanner(System.in)){
 			while(!stop){
 				final var line = sc.nextLine();
@@ -39,7 +41,7 @@ class ConsoleHandler extends Thread{
 					continue;
 				}
 				final var arg1 = args.poll();
-				if(arg1.equalsIgnoreCase("stop")){
+				if(quitList.contains(arg1)){
 					Main.close();
 					jda.shutdownNow();
 				}
@@ -50,6 +52,15 @@ class ConsoleHandler extends Thread{
 					else{
 						final var guild = jda.getGuildById(args.poll());
 						guild.leave().queue();
+						getLogger(null).info("Guild {} left", guild);
+					}
+				}
+				else if(arg1.equalsIgnoreCase("gid")){
+					if(args.isEmpty()){
+						getLogger(null).warn("Please pass the guild as an argument");
+					}
+					else{
+						final var guild = jda.getGuildsByName(args.poll(), true);
 						getLogger(null).info("Guild {} left", guild);
 					}
 				}
