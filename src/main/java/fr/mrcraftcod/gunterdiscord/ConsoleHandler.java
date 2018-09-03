@@ -60,8 +60,17 @@ class ConsoleHandler extends Thread{
 						getLogger(null).warn("Please pass the guild as an argument");
 					}
 					else{
-						final var guild = jda.getGuildsByName(args.poll(), true);
-						getLogger(null).info("Guild {} left", guild);
+						final var guilds = jda.getGuildsByName(args.poll(), true);
+						getLogger(null).info("Guilds {} matcher", guilds);
+					}
+				}
+				else if(arg1.equalsIgnoreCase("listMembers")){
+					if(args.isEmpty()){
+						getLogger(null).warn("Please pass the guild as an argument");
+					}
+					else{
+						final var guild = jda.getGuildById(args.poll());
+						getLogger(null).info("Members of {}: {}", guild, guild.getMembers());
 					}
 				}
 			}

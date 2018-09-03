@@ -209,7 +209,7 @@ public class Actions{
 	 *
 	 * @return Its representation.
 	 */
-	private static String getMessageForLog(final Message message){
+	public static String getMessageForLog(final Message message){
 		return message.getContentRaw() + " => " + message.getEmbeds().stream().map(Utilities::getEmbedForLog).collect(Collectors.joining(" | "));
 	}
 	
