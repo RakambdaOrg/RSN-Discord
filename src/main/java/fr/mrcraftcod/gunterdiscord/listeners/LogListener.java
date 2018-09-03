@@ -8,16 +8,11 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceGuildMuteEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageDeleteEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.core.events.self.SelfUpdateNameEvent;
 import net.dv8tion.jda.core.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -101,45 +96,6 @@ public class LogListener extends ListenerAdapter{
 			getLogger(event.getGuild()).info("Unmuting bot");
 			event.getGuild().getController().setMute(event.getMember(), false).queue();
 			event.getGuild().getController().setDeafen(event.getMember(), false).queue();
-		}
-	}
-	
-	@Override
-	public void onGuildMessageReceived(GuildMessageReceivedEvent event){
-		super.onGuildMessageReceived(event);
-		if(event.getGuild().getIdLong() == 448124547322085397L){
-			try(PrintWriter pw = new PrintWriter("jesiplage.txt")){
-				pw.println(String.format("Message %s sent by %s: %s", event.getMessageId(), Utilities.getUserToLog(event.getAuthor()), Actions.getMessageForLog(event.getMessage())));
-			}
-			catch(FileNotFoundException e){
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	@Override
-	public void onGuildMessageUpdate(GuildMessageUpdateEvent event){
-		super.onGuildMessageUpdate(event);
-		if(event.getGuild().getIdLong() == 448124547322085397L){
-			try(PrintWriter pw = new PrintWriter("jesiplage.txt")){
-				pw.println(String.format("Message %s updated by %s: %s", event.getMessageId(), Utilities.getUserToLog(event.getAuthor()), Actions.getMessageForLog(event.getMessage())));
-			}
-			catch(FileNotFoundException e){
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	@Override
-	public void onGuildMessageDelete(GuildMessageDeleteEvent event){
-		super.onGuildMessageDelete(event);
-		if(event.getGuild().getIdLong() == 448124547322085397L){
-			try(PrintWriter pw = new PrintWriter("jesiplage.txt")){
-				pw.println(String.format("Message deleted: %s", event.getMessageId()));
-			}
-			catch(FileNotFoundException e){
-				e.printStackTrace();
-			}
 		}
 	}
 }
