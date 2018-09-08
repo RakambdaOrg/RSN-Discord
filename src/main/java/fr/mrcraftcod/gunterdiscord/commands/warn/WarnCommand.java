@@ -47,6 +47,7 @@ public abstract class WarnCommand extends BasicCommand{
 				new RemoveRoleConfig(event.getGuild()).addValue(user.getIdLong(), role.getIdLong(), (long) (System.currentTimeMillis() + duration * 24 * 60 * 60 * 1000L));
 				builder.setColor(Color.GREEN);
 				builder.addField("Congratulations", user.getAsMention() + " à rejoint le role " + role.getAsMention() + " pour une durée de " + duration + " jour(s)", false);
+				builder.addField("", "Pour savoir où en est ton ban retiens la formule magique: g?muteinfo " + user.getAsMention(), false);
 				getLogger(event.getGuild()).info("{} warned {} for {} days with role {}", Utilities.getUserToLog(event.getAuthor()), Utilities.getUserToLog(user), duration, role);
 			}
 			Actions.reply(event, builder.build());
