@@ -1,10 +1,10 @@
 package fr.mrcraftcod.gunterdiscord.commands.warn;
 
+import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.MegaWarnRoleConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.MegaWarnTimeConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configurations.DoubleValueConfiguration;
-import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleRoleConfiguration;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Role;
 import java.util.List;
 
 /**
@@ -15,13 +15,13 @@ import java.util.List;
  */
 public class MegaWarnCommand extends WarnCommand{
 	@Override
-	protected SingleRoleConfiguration getRoleConfig(final Guild guild){
-		return new MegaWarnRoleConfig(guild);
+	protected Role getRole(final Guild guild) throws NoValueDefinedException{
+		return new MegaWarnRoleConfig(guild).getObject();
 	}
 	
 	@Override
-	protected DoubleValueConfiguration getTimeConfig(final Guild guild){
-		return new MegaWarnTimeConfig(guild);
+	protected double getTime(final Guild guild){
+		return new MegaWarnTimeConfig(guild).getObject(1D);
 	}
 	
 	@Override
