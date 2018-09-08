@@ -33,7 +33,8 @@ public class BanInfoCommand extends BasicCommand{
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		var target = event.getMessage().getMentionedUsers().stream().findFirst().orElse(event.getAuthor());
-		var builder = Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Information des bans pour " + target.getAsMention());
+		var builder = Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Information des bans");
+		builder.addField("Utilisateur", target.getAsMention(), false);
 		var bans = new RemoveRoleConfig(event.getGuild()).getValue(target.getIdLong());
 		if(bans == null || bans.isEmpty()){
 			builder.setColor(Color.GREEN);
