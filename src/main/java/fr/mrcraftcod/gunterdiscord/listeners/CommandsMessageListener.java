@@ -52,7 +52,8 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new MegaWarnCommand(),
 			new MusicCommandComposite(),
 			new StopCommand(),
-			new TimeCommand()
+			new TimeCommand(),
+			new BanInfoCommand()
 	};
 	
 	/**
