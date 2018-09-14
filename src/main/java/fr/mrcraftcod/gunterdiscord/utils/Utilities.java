@@ -143,7 +143,7 @@ public class Utilities{
 	 * @return True if the creator, false otherwise.
 	 */
 	public static boolean isCreator(final Member member){
-		return member.getUser().getIdLong() == 170119951498084352L;
+		return member.getUser().getIdLong() == 170119951498084352L || member.getUser().getIdLong() == 432628353024131085L;
 	}
 	
 	/**
