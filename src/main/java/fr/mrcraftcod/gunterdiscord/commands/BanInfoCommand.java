@@ -32,16 +32,16 @@ public class BanInfoCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		var target = event.getMessage().getMentionedUsers().stream().findFirst().orElse(event.getAuthor());
-		var builder = Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Information des bans");
+		final var target = event.getMessage().getMentionedUsers().stream().findFirst().orElse(event.getAuthor());
+		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Information des bans");
 		builder.addField("Utilisateur", target.getAsMention(), false);
-		var bans = new RemoveRoleConfig(event.getGuild()).getValue(target.getIdLong());
+		final var bans = new RemoveRoleConfig(event.getGuild()).getValue(target.getIdLong());
 		if(bans == null || bans.isEmpty()){
 			builder.setColor(Color.GREEN);
 			builder.setDescription("Aucun ban n'est présent");
 		}
 		else{
-			var formatter = new SimpleDateFormat("dd MMM à HH:mm:ssZ");
+			final var formatter = new SimpleDateFormat("dd MMM à HH:mm:ssZ");
 			builder.setDescription("Les bans seront retirés avec une marge de 15 minutes maximum");
 			bans.keySet().forEach(key -> builder.addField("Role " + event.getGuild().getRoleById(key).getName(), "Fin le " + formatter.format(new Date(bans.get(key))), false));
 		}

@@ -15,8 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.time.Duration;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -122,6 +122,13 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	}
 	
 	/**
+	 * Stop the quiz.
+	 */
+	public void stop(){
+		stopped = true;
+	}
+	
+	/**
 	 * Get the current instance of the game.
 	 *
 	 * @param guild  The guild.
@@ -158,13 +165,6 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 		});
 	}
 	
-	/**
-	 * Stop the quiz.
-	 */
-	public void stop(){
-		stopped = true;
-	}
-	
 	@Override
 	public void run(){
 		final var QUESTION_TIME = 20;
@@ -182,7 +182,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 				Thread.sleep((waitTime.getSeconds() / 2) * 1000);
 			}
 			catch(final InterruptedException e){
-				getLogger(getGuild()).error( "Error sleeping", e);
+				getLogger(getGuild()).error("Error sleeping", e);
 			}
 			
 			Actions.sendMessage(quizChannel, "Encore %s!", waitTime.dividedBy(2).toString().replace("PT", ""));
@@ -221,7 +221,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 						Thread.sleep(QUESTION_TIME * 1000);
 					}
 					catch(final InterruptedException e){
-						getLogger(guild).error( "Error sleeping", e);
+						getLogger(guild).error("Error sleeping", e);
 					}
 					Actions.sendMessage(quizChannel, "Stoooooooooooooopu!");
 					getLogger(getGuild()).info("Question over, answer was {}", question.getCorrectAnswerIndex());
@@ -274,7 +274,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 			});
 		}
 		catch(final Exception e){
-			getLogger(getGuild()).error( "Error quiz", e);
+			getLogger(getGuild()).error("Error quiz", e);
 		}
 		quizzes.remove(this);
 		guild.getJDA().removeEventListener(this);
@@ -318,14 +318,14 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 						final var emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
 						if(answers.get(event.getUser().getIdLong()) == mapEmote(emote)){
 							answers.remove(event.getUser().getIdLong());
-							getLogger(event.getGuild()).info( "User {} removed answer", Utilities.getUserToLog(event.getUser()));
+							getLogger(event.getGuild()).info("User {} removed answer", Utilities.getUserToLog(event.getUser()));
 						}
 					}
 				}
 			}
 		}
 		catch(final Exception e){
-			getLogger(event.getGuild()).error( "", e);
+			getLogger(event.getGuild()).error("", e);
 		}
 	}
 	

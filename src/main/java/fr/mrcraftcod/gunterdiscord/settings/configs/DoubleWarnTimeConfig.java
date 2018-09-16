@@ -18,7 +18,7 @@ public class DoubleWarnTimeConfig extends DoubleValueConfiguration{
 	public DoubleWarnTimeConfig(final Guild guild){
 		super(guild);
 	}
-
+	
 	@Override
 	public String getName(){
 		return "doubleWarnTime";

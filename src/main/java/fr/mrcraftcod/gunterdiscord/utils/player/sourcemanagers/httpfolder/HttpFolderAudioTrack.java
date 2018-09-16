@@ -16,7 +16,7 @@ import java.net.URI;
 /**
  * Audio track that handles processing Youtube videos as audio tracks.
  */
-public class HttpFolderAudioTrack extends DelegatedAudioTrack{
+class HttpFolderAudioTrack extends DelegatedAudioTrack{
 	private static final Logger log = LoggerFactory.getLogger(HttpFolderAudioTrack.class);
 	
 	private final MediaContainerProbe probe;

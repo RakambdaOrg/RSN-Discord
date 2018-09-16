@@ -29,7 +29,8 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 	
 	/**
 	 * Get the list of values from the given key.
-	 * @param key   The key to get.
+	 *
+	 * @param key The key to get.
 	 *
 	 * @return The values or null if not found.
 	 */
@@ -39,7 +40,6 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 	
 	/**
 	 * Get the map of this configuration.
-	 *
 	 *
 	 * @return The map.
 	 *
@@ -117,7 +117,7 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 	/**
 	 * Add an empty value to the map list.
 	 *
-	 * @param key   The key to add into.
+	 * @param key The key to add into.
 	 */
 	public void addValue(final K key){
 		Settings.mapMapValue(guild, this, key);
@@ -131,7 +131,7 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 	 */
 	public void deleteKeyValue(final K key, final V value){
 		if(value == null){
-			deleteKey( key);
+			deleteKey(key);
 		}
 		else{
 			Settings.deleteKey(guild, this, key, value);
@@ -141,7 +141,7 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 	/**
 	 * Delete the key.
 	 *
-	 * @param key   The key.
+	 * @param key The key.
 	 */
 	public void deleteKey(final K key){
 		Settings.deleteKey(guild, this, key);

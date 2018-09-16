@@ -37,7 +37,7 @@ public abstract class WarnCommand extends BasicCommand{
 			final var user = event.getMessage().getMentionedUsers().get(0);
 			args.pop();
 			final var role = getRole(event.getGuild(), args);
-			final double duration = getTime(event.getGuild(), args);
+			final var duration = getTime(event.getGuild(), args);
 			final var reason = String.join(" ", args);
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
@@ -72,7 +72,7 @@ public abstract class WarnCommand extends BasicCommand{
 	 * Get the configuration of the role to apply.
 	 *
 	 * @param guild The guild of the event.
-	 * @param args
+	 * @param args  The args that were passed.
 	 *
 	 * @return The config.
 	 */
@@ -82,7 +82,7 @@ public abstract class WarnCommand extends BasicCommand{
 	 * Get the configuration of the length for the role to be applied.
 	 *
 	 * @param guild The guild of the event.
-	 * @param args
+	 * @param args  The args that were passed.
 	 *
 	 * @return The config.
 	 */

@@ -29,7 +29,7 @@ public class TrackUserFields{
 			try{
 				return (T) value;
 			}
-			catch(ClassCastException ignored){
+			catch(final ClassCastException ignored){
 			}
 			return null;
 		});

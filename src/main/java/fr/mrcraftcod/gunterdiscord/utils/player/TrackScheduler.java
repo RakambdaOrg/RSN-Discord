@@ -66,19 +66,10 @@ class TrackScheduler extends AudioEventAdapter{
 		if(endReason.mayStartNext){
 			if(!nextTrack()){
 				getLogger(getGuild()).info("Playlist ended, listeners: {}", listeners.size());
-				var executor = Executors.newSingleThreadScheduledExecutor();
+				final var executor = Executors.newSingleThreadScheduledExecutor();
 				executor.schedule(() -> listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty), 5, TimeUnit.SECONDS);
 			}
 		}
-	}
-	
-	public void empty(){
-		Log.getLogger(getGuild()).info("Cleared track scheduler");
-		queue.clear();
-	}
-	
-	public Collection<AudioTrack> getQueue(){
-		return queue;
 	}
 	
 	/**
@@ -100,6 +91,11 @@ class TrackScheduler extends AudioEventAdapter{
 		return player.startTrack(queue.poll(), false);
 	}
 	
+	public void empty(){
+		Log.getLogger(getGuild()).info("Cleared track scheduler");
+		queue.clear();
+	}
+	
 	/**
 	 * Add a StatusTrackListener.
 	 *
@@ -114,5 +110,9 @@ class TrackScheduler extends AudioEventAdapter{
 		if(player.getPlayingTrack() == null && queue.isEmpty()){
 			listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty);
 		}
+	}
+	
+	public Collection<AudioTrack> getQueue(){
+		return queue;
 	}
 }

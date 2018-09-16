@@ -15,6 +15,6 @@ public class NoValueDefinedException extends Exception{
 	 * @param configuration The configuration concerned.
 	 */
 	public NoValueDefinedException(final Configuration configuration){
-		super("The value of " + configuration.getName() + " insn't set.");
+		super("The value of " + configuration.getName() + " isn't set.");
 	}
 }

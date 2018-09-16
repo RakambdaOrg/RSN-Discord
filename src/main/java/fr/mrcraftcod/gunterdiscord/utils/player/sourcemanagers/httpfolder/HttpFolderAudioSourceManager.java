@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -43,17 +44,17 @@ public class HttpFolderAudioSourceManager extends ProbingAudioSourceManager impl
 	}
 	
 	@Override
-	protected AudioTrack createTrack(AudioTrackInfo trackInfo, MediaContainerProbe probe){
+	protected AudioTrack createTrack(final AudioTrackInfo trackInfo, final MediaContainerProbe probe){
 		return new HttpFolderAudioTrack(trackInfo, probe, this);
 	}
 	
 	@Override
-	public void configureRequests(Function<RequestConfig, RequestConfig> configurator){
+	public void configureRequests(final Function<RequestConfig, RequestConfig> configurator){
 		httpInterfaceManager.configureRequests(configurator);
 	}
 	
 	@Override
-	public void configureBuilder(Consumer<HttpClientBuilder> configurator){
+	public void configureBuilder(final Consumer<HttpClientBuilder> configurator){
 		httpInterfaceManager.configureBuilder(configurator);
 	}
 	
@@ -63,8 +64,8 @@ public class HttpFolderAudioSourceManager extends ProbingAudioSourceManager impl
 	}
 	
 	@Override
-	public AudioItem loadItem(DefaultAudioPlayerManager manager, AudioReference reference){
-		AudioReference httpReference = getAsHttpReference(reference);
+	public AudioItem loadItem(final DefaultAudioPlayerManager manager, final AudioReference reference){
+		final var httpReference = getAsHttpReference(reference);
 		if(httpReference == null){
 			return null;
 		}
@@ -78,14 +79,14 @@ public class HttpFolderAudioSourceManager extends ProbingAudioSourceManager impl
 		return null;
 	}
 	
-	private AudioReference getAsHttpReference(AudioReference reference){
+	private AudioReference getAsHttpReference(final AudioReference reference){
 		if(reference.identifier.startsWith("mcc://")){
 			return new AudioReference(reference.identifier.substring("mcc://".length()), reference.title);
 		}
 		return null;
 	}
 	
-	private AudioPlaylist loadPlaylist(AudioReference httpReference) throws IOException{
+	private AudioPlaylist loadPlaylist(final AudioReference httpReference) throws IOException{
 		final var url = new URL(httpReference.identifier);
 		final var root = Jsoup.parse(url, 10000);
 		final var tracks = root.getElementsByTag("a").stream().map(a -> {
@@ -108,13 +109,13 @@ public class HttpFolderAudioSourceManager extends ProbingAudioSourceManager impl
 		return new BasicAudioPlaylist(httpReference.title, tracks, tracks.stream().findFirst().orElse(null), false);
 	}
 	
-	private MediaContainerDetectionResult detectContainer(AudioReference reference){
+	private MediaContainerDetectionResult detectContainer(final AudioReference reference){
 		final MediaContainerDetectionResult result;
 		
-		try(HttpInterface httpInterface = getHttpInterface()){
+		try(final var httpInterface = getHttpInterface()){
 			result = detectContainerWithClient(httpInterface, reference);
 		}
-		catch(IOException e){
+		catch(final IOException e){
 			throw new FriendlyException("Connecting to the URL failed.", SUSPICIOUS, e);
 		}
 		
@@ -128,10 +129,10 @@ public class HttpFolderAudioSourceManager extends ProbingAudioSourceManager impl
 		return httpInterfaceManager.getInterface();
 	}
 	
-	private MediaContainerDetectionResult detectContainerWithClient(HttpInterface httpInterface, AudioReference reference) throws IOException{
-		try(PersistentHttpStream inputStream = new PersistentHttpStream(httpInterface, new URI(reference.identifier), Long.MAX_VALUE)){
-			int statusCode = inputStream.checkStatusCode();
-			String redirectUrl = HttpClientTools.getRedirectLocation(reference.identifier, inputStream.getCurrentResponse());
+	private MediaContainerDetectionResult detectContainerWithClient(final HttpInterface httpInterface, final AudioReference reference) throws IOException{
+		try(final var inputStream = new PersistentHttpStream(httpInterface, new URI(reference.identifier), Long.MAX_VALUE)){
+			final var statusCode = inputStream.checkStatusCode();
+			final var redirectUrl = HttpClientTools.getRedirectLocation(reference.identifier, inputStream.getCurrentResponse());
 			
 			if(redirectUrl != null){
 				return new MediaContainerDetectionResult(null, new AudioReference(redirectUrl, null));
@@ -143,35 +144,28 @@ public class HttpFolderAudioSourceManager extends ProbingAudioSourceManager impl
 				throw new FriendlyException("That URL is not playable.", COMMON, new IllegalStateException("Status code " + statusCode));
 			}
 			
-			MediaContainerHints hints = MediaContainerHints.from(getHeaderValue(inputStream.getCurrentResponse(), "Content-Type"), null);
+			final var hints = MediaContainerHints.from(getHeaderValue(inputStream.getCurrentResponse(), "Content-Type"), null);
 			return MediaContainerDetection.detectContainer(reference, inputStream, hints);
 		}
-		catch(URISyntaxException e){
+		catch(final URISyntaxException e){
 			throw new FriendlyException("Not a valid URL.", COMMON, e);
 		}
 	}
 	
 	@Override
-	public boolean isTrackEncodable(AudioTrack track){
+	public boolean isTrackEncodable(final AudioTrack track){
 		return true;
 	}
 	
 	@Override
-	public void encodeTrack(AudioTrack track, DataOutput output) throws IOException{
+	public void encodeTrack(final AudioTrack track, final DataOutput output) throws IOException{
 		output.writeUTF(((HttpFolderAudioTrack) track).getProbe().getName());
 	}
 	
 	@Override
-	public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) throws IOException{
-		String probeName = input.readUTF();
-		
-		for(MediaContainer container : MediaContainer.class.getEnumConstants()){
-			if(container.probe.getName().equals(probeName)){
-				return new HttpFolderAudioTrack(trackInfo, container.probe, this);
-			}
-		}
-		
-		return null;
+	public AudioTrack decodeTrack(final AudioTrackInfo trackInfo, final DataInput input) throws IOException{
+		final var probeName = input.readUTF();
+		return Arrays.stream(MediaContainer.class.getEnumConstants()).filter(container -> container.probe.getName().equals(probeName)).findFirst().map(container -> new HttpFolderAudioTrack(trackInfo, container.probe, this)).orElse(null);
 	}
 	
 	@Override

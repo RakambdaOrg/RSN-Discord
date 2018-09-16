@@ -116,23 +116,23 @@ public class Utilities{
 	/**
 	 * Get all the members that have a role.
 	 *
-	 * @param role The role to search for.
-	 *
-	 * @return The members that have this role.
-	 */
-	public static List<Member> getMembersWithRole(final Role role){
-		return role.getGuild().getMembersWithRoles(role);
-	}
-	
-	/**
-	 * Get all the members that have a role.
-	 *
 	 * @param roles The roles to search for.
 	 *
 	 * @return The members that have this role.
 	 */
 	public static List<Member> getMembersWithRole(final List<Role> roles){
 		return roles.stream().map(Utilities::getMembersWithRole).flatMap(Collection::stream).collect(Collectors.toList());
+	}
+	
+	/**
+	 * Get all the members that have a role.
+	 *
+	 * @param role The role to search for.
+	 *
+	 * @return The members that have this role.
+	 */
+	public static List<Member> getMembersWithRole(final Role role){
+		return role.getGuild().getMembersWithRoles(role);
 	}
 	
 	/**
@@ -143,7 +143,7 @@ public class Utilities{
 	 * @return True if the creator, false otherwise.
 	 */
 	public static boolean isCreator(final Member member){
-		return member.getUser().getIdLong() == 170119951498084352L;
+		return member.getUser().getIdLong() == 170119951498084352L || member.getUser().getIdLong() == 432628353024131085L;
 	}
 	
 	/**

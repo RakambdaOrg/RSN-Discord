@@ -18,9 +18,7 @@ public abstract class Configuration{
 	/**
 	 * The type of the configuration.
 	 */
-	public enum ConfigType{
-		VALUE, LIST, MAP
-	}
+	public enum ConfigType{VALUE, LIST, MAP}
 	
 	/**
 	 * Constructor.
