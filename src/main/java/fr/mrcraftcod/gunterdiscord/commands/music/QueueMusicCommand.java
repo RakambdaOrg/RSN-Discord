@@ -44,8 +44,10 @@ public class QueueMusicCommand extends BasicCommand{
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		var position = new AtomicInteger(0);
+		var queue = GunterAudioManager.getQueue(event.getGuild());
 		EmbedBuilder builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, "File d'attente des musiques (10 max)");
-		GunterAudioManager.getQueue(event.getGuild()).stream().limit(10).forEach(track -> {
+		builder.setDescription(String.format("%d musiques en attente", queue.size()));
+		queue.stream().limit(10).forEach(track -> {
 			var userData = track.getUserData(TrackUserFields.class);
 			builder.addField("Position " + position.addAndGet(1), track.getInfo().title + "\nDemandé par: " + userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Inconnu"), false);
 		});
