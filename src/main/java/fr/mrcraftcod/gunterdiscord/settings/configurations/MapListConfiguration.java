@@ -29,7 +29,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	/**
 	 * Get the list of values from the given key.
 	 *
-	 * @param key   The key to get.
+	 * @param key The key to get.
 	 *
 	 * @return The values or null if not found.
 	 */
@@ -121,7 +121,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	/**
 	 * Delete the key.
 	 *
-	 * @param key   The key.
+	 * @param key The key.
 	 */
 	public void deleteKey(final K key){
 		Settings.deleteKey(guild, this, key);

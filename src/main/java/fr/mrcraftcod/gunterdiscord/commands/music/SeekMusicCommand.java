@@ -96,6 +96,11 @@ public class SeekMusicCommand extends BasicCommand{
 	}
 	
 	@Override
+	public String getCommandUsage(){
+		return super.getCommandUsage() + "<temps>";
+	}
+	
+	@Override
 	public boolean isAllowed(final Member member){
 		return Utilities.isTeam(member) || GunterAudioManager.isRequester(member.getGuild(), member.getUser());
 	}
@@ -108,11 +113,6 @@ public class SeekMusicCommand extends BasicCommand{
 	@Override
 	public String getName(){
 		return "Temps musique";
-	}
-	
-	@Override
-	public String getCommandUsage(){
-		return super.getCommandUsage() + "<temps>";
 	}
 	
 	@Override

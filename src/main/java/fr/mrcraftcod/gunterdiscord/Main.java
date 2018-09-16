@@ -1,7 +1,6 @@
 package fr.mrcraftcod.gunterdiscord;
 
 import fr.mrcraftcod.gunterdiscord.listeners.*;
-import fr.mrcraftcod.gunterdiscord.listeners.musicparty.MusicPartyListener;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
@@ -31,8 +30,8 @@ public class Main{
 	private static final String SETTINGS_NAME = "settings.json";
 	private static final long SCHEDULED_DELAY = 60;
 	private static final long SCHEDULED_PERIOD = 900;
-	private static JDA jda;
 	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+	private static JDA jda;
 	private static ConsoleHandler consoleHandler;
 	
 	/**
@@ -43,7 +42,8 @@ public class Main{
 	public static void main(final String[] args){
 		try{
 			Settings.init(Paths.get(new File(SETTINGS_NAME).toURI()));
-			jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).buildBlocking();
+			jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).build();
+			jda.awaitReady();
 			jda.addEventListener(new CommandsMessageListener());
 			// jda.addEventListener(new BannedRegexMessageListener());
 			jda.addEventListener(new OnlyImagesMessageListener());
@@ -84,8 +84,6 @@ public class Main{
 	 */
 	public static void close(){
 		QuizListener.stopAll();
-		HangmanListener.stopAll();
-		MusicPartyListener.stopAll();
 		GunterAudioManager.stopAll();
 		
 		executorService.shutdownNow();
@@ -94,7 +92,7 @@ public class Main{
 		try{
 			Settings.save();
 		}
-		catch(IOException e){
+		catch(final IOException e){
 			Log.getLogger(null).error("Error saving configuration", e);
 		}
 		Settings.close();

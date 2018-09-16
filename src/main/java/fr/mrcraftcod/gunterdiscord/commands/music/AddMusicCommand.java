@@ -45,8 +45,8 @@ public class AddMusicCommand extends BasicCommand{
 			Actions.reply(event, "Merci de donner un lien");
 		}
 		else if(event.getMember().getVoiceState().inVoiceChannel()){
-			final var identifier = args.poll().trim();
-			var skipCount = Optional.ofNullable(args.poll()).map(value -> {
+			final var identifier = Objects.requireNonNull(args.poll()).trim();
+			final var skipCount = Optional.ofNullable(args.poll()).map(value -> {
 				try{
 					return Integer.parseInt(value);
 				}
@@ -54,7 +54,7 @@ public class AddMusicCommand extends BasicCommand{
 				}
 				return 0;
 			}).filter(value -> value >= 0).orElse(0);
-			var maxTracks = Optional.ofNullable(args.poll()).map(value -> {
+			final var maxTracks = Optional.ofNullable(args.poll()).map(value -> {
 				try{
 					return Integer.parseInt(value);
 				}

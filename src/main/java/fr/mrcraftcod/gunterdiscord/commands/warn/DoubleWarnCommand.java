@@ -16,12 +16,12 @@ import java.util.List;
  */
 public class DoubleWarnCommand extends WarnCommand{
 	@Override
-	protected Role getRole(final Guild guild, LinkedList<String> args) throws NoValueDefinedException{
+	protected Role getRole(final Guild guild, final LinkedList<String> args) throws NoValueDefinedException{
 		return new DoubleWarnRoleConfig(guild).getObject();
 	}
 	
 	@Override
-	protected double getTime(final Guild guild, LinkedList<String> args){
+	protected double getTime(final Guild guild, final LinkedList<String> args){
 		return new DoubleWarnTimeConfig(guild).getObject(1D);
 	}
 	

@@ -21,9 +21,7 @@ public interface Command extends Comparable<Command>{
 	/**
 	 * The level required to access a command.
 	 */
-	enum AccessLevel{
-		ADMIN, MODERATOR, ALL, CREATOR
-	}
+	enum AccessLevel{ADMIN, MODERATOR, ALL, CREATOR}
 	
 	/**
 	 * Add entries into the help menu.

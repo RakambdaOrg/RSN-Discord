@@ -6,6 +6,4 @@ package fr.mrcraftcod.gunterdiscord.utils.player;
  * @author Thomas Couchoud
  * @since 2018-08-19
  */
-public enum MusicActionResponse{
-	OK, NO_MUSIC, IMPOSSIBLE
-}
+public enum MusicActionResponse{OK, NO_MUSIC, IMPOSSIBLE}

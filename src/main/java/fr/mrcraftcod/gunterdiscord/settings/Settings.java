@@ -24,7 +24,6 @@ import java.util.stream.IntStream;
  */
 public class Settings{
 	public static final Configuration[] SETTINGS = new Configuration[]{
-			// new BannedRegexConfig(null),
 			new ModoRolesConfig(null),
 			new OnlyIdeasConfig(null),
 			new OnlyImagesConfig(null),
@@ -32,7 +31,6 @@ public class Settings{
 			new ReportChannelConfig(null),
 			// new PhotoChannelConfig(null),
 			new QuizChannelConfig(null),
-			// new HangmanChannelConfig(null),
 			// new PhotoConfig(null),
 			new AutoRolesConfig(null),
 			new NickDelayConfig(null),
@@ -40,11 +38,8 @@ public class Settings{
 			// new TrombinoscopeRoleConfig(null),
 			new QuestionsChannelConfig(null),
 			new QuestionsFinalChannelConfig(null),
-			// new HangmanRoleConfig(null),
-			// new WerewolvesChannelConfig(null),
 			new YoutubeChannelConfig(null),
 			new YoutubeRoleConfig(null),
-			new MusicPartyChannelConfig(null),
 			new WarnRoleConfig(null),
 			new DoubleWarnRoleConfig(null),
 			new MegaWarnRoleConfig(null),
@@ -52,8 +47,6 @@ public class Settings{
 			new DoubleWarnTimeConfig(null),
 			new MegaWarnTimeConfig(null),
 			new RemoveRoleConfig(null),
-			new VoiceTextChannelsConfig(null),
-			new VoiceTextChannelsAssociationConfig(null),
 			new DJRoleConfig(null),
 			new NameLastChangeConfig(null),
 			new EnableNameChangeLimitConfig(null)

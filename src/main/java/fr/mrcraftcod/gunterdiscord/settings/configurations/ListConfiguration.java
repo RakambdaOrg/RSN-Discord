@@ -152,16 +152,6 @@ public abstract class ListConfiguration<T> extends Configuration{
 	}
 	
 	/**
-	 * Tell if an element is inside the list.
-	 * @param value The value to test.
-	 *
-	 * @return True if the value is inside, false otherwise.
-	 */
-	public boolean contains(final T value){
-		return getAsList().contains(value);
-	}
-	
-	/**
 	 * Get the parser to parse back values to T.
 	 *
 	 * @return The parser.
@@ -176,5 +166,16 @@ public abstract class ListConfiguration<T> extends Configuration{
 	@Override
 	public ConfigType getType(){
 		return ConfigType.LIST;
+	}
+	
+	/**
+	 * Tell if an element is inside the list.
+	 *
+	 * @param value The value to test.
+	 *
+	 * @return True if the value is inside, false otherwise.
+	 */
+	public boolean contains(final T value){
+		return getAsList().contains(value);
 	}
 }

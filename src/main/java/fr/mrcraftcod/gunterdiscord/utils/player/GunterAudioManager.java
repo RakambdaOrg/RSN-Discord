@@ -175,6 +175,10 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		close();
 	}
 	
+	private VoiceChannel getChannel(){
+		return channel;
+	}
+	
 	public static MusicActionResponse seek(final Guild guild, final long time){
 		if(managers.containsKey(guild)){
 			final var track = currentTrack(guild);
@@ -198,6 +202,10 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		return Optional.empty();
 	}
 	
+	private AudioManager getAudioManager(){
+		return audioManager;
+	}
+	
 	public static boolean isRequester(final Guild guild, final User user){
 		if(managers.containsKey(guild)){
 			return currentTrack(guild).map(track -> {
@@ -217,10 +225,6 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			return managers.get(guild).getChannel();
 		}
 		return null;
-	}
-	
-	public AudioPlayer getAudioPlayer(){
-		return audioPlayer;
 	}
 	
 	public static MusicActionResponse pause(final Guild guild){
@@ -251,12 +255,8 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		trackScheduler.nextTrack();
 	}
 	
-	private VoiceChannel getChannel(){
-		return channel;
-	}
-	
-	private AudioManager getAudioManager(){
-		return audioManager;
+	public AudioPlayer getAudioPlayer(){
+		return audioPlayer;
 	}
 	
 	@Override

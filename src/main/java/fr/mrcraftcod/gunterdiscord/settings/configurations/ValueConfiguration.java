@@ -104,6 +104,11 @@ public abstract class ValueConfiguration<T> extends Configuration{
 		return Set.of(SET, SHOW);
 	}
 	
+	@Override
+	public ConfigType getType(){
+		return ConfigType.VALUE;
+	}
+	
 	/**
 	 * Get the value as an object.
 	 *
@@ -137,9 +142,4 @@ public abstract class ValueConfiguration<T> extends Configuration{
 	 * @return The parser.
 	 */
 	protected abstract Function<T, String> getValueParser();
-	
-	@Override
-	public ConfigType getType(){
-		return ConfigType.VALUE;
-	}
 }

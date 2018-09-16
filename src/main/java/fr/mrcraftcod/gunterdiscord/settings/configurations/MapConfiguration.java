@@ -33,7 +33,7 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 	/**
 	 * Get the value from the given key.
 	 *
-	 * @param key   The key to get.
+	 * @param key The key to get.
 	 *
 	 * @return The value or null if not found.
 	 */
@@ -150,7 +150,7 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 	/**
 	 * Delete the key.
 	 *
-	 * @param key   The key.
+	 * @param key The key.
 	 */
 	public void deleteKey(final K key){
 		Settings.deleteKey(guild, this, key);

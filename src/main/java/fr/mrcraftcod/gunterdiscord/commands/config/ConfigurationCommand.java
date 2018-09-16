@@ -33,16 +33,12 @@ public class ConfigurationCommand extends BasicCommand{
 	/**
 	 * Actions available.
 	 */
-	public enum ChangeConfigType{
-		ADD, REMOVE, SET, SHOW, ERROR
-	}
+	public enum ChangeConfigType{ADD, REMOVE, SET, SHOW, ERROR}
 	
 	/**
 	 * The result of a setting action.
 	 */
-	public enum ActionResult{
-		OK, NONE, ERROR
-	}
+	public enum ActionResult{OK, NONE, ERROR}
 	
 	/**
 	 * Constructor.
@@ -114,6 +110,11 @@ public class ConfigurationCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
+	@Override
+	public String getCommandUsage(){
+		return super.getCommandUsage() + " <configuration> [valeur]";
+	}
+	
 	/**
 	 * Process the configuration.
 	 *
@@ -151,11 +152,6 @@ public class ConfigurationCommand extends BasicCommand{
 			getLogger(event.getGuild()).error("Error instantiating config", e);
 		}
 		return ActionResult.ERROR;
-	}
-	
-	@Override
-	public String getCommandUsage(){
-		return super.getCommandUsage() + " <configuration> [valeur]";
 	}
 	
 	@Override
