@@ -97,7 +97,7 @@ public class HttpFolderAudioSourceManager extends ProbingAudioSourceManager impl
 			else if(href.startsWith("/")){
 				return url.getProtocol() + "://" + url.getHost() + href;
 			}
-			return url.toString() + href;
+			return url.toString() + "/" + href;
 		}).distinct().map(trackUrl -> new AudioReference(trackUrl, URLDecoder.decode(StringEscapeUtils.unescapeHtml4(trackUrl.substring(trackUrl.lastIndexOf("/") + 1)), StandardCharsets.UTF_8))).map(trackHttpReference -> {
 			try{
 				return handleLoadResult(detectContainer(trackHttpReference));
