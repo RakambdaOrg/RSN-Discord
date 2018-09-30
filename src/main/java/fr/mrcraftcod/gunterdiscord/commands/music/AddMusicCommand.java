@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import static fr.mrcraftcod.gunterdiscord.commands.music.NowPlayingMusicCommand.getDuration;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -67,7 +68,7 @@ public class AddMusicCommand extends BasicCommand{
 					Actions.reply(event, "%s, musique inconnue", event.getAuthor().getAsMention());
 				}
 				else if(track instanceof AudioTrack){
-					Actions.reply(event, "%s a ajouté %s", event.getAuthor().getAsMention(), ((AudioTrack) track).getInfo().title);
+					Actions.reply(event, "%s a ajouté %s, temps d'attente estimé: %s", event.getAuthor().getAsMention(), ((AudioTrack) track).getInfo().title, getDuration(GunterAudioManager.getQueue(event.getGuild()).stream().mapToLong(AudioTrack::getDuration).sum()));
 				}
 				else{
 					Actions.reply(event, track.toString());
