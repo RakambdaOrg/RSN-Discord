@@ -17,7 +17,9 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import static fr.mrcraftcod.gunterdiscord.commands.music.NowPlayingMusicCommand.getDuration;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -38,21 +40,36 @@ public class QueueMusicCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
+		builder.addField("<page>", "La page à afficher", false);
 	}
 	
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
+		final var perPage = 10;
+		final var page = Optional.ofNullable(args.poll()).map(i -> {
+			try{
+				return Integer.parseInt(i);
+			}
+			catch(final Exception ignored){
+			}
+			return null;
+		}).orElse(1) - 1;
 		final var position = new AtomicInteger(0);
 		final var queue = GunterAudioManager.getQueue(event.getGuild());
-		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, "File d'attente des musiques (10 max)");
+		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, "File d'attente des musiques (Page " + page + "/" + Math.ceil(queue.size() / (double) perPage) + " - 10 max)");
 		builder.setDescription(String.format("%d musiques en attente", queue.size()));
-		queue.stream().limit(10).forEach(track -> {
+		queue.stream().skip(perPage * page).limit(perPage).forEach(track -> {
 			final var userData = track.getUserData(TrackUserFields.class);
-			builder.addField("Position " + position.addAndGet(1), track.getInfo().title + "\nDemandé par: " + userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Inconnu"), false);
+			builder.addField("Position " + position.addAndGet(1), track.getInfo().title + "\nDemandé par: " + userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Inconnu") + "\nLongeur: " + getDuration(track.getDuration()), false);
 		});
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;
+	}
+	
+	@Override
+	public String getCommandUsage(){
+		return super.getCommandUsage() + " <page>";
 	}
 	
 	@Override
