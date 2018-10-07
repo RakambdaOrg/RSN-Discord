@@ -42,6 +42,7 @@ class ScheduledRunner implements Runnable{
 					final var role = guild.getRoleById(roleID);
 					getLogger(guild).info("Processing role {}, diff is: {}", role, diff);
 					if(diff.isNegative()){
+						getLogger(guild).info("Removed role for the user");
 						Actions.removeRole(member, role);
 						config.deleteKeyValue(userID, roleID);
 					}
