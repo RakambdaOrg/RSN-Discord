@@ -3,7 +3,7 @@ package fr.mrcraftcod.gunterdiscord.runners;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.AniListChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.AniListTokenConfig;
-import fr.mrcraftcod.utils.http.requestssenders.get.JSONGetRequestSender;
+import fr.mrcraftcod.utils.http.requestssenders.post.JSONPostRequestSender;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.User;
 import org.slf4j.Logger;
@@ -60,7 +60,7 @@ public class AniListScheduledRunner implements Runnable{
 		headers.put("Authorization", "Bearer " + token);
 		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "application/json");
-		final var handler = new JSONGetRequestSender(new URL("https://graphql.anilist.co"), headers).getRequestHandler();
+		final var handler = new JSONPostRequestSender(new URL("https://graphql.anilist.co"), headers).getRequestHandler();
 		if(handler.getStatus() == 200){
 			final var jsonResult = handler.getResult();
 			LOGGER.warn("AUTH RESULT: {}", jsonResult.toString());
