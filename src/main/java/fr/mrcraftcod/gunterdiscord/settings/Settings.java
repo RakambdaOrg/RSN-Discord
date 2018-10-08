@@ -49,7 +49,9 @@ public class Settings{
 			new RemoveRoleConfig(null),
 			new DJRoleConfig(null),
 			new NameLastChangeConfig(null),
-			new EnableNameChangeLimitConfig(null)
+			new EnableNameChangeLimitConfig(null),
+			new AniListTokenConfig(null),
+			new AniListChannelConfig(null)
 	};
 	private static Path path;
 	private static JSONObject settings;

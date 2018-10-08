@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.commands.*;
+import fr.mrcraftcod.gunterdiscord.commands.anilist.AniListRegisterCommand;
 import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
@@ -53,7 +54,8 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new MusicCommandComposite(),
 			new StopCommand(),
 			new TimeCommand(),
-			new BanInfoCommand()
+			new BanInfoCommand(),
+			new AniListRegisterCommand()
 	};
 	
 	/**

@@ -1,4 +1,4 @@
-package fr.mrcraftcod.gunterdiscord;
+package fr.mrcraftcod.gunterdiscord.runners;
 
 import fr.mrcraftcod.gunterdiscord.settings.configs.RemoveRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
@@ -12,7 +12,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-07-14
  */
-class ScheduledRunner implements Runnable{
+public class RemoveRolesScheduledRunner implements Runnable{
 	private final JDA jda;
 	
 	/**
@@ -20,7 +20,7 @@ class ScheduledRunner implements Runnable{
 	 *
 	 * @param jda The JDA object.
 	 */
-	ScheduledRunner(final JDA jda){
+	public RemoveRolesScheduledRunner(final JDA jda){
 		getLogger(null).info("Creating scheduled runner");
 		this.jda = jda;
 	}

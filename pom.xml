@@ -10,7 +10,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>10</java.version>
+        <java.version>11</java.version>
         <main.class>fr.mrcraftcod.gunterdiscord.Main</main.class>
     </properties>
     <packaging>jar</packaging>
@@ -98,7 +98,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>3.8.0_423</version>
+            <version>3.8.0_436</version>
             <exclusions>
                 <exclusion>
                     <groupId>net.dv8tion</groupId>
