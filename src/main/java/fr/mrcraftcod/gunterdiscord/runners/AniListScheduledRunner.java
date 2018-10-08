@@ -1,6 +1,5 @@
 package fr.mrcraftcod.gunterdiscord.runners;
 
-import com.mashape.unirest.http.exceptions.UnirestException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.AniListChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.AniListTokenConfig;
 import fr.mrcraftcod.utils.http.requestssenders.post.JSONPostRequestSender;
@@ -9,8 +8,6 @@ import net.dv8tion.jda.core.entities.User;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,9 +54,9 @@ public class AniListScheduledRunner implements Runnable{
 		}
 	}
 	
-	private List<String> getChanges(final User user, final String token) throws MalformedURLException, URISyntaxException, UnirestException{
+	private List<String> getChanges(final User user, final String code) throws Exception{
 		LOGGER.info("Fetching user {}", user);
-		getApiToken(token);
+		final var token = getApiToken(code);
 		final var headers = new HashMap<String, String>();
 		headers.put("Authorization", "Bearer " + token);
 		headers.put("Content-Type", "application/json");
@@ -78,7 +75,7 @@ public class AniListScheduledRunner implements Runnable{
 		return new ArrayList<>();
 	}
 	
-	private void getApiToken(final String token) throws MalformedURLException, URISyntaxException{
+	private String getApiToken(final String token) throws Exception{
 		final var headers = new HashMap<String, String>();
 		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "application/json");
@@ -89,6 +86,10 @@ public class AniListScheduledRunner implements Runnable{
 		body.put("client_secret", System.getenv("ANILIST_SECRET"));
 		body.put("redirect_uri", "https://www.mrcraftcod.fr/redirect");
 		body.put("code", token);
-		new JSONPostRequestSender(new URL("https://anilist.co/api/v2/oauth/token"), headers, new HashMap<>(), body.toString());
+		final var result = new JSONPostRequestSender(new URL("https://anilist.co/api/v2/oauth/token"), headers, new HashMap<>(), body.toString()).getRequestHandler();
+		if(result.getStatus() != 200){
+			throw new Exception("Getting token get HTTP " + result.getStatus());
+		}
+		return "";
 	}
 }
