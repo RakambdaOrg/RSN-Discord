@@ -32,6 +32,6 @@ public class AniListTokenConfig extends MapConfiguration<Long, String>{
 	
 	@Override
 	public String getName(){
-		return "nickLastChange";
+		return "aniListToken";
 	}
 }

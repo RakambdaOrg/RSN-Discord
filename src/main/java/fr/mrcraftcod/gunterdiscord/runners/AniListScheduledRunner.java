@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-08.
@@ -28,12 +29,13 @@ public class AniListScheduledRunner implements Runnable{
 	private final JDA jda;
 	
 	public AniListScheduledRunner(final JDA jda){
+		getLogger(null).info("Creating anilist runner");
 		this.jda = jda;
 	}
 	
 	@Override
 	public void run(){
-		LOGGER.info("Starting AniList scheduler");
+		LOGGER.info("Starting AniList runner");
 		try{
 			final var userChanges = new HashMap<User, List<String>>();
 			for(final var guild : jda.getGuilds()){
@@ -48,10 +50,10 @@ public class AniListScheduledRunner implements Runnable{
 					}
 				}
 			}
-			LOGGER.info("AniList scheduler done");
+			LOGGER.info("AniList runner done");
 		}
 		catch(final Exception e){
-			LOGGER.error("Error in AniList scheduler", e);
+			LOGGER.error("Error in AniList runner", e);
 		}
 	}
 	
@@ -82,6 +84,11 @@ public class AniListScheduledRunner implements Runnable{
 		headers.put("Accept", "application/json");
 		
 		final var body = new JSONObject();
+		body.put("grant_type", "authorization_code");
+		body.put("client_id", "1230");
+		body.put("client_secret", System.getenv("ANILIST_SECRET"));
+		body.put("redirect_uri", "https://www.mrcraftcod.fr/redirect");
+		body.put("code", token);
 		new JSONPostRequestSender(new URL("https://anilist.co/api/v2/oauth/token"), headers, new HashMap<>(), body.toString());
 	}
 }

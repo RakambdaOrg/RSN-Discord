@@ -21,13 +21,13 @@ public class RemoveRolesScheduledRunner implements Runnable{
 	 * @param jda The JDA object.
 	 */
 	public RemoveRolesScheduledRunner(final JDA jda){
-		getLogger(null).info("Creating scheduled runner");
+		getLogger(null).info("Creating roles runner");
 		this.jda = jda;
 	}
 	
 	@Override
 	public void run(){
-		getLogger(null).info("Starting scheduled runner");
+		getLogger(null).info("Starting roles runner");
 		final var currentTime = System.currentTimeMillis();
 		for(final var guild : jda.getGuilds()){
 			final var config = new RemoveRoleConfig(guild);
@@ -48,5 +48,6 @@ public class RemoveRolesScheduledRunner implements Runnable{
 				}
 			}
 		}
+		getLogger(null).info("Roles runner done");
 	}
 }
