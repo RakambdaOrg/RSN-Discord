@@ -60,6 +60,9 @@ public class AniListScheduledRunner implements Runnable{
 		headers.put("Authorization", "Bearer " + token);
 		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "application/json");
+		
+		LOGGER.info("{}", new JSONPostRequestSender(new URL("https://graphql.anilist.co"), headers).getRequest().asString().getBody());
+		
 		final var handler = new JSONPostRequestSender(new URL("https://graphql.anilist.co"), headers).getRequestHandler();
 		if(handler.getStatus() == 200){
 			final var jsonResult = handler.getResult();
