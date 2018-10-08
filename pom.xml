@@ -157,5 +157,10 @@
             <artifactId>commons-text</artifactId>
             <version>1.4</version>
         </dependency>
+        <dependency>
+            <groupId>fr.mrcraftcod</groupId>
+            <artifactId>utils.http</artifactId>
+            <version>5.0.0</version>
+        </dependency>
     </dependencies>
 </project>
