@@ -59,7 +59,7 @@ public class Main{
 			jda.getPresence().setGame(Game.playing("g?help pour l'aide"));
 			
 			executorService.scheduleAtFixedRate(new RemoveRolesScheduledRunner(jda), SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
-			executorService.scheduleAtFixedRate(new AniListScheduledRunner(jda), SCHEDULED_DELAY / 2, SCHEDULED_PERIOD, TimeUnit.SECONDS);
+			executorService.scheduleAtFixedRate(new AniListScheduledRunner(jda), SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
 		}
 		catch(final IOException e){
 			getLogger(null).error("Couldn't load settings", e);
