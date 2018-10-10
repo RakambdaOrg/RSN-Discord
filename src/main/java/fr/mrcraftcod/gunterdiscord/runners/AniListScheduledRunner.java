@@ -89,7 +89,10 @@ public class AniListScheduledRunner implements Runnable{
 		for(final var change : jsonResult.getJSONObject("data").getJSONObject("Page").getJSONArray("activities")){
 			changes.add(buildChange((JSONObject) change));
 		}
-		changes.stream().map(AniListChange::getCreatedAt).mapToLong(Date::getTime).max().ifPresent(val -> userInfoConf.addValue(member.getUser().getIdLong(), "lastFetch", "" + (val / 1000L)));
+		changes.stream().map(AniListChange::getCreatedAt).mapToLong(Date::getTime).max().ifPresent(val -> {
+			LOGGER.info("New last fetched date for {}: {}", member, new Date(val));
+			userInfoConf.addValue(member.getUser().getIdLong(), "lastFetch", "" + (val / 1000L));
+		});
 		return changes;
 	}
 	
