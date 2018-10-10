@@ -87,7 +87,6 @@ public class AniListScheduledRunner implements Runnable{
 		variables.put("perPage", 50);
 		variables.put("date", Integer.parseInt(userInfo.get("lastFetch")));
 		final var jsonResult = AniListUtils.getQuery(member, code, QUERY, variables);
-		LOGGER.warn("ANILIST RESULT: {}", jsonResult.toString());
 		final var changes = new ArrayList<AniListChange>();
 		for(final var change : jsonResult.getJSONObject("data").getJSONObject("Page").getJSONArray("activities")){
 			changes.add(buildChange((JSONObject) change));
