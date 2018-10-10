@@ -5,11 +5,10 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.AniListCodeConfig;
 import fr.mrcraftcod.utils.http.requestssenders.post.JSONPostRequestSender;
 import net.dv8tion.jda.core.entities.Member;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Objects;
+import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-10.
@@ -18,14 +17,13 @@ import java.util.Objects;
  * @since 2018-10-10
  */
 public class AniListUtils{
-	private static final Logger LOGGER = LoggerFactory.getLogger(AniListUtils.class);
 	private static final String API_URL = "https://anilist.co/api/v2";
 	private static final int APP_ID = 1230;
 	private static final String REDIRECT_URI = "https://anilist.co/api/v2/oauth/pin";
 	private static final String CODE_LINK = String.format("%s/oauth/authorize?client_id=%d&response_type=code&redirect_uri=%s", API_URL, APP_ID, REDIRECT_URI);
 	
 	public static JSONObject getQuery(final Member member, final String code, final String query, final JSONObject variables) throws Exception{
-		LOGGER.info("Sending query to AniList", member.getUser());
+		getLogger(member.getGuild()).info("Sending query to AniList", member.getUser());
 		return getQuery(AniListUtils.getAccessToken(member, code), query, variables);
 	}
 	
@@ -45,7 +43,7 @@ public class AniListUtils{
 	}
 	
 	public static String getAccessToken(final Member member, final String token) throws Exception{
-		LOGGER.info("Getting access token for {}", member);
+		getLogger(member.getGuild()).info("Getting access token for {}", member);
 		final var accessToken = getPreviousAccessToken(member);
 		if(Objects.nonNull(accessToken)){
 			return accessToken;
@@ -78,23 +76,23 @@ public class AniListUtils{
 	}
 	
 	private static String getPreviousAccessToken(final Member member){
-		LOGGER.info("Getting previous access token for {}", member);
+		getLogger(member.getGuild()).info("Getting previous access token for {}", member);
 		final var accessTokens = new AniListAccessTokenConfig(member.getGuild());
 		final var access = accessTokens.getValue(member.getUser().getIdLong());
 		if(Objects.nonNull(access)){
 			for(final var time : access.keySet()){
-				LOGGER.info("Found previous access token for {}", member);
+				getLogger(member.getGuild()).info("Found previous access token for {}", member);
 				//if(time < System.currentTimeMillis())
 				return access.get(time);
 				//accessTokens.deleteKeyValue(user.getIdLong(), time);
 			}
 		}
-		LOGGER.info("No access token found for {}", member);
+		getLogger(member.getGuild()).info("No access token found for {}", member);
 		return null;
 	}
 	
 	public static JSONObject getQuery(final Member member, final String query, final JSONObject variables) throws Exception{
-		LOGGER.info("Sending query to AniList", member.getUser());
+		getLogger(member.getGuild()).info("Sending query to AniList", member.getUser());
 		return getQuery(AniListUtils.getPreviousAccessToken(member), query, variables);
 	}
 	

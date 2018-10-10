@@ -15,8 +15,6 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.function.Consumer;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -28,7 +26,6 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-10-08
  */
 public class AniListScheduledRunner implements Runnable{
-	private static final Logger LOGGER = LoggerFactory.getLogger(AniListScheduledRunner.class);
 	private static final String QUERY = "query($userID: Int, $page: Int, $perPage: Int, $date: Int){\n" + "  Page (page: $page, perPage: $perPage) {\n" + "    pageInfo {\n" + "      total\n" + "      currentPage\n" + "      lastPage\n" + "      hasNextPage\n" + "      perPage\n" + "    }\n" + "  \tactivities(userId: $userID, createdAt_greater: $date){\n" + "      ... on ListActivity{\n" + "        userId\n" + "        type\n" + "        createdAt\n" + "        progress\n" + "        siteUrl\n" + "        media {\n" + "          id\n" + "          title {\n" + "            userPreferred\n" + "          }\n" + "          season\n" + "          type\n" + "          format\n" + "          status\n" + "          episodes\n" + "          chapters\n" + "          isAdult\n" + "          coverImage{\n" + "            large\n" + "          }\n" + "          siteUrl" + "        }\n" + "      }\n" + "    }\n" + "  }\n" + "}";
 	private final JDA jda;
 	
@@ -39,7 +36,7 @@ public class AniListScheduledRunner implements Runnable{
 	
 	@Override
 	public void run(){
-		LOGGER.info("Starting AniList runner");
+		getLogger(null).info("Starting AniList runner");
 		try{
 			final var channels = new ArrayList<TextChannel>();
 			final var userChanges = new HashMap<User, List<AniListChange>>();
@@ -56,27 +53,27 @@ public class AniListScheduledRunner implements Runnable{
 								userChanges.put(member.getUser(), getChanges(member, tokensMap.get(userID)));
 							}
 							catch(final Exception e){
-								LOGGER.error("Error fetching user {} on AniList", member, e);
+								getLogger(guild).error("Error fetching user {} on AniList", member, e);
 							}
 						}
 					}
 				}
 			}
-			LOGGER.info("AniList API done");
+			getLogger(null).info("AniList API done");
 			for(final var user : userChanges.keySet()){
 				final var changes = userChanges.get(user);
 				changes.stream().sorted(Comparator.comparing(AniListChange::getCreatedAt)).map(change -> buildMessage(user, change)).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
 			}
 			
-			LOGGER.info("AniList runner done");
+			getLogger(null).info("AniList runner done");
 		}
 		catch(final Exception e){
-			LOGGER.error("Error in AniList runner", e);
+			getLogger(null).error("Error in AniList runner", e);
 		}
 	}
 	
 	private List<AniListChange> getChanges(final Member member, final String code) throws Exception{
-		LOGGER.info("Fetching user {}", member);
+		getLogger(member.getGuild()).info("Fetching user {}", member);
 		final var userInfoConf = new AniListLastAccessConfig(member.getGuild());
 		final var userInfo = userInfoConf.getValue(member.getUser().getIdLong());
 		final var variables = new JSONObject();
@@ -90,7 +87,7 @@ public class AniListScheduledRunner implements Runnable{
 			changes.add(buildChange((JSONObject) change));
 		}
 		changes.stream().map(AniListChange::getCreatedAt).mapToLong(Date::getTime).max().ifPresent(val -> {
-			LOGGER.info("New last fetched date for {}: {}", member, new Date(val));
+			getLogger(member.getGuild()).info("New last fetched date for {}: {}", member, new Date(val));
 			userInfoConf.addValue(member.getUser().getIdLong(), "lastFetch", "" + (val / 1000L));
 		});
 		return changes;
