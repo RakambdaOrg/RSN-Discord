@@ -44,7 +44,7 @@ public class StopCommand extends BasicCommand{
 	
 	@Override
 	public List<String> getCommand(){
-		return List.of("stop");
+		return List.of("stop", "quit");
 	}
 	
 	@Override

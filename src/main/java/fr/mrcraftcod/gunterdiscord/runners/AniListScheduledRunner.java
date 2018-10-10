@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.*;
+import java.util.function.Consumer;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -64,10 +65,7 @@ public class AniListScheduledRunner implements Runnable{
 			LOGGER.info("AniList API done");
 			for(final var user : userChanges.keySet()){
 				final var changes = userChanges.get(user);
-				for(final var change : changes){
-					final var message = buildMessage(user, change);
-					channels.forEach(c -> Actions.sendMessage(c, message));
-				}
+				changes.stream().sorted(Comparator.comparing(AniListChange::getCreatedAt)).map(change -> buildMessage(user, change)).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
 			}
 			
 			LOGGER.info("AniList runner done");
