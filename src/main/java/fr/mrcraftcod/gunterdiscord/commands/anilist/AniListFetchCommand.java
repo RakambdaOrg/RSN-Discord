@@ -3,8 +3,7 @@ package fr.mrcraftcod.gunterdiscord.commands.anilist;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.configs.AniListTokenConfig;
-import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.runners.AniListScheduledRunner;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
@@ -20,8 +19,6 @@ import java.util.List;
  * @since 2018-10-08
  */
 public class AniListFetchCommand extends BasicCommand{
-	private static final String link = "https://anilist.co/api/v2/oauth/authorize?client_id=1230&response_type=code&redirect_uri=https://www.mrcraftcod.fr/redirect.php";
-	
 	/**
 	 * Constructor.
 	 *
@@ -34,45 +31,33 @@ public class AniListFetchCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Code", "Code d'accès à l'api, obtenu en visitant: " + link, false);
 	}
 	
 	@Override
 	public CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		if(args.size() < 1){
-			Actions.reply(event, "Merci de donner votre code d'accès");
-		}
-		else{
-			new AniListTokenConfig(event.getGuild()).addValue(event.getAuthor().getIdLong(), args.poll());
-			Actions.reply(event, "Code d'accès enregistré");
-		}
+		new AniListScheduledRunner(event.getJDA()).run();
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
-	public String getCommandUsage(){
-		return super.getCommandUsage() + " <code>";
-	}
-	
-	@Override
 	public AccessLevel getAccessLevel(){
-		return AccessLevel.ALL;
+		return AccessLevel.MODERATOR;
 	}
 	
 	@Override
 	public String getName(){
-		return "AniList enregistrement";
+		return "AniList fetcher";
 	}
 	
 	@Override
 	public List<String> getCommand(){
-		return List.of("r", "register");
+		return List.of("f", "fetch");
 	}
 	
 	@Override
 	public String getDescription(){
-		return "Enregistre son compte pour le tracker anilist";
+		return "Fetch les données d'AniList";
 	}
 	
 	@Override

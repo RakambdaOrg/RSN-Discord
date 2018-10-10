@@ -50,8 +50,10 @@ public class Settings{
 			new DJRoleConfig(null),
 			new NameLastChangeConfig(null),
 			new EnableNameChangeLimitConfig(null),
-			new AniListTokenConfig(null),
-			new AniListChannelConfig(null)
+			new AniListCodeConfig(null),
+			new AniListChannelConfig(null),
+			new AniListAccessTokenConfig(null),
+			new AniListLastAccessConfig(null)
 	};
 	private static Path path;
 	private static JSONObject settings;

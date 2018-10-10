@@ -10,13 +10,13 @@ import java.util.function.Function;
  * @author Thomas Couchoud
  * @since 2018-10-08
  */
-public class AniListTokenConfig extends MapConfiguration<Long, String>{
+public class AniListCodeConfig extends MapConfiguration<Long, String>{
 	/**
 	 * Constructor.
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public AniListTokenConfig(final Guild guild){
+	public AniListCodeConfig(final Guild guild){
 		super(guild);
 	}
 	
@@ -32,6 +32,6 @@ public class AniListTokenConfig extends MapConfiguration<Long, String>{
 	
 	@Override
 	public String getName(){
-		return "aniListToken";
+		return "aniListCode";
 	}
 }

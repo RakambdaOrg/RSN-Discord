@@ -5,6 +5,7 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.ModoRolesConfig;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
+import org.json.JSONObject;
 import java.awt.*;
 import java.util.Collection;
 import java.util.List;
@@ -232,5 +233,15 @@ public class Utilities{
 	 */
 	public static String getUserToLog(final User user){
 		return user == null ? "NULL" : (user.getName() + "#" + user.getDiscriminator() + " (" + user.getIdLong() + ")");
+	}
+	
+	public static <T> T getJSONMaybe(final JSONObject json, final Class<? extends T> klass, final String key){
+		if(json.has(key)){
+			final var value = json.get(key);
+			if(value != JSONObject.NULL){
+				return klass.cast(json.get(key));
+			}
+		}
+		return null;
 	}
 }
