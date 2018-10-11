@@ -1,6 +1,6 @@
-package fr.mrcraftcod.gunterdiscord.commands.anilist;
+package fr.mrcraftcod.gunterdiscord.commands.anilist.fetch;
 
-import fr.mrcraftcod.gunterdiscord.commands.anilist.fetch.AniListFetchCommandComposite;
+import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.core.entities.ChannelType;
 import java.util.List;
@@ -11,34 +11,36 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-10-08
  */
-public class AniListCommandComposite extends CommandComposite{
+public class AniListFetchCommandComposite extends CommandComposite{
 	/**
 	 * Constructor.
+	 *
+	 * @param parent The parent command.
 	 */
-	public AniListCommandComposite(){
-		super();
-		addSubCommand(new AniListFetchCommandComposite(this));
-		addSubCommand(new AniListRegisterCommand(this));
+	public AniListFetchCommandComposite(final Command parent){
+		super(parent);
+		addSubCommand(new AniListFetchActivityCommand(this));
+		addSubCommand(new AniListFetchNotificationCommand(this));
 	}
 	
 	@Override
 	public AccessLevel getAccessLevel(){
-		return AccessLevel.ALL;
+		return AccessLevel.MODERATOR;
 	}
 	
 	@Override
 	public String getName(){
-		return "AniList";
+		return "AniList fetcher";
 	}
 	
 	@Override
 	public List<String> getCommand(){
-		return List.of("anilist", "al");
+		return List.of("fetch", "f");
 	}
 	
 	@Override
 	public String getDescription(){
-		return "Point d'entré des fonctionnalitées d'AniList";
+		return "Fetch les données d'AniList";
 	}
 	
 	@Override

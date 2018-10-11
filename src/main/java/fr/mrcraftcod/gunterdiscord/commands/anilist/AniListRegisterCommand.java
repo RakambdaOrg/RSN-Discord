@@ -55,7 +55,6 @@ public class AniListRegisterCommand extends BasicCommand{
 				final var userInfos = AniListUtils.getQuery(event.getMember(), QUERY, new JSONObject());
 				final var userInfoConf = new AniListLastAccessConfig(event.getGuild());
 				userInfoConf.addValue(event.getAuthor().getIdLong(), "userId", "" + userInfos.getJSONObject("data").getJSONObject("Viewer").getInt("id"));
-				userInfoConf.addValue(event.getAuthor().getIdLong(), "lastFetch", "" + (System.currentTimeMillis() / 1000L));
 				Actions.reply(event, "Code d'accès enregistré");
 			}
 			catch(final Exception e){
@@ -83,7 +82,7 @@ public class AniListRegisterCommand extends BasicCommand{
 	
 	@Override
 	public List<String> getCommand(){
-		return List.of("r", "register");
+		return List.of("register", "r");
 	}
 	
 	@Override

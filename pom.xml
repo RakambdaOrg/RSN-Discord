@@ -89,9 +89,12 @@
             <url>https://maven.mrcraftcod.fr/</url>
         </repository>
         <repository>
-            <id>jcenter</id>
-            <name>jcenter-bintray</name>
-            <url>http://jcenter.bintray.com</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>bintray</name>
+            <url>https://jcenter.bintray.com</url>
         </repository>
     </repositories>
     <dependencies>

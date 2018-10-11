@@ -1,11 +1,12 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.media;
 
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.JSONFiller;
 import net.dv8tion.jda.core.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.json.JSONObject;
-import java.net.URL;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Optional;
  * @author Thomas Couchoud
  * @since 2018-10-10
  */
-public abstract class AniListMedia implements JSONFiller{
+public abstract class AniListMedia implements JSONFiller, AniListObject{
 	private static final String QUERY = "media {\n" + "id\n" + "title {\n" + "userPreferred\n" + "}\n" + "season\n" + "type\n" + "format\n" + "status\n" + "episodes\n" + "chapters\n" + "isAdult\n" + "coverImage{\n" + "large\n" + "}\n" + "siteUrl" + "}";
 	
 	private String title;
@@ -22,9 +23,10 @@ public abstract class AniListMedia implements JSONFiller{
 	private AniListMediaSeason season;
 	private AniListMediaFormat format;
 	private AniListMediaStatus status;
-	private URL url;
-	private URL coverUrl;
+	private String url;
+	private String coverUrl;
 	private boolean isAdult;
+	private int id;
 	
 	protected AniListMedia(final AniListMediaType type){
 		this.type = type;
@@ -38,39 +40,35 @@ public abstract class AniListMedia implements JSONFiller{
 	
 	@Override
 	public void fromJSON(final JSONObject json) throws Exception{
+		this.id = json.getInt("id");
 		this.title = json.getJSONObject("title").getString("userPreferred");
 		this.season = Optional.ofNullable(Utilities.getJSONMaybe(json, String.class, "season")).map(AniListMediaSeason::valueOf).orElse(null);
 		this.format = Optional.ofNullable(Utilities.getJSONMaybe(json, String.class, "format")).map(AniListMediaFormat::valueOf).orElse(null);
 		this.status = Optional.ofNullable(Utilities.getJSONMaybe(json, String.class, "status")).map(AniListMediaStatus::valueOf).orElse(null);
-		this.url = new URL(json.getString("siteUrl"));
-		this.isAdult = json.getBoolean("isAdult");
-		this.coverUrl = new URL(json.getJSONObject("coverImage").getString("large"));
+		this.url = Optional.ofNullable(Utilities.getJSONMaybe(json, String.class, "siteUrl")).orElse(null);
+		this.isAdult = Optional.ofNullable(Utilities.getJSONMaybe(json, Boolean.class, "isAdult")).orElse(false);
+		this.coverUrl = json.getJSONObject("coverImage").getString("large");
 	}
 	
-	public void fillEmbed(final EmbedBuilder builder){
-		builder.setTitle(getTitle());
-		builder.addField("Format", Optional.ofNullable(getFormat()).map(Enum::name).orElse("UNKNOWN"), true);
-		builder.addField("Status", Optional.ofNullable(getStatus()).map(Enum::name).orElse("UNKNOWN"), true);
-		if(isAdult()){
-			builder.addField("Adult content", "true", true);
-		}
-		builder.addField("Link", getUrl().toString(), false);
-		builder.setThumbnail(getCoverUrl().toString());
+	@Override
+	public boolean equals(final Object obj){
+		return obj instanceof AniListMedia && Objects.equals(((AniListMedia) obj).getId(), getId());
 	}
 	
 	public abstract String getProgressType(final boolean contains);
 	
 	@Override
 	public String toString(){
-		return new ToStringBuilder(this).append("title", title).append("season", season).append("type", type).append("format", format).append("status", status).append("url", url).append("coverUrl", coverUrl).append("isAdult", isAdult).toString();
+		return new ToStringBuilder(this).append("id", id).append("title", title).append("season", season).append("type", type).append("format", format).append("status", status).append("url", url).append("coverUrl", coverUrl).append("isAdult", isAdult).toString();
 	}
 	
 	public AniListMediaType getType(){
 		return type;
 	}
 	
-	public URL getCoverUrl(){
-		return coverUrl;
+	@Override
+	public int getId(){
+		return this.id;
 	}
 	
 	public AniListMediaFormat getFormat(){
@@ -89,8 +87,16 @@ public abstract class AniListMedia implements JSONFiller{
 		return title;
 	}
 	
-	public URL getUrl(){
-		return url;
+	@Override
+	public void fillEmbed(final EmbedBuilder builder){
+		builder.setTitle(getTitle());
+		builder.addField("Format", Optional.ofNullable(getFormat()).map(Enum::name).orElse("UNKNOWN"), true);
+		builder.addField("Status", Optional.ofNullable(getStatus()).map(Enum::name).orElse("UNKNOWN"), true);
+		if(isAdult()){
+			builder.addField("Adult content", "true", true);
+		}
+		builder.addField("Link", getUrl(), false);
+		builder.setThumbnail(getCoverUrl());
 	}
 	
 	public boolean isAdult(){
@@ -99,5 +105,14 @@ public abstract class AniListMedia implements JSONFiller{
 	
 	public AniListMediaSeason getSeason(){
 		return season;
+	}
+	
+	public String getCoverUrl(){
+		return coverUrl;
+	}
+	
+	@Override
+	public String getUrl(){
+		return url;
 	}
 }

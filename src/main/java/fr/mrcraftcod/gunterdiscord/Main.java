@@ -2,7 +2,8 @@ package fr.mrcraftcod.gunterdiscord;
 
 import fr.mrcraftcod.gunterdiscord.listeners.*;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
-import fr.mrcraftcod.gunterdiscord.runners.AniListScheduledRunner;
+import fr.mrcraftcod.gunterdiscord.runners.AniListActivityScheduledRunner;
+import fr.mrcraftcod.gunterdiscord.runners.AniListNotificationScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.RemoveRolesScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
@@ -59,7 +60,8 @@ public class Main{
 			jda.getPresence().setGame(Game.playing("g?help pour l'aide"));
 			
 			executorService.scheduleAtFixedRate(new RemoveRolesScheduledRunner(jda), SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
-			executorService.scheduleAtFixedRate(new AniListScheduledRunner(jda), SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
+			executorService.scheduleAtFixedRate(new AniListActivityScheduledRunner(jda), SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
+			executorService.scheduleAtFixedRate(new AniListNotificationScheduledRunner(jda), SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
 		}
 		catch(final IOException e){
 			getLogger(null).error("Couldn't load settings", e);
