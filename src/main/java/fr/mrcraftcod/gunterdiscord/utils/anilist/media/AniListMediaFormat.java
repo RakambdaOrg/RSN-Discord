@@ -1,4 +1,4 @@
-package fr.mrcraftcod.gunterdiscord.utils.anilist;
+package fr.mrcraftcod.gunterdiscord.utils.anilist.media;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-10.

@@ -4,16 +4,14 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.AniListChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.AniListCodeConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.AniListLastAccessConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListChange;
-import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListMediaType;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListUtils;
+import fr.mrcraftcod.gunterdiscord.utils.anilist.activity.list.AniListListActivity;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import java.util.*;
 import java.util.function.Consumer;
@@ -26,7 +24,8 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-10-08
  */
 public class AniListScheduledRunner implements Runnable{
-	private static final String QUERY = "query($userID: Int, $page: Int, $perPage: Int, $date: Int){\n" + "  Page (page: $page, perPage: $perPage) {\n" + "    pageInfo {\n" + "      total\n" + "      currentPage\n" + "      lastPage\n" + "      hasNextPage\n" + "      perPage\n" + "    }\n" + "  \tactivities(userId: $userID, createdAt_greater: $date){\n" + "      ... on ListActivity{\n" + "        userId\n" + "        type\n" + "        createdAt\n" + "        progress\n" + "        siteUrl\n" + "        media {\n" + "          id\n" + "          title {\n" + "            userPreferred\n" + "          }\n" + "          season\n" + "          type\n" + "          format\n" + "          status\n" + "          episodes\n" + "          chapters\n" + "          isAdult\n" + "          coverImage{\n" + "            large\n" + "          }\n" + "          siteUrl" + "        }\n" + "      }\n" + "    }\n" + "  }\n" + "}";
+	private static final String QUERY_FEED = "query($userID: Int, $page: Int, $perPage: Int, $date: Int){\n" + "  Page (page: $page, perPage: $perPage) {\n" + "    pageInfo {\n" + "      total\n" + "      currentPage\n" + "      lastPage\n" + "      hasNextPage\n" + "      perPage\n" + "    }\n" + "  \tactivities(userId: $userID, createdAt_greater: $date){\n" + "      ... on ListActivity{\n" + "        userId\n" + "        type\n" + "        createdAt\n" + "        progress\n" + "        siteUrl\n" + "        media {\n" + "          id\n" + "          title {\n" + "            userPreferred\n" + "          }\n" + "          season\n" + "          type\n" + "          format\n" + "          status\n" + "          episodes\n" + "          chapters\n" + "          isAdult\n" + "          coverImage{\n" + "            large\n" + "          }\n" + "          siteUrl" + "        }\n" + "      }\n" + "    }\n" + "  }\n" + "}";
+	private static final String QUERY_NOTIFICATIONS = "query ($page: Int, $perPage: Int) {\n" + "  Page(page: $page, perPage: $perPage) {\n" + "    pageInfo {\n" + "      total\n" + "      currentPage\n" + "      lastPage\n" + "      hasNextPage\n" + "      perPage\n" + "    }\n" + "    notifications{\n" + "      ... on AiringNotification {\n" + "        type\n" + "        episode\n" + "        createdAt\n" + "        media {\n" + "          id\n" + "        }\n" + "      }\n" + "    }\n" + "  }\n" + "}\n";
 	private final JDA jda;
 	
 	public AniListScheduledRunner(final JDA jda){
@@ -39,7 +38,7 @@ public class AniListScheduledRunner implements Runnable{
 		getLogger(null).info("Starting AniList runner");
 		try{
 			final var channels = new ArrayList<TextChannel>();
-			final var userChanges = new HashMap<User, List<AniListChange>>();
+			final var userChanges = new HashMap<User, List<AniListListActivity>>();
 			for(final var guild : jda.getGuilds()){
 				final var channel = new AniListChannelConfig(guild).getObject(null);
 				if(Objects.nonNull(channel)){
@@ -62,7 +61,7 @@ public class AniListScheduledRunner implements Runnable{
 			getLogger(null).info("AniList API done");
 			for(final var user : userChanges.keySet()){
 				final var changes = userChanges.get(user);
-				changes.stream().sorted(Comparator.comparing(AniListChange::getCreatedAt)).map(change -> buildMessage(user, change)).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
+				changes.stream().sorted(Comparator.comparing(AniListListActivity::getCreatedAt)).map(change -> buildMessage(user, change)).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
 			}
 			
 			getLogger(null).info("AniList runner done");
@@ -72,7 +71,7 @@ public class AniListScheduledRunner implements Runnable{
 		}
 	}
 	
-	private List<AniListChange> getChanges(final Member member, final String code) throws Exception{
+	private List<AniListListActivity> getChanges(final Member member, final String code) throws Exception{
 		getLogger(member.getGuild()).info("Fetching user {}", member);
 		final var userInfoConf = new AniListLastAccessConfig(member.getGuild());
 		final var userInfo = userInfoConf.getValue(member.getUser().getIdLong());
@@ -81,51 +80,26 @@ public class AniListScheduledRunner implements Runnable{
 		variables.put("page", 1);
 		variables.put("perPage", 50);
 		variables.put("date", Integer.parseInt(userInfo.get("lastFetch")));
-		final var jsonResult = AniListUtils.getQuery(member, code, QUERY, variables);
-		final var changes = new ArrayList<AniListChange>();
+		final var jsonResult = AniListUtils.getQuery(member, code, QUERY_FEED, variables);
+		final var changes = new ArrayList<AniListListActivity>();
 		for(final var change : jsonResult.getJSONObject("data").getJSONObject("Page").getJSONArray("activities")){
 			changes.add(buildChange((JSONObject) change));
 		}
-		changes.stream().map(AniListChange::getCreatedAt).mapToLong(Date::getTime).max().ifPresent(val -> {
+		changes.stream().map(AniListListActivity::getCreatedAt).mapToLong(Date::getTime).max().ifPresent(val -> {
 			getLogger(member.getGuild()).info("New last fetched date for {}: {}", member, new Date(val));
 			userInfoConf.addValue(member.getUser().getIdLong(), "lastFetch", "" + (val / 1000L));
 		});
 		return changes;
 	}
 	
-	private MessageEmbed buildMessage(final User user, final AniListChange change){
+	private MessageEmbed buildMessage(final User user, final AniListListActivity change){
 		final var builder = new EmbedBuilder();
-		
 		builder.setAuthor(user.getName(), change.getUrl().toString(), user.getAvatarUrl());
-		builder.setColor(change.getType().getColor());
-		builder.setTimestamp(change.getCreatedAt().toInstant());
-		builder.setTitle(change.getMedia().getTitle());
-		
-		if(Objects.isNull(change.getProgress())){
-			builder.setDescription("Added to list");
-		}
-		else{
-			builder.setDescription(StringUtils.capitalize(change.getMedia().getProgressType(change.getProgress().contains("-"))) + " " + change.getProgress());
-		}
-		builder.addField("Format", Optional.ofNullable(change.getMedia().getFormat()).map(Enum::name).orElse("UNKNOWN"), true);
-		builder.addField("Status", Optional.ofNullable(change.getMedia().getStatus()).map(Enum::name).orElse("UNKNOWN"), true);
-		if(change.getMedia().getType() == AniListMediaType.ANIME){
-			Optional.ofNullable(change.getMedia().getSeason()).map(Enum::name).ifPresent(val -> builder.addField("Season", val, true));
-			Optional.ofNullable(change.getMedia().getEpisodes()).map(Object::toString).ifPresent(val -> builder.addField("Episodes", val, true));
-		}
-		else if(change.getMedia().getType() == AniListMediaType.MANGA){
-			Optional.ofNullable(change.getMedia().getChapters()).map(Object::toString).ifPresent(val -> builder.addField("Chapters", val, true));
-		}
-		if(change.getMedia().isAdult()){
-			builder.addField("Adult content", "true", true);
-		}
-		builder.addField("Link", change.getMedia().getUrl().toString(), false);
-		builder.setThumbnail(change.getMedia().getCoverUrl().toString());
-		
+		change.fillEmbed(builder);
 		return builder.build();
 	}
 	
-	private AniListChange buildChange(final JSONObject change) throws Exception{
-		return AniListChange.fromJSON(change);
+	private AniListListActivity buildChange(final JSONObject change) throws Exception{
+		return AniListListActivity.buildFromJSON(change);
 	}
 }

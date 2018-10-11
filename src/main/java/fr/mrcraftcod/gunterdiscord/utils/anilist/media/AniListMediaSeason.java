@@ -1,4 +1,4 @@
-package fr.mrcraftcod.gunterdiscord.utils.anilist;
+package fr.mrcraftcod.gunterdiscord.utils.anilist.media;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-10.
@@ -6,4 +6,4 @@ package fr.mrcraftcod.gunterdiscord.utils.anilist;
  * @author Thomas Couchoud
  * @since 2018-10-10
  */
-public enum AniListMediaStatus{FINISHED, RELEASING, NOT_YET_RELEASED, CANCELLED}
+public enum AniListMediaSeason{WINTER, SPRING, SUMMER, FALL}
