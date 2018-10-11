@@ -31,7 +31,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 public class Main{
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
 	private static final String SETTINGS_NAME = "settings.json";
-	private static final long SCHEDULED_DELAY = 60;
+	private static final long SCHEDULED_DELAY = 20;
 	private static final long SCHEDULED_PERIOD = 900;
 	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 	private static JDA jda;
@@ -60,8 +60,8 @@ public class Main{
 			jda.getPresence().setGame(Game.playing("g?help pour l'aide"));
 			
 			executorService.scheduleAtFixedRate(new RemoveRolesScheduledRunner(jda), SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
-			executorService.scheduleAtFixedRate(new AniListActivityScheduledRunner(jda), SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
-			executorService.scheduleAtFixedRate(new AniListNotificationScheduledRunner(jda), SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
+			executorService.scheduleAtFixedRate(new AniListActivityScheduledRunner(jda), 2 * SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
+			executorService.scheduleAtFixedRate(new AniListNotificationScheduledRunner(jda), 3 * SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
 		}
 		catch(final IOException e){
 			getLogger(null).error("Couldn't load settings", e);
