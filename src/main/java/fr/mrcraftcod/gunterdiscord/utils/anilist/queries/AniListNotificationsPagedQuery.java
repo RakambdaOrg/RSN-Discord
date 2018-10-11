@@ -2,11 +2,10 @@ package fr.mrcraftcod.gunterdiscord.utils.anilist.queries;
 
 import fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.airing.AniListAiringNotification;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-11.
@@ -15,7 +14,6 @@ import java.util.List;
  * @since 2018-10-11
  */
 public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniListAiringNotification>{
-	private static final Logger LOGGER = LoggerFactory.getLogger(AniListNotificationsPagedQuery.class);
 	private static final String QUERY_NOTIFICATIONS = AniListPagedQuery.pagedQuery("", "notifications{\n" + "... on " + AniListAiringNotification.getQuery() + "}\n");
 	
 	private final JSONObject variables;
@@ -50,7 +48,7 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 				}
 			}
 			catch(final Exception e){
-				LOGGER.error("Error building AniListAiringNotification object, json was {}", change, e);
+				getLogger(null).error("Error building AniListAiringNotification object, json was {}", change, e);
 			}
 		}
 		return changes;
