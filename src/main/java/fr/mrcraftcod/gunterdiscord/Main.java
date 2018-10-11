@@ -2,9 +2,9 @@ package fr.mrcraftcod.gunterdiscord;
 
 import fr.mrcraftcod.gunterdiscord.listeners.*;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
-import fr.mrcraftcod.gunterdiscord.runners.AniListActivityScheduledRunner;
-import fr.mrcraftcod.gunterdiscord.runners.AniListNotificationScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.RemoveRolesScheduledRunner;
+import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListActivityScheduledRunner;
+import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListNotificationScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;

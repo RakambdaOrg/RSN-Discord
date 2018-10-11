@@ -3,7 +3,7 @@ package fr.mrcraftcod.gunterdiscord.commands.anilist.fetch;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.runners.AniListActivityScheduledRunner;
+import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListActivityScheduledRunner;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;

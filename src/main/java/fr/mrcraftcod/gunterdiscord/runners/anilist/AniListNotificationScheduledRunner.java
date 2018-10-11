@@ -1,6 +1,5 @@
-package fr.mrcraftcod.gunterdiscord.runners;
+package fr.mrcraftcod.gunterdiscord.runners.anilist;
 
-import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListRunner;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.airing.AniListAiringNotification;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListNotificationsPagedQuery;
 import net.dv8tion.jda.core.JDA;
