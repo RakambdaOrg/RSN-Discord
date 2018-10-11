@@ -1,55 +1,56 @@
-package fr.mrcraftcod.gunterdiscord.commands;
+package fr.mrcraftcod.gunterdiscord.commands.anilist.fetch;
 
-import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListNotificationScheduledRunner;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
-import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
+ * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-08.
  *
  * @author Thomas Couchoud
- * @since 2018-04-12
+ * @since 2018-10-08
  */
-public class StopCommand extends BasicCommand{
+public class AniListFetchNotificationCommand extends BasicCommand{
+	/**
+	 * Constructor.
+	 *
+	 * @param parent The parent command.
+	 */
+	AniListFetchNotificationCommand(final Command parent){
+		super(parent);
+	}
+	
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		if(Utilities.isCreator(event.getMember())){
-			Main.close();
-			event.getJDA().shutdown();
-			getLogger(event.getGuild()).info("BOT STOPPING");
-		}
-		else{
-			return CommandResult.NOT_ALLOWED;
-		}
+		new AniListNotificationScheduledRunner(event.getJDA()).run();
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
 	public AccessLevel getAccessLevel(){
-		return AccessLevel.ADMIN;
+		return AccessLevel.MODERATOR;
 	}
 	
 	@Override
 	public String getName(){
-		return "Stop";
+		return "AniList fetch notification";
 	}
 	
 	@Override
 	public List<String> getCommand(){
-		return List.of("stop", "quit");
+		return List.of("notification", "n");
 	}
 	
 	@Override
 	public String getDescription(){
-		return "Arrête le bot";
+		return "Fetch les notifications d'AniList";
 	}
 	
 	@Override

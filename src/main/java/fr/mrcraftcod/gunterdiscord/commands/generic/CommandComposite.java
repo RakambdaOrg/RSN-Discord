@@ -29,6 +29,16 @@ public abstract class CommandComposite extends BasicCommand{
 	}
 	
 	/**
+	 * Constructor.
+	 *
+	 * @param parent The parent command.
+	 */
+	protected CommandComposite(final Command parent){
+		super(parent);
+		subCommands = new LinkedHashSet<>();
+	}
+	
+	/**
 	 * Add a sub command.
 	 *
 	 * @param command The command to add.

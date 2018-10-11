@@ -10,7 +10,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>10</java.version>
+        <java.version>11</java.version>
         <main.class>fr.mrcraftcod.gunterdiscord.Main</main.class>
     </properties>
     <packaging>jar</packaging>
@@ -89,16 +89,19 @@
             <url>https://maven.mrcraftcod.fr/</url>
         </repository>
         <repository>
-            <id>jcenter</id>
-            <name>jcenter-bintray</name>
-            <url>http://jcenter.bintray.com</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>bintray</name>
+            <url>https://jcenter.bintray.com</url>
         </repository>
     </repositories>
     <dependencies>
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>3.8.0_423</version>
+            <version>3.8.0_436</version>
             <exclusions>
                 <exclusion>
                     <groupId>net.dv8tion</groupId>
@@ -156,6 +159,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
             <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.mrcraftcod</groupId>
+            <artifactId>utils.http</artifactId>
+            <version>5.1.1</version>
         </dependency>
     </dependencies>
 </project>

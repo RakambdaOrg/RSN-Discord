@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.commands.*;
+import fr.mrcraftcod.gunterdiscord.commands.anilist.AniListCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
@@ -53,14 +54,15 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new MusicCommandComposite(),
 			new StopCommand(),
 			new TimeCommand(),
-			new BanInfoCommand()
+			new BanInfoCommand(),
+			new AniListCommandComposite()
 	};
 	
 	/**
 	 * Constructor.
 	 */
 	public CommandsMessageListener(){
-		final HashMap<String, Integer> counts = new HashMap<>();
+		final var counts = new HashMap<String, Integer>();
 		Arrays.asList(commands).forEach(c -> c.getCommand().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
 		final var clash = counts.keySet().stream().filter(k -> counts.get(k) > 1).collect(Collectors.joining(", "));
 		if(clash != null && !clash.isEmpty()){

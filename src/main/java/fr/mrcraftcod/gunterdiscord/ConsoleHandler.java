@@ -35,6 +35,14 @@ class ConsoleHandler extends Thread{
 		final var quitList = List.of("stop", "quit");
 		try(final var sc = new Scanner(System.in)){
 			while(!stop){
+				if(!sc.hasNext()){
+					try{
+						Thread.sleep(10000);
+					}
+					catch(final InterruptedException e){
+					}
+					continue;
+				}
 				final var line = sc.nextLine();
 				final var args = new LinkedList<>(Arrays.asList(line.split(" ")));
 				if(args.isEmpty()){
