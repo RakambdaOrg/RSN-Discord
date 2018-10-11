@@ -50,15 +50,19 @@ public interface AniListRunner<T extends AniListDatedObject, U extends AniListPa
 				}
 			}
 			getLogger(null).info("AniList API done");
-			for(final var user : userElements.keySet()){
-				final var element = userElements.get(user);
-				element.stream().sorted(Comparator.comparing(AniListDatedObject::getDate)).map(change -> buildMessage(user, change)).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
-			}
+			sendMessages(channels, userElements);
 			
 			getLogger(null).info("AniList {} runner done", getRunnerName());
 		}
 		catch(final Exception e){
 			getLogger(null).error("Error in AniList {} runner", getRunnerName(), e);
+		}
+	}
+	
+	default void sendMessages(final List<TextChannel> channels, final Map<User, List<T>> userElements){
+		for(final var user : userElements.keySet()){
+			final var element = userElements.get(user);
+			element.stream().sorted(Comparator.comparing(AniListDatedObject::getDate)).map(change -> buildMessage(user, change)).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
 		}
 	}
 	
@@ -84,7 +88,12 @@ public interface AniListRunner<T extends AniListDatedObject, U extends AniListPa
 	
 	default MessageEmbed buildMessage(final User user, final T change){
 		final var builder = new EmbedBuilder();
-		builder.setAuthor(user.getName(), change.getUrl(), user.getAvatarUrl());
+		if(Objects.isNull(user)){
+			builder.setAuthor(getJDA().getSelfUser().getName(), change.getUrl(), getJDA().getSelfUser().getAvatarUrl());
+		}
+		else{
+			builder.setAuthor(user.getName(), change.getUrl(), user.getAvatarUrl());
+		}
 		change.fillEmbed(builder);
 		return builder.build();
 	}
