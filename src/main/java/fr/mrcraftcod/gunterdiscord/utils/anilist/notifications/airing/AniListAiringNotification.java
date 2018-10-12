@@ -1,11 +1,13 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.airing;
 
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListDatedObject;
+import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.JSONFiller;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMedia;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.AniListNotificationType;
 import net.dv8tion.jda.core.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import java.awt.*;
 import java.util.Date;
@@ -68,6 +70,9 @@ public class AniListAiringNotification implements JSONFiller, AniListDatedObject
 		builder.setColor(Color.GREEN);
 		builder.setDescription("New release");
 		builder.addField("Episode", "" + getEpisode(), true);
+		
+		builder.addBlankField(false);
+		builder.addField("Media:", "", false);
 		getMedia().fillEmbed(builder);
 	}
 	
@@ -100,5 +105,13 @@ public class AniListAiringNotification implements JSONFiller, AniListDatedObject
 	@Override
 	public int hashCode(){
 		return this.getEpisode();
+	}
+	
+	@Override
+	public int compareTo(@NotNull final AniListObject o){
+		if(o instanceof AniListDatedObject){
+			return getDate().compareTo(((AniListDatedObject) o).getDate());
+		}
+		return Integer.compare(getId(), o.getId());
 	}
 }

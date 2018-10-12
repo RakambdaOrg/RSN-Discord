@@ -5,6 +5,7 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.AniListChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.AniListLastAccessConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListDatedObject;
+import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListPagedQuery;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
@@ -23,8 +24,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-10-11
  */
-public interface AniListRunner<T extends AniListDatedObject, U extends AniListPagedQuery<T>> extends Runnable{
-	
+public interface AniListRunner<T extends AniListObject, U extends AniListPagedQuery<T>> extends Runnable{
 	@Override
 	default void run(){
 		getLogger(null).info("Starting AniList {} runner", getRunnerName());
@@ -62,7 +62,7 @@ public interface AniListRunner<T extends AniListDatedObject, U extends AniListPa
 	default void sendMessages(final List<TextChannel> channels, final Map<User, List<T>> userElements){
 		for(final var user : userElements.keySet()){
 			final var element = userElements.get(user);
-			element.stream().sorted(Comparator.comparing(AniListDatedObject::getDate)).map(change -> buildMessage(user, change)).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
+			element.stream().sorted().map(change -> buildMessage(user, change)).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
 		}
 	}
 	
@@ -77,9 +77,9 @@ public interface AniListRunner<T extends AniListDatedObject, U extends AniListPa
 		var elementList = initQuery(userInfo).getResult(member);
 		if(keepOnlyNew()){
 			final var baseDate = new Date(Optional.ofNullable(userInfo.getOrDefault("lastFetch" + getFetcherID(), null)).map(Integer::parseInt).orElse(0) * 1000L);
-			elementList = elementList.stream().filter(e -> e.getDate().after(baseDate)).collect(Collectors.toList());
+			elementList = elementList.stream().filter(e -> e instanceof AniListDatedObject).filter(e -> ((AniListDatedObject) e).getDate().after(baseDate)).collect(Collectors.toList());
 		}
-		elementList.stream().map(AniListDatedObject::getDate).mapToLong(Date::getTime).max().ifPresent(val -> {
+		elementList.stream().filter(e -> e instanceof AniListDatedObject).map(e -> (AniListDatedObject) e).map(AniListDatedObject::getDate).mapToLong(Date::getTime).max().ifPresent(val -> {
 			getLogger(member.getGuild()).info("New last fetched date for {}: {}", member, new Date(val));
 			userInfoConf.addValue(member.getUser().getIdLong(), "lastFetch" + getFetcherID(), "" + (val / 1000L));
 		});

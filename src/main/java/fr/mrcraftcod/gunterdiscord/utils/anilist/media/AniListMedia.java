@@ -5,6 +5,7 @@ import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.JSONFiller;
 import net.dv8tion.jda.core.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import java.util.Objects;
 import java.util.Optional;
@@ -119,5 +120,10 @@ public abstract class AniListMedia implements JSONFiller, AniListObject{
 	@Override
 	public int hashCode(){
 		return this.getId();
+	}
+	
+	@Override
+	public int compareTo(@NotNull final AniListObject o){
+		return Integer.compare(getId(), o.getId());
 	}
 }

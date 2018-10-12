@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -18,6 +19,7 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 	
 	private final JSONObject variables;
 	private final Date date;
+	private int nextPage = 0;
 	
 	public AniListNotificationsPagedQuery(final int userId, final int date){
 		this.date = new Date(date * 1000L);
@@ -28,8 +30,8 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 	}
 	
 	@Override
-	public JSONObject getParameters(){
-		return this.variables;
+	public int getNextPage(){
+		return ++nextPage;
 	}
 	
 	@Override
@@ -43,7 +45,7 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 		for(final var change : json.getJSONObject("data").getJSONObject("Page").getJSONArray("notifications")){
 			try{
 				final var changeObj = buildChange((JSONObject) change);
-				if(changeObj.getDate().after(this.date)){
+				if(Objects.nonNull(changeObj) && changeObj.getDate().after(this.date)){
 					changes.add(changeObj);
 				}
 			}
@@ -54,7 +56,16 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 		return changes;
 	}
 	
+	@Override
+	public JSONObject getParameters(final int page){
+		variables.put("page", page);
+		return this.variables;
+	}
+	
 	private AniListAiringNotification buildChange(final JSONObject change) throws Exception{
-		return AniListAiringNotification.buildFromJSON(change);
+		if(change.keySet().size() > 0){
+			return AniListAiringNotification.buildFromJSON(change);
+		}
+		return null;
 	}
 }

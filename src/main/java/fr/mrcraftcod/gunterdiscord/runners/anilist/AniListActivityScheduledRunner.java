@@ -32,7 +32,7 @@ public class AniListActivityScheduledRunner implements AniListRunner<AniListList
 	
 	@Override
 	public AniListListActivityPagedQuery initQuery(final Map<String, String> userInfo){
-		return new AniListListActivityPagedQuery(Integer.parseInt(userInfo.get("userId")), Integer.parseInt(userInfo.get("lastFetch")));
+		return new AniListListActivityPagedQuery(Integer.parseInt(userInfo.get("userId")), Integer.parseInt(userInfo.get("lastFetch" + getFetcherID())));
 	}
 	
 	@Override

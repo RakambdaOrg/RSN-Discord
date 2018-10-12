@@ -21,6 +21,7 @@ public class AniListFetchCommandComposite extends CommandComposite{
 		super(parent);
 		addSubCommand(new AniListFetchActivityCommand(this));
 		addSubCommand(new AniListFetchNotificationCommand(this));
+		addSubCommand(new AniListFetchMediaListCommand(this));
 	}
 	
 	@Override

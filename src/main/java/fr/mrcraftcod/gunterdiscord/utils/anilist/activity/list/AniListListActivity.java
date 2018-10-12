@@ -2,11 +2,13 @@ package fr.mrcraftcod.gunterdiscord.utils.anilist.activity.list;
 
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListDatedObject;
+import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.JSONFiller;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMedia;
 import net.dv8tion.jda.core.EmbedBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import java.awt.*;
 import java.util.Date;
@@ -84,6 +86,8 @@ public abstract class AniListListActivity implements JSONFiller, AniListDatedObj
 			builder.setDescription(StringUtils.capitalize(getMedia().getProgressType(getProgress().contains("-"))) + " " + getProgress());
 		}
 		
+		builder.addBlankField(false);
+		builder.addField("Media:", "", false);
 		getMedia().fillEmbed(builder);
 	}
 	
@@ -107,5 +111,13 @@ public abstract class AniListListActivity implements JSONFiller, AniListDatedObj
 	@Override
 	public int hashCode(){
 		return this.getId();
+	}
+	
+	@Override
+	public int compareTo(@NotNull final AniListObject o){
+		if(o instanceof AniListDatedObject){
+			return getDate().compareTo(((AniListDatedObject) o).getDate());
+		}
+		return Integer.compare(getId(), o.getId());
 	}
 }
