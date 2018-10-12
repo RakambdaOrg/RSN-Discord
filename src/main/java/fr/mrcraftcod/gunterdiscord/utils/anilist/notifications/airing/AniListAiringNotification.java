@@ -49,7 +49,7 @@ public class AniListAiringNotification implements JSONFiller, AniListDatedObject
 			return false;
 		}
 		final var notification = (AniListAiringNotification) obj;
-		return Objects.equals(notification.getEpisode(), getEpisode()) && Objects.equals(notification.getEpisode(), getEpisode());
+		return Objects.equals(notification.getEpisode(), getEpisode()) && Objects.equals(notification.getMedia(), getMedia());
 	}
 	
 	@Override
