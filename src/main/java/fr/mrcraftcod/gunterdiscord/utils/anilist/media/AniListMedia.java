@@ -115,4 +115,9 @@ public abstract class AniListMedia implements JSONFiller, AniListObject{
 	public String getUrl(){
 		return url;
 	}
+	
+	@Override
+	public int hashCode(){
+		return this.getId();
+	}
 }

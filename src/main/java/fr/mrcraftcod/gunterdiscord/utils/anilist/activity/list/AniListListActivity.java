@@ -103,4 +103,9 @@ public abstract class AniListListActivity implements JSONFiller, AniListDatedObj
 	public static String getQuery(){
 		return QUERY;
 	}
+	
+	@Override
+	public int hashCode(){
+		return this.getId();
+	}
 }

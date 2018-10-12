@@ -96,4 +96,9 @@ public class AniListAiringNotification implements JSONFiller, AniListDatedObject
 	public AniListNotificationType getType(){
 		return type;
 	}
+	
+	@Override
+	public int hashCode(){
+		return this.getEpisode();
+	}
 }
