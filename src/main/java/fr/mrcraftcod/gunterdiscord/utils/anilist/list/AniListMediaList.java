@@ -68,7 +68,7 @@ public class AniListMediaList implements AniListDatedObject{
 		if(Objects.nonNull(getCompletedAt())){
 			builder.addField("Completed at", SIMPLE_DATE_FORMAT.format(getCompletedAt().asDate()), true);
 		}
-		builder.addField("Progress", "" + getProgress(), true);
+		builder.addField("Progress", getProgress() + "/" + Optional.ofNullable(getMedia().getItemCount()).map(Object::toString).orElse("?"), true);
 		
 		builder.addBlankField(false);
 		builder.addField("Media:", "", false);

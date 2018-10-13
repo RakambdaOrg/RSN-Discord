@@ -63,6 +63,8 @@ public abstract class AniListMedia implements JSONFiller, AniListObject{
 		return ToStringBuilder.reflectionToString(this);
 	}
 	
+	public abstract Integer getItemCount();
+	
 	public AniListMediaType getType(){
 		return type;
 	}

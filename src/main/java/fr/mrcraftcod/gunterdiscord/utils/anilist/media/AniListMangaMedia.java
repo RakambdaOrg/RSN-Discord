@@ -41,6 +41,11 @@ public class AniListMangaMedia extends AniListMedia{
 		return ToStringBuilder.reflectionToString(this);
 	}
 	
+	@Override
+	public Integer getItemCount(){
+		return getChapters();
+	}
+	
 	public Integer getChapters(){
 		return chapters;
 	}
