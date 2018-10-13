@@ -42,6 +42,11 @@ public class AniListAnimeMedia extends AniListMedia{
 		return ToStringBuilder.reflectionToString(this);
 	}
 	
+	@Override
+	public Integer getItemCount(){
+		return getEpisodes();
+	}
+	
 	public Integer getEpisodes(){
 		return episodes;
 	}
