@@ -56,7 +56,7 @@ public abstract class AniListListActivity implements JSONFiller, AniListDatedObj
 	
 	@Override
 	public String toString(){
-		return new ToStringBuilder(this).append("id", id).append("type", type).append("createdAt", createdAt).append("url", url).append("progress", progress).append("media", media).toString();
+		return ToStringBuilder.reflectionToString(this);
 	}
 	
 	protected abstract Color getColor();

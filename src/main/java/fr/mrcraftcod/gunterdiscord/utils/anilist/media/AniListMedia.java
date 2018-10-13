@@ -60,7 +60,7 @@ public abstract class AniListMedia implements JSONFiller, AniListObject{
 	
 	@Override
 	public String toString(){
-		return new ToStringBuilder(this).append("id", id).append("title", title).append("season", season).append("type", type).append("format", format).append("status", status).append("url", url).append("coverUrl", coverUrl).append("isAdult", isAdult).toString();
+		return ToStringBuilder.reflectionToString(this);
 	}
 	
 	public AniListMediaType getType(){

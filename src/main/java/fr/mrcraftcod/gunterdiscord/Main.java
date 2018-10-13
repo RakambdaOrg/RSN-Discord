@@ -3,7 +3,7 @@ package fr.mrcraftcod.gunterdiscord;
 import fr.mrcraftcod.gunterdiscord.listeners.*;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
 import fr.mrcraftcod.gunterdiscord.runners.RemoveRolesScheduledRunner;
-import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListActivityScheduledRunner;
+import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListMediaListScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListNotificationScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
@@ -59,9 +59,11 @@ public class Main{
 			jda.setAutoReconnect(true);
 			jda.getPresence().setGame(Game.playing("g?help pour l'aide"));
 			
-			executorService.scheduleAtFixedRate(new RemoveRolesScheduledRunner(jda), SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
-			executorService.scheduleAtFixedRate(new AniListActivityScheduledRunner(jda), 2 * SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
-			executorService.scheduleAtFixedRate(new AniListNotificationScheduledRunner(jda), 3 * SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
+			var index = 0;
+			executorService.scheduleAtFixedRate(new RemoveRolesScheduledRunner(jda), ++index * SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
+			// executorService.scheduleAtFixedRate(new AniListActivityScheduledRunner(jda), ++index * SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
+			executorService.scheduleAtFixedRate(new AniListNotificationScheduledRunner(jda), ++index * SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
+			executorService.scheduleAtFixedRate(new AniListMediaListScheduledRunner(jda), ++index * SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
 		}
 		catch(final IOException e){
 			getLogger(null).error("Couldn't load settings", e);

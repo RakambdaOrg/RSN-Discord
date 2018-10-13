@@ -6,6 +6,7 @@ import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.FuzzyDate;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMedia;
 import net.dv8tion.jda.core.EmbedBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import java.text.SimpleDateFormat;
@@ -21,7 +22,7 @@ import java.util.Optional;
  */
 public class AniListMediaList implements AniListDatedObject{
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
-	private static final String QUERY = "mediaList(userId: $userID) {\n" + "id\n" + "private\n" + "progress\n" + "priority\n" + "score(format: POINT_100)\n" + "completedAt{year month day}" + "startedAt{year month day}" + "status\n" + AniListMedia.getQuery() + "}";
+	private static final String QUERY = "mediaList(userId: $userID) {\n" + "id\n" + "private\n" + "progress\n" + "priority\n" + "score(format: POINT_100)\n" + "completedAt{year month day}" + "startedAt{year month day}" + "status\n" + "updatedAt\n" + "createdAt\n" + AniListMedia.getQuery() + "}";
 	private int id;
 	private AniListMediaListStatus status;
 	private AniListMedia media;
@@ -141,5 +142,10 @@ public class AniListMediaList implements AniListDatedObject{
 	
 	public static String getQuery(){
 		return QUERY;
+	}
+	
+	@Override
+	public String toString(){
+		return ToStringBuilder.reflectionToString(this);
 	}
 }

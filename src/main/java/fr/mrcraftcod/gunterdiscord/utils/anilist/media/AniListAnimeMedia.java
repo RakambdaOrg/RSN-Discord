@@ -39,7 +39,7 @@ public class AniListAnimeMedia extends AniListMedia{
 	
 	@Override
 	public String toString(){
-		return new ToStringBuilder(this).append("episodes", episodes).toString();
+		return ToStringBuilder.reflectionToString(this);
 	}
 	
 	public Integer getEpisodes(){

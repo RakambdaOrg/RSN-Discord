@@ -38,7 +38,7 @@ public class AniListMangaMedia extends AniListMedia{
 	
 	@Override
 	public String toString(){
-		return new ToStringBuilder(this).append("chapters", chapters).toString();
+		return ToStringBuilder.reflectionToString(this);
 	}
 	
 	public Integer getChapters(){

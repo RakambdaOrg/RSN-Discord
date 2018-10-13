@@ -56,7 +56,7 @@ public class AniListAiringNotification implements JSONFiller, AniListDatedObject
 	
 	@Override
 	public String toString(){
-		return new ToStringBuilder(this).append("episode", episode).append("createdAt", createdAt).append("type", type).append("media", media).append("id", id).toString();
+		return ToStringBuilder.reflectionToString(this);
 	}
 	
 	@Override
