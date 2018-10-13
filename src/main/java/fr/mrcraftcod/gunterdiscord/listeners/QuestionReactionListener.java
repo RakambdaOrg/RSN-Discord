@@ -35,8 +35,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 						event.getTextChannel().getMessageById(event.getReaction().getMessageIdLong()).queue(m -> {
 							try{
 								final var channel = new QuestionsFinalChannelConfig(event.getGuild()).getObject();
-								final var messagesSent = Actions.getMessage(channel, m.getEmbeds().stream().map(Utilities::buildEmbed).map(mess -> mess.addField("Approved by", event.getUser().getAsMention(), false).setTimestamp(m.getCreationTime())).map(EmbedBuilder::build).collect(Collectors.toList()));
-								messagesSent.forEach(mess -> mess.addReaction(BasicEmotes.CHECK_OK.getValue()).queue());
+								Actions.sendMessage(channel, mess -> mess.addReaction(BasicEmotes.CHECK_OK.getValue()).queue(), m.getEmbeds().stream().map(Utilities::buildEmbed).map(mess -> mess.addField("Approved by", event.getUser().getAsMention(), false).setTimestamp(m.getCreationTime())).map(EmbedBuilder::build).collect(Collectors.toList()));
 								Actions.deleteMessage(m);
 								try{
 									final var user = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("Utilisateur")).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e.getValue()).replaceAll("")))).findAny().orElse(null);
