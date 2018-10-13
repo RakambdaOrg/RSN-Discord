@@ -415,6 +415,16 @@ public class Actions{
 	}
 	
 	/**
+	 * Send a message to a channel.
+	 *
+	 * @param channel The channel to send to.
+	 * @param embeds  The messages to send.
+	 */
+	public static void sendMessage(@NotNull final TextChannel channel, @NotNull final Consumer<Message> onDone, @NotNull final List<MessageEmbed> embeds){
+		embeds.forEach(e -> sendMessage(channel, onDone, e));
+	}
+	
+	/**
 	 * Deafen members.
 	 *
 	 * @param members The member to set deaf.

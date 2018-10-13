@@ -39,7 +39,7 @@ public class AniListUtils{
 		if(handler.getStatus() == 200){
 			return handler.getRequestResult().getObject();
 		}
-		throw new Exception("Error sending API request, HTTP code " + handler.getStatus());
+		throw new Exception("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString() + " | query was " + query);
 	}
 	
 	public static String getAccessToken(final Member member, final String token) throws Exception{

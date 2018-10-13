@@ -14,6 +14,7 @@ import java.util.List;
 public class AniListListActivityPagedQuery implements AniListPagedQuery<AniListListActivity>{
 	private static final String QUERY_FEED = AniListPagedQuery.pagedQuery(", $userID: Int, $date: Int", "activities(userId: $userID, createdAt_greater: $date){\n" + "... on " + AniListListActivity.getQuery() + "}\n");
 	private final JSONObject variables;
+	private int nextPage = 0;
 	
 	public AniListListActivityPagedQuery(final int userId, final int date){
 		this.variables = new JSONObject();
@@ -24,13 +25,19 @@ public class AniListListActivityPagedQuery implements AniListPagedQuery<AniListL
 	}
 	
 	@Override
-	public JSONObject getParameters(){
-		return this.variables;
+	public int getNextPage(){
+		return ++nextPage;
 	}
 	
 	@Override
 	public String getQuery(){
 		return QUERY_FEED;
+	}
+	
+	@Override
+	public JSONObject getParameters(final int page){
+		variables.put("page", page);
+		return this.variables;
 	}
 	
 	@Override

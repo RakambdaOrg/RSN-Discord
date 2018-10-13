@@ -9,7 +9,7 @@ import org.json.JSONObject;
  * @author Thomas Couchoud
  * @since 2018-10-11
  */
-public interface AniListObject{
+public interface AniListObject extends Comparable<AniListObject>{
 	void fromJSON(JSONObject object) throws Exception;
 	
 	void fillEmbed(EmbedBuilder builder);
