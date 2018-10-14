@@ -71,14 +71,14 @@ public class HttpFolderAudioSourceManager extends ProbingAudioSourceManager impl
 				return url.getProtocol() + "://" + url.getHost() + href;
 			}
 			return url.toString() + "/" + href;
-		}).distinct().limit(getMaxToLoad()).map(trackUrl -> new AudioReference(trackUrl, URLDecoder.decode(StringEscapeUtils.unescapeHtml4(trackUrl.substring(trackUrl.lastIndexOf("/") + 1)), StandardCharsets.UTF_8))).map(trackHttpReference -> {
+		}).distinct().map(trackUrl -> new AudioReference(trackUrl, URLDecoder.decode(StringEscapeUtils.unescapeHtml4(trackUrl.substring(trackUrl.lastIndexOf("/") + 1)), StandardCharsets.UTF_8))).map(trackHttpReference -> {
 			try{
 				return handleLoadResult(detectContainer(trackHttpReference));
 			}
 			catch(final Exception ignored){
 			}
 			return null;
-		}).filter(audioItem -> audioItem instanceof AudioTrack).map(audioItem -> (AudioTrack) audioItem).collect(Collectors.toList());
+		}).filter(audioItem -> audioItem instanceof AudioTrack).limit(getMaxToLoad()).map(audioItem -> (AudioTrack) audioItem).collect(Collectors.toList());
 		return new BasicAudioPlaylist(httpReference.title, tracks, tracks.stream().findFirst().orElse(null), false);
 	}
 	
