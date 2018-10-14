@@ -58,6 +58,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	public static void play(final User requester, final VoiceChannel channel, final StatusTrackSchedulerListener listener, final Consumer<Object> onTrackAdded, final int skipCount, final int maxTracks, final String... identifier){
 		final var gunterAudioManager = getGunterPlayerManager(channel, listener);
 		gunterAudioManager.isSearchingTracks = true;
+		HttpFolderAudioSourceManager.setMaxToLoad(maxTracks);
 		for(final var ident : identifier){
 			gunterAudioManager.getAudioPlayerManager().loadItem(ident, new AudioLoadResultHandler(){
 				@Override

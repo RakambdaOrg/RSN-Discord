@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import static fr.mrcraftcod.gunterdiscord.commands.music.NowPlayingMusicCommand.getDuration;
 
 /**
@@ -57,11 +58,13 @@ public class QueueMusicCommand extends BasicCommand{
 		}).orElse(1) - 1;
 		final var position = new AtomicInteger(0);
 		final var queue = GunterAudioManager.getQueue(event.getGuild());
-		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, "File d'attente des musiques (Page " + page + "/" + Math.ceil(queue.size() / (double) perPage) + " - 10 max)");
+		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, "File d'attente des musiques (Page " + page + "/" + ((int) Math.ceil(queue.size() / (double) perPage)) + " - 10 max)");
 		builder.setDescription(String.format("%d musiques en attente", queue.size()));
-		queue.stream().skip(perPage * page).limit(perPage).forEach(track -> {
+		final var beforeDuration = new AtomicLong(queue.stream().limit(perPage * page).mapToLong(t -> t.getDuration() - t.getPosition()).sum());
+		queue.stream().skip(perPage * page).limit(perPage).forEachOrdered(track -> {
 			final var userData = track.getUserData(TrackUserFields.class);
-			builder.addField("Position " + position.addAndGet(1), track.getInfo().title + "\nDemandé par: " + userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Inconnu") + "\nLongeur: " + getDuration(track.getDuration()), false);
+			builder.addField("Position " + position.addAndGet(1), track.getInfo().title + "\nDemandé par: " + userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Inconnu") + "\nLongeur: " + getDuration(track.getDuration()) + "\nTemps estimé avant lecture: " + getDuration(beforeDuration.get()), false);
+			beforeDuration.addAndGet(track.getDuration() - track.getPosition());
 		});
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;
