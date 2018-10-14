@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands.music;
 
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
@@ -60,11 +61,11 @@ public class QueueMusicCommand extends BasicCommand{
 		final var queue = GunterAudioManager.getQueue(event.getGuild());
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, "File d'attente des musiques (Page " + page + "/" + ((int) Math.ceil(queue.size() / (double) perPage)) + " - 10 max)");
 		builder.setDescription(String.format("%d musiques en attente", queue.size()));
-		final var beforeDuration = new AtomicLong(queue.stream().limit(perPage * page).mapToLong(t -> t.getDuration() - t.getPosition()).sum());
+		final var beforeDuration = new AtomicLong(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).orElse(0L) + queue.stream().limit(perPage * page).mapToLong(AudioTrack::getDuration).sum());
 		queue.stream().skip(perPage * page).limit(perPage).forEachOrdered(track -> {
 			final var userData = track.getUserData(TrackUserFields.class);
 			builder.addField("Position " + position.addAndGet(1), track.getInfo().title + "\nDemandé par: " + userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Inconnu") + "\nLongeur: " + getDuration(track.getDuration()) + "\nTemps estimé avant lecture: " + getDuration(beforeDuration.get()), false);
-			beforeDuration.addAndGet(track.getDuration() - track.getPosition());
+			beforeDuration.addAndGet(track.getDuration());
 		});
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;
