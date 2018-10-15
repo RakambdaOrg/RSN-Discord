@@ -58,6 +58,7 @@ public class AniListMediaList implements AniListDatedObject{
 	public void fillEmbed(final EmbedBuilder builder){
 		builder.setTimestamp(getDate().toInstant());
 		builder.setColor(getStatus().getColor());
+		builder.setDescription("List changed");
 		builder.addField("List status", this.getStatus().toString(), true);
 		if(Objects.equals(isPrivateItem(), Boolean.TRUE)){
 			builder.addField("Private", "Yes", true);
