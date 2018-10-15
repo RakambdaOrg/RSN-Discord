@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands.music;
 
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
@@ -19,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import static fr.mrcraftcod.gunterdiscord.commands.music.NowPlayingMusicCommand.getDuration;
 
 /**
@@ -55,13 +57,15 @@ public class QueueMusicCommand extends BasicCommand{
 			}
 			return null;
 		}).orElse(1) - 1;
-		final var position = new AtomicInteger(0);
+		final var position = new AtomicInteger(1);
 		final var queue = GunterAudioManager.getQueue(event.getGuild());
-		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, "File d'attente des musiques (Page " + page + "/" + Math.ceil(queue.size() / (double) perPage) + " - 10 max)");
+		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, "File d'attente des musiques (Page " + page + "/" + ((int) Math.ceil(queue.size() / (double) perPage)) + " - 10 max)");
 		builder.setDescription(String.format("%d musiques en attente", queue.size()));
-		queue.stream().skip(perPage * page).limit(perPage).forEach(track -> {
+		final var beforeDuration = new AtomicLong(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).orElse(0L) + queue.stream().limit(perPage * page).mapToLong(AudioTrack::getDuration).sum());
+		queue.stream().skip(perPage * page).limit(perPage).forEachOrdered(track -> {
 			final var userData = track.getUserData(TrackUserFields.class);
-			builder.addField("Position " + position.addAndGet(1), track.getInfo().title + "\nDemandé par: " + userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Inconnu") + "\nLongeur: " + getDuration(track.getDuration()), false);
+			builder.addField("Position " + position.addAndGet(1), track.getInfo().title + "\nDemandé par: " + userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Inconnu") + "\nLongeur: " + getDuration(track.getDuration()) + "\nTemps estimé avant lecture: " + getDuration(beforeDuration.get()), false);
+			beforeDuration.addAndGet(track.getDuration());
 		});
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;

@@ -68,7 +68,8 @@ public class AddMusicCommand extends BasicCommand{
 					Actions.reply(event, "%s, musique inconnue", event.getAuthor().getAsMention());
 				}
 				else if(track instanceof AudioTrack){
-					Actions.reply(event, "%s a ajouté %s, temps d'attente estimé: %s", event.getAuthor().getAsMention(), ((AudioTrack) track).getInfo().title, getDuration(GunterAudioManager.getQueue(event.getGuild()).stream().mapToLong(AudioTrack::getDuration).sum()));
+					final var queue = GunterAudioManager.getQueue(event.getGuild());
+					Actions.reply(event, "%s a ajouté %s, temps d'attente estimé: %s", event.getAuthor().getAsMention(), ((AudioTrack) track).getInfo().title, getDuration(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + queue.stream().takeWhile(t -> !track.equals(t)).mapToLong(AudioTrack::getDuration).sum()));
 				}
 				else{
 					Actions.reply(event, track.toString());

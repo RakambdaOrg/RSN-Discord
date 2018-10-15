@@ -38,6 +38,7 @@ import static com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools.getHeade
 public class HttpFolderAudioSourceManager extends ProbingAudioSourceManager implements HttpConfigurable{
 	private final static Logger LOGGER = LoggerFactory.getLogger(HttpFolderAudioSourceManager.class);
 	private final HttpInterfaceManager httpInterfaceManager;
+	private static int MAX_TO_LOAD = 10;
 	
 	public HttpFolderAudioSourceManager(){
 		httpInterfaceManager = new ThreadLocalHttpInterfaceManager(HttpClientTools.createSharedCookiesHttpBuilder().setRedirectStrategy(new HttpClientTools.NoRedirectsStrategy()), HttpClientTools.DEFAULT_REQUEST_CONFIG);
@@ -56,6 +57,29 @@ public class HttpFolderAudioSourceManager extends ProbingAudioSourceManager impl
 	@Override
 	public void configureBuilder(final Consumer<HttpClientBuilder> configurator){
 		httpInterfaceManager.configureBuilder(configurator);
+	}
+	
+	private AudioPlaylist loadPlaylist(final AudioReference httpReference) throws IOException{
+		final var url = new URL(httpReference.identifier);
+		final var root = Jsoup.parse(url, 10000);
+		final var tracks = root.getElementsByTag("a").stream().map(a -> {
+			var href = a.attr("href");
+			if(href.startsWith("http://") || href.startsWith("https://")){
+				return href;
+			}
+			else if(href.startsWith("/")){
+				return url.getProtocol() + "://" + url.getHost() + href;
+			}
+			return url.toString() + "/" + href;
+		}).distinct().map(trackUrl -> new AudioReference(trackUrl, URLDecoder.decode(StringEscapeUtils.unescapeHtml4(trackUrl.substring(trackUrl.lastIndexOf("/") + 1)), StandardCharsets.UTF_8))).map(trackHttpReference -> {
+			try{
+				return handleLoadResult(detectContainer(trackHttpReference));
+			}
+			catch(final Exception ignored){
+			}
+			return null;
+		}).filter(audioItem -> audioItem instanceof AudioTrack).limit(getMaxToLoad()).map(audioItem -> (AudioTrack) audioItem).collect(Collectors.toList());
+		return new BasicAudioPlaylist(httpReference.title, tracks, tracks.stream().findFirst().orElse(null), false);
 	}
 	
 	@Override
@@ -86,27 +110,8 @@ public class HttpFolderAudioSourceManager extends ProbingAudioSourceManager impl
 		return null;
 	}
 	
-	private AudioPlaylist loadPlaylist(final AudioReference httpReference) throws IOException{
-		final var url = new URL(httpReference.identifier);
-		final var root = Jsoup.parse(url, 10000);
-		final var tracks = root.getElementsByTag("a").stream().map(a -> {
-			var href = a.attr("href");
-			if(href.startsWith("http://") || href.startsWith("https://")){
-				return href;
-			}
-			else if(href.startsWith("/")){
-				return url.getProtocol() + "://" + url.getHost() + href;
-			}
-			return url.toString() + "/" + href;
-		}).distinct().map(trackUrl -> new AudioReference(trackUrl, URLDecoder.decode(StringEscapeUtils.unescapeHtml4(trackUrl.substring(trackUrl.lastIndexOf("/") + 1)), StandardCharsets.UTF_8))).map(trackHttpReference -> {
-			try{
-				return handleLoadResult(detectContainer(trackHttpReference));
-			}
-			catch(final Exception ignored){
-			}
-			return null;
-		}).filter(audioItem -> audioItem instanceof AudioTrack).map(audioItem -> (AudioTrack) audioItem).collect(Collectors.toList());
-		return new BasicAudioPlaylist(httpReference.title, tracks, tracks.stream().findFirst().orElse(null), false);
+	public static int getMaxToLoad(){
+		return MAX_TO_LOAD;
 	}
 	
 	private MediaContainerDetectionResult detectContainer(final AudioReference reference){
@@ -171,5 +176,9 @@ public class HttpFolderAudioSourceManager extends ProbingAudioSourceManager impl
 	@Override
 	public void shutdown(){
 		// Nothing to shut down
+	}
+	
+	public static void setMaxToLoad(final int maxToLoad){
+		MAX_TO_LOAD = maxToLoad;
 	}
 }
