@@ -11,8 +11,10 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-12.
@@ -22,7 +24,7 @@ import java.util.Optional;
  */
 public class AniListMediaList implements AniListDatedObject{
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
-	private static final String QUERY = "mediaList(userId: $userID) {\n" + "id\n" + "private\n" + "progress\n" + "priority\n" + "score(format: POINT_100)\n" + "completedAt{year month day}" + "startedAt{year month day}" + "status\n" + "updatedAt\n" + "createdAt\n" + AniListMedia.getQuery() + "}";
+	private static final String QUERY = "mediaList(userId: $userID) {\n" + "id\n" + "private\n" + "progress\n" + "priority\n" + "customLists\n" + "score(format: POINT_100)\n" + "completedAt{year month day}" + "startedAt{year month day}" + "status\n" + "updatedAt\n" + "createdAt\n" + AniListMedia.getQuery() + "}";
 	private int id;
 	private AniListMediaListStatus status;
 	private AniListMedia media;
@@ -33,6 +35,7 @@ public class AniListMediaList implements AniListDatedObject{
 	private Date updatedAt;
 	private FuzzyDate startedAt;
 	private FuzzyDate completedAt;
+	private HashMap<String, Boolean> customLists;
 	
 	public static AniListMediaList buildFromJSON(final JSONObject json) throws Exception{
 		final var mediaList = new AniListMediaList();
@@ -52,6 +55,11 @@ public class AniListMediaList implements AniListDatedObject{
 		this.updatedAt = new Date(Optional.ofNullable(Utilities.getJSONMaybe(json, Integer.class, "updatedAt")).orElse(0) * 1000L);
 		this.startedAt = FuzzyDate.buildFromJSON(json, "startedAt");
 		this.completedAt = FuzzyDate.buildFromJSON(json, "completedAt");
+		this.customLists = new HashMap<>();
+		final var customListsJson = json.getJSONObject("customLists");
+		for(final var list : customListsJson.keySet()){
+			customLists.put(list, customListsJson.getBoolean(list));
+		}
 	}
 	
 	@Override
@@ -70,6 +78,11 @@ public class AniListMediaList implements AniListDatedObject{
 			builder.addField("Completed at", SIMPLE_DATE_FORMAT.format(getCompletedAt().asDate()), true);
 		}
 		builder.addField("Progress", getProgress() + "/" + Optional.ofNullable(getMedia().getItemCount()).map(Object::toString).orElse("?"), true);
+		
+		final var lists = this.customLists.keySet().stream().filter(k -> customLists.get(k)).collect(Collectors.joining(", "));
+		if(Objects.nonNull(lists) && !lists.isBlank()){
+			builder.addField("In custom lists", lists, true);
+		}
 		
 		builder.addBlankField(false);
 		builder.addField("Media:", "", false);
