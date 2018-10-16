@@ -43,7 +43,7 @@ public abstract class AniListListActivity implements JSONFiller, AniListDatedObj
 	@Override
 	public void fromJSON(final JSONObject json) throws Exception{
 		this.id = json.getInt("id");
-		this.createdAt = new Date(json.getInt("createdAt") * 1000L);
+		this.createdAt = new Date(json.optInt("createdAt") * 1000L);
 		this.url = json.getString("siteUrl");
 		this.progress = Utilities.getJSONMaybe(json, String.class, "progress");
 		this.media = AniListMedia.buildFromJSON(json.getJSONObject("media"));
