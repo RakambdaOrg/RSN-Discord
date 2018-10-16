@@ -51,14 +51,16 @@ public class AniListMediaList implements AniListDatedObject{
 		this.progress = Utilities.getJSONMaybe(json, Integer.class, "progress");
 		this.status = AniListMediaListStatus.valueOf(json.getString("status"));
 		this.media = AniListMedia.buildFromJSON(json.getJSONObject("media"));
-		this.createdAt = new Date(Optional.ofNullable(Utilities.getJSONMaybe(json, Integer.class, "createdAt")).orElse(0) * 1000L);
-		this.updatedAt = new Date(Optional.ofNullable(Utilities.getJSONMaybe(json, Integer.class, "updatedAt")).orElse(0) * 1000L);
+		this.createdAt = new Date(json.optInt("createdAt") * 1000L);
+		this.updatedAt = new Date(json.optInt("updatedAt") * 1000L);
 		this.startedAt = FuzzyDate.buildFromJSON(json, "startedAt");
 		this.completedAt = FuzzyDate.buildFromJSON(json, "completedAt");
 		this.customLists = new HashMap<>();
-		final var customListsJson = json.getJSONObject("customLists");
-		for(final var list : customListsJson.keySet()){
-			customLists.put(list, customListsJson.getBoolean(list));
+		final var customListsJson = json.optJSONObject("customLists");
+		if(Objects.nonNull(customListsJson)){
+			for(final var list : customListsJson.keySet()){
+				customLists.put(list, customListsJson.getBoolean(list));
+			}
 		}
 	}
 	

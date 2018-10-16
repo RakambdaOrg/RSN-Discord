@@ -41,7 +41,7 @@ public class AniListAiringNotification implements JSONFiller, AniListDatedObject
 	public void fromJSON(final JSONObject json) throws Exception{
 		this.id = json.getInt("id");
 		this.episode = json.getInt("episode");
-		this.createdAt = new Date(json.getInt("createdAt") * 1000L);
+		this.createdAt = new Date(json.optInt("createdAt") * 1000L);
 		this.media = AniListMedia.buildFromJSON(json.getJSONObject("media"));
 	}
 	

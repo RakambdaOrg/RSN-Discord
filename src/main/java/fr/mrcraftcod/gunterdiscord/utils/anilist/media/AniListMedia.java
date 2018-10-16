@@ -46,7 +46,7 @@ public abstract class AniListMedia implements JSONFiller, AniListObject{
 		this.season = Optional.ofNullable(Utilities.getJSONMaybe(json, String.class, "season")).map(AniListMediaSeason::valueOf).orElse(null);
 		this.format = Optional.ofNullable(Utilities.getJSONMaybe(json, String.class, "format")).map(AniListMediaFormat::valueOf).orElse(null);
 		this.status = Optional.ofNullable(Utilities.getJSONMaybe(json, String.class, "status")).map(AniListMediaStatus::valueOf).orElse(null);
-		this.url = Optional.ofNullable(Utilities.getJSONMaybe(json, String.class, "siteUrl")).orElse(null);
+		this.url = json.optString("siteUrl", null);
 		this.isAdult = Optional.ofNullable(Utilities.getJSONMaybe(json, Boolean.class, "isAdult")).orElse(false);
 		this.coverUrl = json.getJSONObject("coverImage").getString("large");
 	}
