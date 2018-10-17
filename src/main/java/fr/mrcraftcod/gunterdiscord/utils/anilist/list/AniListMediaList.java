@@ -36,6 +36,7 @@ public class AniListMediaList implements AniListDatedObject{
 	private FuzzyDate startedAt;
 	private FuzzyDate completedAt;
 	private HashMap<String, Boolean> customLists;
+	private Integer score;
 	
 	public static AniListMediaList buildFromJSON(final JSONObject json) throws Exception{
 		final var mediaList = new AniListMediaList();
@@ -49,6 +50,7 @@ public class AniListMediaList implements AniListDatedObject{
 		this.privateItem = json.getBoolean("private");
 		this.priority = Utilities.getJSONMaybe(json, Integer.class, "priority");
 		this.progress = Utilities.getJSONMaybe(json, Integer.class, "progress");
+		this.score = Utilities.getJSONMaybe(json, Integer.class, "score");
 		this.status = AniListMediaListStatus.valueOf(json.getString("status"));
 		this.media = AniListMedia.buildFromJSON(json.getJSONObject("media"));
 		this.createdAt = new Date(json.optInt("createdAt") * 1000L);
@@ -70,6 +72,9 @@ public class AniListMediaList implements AniListDatedObject{
 		builder.setColor(getStatus().getColor());
 		builder.setDescription("List changed");
 		builder.addField("List status", this.getStatus().toString(), true);
+		if(Objects.nonNull(getScore())){
+			builder.addField("Score", this.getScore().toString(), true);
+		}
 		if(Objects.equals(isPrivateItem(), Boolean.TRUE)){
 			builder.addField("Private", "Yes", true);
 		}
@@ -94,6 +99,10 @@ public class AniListMediaList implements AniListDatedObject{
 	@Override
 	public Date getDate(){
 		return this.updatedAt;
+	}
+	
+	public Integer getScore(){
+		return score;
 	}
 	
 	public AniListMediaListStatus getStatus(){
