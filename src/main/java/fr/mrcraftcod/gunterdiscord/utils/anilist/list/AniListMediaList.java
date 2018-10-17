@@ -73,7 +73,7 @@ public class AniListMediaList implements AniListDatedObject{
 		builder.setDescription("List changed");
 		builder.addField("List status", this.getStatus().toString(), true);
 		if(Objects.nonNull(getScore())){
-			builder.addField("Score", this.getScore().toString(), true);
+			builder.addField("Score", this.getScore() + "/100", true);
 		}
 		if(Objects.equals(isPrivateItem(), Boolean.TRUE)){
 			builder.addField("Private", "Yes", true);
