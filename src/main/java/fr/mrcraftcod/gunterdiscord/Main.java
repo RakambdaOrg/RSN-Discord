@@ -49,11 +49,12 @@ public class Main{
 			jda.awaitReady();
 			jda.addEventListener(new CommandsMessageListener());
 			// jda.addEventListener(new BannedRegexMessageListener());
-			jda.addEventListener(new OnlyImagesMessageListener());
+			// jda.addEventListener(new OnlyImagesMessageListener());
 			jda.addEventListener(new ShutdownListener());
 			jda.addEventListener(new LogListener());
 			jda.addEventListener(new AutoRolesListener());
 			jda.addEventListener(new IdeaChannelMessageListener());
+			jda.addEventListener(new EmotesMessageListener());
 			jda.addEventListener(new QuestionReactionListener());
 			// jda.addEventListener(new VoiceTextChannelsListener());
 			jda.setAutoReconnect(true);
