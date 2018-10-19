@@ -53,7 +53,8 @@ public class Settings{
 			new AniListCodeConfig(null),
 			new AniListChannelConfig(null),
 			new AniListAccessTokenConfig(null),
-			new AniListLastAccessConfig(null)
+			new AniListLastAccessConfig(null),
+			new EmoteUsageConfig(null)
 	};
 	private static Path path;
 	private static JSONObject settings;
