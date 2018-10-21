@@ -102,7 +102,6 @@ public abstract class AniListMedia implements JSONFiller, AniListObject{
 			builder.addField("Adult content", "true", true);
 		}
 		builder.addField("Link", getUrl(), false);
-		builder.setFooter(getUrl(), "https://anilist.co//img/icons/favicon-32x32.png");
 		builder.setThumbnail(getCoverUrl());
 	}
 	
