@@ -29,7 +29,7 @@ public class EmotesCommand extends BasicCommand{
 			final var percent = 100 * value / total;
 			if(percent >= 1){
 				final var name = Arrays.stream(key.split(":")).findFirst().orElse("ERROR");
-				Actions.reply(event, String.format("Emote: %s -> utilisation à %.2f%%", emotes.stream().filter(e -> e.getName().equals(name)).findAny().map(Emote::getAsMention).orElse("ERROR"), percent));
+				Actions.reply(event, String.format("Emote: %s -> utilisation à %.2f%%", emotes.stream().filter(e -> e.getName().equals(name)).findAny().map(Emote::getAsMention).orElse(name), percent));
 			}
 		});
 		return CommandResult.SUCCESS;
