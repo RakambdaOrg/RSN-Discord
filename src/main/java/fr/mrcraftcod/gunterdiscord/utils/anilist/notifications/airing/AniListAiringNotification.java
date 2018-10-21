@@ -68,7 +68,7 @@ public class AniListAiringNotification implements JSONFiller, AniListDatedObject
 	public void fillEmbed(final EmbedBuilder builder){
 		builder.setTimestamp(getDate().toInstant());
 		builder.setColor(Color.GREEN);
-		builder.setDescription("New release");
+		builder.setTitle("New release", getMedia().getUrl());
 		builder.addField("Episode", "" + getEpisode(), true);
 		
 		builder.addBlankField(false);

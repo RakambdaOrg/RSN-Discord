@@ -1,9 +1,26 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.media;
 
+import java.util.Objects;
+
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-10.
  *
  * @author Thomas Couchoud
  * @since 2018-10-10
  */
-public enum AniListMediaFormat{TV, TV_SHORT, MOVIE, SPECIAL, OVA, ONA, MUSIC, MANGA, NOVEL, ONE_SHOT}
+public enum AniListMediaFormat{TV(":tv:"), TV_SHORT(":tv: short"), MOVIE(":cinema:"), SPECIAL("Special"), OVA, ONA, MUSIC(":musical_note:"), MANGA(":books:"), NOVEL("Novel"), ONE_SHOT("One shot");
+	
+	private final String display;
+	
+	AniListMediaFormat(){
+		this(null);
+	}
+	
+	AniListMediaFormat(final String display){
+		this.display = display;
+	}
+	
+	@Override
+	public String toString(){
+		return Objects.isNull(display) ? name() : this.display;
+	}}
