@@ -101,7 +101,7 @@ public abstract class AniListMedia implements JSONFiller, AniListObject{
 		if(isAdult()){
 			builder.addField("Adult content", "true", true);
 		}
-		builder.addField("Link", getUrl(), false);
+		//builder.addField("Link", getUrl(), false);
 		builder.setThumbnail(getCoverUrl());
 	}
 	

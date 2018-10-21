@@ -6,7 +6,7 @@ package fr.mrcraftcod.gunterdiscord.utils.anilist.media;
  * @author Thomas Couchoud
  * @since 2018-10-10
  */
-public enum AniListMediaStatus{FINISHED(":ballot_box_with_check:"), RELEASING(":satellite:"), NOT_YET_RELEASED(":alarm_clock:"), CANCELLED(":no_entry:");
+public enum AniListMediaStatus{FINISHED("Finished"), RELEASING("Releasing"), NOT_YET_RELEASED("Not yet released"), CANCELLED("Cancelled");
 	
 	private final String display;
 	
