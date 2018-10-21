@@ -23,12 +23,15 @@ public class EmotesCommand extends BasicCommand{
 		final var config = new EmoteUsageConfig(event.getGuild()).getAsMap();
 		final var sorted = config.entrySet().stream().sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
 		final var total = sorted.values().stream().mapToLong(l -> l).sum() * 1.0D;
-		final var message = new StringBuilder();
 		sorted.forEach((key, value) -> {
-			final var name = Arrays.stream(key.split(":")).findFirst().orElse("ERROR");
-			message.append("Emote :").append(name).append(": utilisation à ").append(100 * value / total).append("%").append("\n");
+			final var percent = 100 * value / total;
+			if(percent >= 1){
+				final var message = new StringBuilder();
+				final var name = Arrays.stream(key.split(":")).findFirst().orElse("ERROR");
+				message.append("Emote :").append(name).append(": utilisation à ").append(percent).append("%").append("\n");
+				Actions.reply(event, message.toString());
+			}
 		});
-		Actions.reply(event, message.toString());
 		return CommandResult.SUCCESS;
 	}
 	
