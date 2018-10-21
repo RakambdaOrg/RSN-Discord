@@ -5,6 +5,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.EmoteUsageConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Emote;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.*;
@@ -23,13 +24,12 @@ public class EmotesCommand extends BasicCommand{
 		final var config = new EmoteUsageConfig(event.getGuild()).getAsMap();
 		final var sorted = config.entrySet().stream().sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
 		final var total = sorted.values().stream().mapToLong(l -> l).sum() * 1.0D;
+		final var emotes = event.getGuild().getEmotes();
 		sorted.forEach((key, value) -> {
 			final var percent = 100 * value / total;
 			if(percent >= 1){
-				final var message = new StringBuilder();
 				final var name = Arrays.stream(key.split(":")).findFirst().orElse("ERROR");
-				message.append("Emote :").append(name).append(": utilisation à ").append(percent).append("%").append("\n");
-				Actions.reply(event, message.toString());
+				Actions.reply(event, String.format("Emote: %s -> utilisation à %.2f%%", emotes.stream().filter(e -> e.getName().equals(name)).findAny().map(Emote::getAsMention).orElse("ERROR"), percent));
 			}
 		});
 		return CommandResult.SUCCESS;
