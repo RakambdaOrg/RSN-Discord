@@ -8,7 +8,7 @@ import java.util.Objects;
  * @author Thomas Couchoud
  * @since 2018-10-10
  */
-public enum AniListMediaFormat{TV(":tv:"), TV_SHORT(":tv: short"), MOVIE(":cinema:"), SPECIAL("Special"), OVA, ONA, MUSIC(":musical_note:"), MANGA(":books:"), NOVEL("Novel"), ONE_SHOT("One shot");
+public enum AniListMediaFormat{TV("TV"), TV_SHORT("TV Short"), MOVIE("Movie"), SPECIAL("Special"), OVA, ONA, MUSIC("Music"), MANGA("Manga"), NOVEL("Novel"), ONE_SHOT("One shot");
 	
 	private final String display;
 	

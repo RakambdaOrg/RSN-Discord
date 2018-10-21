@@ -8,7 +8,7 @@ import java.awt.*;
  * @author Thomas Couchoud
  * @since 2018-10-12
  */
-public enum AniListMediaListStatus{CURRENT(Color.GREEN, ":eyes:"), PLANNING(Color.WHITE, ":soon:"), COMPLETED(Color.BLACK, ":white_check_mark:"), DROPPED(Color.RED, ":no_good:"), PAUSED(Color.ORANGE, ":pause_button:"), REPEATING(Color.YELLOW, ":repeat:");
+public enum AniListMediaListStatus{CURRENT(Color.GREEN, "Current"), PLANNING(Color.WHITE, "Planning"), COMPLETED(Color.BLACK, "Completed"), DROPPED(Color.RED, "Dropped"), PAUSED(Color.ORANGE, "Paused"), REPEATING(Color.YELLOW, "Repeating");
 	
 	private final Color color;
 	private final String display;
