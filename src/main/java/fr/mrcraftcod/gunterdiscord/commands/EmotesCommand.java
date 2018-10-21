@@ -26,7 +26,7 @@ public class EmotesCommand extends BasicCommand{
 		final var message = new StringBuilder();
 		sorted.forEach((key, value) -> {
 			final var name = Arrays.stream(key.split(":")).findFirst().orElse("ERROR");
-			message.append("Emote ").append(name).append(" utilisation à ").append(100 * value / total).append("%").append("\n");
+			message.append("Emote :").append(name).append(": utilisation à ").append(100 * value / total).append("%").append("\n");
 		});
 		Actions.reply(event, message.toString());
 		return CommandResult.SUCCESS;
