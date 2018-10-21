@@ -96,13 +96,13 @@ public abstract class AniListMedia implements JSONFiller, AniListObject{
 		if(getType().shouldDisplay()){
 			builder.addField("Type", getType().toString(), true);
 		}
-		builder.addField("Format", Optional.ofNullable(getFormat()).map(Enum::name).orElse("UNKNOWN"), true);
-		builder.addField("Status", Optional.ofNullable(getStatus()).map(Enum::name).orElse("UNKNOWN"), true);
+		builder.addField("Format", Optional.ofNullable(getFormat()).map(Enum::toString).orElse("UNKNOWN"), true);
+		builder.addField("Status", Optional.ofNullable(getStatus()).map(Enum::toString).orElse("UNKNOWN"), true);
 		if(isAdult()){
 			builder.addField("Adult content", "true", true);
 		}
 		builder.addField("Link", getUrl(), false);
-		builder.setFooter(getUrl(), "https://anilist.co/img/icons/icon.svg");
+		builder.setFooter(getUrl(), "https://anilist.co//img/icons/favicon-32x32.png");
 		builder.setThumbnail(getCoverUrl());
 	}
 	

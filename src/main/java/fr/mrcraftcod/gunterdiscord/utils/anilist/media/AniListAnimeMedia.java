@@ -23,7 +23,7 @@ public class AniListAnimeMedia extends AniListMedia{
 	public void fillEmbed(final EmbedBuilder builder){
 		super.fillEmbed(builder);
 		Optional.ofNullable(getEpisodes()).map(Object::toString).ifPresent(val -> builder.addField("Episodes", val, true));
-		Optional.ofNullable(getSeason()).map(Enum::name).ifPresent(val -> builder.addField("Season", val, true));
+		Optional.ofNullable(getSeason()).map(Enum::toString).ifPresent(val -> builder.addField("Season", val, true));
 	}
 	
 	@Override
