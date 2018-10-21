@@ -18,9 +18,8 @@ public class IdeaChannelMessageListener extends ListenerAdapter{
 		super.onMessageReceived(event);
 		try{
 			if(new OnlyIdeasConfig(event.getGuild()).contains(event.getMessage().getTextChannel())){
-				final var emotes = event.getGuild().getEmotes();
-				emotes.stream().filter(e -> e.getName().equals("LLFthumbUp")).findFirst().ifPresentOrElse(e -> event.getMessage().addReaction(e).queue(), () -> event.getMessage().addReaction(BasicEmotes.THUMB_UP.getValue()).queue());
-				emotes.stream().filter(e -> e.getName().equals("LLFthumbDown")).findFirst().ifPresentOrElse(e -> event.getMessage().addReaction(e).queue(), () -> event.getMessage().addReaction(BasicEmotes.THUMB_DOWN.getValue()).queue());
+				event.getMessage().addReaction(BasicEmotes.THUMB_UP.getValue()).complete();
+				event.getMessage().addReaction(BasicEmotes.THUMB_DOWN.getValue()).complete();
 			}
 		}
 		catch(final Exception e){
