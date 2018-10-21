@@ -8,12 +8,19 @@ import java.awt.*;
  * @author Thomas Couchoud
  * @since 2018-10-12
  */
-public enum AniListMediaListStatus{CURRENT(Color.GREEN), PLANNING(Color.WHITE), COMPLETED(Color.BLACK), DROPPED(Color.RED), PAUSED(Color.ORANGE), REPEATING(Color.YELLOW);
+public enum AniListMediaListStatus{CURRENT(Color.GREEN, ":eyes:"), PLANNING(Color.WHITE, ":soon:"), COMPLETED(Color.BLACK, ":white_check_mark:"), DROPPED(Color.RED, ":no_good:"), PAUSED(Color.ORANGE, ":pause_button:"), REPEATING(Color.YELLOW, ":repeat:");
 	
 	private final Color color;
+	private final String display;
 	
-	AniListMediaListStatus(final Color color){
+	AniListMediaListStatus(final Color color, final String display){
 		this.color = color;
+		this.display = display;
+	}
+	
+	@Override
+	public String toString(){
+		return this.display;
 	}
 	
 	public Color getColor(){

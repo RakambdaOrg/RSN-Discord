@@ -8,7 +8,7 @@ import java.lang.reflect.InvocationTargetException;
  * @author Thomas Couchoud
  * @since 2018-10-10
  */
-public enum AniListMediaType{ANIME(AniListAnimeMedia.class, false), MANGA(AniListMangaMedia.class, true);
+public enum AniListMediaType{ANIME(AniListAnimeMedia.class, true), MANGA(AniListMangaMedia.class, false);
 	
 	private final Class<? extends AniListMedia> klass;
 	private final boolean shouldDisplay;

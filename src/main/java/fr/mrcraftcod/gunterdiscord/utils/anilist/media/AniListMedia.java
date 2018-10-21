@@ -92,7 +92,7 @@ public abstract class AniListMedia implements JSONFiller, AniListObject{
 	
 	@Override
 	public void fillEmbed(final EmbedBuilder builder){
-		builder.setTitle(getTitle());
+		builder.setDescription(getTitle());
 		if(getType().shouldDisplay()){
 			builder.addField("Type", getType().toString(), true);
 		}
@@ -102,6 +102,7 @@ public abstract class AniListMedia implements JSONFiller, AniListObject{
 			builder.addField("Adult content", "true", true);
 		}
 		builder.addField("Link", getUrl(), false);
+		builder.setFooter(getUrl(), "https://anilist.co/img/icons/icon.svg");
 		builder.setThumbnail(getCoverUrl());
 	}
 	
