@@ -32,8 +32,9 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 public class Main{
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
 	private static final String SETTINGS_NAME = "settings.json";
-	private static final long SCHEDULED_DELAY = 20;
-	private static final long SCHEDULED_PERIOD = 900;
+	private static final long SCHEDULER_DELAY = 20;
+	private static final long SCHEDULER_PERIOD = 900;
+	private static final long SCHEDULER_ANILIST_PERIOD = 3600;
 	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 	private static JDA jda;
 	private static ConsoleHandler consoleHandler;
@@ -62,11 +63,11 @@ public class Main{
 			jda.getPresence().setGame(Game.playing("g?help pour l'aide"));
 			
 			var index = 0;
-			executorService.scheduleAtFixedRate(new RemoveRolesScheduledRunner(jda), ++index * SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
-			// executorService.scheduleAtFixedRate(new AniListActivityScheduledRunner(jda), ++index * SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
-			executorService.scheduleAtFixedRate(new AniListNotificationScheduledRunner(jda), ++index * SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
-			executorService.scheduleAtFixedRate(new AniListMediaListScheduledRunner(jda), ++index * SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
-			executorService.scheduleAtFixedRate(new SaveConfigScheduledRunner(jda), ++index * SCHEDULED_DELAY, SCHEDULED_PERIOD, TimeUnit.SECONDS);
+			executorService.scheduleAtFixedRate(new RemoveRolesScheduledRunner(jda), ++index * SCHEDULER_DELAY, SCHEDULER_PERIOD, TimeUnit.SECONDS);
+			// executorService.scheduleAtFixedRate(new AniListActivityScheduledRunner(jda), ++index * SCHEDULER_DELAY, SCHEDULER_ANILIST_PERIOD, TimeUnit.SECONDS);
+			executorService.scheduleAtFixedRate(new AniListNotificationScheduledRunner(jda), ++index * SCHEDULER_DELAY, SCHEDULER_ANILIST_PERIOD, TimeUnit.SECONDS);
+			executorService.scheduleAtFixedRate(new AniListMediaListScheduledRunner(jda), ++index * SCHEDULER_DELAY, SCHEDULER_ANILIST_PERIOD, TimeUnit.SECONDS);
+			executorService.scheduleAtFixedRate(new SaveConfigScheduledRunner(jda), ++index * SCHEDULER_DELAY, SCHEDULER_PERIOD, TimeUnit.SECONDS);
 		}
 		catch(final IOException e){
 			getLogger(null).error("Couldn't load settings", e);
