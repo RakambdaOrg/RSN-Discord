@@ -54,7 +54,9 @@ public class Settings{
 			new AniListChannelConfig(null),
 			new AniListAccessTokenConfig(null),
 			new AniListLastAccessConfig(null),
-			new EmoteUsageConfig(null)
+			new EmoteUsageConfig(null),
+			new NoXPChannelsConfig(null),
+			new MembersParticipationConfig(null)
 	};
 	private static Path path;
 	private static JSONObject settings;
