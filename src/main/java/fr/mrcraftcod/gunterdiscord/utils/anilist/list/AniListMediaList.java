@@ -70,7 +70,7 @@ public class AniListMediaList implements AniListDatedObject{
 	public void fillEmbed(final EmbedBuilder builder){
 		builder.setTimestamp(getDate().toInstant());
 		builder.setColor(getStatus().getColor());
-		builder.setTitle("List changed");
+		builder.setTitle("List changed", getMedia().getUrl());
 		builder.addField("List status", this.getStatus().toString(), true);
 		if(Objects.nonNull(getScore())){
 			builder.addField("Score", this.getScore() + "/100", true);
