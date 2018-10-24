@@ -63,10 +63,9 @@ public class Main{
 			jda.setAutoReconnect(true);
 			jda.getPresence().setGame(Game.playing("g?help pour l'aide"));
 			
-			var index = 0;
 			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda));
 			for(final var scheduledRunner : scheduledRunners){
-				executorService.scheduleAtFixedRate(scheduledRunner, ++index * SCHEDULER_DELAY, scheduledRunner.getPeriod(), scheduledRunner.getPeriodUnit());
+				executorService.scheduleAtFixedRate(scheduledRunner, scheduledRunner.getDelay(), scheduledRunner.getPeriod(), scheduledRunner.getPeriodUnit());
 			}
 		}
 		catch(final IOException e){
