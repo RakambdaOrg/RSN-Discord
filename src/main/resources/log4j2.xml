@@ -20,6 +20,10 @@
         </RollingFile>
     </Appenders>
     <Loggers>
+        <Logger name="net.dv8tion.jda" level="warn">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="MyFile"/>
+        </Logger>
         <Root level="debug">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="MyFile"/>
