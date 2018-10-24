@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord;
 
 import fr.mrcraftcod.gunterdiscord.listeners.*;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
+import fr.mrcraftcod.gunterdiscord.runners.DisplayDailyStatsScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.RemoveRolesScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.SaveConfigScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListMediaListScheduledRunner;
@@ -18,9 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -63,11 +64,10 @@ public class Main{
 			jda.getPresence().setGame(Game.playing("g?help pour l'aide"));
 			
 			var index = 0;
-			executorService.scheduleAtFixedRate(new RemoveRolesScheduledRunner(jda), ++index * SCHEDULER_DELAY, SCHEDULER_PERIOD, TimeUnit.SECONDS);
-			// executorService.scheduleAtFixedRate(new AniListActivityScheduledRunner(jda), ++index * SCHEDULER_DELAY, SCHEDULER_ANILIST_PERIOD, TimeUnit.SECONDS);
-			executorService.scheduleAtFixedRate(new AniListNotificationScheduledRunner(jda), ++index * SCHEDULER_DELAY, SCHEDULER_ANILIST_PERIOD, TimeUnit.SECONDS);
-			executorService.scheduleAtFixedRate(new AniListMediaListScheduledRunner(jda), ++index * SCHEDULER_DELAY, SCHEDULER_ANILIST_PERIOD, TimeUnit.SECONDS);
-			executorService.scheduleAtFixedRate(new SaveConfigScheduledRunner(jda), ++index * SCHEDULER_DELAY, SCHEDULER_PERIOD, TimeUnit.SECONDS);
+			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda));
+			for(final var scheduledRunner : scheduledRunners){
+				executorService.scheduleAtFixedRate(scheduledRunner, ++index * SCHEDULER_DELAY, scheduledRunner.getPeriod(), scheduledRunner.getPeriodUnit());
+			}
 		}
 		catch(final IOException e){
 			getLogger(null).error("Couldn't load settings", e);
@@ -81,7 +81,7 @@ public class Main{
 				Settings.save();
 			}
 			catch(final IOException e){
-				Log.getLogger(null).error("Error saving settings", e);
+				getLogger(null).error("Error saving settings", e);
 			}
 			Settings.close();
 		}));

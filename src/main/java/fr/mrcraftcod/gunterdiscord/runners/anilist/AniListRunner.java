@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.runners.anilist;
 
+import fr.mrcraftcod.gunterdiscord.runners.ScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.settings.configs.AniListAccessTokenConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.AniListChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.AniListLastAccessConfig;
@@ -24,7 +25,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-10-11
  */
-public interface AniListRunner<T extends AniListObject, U extends AniListPagedQuery<T>> extends Runnable{
+public interface AniListRunner<T extends AniListObject, U extends AniListPagedQuery<T>> extends ScheduledRunner{
 	@Override
 	default void run(){
 		getLogger(null).info("Starting AniList {} runner", getRunnerName());

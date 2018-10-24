@@ -4,6 +4,7 @@ import fr.mrcraftcod.gunterdiscord.utils.anilist.list.AniListMediaList;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListMediaListPagedQuery;
 import net.dv8tion.jda.core.JDA;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -18,6 +19,16 @@ public class AniListMediaListScheduledRunner implements AniListRunner<AniListMed
 	public AniListMediaListScheduledRunner(final JDA jda){
 		getLogger(null).info("Creating AniList {} runner", getRunnerName());
 		this.jda = jda;
+	}
+	
+	@Override
+	public long getPeriod(){
+		return 1;
+	}
+	
+	@Override
+	public TimeUnit getPeriodUnit(){
+		return TimeUnit.HOURS;
 	}
 	
 	@Override

@@ -4,6 +4,7 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.RemoveRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.JDA;
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -12,7 +13,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-07-14
  */
-public class RemoveRolesScheduledRunner implements Runnable{
+public class RemoveRolesScheduledRunner implements ScheduledRunner{
 	private final JDA jda;
 	
 	/**
@@ -50,5 +51,15 @@ public class RemoveRolesScheduledRunner implements Runnable{
 			}
 		}
 		getLogger(null).info("Roles runner done");
+	}
+	
+	@Override
+	public long getPeriod(){
+		return 15;
+	}
+	
+	@Override
+	public TimeUnit getPeriodUnit(){
+		return TimeUnit.MINUTES;
 	}
 }

@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -26,6 +27,16 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 	public AniListNotificationScheduledRunner(final JDA jda){
 		getLogger(null).info("Creating AniList {} runner", getRunnerName());
 		this.jda = jda;
+	}
+	
+	@Override
+	public long getPeriod(){
+		return 15;
+	}
+	
+	@Override
+	public TimeUnit getPeriodUnit(){
+		return TimeUnit.MINUTES;
 	}
 	
 	@Override
