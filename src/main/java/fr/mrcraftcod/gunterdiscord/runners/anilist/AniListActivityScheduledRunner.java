@@ -32,6 +32,11 @@ public class AniListActivityScheduledRunner implements AniListRunner<AniListList
 	}
 	
 	@Override
+	public long getDelay(){
+		return 0;
+	}
+	
+	@Override
 	public String getRunnerName(){
 		return "list activity";
 	}

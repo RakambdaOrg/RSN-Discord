@@ -42,4 +42,9 @@ public class SaveConfigScheduledRunner implements ScheduledRunner{
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.MINUTES;
 	}
+	
+	@Override
+	public long getDelay(){
+		return 2;
+	}
 }

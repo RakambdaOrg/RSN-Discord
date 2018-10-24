@@ -66,4 +66,9 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.HOURS;
 	}
+	
+	@Override
+	public long getDelay(){
+		return 0;
+	}
 }

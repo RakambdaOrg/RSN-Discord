@@ -12,4 +12,6 @@ public interface ScheduledRunner extends Runnable{
 	long getPeriod();
 	
 	TimeUnit getPeriodUnit();
+	
+	long getDelay();
 }

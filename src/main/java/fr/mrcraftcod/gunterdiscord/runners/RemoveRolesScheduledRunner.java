@@ -62,4 +62,9 @@ public class RemoveRolesScheduledRunner implements ScheduledRunner{
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.MINUTES;
 	}
+	
+	@Override
+	public long getDelay(){
+		return 1;
+	}
 }

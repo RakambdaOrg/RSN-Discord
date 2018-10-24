@@ -40,6 +40,11 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 	}
 	
 	@Override
+	public long getDelay(){
+		return 1;
+	}
+	
+	@Override
 	public String getRunnerName(){
 		return "notification";
 	}

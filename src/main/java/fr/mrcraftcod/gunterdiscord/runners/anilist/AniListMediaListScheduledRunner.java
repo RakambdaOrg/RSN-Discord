@@ -32,6 +32,11 @@ public class AniListMediaListScheduledRunner implements AniListRunner<AniListMed
 	}
 	
 	@Override
+	public long getDelay(){
+		return 0;
+	}
+	
+	@Override
 	public String getRunnerName(){
 		return "media list";
 	}
