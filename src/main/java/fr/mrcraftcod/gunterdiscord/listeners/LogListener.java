@@ -24,10 +24,23 @@ public class LogListener extends ListenerAdapter{
 	private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMdd");
 	
 	@Override
+	public void onUserUpdateName(final UserUpdateNameEvent event){
+		super.onUserUpdateName(event);
+		try{
+			getLogger(null).debug("User {} changed name of {} `{}` to `{}`", Utilities.getUserToLog(event.getUser()), Utilities.getUserToLog(event.getEntity()), event.getOldName(), event.getNewName());
+		}
+		catch(final NullPointerException ignored){
+		}
+		catch(final Exception e){
+			getLogger(null).error("", e);
+		}
+	}
+	
+	@Override
 	public void onSelfUpdateName(final SelfUpdateNameEvent event){
 		super.onSelfUpdateName(event);
 		try{
-			getLogger(null).info("User {} changed name `{}` to `{}`", Utilities.getUserToLog(event.getEntity()), event.getOldName(), event.getNewName());
+			getLogger(null).debug("User {} changed name `{}` to `{}`", Utilities.getUserToLog(event.getEntity()), event.getOldName(), event.getNewName());
 			for(final var guild : event.getEntity().getMutualGuilds()){
 				if(new EnableNameChangeLimitConfig(guild).getObject(false)){
 					final var config = new NameLastChangeConfig(guild);
@@ -43,19 +56,6 @@ public class LogListener extends ListenerAdapter{
 					config.addValue(event.getEntity().getIdLong(), System.currentTimeMillis());
 				}
 			}
-		}
-		catch(final NullPointerException ignored){
-		}
-		catch(final Exception e){
-			getLogger(null).error("", e);
-		}
-	}
-	
-	@Override
-	public void onUserUpdateName(final UserUpdateNameEvent event){
-		super.onUserUpdateName(event);
-		try{
-			getLogger(null).info("User {} changed name of {} `{}` to `{}`", Utilities.getUserToLog(event.getUser()), Utilities.getUserToLog(event.getEntity()), event.getOldName(), event.getNewName());
 		}
 		catch(final NullPointerException ignored){
 		}
@@ -90,7 +90,7 @@ public class LogListener extends ListenerAdapter{
 	public void onMessageReactionAdd(final MessageReactionAddEvent event){
 		super.onMessageReactionAdd(event);
 		try{
-			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> getLogger(event.getGuild()).info("New reaction {} from `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), Utilities.getUserToLog(event.getUser()), event.getReaction().getTextChannel().getName(), m.getContentRaw().replace("\n", "{n}"), Utilities.getUserToLog(m.getAuthor())));
+			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> getLogger(event.getGuild()).debug("New reaction {} from `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), Utilities.getUserToLog(event.getUser()), event.getReaction().getTextChannel().getName(), m.getContentRaw().replace("\n", "{n}"), Utilities.getUserToLog(m.getAuthor())));
 		}
 		catch(final NullPointerException ignored){
 		}
@@ -103,7 +103,7 @@ public class LogListener extends ListenerAdapter{
 	public void onMessageReactionRemove(final MessageReactionRemoveEvent event){
 		super.onMessageReactionRemove(event);
 		try{
-			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> getLogger(event.getGuild()).info("Reaction {} removed by `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), Utilities.getUserToLog(event.getUser()), event.getReaction().getTextChannel().getName(), m.getContentRaw().replace("\n", "{n}"), Utilities.getUserToLog(m.getAuthor())));
+			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> getLogger(event.getGuild()).debug("Reaction {} removed by `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), Utilities.getUserToLog(event.getUser()), event.getReaction().getTextChannel().getName(), m.getContentRaw().replace("\n", "{n}"), Utilities.getUserToLog(m.getAuthor())));
 		}
 		catch(final NullPointerException ignored){
 		}

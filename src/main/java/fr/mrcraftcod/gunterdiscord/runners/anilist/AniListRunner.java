@@ -50,7 +50,7 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 					}
 				}
 			}
-			getLogger(null).info("AniList API done");
+			getLogger(null).debug("AniList API done");
 			sendMessages(channels, userElements);
 			
 			getLogger(null).info("AniList {} runner done", getRunnerName());
@@ -72,7 +72,7 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 	JDA getJDA();
 	
 	default List<T> getElements(final Member member) throws Exception{
-		getLogger(member.getGuild()).info("Fetching user {}", member);
+		getLogger(member.getGuild()).debug("Fetching user {}", member);
 		final var userInfoConf = new AniListLastAccessConfig(member.getGuild());
 		final var userInfo = userInfoConf.getValue(member.getUser().getIdLong());
 		var elementList = initQuery(userInfo).getResult(member);
@@ -81,7 +81,7 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 			elementList = elementList.stream().filter(e -> e instanceof AniListDatedObject).filter(e -> ((AniListDatedObject) e).getDate().after(baseDate)).collect(Collectors.toList());
 		}
 		elementList.stream().filter(e -> e instanceof AniListDatedObject).map(e -> (AniListDatedObject) e).map(AniListDatedObject::getDate).mapToLong(Date::getTime).max().ifPresent(val -> {
-			getLogger(member.getGuild()).info("New last fetched date for {}: {}", member, new Date(val));
+			getLogger(member.getGuild()).debug("New last fetched date for {}: {}", member, new Date(val));
 			userInfoConf.addValue(member.getUser().getIdLong(), "lastFetch" + getFetcherID(), "" + (val / 1000L));
 		});
 		return elementList;

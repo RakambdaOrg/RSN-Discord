@@ -32,18 +32,18 @@ public class RemoveRolesScheduledRunner implements ScheduledRunner{
 		final var currentTime = System.currentTimeMillis();
 		for(final var guild : jda.getGuilds()){
 			final var config = new RemoveRoleConfig(guild);
-			getLogger(guild).info("Processing guild {}", guild);
+			getLogger(guild).debug("Processing guild {}", guild);
 			final var guildConfig = config.getAsMap();
 			for(final var userID : guildConfig.keySet()){
 				final var member = guild.getMemberById(userID);
-				getLogger(guild).info("Processing user {}", member);
+				getLogger(guild).debug("Processing user {}", member);
 				final var userGuildConfig = guildConfig.get(userID);
 				for(final var roleID : userGuildConfig.keySet()){
 					final var diff = Duration.ofMillis(userGuildConfig.get(roleID) - currentTime);
 					final var role = guild.getRoleById(roleID);
-					getLogger(guild).info("Processing role {}, diff is: {}", role, diff);
+					getLogger(guild).debug("Processing role {}, diff is: {}", role, diff);
 					if(diff.isNegative()){
-						getLogger(guild).info("Removed role for the user");
+						getLogger(guild).debug("Removed role for the user");
 						Actions.removeRole(member, role);
 						config.deleteKeyValue(userID, roleID);
 					}

@@ -63,7 +63,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			gunterAudioManager.getAudioPlayerManager().loadItem(ident, new AudioLoadResultHandler(){
 				@Override
 				public void trackLoaded(final AudioTrack track){
-					getLogger(channel.getGuild()).info("Added `{}` to the audio queue on channel `{}`", ident, channel.getName());
+					getLogger(channel.getGuild()).debug("Added `{}` to the audio queue on channel `{}`", ident, channel.getName());
 					final var userData = new TrackUserFields();
 					userData.fill(new RequesterTrackUserField(), requester);
 					track.setUserData(userData);
@@ -80,7 +80,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 				
 				@Override
 				public void playlistLoaded(final AudioPlaylist playlist){
-					getLogger(channel.getGuild()).info("Added `{}`(size: {}) to the audio queue on channel `{}`", ident, playlist.getTracks().size(), channel.getName());
+					getLogger(channel.getGuild()).debug("Added `{}`(size: {}) to the audio queue on channel `{}`", ident, playlist.getTracks().size(), channel.getName());
 					playlist.getTracks().stream().skip(skipCount).limit(maxTracks).forEach(this::trackLoaded);
 					gunterAudioManager.isSearchingTracks = false;
 				}
