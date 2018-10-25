@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -46,6 +47,7 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 				final var participationConfig = new MembersParticipationConfig(guild);
 				final var stats = new MembersParticipationConfig(guild).getValue(ytdKey);
 				if(Objects.nonNull(stats)){
+					final var i = new AtomicInteger(0);
 					getLogger(guild).debug("Processing stats for guild {}", guild);
 					final var builder = Utilities.buildEmbed(this.jda.getSelfUser(), Color.MAGENTA, "Participation of the " + date);
 					stats.entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).map(e -> {
@@ -54,7 +56,7 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 							return Map.entry(user, e.getValue());
 						}
 						return null;
-					}).filter(Objects::nonNull).limit(10).forEachOrdered(e -> builder.addField(e.getKey().getAsMention(), "Messages: " + e.getValue(), false));
+					}).filter(Objects::nonNull).limit(10).forEachOrdered(e -> builder.addField("#" + i.getAndIncrement(), e.getKey().getAsMention() + " Messages: " + e.getValue(), false));
 					Actions.sendMessage(reportChannel, builder.build());
 					participationConfig.deleteKey(ytdKey);
 				}
