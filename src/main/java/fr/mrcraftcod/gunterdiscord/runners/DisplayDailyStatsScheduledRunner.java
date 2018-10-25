@@ -39,7 +39,6 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 		getLogger(null).info("Starting daily stats runner");
 		final var ytd = LocalDate.now().minusDays(1);
 		final var ytdKey = ytd.format(DF);
-		getLogger(null).debug("YTD Key: {}", ytdKey);
 		final var date = ytd.format(DFD);
 		for(final var guild : this.jda.getGuilds()){
 			final var reportChannel = new MembersParticipationChannelConfig(guild).getObject(null);
@@ -48,26 +47,16 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 				final var stats = new MembersParticipationConfig(guild).getValue(ytdKey);
 				if(Objects.nonNull(stats)){
 					getLogger(guild).debug("Processing stats for guild {}", guild);
-					getLogger(guild).info("{}", stats);
 					final var builder = Utilities.buildEmbed(this.jda.getSelfUser(), Color.MAGENTA, "Participation of the " + date);
 					stats.entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).map(e -> {
-						getLogger(guild).debug("ZZZ {}", e.getKey());
 						final var user = this.jda.getUserById(e.getKey());
-						getLogger(guild).debug("KKK {}", user);
 						if(Objects.nonNull(user)){
 							return Map.entry(user, e.getValue());
 						}
 						return null;
-					}).filter(Objects::nonNull).limit(10).forEachOrdered(e -> {
-						getLogger(guild).debug("A {}", e);
-						builder.addField(e.getKey().getAsMention(), "Messages: " + e.getValue(), false);
-						getLogger(guild).debug("Z");
-					});
-					getLogger(guild).debug("B");
+					}).filter(Objects::nonNull).limit(10).forEachOrdered(e -> builder.addField(e.getKey().getAsMention(), "Messages: " + e.getValue(), false));
 					Actions.sendMessage(reportChannel, builder.build());
-					getLogger(guild).debug("C");
 					participationConfig.deleteKey(ytdKey);
-					getLogger(guild).debug("D");
 				}
 			}
 		}
