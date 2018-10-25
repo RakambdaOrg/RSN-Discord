@@ -35,9 +35,10 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 	
 	@Override
 	public void run(){
-		getLogger(null).info("Starting roles runner");
+		getLogger(null).info("Starting daily stats runner");
 		final var ytd = LocalDate.now().minusDays(1);
 		final var ytdKey = ytd.format(DF);
+		getLogger(null).debug("YTD Key: {}", ytdKey);
 		final var date = ytd.format(DFD);
 		for(final var guild : this.jda.getGuilds()){
 			final var reportChannel = new MembersParticipationChannelConfig(guild).getObject(null);
@@ -45,6 +46,7 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 				final var participationConfig = new MembersParticipationConfig(guild);
 				final var stats = new MembersParticipationConfig(guild).getValue(ytdKey);
 				if(Objects.nonNull(stats)){
+					getLogger(guild).debug("Processing stats for guild {}", guild);
 					final var builder = Utilities.buildEmbed(this.jda.getSelfUser(), Color.MAGENTA, "Participation of the " + date);
 					stats.entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).limit(10).forEachOrdered(e -> {
 						builder.addField(this.jda.getUserById(e.getKey()).getAsMention(), "Messages: " + e.getValue(), false);
