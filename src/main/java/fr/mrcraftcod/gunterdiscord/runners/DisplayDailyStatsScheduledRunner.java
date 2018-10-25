@@ -47,10 +47,12 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 				final var stats = new MembersParticipationConfig(guild).getValue(ytdKey);
 				if(Objects.nonNull(stats)){
 					getLogger(guild).debug("Processing stats for guild {}", guild);
+					getLogger(guild).info("{}", stats);
 					final var builder = Utilities.buildEmbed(this.jda.getSelfUser(), Color.MAGENTA, "Participation of the " + date);
 					stats.entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).limit(10).forEachOrdered(e -> {
 						getLogger(guild).debug("A");
 						builder.addField(this.jda.getUserById(e.getKey()).getAsMention(), "Messages: " + e.getValue(), false);
+						getLogger(guild).debug("Z");
 					});
 					getLogger(guild).debug("B");
 					Actions.sendMessage(reportChannel, builder.build());
