@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.JDA;
 import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -49,9 +50,17 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 					getLogger(guild).debug("Processing stats for guild {}", guild);
 					getLogger(guild).info("{}", stats);
 					final var builder = Utilities.buildEmbed(this.jda.getSelfUser(), Color.MAGENTA, "Participation of the " + date);
-					stats.entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).limit(10).forEachOrdered(e -> {
+					stats.entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).map(e -> {
+						getLogger(guild).debug("ZZZ {}", e.getKey());
+						final var user = this.jda.getUserById(e.getKey());
+						getLogger(guild).debug("KKK {}", user);
+						if(Objects.nonNull(user)){
+							return Map.entry(user, e.getValue());
+						}
+						return null;
+					}).filter(Objects::nonNull).limit(10).forEachOrdered(e -> {
 						getLogger(guild).debug("A {}", e);
-						builder.addField(this.jda.getUserById(e.getKey()).getAsMention(), "Messages: " + e.getValue(), false);
+						builder.addField(e.getKey().getAsMention(), "Messages: " + e.getValue(), false);
 						getLogger(guild).debug("Z");
 					});
 					getLogger(guild).debug("B");
