@@ -57,7 +57,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new BanInfoCommand(),
 			new AniListCommandComposite(),
 			new EmotesCommand(),
-			new TempCommand()
+			new TempParticipationCommand()
 	};
 	
 	/**

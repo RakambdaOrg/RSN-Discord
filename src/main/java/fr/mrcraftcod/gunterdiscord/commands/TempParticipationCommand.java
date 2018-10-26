@@ -6,6 +6,7 @@ import fr.mrcraftcod.gunterdiscord.runners.DisplayDailyStatsScheduledRunner;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,32 +16,32 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public class TempCommand extends BasicCommand{
+public class TempParticipationCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		new DisplayDailyStatsScheduledRunner(event.getJDA()).run();
+		new DisplayDailyStatsScheduledRunner(event.getJDA(), LocalDate.now(), false).run();
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
 	public AccessLevel getAccessLevel(){
-		return AccessLevel.CREATOR;
+		return AccessLevel.ADMIN;
 	}
 	
 	@Override
 	public String getName(){
-		return "Temporary command";
+		return "Temporary participation";
 	}
 	
 	@Override
 	public List<String> getCommand(){
-		return List.of("temp");
+		return List.of("tempparticipation", "tp");
 	}
 	
 	@Override
 	public String getDescription(){
-		return "For tests";
+		return "Display the temporary ranking for the day";
 	}
 	
 	@Override

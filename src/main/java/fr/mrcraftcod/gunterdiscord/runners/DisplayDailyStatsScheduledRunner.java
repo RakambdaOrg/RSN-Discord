@@ -24,6 +24,8 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 	private final JDA jda;
 	private final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyyMMdd");
 	private final DateTimeFormatter DFD = DateTimeFormatter.ofPattern("dd/MM/yyy");
+	private final boolean deleteStats;
+	private final LocalDate date;
 	
 	/**
 	 * Constructor.
@@ -31,16 +33,28 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 	 * @param jda The JDA object.
 	 */
 	public DisplayDailyStatsScheduledRunner(final JDA jda){
+		this(jda, LocalDate.now().minusDays(1), true);
+	}
+	
+	/**
+	 * Constructor.
+	 *
+	 * @param jda         The JDA object.
+	 * @param date        The date to fetch the stats for.
+	 * @param deleteStats Either to delete the stats after printing or not.
+	 */
+	public DisplayDailyStatsScheduledRunner(final JDA jda, final LocalDate date, final boolean deleteStats){
 		getLogger(null).info("Creating daily stats runner");
 		this.jda = jda;
+		this.date = date;
+		this.deleteStats = deleteStats;
 	}
 	
 	@Override
 	public void run(){
 		getLogger(null).info("Starting daily stats runner");
-		final var ytd = LocalDate.now().minusDays(1);
-		final var ytdKey = ytd.format(DF);
-		final var date = ytd.format(DFD);
+		final var ytdKey = this.date.format(DF);
+		final var date = this.date.format(DFD);
 		for(final var guild : this.jda.getGuilds()){
 			final var reportChannel = new MembersParticipationChannelConfig(guild).getObject(null);
 			if(Objects.nonNull(reportChannel)){
@@ -58,7 +72,10 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 						return null;
 					}).filter(Objects::nonNull).limit(10).forEachOrdered(e -> builder.addField("#" + i.getAndIncrement(), e.getKey().getAsMention() + " Messages: " + e.getValue(), false));
 					Actions.sendMessage(reportChannel, builder.build());
-					participationConfig.deleteKey(ytdKey);
+					if(deleteStats){
+						getLogger(guild).debug("Deleting stats of the day");
+						participationConfig.deleteKey(ytdKey);
+					}
 				}
 			}
 		}
