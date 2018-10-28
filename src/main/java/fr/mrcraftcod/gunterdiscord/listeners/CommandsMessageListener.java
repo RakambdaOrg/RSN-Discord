@@ -14,6 +14,7 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -77,7 +78,9 @@ public class CommandsMessageListener extends ListenerAdapter{
 		super.onMessageReceived(event);
 		try{
 			if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
-				Actions.deleteMessage(event.getMessage());
+				if(event.getChannelType() != ChannelType.PRIVATE && event.getChannelType() != ChannelType.GROUP){
+					Actions.deleteMessage(event.getMessage());
+				}
 				final var args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 				final var cmdText = args.pop().substring(new PrefixConfig(event.getGuild()).getObject("g?").length());
 				final var command = getCommand(cmdText);
