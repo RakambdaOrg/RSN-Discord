@@ -7,6 +7,9 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.MembersParticipationConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.*;
@@ -27,23 +30,32 @@ public class TempParticipationCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		final var localDate = LocalDate.now();
-		final var ytdKey = localDate.format(DisplayDailyStatsScheduledRunner.DF);
+		sendInfos(event.getGuild(), LocalDate.now(), event.getAuthor(), event.getTextChannel());
+		return CommandResult.SUCCESS;
+	}
+	
+	public static boolean sendInfos(final Guild guild, final LocalDate localDate, final User author, final TextChannel channel){
+		final var ytdKey = getKey(localDate);
 		final var date = localDate.format(DisplayDailyStatsScheduledRunner.DFD);
-		final var stats = new MembersParticipationConfig(event.getGuild()).getValue(ytdKey);
+		final var stats = new MembersParticipationConfig(guild).getValue(ytdKey);
 		if(Objects.nonNull(stats)){
 			final var i = new AtomicInteger(1);
-			final var builder = Utilities.buildEmbed(event.getAuthor(), Color.MAGENTA, "Participation of the " + date);
+			final var builder = Utilities.buildEmbed(author, Color.MAGENTA, "Participation of the " + date + " (UTC)");
 			stats.entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).map(e -> {
-				final var user = event.getJDA().getUserById(e.getKey());
+				final var user = guild.getJDA().getUserById(e.getKey());
 				if(Objects.nonNull(user)){
 					return Map.entry(user, e.getValue());
 				}
 				return null;
 			}).filter(Objects::nonNull).limit(10).forEachOrdered(e -> builder.addField("#" + i.getAndIncrement(), e.getKey().getAsMention() + " Messages: " + e.getValue(), false));
-			Actions.reply(event, builder.build());
+			Actions.sendMessage(channel, builder.build());
+			return true;
 		}
-		return CommandResult.SUCCESS;
+		return false;
+	}
+	
+	public static String getKey(final LocalDate localDate){
+		return localDate.format(DisplayDailyStatsScheduledRunner.DF);
 	}
 	
 	@Override
