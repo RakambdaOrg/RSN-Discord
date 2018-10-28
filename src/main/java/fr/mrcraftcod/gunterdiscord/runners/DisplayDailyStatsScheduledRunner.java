@@ -43,12 +43,12 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 			final var reportChannel = new MembersParticipationChannelConfig(guild).getObject(null);
 			if(Objects.nonNull(reportChannel)){
 				getLogger(guild).debug("Processing stats for guild {}", guild);
-				final var usersToPin = new MembersParticipationPinConfig(guild).getAsList();
-				if(!usersToPin.isEmpty()){
-					Actions.sendMessage(reportChannel, usersToPin.stream().map(User::getAsMention).collect(Collectors.joining("\n")));
-				}
 				if(TempParticipationCommand.sendInfos(guild, ytd, jda.getSelfUser(), reportChannel)){
 					new MembersParticipationConfig(guild).deleteKey(TempParticipationCommand.getKey(ytd));
+					final var usersToPin = new MembersParticipationPinConfig(guild).getAsList();
+					if(!usersToPin.isEmpty()){
+						Actions.sendMessage(reportChannel, usersToPin.stream().map(User::getAsMention).collect(Collectors.joining("\n")));
+					}
 				}
 			}
 		}
