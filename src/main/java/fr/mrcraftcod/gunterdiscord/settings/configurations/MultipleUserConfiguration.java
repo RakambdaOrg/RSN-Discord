@@ -30,7 +30,7 @@ public abstract class MultipleUserConfiguration extends ListConfiguration<User>{
 	@Override
 	protected BiFunction<MessageReceivedEvent, String, String> getMessageParser(){
 		return (event, arg) -> {
-			if(event.getMessage().getMentionedRoles().isEmpty()){
+			if(event.getMessage().getMentionedUsers().isEmpty()){
 				throw new IllegalStateException("Please mention a role");
 			}
 			return "" + event.getMessage().getMentionedUsers().get(0).getIdLong();
