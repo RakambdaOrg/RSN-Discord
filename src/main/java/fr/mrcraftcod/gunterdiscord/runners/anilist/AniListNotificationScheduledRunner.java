@@ -1,18 +1,14 @@
 package fr.mrcraftcod.gunterdiscord.runners.anilist;
 
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListDatedObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.airing.AniListAiringNotification;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListNotificationsPagedQuery;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -71,6 +67,16 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 	
 	@Override
 	public void sendMessages(final List<TextChannel> channels, final Map<User, List<AniListAiringNotification>> userElements){
-		userElements.values().stream().flatMap(List::stream).distinct().sorted(Comparator.comparing(AniListDatedObject::getDate)).map(change -> buildMessage(null, change)).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
+		final var notifications = new HashMap<AniListAiringNotification, List<User>>();
+		for(final var user : userElements.keySet()){
+			for(final var notification : userElements.get(user)){
+				notifications.putIfAbsent(notification, new LinkedList<>());
+				notifications.get(notification).add(user);
+			}
+		}
+		notifications.entrySet().stream().sorted(Comparator.comparing(e -> e.getKey().getDate())).forEachOrdered(e -> {
+			channels.forEach(c -> Actions.sendMessage(c, e.getValue().stream().map(User::getAsMention).collect(Collectors.joining("\n"))));
+			channels.forEach(c -> Actions.sendMessage(c, buildMessage(null, e.getKey())));
+		});
 	}
 }
