@@ -2,9 +2,11 @@ package fr.mrcraftcod.gunterdiscord.runners;
 
 import fr.mrcraftcod.gunterdiscord.settings.configs.MembersParticipationChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.MembersParticipationConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.MembersParticipationPinConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.User;
 import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -12,6 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -57,6 +60,10 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 						}
 						return null;
 					}).filter(Objects::nonNull).limit(10).forEachOrdered(e -> builder.addField("#" + i.getAndIncrement(), e.getKey().getAsMention() + " Messages: " + e.getValue(), false));
+					final var usersToPin = new MembersParticipationPinConfig(guild).getAsList();
+					if(!usersToPin.isEmpty()){
+						Actions.sendMessage(reportChannel, usersToPin.stream().map(User::getAsMention).collect(Collectors.joining("\n")));
+					}
 					Actions.sendMessage(reportChannel, builder.build());
 					participationConfig.deleteKey(ytdKey);
 				}

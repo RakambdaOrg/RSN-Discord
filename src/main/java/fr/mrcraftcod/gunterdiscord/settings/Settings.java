@@ -57,7 +57,8 @@ public class Settings{
 			new EmoteUsageConfig(null),
 			new NoXPChannelsConfig(null),
 			new MembersParticipationConfig(null),
-			new MembersParticipationChannelConfig(null)
+			new MembersParticipationChannelConfig(null),
+			new MembersParticipationPinConfig(null)
 	};
 	private static Path path;
 	private static JSONObject settings;
