@@ -24,7 +24,15 @@
             <AppenderRef ref="Console"/>
             <AppenderRef ref="MyFile"/>
         </Logger>
-        <Root level="debug">
+        <Logger name="com.sedmelluq.discord.lavaplayer" level="warn">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="MyFile"/>
+        </Logger>
+        <Logger name="fr.mrcraftcod" level="debug">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="MyFile"/>
+        </Logger>
+        <Root level="info">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="MyFile"/>
         </Root>
