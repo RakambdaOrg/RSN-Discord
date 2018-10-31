@@ -39,10 +39,10 @@ public class ResumeMusicCommand extends BasicCommand{
 		super.execute(event, args);
 		switch(GunterAudioManager.resume(event.getGuild())){
 			case NO_MUSIC:
-				Actions.reply(event, "%s, aucune musique n'est en cours", event.getAuthor().getAsMention());
+				Actions.reply(event, "%s, no music are currently playing", event.getAuthor().getAsMention());
 				break;
 			case OK:
-				Actions.reply(event, "%s a relancé la musique", event.getAuthor().getAsMention());
+				Actions.reply(event, "%s resumed the music", event.getAuthor().getAsMention());
 				break;
 		}
 		return CommandResult.SUCCESS;
@@ -55,7 +55,7 @@ public class ResumeMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Reprendre musique";
+		return "Resume";
 	}
 	
 	@Override
@@ -65,7 +65,7 @@ public class ResumeMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Reprends la musique";
+		return "Resumes la music";
 	}
 	
 	@Override

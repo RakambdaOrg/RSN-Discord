@@ -42,7 +42,7 @@ public class QueueMusicCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("<page>", "La page à afficher", false);
+		builder.addField("<page>", "The page to display", false);
 	}
 	
 	@Override
@@ -59,12 +59,12 @@ public class QueueMusicCommand extends BasicCommand{
 		}).orElse(1) - 1;
 		final var position = new AtomicInteger(1);
 		final var queue = GunterAudioManager.getQueue(event.getGuild());
-		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, "File d'attente des musiques (Page " + page + "/" + ((int) Math.ceil(queue.size() / (double) perPage)) + " - 10 max)");
-		builder.setDescription(String.format("%d musiques en attente", queue.size()));
+		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, "Music queue (Page " + page + "/" + ((int) Math.ceil(queue.size() / (double) perPage)) + " - 10 max)");
+		builder.setDescription(String.format("%d musics queued", queue.size()));
 		final var beforeDuration = new AtomicLong(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).orElse(0L) + queue.stream().limit(perPage * page).mapToLong(AudioTrack::getDuration).sum());
 		queue.stream().skip(perPage * page).limit(perPage).forEachOrdered(track -> {
 			final var userData = track.getUserData(TrackUserFields.class);
-			builder.addField("Position " + position.addAndGet(1), track.getInfo().title + "\nDemandé par: " + userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Inconnu") + "\nLongeur: " + getDuration(track.getDuration()) + "\nTemps estimé avant lecture: " + getDuration(beforeDuration.get()), false);
+			builder.addField("Position " + position.addAndGet(1), track.getInfo().title + "\nRequester: " + userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Unknown") + "\nLength: " + getDuration(track.getDuration()) + "\nETA: " + getDuration(beforeDuration.get()), false);
 			beforeDuration.addAndGet(track.getDuration());
 		});
 		Actions.reply(event, builder.build());
@@ -83,7 +83,7 @@ public class QueueMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "File d'attente";
+		return "Queue";
 	}
 	
 	@Override
@@ -93,7 +93,7 @@ public class QueueMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Obtient la file d'attente";
+		return "Prints the musicc queue";
 	}
 	
 	@Override

@@ -55,7 +55,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new MusicCommandComposite(),
 			new StopCommand(),
 			new TimeCommand(),
-			new BanInfoCommand(),
+			new WarnInfoCommand(),
 			new AniListCommandComposite(),
 			new EmotesCommand(),
 			new TempParticipationCommand()

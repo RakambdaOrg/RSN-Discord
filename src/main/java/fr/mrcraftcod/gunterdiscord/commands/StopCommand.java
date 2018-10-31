@@ -49,7 +49,7 @@ public class StopCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Arrête le bot";
+		return "Stops the bot";
 	}
 	
 	@Override

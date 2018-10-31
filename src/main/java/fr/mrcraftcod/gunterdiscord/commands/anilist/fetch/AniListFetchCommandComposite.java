@@ -41,7 +41,7 @@ public class AniListFetchCommandComposite extends CommandComposite{
 	
 	@Override
 	public String getDescription(){
-		return "Fetch les données d'AniList";
+		return "Fetch data from AniList";
 	}
 	
 	@Override

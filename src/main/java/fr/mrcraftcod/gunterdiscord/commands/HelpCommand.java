@@ -28,7 +28,7 @@ public class HelpCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Optionnel: Commande", "La commande dont on veut l'information (par défaut affiche la liste des commandes)", false);
+		builder.addField("Command", "The command to get information for (default: displays the list of the available commands)", false);
 	}
 	
 	@Override
@@ -39,7 +39,7 @@ public class HelpCommand extends BasicCommand{
 			final var builder = new EmbedBuilder();
 			builder.setColor(Color.GREEN);
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-			builder.setTitle("Commandes disponibles");
+			builder.setTitle("Available commands");
 			Arrays.stream(CommandsMessageListener.commands).filter(c -> c.isAllowed(event.getMember())).map(s -> new MessageEmbed.Field(prefix + s.getCommand().get(0), s.getDescription(), false)).sorted(Comparator.comparing(MessageEmbed.Field::getName)).forEach(builder::addField);
 			Actions.reply(event, builder.build());
 		}
@@ -59,17 +59,17 @@ public class HelpCommand extends BasicCommand{
 			if(command != null){
 				builder.setColor(Color.GREEN);
 				builder.setTitle(getName());
-				builder.addField("Nom", command.getName(), true);
+				builder.addField("Name", command.getName(), true);
 				builder.addField("Description", command.getDescription(), true);
-				builder.addField("Commande", String.join(", ", command.getCommand()), false);
-				builder.addField("Utilisation", command.getCommandUsage(), false);
+				builder.addField("Command", String.join(", ", command.getCommand()), false);
+				builder.addField("Usage", command.getCommandUsage(), false);
 				builder.addBlankField(true);
-				builder.addField("", "Paramètres", false);
+				builder.addField("", "Arguments", false);
 				command.addHelp(event.getGuild(), builder);
 			}
 			else{
 				builder.setColor(Color.ORANGE);
-				builder.addField(prefix + args.poll(), "Cette commande n'existe pas ou vous n'y avez pas accès", false);
+				builder.addField(prefix + args.poll(), "This command doesn't exist or you don't have access to it", false);
 			}
 			Actions.reply(event, builder.build());
 		}
@@ -79,7 +79,7 @@ public class HelpCommand extends BasicCommand{
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " [commande...]";
+		return super.getCommandUsage() + " [command...]";
 	}
 	
 	@Override
@@ -99,7 +99,7 @@ public class HelpCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Aide des commandes";
+		return "Gets the help";
 	}
 	
 	@Override

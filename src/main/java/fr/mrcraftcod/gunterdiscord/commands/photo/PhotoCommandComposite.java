@@ -39,7 +39,7 @@ public class PhotoCommandComposite extends CommandComposite{
 	
 	@Override
 	public String getDescription(){
-		return "Point d'entré des fonctionnalitées du trombinoscope";
+		return "Functions of the trombinoscope";
 	}
 	
 	@Override

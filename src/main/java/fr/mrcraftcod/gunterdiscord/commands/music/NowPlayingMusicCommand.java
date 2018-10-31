@@ -44,15 +44,15 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, "En cours de diffusion");
+		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, "Currently playing");
 		GunterAudioManager.currentTrack(event.getGuild()).ifPresentOrElse(track -> {
 			final var userData = track.getUserData(TrackUserFields.class);
-			builder.addField("Titre", track.getInfo().title, false);
-			builder.addField("Demandé par", userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Inconnu"), false);
+			builder.addField("Title", track.getInfo().title, false);
+			builder.addField("Requester", userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Unknown"), false);
 			builder.addField("Position", String.format("%s %s / %s", buildBar(track.getPosition(), track.getDuration()), getDuration(track.getPosition()), getDuration(track.getDuration())), false);
 		}, () -> {
 			builder.setColor(Color.RED);
-			builder.setDescription("Aucune musique ne joue actuellement");
+			builder.setDescription("No music are currently playing");
 		});
 		
 		Actions.reply(event, builder.build());
@@ -93,7 +93,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "En cours musique";
+		return "Now playing";
 	}
 	
 	@Override
@@ -103,7 +103,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Obtient des infos sur la musique en cours";
+		return "Get information about the current music";
 	}
 	
 	@Override

@@ -26,8 +26,8 @@ public abstract class WarnCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Utilisateur", "L'utilisateur à warn", false);
-		builder.addField("Raison", "La raison du warn", false);
+		builder.addField("User", "L'The user to warn", false);
+		builder.addField("Reason", "Reason of the warn", false);
 	}
 	
 	@Override
@@ -43,17 +43,17 @@ public abstract class WarnCommand extends BasicCommand{
 			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 			if(role == null){
 				builder.setColor(Color.RED);
-				builder.addField("Erreur", "Merci de configurer le role à donner", true);
+				builder.addField("Error", "Please configure a role to give", true);
 			}
 			else{
 				Actions.giveRole(event.getGuild(), user, role);
 				new RemoveRoleConfig(event.getGuild()).addValue(user.getIdLong(), role.getIdLong(), (long) (System.currentTimeMillis() + duration * 24 * 60 * 60 * 1000L));
 				builder.setColor(Color.GREEN);
-				builder.addField("Congratulations", user.getAsMention() + " à rejoint le role " + role.getAsMention() + " pour une durée de " + duration + " jour(s)", false);
-				builder.addField("", "Pour savoir où en est ton ban retiens la formule magique: g?muteinfo " + user.getAsMention(), false);
+				builder.addField("Congratulations", user.getAsMention() + " joined the role " + role.getAsMention() + " for " + duration + " day(s)", false);
+				builder.addField("", "To know how your warn is doing, user the magic command: g?warninfo " + user.getAsMention(), false);
 				getLogger(event.getGuild()).info("{} warned {} for {} days with role {}", Utilities.getUserToLog(event.getAuthor()), Utilities.getUserToLog(user), duration, role);
 				if(!reason.isEmpty()){
-					Actions.replyPrivate(event.getGuild(), user, "Raison du ban: %s", reason);
+					Actions.replyPrivate(event.getGuild(), user, "Warn reason: %s", reason);
 				}
 			}
 			Actions.reply(event, builder.build());
@@ -62,7 +62,7 @@ public abstract class WarnCommand extends BasicCommand{
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
-			builder.addField("Erreur", "Merci de mentionner un utilisateur a warn", true);
+			builder.addField("Error", "Please give a user to warn", true);
 			Actions.reply(event, builder.build());
 		}
 		return CommandResult.SUCCESS;
@@ -90,7 +90,7 @@ public abstract class WarnCommand extends BasicCommand{
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " <@utilisateur> [raison]";
+		return super.getCommandUsage() + " <@user> [reason]";
 	}
 	
 	@Override
@@ -100,7 +100,7 @@ public abstract class WarnCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Warn un utilisateur (en donnant un role) pendant un temps préconfiguré";
+		return "Warn a user (by giving a role) for a defined period of time";
 	}
 	
 	@Override

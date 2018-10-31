@@ -72,7 +72,7 @@ public class EmotesCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Obtient la fréquence d'utilisation des emotes";
+		return "Gets the usage of the emotes for the current week";
 	}
 	
 	@Override

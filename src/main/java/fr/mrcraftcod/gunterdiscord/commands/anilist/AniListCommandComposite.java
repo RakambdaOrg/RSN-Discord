@@ -38,7 +38,7 @@ public class AniListCommandComposite extends CommandComposite{
 	
 	@Override
 	public String getDescription(){
-		return "Point d'entré des fonctionnalitées d'AniList";
+		return "AniList related commands";
 	}
 	
 	@Override

@@ -36,7 +36,7 @@ public class PhotoListCommand extends BasicCommand{
 		final var builder = new EmbedBuilder();
 		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 		builder.setColor(Color.GREEN);
-		builder.setTitle("Participants du trombinoscope");
+		builder.setTitle("Users of the trombinoscope");
 		Utilities.getMembersWithRole(new TrombinoscopeRoleConfig(event.getGuild()).getObject()).stream().map(u -> u.getUser().getName()).forEach(u -> builder.addField("", u, false));
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;
@@ -49,7 +49,7 @@ public class PhotoListCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Liste";
+		return "Users";
 	}
 	
 	@Override
@@ -59,7 +59,7 @@ public class PhotoListCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Obtient la liste des participants du trombinoscope";
+		return "Lists the users of the trombinoscope";
 	}
 	
 	@Override

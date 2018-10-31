@@ -50,7 +50,7 @@ public class AniListFetchMediaListCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Fetch la collection d'AniList";
+		return "Fetch media list changes from AniList";
 	}
 	
 	@Override

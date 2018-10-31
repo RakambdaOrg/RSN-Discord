@@ -22,28 +22,28 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public class BanInfoCommand extends BasicCommand{
+public class WarnInfoCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("utilisateur", "L'utilisateur ciblé (défaut: @me)", false);
+		builder.addField("user", "The user to get the infos for (default: @me)", false);
 	}
 	
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final var target = event.getMessage().getMentionedUsers().stream().findFirst().orElse(event.getAuthor());
-		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Information des bans");
-		builder.addField("Utilisateur", target.getAsMention(), false);
+		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Warns info");
+		builder.addField("User", target.getAsMention(), false);
 		final var bans = new RemoveRoleConfig(event.getGuild()).getValue(target.getIdLong());
 		if(bans == null || bans.isEmpty()){
 			builder.setColor(Color.GREEN);
-			builder.setDescription("Aucun ban n'est présent");
+			builder.setDescription("The user have no warns");
 		}
 		else{
-			final var formatter = new SimpleDateFormat("dd MMM à HH:mm:ssZ");
-			builder.setDescription("Les bans seront retirés avec une marge de 15 minutes maximum");
-			bans.keySet().forEach(key -> builder.addField("Role " + event.getGuild().getRoleById(key).getName(), "Fin le " + formatter.format(new Date(bans.get(key))), false));
+			final var formatter = new SimpleDateFormat("dd MMM at HH:mm:ssZ");
+			builder.setDescription("Warns will be removed with a maximum delay of 15 minutes");
+			bans.keySet().forEach(key -> builder.addField("Role " + event.getGuild().getRoleById(key).getName(), "Ends the " + formatter.format(new Date(bans.get(key))), false));
 		}
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;
@@ -51,7 +51,7 @@ public class BanInfoCommand extends BasicCommand{
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " [@utilisateur]";
+		return super.getCommandUsage() + " [@user]";
 	}
 	
 	@Override
@@ -61,17 +61,17 @@ public class BanInfoCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Ban info";
+		return "Warn info";
 	}
 	
 	@Override
 	public List<String> getCommand(){
-		return List.of("baninfo", "bi");
+		return List.of("warninfo", "wi");
 	}
 	
 	@Override
 	public String getDescription(){
-		return "Obtient des informations sur les bans en cours";
+		return "Gets information about the warns in progress";
 	}
 	
 	@Override

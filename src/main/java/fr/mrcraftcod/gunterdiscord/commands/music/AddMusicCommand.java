@@ -36,14 +36,14 @@ public class AddMusicCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("lien", "Le lien de la musique", false);
+		builder.addField("link", "Music link", false);
 	}
 	
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.isEmpty()){
-			Actions.reply(event, "Merci de donner un lien");
+			Actions.reply(event, "Please give a link");
 		}
 		else if(event.getMember().getVoiceState().inVoiceChannel()){
 			final var identifier = Objects.requireNonNull(args.poll()).trim();
@@ -65,11 +65,11 @@ public class AddMusicCommand extends BasicCommand{
 			}).filter(value -> value >= 0).orElse(10);
 			GunterAudioManager.play(event.getAuthor(), event.getMember().getVoiceState().getChannel(), null, track -> {
 				if(Objects.isNull(track)){
-					Actions.reply(event, "%s, musique inconnue", event.getAuthor().getAsMention());
+					Actions.reply(event, "%s, unknown music", event.getAuthor().getAsMention());
 				}
 				else if(track instanceof AudioTrack){
 					final var queue = GunterAudioManager.getQueue(event.getGuild());
-					Actions.reply(event, "%s a ajouté %s, temps d'attente estimé: %s", event.getAuthor().getAsMention(), ((AudioTrack) track).getInfo().title, getDuration(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + queue.stream().takeWhile(t -> !track.equals(t)).mapToLong(AudioTrack::getDuration).sum()));
+					Actions.reply(event, "%s added %s, ETAé: %s", event.getAuthor().getAsMention(), ((AudioTrack) track).getInfo().title, getDuration(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + queue.stream().takeWhile(t -> !track.equals(t)).mapToLong(AudioTrack::getDuration).sum()));
 				}
 				else{
 					Actions.reply(event, track.toString());
@@ -77,14 +77,14 @@ public class AddMusicCommand extends BasicCommand{
 			}, skipCount, maxTracks, identifier);
 		}
 		else{
-			Actions.reply(event, "Vous devez être dans un channel vocal");
+			Actions.reply(event, "You must be in a voice channel");
 		}
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " <lien>";
+		return super.getCommandUsage() + " <link>";
 	}
 	
 	@Override
@@ -94,7 +94,7 @@ public class AddMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Ajouter musique";
+		return "Add";
 	}
 	
 	@Override
@@ -104,7 +104,7 @@ public class AddMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Ajoute une musique dans la liste";
+		return "Adds a music to the queue";
 	}
 	
 	@Override
