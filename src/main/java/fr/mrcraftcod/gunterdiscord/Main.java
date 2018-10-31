@@ -57,7 +57,6 @@ public class Main{
 			jda.addEventListener(new LogListener());
 			jda.addEventListener(new AutoRolesListener());
 			jda.addEventListener(new IdeaChannelMessageListener());
-			jda.addEventListener(new EmotesMessageListener());
 			jda.addEventListener(new QuestionReactionListener());
 			// jda.addEventListener(new VoiceTextChannelsListener());
 			jda.setAutoReconnect(true);

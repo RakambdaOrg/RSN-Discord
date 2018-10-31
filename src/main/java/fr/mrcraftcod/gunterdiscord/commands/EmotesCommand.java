@@ -2,14 +2,23 @@ package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.configs.EmoteUsageConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.EmotesParticipationConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Emote;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.awt.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -18,21 +27,32 @@ import java.util.stream.Collectors;
  * @since 2018-06-16
  */
 public class EmotesCommand extends BasicCommand{
+	public static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyyww");
+	public static final DateTimeFormatter DFD = DateTimeFormatter.ofPattern("ww");
+	
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		final var config = new EmoteUsageConfig(event.getGuild()).getAsMap();
-		final var sorted = config.entrySet().stream().sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
-		final var total = sorted.values().stream().mapToLong(l -> l).sum() * 1.0D;
-		final var emotes = event.getGuild().getEmotes();
-		sorted.forEach((key, value) -> {
-			final var percent = 100 * value / total;
-			if(percent >= 1){
-				final var name = Arrays.stream(key.split(":")).findFirst().orElse("ERROR");
-				Actions.reply(event, String.format("Emote: %s -> utilisation à %.2f%%", emotes.stream().filter(e -> e.getName().equals(name)).findAny().map(Emote::getAsMention).orElse(name), percent));
-			}
-		});
+		sendInfos(event.getGuild(), LocalDate.now(), event.getAuthor(), event.getTextChannel());
 		return CommandResult.SUCCESS;
+	}
+	
+	public static boolean sendInfos(final Guild guild, final LocalDate localDate, final User author, final TextChannel channel){
+		final var weekKey = getKey(localDate);
+		final var date = localDate.format(DFD);
+		final var stats = new EmotesParticipationConfig(guild).getValue(weekKey);
+		if(Objects.nonNull(stats)){
+			final var i = new AtomicInteger(1);
+			final var builder = Utilities.buildEmbed(author, Color.MAGENTA, "Participation of the week " + date + " (UTC)");
+			stats.entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).map(e -> guild.getEmotesByName(e.getKey(), true).stream().findFirst().map(e2 -> Map.entry(e2, e.getValue())).orElse(null)).filter(Objects::nonNull).limit(10).forEachOrdered(e -> builder.addField("#" + i.getAndIncrement(), e.getKey().getAsMention() + " Use count: " + e.getValue(), false));
+			Actions.sendMessage(channel, builder.build());
+			return true;
+		}
+		return false;
+	}
+	
+	public static String getKey(final LocalDate localDate){
+		return localDate.format(DF);
 	}
 	
 	@Override

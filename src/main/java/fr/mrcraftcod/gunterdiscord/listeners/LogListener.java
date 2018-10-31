@@ -1,8 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
+import fr.mrcraftcod.gunterdiscord.commands.EmotesCommand;
+import fr.mrcraftcod.gunterdiscord.commands.TempParticipationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.configs.*;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import net.dv8tion.jda.core.entities.Emote;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceGuildMuteEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
@@ -10,8 +13,7 @@ import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.core.events.self.SelfUpdateNameEvent;
 import net.dv8tion.jda.core.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -21,8 +23,6 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-05-06
  */
 public class LogListener extends ListenerAdapter{
-	private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMdd");
-	
 	@Override
 	public void onUserUpdateName(final UserUpdateNameEvent event){
 		super.onUserUpdateName(event);
@@ -69,16 +69,24 @@ public class LogListener extends ListenerAdapter{
 		super.onGuildMessageReceived(event);
 		try{
 			if(!new NoXPChannelsConfig(event.getGuild()).getAsList().contains(event.getChannel())){
+				final var now = LocalDate.now();
 				final var participation = new MembersParticipationConfig(event.getGuild());
 				final var participationMap = participation.getAsMap();
-				final var todayKey = SDF.format(new Date());
+				final var todayKey = TempParticipationCommand.DF.format(now);
 				if(participationMap.containsKey(todayKey)){
-					final var participationToday = participationMap.get(todayKey);
-					participation.addValue(todayKey, event.getAuthor().getIdLong(), participationToday.getOrDefault(event.getAuthor().getIdLong(), 0L) + 1);
+					participation.addValue(todayKey, event.getAuthor().getIdLong(), participationMap.get(todayKey).getOrDefault(event.getAuthor().getIdLong(), 0L) + 1);
 				}
 				else{
 					participation.addValue(todayKey, event.getAuthor().getIdLong(), 1L);
 				}
+				
+				final var emotes = new EmotesParticipationConfig(event.getGuild());
+				final var emotesMap = emotes.getAsMap();
+				final var weekKey = EmotesCommand.DF.format(now);
+				if(!emotesMap.containsKey(weekKey)){
+					emotes.addValue(weekKey);
+				}
+				event.getMessage().getEmotes().stream().map(Emote::getName).forEach(id -> emotes.addValue(weekKey, id, emotesMap.get(weekKey).getOrDefault(id, 0L) + 1));
 			}
 		}
 		catch(final Exception e){

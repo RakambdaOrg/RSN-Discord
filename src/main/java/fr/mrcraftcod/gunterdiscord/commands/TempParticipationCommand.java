@@ -2,7 +2,6 @@ package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.runners.DisplayDailyStatsScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.settings.configs.MembersParticipationConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
@@ -14,6 +13,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +27,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2018-04-12
  */
 public class TempParticipationCommand extends BasicCommand{
+	public static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyyMMdd");
+	public static final DateTimeFormatter DFD = DateTimeFormatter.ofPattern("dd/MM/yyy");
+	
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
@@ -36,7 +39,7 @@ public class TempParticipationCommand extends BasicCommand{
 	
 	public static boolean sendInfos(final Guild guild, final LocalDate localDate, final User author, final TextChannel channel){
 		final var ytdKey = getKey(localDate);
-		final var date = localDate.format(DisplayDailyStatsScheduledRunner.DFD);
+		final var date = localDate.format(DFD);
 		final var stats = new MembersParticipationConfig(guild).getValue(ytdKey);
 		if(Objects.nonNull(stats)){
 			final var i = new AtomicInteger(1);
@@ -55,7 +58,7 @@ public class TempParticipationCommand extends BasicCommand{
 	}
 	
 	public static String getKey(final LocalDate localDate){
-		return localDate.format(DisplayDailyStatsScheduledRunner.DF);
+		return localDate.format(DF);
 	}
 	
 	@Override
