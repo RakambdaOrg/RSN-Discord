@@ -69,7 +69,7 @@ public class PhotoAddCommand extends BasicCommand{
 				final var saveFile = new File("./pictures/" + user.getIdLong() + "/", event.getMessage().getCreationTime().toEpochSecond() + ext);
 				//noinspection ResultOfMethodCallIgnored
 				saveFile.getParentFile().mkdirs();
-				if(attachment.download(saveFile) && attachment.getSize() == saveFile.length()){
+				if(attachment.download(saveFile) && attachment.getSize() == saveFile.length() && saveFile.length() > 512){
 					new PhotoConfig(event.getGuild()).addValue(user.getIdLong(), saveFile.getPath());
 					Actions.giveRole(event.getGuild(), user, new TrombinoscopeRoleConfig(event.getGuild()).getObject());
 					final var builder = new EmbedBuilder();
