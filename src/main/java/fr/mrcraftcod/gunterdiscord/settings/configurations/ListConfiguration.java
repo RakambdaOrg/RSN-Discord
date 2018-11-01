@@ -84,7 +84,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
-			builder.setTitle("Valeurs de " + getName());
+			builder.setTitle("Values of " + getName());
 			getAsList().stream().map(Object::toString).forEach(o -> builder.addField("", o, false));
 			Actions.reply(event, builder.build());
 			return ConfigurationCommand.ActionResult.NONE;

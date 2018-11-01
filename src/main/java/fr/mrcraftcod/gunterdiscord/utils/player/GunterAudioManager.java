@@ -90,7 +90,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 					getLogger(channel.getGuild()).warn("Player found nothing for channel `{}`", channel.getName());
 					gunterAudioManager.isSearchingTracks = false;
 					gunterAudioManager.getTrackScheduler().foundNothing();
-					onTrackAdded.accept("Aucune musique trouvée");
+					onTrackAdded.accept("No music found");
 				}
 				
 				@Override
@@ -98,7 +98,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 					getLogger(channel.getGuild()).warn("Failed to load audio for channel `{}`", channel.getName(), throwable);
 					gunterAudioManager.isSearchingTracks = false;
 					gunterAudioManager.getTrackScheduler().foundNothing();
-					onTrackAdded.accept("Erreur pendant le chargement");
+					onTrackAdded.accept("Error loading music");
 				}
 			});
 		}

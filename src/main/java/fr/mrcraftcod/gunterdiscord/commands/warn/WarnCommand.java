@@ -5,7 +5,6 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.RemoveRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
@@ -51,7 +50,7 @@ public abstract class WarnCommand extends BasicCommand{
 				builder.setColor(Color.GREEN);
 				builder.addField("Congratulations", user.getAsMention() + " joined the role " + role.getAsMention() + " for " + duration + " day(s)", false);
 				builder.addField("", "To know how your warn is doing, user the magic command: g?warninfo " + user.getAsMention(), false);
-				getLogger(event.getGuild()).info("{} warned {} for {} days with role {}", Utilities.getUserToLog(event.getAuthor()), Utilities.getUserToLog(user), duration, role);
+				getLogger(event.getGuild()).info("{} warned {} for {} days with role {}", event.getAuthor(), user, duration, role);
 				if(!reason.isEmpty()){
 					Actions.replyPrivate(event.getGuild(), user, "Warn reason: %s", reason);
 				}

@@ -33,9 +33,6 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 public class Main{
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
 	private static final String SETTINGS_NAME = "settings.json";
-	private static final long SCHEDULER_DELAY = 20;
-	private static final long SCHEDULER_PERIOD = 900;
-	private static final long SCHEDULER_ANILIST_PERIOD = 3600;
 	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 	private static JDA jda;
 	private static ConsoleHandler consoleHandler;
@@ -51,16 +48,14 @@ public class Main{
 			jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).build();
 			jda.awaitReady();
 			jda.addEventListener(new CommandsMessageListener());
-			// jda.addEventListener(new BannedRegexMessageListener());
 			// jda.addEventListener(new OnlyImagesMessageListener());
 			jda.addEventListener(new ShutdownListener());
 			jda.addEventListener(new LogListener());
 			jda.addEventListener(new AutoRolesListener());
 			jda.addEventListener(new IdeaChannelMessageListener());
 			jda.addEventListener(new QuestionReactionListener());
-			// jda.addEventListener(new VoiceTextChannelsListener());
 			jda.setAutoReconnect(true);
-			jda.getPresence().setGame(Game.playing("g?help pour l'aide"));
+			jda.getPresence().setGame(Game.playing("g?help for the help"));
 			
 			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda));
 			for(final var scheduledRunner : scheduledRunners){

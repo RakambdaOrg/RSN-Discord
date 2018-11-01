@@ -4,7 +4,6 @@ import fr.mrcraftcod.gunterdiscord.commands.EmotesCommand;
 import fr.mrcraftcod.gunterdiscord.commands.TempParticipationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.configs.*;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.entities.Emote;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceGuildMuteEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -27,7 +26,7 @@ public class LogListener extends ListenerAdapter{
 	public void onUserUpdateName(final UserUpdateNameEvent event){
 		super.onUserUpdateName(event);
 		try{
-			getLogger(null).debug("User {} changed name of {} `{}` to `{}`", Utilities.getUserToLog(event.getUser()), Utilities.getUserToLog(event.getEntity()), event.getOldName(), event.getNewName());
+			getLogger(null).debug("User {} changed name of {} `{}` to `{}`", event.getUser(), event.getEntity(), event.getOldName(), event.getNewName());
 		}
 		catch(final NullPointerException ignored){
 		}
@@ -40,7 +39,7 @@ public class LogListener extends ListenerAdapter{
 	public void onSelfUpdateName(final SelfUpdateNameEvent event){
 		super.onSelfUpdateName(event);
 		try{
-			getLogger(null).debug("User {} changed name `{}` to `{}`", Utilities.getUserToLog(event.getEntity()), event.getOldName(), event.getNewName());
+			getLogger(null).debug("User {} changed name `{}` to `{}`", event.getEntity(), event.getOldName(), event.getNewName());
 			for(final var guild : event.getEntity().getMutualGuilds()){
 				if(new EnableNameChangeLimitConfig(guild).getObject(false)){
 					final var config = new NameLastChangeConfig(guild);
@@ -51,7 +50,7 @@ public class LogListener extends ListenerAdapter{
 						final var currentRoleRemove = removeRoleConfig.getAsMap().keySet().stream().filter(k -> k == event.getEntity().getIdLong()).map(removeRoleConfig::getValue).map(map -> map.getOrDefault(warnRole.getIdLong(), 0L)).findFirst().orElse(0L);
 						Actions.giveRole(guild, event.getEntity(), warnRole);
 						removeRoleConfig.addValue(event.getEntity().getIdLong(), warnRole.getIdLong(), Math.max(currentRoleRemove, System.currentTimeMillis() + 6 * 60 * 60 * 1000L));
-						Actions.replyPrivate(guild, event.getEntity(), "Vous avez été warn dans le serveur `%s` car vous avez changé de nom trop souvent.", guild.getName());
+						Actions.replyPrivate(guild, event.getEntity(), "You've been warned in the server `%s` because you changed your name too often.", guild.getName());
 					}
 					config.addValue(event.getEntity().getIdLong(), System.currentTimeMillis());
 				}
@@ -98,7 +97,7 @@ public class LogListener extends ListenerAdapter{
 	public void onMessageReactionAdd(final MessageReactionAddEvent event){
 		super.onMessageReactionAdd(event);
 		try{
-			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> getLogger(event.getGuild()).debug("New reaction {} from `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), Utilities.getUserToLog(event.getUser()), event.getReaction().getTextChannel().getName(), m.getContentRaw().replace("\n", "{n}"), Utilities.getUserToLog(m.getAuthor())));
+			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> getLogger(event.getGuild()).debug("New reaction {} from `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), event.getUser(), event.getReaction().getTextChannel().getName(), m.getContentRaw().replace("\n", "{n}"), m.getAuthor()));
 		}
 		catch(final NullPointerException ignored){
 		}
@@ -111,7 +110,7 @@ public class LogListener extends ListenerAdapter{
 	public void onMessageReactionRemove(final MessageReactionRemoveEvent event){
 		super.onMessageReactionRemove(event);
 		try{
-			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> getLogger(event.getGuild()).debug("Reaction {} removed by `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), Utilities.getUserToLog(event.getUser()), event.getReaction().getTextChannel().getName(), m.getContentRaw().replace("\n", "{n}"), Utilities.getUserToLog(m.getAuthor())));
+			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> getLogger(event.getGuild()).debug("Reaction {} removed by `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), event.getUser(), event.getReaction().getTextChannel().getName(), m.getContentRaw().replace("\n", "{n}"), m.getAuthor()));
 		}
 		catch(final NullPointerException ignored){
 		}

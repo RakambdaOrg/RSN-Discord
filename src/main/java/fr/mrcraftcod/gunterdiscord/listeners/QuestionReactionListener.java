@@ -38,10 +38,10 @@ public class QuestionReactionListener extends ListenerAdapter{
 								Actions.sendMessage(channel, mess -> mess.addReaction(BasicEmotes.CHECK_OK.getValue()).queue(), m.getEmbeds().stream().map(Utilities::buildEmbed).map(mess -> mess.addField("Approved by", event.getUser().getAsMention(), false).setTimestamp(m.getCreationTime())).map(EmbedBuilder::build).collect(Collectors.toList()));
 								Actions.deleteMessage(m);
 								try{
-									final var user = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("Utilisateur")).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e.getValue()).replaceAll("")))).findAny().orElse(null);
+									final var user = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("User")).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e.getValue()).replaceAll("")))).findAny().orElse(null);
 									final var ID = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("ID")).map(MessageEmbed.Field::getValue).findAny().orElse("");
 									if(user != null){
-										Actions.replyPrivate(event.getGuild(), user, "Votre question (ID: %s) a été acceptée et transférée", ID);
+										Actions.replyPrivate(event.getGuild(), user, "Your question (ID: %s) has been accepted and forwarded.", ID);
 									}
 								}
 								catch(final Exception e){
@@ -57,10 +57,10 @@ public class QuestionReactionListener extends ListenerAdapter{
 						event.getTextChannel().getMessageById(event.getReaction().getMessageIdLong()).queue(m -> {
 							Actions.deleteMessage(m);
 							try{
-								final var user = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("Utilisateur")).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e.getValue()).replaceAll("")))).findAny().orElse(null);
+								final var user = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("User")).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e.getValue()).replaceAll("")))).findAny().orElse(null);
 								final var ID = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("ID")).map(MessageEmbed.Field::getValue).findAny().orElse("");
 								if(user != null){
-									Actions.replyPrivate(event.getGuild(), user, "Votre question (ID: %s) a été refusée", ID);
+									Actions.replyPrivate(event.getGuild(), user, "Your question (ID: %s) has been rejected.", ID);
 								}
 							}
 							catch(final Exception e){

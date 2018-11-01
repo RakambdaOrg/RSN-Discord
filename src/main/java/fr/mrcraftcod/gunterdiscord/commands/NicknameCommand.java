@@ -91,7 +91,7 @@ public class NicknameCommand extends BasicCommand{
 				member.getGuild().getController().setNickname(member, newName).complete();
 				builder.setColor(Color.GREEN);
 				new NickLastChangeConfig(event.getGuild()).addValue(member.getUser().getIdLong(), new Date().getTime());
-				getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", Utilities.getUserToLog(event.getAuthor()), Utilities.getUserToLog(member.getUser()), oldName, newName);
+				getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", event.getAuthor(), member.getUser(), oldName, newName);
 			}
 			catch(final HierarchyException e){
 				builder.setColor(Color.RED);
