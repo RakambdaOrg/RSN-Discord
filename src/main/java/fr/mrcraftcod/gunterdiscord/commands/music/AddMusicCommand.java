@@ -6,6 +6,8 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
+import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
@@ -63,11 +65,18 @@ public class AddMusicCommand extends BasicCommand{
 				}
 				return 10;
 			}).filter(value -> value >= 0).orElse(10);
+			final var repeat = Optional.ofNullable(args.poll()).map(Boolean::valueOf).orElse(false);
 			GunterAudioManager.play(event.getAuthor(), event.getMember().getVoiceState().getChannel(), null, track -> {
 				if(Objects.isNull(track)){
 					Actions.reply(event, "%s, unknown music", event.getAuthor().getAsMention());
 				}
 				else if(track instanceof AudioTrack){
+					final var audioTrack = (AudioTrack) track;
+					if(repeat){
+						if(audioTrack.getUserData() instanceof TrackUserFields){
+							audioTrack.getUserData(TrackUserFields.class).fill(new ReplayTrackUserField(), false);
+						}
+					}
 					final var queue = GunterAudioManager.getQueue(event.getGuild());
 					Actions.reply(event, "%s added %s, ETAé: %s", event.getAuthor().getAsMention(), ((AudioTrack) track).getInfo().title, getDuration(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + queue.stream().takeWhile(t -> !track.equals(t)).mapToLong(AudioTrack::getDuration).sum()));
 				}

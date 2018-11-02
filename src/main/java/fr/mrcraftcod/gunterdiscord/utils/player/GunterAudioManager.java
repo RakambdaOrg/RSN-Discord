@@ -10,6 +10,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import fr.mrcraftcod.gunterdiscord.utils.player.sourcemanagers.httpfolder.HttpFolderAudioSourceManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.RequesterTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
 import net.dv8tion.jda.core.entities.Guild;
@@ -253,6 +254,12 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	}
 	
 	private void skip(){
+		final var trackOptional = currentTrack(getChannel().getGuild());
+		trackOptional.ifPresent(track -> {
+			if(track.getUserData() instanceof TrackUserFields){
+				track.getUserData(TrackUserFields.class).fill(new ReplayTrackUserField(), false);
+			}
+		});
 		trackScheduler.nextTrack();
 	}
 	

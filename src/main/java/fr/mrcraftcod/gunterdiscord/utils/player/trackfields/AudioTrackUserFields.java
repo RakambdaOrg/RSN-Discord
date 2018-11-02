@@ -8,4 +8,13 @@ package fr.mrcraftcod.gunterdiscord.utils.player.trackfields;
  */
 interface AudioTrackUserFields<T>{
 	String getName();
+	
+	default T parseObject(final Object value) throws IllegalArgumentException{
+		//noinspection unchecked
+		return (T) value;
+	}
+	
+	default Object valueForField(final T value){
+		return value;
+	}
 }

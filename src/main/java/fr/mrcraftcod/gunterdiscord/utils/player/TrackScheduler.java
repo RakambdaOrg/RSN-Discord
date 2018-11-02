@@ -5,6 +5,8 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
+import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
+import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
 import net.dv8tion.jda.core.entities.Guild;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -61,6 +63,12 @@ class TrackScheduler extends AudioEventAdapter{
 	@Override
 	public void onTrackEnd(final AudioPlayer player, final AudioTrack track, final AudioTrackEndReason endReason){
 		super.onTrackEnd(player, track, endReason);
+		if(track.getUserData() instanceof TrackUserFields){
+			if(track.getUserData(TrackUserFields.class).getOrDefault(new ReplayTrackUserField(), false)){
+				track.setPosition(0);
+				queue(track);
+			}
+		}
 		listeners.forEach(l -> l.onTrackEnd(track));
 		getLogger(getGuild()).info("Track ended: {}", track.getIdentifier());
 		if(endReason.mayStartNext){

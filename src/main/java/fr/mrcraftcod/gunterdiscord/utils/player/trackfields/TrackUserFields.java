@@ -17,7 +17,7 @@ public class TrackUserFields{
 	}
 	
 	public <T> void fill(final AudioTrackUserFields<T> field, final T value){
-		map.put(field.getName(), value);
+		map.put(field.getName(), field.valueForField(value));
 	}
 	
 	public <T> T getOrDefault(final AudioTrackUserFields<T> field, final T defaultValue){
@@ -25,13 +25,6 @@ public class TrackUserFields{
 	}
 	
 	public <T> Optional<T> get(final AudioTrackUserFields<T> field){
-		return Optional.ofNullable(map.get(field.getName())).map(value -> {
-			try{
-				return (T) value;
-			}
-			catch(final ClassCastException ignored){
-			}
-			return null;
-		});
+		return Optional.ofNullable(map.get(field.getName())).map(field::parseObject);
 	}
 }
