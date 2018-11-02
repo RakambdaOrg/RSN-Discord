@@ -39,7 +39,7 @@ public class PauseMusicCommand extends BasicCommand{
 		super.execute(event, args);
 		switch(GunterAudioManager.pause(event.getGuild())){
 			case NO_MUSIC:
-				Actions.reply(event, "%s, now music are being played", event.getAuthor().getAsMention());
+				Actions.reply(event, "%s, no music are being played", event.getAuthor().getAsMention());
 				break;
 			case OK:
 				Actions.reply(event, "%s paused the music", event.getAuthor().getAsMention());
