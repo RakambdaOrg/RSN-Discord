@@ -39,6 +39,9 @@ public class AddMusicCommand extends BasicCommand{
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("link", "Music link", false);
+		builder.addField("skip", "The number of tracks to skip before adding them", false);
+		builder.addField("max", "The maximum number of tracks to add", false);
+		builder.addField("repeat", "Either to repeat this track or not (true/false)", false);
 	}
 	
 	@Override
@@ -93,7 +96,7 @@ public class AddMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " <link>";
+		return super.getCommandUsage() + " <link> [skip] [max] [repeat]";
 	}
 	
 	@Override
