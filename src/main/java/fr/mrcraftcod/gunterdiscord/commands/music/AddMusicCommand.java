@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.commands.music.NowPlayingMusicCommand.getDuration;
 
 /**
@@ -77,11 +78,12 @@ public class AddMusicCommand extends BasicCommand{
 					final var audioTrack = (AudioTrack) track;
 					if(repeat){
 						if(audioTrack.getUserData() instanceof TrackUserFields){
-							audioTrack.getUserData(TrackUserFields.class).fill(new ReplayTrackUserField(), false);
+							audioTrack.getUserData(TrackUserFields.class).fill(new ReplayTrackUserField(), true);
 						}
 					}
 					final var queue = GunterAudioManager.getQueue(event.getGuild());
-					Actions.reply(event, "%s added %s, ETA: %s", event.getAuthor().getAsMention(), ((AudioTrack) track).getInfo().title, getDuration(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + queue.stream().takeWhile(t -> !track.equals(t)).mapToLong(AudioTrack::getDuration).sum()));
+					final var before = queue.stream().takeWhile(t -> !track.equals(t)).collect(Collectors.toList());
+					Actions.reply(event, "%s added %s, position in queue: %d, ETA: %s", event.getAuthor().getAsMention(), ((AudioTrack) track).getInfo().title, GunterAudioManager.currentTrack(event.getGuild()).equals(track) ? 0 : (1 + before.size()), getDuration(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + before.stream().mapToLong(AudioTrack::getDuration).sum()));
 				}
 				else{
 					Actions.reply(event, track.toString());
