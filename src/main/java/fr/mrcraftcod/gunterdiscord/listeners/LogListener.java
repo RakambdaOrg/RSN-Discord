@@ -78,15 +78,14 @@ public class LogListener extends ListenerAdapter{
 				else{
 					participation.addValue(todayKey, event.getAuthor().getIdLong(), 1L);
 				}
-				
-				final var emotes = new EmotesParticipationConfig(event.getGuild());
-				final var emotesMap = emotes.getAsMap();
-				final var weekKey = EmotesCommand.DF.format(now);
-				if(!emotesMap.containsKey(weekKey)){
-					emotes.addValue(weekKey);
-				}
-				event.getMessage().getEmotes().stream().map(Emote::getName).forEach(id -> emotes.addValue(weekKey, id, emotesMap.get(weekKey).getOrDefault(id, 0L) + 1));
 			}
+			final var emotes = new EmotesParticipationConfig(event.getGuild());
+			final var emotesMap = emotes.getAsMap();
+			final var weekKey = EmotesCommand.DF.format(now);
+			if(!emotesMap.containsKey(weekKey)){
+				emotes.addValue(weekKey);
+			}
+			event.getMessage().getEmotes().stream().map(Emote::getName).forEach(id -> emotes.addValue(weekKey, id, emotesMap.get(weekKey).getOrDefault(id, 0L) + 1));
 		}
 		catch(final Exception e){
 			getLogger(event.getGuild()).error("", e);
