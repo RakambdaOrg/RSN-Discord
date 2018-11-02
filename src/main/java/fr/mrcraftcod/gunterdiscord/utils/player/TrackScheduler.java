@@ -47,13 +47,11 @@ class TrackScheduler extends AudioEventAdapter{
 	 * @param track The track to play or add to queue.
 	 */
 	public void queue(final AudioTrack track){
-		if(player.startTrack(track, true)){
-			getLogger(guild).info("Playing track {}", track.getInfo().identifier);
+		if(queue.stream().noneMatch(track2 -> Objects.equals(track2.getInfo().identifier, track.getInfo().identifier))){
+			queue.offer(track);
 		}
-		else{
-			if(queue.stream().noneMatch(track2 -> Objects.equals(track2.getInfo().identifier, track.getInfo().identifier))){
-				queue.offer(track);
-			}
+		if(player.startTrack(queue.poll(), true)){
+			getLogger(guild).info("Playing track {}", track.getInfo().identifier);
 		}
 	}
 	
