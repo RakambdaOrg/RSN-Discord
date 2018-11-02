@@ -5,6 +5,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
@@ -13,6 +14,7 @@ import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -83,7 +85,9 @@ public class AddMusicCommand extends BasicCommand{
 					}
 					final var queue = GunterAudioManager.getQueue(event.getGuild());
 					final var before = queue.stream().takeWhile(t -> !track.equals(t)).collect(Collectors.toList());
-					Actions.reply(event, "%s added %s, position in queue: %d, ETA: %s", event.getAuthor().getAsMention(), ((AudioTrack) track).getInfo().title, GunterAudioManager.currentTrack(event.getGuild()).equals(track) ? 0 : (1 + before.size()), getDuration(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + before.stream().mapToLong(AudioTrack::getDuration).sum()));
+					final var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Music added");
+					Actions.reply(event, embed.build());
+					Actions.reply(event, "%s added `%s`\nPosition in queue: %d\nETA: %s", event.getAuthor().getAsMention(), ((AudioTrack) track).getInfo().title, GunterAudioManager.currentTrack(event.getGuild()).equals(track) ? 0 : (1 + before.size()), getDuration(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + before.stream().mapToLong(AudioTrack::getDuration).sum()));
 				}
 				else{
 					Actions.reply(event, track.toString());

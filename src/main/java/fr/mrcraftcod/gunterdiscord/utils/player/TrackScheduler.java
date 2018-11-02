@@ -65,8 +65,7 @@ class TrackScheduler extends AudioEventAdapter{
 		super.onTrackEnd(player, track, endReason);
 		if(track.getUserData() instanceof TrackUserFields){
 			if(track.getUserData(TrackUserFields.class).getOrDefault(new ReplayTrackUserField(), false)){
-				track.setPosition(0);
-				queue(track);
+				queue(track.makeClone());
 			}
 		}
 		listeners.forEach(l -> l.onTrackEnd(track));
