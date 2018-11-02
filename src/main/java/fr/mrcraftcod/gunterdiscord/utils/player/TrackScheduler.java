@@ -65,13 +65,15 @@ class TrackScheduler extends AudioEventAdapter{
 		super.onTrackEnd(player, track, endReason);
 		if(track.getUserData() instanceof TrackUserFields){
 			if(track.getUserData(TrackUserFields.class).getOrDefault(new ReplayTrackUserField(), false)){
-				queue(track.makeClone());
+				final var clone = track.makeClone();
+				clone.setUserData(track.getUserData());
+				queue(clone);
 			}
 		}
 		listeners.forEach(l -> l.onTrackEnd(track));
 		getLogger(getGuild()).info("Track ended: {}", track.getIdentifier());
 		if(endReason.mayStartNext){
-			if(!nextTrack()){
+			if(Objects.isNull(this.player.getPlayingTrack()) && !nextTrack()){
 				getLogger(getGuild()).info("Playlist ended, listeners: {}", listeners.size());
 				final var executor = Executors.newSingleThreadScheduledExecutor();
 				executor.schedule(() -> listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty), 5, TimeUnit.SECONDS);

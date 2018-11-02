@@ -7,6 +7,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.RequesterTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -64,7 +65,7 @@ public class QueueMusicCommand extends BasicCommand{
 		final var beforeDuration = new AtomicLong(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).orElse(0L) + queue.stream().limit(perPage * page).mapToLong(AudioTrack::getDuration).sum());
 		queue.stream().skip(perPage * page).limit(perPage).forEachOrdered(track -> {
 			final var userData = track.getUserData(TrackUserFields.class);
-			builder.addField("Position " + position.addAndGet(1), track.getInfo().title + "\nRequester: " + userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Unknown") + "\nLength: " + getDuration(track.getDuration()) + "\nETA: " + getDuration(beforeDuration.get()), false);
+			builder.addField("Position " + position.addAndGet(1), track.getInfo().title + "\nRequester: " + userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Unknown") + "\nRepeating: " + userData.get(new ReplayTrackUserField()).map(Object::toString).orElse("False") + "\nLength: " + getDuration(track.getDuration()) + "\nETA: " + getDuration(beforeDuration.get()), false);
 			beforeDuration.addAndGet(track.getDuration());
 		});
 		Actions.reply(event, builder.build());

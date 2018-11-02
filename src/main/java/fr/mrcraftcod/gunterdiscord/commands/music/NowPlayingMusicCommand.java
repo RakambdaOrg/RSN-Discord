@@ -6,6 +6,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.RequesterTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -47,9 +48,10 @@ public class NowPlayingMusicCommand extends BasicCommand{
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, "Currently playing");
 		GunterAudioManager.currentTrack(event.getGuild()).ifPresentOrElse(track -> {
 			final var userData = track.getUserData(TrackUserFields.class);
-			builder.addField("Title", track.getInfo().title, false);
-			builder.addField("Requester", userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Unknown"), false);
-			builder.addField("Position", String.format("%s %s / %s", buildBar(track.getPosition(), track.getDuration()), getDuration(track.getPosition()), getDuration(track.getDuration())), false);
+			builder.setDescription(track.getInfo().title);
+			builder.addField("Requester", userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Unknown"), true);
+			builder.addField("Repeating", userData.get(new ReplayTrackUserField()).map(Object::toString).orElse("False"), true);
+			builder.addField("Position", String.format("%s %s / %s", buildBar(track.getPosition(), track.getDuration()), getDuration(track.getPosition()), getDuration(track.getDuration())), true);
 		}, () -> {
 			builder.setColor(Color.RED);
 			builder.setDescription("No music are currently playing");
