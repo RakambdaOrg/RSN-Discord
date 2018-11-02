@@ -86,8 +86,11 @@ public class AddMusicCommand extends BasicCommand{
 					final var queue = GunterAudioManager.getQueue(event.getGuild());
 					final var before = queue.stream().takeWhile(t -> !track.equals(t)).collect(Collectors.toList());
 					final var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Music added");
+					embed.setDescription(((AudioTrack) track).getInfo().title);
+					embed.addField("Requester", event.getAuthor().getAsMention(), true);
+					embed.addField("ETA", getDuration(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + before.stream().mapToLong(AudioTrack::getDuration).sum()), true);
+					embed.addField("Position in queue", "" + (GunterAudioManager.currentTrack(event.getGuild()).equals(track) ? 0 : (1 + before.size())), true);
 					Actions.reply(event, embed.build());
-					Actions.reply(event, "%s added `%s`\nPosition in queue: %d\nETA: %s", event.getAuthor().getAsMention(), ((AudioTrack) track).getInfo().title, GunterAudioManager.currentTrack(event.getGuild()).equals(track) ? 0 : (1 + before.size()), getDuration(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + before.stream().mapToLong(AudioTrack::getDuration).sum()));
 				}
 				else{
 					Actions.reply(event, track.toString());
