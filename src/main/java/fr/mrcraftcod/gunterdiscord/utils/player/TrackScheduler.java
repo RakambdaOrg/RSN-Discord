@@ -68,6 +68,7 @@ class TrackScheduler extends AudioEventAdapter{
 		super.onTrackEnd(player, track, endReason);
 		if(track.getUserData() instanceof TrackUserFields){
 			if(track.getUserData(TrackUserFields.class).getOrDefault(new ReplayTrackUserField(), false)){
+				getLogger(guild).info("Putting back {} into queue: repeat is enabled", track.getInfo().identifier);
 				final var clone = track.makeClone();
 				clone.setUserData(track.getUserData());
 				queue(clone);
