@@ -67,8 +67,8 @@ public class LogListener extends ListenerAdapter{
 	public void onGuildMessageReceived(final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
+			final var now = LocalDate.now();
 			if(!new NoXPChannelsConfig(event.getGuild()).getAsList().contains(event.getChannel())){
-				final var now = LocalDate.now();
 				final var participation = new MembersParticipationConfig(event.getGuild());
 				final var participationMap = participation.getAsMap();
 				final var todayKey = TempParticipationCommand.DF.format(now);
