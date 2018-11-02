@@ -71,14 +71,23 @@ class TrackScheduler extends AudioEventAdapter{
 			}
 		}
 		listeners.forEach(l -> l.onTrackEnd(track));
-		getLogger(getGuild()).info("Track ended: {}", track.getIdentifier());
+		getLogger(getGuild()).info("Track ended ({}): {}", endReason.name(), track.getIdentifier());
 		if(endReason.mayStartNext){
-			if(Objects.isNull(this.player.getPlayingTrack()) && !nextTrack()){
-				getLogger(getGuild()).info("Playlist ended, listeners: {}", listeners.size());
-				final var executor = Executors.newSingleThreadScheduledExecutor();
-				executor.schedule(() -> listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty), 5, TimeUnit.SECONDS);
-			}
+			tryStartNext();
 		}
+	}
+	
+	private void tryStartNext(){
+		if(Objects.isNull(this.player.getPlayingTrack()) && !nextTrack()){
+			getLogger(getGuild()).info("Playlist ended, listeners: {}", listeners.size());
+			final var executor = Executors.newSingleThreadScheduledExecutor();
+			executor.schedule(() -> listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty), 5, TimeUnit.SECONDS);
+		}
+	}
+	
+	public void skip(){
+		this.player.startTrack(null, false);
+		tryStartNext();
 	}
 	
 	/**

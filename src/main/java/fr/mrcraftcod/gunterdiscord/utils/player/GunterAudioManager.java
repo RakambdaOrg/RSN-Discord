@@ -259,8 +259,8 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			if(track.getUserData() instanceof TrackUserFields){
 				track.getUserData(TrackUserFields.class).fill(new ReplayTrackUserField(), false);
 			}
+			trackScheduler.skip();
 		});
-		trackScheduler.nextTrack();
 	}
 	
 	public AudioPlayer getAudioPlayer(){
