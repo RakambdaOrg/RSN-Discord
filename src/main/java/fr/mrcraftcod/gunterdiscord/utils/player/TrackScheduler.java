@@ -91,7 +91,7 @@ class TrackScheduler extends AudioEventAdapter{
 	
 	public void shuffle(){
 		final var oldList = new ArrayList<>(this.queue);
-		this.queue = new LinkedBlockingQueue<>(oldList.size());
+		this.queue = new LinkedBlockingQueue<>();
 		Collections.shuffle(oldList);
 		this.queue.addAll(oldList);
 	}
