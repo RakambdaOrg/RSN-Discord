@@ -47,7 +47,8 @@ class TrackScheduler extends AudioEventAdapter{
 		if(queue.stream().noneMatch(track2 -> Objects.equals(track2.getInfo().identifier, track.getInfo().identifier))){
 			queue.offer(track);
 		}
-		if(player.startTrack(queue.poll(), true)){
+		if(player.startTrack(queue.peek(), true)){
+			queue.poll();
 			getLogger(guild).info("Playing track {}", track.getInfo().identifier);
 		}
 	}
@@ -90,10 +91,12 @@ class TrackScheduler extends AudioEventAdapter{
 	}
 	
 	public void shuffle(){
-		final var oldList = new ArrayList<>(this.queue);
-		this.queue = new LinkedBlockingQueue<>();
-		Collections.shuffle(oldList);
-		this.queue.addAll(oldList);
+		if(this.queue.size() > 1){
+			final var oldList = new ArrayList<>(this.queue);
+			this.queue = new LinkedBlockingQueue<>();
+			Collections.shuffle(oldList);
+			this.queue.addAll(oldList);
+		}
 	}
 	
 	/**
