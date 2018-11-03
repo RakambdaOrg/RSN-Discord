@@ -58,7 +58,7 @@ public class QueueMusicCommand extends BasicCommand{
 			}
 			return null;
 		}).orElse(1) - 1;
-		final var position = new AtomicInteger(1);
+		final var position = new AtomicInteger(0);
 		final var queue = GunterAudioManager.getQueue(event.getGuild());
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, "Music queue (Page " + page + "/" + ((int) Math.ceil(queue.size() / (double) perPage)) + " - 10 max)");
 		builder.setDescription(String.format("%d musics queued", queue.size()));
