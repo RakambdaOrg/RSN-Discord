@@ -47,6 +47,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 		super.execute(event, args);
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, "Currently playing");
 		GunterAudioManager.currentTrack(event.getGuild()).ifPresentOrElse(track -> {
+			builder.setTitle("Currently playing", track.getInfo().uri);
 			final var userData = track.getUserData(TrackUserFields.class);
 			builder.setDescription(track.getInfo().title);
 			builder.addField("Requester", userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Unknown"), true);

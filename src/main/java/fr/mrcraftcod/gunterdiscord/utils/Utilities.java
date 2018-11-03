@@ -172,12 +172,26 @@ public class Utilities{
 	 * @return The builder.
 	 */
 	public static EmbedBuilder buildEmbed(final User author, final Color color, final String title){
+		return buildEmbed(author, color, title, null);
+	}
+	
+	/**
+	 * Build an embed.
+	 *
+	 * @param author   The author.
+	 * @param color    The color.
+	 * @param title    The title.
+	 * @param titleURL The url of the title.
+	 *
+	 * @return The builder.
+	 */
+	public static EmbedBuilder buildEmbed(final User author, final Color color, final String title, final String titleURL){
 		final var builder = new EmbedBuilder();
 		if(author != null){
 			builder.setAuthor(author.getName(), null, author.getAvatarUrl());
 		}
 		builder.setColor(color);
-		builder.setTitle(title);
+		builder.setTitle(title, titleURL);
 		return builder;
 	}
 	
