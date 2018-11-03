@@ -8,10 +8,7 @@ import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
 import net.dv8tion.jda.core.entities.Guild;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -26,7 +23,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 class TrackScheduler extends AudioEventAdapter{
 	private final AudioPlayer player;
-	private final BlockingQueue<AudioTrack> queue;
+	private BlockingQueue<AudioTrack> queue;
 	private final Guild guild;
 	private final Set<StatusTrackSchedulerListener> listeners;
 	
@@ -90,6 +87,13 @@ class TrackScheduler extends AudioEventAdapter{
 	public void skip(){
 		this.player.startTrack(null, false);
 		tryStartNext();
+	}
+	
+	public void shuffle(){
+		final var oldList = Arrays.asList(this.queue.toArray(new AudioTrack[0]));
+		this.queue = new LinkedBlockingQueue<>(oldList.size());
+		Collections.shuffle(oldList);
+		this.queue.addAll(oldList);
 	}
 	
 	/**
