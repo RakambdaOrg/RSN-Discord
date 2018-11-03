@@ -90,7 +90,7 @@ class TrackScheduler extends AudioEventAdapter{
 	}
 	
 	public void shuffle(){
-		final var oldList = Arrays.asList(this.queue.toArray(new AudioTrack[0]));
+		final var oldList = new ArrayList<>(this.queue);
 		this.queue = new LinkedBlockingQueue<>(oldList.size());
 		Collections.shuffle(oldList);
 		this.queue.addAll(oldList);
