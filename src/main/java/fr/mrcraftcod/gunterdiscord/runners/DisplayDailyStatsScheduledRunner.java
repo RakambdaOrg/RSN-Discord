@@ -53,7 +53,7 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 			if(Objects.nonNull(emotesParticipationChannel)){
 				getLogger(guild).debug("Processing stats for guild {}", guild);
 				if(EmotesCommand.sendInfos(guild, lastWeek, jda.getSelfUser(), emotesParticipationChannel)){
-					new EmotesParticipationConfig(guild).deleteKey(TempParticipationCommand.getKey(lastWeek));
+					new EmotesParticipationConfig(guild).deleteKey(EmotesCommand.getKey(lastWeek));
 					final var usersToPin = new EmotesParticipationPinConfig(guild).getAsList();
 					if(!usersToPin.isEmpty()){
 						Actions.sendMessage(emotesParticipationChannel, usersToPin.stream().map(User::getAsMention).collect(Collectors.joining("\n")));
