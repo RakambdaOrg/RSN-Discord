@@ -8,6 +8,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -35,8 +36,8 @@ public abstract class WarnCommand extends BasicCommand{
 		if(event.getMessage().getMentionedUsers().size() > 0){
 			final var user = event.getMessage().getMentionedUsers().get(0);
 			args.pop();
-			final var role = getRole(event.getGuild(), args);
-			final var duration = getTime(event.getGuild(), args);
+			final var role = getRole(event.getGuild(), event.getMessage(), args);
+			final var duration = getTime(event.getGuild(), event.getMessage(), args);
 			final var reason = String.join(" ", args);
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
@@ -71,21 +72,23 @@ public abstract class WarnCommand extends BasicCommand{
 	 * Get the configuration of the role to apply.
 	 *
 	 * @param guild The guild of the event.
+	 * @param message
 	 * @param args  The args that were passed.
 	 *
 	 * @return The config.
 	 */
-	protected abstract Role getRole(Guild guild, LinkedList<String> args) throws NoValueDefinedException;
+	protected abstract Role getRole(Guild guild, Message message, LinkedList<String> args) throws NoValueDefinedException;
 	
 	/**
 	 * Get the configuration of the length for the role to be applied.
 	 *
 	 * @param guild The guild of the event.
+	 * @param message
 	 * @param args  The args that were passed.
 	 *
 	 * @return The config.
 	 */
-	protected abstract double getTime(Guild guild, LinkedList<String> args);
+	protected abstract double getTime(Guild guild, Message message, LinkedList<String> args);
 	
 	@Override
 	public String getCommandUsage(){

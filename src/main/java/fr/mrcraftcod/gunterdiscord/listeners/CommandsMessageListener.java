@@ -7,6 +7,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
 import fr.mrcraftcod.gunterdiscord.commands.music.MusicCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.quiz.QuizCommandComposite;
+import fr.mrcraftcod.gunterdiscord.commands.warn.CustomWarnCommand;
 import fr.mrcraftcod.gunterdiscord.commands.warn.DoubleWarnCommand;
 import fr.mrcraftcod.gunterdiscord.commands.warn.MegaWarnCommand;
 import fr.mrcraftcod.gunterdiscord.commands.warn.NormalWarnCommand;
@@ -51,6 +52,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new NormalWarnCommand(),
 			new DoubleWarnCommand(),
 			new MegaWarnCommand(),
+			new CustomWarnCommand(),
 			new MusicCommandComposite(),
 			new StopCommand(),
 			new TimeCommand(),

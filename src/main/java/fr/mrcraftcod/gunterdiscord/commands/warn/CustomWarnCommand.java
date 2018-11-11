@@ -1,8 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands.warn;
 
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
-import fr.mrcraftcod.gunterdiscord.settings.configs.DoubleWarnRoleConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.DoubleWarnTimeConfig;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
@@ -15,24 +13,25 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public class DoubleWarnCommand extends WarnCommand{
+public class CustomWarnCommand extends WarnCommand{
 	@Override
 	protected Role getRole(final Guild guild, final Message message, final LinkedList<String> args) throws NoValueDefinedException{
-		return new DoubleWarnRoleConfig(guild).getObject();
+		args.pop();
+		return message.getMentionedRoles().get(0);
 	}
 	
 	@Override
 	protected double getTime(final Guild guild, final Message message, final LinkedList<String> args){
-		return new DoubleWarnTimeConfig(guild).getObject(1D);
+		return Double.parseDouble(args.poll());
 	}
 	
 	@Override
 	public String getName(){
-		return "Double warn";
+		return "Custom warn";
 	}
 	
 	@Override
 	public List<String> getCommand(){
-		return List.of("doublewarn", "dwarn");
+		return List.of("cwarn");
 	}
 }
