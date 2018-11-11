@@ -14,10 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -33,18 +31,25 @@ public class EmotesCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		sendInfos(event.getGuild(), LocalDate.now(), event.getAuthor(), event.getTextChannel());
+		sendInfos(event.getGuild(), LocalDate.now(), event.getAuthor(), event.getTextChannel(), Optional.ofNullable(args.poll()).map(e -> {
+			try{
+				return Integer.parseInt(e);
+			}
+			catch(Exception ignored){
+			}
+			return null;
+		}).filter(i -> i > 0).orElse(10));
 		return CommandResult.SUCCESS;
 	}
 	
-	public static boolean sendInfos(final Guild guild, final LocalDate localDate, final User author, final TextChannel channel){
+	public static boolean sendInfos(final Guild guild, final LocalDate localDate, final User author, final TextChannel channel, final int limit){
 		final var weekKey = getKey(localDate);
 		final var date = localDate.format(DFD);
 		final var stats = new EmotesParticipationConfig(guild).getValue(weekKey);
 		if(Objects.nonNull(stats)){
 			final var i = new AtomicInteger(1);
 			final var builder = Utilities.buildEmbed(author, Color.MAGENTA, "Participation of the week " + date + " (UTC)");
-			stats.entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).map(e -> guild.getEmotesByName(e.getKey(), true).stream().findFirst().map(e2 -> Map.entry(e2, e.getValue())).orElse(null)).filter(Objects::nonNull).limit(10).forEachOrdered(e -> builder.addField("#" + i.getAndIncrement(), e.getKey().getAsMention() + " Use count: " + e.getValue(), false));
+			stats.entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).map(e -> guild.getEmotesByName(e.getKey(), true).stream().findFirst().map(e2 -> Map.entry(e2, e.getValue())).orElse(null)).filter(Objects::nonNull).limit(limit).forEachOrdered(e -> builder.addField("#" + i.getAndIncrement(), e.getKey().getAsMention() + " Use count: " + e.getValue(), false));
 			Actions.sendMessage(channel, builder.build());
 			return true;
 		}
