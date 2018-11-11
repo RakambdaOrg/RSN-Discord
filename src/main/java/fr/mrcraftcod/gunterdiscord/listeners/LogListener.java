@@ -5,7 +5,6 @@ import fr.mrcraftcod.gunterdiscord.commands.TempParticipationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.configs.*;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.entities.Emote;
-import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceGuildMuteEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
@@ -91,12 +90,6 @@ public class LogListener extends ListenerAdapter{
 		catch(final Exception e){
 			getLogger(event.getGuild()).error("", e);
 		}
-	}
-	
-	@Override
-	public void onGuildMemberLeave(final GuildMemberLeaveEvent event){
-		super.onGuildMemberLeave(event);
-		getLogger(event.getGuild()).debug("User {} left the server", event.getMember());
 	}
 	
 	@Override
