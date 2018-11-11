@@ -35,7 +35,7 @@ public abstract class WarnCommand extends BasicCommand{
 		super.execute(event, args);
 		if(event.getMessage().getMentionedUsers().size() > 0){
 			final var user = event.getMessage().getMentionedUsers().get(0);
-			args.pop();
+			args.poll();
 			final var role = getRole(event.getGuild(), event.getMessage(), args);
 			final var duration = getTime(event.getGuild(), event.getMessage(), args);
 			final var reason = String.join(" ", args);
