@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-12.
@@ -83,6 +84,9 @@ public class AniListMediaList implements AniListDatedObject{
 		}
 		if(Objects.nonNull(getCompletedAt())){
 			builder.addField("Completed at", SIMPLE_DATE_FORMAT.format(getCompletedAt().asDate()), true);
+		}
+		if(Objects.nonNull(getStartedAt()) && Objects.nonNull(getCompletedAt())){
+			builder.addField("Time to complete", String.format("%d days", getStartedAt().durationTo(getCompletedAt()).get(DAYS)), true);
 		}
 		builder.addField("Progress", getProgress() + "/" + Optional.ofNullable(getMedia().getItemCount()).map(Object::toString).orElse("?"), true);
 		
