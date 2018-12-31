@@ -3,7 +3,7 @@ package fr.mrcraftcod.gunterdiscord.commands.anilist.fetch;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListMediaListScheduledRunner;
+import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListMediaUserListScheduledRunner;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -16,20 +16,20 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-10-08
  */
-public class AniListFetchMediaListCommand extends BasicCommand{
+public class AniListFetchMediaUserListCommand extends BasicCommand{
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	AniListFetchMediaListCommand(final Command parent){
+	AniListFetchMediaUserListCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		new AniListMediaListScheduledRunner(event.getJDA()).run();
+		new AniListMediaUserListScheduledRunner(event.getJDA()).run();
 		return CommandResult.SUCCESS;
 	}
 	
@@ -40,7 +40,7 @@ public class AniListFetchMediaListCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "AniList fetch media list";
+		return "AniList fetch media user list";
 	}
 	
 	@Override
@@ -50,7 +50,7 @@ public class AniListFetchMediaListCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Fetch media list changes from AniList";
+		return "Fetch media user list changes from AniList";
 	}
 	
 	@Override

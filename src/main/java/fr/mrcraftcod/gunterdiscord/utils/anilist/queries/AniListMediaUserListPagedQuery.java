@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.queries;
 
-import fr.mrcraftcod.gunterdiscord.utils.anilist.list.AniListMediaList;
+import fr.mrcraftcod.gunterdiscord.utils.anilist.list.AniListMediaUserList;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,13 +12,13 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-10-11
  */
-public class AniListMediaListPagedQuery implements AniListPagedQuery<AniListMediaList>{
-	private static final String QUERY_MEDIA_LIST = AniListPagedQuery.pagedQuery(", $userID: Int", AniListMediaList.getQuery());
+public class AniListMediaUserListPagedQuery implements AniListPagedQuery<AniListMediaUserList>{
+	private static final String QUERY_MEDIA_LIST = AniListPagedQuery.pagedQuery(", $userID: Int", AniListMediaUserList.getQuery());
 	
 	private final JSONObject variables;
 	private int nextPage = 0;
 	
-	public AniListMediaListPagedQuery(final int userId){
+	public AniListMediaUserListPagedQuery(final int userId){
 		this.variables = new JSONObject();
 		variables.put("userID", userId);
 		variables.put("page", 1);
@@ -31,8 +31,8 @@ public class AniListMediaListPagedQuery implements AniListPagedQuery<AniListMedi
 	}
 	
 	@Override
-	public List<AniListMediaList> parseResult(final JSONObject json) throws Exception{
-		final var changes = new ArrayList<AniListMediaList>();
+	public List<AniListMediaUserList> parseResult(final JSONObject json) throws Exception{
+		final var changes = new ArrayList<AniListMediaUserList>();
 		for(final var change : json.getJSONObject("data").getJSONObject("Page").getJSONArray("mediaList")){
 			try{
 				changes.add(buildChange((JSONObject) change));
@@ -55,7 +55,7 @@ public class AniListMediaListPagedQuery implements AniListPagedQuery<AniListMedi
 		return this.variables;
 	}
 	
-	private AniListMediaList buildChange(final JSONObject change) throws Exception{
-		return AniListMediaList.buildFromJSON(change);
+	private AniListMediaUserList buildChange(final JSONObject change) throws Exception{
+		return AniListMediaUserList.buildFromJSON(change);
 	}
 }

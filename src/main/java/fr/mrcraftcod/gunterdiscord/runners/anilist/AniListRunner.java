@@ -1,6 +1,5 @@
 package fr.mrcraftcod.gunterdiscord.runners.anilist;
 
-import fr.mrcraftcod.gunterdiscord.runners.ScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.settings.configs.AniListAccessTokenConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.AniListChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.AniListLastAccessConfig;
@@ -25,28 +24,24 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-10-11
  */
-public interface AniListRunner<T extends AniListObject, U extends AniListPagedQuery<T>> extends ScheduledRunner{
-	@Override
-	default void run(){
+public interface AniListRunner<T extends AniListObject, U extends AniListPagedQuery<T>>{
+	default void runQueryOnEveryUserAndDefaultChannels(){
+		final var channels = getJDA().getGuilds().stream().map(g -> new AniListChannelConfig(g).getObject(null)).filter(Objects::nonNull).collect(Collectors.toList());
+		final var members = channels.stream().flatMap(c -> new AniListAccessTokenConfig(c.getGuild()).getAsMap().keySet().stream().map(k -> c.getGuild().getMemberById(k))).collect(Collectors.toList());
+		runQuery(members, channels);
+	}
+	
+	default void runQuery(final List<Member> members, final List<TextChannel> channels){
 		getLogger(null).info("Starting AniList {} runner", getRunnerName());
 		try{
-			final var channels = new ArrayList<TextChannel>();
 			final var userElements = new HashMap<User, List<T>>();
-			for(final var guild : getJDA().getGuilds()){
-				final var channel = new AniListChannelConfig(guild).getObject(null);
-				if(Objects.nonNull(channel)){
-					channels.add(channel);
-					final var tokens = new AniListAccessTokenConfig(guild);
-					for(final var userID : tokens.getAsMap().keySet()){
-						final var member = guild.getMemberById(userID);
-						if(!userElements.containsKey(member.getUser())){
-							try{
-								userElements.put(member.getUser(), getElements(member));
-							}
-							catch(final Exception e){
-								getLogger(guild).error("Error fetching user {} on AniList", member, e);
-							}
-						}
+			for(var member : members){
+				if(!userElements.containsKey(member.getUser())){
+					try{
+						userElements.put(member.getUser(), getElements(member));
+					}
+					catch(final Exception e){
+						getLogger(member.getGuild()).error("Error fetching user {} on AniList", member, e);
 					}
 				}
 			}
@@ -61,10 +56,19 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 	}
 	
 	default void sendMessages(final List<TextChannel> channels, final Map<User, List<T>> userElements){
-		for(final var user : userElements.keySet()){
-			final var element = userElements.get(user);
-			element.stream().sorted().map(change -> buildMessage(user, change)).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
+		if(sortedByUser()){
+			for(final var user : userElements.keySet()){
+				final var element = userElements.get(user);
+				element.stream().sorted().map(change -> buildMessage(user, change)).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
+			}
 		}
+		else{
+			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
+		}
+	}
+	
+	default boolean sortedByUser(){
+		return false;
 	}
 	
 	String getRunnerName();

@@ -23,11 +23,11 @@ import static java.time.temporal.ChronoUnit.DAYS;
  * @author Thomas Couchoud
  * @since 2018-10-12
  */
-public class AniListMediaList implements AniListDatedObject{
+public class AniListMediaUserList implements AniListDatedObject{
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 	private static final String QUERY = "mediaList(userId: $userID) {\n" + "id\n" + "private\n" + "progress\n" + "priority\n" + "customLists\n" + "score(format: POINT_100)\n" + "completedAt{year month day}" + "startedAt{year month day}" + "status\n" + "updatedAt\n" + "createdAt\n" + AniListMedia.getQuery() + "}";
 	private int id;
-	private AniListMediaListStatus status;
+	private AniListMediaListUserStatus status;
 	private AniListMedia media;
 	private boolean privateItem;
 	private Integer priority;
@@ -39,8 +39,8 @@ public class AniListMediaList implements AniListDatedObject{
 	private HashMap<String, Boolean> customLists;
 	private Integer score;
 	
-	public static AniListMediaList buildFromJSON(final JSONObject json) throws Exception{
-		final var mediaList = new AniListMediaList();
+	public static AniListMediaUserList buildFromJSON(final JSONObject json) throws Exception{
+		final var mediaList = new AniListMediaUserList();
 		mediaList.fromJSON(json);
 		return mediaList;
 	}
@@ -52,7 +52,7 @@ public class AniListMediaList implements AniListDatedObject{
 		this.priority = Utilities.getJSONMaybe(json, Integer.class, "priority");
 		this.progress = Utilities.getJSONMaybe(json, Integer.class, "progress");
 		this.score = Utilities.getJSONMaybe(json, Integer.class, "score");
-		this.status = AniListMediaListStatus.valueOf(json.getString("status"));
+		this.status = AniListMediaListUserStatus.valueOf(json.getString("status"));
 		this.media = AniListMedia.buildFromJSON(json.getJSONObject("media"));
 		this.createdAt = new Date(json.optInt("createdAt") * 1000L);
 		this.updatedAt = new Date(json.optInt("updatedAt") * 1000L);
@@ -109,8 +109,9 @@ public class AniListMediaList implements AniListDatedObject{
 		return score;
 	}
 	
-	public AniListMediaListStatus getStatus(){
-		return status;
+	@Override
+	public boolean equals(final Object obj){
+		return obj instanceof AniListMediaUserList && Objects.equals(((AniListMediaUserList) obj).getId(), getId());
 	}
 	
 	public boolean isPrivateItem(){
@@ -156,9 +157,8 @@ public class AniListMediaList implements AniListDatedObject{
 		return this.getId();
 	}
 	
-	@Override
-	public boolean equals(final Object obj){
-		return obj instanceof AniListMediaList && Objects.equals(((AniListMediaList) obj).getId(), getId());
+	public AniListMediaListUserStatus getStatus(){
+		return status;
 	}
 	
 	public Date getCreatedAt(){

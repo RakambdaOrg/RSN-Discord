@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.runners.anilist;
 
+import fr.mrcraftcod.gunterdiscord.runners.ScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.airing.AniListAiringNotification;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListNotificationsPagedQuery;
@@ -17,12 +18,17 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-10-08
  */
-public class AniListNotificationScheduledRunner implements AniListRunner<AniListAiringNotification, AniListNotificationsPagedQuery>{
+public class AniListNotificationScheduledRunner implements AniListRunner<AniListAiringNotification, AniListNotificationsPagedQuery>, ScheduledRunner{
 	private final JDA jda;
 	
 	public AniListNotificationScheduledRunner(final JDA jda){
 		getLogger(null).info("Creating AniList {} runner", getRunnerName());
 		this.jda = jda;
+	}
+	
+	@Override
+	public void run(){
+		runQueryOnEveryUserAndDefaultChannels();
 	}
 	
 	@Override
