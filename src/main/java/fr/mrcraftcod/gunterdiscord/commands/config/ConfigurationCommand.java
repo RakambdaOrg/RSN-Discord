@@ -12,7 +12,7 @@ import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import java.awt.*;
+import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -138,7 +138,7 @@ public class ConfigurationCommand extends BasicCommand{
 					builder.setColor(Color.RED);
 					builder.setTitle("Error performing the operation");
 					builder.setDescription("Command: " + getName());
-					builder.addField("Reason", e.getMessage(), false);
+					builder.addField("Reason", e.getMessage().isBlank() ? e.getClass().getName() : e.getMessage(), false);
 					builder.addField("Configuration", configuration.getName(), false);
 					Actions.reply(event, builder.build());
 					getLogger(event.getGuild()).error("Error handling configuration change", e);
