@@ -9,11 +9,8 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
-import java.awt.*;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.awt.Color;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import static fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand.ChangeConfigType.*;
@@ -85,7 +82,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Values of " + getName());
-			getAsList().stream().map(Object::toString).forEach(o -> builder.addField("", o, false));
+			getAsList().stream().filter(Objects::nonNull).map(Object::toString).forEach(o -> builder.addField("", o, false));
 			Actions.reply(event, builder.build());
 			return ConfigurationCommand.ActionResult.NONE;
 		}
