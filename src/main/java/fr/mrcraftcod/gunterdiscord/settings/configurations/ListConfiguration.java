@@ -9,6 +9,8 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.awt.Color;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -23,6 +25,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-04-15
  */
 public abstract class ListConfiguration<T> extends Configuration{
+	private static final Logger LOGGER = LoggerFactory.getLogger(ListConfiguration.class);
 	/**
 	 * Constructor.
 	 *
@@ -47,7 +50,12 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 * @param value The value to add.
 	 */
 	private void addRawValue(final String value){
-		Settings.addValue(guild, this, value);
+		if(Objects.isNull(value)){
+			LOGGER.warn("Adding a null value inside a list ({}), skipping", getName());
+		}
+		else{
+			Settings.addValue(guild, this, value);
+		}
 	}
 	
 	/**
