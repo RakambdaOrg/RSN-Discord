@@ -17,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -138,7 +139,7 @@ public class ConfigurationCommand extends BasicCommand{
 					builder.setColor(Color.RED);
 					builder.setTitle("Error performing the operation");
 					builder.setDescription("Command: " + getName());
-					builder.addField("Reason", e.getMessage().isBlank() ? e.getClass().getName() : e.getMessage(), false);
+					builder.addField("Reason", (Objects.isNull(e.getMessage()) || e.getMessage().isBlank()) ? e.getClass().getName() : e.getMessage(), false);
 					builder.addField("Configuration", configuration.getName(), false);
 					Actions.reply(event, builder.build());
 					getLogger(event.getGuild()).error("Error handling configuration change", e);
