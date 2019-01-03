@@ -7,10 +7,14 @@ import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListRunner;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.list.AniListMediaUserList;
+import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMediaType;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListMediaUserListPagedQuery;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
@@ -26,9 +30,11 @@ import java.util.function.Consumer;
 public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 	class AniListMediaUserListDifferencesRunner implements AniListRunner<AniListMediaUserList, AniListMediaUserListPagedQuery>{
 		private final JDA jda;
+		private final AniListMediaType type;
 		
-		AniListMediaUserListDifferencesRunner(final JDA jda){
+		AniListMediaUserListDifferencesRunner(final JDA jda, final AniListMediaType type){
 			this.jda = jda;
+			this.type = type;
 		}
 		
 		public void sendMessages(final List<TextChannel> channels, final Map<User, List<AniListMediaUserList>> userElements){
@@ -49,7 +55,7 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 				});
 			}
 			//noinspection Duplicates
-			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
+			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).filter(m -> Objects.isNull(type) || m.getValue().getMedia().getType().equals(type)).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
 		}
 		
 		@Override
@@ -60,23 +66,6 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 		@Override
 		public JDA getJDA(){
 			return this.jda;
-		}
-		
-		@SuppressWarnings("Duplicates")
-		public MessageEmbed buildMessage(final User user, final AniListMediaUserList change){
-			final var builder = new EmbedBuilder();
-			if(Objects.isNull(user)){
-				builder.setAuthor(getJDA().getSelfUser().getName(), change.getUrl(), getJDA().getSelfUser().getAvatarUrl());
-			}
-			else{
-				builder.setAuthor(user.getName(), change.getUrl(), user.getAvatarUrl());
-			}
-			builder.setTitle(change.getMedia().getTitle(), change.getUrl());
-			if(Objects.nonNull(change.getScore())){
-				builder.addField("Score", change.getScore() + "/100", true);
-			}
-			builder.addField("Type", Optional.ofNullable(change.getMedia().getType()).map(Enum::toString).orElse("UNKNOWN"), true);
-			return builder.build();
 		}
 		
 		@Override
@@ -105,8 +94,9 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 	}
 	
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
+		builder.addField("filter", "What kind of media to get the differences", false);
 		builder.addField("user1", "Mention of the first user to compare", false);
 		builder.addField("user2", "Mention of the second user to compare", false);
 	}
@@ -114,13 +104,14 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		if(event.getMessage().getMentionedUsers().size() < 2){
+		if(args.size() < 3 || event.getMessage().getMentionedUsers().size() < 2){
 			final var embed = Utilities.buildEmbed(event.getAuthor(), Color.RED, "Invalid parameters");
 			embed.addField("Reason", "Please mention 2 users to compare", false);
 			Actions.reply(event, embed.build());
 			return CommandResult.SUCCESS;
 		}
-		final var runner = new AniListMediaUserListDifferencesRunner(event.getJDA());
+		final var type = AniListMediaType.valueOf(args.poll());
+		final var runner = new AniListMediaUserListDifferencesRunner(event.getJDA(), type);
 		runner.runQuery(event.getMessage().getMentionedMembers(), List.of(event.getTextChannel()));
 		return CommandResult.SUCCESS;
 	}
