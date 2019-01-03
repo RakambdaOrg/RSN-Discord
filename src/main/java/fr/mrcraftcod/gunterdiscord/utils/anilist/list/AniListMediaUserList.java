@@ -4,6 +4,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListDatedObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.FuzzyDate;
+import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMangaMedia;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMedia;
 import net.dv8tion.jda.core.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -25,13 +26,14 @@ import static java.time.temporal.ChronoUnit.DAYS;
  */
 public class AniListMediaUserList implements AniListDatedObject{
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
-	private static final String QUERY = "mediaList(userId: $userID) {\n" + "id\n" + "private\n" + "progress\n" + "priority\n" + "customLists\n" + "score(format: POINT_100)\n" + "completedAt{year month day}" + "startedAt{year month day}" + "status\n" + "updatedAt\n" + "createdAt\n" + AniListMedia.getQuery() + "}";
+	private static final String QUERY = "mediaList(userId: $userID) {\n" + "id\n" + "private\n" + "progress\n" + "progressVolumes\n" + "priority\n" + "customLists\n" + "score(format: POINT_100)\n" + "completedAt{year month day}" + "startedAt{year month day}" + "status\n" + "updatedAt\n" + "createdAt\n" + AniListMedia.getQuery() + "}";
 	private int id;
 	private AniListMediaListUserStatus status;
 	private AniListMedia media;
 	private boolean privateItem;
 	private Integer priority;
 	private Integer progress;
+	private Integer progressVolumes;
 	private Date createdAt;
 	private Date updatedAt;
 	private FuzzyDate startedAt;
@@ -51,6 +53,7 @@ public class AniListMediaUserList implements AniListDatedObject{
 		this.privateItem = json.getBoolean("private");
 		this.priority = Utilities.getJSONMaybe(json, Integer.class, "priority");
 		this.progress = Utilities.getJSONMaybe(json, Integer.class, "progress");
+		this.progressVolumes = Utilities.getJSONMaybe(json, Integer.class, "progressVolumes");
 		this.score = Utilities.getJSONMaybe(json, Integer.class, "score");
 		this.status = AniListMediaListUserStatus.valueOf(json.getString("status"));
 		this.media = AniListMedia.buildFromJSON(json.getJSONObject("media"));
@@ -89,6 +92,9 @@ public class AniListMediaUserList implements AniListDatedObject{
 			builder.addField("Time to complete", String.format("%d days", getStartedAt().durationTo(getCompletedAt()).get(DAYS)), true);
 		}
 		builder.addField("Progress", getProgress() + "/" + Optional.ofNullable(getMedia().getItemCount()).map(Object::toString).orElse("?"), true);
+		if(Objects.nonNull(getProgressVolumes()) && getMedia() instanceof AniListMangaMedia){
+			builder.addField("Volumes progress", getProgressVolumes() + "/" + Optional.ofNullable(((AniListMangaMedia) getMedia()).getVolumes()).map(Object::toString).orElse("?"), true);
+		}
 		
 		final var lists = this.customLists.keySet().stream().filter(k -> customLists.get(k)).collect(Collectors.joining(", "));
 		if(Objects.nonNull(lists) && !lists.isBlank()){
@@ -98,6 +104,10 @@ public class AniListMediaUserList implements AniListDatedObject{
 		builder.addBlankField(false);
 		builder.addField("Media:", "", false);
 		getMedia().fillEmbed(builder);
+	}
+	
+	private Integer getProgressVolumes(){
+		return progressVolumes;
 	}
 	
 	@Override
