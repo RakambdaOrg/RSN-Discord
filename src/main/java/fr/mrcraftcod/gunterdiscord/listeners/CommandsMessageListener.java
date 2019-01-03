@@ -18,7 +18,7 @@ import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import java.awt.*;
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -59,7 +59,8 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new WarnInfoCommand(),
 			new AniListCommandComposite(),
 			new EmotesCommand(),
-			new TempParticipationCommand()
+			new TempParticipationCommand(),
+			new DogCommand()
 	};
 	
 	/**
