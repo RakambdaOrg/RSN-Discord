@@ -1,4 +1,4 @@
-package fr.mrcraftcod.gunterdiscord.commands.anilist.fetch;
+package fr.mrcraftcod.gunterdiscord.commands.anilist;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
@@ -18,7 +18,10 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
-import java.util.*;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -27,40 +30,27 @@ import java.util.function.Consumer;
  * @author Thomas Couchoud
  * @since 2018-10-08
  */
-public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
-	class AniListMediaUserListDifferencesRunner implements AniListRunner<AniListMediaUserList, AniListMediaUserListPagedQuery>{
+public class AniListGetUserEntryCommand extends BasicCommand{
+	class AniListMediaUserListRunner implements AniListRunner<AniListMediaUserList, AniListMediaUserListPagedQuery>{
+		private final int ID;
 		private final JDA jda;
 		private final AniListMediaType type;
 		
-		AniListMediaUserListDifferencesRunner(final JDA jda, final AniListMediaType type){
+		AniListMediaUserListRunner(final JDA jda, final AniListMediaType type, int ID){
 			this.jda = jda;
 			this.type = type;
+			this.ID = ID;
 		}
 		
 		public void sendMessages(final List<TextChannel> channels, final Map<User, List<AniListMediaUserList>> userElements){
-			for(final var user : userElements.keySet()){
-				userElements.keySet().parallelStream().filter(user2 -> !Objects.equals(user, user2)).forEach(userCompare -> {
-					final var it1 = userElements.get(user).iterator();
-					while(it1.hasNext()){
-						final var media = it1.next().getMedia();
-						final var it2 = userElements.get(userCompare).iterator();
-						while(it2.hasNext()){
-							if(Objects.equals(media, it2.next().getMedia())){
-								it1.remove();
-								it2.remove();
-								break;
-							}
-						}
-					}
-				});
-			}
+			userElements.values().forEach(l -> l.removeIf(aniListMediaUserList -> !aniListMediaUserList.getMedia().getType().equals(this.type) || aniListMediaUserList.getMedia().getId() != ID));
 			//noinspection Duplicates
-			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).filter(m -> Objects.nonNull(type) && m.getValue().getMedia().getType().equals(type)).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
+			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
 		}
 		
 		@Override
 		public String getRunnerName(){
-			return "differences";
+			return "get media";
 		}
 		
 		@Override
@@ -80,7 +70,7 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 		
 		@Override
 		public String getFetcherID(){
-			return "differences";
+			return "getmedia";
 		}
 	}
 	
@@ -89,7 +79,7 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	AniListFetchMediaUserListDifferencesCommand(final Command parent){
+	AniListGetUserEntryCommand(final Command parent){
 		super(parent);
 	}
 	
@@ -97,28 +87,29 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("filter", "What kind of media to get the differences", false);
-		builder.addField("user1", "Mention of the first user to compare", false);
-		builder.addField("user2", "Mention of the second user to compare", false);
+		builder.addField("mediaID", "The ID of the media", false);
+		builder.addField("user", "Mention of the first user to compare", false);
 	}
 	
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		if(args.size() < 3 || event.getMessage().getMentionedUsers().size() < 2){
+		if(args.size() < 3 || event.getMessage().getMentionedUsers().isEmpty()){
 			final var embed = Utilities.buildEmbed(event.getAuthor(), Color.RED, "Invalid parameters");
-			embed.addField("Reason", "Please mention 2 users to compare and a kind of media", false);
+			embed.addField("Reason", "Please mention a user to compare and a kind of media", false);
 			Actions.reply(event, embed.build());
 			return CommandResult.SUCCESS;
 		}
 		final var type = AniListMediaType.valueOf(args.poll());
-		final var runner = new AniListMediaUserListDifferencesRunner(event.getJDA(), type);
+		final var ID = Integer.parseInt(args.pop());
+		final var runner = new AniListMediaUserListRunner(event.getJDA(), type, ID);
 		runner.runQuery(event.getMessage().getMentionedMembers(), List.of(event.getTextChannel()));
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " <filter> <@user1> <@user2>";
+		return super.getCommandUsage() + " <filter> <mediaID> <@user2>";
 	}
 	
 	@Override
@@ -128,17 +119,17 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "AniList fetch media user list differences";
+		return "AniList fetch media user list";
 	}
 	
 	@Override
 	public List<String> getCommand(){
-		return List.of("mediadiff", "d");
+		return List.of("get", "g");
 	}
 	
 	@Override
 	public String getDescription(){
-		return "Fetch media user list differences from AniList";
+		return "Fetch media user list from AniList";
 	}
 	
 	@Override
