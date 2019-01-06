@@ -88,7 +88,7 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 		super.addHelp(guild, builder);
 		builder.addField("filter", "What kind of media to get the differences", false);
 		builder.addField("mediaID", "The ID of the media", false);
-		builder.addField("user", "Mention of the first user to compare", false);
+		builder.addField("user", "Mention of the users to get", false);
 	}
 	
 	@Override
@@ -109,7 +109,7 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " <filter> <mediaID> <@user2>";
+		return super.getCommandUsage() + " <filter> <mediaID> <@user...>";
 	}
 	
 	@Override
