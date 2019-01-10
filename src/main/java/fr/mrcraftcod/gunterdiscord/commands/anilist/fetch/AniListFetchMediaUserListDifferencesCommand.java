@@ -55,7 +55,7 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 				});
 			}
 			//noinspection Duplicates
-			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).filter(m -> Objects.isNull(type) || m.getValue().getMedia().getType().equals(type)).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
+			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).filter(m -> Objects.isNull(type) || m.getValue().getMedia().getType().equals(type)).sorted(Comparator.comparing(m -> m.getValue().getMedia().getTitle())).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
 		}
 		
 		@Override

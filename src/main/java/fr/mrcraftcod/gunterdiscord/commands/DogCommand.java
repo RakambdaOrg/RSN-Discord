@@ -4,12 +4,12 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import fr.mrcraftcod.utils.http.requestssenders.get.JSONGetRequestSender;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.awt.Color;
 import java.net.URL;
 import java.util.LinkedList;
@@ -23,19 +23,17 @@ import java.util.Objects;
  * @since 2018-04-12
  */
 public class DogCommand extends BasicCommand{
-	private static final Logger LOGGER = LoggerFactory.getLogger(DogCommand.class);
-	
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, ":dog: ** | Here's your random dog:**");
-		embed.setImage(getDogPictureURL());
+		embed.setImage(getDogPictureURL(event.getGuild()));
 		Actions.reply(event, embed.build());
 		return CommandResult.SUCCESS;
 	}
 	
-	private String getDogPictureURL() throws Exception{
-		LOGGER.debug("Getting random dog picture");
+	private String getDogPictureURL(final Guild guild) throws Exception{
+		Log.getLogger(guild).debug("Getting random dog picture");
 		final var handler = new JSONGetRequestSender(new URL("https://dog.ceo/api/breeds/image/random")).getRequestHandler();
 		if(handler.getStatus() == 200){
 			final var json = handler.getRequestResult().getObject();
