@@ -19,6 +19,7 @@ public class AniListCommandComposite extends CommandComposite{
 		super();
 		addSubCommand(new AniListFetchCommandComposite(this));
 		addSubCommand(new AniListRegisterCommand(this));
+		addSubCommand(new AniListGetUserEntryCommand(this));
 	}
 	
 	@Override
