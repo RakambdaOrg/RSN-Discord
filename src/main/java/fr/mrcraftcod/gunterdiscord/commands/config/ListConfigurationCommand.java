@@ -45,7 +45,7 @@ public class ListConfigurationCommand extends BasicCommand{
 		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 		builder.setColor(Color.ORANGE);
 		builder.setTitle("Configurations");
-		builder.addField("Configurations disponibles", Arrays.stream(Settings.SETTINGS).map(Configuration::getName).sorted().collect(Collectors.joining(", ")), false);
+		builder.addField("Configurations available", Arrays.stream(Settings.SETTINGS).map(Configuration::getName).sorted().collect(Collectors.joining(", ")), false);
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;
 	}
@@ -57,7 +57,7 @@ public class ListConfigurationCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Lister configuration";
+		return "Lists configuration";
 	}
 	
 	@Override
@@ -67,7 +67,7 @@ public class ListConfigurationCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Liste les configurations disponibles";
+		return "Lists the available configurations";
 	}
 	
 	@Override

@@ -34,8 +34,8 @@ public class NicknameCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Optionnel: Utilisateur", "L'utilisateur visé par la modification (par défaut @me)", false);
-		builder.addField("Optionnel: Surnom", "Le nouveau surnom (si aucun n'est précisé le surnom sera réinitialisé)", false);
+		builder.addField("User", "The targeted user (default: @me)", false);
+		builder.addField("Nickname", "The new surname (if none are provided, the old nickname will be removed)", false);
 	}
 	
 	@SuppressWarnings("Duplicates")
@@ -49,8 +49,8 @@ public class NicknameCommand extends BasicCommand{
 			if(event.getAuthor().getIdLong() != member.getUser().getIdLong() && !Utilities.isTeam(event.getMember())){
 				final var builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-				builder.addField("Utilisateur", member.getAsMention(), true);
-				builder.setTitle("T'es cru changer le nom d'un autre mec alors que t'es pas du staff?!");
+				builder.addField("User", member.getAsMention(), true);
+				builder.setTitle("You thought changing the name of another guy?");
 				builder.setColor(Color.RED);
 				Actions.reply(event, builder.build());
 				return CommandResult.SUCCESS;
@@ -67,10 +67,10 @@ public class NicknameCommand extends BasicCommand{
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
-			builder.addField("Ancien surnom", oldName == null ? "*AUCUN*" : oldName, true);
-			builder.addField("Utilisateur", member.getAsMention(), true);
-			builder.addField("Raison", "Vous ne pouvez changer de nickname qu'une fois toutes les " + delay.toString().replace("PT", ""), true);
-			builder.addField("Dernier changement", sdf.format(lastChange), true);
+			builder.addField("Old nickname", oldName == null ? "*NONE*" : oldName, true);
+			builder.addField("User", member.getAsMention(), true);
+			builder.addField("Reason", "You can change your nickname once every " + delay.toString().replace("PT", ""), true);
+			builder.addField("Last change", sdf.format(lastChange), true);
 			builder.setTimestamp(new Date().toInstant());
 			Actions.reply(event, builder.build());
 		}
@@ -84,23 +84,23 @@ public class NicknameCommand extends BasicCommand{
 			}
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-			builder.addField("Ancien surnom", oldName == null ? "*AUCUN*" : oldName, true);
-			builder.addField("Nouveau surnom", newName == null ? "*AUCUN*" : newName, true);
-			builder.addField("Utilisateur", member.getAsMention(), true);
+			builder.addField("Old nickname", oldName == null ? "*NONE*" : oldName, true);
+			builder.addField("New nickname", newName == null ? "*NONE*" : newName, true);
+			builder.addField("User", member.getAsMention(), true);
 			try{
 				member.getGuild().getController().setNickname(member, newName).complete();
 				builder.setColor(Color.GREEN);
 				new NickLastChangeConfig(event.getGuild()).addValue(member.getUser().getIdLong(), new Date().getTime());
-				getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", Utilities.getUserToLog(event.getAuthor()), Utilities.getUserToLog(member.getUser()), oldName, newName);
+				getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", event.getAuthor(), member.getUser(), oldName, newName);
 			}
 			catch(final HierarchyException e){
 				builder.setColor(Color.RED);
-				builder.setTitle("T'as cru changer le nom d'un mec plus haut que moi?!");
+				builder.setTitle("You thought I can change the nickname of someone higher than me?!");
 			}
 			catch(final ErrorResponseException e){
 				builder.setColor(Color.RED);
-				builder.setTitle("Ce pseudo n'est pas valide");
-				builder.addField("Raison", e.getMeaning(), false);
+				builder.setTitle("Invalid nickname");
+				builder.addField("Reason", e.getMeaning(), false);
 			}
 			Actions.reply(event, builder.build());
 		}
@@ -109,7 +109,7 @@ public class NicknameCommand extends BasicCommand{
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " [@utilisateur] [surnom]";
+		return super.getCommandUsage() + " [@user] [nickname]";
 	}
 	
 	@Override
@@ -119,7 +119,7 @@ public class NicknameCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Surnom";
+		return "Nickname";
 	}
 	
 	@Override
@@ -129,7 +129,7 @@ public class NicknameCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Change le surnom d'un utilisateur";
+		return "Change the nickname of a user";
 	}
 	
 	@Override

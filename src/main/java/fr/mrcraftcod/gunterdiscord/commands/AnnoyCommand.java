@@ -23,7 +23,7 @@ public class AnnoyCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("utilisateur", "L'utilisateur que le bot tentera de rejoindre", false);
+		builder.addField("User", "The target of the prank", false);
 	}
 	
 	@Override
@@ -39,19 +39,19 @@ public class AnnoyCommand extends BasicCommand{
 					GunterAudioManager.play(event.getAuthor(), member.getVoiceState().getChannel(), identifier.equals("") ? "https://www.youtube.com/watch?v=J4X2b-CEGNg" : identifier);
 				}
 				else{
-					Actions.reply(event, "Désolé, l'utilisateur est dans un autre channel que moi");
+					Actions.reply(event, "Sorry, the user is in another channel");
 				}
 			}
 			else{
-				Actions.reply(event, "Cet utilisateur n'est pas dans un channel vocal");
+				Actions.reply(event, "The user isn't in a voice channel");
 			}
-		}, () -> Actions.reply(event, "Merci de mentionner un utilisateur valide"));
+		}, () -> Actions.reply(event, "Please mention a user"));
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " <@utilisateur>";
+		return super.getCommandUsage() + " <@user>";
 	}
 	
 	@Override
@@ -61,7 +61,7 @@ public class AnnoyCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Fais chier";
+		return "Annoys someone";
 	}
 	
 	@Override
@@ -71,7 +71,7 @@ public class AnnoyCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Rejoins un channel et fait du bruit";
+		return "Go annoy a user in a vocie channel";
 	}
 	
 	@Override

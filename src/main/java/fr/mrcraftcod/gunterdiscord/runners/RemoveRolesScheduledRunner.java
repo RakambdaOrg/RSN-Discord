@@ -4,6 +4,7 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.RemoveRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.core.JDA;
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -12,7 +13,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-07-14
  */
-public class RemoveRolesScheduledRunner implements Runnable{
+public class RemoveRolesScheduledRunner implements ScheduledRunner{
 	private final JDA jda;
 	
 	/**
@@ -31,18 +32,18 @@ public class RemoveRolesScheduledRunner implements Runnable{
 		final var currentTime = System.currentTimeMillis();
 		for(final var guild : jda.getGuilds()){
 			final var config = new RemoveRoleConfig(guild);
-			getLogger(guild).info("Processing guild {}", guild);
+			getLogger(guild).debug("Processing guild {}", guild);
 			final var guildConfig = config.getAsMap();
 			for(final var userID : guildConfig.keySet()){
 				final var member = guild.getMemberById(userID);
-				getLogger(guild).info("Processing user {}", member);
+				getLogger(guild).debug("Processing user {}", member);
 				final var userGuildConfig = guildConfig.get(userID);
 				for(final var roleID : userGuildConfig.keySet()){
 					final var diff = Duration.ofMillis(userGuildConfig.get(roleID) - currentTime);
 					final var role = guild.getRoleById(roleID);
-					getLogger(guild).info("Processing role {}, diff is: {}", role, diff);
+					getLogger(guild).debug("Processing role {}, diff is: {}", role, diff);
 					if(diff.isNegative()){
-						getLogger(guild).info("Removed role for the user");
+						getLogger(guild).debug("Removed role for the user");
 						Actions.removeRole(member, role);
 						config.deleteKeyValue(userID, roleID);
 					}
@@ -50,5 +51,20 @@ public class RemoveRolesScheduledRunner implements Runnable{
 			}
 		}
 		getLogger(null).info("Roles runner done");
+	}
+	
+	@Override
+	public long getPeriod(){
+		return 15;
+	}
+	
+	@Override
+	public TimeUnit getPeriodUnit(){
+		return TimeUnit.MINUTES;
+	}
+	
+	@Override
+	public long getDelay(){
+		return 1;
 	}
 }

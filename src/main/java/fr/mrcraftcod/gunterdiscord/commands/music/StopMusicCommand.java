@@ -39,10 +39,10 @@ public class StopMusicCommand extends BasicCommand{
 		super.execute(event, args);
 		switch(GunterAudioManager.leave(event.getGuild())){
 			case NO_MUSIC:
-				Actions.reply(event, "%s, aucune musique n'est en cours", event.getAuthor().getAsMention());
+				Actions.reply(event, "%s, no music currently playing", event.getAuthor().getAsMention());
 				break;
 			case OK:
-				Actions.reply(event, "%s a arrêté la musique", event.getAuthor().getAsMention());
+				Actions.reply(event, "%s stopped the music", event.getAuthor().getAsMention());
 				break;
 		}
 		return CommandResult.SUCCESS;
@@ -60,7 +60,7 @@ public class StopMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Stopper musique";
+		return "Stop";
 	}
 	
 	@Override
@@ -70,7 +70,7 @@ public class StopMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Arrête la musique";
+		return "Stops the music";
 	}
 	
 	@Override

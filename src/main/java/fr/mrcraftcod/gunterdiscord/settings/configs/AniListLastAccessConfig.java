@@ -33,7 +33,7 @@ public class AniListLastAccessConfig extends MapMapConfiguration<Long, String, S
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
-			builder.setTitle("Valeurs de " + getName());
+			builder.setTitle("Values of " + getName());
 			final var map = getAsMap();
 			map.keySet().stream().map(k -> new MessageEmbed.Field(k.toString(), map.get(k).toString(), false)).forEach(builder::addField);
 			Actions.reply(event, builder.build());

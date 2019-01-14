@@ -25,7 +25,7 @@ public class UpCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		Actions.sendMessage(event.getTextChannel(), Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Uptime infos").addField("Dernier démarage (heure locale):", Main.bootTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME), false).addField("Temps écoulé", Duration.between(Main.bootTime, ZonedDateTime.now()).toString(), false).build());
+		Actions.sendMessage(event.getTextChannel(), Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Uptime infos").addField("Last start (local time):", Main.bootTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME), false).addField("Time elapsed", Duration.between(Main.bootTime, ZonedDateTime.now()).toString(), false).build());
 		return CommandResult.SUCCESS;
 	}
 	
@@ -46,7 +46,7 @@ public class UpCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Envoie des infos sur la durée de fonctionnement du bot";
+		return "Sends infos about the bot";
 	}
 	
 	@Override

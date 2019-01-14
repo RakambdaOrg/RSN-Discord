@@ -50,7 +50,7 @@ public class AniListFetchNotificationCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Fetch les notifications d'AniList";
+		return "Fetch notifications from AniList";
 	}
 	
 	@Override

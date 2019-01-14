@@ -39,30 +39,30 @@ public class SeekMusicCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Temps", "Le temps à mettre, sous la forme hh:mm:ss ou mm:ss ou ss", false);
+		builder.addField("Time", "The time to seek, must be in the format hh:mm:ss ou mm:ss or ss", false);
 	}
 	
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.isEmpty()){
-			Actions.reply(event, "Merci de donner le temps souhaité");
+			Actions.reply(event, "Please give the time to seek");
 		}
 		else{
 			final var time = parseTime(event.getGuild(), args.poll());
 			if(time < 0){
-				Actions.reply(event, "Le format est incorrect");
+				Actions.reply(event, "Invalid format");
 			}
 			else{
 				switch(GunterAudioManager.seek(event.getGuild(), time)){
 					case NO_MUSIC:
-						Actions.reply(event, "%s, aucune musique n'est en cours", event.getAuthor().getAsMention());
+						Actions.reply(event, "%s, No music currently playing", event.getAuthor().getAsMention());
 						break;
 					case OK:
-						Actions.reply(event, "%s a positioné la musique à %s", event.getAuthor().getAsMention(), NowPlayingMusicCommand.getDuration(time));
+						Actions.reply(event, "%s seeked the music to %s", event.getAuthor().getAsMention(), NowPlayingMusicCommand.getDuration(time));
 						break;
 					case IMPOSSIBLE:
-						Actions.reply(event, "%s, le temps de cette musique ne peut être changé", event.getAuthor().getAsMention());
+						Actions.reply(event, "%s, the time of this music cannot be changed", event.getAuthor().getAsMention());
 						break;
 				}
 			}
@@ -97,7 +97,7 @@ public class SeekMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + "<temps>";
+		return super.getCommandUsage() + "<time>";
 	}
 	
 	@Override
@@ -112,7 +112,7 @@ public class SeekMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Temps musique";
+		return "Seek";
 	}
 	
 	@Override
@@ -122,7 +122,7 @@ public class SeekMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Change la position dans la musique";
+		return "Seek a time into the music";
 	}
 	
 	@Override

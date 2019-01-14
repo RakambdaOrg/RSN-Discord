@@ -103,7 +103,7 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
-			builder.setTitle("Valeurs de " + getName());
+			builder.setTitle("Values of " + getName());
 			final var map = getAsMap();
 			map.keySet().stream().map(k -> k + " -> " + map.get(k)).forEach(o -> builder.addField("", o, false));
 			Actions.reply(event, builder.build());

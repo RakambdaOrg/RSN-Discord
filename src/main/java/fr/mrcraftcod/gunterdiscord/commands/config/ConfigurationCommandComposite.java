@@ -42,7 +42,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 	
 	@Override
 	public String getDescription(){
-		return "Modifie la configuration du bot";
+		return "Interact with the bot's configuration";
 	}
 	
 	@Override

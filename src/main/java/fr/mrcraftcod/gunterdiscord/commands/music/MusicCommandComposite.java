@@ -26,6 +26,7 @@ public class MusicCommandComposite extends CommandComposite{
 		addSubCommand(new SeekMusicCommand(this));
 		addSubCommand(new SkipMusicCommand(this));
 		addSubCommand(new QueueMusicCommand(this));
+		addSubCommand(new ShuffleMusicCommand(this));
 	}
 	
 	@Override
@@ -40,7 +41,7 @@ public class MusicCommandComposite extends CommandComposite{
 	
 	@Override
 	public String getName(){
-		return "Musique";
+		return "Music";
 	}
 	
 	@Override
@@ -50,7 +51,7 @@ public class MusicCommandComposite extends CommandComposite{
 	
 	@Override
 	public String getDescription(){
-		return "Permet de gérer les musiques bu bot";
+		return "Handles music interactions";
 	}
 	
 	@Override

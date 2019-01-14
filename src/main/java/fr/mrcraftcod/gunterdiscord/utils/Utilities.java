@@ -172,24 +172,27 @@ public class Utilities{
 	 * @return The builder.
 	 */
 	public static EmbedBuilder buildEmbed(final User author, final Color color, final String title){
+		return buildEmbed(author, color, title, null);
+	}
+	
+	/**
+	 * Build an embed.
+	 *
+	 * @param author   The author.
+	 * @param color    The color.
+	 * @param title    The title.
+	 * @param titleURL The url of the title.
+	 *
+	 * @return The builder.
+	 */
+	public static EmbedBuilder buildEmbed(final User author, final Color color, final String title, final String titleURL){
 		final var builder = new EmbedBuilder();
 		if(author != null){
 			builder.setAuthor(author.getName(), null, author.getAvatarUrl());
 		}
 		builder.setColor(color);
-		builder.setTitle(title);
+		builder.setTitle(title, titleURL);
 		return builder;
-	}
-	
-	/**
-	 * Get a guild in a readable way.
-	 *
-	 * @param guild The guild to print.
-	 *
-	 * @return The string representing the guild.
-	 */
-	public static String getGuildToLog(final Guild guild){
-		return guild.getName();
 	}
 	
 	/**
@@ -201,7 +204,7 @@ public class Utilities{
 	 */
 	static String getEmbedForLog(final MessageEmbed embed){
 		final var builder = new StringBuilder("Embed " + embed.hashCode());
-		builder.append("\n").append("Author: ").append(embed.getAuthor() == null ? "<NONE>" : embed.getAuthor().getName());
+		builder.append("\n").append("Author: ").append(embed.getAuthor() == null ? "<NONE>" : embed.getAuthor());
 		builder.append("\n").append("Title: ").append(embed.getTitle());
 		builder.append("\n").append("Description: ").append(embed.getDescription());
 		builder.append("\n").append("Color: ").append(embed.getColor());
@@ -211,28 +214,6 @@ public class Utilities{
 			builder.append("\n\t").append("Value: ").append(f.getValue());
 		});
 		return builder.toString();
-	}
-	
-	/**
-	 * Get a member in a readable way.
-	 *
-	 * @param member The member to print.
-	 *
-	 * @return The string representing the member.
-	 */
-	public static String getMemberToLog(final Member member){
-		return member == null ? "NULL" : getUserToLog(member.getUser());
-	}
-	
-	/**
-	 * Get a user in a readable way.
-	 *
-	 * @param user The user to print.
-	 *
-	 * @return The string representing the user.
-	 */
-	public static String getUserToLog(final User user){
-		return user == null ? "NULL" : (user.getName() + "#" + user.getDiscriminator() + " (" + user.getIdLong() + ")");
 	}
 	
 	public static <T> T getJSONMaybe(final JSONObject json, final Class<? extends T> klass, final String key){

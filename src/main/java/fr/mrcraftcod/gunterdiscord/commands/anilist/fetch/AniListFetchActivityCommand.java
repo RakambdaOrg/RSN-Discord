@@ -50,7 +50,7 @@ public class AniListFetchActivityCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Fetch les activités d'AniList";
+		return "Fetch user's activity from AniList";
 	}
 	
 	@Override

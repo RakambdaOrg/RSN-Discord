@@ -21,7 +21,7 @@ public class SayCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Message", "Le message à dire", false);
+		builder.addField("Message", "The message to say", false);
 	}
 	
 	@Override
@@ -43,7 +43,7 @@ public class SayCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Dire";
+		return "Say";
 	}
 	
 	@Override
@@ -53,7 +53,7 @@ public class SayCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Envoie un message en tant que le bot";
+		return "Sends a message as the bot";
 	}
 	
 	@Override

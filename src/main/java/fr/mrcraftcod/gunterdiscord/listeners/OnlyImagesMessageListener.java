@@ -21,7 +21,7 @@ public class OnlyImagesMessageListener extends ListenerAdapter{
 			if(new OnlyImagesConfig(event.getGuild()).contains(event.getMessage().getTextChannel()) && event.getMessage().getAttachments().size() < 1){
 				if(!Utilities.isTeam(event.getMember())){
 					Actions.deleteMessage(event.getMessage());
-					Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Le channel %s est pour les images seulement.", event.getChannel().getName());
+					Actions.replyPrivate(event.getGuild(), event.getAuthor(), "The channel %s is only for images.", event.getChannel().getName());
 				}
 			}
 		}

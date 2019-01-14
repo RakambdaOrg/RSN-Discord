@@ -39,14 +39,14 @@ public class AniListRegisterCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Code", "Code d'accès à l'api, obtenu en visitant: " + AniListUtils.getCodeLink(), false);
+		builder.addField("Code", "API code obtained from: " + AniListUtils.getCodeLink(), false);
 	}
 	
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.size() < 1){
-			Actions.reply(event, "Merci de donner votre code d'accès");
+			Actions.reply(event, "Please provide your API code");
 		}
 		else{
 			try{
@@ -55,10 +55,10 @@ public class AniListRegisterCommand extends BasicCommand{
 				final var userInfos = AniListUtils.getQuery(event.getMember(), QUERY, new JSONObject());
 				final var userInfoConf = new AniListLastAccessConfig(event.getGuild());
 				userInfoConf.addValue(event.getAuthor().getIdLong(), "userId", "" + userInfos.getJSONObject("data").getJSONObject("Viewer").getInt("id"));
-				Actions.reply(event, "Code d'accès enregistré");
+				Actions.reply(event, "API code saved");
 			}
 			catch(final Exception e){
-				Actions.reply(event, "Erreur lors de l'enregistrement de ce token");
+				Actions.reply(event, "Error while saving api code");
 				LOGGER.error("Error getting AniList access token", e);
 			}
 		}
@@ -77,7 +77,7 @@ public class AniListRegisterCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "AniList enregistrement";
+		return "AniList registering";
 	}
 	
 	@Override
@@ -87,7 +87,7 @@ public class AniListRegisterCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Enregistre son compte pour le tracker anilist";
+		return "Register your account for AniList usages";
 	}
 	
 	@Override

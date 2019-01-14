@@ -41,7 +41,7 @@ public abstract class ValueConfiguration<T> extends Configuration{
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
-			builder.setTitle("Valeur de " + getName());
+			builder.setTitle("Value of " + getName());
 			builder.addField("", getObject().toString(), false);
 			Actions.reply(event, builder.build());
 			return ConfigurationCommand.ActionResult.NONE;

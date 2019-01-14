@@ -19,6 +19,7 @@ public class AniListCommandComposite extends CommandComposite{
 		super();
 		addSubCommand(new AniListFetchCommandComposite(this));
 		addSubCommand(new AniListRegisterCommand(this));
+		addSubCommand(new AniListGetUserEntryCommand(this));
 	}
 	
 	@Override
@@ -38,7 +39,7 @@ public class AniListCommandComposite extends CommandComposite{
 	
 	@Override
 	public String getDescription(){
-		return "Point d'entré des fonctionnalitées d'AniList";
+		return "AniList related commands";
 	}
 	
 	@Override

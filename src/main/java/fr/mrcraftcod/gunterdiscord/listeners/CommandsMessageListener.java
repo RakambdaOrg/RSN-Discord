@@ -7,17 +7,18 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
 import fr.mrcraftcod.gunterdiscord.commands.music.MusicCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.quiz.QuizCommandComposite;
+import fr.mrcraftcod.gunterdiscord.commands.warn.CustomWarnCommand;
 import fr.mrcraftcod.gunterdiscord.commands.warn.DoubleWarnCommand;
 import fr.mrcraftcod.gunterdiscord.commands.warn.MegaWarnCommand;
 import fr.mrcraftcod.gunterdiscord.commands.warn.NormalWarnCommand;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import java.awt.*;
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -51,12 +52,15 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new NormalWarnCommand(),
 			new DoubleWarnCommand(),
 			new MegaWarnCommand(),
+			new CustomWarnCommand(),
 			new MusicCommandComposite(),
 			new StopCommand(),
 			new TimeCommand(),
-			new BanInfoCommand(),
+			new WarnInfoCommand(),
 			new AniListCommandComposite(),
-			new EmotesCommand()
+			new EmotesCommand(),
+			new TempParticipationCommand(),
+			new DogCommand()
 	};
 	
 	/**
@@ -76,20 +80,22 @@ public class CommandsMessageListener extends ListenerAdapter{
 		super.onMessageReceived(event);
 		try{
 			if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
-				Actions.deleteMessage(event.getMessage());
+				if(event.getChannelType() != ChannelType.PRIVATE && event.getChannelType() != ChannelType.GROUP){
+					Actions.deleteMessage(event.getMessage());
+				}
 				final var args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 				final var cmdText = args.pop().substring(new PrefixConfig(event.getGuild()).getObject("g?").length());
 				final var command = getCommand(cmdText);
 				if(command != null){
 					if(command.getScope() == -5 || command.getScope() == event.getChannel().getType().getId()){
 						try{
-							getLogger(event.getGuild()).info("Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(), Utilities.getUserToLog(event.getAuthor()), args);
+							getLogger(event.getGuild()).info("Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(), event.getAuthor(), args);
 							switch(command.execute(event, args)){
 								case NOT_ALLOWED:
-									Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Vous n'etes par autorisé à utiliser cette commande");
+									Actions.replyPrivate(event.getGuild(), event.getAuthor(), "You're not allowed to use this command");
 									break;
 								case FAILED:
-									Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Une erreur est survenue");
+									Actions.replyPrivate(event.getGuild(), event.getAuthor(), "An error occurred");
 									break;
 								default:
 								case SUCCESS:
@@ -100,7 +106,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 							final var builder = new EmbedBuilder();
 							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 							builder.setColor(Color.RED);
-							builder.setTitle("Vous n'avez pas accès à cette commande.");
+							builder.setTitle("You're not allowed to execute this command");
 							Actions.reply(event, builder.build());
 						}
 						catch(final Exception e){
@@ -108,7 +114,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 							final var builder = new EmbedBuilder();
 							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 							builder.setColor(Color.RED);
-							builder.setTitle("Cette fonctionnalité doit encore être configuré. Veuillez en avertir un modérateur.");
+							builder.setTitle("This feature isn't yet configured");
 							Actions.reply(event, builder.build());
 						}
 					}
@@ -116,7 +122,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 						final var builder = new EmbedBuilder();
 						builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 						builder.setColor(Color.ORANGE);
-						builder.setTitle("Cette commande ne s'exécute pas dans ce type de channel");
+						builder.setTitle("You can't use this command in this kind of channel");
 						Actions.reply(event, builder.build());
 					}
 				}
@@ -124,8 +130,8 @@ public class CommandsMessageListener extends ListenerAdapter{
 					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.ORANGE);
-					builder.setTitle("Commande non trouvée");
-					builder.addField("Commande", cmdText, false);
+					builder.setTitle("Command not found");
+					builder.addField("Command", cmdText, false);
 					Actions.reply(event, builder.build());
 				}
 			}

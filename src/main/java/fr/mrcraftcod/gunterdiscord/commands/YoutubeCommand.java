@@ -26,7 +26,8 @@ public class YoutubeCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Message", "Le message à dire", false);
+		builder.addField("User", "The user to get the channel", false);
+		builder.addField("URL", "The URL to the user's channel", false);
 	}
 	
 	@Override
@@ -45,30 +46,30 @@ public class YoutubeCommand extends BasicCommand{
 						}
 						catch(final Exception e){
 							Log.getLogger(event.getGuild()).warn("Provided YouTube link isn't valid {}", strUrl);
-							Actions.reply(event, "Le lien n'est pas valide");
+							Actions.reply(event, "Invalid link");
 						}
 					}
 					else{
-						Actions.reply(event, "Vous ne pouvez pas modifier la chaine d'un utilisateur");
+						Actions.reply(event, "You can't modify the link to a user's channel");
 					}
 				}
 				else{
-					Actions.reply(event, "La chaine de %s est disponible ici: %s", member.getAsMention(), new YoutubeChannelConfig(event.getGuild()).getValue(member.getUser().getIdLong()));
+					Actions.reply(event, "%s's channel is available at %s", member.getAsMention(), new YoutubeChannelConfig(event.getGuild()).getValue(member.getUser().getIdLong()));
 				}
 			}
 			else{
-				Actions.reply(event, "Cet utilisateur n'est pas YouTubeur");
+				Actions.reply(event, "This user isn't a content creator");
 			}
 		}
 		else{
-			Actions.reply(event, "Merci de mentionner un utilisateur");
+			Actions.reply(event, "Please mention a user");
 		}
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " <@utilisateur> [URL]";
+		return super.getCommandUsage() + " <@user> [URL]";
 	}
 	
 	@Override
@@ -88,7 +89,7 @@ public class YoutubeCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Obtient la chaine d'un YouTubeur";
+		return "Gets the link to a content creator's page";
 	}
 	
 	@Override

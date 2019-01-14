@@ -12,11 +12,12 @@ import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import java.awt.*;
+import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -56,8 +57,8 @@ public class ConfigurationCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Configuration", "Le nom de la configuration", false);
-		builder.addField("Optionnel: Valeur", "Paramètres de la sous commande", false);
+		builder.addField("Configuration", "Configuration's name", false);
+		builder.addField("Value", "Value of the sub command", false);
 	}
 	
 	@Override
@@ -72,9 +73,9 @@ public class ConfigurationCommand extends BasicCommand{
 					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.RED);
-					builder.setTitle("Erreur durant l'opération");
-					builder.setDescription("Commande: " + getName());
-					builder.addField("Raison", "C'est compliqué", false);
+					builder.setTitle("Error performing the operation");
+					builder.setDescription("Command: " + getName());
+					builder.addField("Reason", "It's complicated", false);
 					builder.addField("Configuration", configuration.getName(), false);
 					Actions.reply(event, builder.build());
 					getLogger(event.getGuild()).error("Error handling configuration change");
@@ -83,10 +84,10 @@ public class ConfigurationCommand extends BasicCommand{
 					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.GREEN);
-					builder.setTitle("Valeur changée");
-					builder.setDescription("Commande: " + getName());
+					builder.setTitle("Value changed");
+					builder.setDescription("Command: " + getName());
 					builder.addField("Configuration:", configuration.getName(), false);
-					builder.addField("Valeur:", beforeArgs.toString(), false);
+					builder.addField("Value:", beforeArgs.toString(), false);
 					Actions.reply(event, builder.build());
 					getLogger(event.getGuild()).info("Config value {} changed", configuration.getName());
 				}
@@ -95,8 +96,8 @@ public class ConfigurationCommand extends BasicCommand{
 				final var builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.setColor(Color.ORANGE);
-				builder.setTitle("Configuration non trouvée");
-				builder.addField("Configurations disponibles", Arrays.stream(Settings.SETTINGS).map(Configuration::getName).collect(Collectors.joining(", ")), false);
+				builder.setTitle("Configuration not found");
+				builder.addField("Available configurations", Arrays.stream(Settings.SETTINGS).map(Configuration::getName).collect(Collectors.joining(", ")), false);
 				Actions.reply(event, builder.build());
 			}
 		}
@@ -104,7 +105,7 @@ public class ConfigurationCommand extends BasicCommand{
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.ORANGE);
-			builder.setTitle("Merci de renseigner le nom de la configuration à changer");
+			builder.setTitle("Please give the name of the configuration to modify");
 			Actions.reply(event, builder.build());
 		}
 		return CommandResult.SUCCESS;
@@ -112,7 +113,7 @@ public class ConfigurationCommand extends BasicCommand{
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " <configuration> [valeur]";
+		return super.getCommandUsage() + " <configuration> [value]";
 	}
 	
 	/**
@@ -136,16 +137,16 @@ public class ConfigurationCommand extends BasicCommand{
 					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.RED);
-					builder.setTitle("Erreur durant l'opération");
-					builder.setDescription("Commande: " + getName());
-					builder.addField("Raison", e.getMessage(), false);
+					builder.setTitle("Error performing the operation");
+					builder.setDescription("Command: " + getName());
+					builder.addField("Reason", (Objects.isNull(e.getMessage()) || e.getMessage().isBlank()) ? e.getClass().getName() : e.getMessage(), false);
 					builder.addField("Configuration", configuration.getName(), false);
 					Actions.reply(event, builder.build());
 					getLogger(event.getGuild()).error("Error handling configuration change", e);
 				}
 			}
 			else{
-				Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Opération impossible").addField("Raison", "Opération " + getType().name() + " impossible sur cette configuration", false).addField("Configuration", configuration.getName(), false).build());
+				Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Invalid operation").addField("Reason", "Operation " + getType().name() + " invalid for this configuration", false).addField("Configuration", configuration.getName(), false).build());
 			}
 		}
 		catch(final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e){
@@ -161,7 +162,7 @@ public class ConfigurationCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Opération " + getType().name();
+		return "Operation " + getType().name();
 	}
 	
 	@Override
@@ -171,7 +172,7 @@ public class ConfigurationCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Effectue une opération " + getType().name() + " sur cette configuration";
+		return "Applies an operation " + getType().name() + " on this configuration";
 	}
 	
 	@Override

@@ -22,7 +22,7 @@ public class AvatarCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Utilisateur", "L'utilisateur dont on veut l'avatar", false);
+		builder.addField("User", "The user to get the avatar from", false);
 	}
 	
 	@Override
@@ -41,7 +41,7 @@ public class AvatarCommand extends BasicCommand{
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
-			builder.addField("Erreur", "Merci de mentionner un utilisateur", true);
+			builder.addField("Error", "Please mention a user", true);
 			Actions.reply(event, builder.build());
 		}
 		return CommandResult.SUCCESS;
@@ -49,7 +49,7 @@ public class AvatarCommand extends BasicCommand{
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " <@utilisateur>";
+		return super.getCommandUsage() + " <@user>";
 	}
 	
 	@Override
@@ -69,7 +69,7 @@ public class AvatarCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Obtient l'avatar d'un utilisateur";
+		return "Gets the avatar of a user";
 	}
 	
 	@Override

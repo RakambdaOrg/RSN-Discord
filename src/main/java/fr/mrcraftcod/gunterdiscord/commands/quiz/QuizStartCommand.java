@@ -31,8 +31,8 @@ public class QuizStartCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Optionnel: Quantité", "Le nombre de questions (par défaut le maximum disponible)", false);
-		builder.addField("Optionnel: Délais", "Le délais en secondes avant de commencer le quiz (par défaut 60 secondes)", false);
+		builder.addField("Quantity", "The maximum number of questions (default: all questions)", false);
+		builder.addField("Delay", "The delay before starting the quiz (default: 60 seconds)", false);
 	}
 	
 	@Override
@@ -60,7 +60,7 @@ public class QuizStartCommand extends BasicCommand{
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " [quantité] [délais]";
+		return super.getCommandUsage() + " [quantity] [delay]";
 	}
 	
 	@Override
