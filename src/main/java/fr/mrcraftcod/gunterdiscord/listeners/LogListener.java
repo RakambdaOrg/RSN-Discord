@@ -67,25 +67,27 @@ public class LogListener extends ListenerAdapter{
 	public void onGuildMessageReceived(final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
-			final var now = LocalDate.now();
-			if(!new NoXPChannelsConfig(event.getGuild()).getAsList().contains(event.getChannel())){
-				final var participation = new MembersParticipationConfig(event.getGuild());
-				final var participationMap = participation.getAsMap();
-				final var todayKey = TempParticipationCommand.DF.format(now);
-				if(participationMap.containsKey(todayKey)){
-					participation.addValue(todayKey, event.getAuthor().getIdLong(), participationMap.get(todayKey).getOrDefault(event.getAuthor().getIdLong(), 0L) + 1);
+			if(!event.getAuthor().equals(event.getJDA().getSelfUser())){
+				final var now = LocalDate.now();
+				if(!new NoXPChannelsConfig(event.getGuild()).getAsList().contains(event.getChannel())){
+					final var participation = new MembersParticipationConfig(event.getGuild());
+					final var participationMap = participation.getAsMap();
+					final var todayKey = TempParticipationCommand.DF.format(now);
+					if(participationMap.containsKey(todayKey)){
+						participation.addValue(todayKey, event.getAuthor().getIdLong(), participationMap.get(todayKey).getOrDefault(event.getAuthor().getIdLong(), 0L) + 1);
+					}
+					else{
+						participation.addValue(todayKey, event.getAuthor().getIdLong(), 1L);
+					}
 				}
-				else{
-					participation.addValue(todayKey, event.getAuthor().getIdLong(), 1L);
+				final var emotes = new EmotesParticipationConfig(event.getGuild());
+				final var emotesMap = emotes.getAsMap();
+				final var weekKey = EmotesCommand.DF.format(now);
+				if(!emotesMap.containsKey(weekKey)){
+					emotes.addValue(weekKey);
 				}
+				event.getMessage().getEmotes().stream().map(Emote::getName).forEach(id -> emotes.addValue(weekKey, id, emotesMap.get(weekKey).getOrDefault(id, 0L) + 1));
 			}
-			final var emotes = new EmotesParticipationConfig(event.getGuild());
-			final var emotesMap = emotes.getAsMap();
-			final var weekKey = EmotesCommand.DF.format(now);
-			if(!emotesMap.containsKey(weekKey)){
-				emotes.addValue(weekKey);
-			}
-			event.getMessage().getEmotes().stream().map(Emote::getName).forEach(id -> emotes.addValue(weekKey, id, emotesMap.get(weekKey).getOrDefault(id, 0L) + 1));
 		}
 		catch(final Exception e){
 			getLogger(event.getGuild()).error("", e);
