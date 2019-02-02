@@ -102,7 +102,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>3.8.1_453</version>
+            <version>3.8.2_459</version>
             <exclusions>
                 <exclusion>
                     <groupId>net.dv8tion</groupId>
