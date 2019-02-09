@@ -1,12 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.utils;
 
-import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.settings.configs.ModoRolesConfig;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.*;
 import org.json.JSONObject;
-import java.awt.*;
+import java.awt.Color;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -106,8 +105,8 @@ public class Utilities{
 	 *
 	 * @return The mention, or empty string if not found.
 	 */
-	public static String getEmoteMention(final String name){
-		final var emotes = Main.getJDA().getEmotesByName(name, true);
+	public static String getEmoteMention(final Guild guild, final String name){
+		final var emotes = guild.getEmotesByName(name, true);
 		if(emotes.size() < 1){
 			return "";
 		}

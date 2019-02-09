@@ -3,7 +3,7 @@ package fr.mrcraftcod.gunterdiscord.settings.configurations;
 import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.Configuration;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
-import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.api.entities.Guild;
 import org.json.JSONObject;
 import java.util.*;
 import java.util.function.BiFunction;

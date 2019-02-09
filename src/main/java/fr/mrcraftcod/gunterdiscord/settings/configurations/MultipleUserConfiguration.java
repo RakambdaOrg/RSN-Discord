@@ -1,8 +1,8 @@
 package fr.mrcraftcod.gunterdiscord.settings.configurations;
 
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 

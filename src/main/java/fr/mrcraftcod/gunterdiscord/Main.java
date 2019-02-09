@@ -10,10 +10,10 @@ import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListNotificationScheduledR
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.api.AccountType;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
@@ -55,7 +55,7 @@ public class Main{
 			jda.addEventListener(new IdeaChannelMessageListener());
 			jda.addEventListener(new QuestionReactionListener());
 			jda.setAutoReconnect(true);
-			jda.getPresence().setGame(Game.playing("g?help for the help"));
+			jda.getPresence().setActivity(Activity.playing("g?help for the help"));
 			
 			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaUserListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda));
 			for(final var scheduledRunner : scheduledRunners){

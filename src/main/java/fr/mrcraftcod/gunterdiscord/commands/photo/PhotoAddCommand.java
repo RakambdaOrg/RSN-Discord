@@ -8,13 +8,13 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.TrombinoscopeRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import java.awt.*;
+import java.awt.Color;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
@@ -66,7 +66,7 @@ public class PhotoAddCommand extends BasicCommand{
 			else{
 				final var attachment = event.getMessage().getAttachments().get(0);
 				final var ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
-				final var saveFile = new File("./pictures/" + user.getIdLong() + "/", event.getMessage().getCreationTime().toEpochSecond() + ext);
+				final var saveFile = new File("./pictures/" + user.getIdLong() + "/", event.getMessage().getTimeCreated().toEpochSecond() + ext);
 				//noinspection ResultOfMethodCallIgnored
 				saveFile.getParentFile().mkdirs();
 				if(attachment.download(saveFile) && attachment.getSize() == saveFile.length() && saveFile.length() > 512){
@@ -77,7 +77,7 @@ public class PhotoAddCommand extends BasicCommand{
 					builder.setColor(Color.GREEN);
 					builder.setTitle("New picture");
 					builder.addField("User", user.getAsMention(), true);
-					builder.addField("ID", "" + event.getMessage().getCreationTime().toEpochSecond(), true);
+					builder.addField("ID", "" + event.getMessage().getTimeCreated().toEpochSecond(), true);
 					Actions.sendMessage(new PhotoChannelConfig(event.getGuild()).getObject(), builder.build());
 				}
 				else{

@@ -2,7 +2,7 @@ package fr.mrcraftcod.gunterdiscord.commands.anilist;
 
 import fr.mrcraftcod.gunterdiscord.commands.anilist.fetch.AniListFetchCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
-import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.api.entities.ChannelType;
 import java.util.List;
 
 /**

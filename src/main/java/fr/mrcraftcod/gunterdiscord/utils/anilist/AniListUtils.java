@@ -3,7 +3,7 @@ package fr.mrcraftcod.gunterdiscord.utils.anilist;
 import fr.mrcraftcod.gunterdiscord.settings.configs.AniListAccessTokenConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.AniListCodeConfig;
 import fr.mrcraftcod.utils.http.requestssenders.post.JSONPostRequestSender;
-import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.api.entities.Member;
 import org.json.JSONObject;
 import java.net.URL;
 import java.util.HashMap;

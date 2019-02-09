@@ -2,7 +2,7 @@ package fr.mrcraftcod.gunterdiscord.runners;
 
 import fr.mrcraftcod.gunterdiscord.settings.configs.RemoveRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.api.JDA;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;

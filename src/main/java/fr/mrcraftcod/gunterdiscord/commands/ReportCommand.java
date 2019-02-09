@@ -4,12 +4,12 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.ReportChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import java.awt.*;
+import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class ReportCommand extends BasicCommand{
 			builder.setTitle("New report");
 			builder.addField("User", event.getAuthor().getAsMention(), false);
 			builder.addField("Reason", String.join(" ", args), false);
-			builder.setTimestamp(event.getMessage().getCreationTime());
+			builder.setTimestamp(event.getMessage().getTimeCreated());
 			Actions.sendMessage(channel, builder.build());
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Your message have been forwarded.");
 		}

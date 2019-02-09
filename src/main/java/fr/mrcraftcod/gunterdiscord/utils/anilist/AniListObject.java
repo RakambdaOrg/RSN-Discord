@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist;
 
-import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.api.EmbedBuilder;
 import org.json.JSONObject;
 
 /**
