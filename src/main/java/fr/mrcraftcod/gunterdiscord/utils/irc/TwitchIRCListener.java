@@ -42,7 +42,9 @@ public class TwitchIRCListener extends AbstractIRCListener{
 	
 	@Override
 	protected void onIRCMessage(ChannelMessageIRCEvent event){
+		LOGGER.debug("LR");
 		if(Objects.nonNull(channel)){
+			LOGGER.debug("LT");
 			Actions.sendMessage(channel, "**`%s`** %s", event.getUser().toString(), event.getMessage());
 		}
 	}
