@@ -31,7 +31,7 @@ public class TwitchIRCListener extends AbstractIRCListener{
 	protected void onIRCMessage(ChannelMessageIRCEvent event){
 		final var channel = new TwitchIRCChannelConfig(this.getGuild()).getObject(null);
 		if(Objects.nonNull(channel)){
-			Actions.sendMessage(channel, "%s => %s", event.getUser().toString(), event.getMessage());
+			Actions.sendMessage(channel, "**`%s`** %s", event.getUser().toString(), event.getMessage());
 		}
 	}
 	
