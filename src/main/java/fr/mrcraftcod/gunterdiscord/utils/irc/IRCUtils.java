@@ -14,6 +14,9 @@ public class IRCUtils{
 	private static final Logger LOGGER = LoggerFactory.getLogger(IRCUtils.class);
 	
 	public static IRCEvent buildEvent(String message){
+		if(message.equals("PING :tmi.twitch.tv")){
+			return new PingIRCEvent();
+		}
 		if(!message.startsWith(":")){
 			LOGGER.warn("IRC message doesn't start with ':' => {}", message);
 			return null;
@@ -35,7 +38,7 @@ public class IRCUtils{
 				}
 				return new ChannelMessageIRCEvent(user, eventType, infos[2], message.substring(columnIndex + 1));
 			case "PING":
-				return new PingIRCEvent(user, eventType);
+				return new PingIRCEvent();
 			case "001":
 			case "002":
 			case "003":
