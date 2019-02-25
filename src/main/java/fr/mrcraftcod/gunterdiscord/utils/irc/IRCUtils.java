@@ -49,6 +49,8 @@ public class IRCUtils{
 			case "375":
 			case "376":
 				break;
+			case "421":
+				LOGGER.warn("Unknown command: {}", message);
 			default:
 				LOGGER.warn("Unknown IRC event type {} in {}", eventType, message);
 		}
