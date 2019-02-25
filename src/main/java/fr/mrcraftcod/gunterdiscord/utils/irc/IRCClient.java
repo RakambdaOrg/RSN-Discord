@@ -42,17 +42,21 @@ public class IRCClient implements Closeable{
 		this.ircReader = new IRCReaderThread(this, this.socket.getInputStream());
 		this.ircReader.start();
 		if(Objects.nonNull(this.pass)){
-			this.socketWriter.println(String.format("PASS %s", this.pass));
+			sendMessage(String.format("PASS %s", this.pass));
 			LOGGER.info("Using pass to connect to {}:{}", this.host, this.port);
 		}
 		this.connected = true;
 		LOGGER.info("IRC connection initialized with {}:{}", this.host, this.port);
 	}
 	
+	public void sendMessage(String message){
+		this.socketWriter.println(message);
+	}
+	
 	@Override
 	public void close() throws IOException{
 		if(isConnected()){
-			this.socketWriter.println("QUIT");
+			sendMessage("QUIT");
 			this.socketWriter.close();
 			this.ircReader.close();
 			this.socket.close();
@@ -69,7 +73,7 @@ public class IRCClient implements Closeable{
 	
 	public void joinChannel(String channel){
 		if(isConnected()){
-			this.socketWriter.println(String.format("JOIN %s", channel));
+			sendMessage(String.format("JOIN %s", channel));
 			this.joinedChannels.add(channel);
 			LOGGER.info("Joined channel {} on {}:{}", channel, this.host, this.port);
 		}
@@ -84,7 +88,7 @@ public class IRCClient implements Closeable{
 	
 	public void leaveChannel(String channel){
 		if(isConnected()){
-			this.socketWriter.println(String.format("PART %s", channel));
+			sendMessage(String.format("PART %s", channel));
 			this.joinedChannels.remove(channel);
 			LOGGER.info("Left channel {} on {}:{}", channel, this.host, this.port);
 		}
@@ -103,7 +107,7 @@ public class IRCClient implements Closeable{
 	
 	public void setNick(String nickname){
 		if(isConnected()){
-			this.socketWriter.println(String.format("NICK %s", nickname));
+			sendMessage(String.format("NICK %s", nickname));
 			LOGGER.info("Set nick to {} on {}:{}", nickname, this.host, this.port);
 		}
 		else{

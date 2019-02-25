@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
+import fr.mrcraftcod.gunterdiscord.utils.irc.events.PingIRCEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.*;
@@ -15,12 +16,10 @@ public class IRCReaderThread extends Thread implements Closeable{
 	private static final Logger LOGGER = LoggerFactory.getLogger(IRCReaderThread.class);
 	private final BufferedReader reader;
 	private final IRCClient client;
-	private final InputStream inputStream;
 	private boolean stop;
 	
 	public IRCReaderThread(IRCClient client, InputStream inputStream){
 		this.client = client;
-		this.inputStream = inputStream;
 		this.reader = new BufferedReader(new InputStreamReader(inputStream));
 		this.stop = false;
 	}
@@ -33,7 +32,10 @@ public class IRCReaderThread extends Thread implements Closeable{
 					final var line = reader.readLine();
 					try{
 						final var event = IRCUtils.buildEvent(line);
-						if(Objects.nonNull(event)){
+						if(event instanceof PingIRCEvent){
+							client.sendMessage("PONG");
+						}
+						else if(Objects.nonNull(event)){
 							client.getListeners().forEach(l -> l.onIRCEvent(event));
 						}
 					}

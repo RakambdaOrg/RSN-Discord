@@ -1,9 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
-import fr.mrcraftcod.gunterdiscord.utils.irc.events.ChannelJoinedIRCEvent;
-import fr.mrcraftcod.gunterdiscord.utils.irc.events.ChannelLeftIRCEvent;
-import fr.mrcraftcod.gunterdiscord.utils.irc.events.ChannelMessageIRCEvent;
-import fr.mrcraftcod.gunterdiscord.utils.irc.events.IRCEvent;
+import fr.mrcraftcod.gunterdiscord.utils.irc.events.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +34,8 @@ public class IRCUtils{
 					return null;
 				}
 				return new ChannelMessageIRCEvent(user, eventType, infos[2], message.substring(columnIndex + 1));
+			case "PING":
+				return new PingIRCEvent(user, eventType);
 			case "001":
 			case "002":
 			case "003":

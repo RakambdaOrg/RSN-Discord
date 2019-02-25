@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class TwitchIRC{
-	private static final String NICKNAME = "RakSrinaNa";
+	private static final String NICKNAME = "raksrinana";
 	private static IRCClient CLIENT = null;
 	
 	public static void connect(Guild guild, String user) throws IOException{
