@@ -10,7 +10,7 @@ public class TwitchIRC{
 	
 	public static void connect(Guild guild, String user) throws IOException{
 		if(Objects.isNull(CLIENT)){
-			CLIENT = new IRCClient("irc.chat.twitch.tv", 6667);
+			CLIENT = new IRCClient("irc.chat.twitch.tv", 6697);
 			CLIENT.setSecureKeyPassword(String.format("oauth:%s", System.getenv("TWITCH_TOKEN")));
 			CLIENT.connect();
 			CLIENT.setNick(NICKNAME);
