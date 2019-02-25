@@ -29,9 +29,15 @@ public class TwitchIRC{
 			CLIENT.leaveChannel(channel);
 			CLIENT.getListeners().removeIf(obj -> obj instanceof TwitchIRCListener && Objects.equals(((TwitchIRCListener) obj).getUser(), user) && Objects.equals(((TwitchIRCListener) obj).getGuild(), guild));
 			if(CLIENT.getJoinedChannels().isEmpty()){
-				CLIENT.close();
-				CLIENT = null;
+				close();
 			}
+		}
+	}
+	
+	public static void close() throws IOException{
+		if(Objects.nonNull(CLIENT)){
+			CLIENT.close();
+			CLIENT = null;
 		}
 	}
 }
