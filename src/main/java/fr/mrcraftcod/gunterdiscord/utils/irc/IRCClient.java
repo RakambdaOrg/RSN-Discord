@@ -43,7 +43,7 @@ public class IRCClient implements Closeable{
 		this.ircReader.start();
 		if(Objects.nonNull(this.pass)){
 			this.socketWriter.println(String.format("PASS %s", this.pass));
-			LOGGER.info("Using pass to connect to {}:{}", this.host, this.port);
+			LOGGER.info("Using pass {} to connect to {}:{}", this.pass, this.host, this.port);
 		}
 		this.connected = true;
 		LOGGER.info("IRC connection initialized with {}:{}", this.host, this.port);
