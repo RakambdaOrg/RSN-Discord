@@ -26,10 +26,8 @@ public class TwitchIRC{
 	public static void disconnect(Guild guild, String user) throws IOException{
 		if(Objects.nonNull(CLIENT)){
 			String channel = String.format("#%s", user);
+			CLIENT.leaveChannel(channel);
 			CLIENT.getListeners().removeIf(obj -> obj instanceof TwitchIRCListener && Objects.equals(((TwitchIRCListener) obj).getUser(), user) && Objects.equals(((TwitchIRCListener) obj).getGuild(), guild));
-			if(CLIENT.getListeners().stream().noneMatch(l -> l.handlesChannel(channel))){
-				CLIENT.leaveChannel(channel);
-			}
 			if(CLIENT.getJoinedChannels().isEmpty()){
 				CLIENT.close();
 				CLIENT = null;

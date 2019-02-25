@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
 import fr.mrcraftcod.gunterdiscord.utils.irc.events.ChannelJoinedIRCEvent;
+import fr.mrcraftcod.gunterdiscord.utils.irc.events.ChannelLeftIRCEvent;
 import fr.mrcraftcod.gunterdiscord.utils.irc.events.ChannelMessageIRCEvent;
 import fr.mrcraftcod.gunterdiscord.utils.irc.events.IRCEvent;
 import org.slf4j.Logger;
@@ -28,6 +29,8 @@ public class IRCUtils{
 		switch(eventType){
 			case "JOIN":
 				return new ChannelJoinedIRCEvent(user, eventType, infos[2]);
+			case "PART":
+				return new ChannelLeftIRCEvent(user, eventType, infos[2]);
 			case "PRIVMSG":
 				if(columnIndex < 0){
 					LOGGER.error("Invalid IRC message (no message): {}", message);

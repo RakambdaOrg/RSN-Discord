@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
 import fr.mrcraftcod.gunterdiscord.utils.irc.events.ChannelJoinedIRCEvent;
+import fr.mrcraftcod.gunterdiscord.utils.irc.events.ChannelLeftIRCEvent;
 import fr.mrcraftcod.gunterdiscord.utils.irc.events.ChannelMessageIRCEvent;
 import fr.mrcraftcod.gunterdiscord.utils.irc.events.IRCEvent;
 
@@ -16,6 +17,9 @@ public abstract class AbstractIRCListener implements IRCListener{
 		if(event instanceof ChannelJoinedIRCEvent){
 			onIRCChannelJoined((ChannelJoinedIRCEvent) event);
 		}
+		else if(event instanceof ChannelLeftIRCEvent){
+			onIRCChannelLeft((ChannelLeftIRCEvent) event);
+		}
 		else if(event instanceof ChannelMessageIRCEvent){
 			onIRCMessage((ChannelMessageIRCEvent) event);
 		}
@@ -25,6 +29,8 @@ public abstract class AbstractIRCListener implements IRCListener{
 	}
 	
 	protected abstract void onIRCChannelJoined(ChannelJoinedIRCEvent event);
+	
+	protected abstract void onIRCChannelLeft(ChannelLeftIRCEvent event);
 	
 	protected abstract void onIRCMessage(ChannelMessageIRCEvent event);
 	
