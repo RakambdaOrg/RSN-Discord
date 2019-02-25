@@ -29,18 +29,20 @@ public class IRCReaderThread extends Thread implements Closeable{
 		while(!stop){
 			try{
 				if(reader.ready()){
-					final var line = reader.readLine();
-					try{
-						final var event = IRCUtils.buildEvent(line);
-						if(event instanceof PingIRCEvent){
-							client.sendMessage("PONG");
+					String line;
+					while((line = reader.readLine()) != null){
+						try{
+							final var event = IRCUtils.buildEvent(line);
+							if(event instanceof PingIRCEvent){
+								client.sendMessage("PONG");
+							}
+							else if(Objects.nonNull(event)){
+								client.getListeners().forEach(l -> l.onIRCEvent(event));
+							}
 						}
-						else if(Objects.nonNull(event)){
-							client.getListeners().forEach(l -> l.onIRCEvent(event));
+						catch(Exception e){
+							LOGGER.error("Error handling IRC message: {}", line, e);
 						}
-					}
-					catch(Exception e){
-						LOGGER.error("Error handling IRC message: {}", line, e);
 					}
 				}
 				else{

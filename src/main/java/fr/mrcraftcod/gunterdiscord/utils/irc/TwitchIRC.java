@@ -18,7 +18,7 @@ public class TwitchIRC{
 			CLIENT.connect();
 			CLIENT.setNick(NICKNAME);
 		}
-		String channel = String.format("#%s", user);
+		String channel = String.format("#%s", user.toLowerCase());
 		if(CLIENT.getJoinedChannels().stream().noneMatch(joinedChannel -> Objects.equals(joinedChannel, channel))){
 			final var listener = new TwitchIRCListener(guild, user, channel);
 			CLIENT.addEventListener(listener);
@@ -28,7 +28,7 @@ public class TwitchIRC{
 	
 	public static void disconnect(Guild guild, String user){
 		if(Objects.nonNull(CLIENT)){
-			String channel = String.format("#%s", user);
+			String channel = String.format("#%s", user.toLowerCase());
 			CLIENT.leaveChannel(channel);
 			CLIENT.getListeners().removeIf(obj -> obj instanceof TwitchIRCListener && Objects.equals(((TwitchIRCListener) obj).getUser(), user) && Objects.equals(((TwitchIRCListener) obj).getGuild(), guild));
 			if(CLIENT.getJoinedChannels().isEmpty()){
