@@ -20,15 +20,15 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="net.dv8tion.jda" level="warn">
+        <Logger name="net.dv8tion.jda" level="warn" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="MyFile"/>
         </Logger>
-        <Logger name="com.sedmelluq.discord.lavaplayer" level="warn">
+        <Logger name="com.sedmelluq.discord.lavaplayer" level="warn" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="MyFile"/>
         </Logger>
-        <Logger name="fr.mrcraftcod" level="debug">
+        <Logger name="fr.mrcraftcod" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="MyFile"/>
         </Logger>

@@ -158,10 +158,5 @@
             <artifactId>utils.http</artifactId>
             <version>5.2.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.kitteh.irc</groupId>
-            <artifactId>client-lib</artifactId>
-            <version>6.0.0</version>
-        </dependency>
     </dependencies>
 </project>
