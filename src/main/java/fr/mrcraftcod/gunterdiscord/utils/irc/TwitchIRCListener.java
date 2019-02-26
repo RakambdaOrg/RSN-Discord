@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.io.IOException;
 import java.util.Objects;
 
 public class TwitchIRCListener extends AbstractIRCListener{
@@ -30,12 +29,7 @@ public class TwitchIRCListener extends AbstractIRCListener{
 	@Override
 	protected void onPingIRC(PingIRCEvent event){
 		if(System.currentTimeMillis() - lastMessage > 300000){
-			try{
-				TwitchIRC.disconnect(getGuild(), getUser());
-			}
-			catch(IOException e){
-				LOGGER.error("Failed to disconnect after no messages for a while", e);
-			}
+			TwitchIRC.disconnect(getGuild(), getUser());
 		}
 	}
 	
