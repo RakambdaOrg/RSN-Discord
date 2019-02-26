@@ -8,6 +8,7 @@ import fr.mrcraftcod.gunterdiscord.runners.SaveConfigScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListMediaUserListScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListNotificationScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
+import fr.mrcraftcod.gunterdiscord.utils.irc.TwitchIRC;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
 import net.dv8tion.jda.api.AccountType;
@@ -89,6 +90,7 @@ public class Main{
 	public static void close(){
 		QuizListener.stopAll();
 		GunterAudioManager.stopAll();
+		TwitchIRC.close();
 		
 		executorService.shutdownNow();
 		consoleHandler.close();

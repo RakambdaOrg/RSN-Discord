@@ -17,6 +17,7 @@ public class TwitchCommandComposite extends CommandComposite{
 	public TwitchCommandComposite(){
 		addSubCommand(new ConnectCommand(this));
 		addSubCommand(new DisconnectCommand(this));
+		addSubCommand(new QuitCommand(this));
 	}
 	
 	@Override
