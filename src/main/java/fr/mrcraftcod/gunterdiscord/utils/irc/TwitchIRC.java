@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
+import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import net.dv8tion.jda.api.entities.Guild;
 import java.io.IOException;
 import java.util.Objects;
@@ -8,7 +9,7 @@ public class TwitchIRC{
 	private static final String NICKNAME = "raksrinana";
 	private static IRCClient CLIENT = null;
 	
-	public static void connect(Guild guild, String user) throws IOException{
+	public static void connect(Guild guild, String user) throws IOException, NoValueDefinedException{
 		if(Objects.isNull(CLIENT)){
 			CLIENT = new IRCClient("irc.chat.twitch.tv", 6697);
 			CLIENT.setSecureKeyPassword(String.format("oauth:%s", System.getenv("TWITCH_TOKEN")));
@@ -17,9 +18,17 @@ public class TwitchIRC{
 		}
 		String channel = String.format("#%s", user);
 		if(CLIENT.getJoinedChannels().stream().noneMatch(joinedChannel -> Objects.equals(joinedChannel, channel))){
-			final var listener = new TwitchIRCListener(guild, user, channel);
-			CLIENT.addEventListener(listener);
-			CLIENT.joinChannel(channel);
+			try{
+				final var listener = new TwitchIRCListener(guild, user, channel);
+				CLIENT.addEventListener(listener);
+				CLIENT.joinChannel(channel);
+			}
+			catch(NoValueDefinedException e){
+				if(CLIENT.getJoinedChannels().isEmpty()){
+					CLIENT.close();
+				}
+				throw e;
+			}
 		}
 	}
 	

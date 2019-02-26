@@ -32,10 +32,10 @@ public class IRCReaderThread extends Thread implements Closeable{
 					final var line = reader.readLine();
 					try{
 						final var event = IRCUtils.buildEvent(line);
-						if(event instanceof PingIRCEvent){
-							client.sendMessage("PONG");
-						}
-						else if(Objects.nonNull(event)){
+						if(Objects.nonNull(event)){
+							if(event instanceof PingIRCEvent){
+								client.sendMessage("PONG");
+							}
 							client.getListeners().forEach(l -> l.onIRCEvent(event));
 						}
 					}

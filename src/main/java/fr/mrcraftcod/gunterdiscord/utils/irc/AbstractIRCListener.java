@@ -1,9 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
-import fr.mrcraftcod.gunterdiscord.utils.irc.events.ChannelJoinedIRCEvent;
-import fr.mrcraftcod.gunterdiscord.utils.irc.events.ChannelLeftIRCEvent;
-import fr.mrcraftcod.gunterdiscord.utils.irc.events.ChannelMessageIRCEvent;
-import fr.mrcraftcod.gunterdiscord.utils.irc.events.IRCEvent;
+import fr.mrcraftcod.gunterdiscord.utils.irc.events.*;
 
 /**
  * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-02-25.
@@ -23,10 +20,15 @@ public abstract class AbstractIRCListener implements IRCListener{
 		else if(event instanceof ChannelMessageIRCEvent){
 			onIRCMessage((ChannelMessageIRCEvent) event);
 		}
+		else if(event instanceof PingIRCEvent){
+			onPingIRC((PingIRCEvent) event);
+		}
 		else{
 			onIRCUnknownEvent(event);
 		}
 	}
+	
+	protected abstract void onPingIRC(PingIRCEvent event);
 	
 	protected abstract void onIRCChannelJoined(ChannelJoinedIRCEvent event);
 	
