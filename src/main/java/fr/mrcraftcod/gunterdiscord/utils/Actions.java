@@ -1,11 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.utils;
 
 import fr.mrcraftcod.gunterdiscord.Main;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.message.GenericMessageEvent;
-import net.dv8tion.jda.core.exceptions.HierarchyException;
-import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.message.GenericMessageEvent;
+import net.dv8tion.jda.api.exceptions.HierarchyException;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.FileInputStream;
@@ -460,7 +460,7 @@ public class Actions{
 	 * @param channel    The channel it'll apply to.
 	 * @param permission The permission to remove.
 	 */
-	public static void denyPermission(@NotNull final List<Member> members, @NotNull final Channel channel, @NotNull final Permission permission){
+	public static void denyPermission(@NotNull final List<Member> members, @NotNull final GuildChannel channel, @NotNull final Permission permission){
 		members.forEach(m -> denyPermission(m, channel, permission));
 	}
 	
@@ -471,7 +471,7 @@ public class Actions{
 	 * @param channel    The channel it'll apply to.
 	 * @param permission The permission to remove.
 	 */
-	public static void denyPermission(@NotNull final Member member, @NotNull final Channel channel, @NotNull final Permission permission){
+	public static void denyPermission(@NotNull final Member member, @NotNull final GuildChannel channel, @NotNull final Permission permission){
 		try{
 			channel.putPermissionOverride(member).setDeny(permission).queue();
 			getLogger(member.getGuild()).info("{} no longer have permission {} on {}", member.getUser(), permission.name(), channel.getName());
@@ -491,7 +491,7 @@ public class Actions{
 	 * @param channel    The channel it'll apply to.
 	 * @param permission The permission to give.
 	 */
-	public static void allowPermission(@NotNull final List<Member> members, @NotNull final Channel channel, @NotNull final Permission permission){
+	public static void allowPermission(@NotNull final List<Member> members, @NotNull final GuildChannel channel, @NotNull final Permission permission){
 		members.forEach(m -> allowPermission(m, channel, permission));
 	}
 	
@@ -502,7 +502,7 @@ public class Actions{
 	 * @param channel    The channel it'll apply to.
 	 * @param permission The permission to give.
 	 */
-	public static void allowPermission(@NotNull final Member member, @NotNull final Channel channel, @NotNull final Permission permission){
+	public static void allowPermission(@NotNull final Member member, @NotNull final GuildChannel channel, @NotNull final Permission permission){
 		try{
 			channel.putPermissionOverride(member).setAllow(permission).queue();
 			getLogger(member.getGuild()).info("{} now have permission {} on {}", member.getUser(), permission.getName(), channel.getName());

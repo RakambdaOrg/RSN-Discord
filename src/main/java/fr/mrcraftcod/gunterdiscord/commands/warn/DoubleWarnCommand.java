@@ -3,9 +3,9 @@ package fr.mrcraftcod.gunterdiscord.commands.warn;
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.DoubleWarnRoleConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.DoubleWarnTimeConfig;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Role;
 import java.util.LinkedList;
 import java.util.List;
 

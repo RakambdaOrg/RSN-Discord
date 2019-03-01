@@ -4,7 +4,7 @@ import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.settings.configs.*;
 import fr.mrcraftcod.gunterdiscord.settings.configurations.*;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
-import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -60,7 +60,8 @@ public class Settings{
 			new MembersParticipationPinConfig(null),
 			new EmotesParticipationConfig(null),
 			new EmotesParticipationChannelConfig(null),
-			new EmotesParticipationPinConfig(null)
+			new EmotesParticipationPinConfig(null),
+			new TwitchIRCChannelConfig(null)
 	};
 	private static Path path;
 	private static JSONObject settings;

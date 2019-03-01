@@ -4,9 +4,9 @@ import fr.mrcraftcod.gunterdiscord.runners.ScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.airing.AniListAiringNotification;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListNotificationsPagedQuery;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -80,9 +80,12 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 				notifications.get(notification).add(user);
 			}
 		}
-		notifications.entrySet().stream().sorted(Comparator.comparing(e -> e.getKey().getDate())).forEachOrdered(e -> {
-			channels.forEach(c -> Actions.sendMessage(c, e.getValue().stream().map(User::getAsMention).collect(Collectors.joining("\n"))));
-			channels.forEach(c -> Actions.sendMessage(c, buildMessage(null, e.getKey())));
-		});
+		notifications.entrySet().stream().sorted(Comparator.comparing(e -> e.getKey().getDate())).forEachOrdered(e -> channels.forEach(c -> {
+			final var mentions = e.getValue().stream().filter(u -> sendToChannel(c, u)).map(User::getAsMention).collect(Collectors.toList());
+			if(!mentions.isEmpty()){
+				Actions.sendMessage(c, String.join("\n", mentions));
+				Actions.sendMessage(c, buildMessage(null, e.getKey()));
+			}
+		}));
 	}
 }

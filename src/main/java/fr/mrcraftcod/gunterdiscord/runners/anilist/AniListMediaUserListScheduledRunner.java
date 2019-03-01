@@ -3,7 +3,7 @@ package fr.mrcraftcod.gunterdiscord.runners.anilist;
 import fr.mrcraftcod.gunterdiscord.runners.ScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.list.AniListMediaUserList;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListMediaUserListPagedQuery;
-import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.api.JDA;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
