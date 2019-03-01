@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.photo;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
-import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.api.entities.ChannelType;
 import java.util.List;
 
 /**
@@ -39,7 +39,7 @@ public class PhotoCommandComposite extends CommandComposite{
 	
 	@Override
 	public String getDescription(){
-		return "Point d'entré des fonctionnalitées du trombinoscope";
+		return "Functions of the trombinoscope";
 	}
 	
 	@Override

@@ -7,11 +7,11 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.TrombinoscopeRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,8 +35,8 @@ public class PhotoDeleteCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Optionnel: Utilisateur", "L'utilisateur visé par la suppression (par défaut @me)", false);
-		builder.addField("Optionnel: ID", "L'ID de la photo à supprimer (si aucun n'est précisé toutes les photos seront supprimées)", false);
+		builder.addField("User", "The user that will have its picture deleted (default: @me)", false);
+		builder.addField("ID", "The ID of the picture to delete (if none is provided, every picture will be deleted)", false);
 	}
 	
 	@Override
@@ -62,10 +62,10 @@ public class PhotoDeleteCommand extends BasicCommand{
 					if(new PhotoConfig(event.getGuild()).getValue(user.getIdLong()).isEmpty()){
 						Actions.removeRole(user, new TrombinoscopeRoleConfig(event.getGuild()).getObject());
 					}
-					Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Photos de %s supprimées", user.getAsMention());
+					Actions.replyPrivate(event.getGuild(), event.getAuthor(), "%s's pictures deleted", user.getAsMention());
 				}
 				else{
-					Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Vous ne pouvez pas supprimer la photo de quelqu'un d'autre");
+					Actions.replyPrivate(event.getGuild(), event.getAuthor(), "You can't delete the picture of someone else");
 				}
 			}
 			else{
@@ -73,20 +73,20 @@ public class PhotoDeleteCommand extends BasicCommand{
 				if(new PhotoConfig(event.getGuild()).getValue(user.getIdLong()).isEmpty()){
 					Actions.removeRole(user, new TrombinoscopeRoleConfig(event.getGuild()).getObject());
 				}
-				Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Photos supprimées");
+				Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Picture deleted");
 			}
 		}
 		else{
 			new PhotoConfig(event.getGuild()).deleteKey(event.getAuthor().getIdLong());
 			Actions.removeRole(event.getAuthor(), new TrombinoscopeRoleConfig(event.getGuild()).getObject());
-			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Photos supprimées");
+			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Pictures deleted");
 		}
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " [@utilisateur] [ID]";
+		return super.getCommandUsage() + " [@user] [ID]";
 	}
 	
 	@Override
@@ -96,7 +96,7 @@ public class PhotoDeleteCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Supprimer photo";
+		return "Delete picture";
 	}
 	
 	@Override
@@ -106,7 +106,7 @@ public class PhotoDeleteCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Supprime une ou des photos du trombinoscope";
+		return "Deletes pictures from the trombinoscope";
 	}
 	
 	@Override

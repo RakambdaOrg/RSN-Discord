@@ -4,8 +4,8 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListActivityScheduledRunner;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,7 +50,7 @@ public class AniListFetchActivityCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Fetch les activités d'AniList";
+		return "Fetch user's activity from AniList";
 	}
 	
 	@Override

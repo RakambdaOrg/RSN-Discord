@@ -3,10 +3,10 @@ package fr.mrcraftcod.gunterdiscord.commands;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +21,7 @@ public class SayCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Message", "Le message à dire", false);
+		builder.addField("Message", "The message to say", false);
 	}
 	
 	@Override
@@ -43,7 +43,7 @@ public class SayCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Dire";
+		return "Say";
 	}
 	
 	@Override
@@ -53,7 +53,7 @@ public class SayCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Envoie un message en tant que le bot";
+		return "Sends a message as the bot";
 	}
 	
 	@Override

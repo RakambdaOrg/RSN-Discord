@@ -1,5 +1,4 @@
 #!/bin/sh
-cd /home/ubuntu/Gunter-Discord/
 while :
 do
 	git pull

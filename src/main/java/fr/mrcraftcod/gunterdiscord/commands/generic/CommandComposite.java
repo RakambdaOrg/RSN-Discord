@@ -2,11 +2,11 @@ package fr.mrcraftcod.gunterdiscord.commands.generic;
 
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import java.awt.*;
+import java.awt.Color;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
@@ -60,7 +60,7 @@ public abstract class CommandComposite extends BasicCommand{
 	
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
-		builder.addField("Sous-commande", subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false);
+		builder.addField("Sub-command", subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false);
 	}
 	
 	@Override
@@ -70,7 +70,7 @@ public abstract class CommandComposite extends BasicCommand{
 		}
 		final var switchStr = args.poll();
 		if(switchStr == null){
-			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.RED, "Erreur durant l'execution de la commande").addField("Command", getName(), false).addField("Raison", getCommandUsage(), false).addField("Arguments disponibles", subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false).build());
+			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.RED, "Error while executing command").addField("Command", getName(), false).addField("Reason", getCommandUsage(), false).addField("Arguments available", subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false).build());
 		}
 		else{
 			final var toExecute = subCommands.stream().filter(c -> c.getCommand().contains(switchStr.toLowerCase())).findFirst();
@@ -78,7 +78,7 @@ public abstract class CommandComposite extends BasicCommand{
 				toExecute.get().execute(event, args);
 			}
 			else{
-				Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Erreur durant l'execution de la commande").addField("Command", getName(), false).addField("Raison", "Argument non valide", false).addField("Arguments disponibles", subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false).build());
+				Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Error while executing command").addField("Command", getName(), false).addField("Reason", "Invalid argument", false).addField("Arguments available", subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false).build());
 			}
 		}
 		return CommandResult.SUCCESS;
@@ -86,6 +86,6 @@ public abstract class CommandComposite extends BasicCommand{
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " [sous-commande]";
+		return super.getCommandUsage() + " [sub-command]";
 	}
 }

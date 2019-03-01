@@ -1,11 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.utils;
 
 import fr.mrcraftcod.gunterdiscord.Main;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.message.GenericMessageEvent;
-import net.dv8tion.jda.core.exceptions.HierarchyException;
-import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.message.GenericMessageEvent;
+import net.dv8tion.jda.api.exceptions.HierarchyException;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.FileInputStream;
@@ -68,11 +68,11 @@ public class Actions{
 	 */
 	public static void sendMessage(final Guild guild, @NotNull final PrivateChannel channel, final String text){
 		if(channel.getUser().isBot()){
-			getLogger(guild).info("Cannot send private message to bot {} : {}", Utilities.getUserToLog(channel.getUser()), text);
+			getLogger(guild).info("Cannot send private message to bot {} : {}", channel.getUser(), text);
 		}
 		else{
 			channel.sendMessage(text).queue();
-			getLogger(guild).info("Sent private message to {} : {}", Utilities.getUserToLog(channel.getUser()), text);
+			getLogger(guild).info("Sent private message to {} : {}", channel.getUser(), text);
 		}
 	}
 	
@@ -162,7 +162,7 @@ public class Actions{
 	 * @param role The role to remove.
 	 */
 	public static void removeRole(final User user, @NotNull final Role role){
-		Optional.ofNullable(role.getGuild().getMember(user)).ifPresentOrElse(member -> removeRole(member, role), () -> getLogger(role.getGuild()).info("Couldn't find {} in guild {}", Utilities.getUserToLog(user), Utilities.getGuildToLog(role.getGuild())));
+		Optional.ofNullable(role.getGuild().getMember(user)).ifPresentOrElse(member -> removeRole(member, role), () -> getLogger(role.getGuild()).info("Couldn't find {} in guild {}", user, role.getGuild()));
 	}
 	
 	/**
@@ -175,7 +175,7 @@ public class Actions{
 		try{
 			//noinspection ConstantConditions
 			member.getGuild().getController().removeSingleRoleFromMember(member, role).queue();
-			getLogger(member.getGuild()).info("Removed role {} from {}", role, Utilities.getUserToLog(member.getUser()));
+			getLogger(member.getGuild()).info("Removed role {} from {}", role, member.getUser());
 		}
 		catch(final IllegalArgumentException e){
 			getLogger(member.getGuild()).warn("User/Role not found", e);
@@ -199,7 +199,7 @@ public class Actions{
 	 */
 	public static void deleteMessage(@NotNull final Message message){
 		message.delete().queue();
-		getLogger(message.getGuild()).info("Deleted message from {} : {}", Utilities.getUserToLog(message.getAuthor()), message.getContentRaw());
+		getLogger(message.getGuild()).info("Deleted message from {} : {}", message.getAuthor(), message.getContentRaw());
 	}
 	
 	/**
@@ -320,19 +320,19 @@ public class Actions{
 		try{
 			final var member = guild.getMember(user);
 			if(member.getRoles().contains(role)){
-				getLogger(guild).info("{} already have role {}", Utilities.getUserToLog(user), role);
+				getLogger(guild).info("{} already have role {}", user, role);
 			}
 			else{
 				//noinspection ConstantConditions
 				guild.getController().addSingleRoleToMember(guild.getMember(user), role).queue();
-				getLogger(guild).info("Added role {} to {}", role, Utilities.getUserToLog(user));
+				getLogger(guild).info("Added role {} to {}", role, user);
 			}
 		}
 		catch(final IllegalArgumentException e){
 			getLogger(guild).warn("User/Role not found {}", role, e);
 		}
 		catch(final Exception e){
-			getLogger(guild).error("Error giving role {} to {}", role, Utilities.getUserToLog(user), e);
+			getLogger(guild).error("Error giving role {} to {}", role, user, e);
 		}
 	}
 	
@@ -364,7 +364,7 @@ public class Actions{
 	public static void sendPrivateMessage(final Guild guild, final PrivateChannel channel, final MessageEmbed embed){
 		if(channel != null){
 			channel.sendMessage(embed).queue();
-			getLogger(guild).info("Sent private message to {} : {}", Utilities.getUserToLog(channel.getUser()), Utilities.getEmbedForLog(embed));
+			getLogger(guild).info("Sent private message to {} : {}", channel.getUser(), Utilities.getEmbedForLog(embed));
 		}
 		else{
 			getLogger(guild).warn("Cannot send private message to null channel : {}", Utilities.getEmbedForLog(embed));
@@ -443,13 +443,13 @@ public class Actions{
 	private static void deafen(@NotNull final Member member, final boolean state){
 		try{
 			member.getGuild().getController().setDeafen(member, state).queue();
-			getLogger(member.getGuild()).info("Member {} is now {}deaf", Utilities.getUserToLog(member.getUser()), state ? "" : "un");
+			getLogger(member.getGuild()).info("Member {} is now {}deaf", member.getUser(), state ? "" : "un");
 		}
 		catch(final HierarchyException | InsufficientPermissionException e){
-			getLogger(member.getGuild()).warn("Cannot {}deaf member {}", state ? "" : "un", Utilities.getUserToLog(member.getUser()));
+			getLogger(member.getGuild()).warn("Cannot {}deaf member {}", state ? "" : "un", member.getUser());
 		}
 		catch(final Exception e){
-			getLogger(member.getGuild()).error("Error trying to {}deafen member {}", state ? "" : "un", Utilities.getUserToLog(member.getUser()), e);
+			getLogger(member.getGuild()).error("Error trying to {}deafen member {}", state ? "" : "un", member.getUser(), e);
 		}
 	}
 	
@@ -460,7 +460,7 @@ public class Actions{
 	 * @param channel    The channel it'll apply to.
 	 * @param permission The permission to remove.
 	 */
-	public static void denyPermission(@NotNull final List<Member> members, @NotNull final Channel channel, @NotNull final Permission permission){
+	public static void denyPermission(@NotNull final List<Member> members, @NotNull final GuildChannel channel, @NotNull final Permission permission){
 		members.forEach(m -> denyPermission(m, channel, permission));
 	}
 	
@@ -471,16 +471,16 @@ public class Actions{
 	 * @param channel    The channel it'll apply to.
 	 * @param permission The permission to remove.
 	 */
-	public static void denyPermission(@NotNull final Member member, @NotNull final Channel channel, @NotNull final Permission permission){
+	public static void denyPermission(@NotNull final Member member, @NotNull final GuildChannel channel, @NotNull final Permission permission){
 		try{
 			channel.putPermissionOverride(member).setDeny(permission).queue();
-			getLogger(member.getGuild()).info("{} no longer have permission {} on {}", Utilities.getUserToLog(member.getUser()), permission.name(), channel.getName());
+			getLogger(member.getGuild()).info("{} no longer have permission {} on {}", member.getUser(), permission.name(), channel.getName());
 		}
 		catch(final HierarchyException | InsufficientPermissionException e){
-			getLogger(member.getGuild()).warn("Cannot remove permission from {} in {}", Utilities.getUserToLog(member.getUser()), channel.getName());
+			getLogger(member.getGuild()).warn("Cannot remove permission from {} in {}", member.getUser(), channel.getName());
 		}
 		catch(final Exception e){
-			getLogger(member.getGuild()).warn("Error removing permission from {} in {}", Utilities.getUserToLog(member.getUser()), channel.getName(), e);
+			getLogger(member.getGuild()).warn("Error removing permission from {} in {}", member.getUser(), channel.getName(), e);
 		}
 	}
 	
@@ -491,7 +491,7 @@ public class Actions{
 	 * @param channel    The channel it'll apply to.
 	 * @param permission The permission to give.
 	 */
-	public static void allowPermission(@NotNull final List<Member> members, @NotNull final Channel channel, @NotNull final Permission permission){
+	public static void allowPermission(@NotNull final List<Member> members, @NotNull final GuildChannel channel, @NotNull final Permission permission){
 		members.forEach(m -> allowPermission(m, channel, permission));
 	}
 	
@@ -502,16 +502,16 @@ public class Actions{
 	 * @param channel    The channel it'll apply to.
 	 * @param permission The permission to give.
 	 */
-	public static void allowPermission(@NotNull final Member member, @NotNull final Channel channel, @NotNull final Permission permission){
+	public static void allowPermission(@NotNull final Member member, @NotNull final GuildChannel channel, @NotNull final Permission permission){
 		try{
 			channel.putPermissionOverride(member).setAllow(permission).queue();
-			getLogger(member.getGuild()).info("{} now have permission {} on {}", Utilities.getUserToLog(member.getUser()), permission.getName(), channel.getName());
+			getLogger(member.getGuild()).info("{} now have permission {} on {}", member.getUser(), permission.getName(), channel.getName());
 		}
 		catch(final HierarchyException | InsufficientPermissionException e){
-			getLogger(member.getGuild()).warn("Cannot give permission to {} in {}", Utilities.getUserToLog(member.getUser()), channel.getName());
+			getLogger(member.getGuild()).warn("Cannot give permission to {} in {}", member.getUser(), channel.getName());
 		}
 		catch(final Exception e){
-			getLogger(member.getGuild()).warn("Error giving permission to {} in {}", Utilities.getUserToLog(member.getUser()), channel.getName(), e);
+			getLogger(member.getGuild()).warn("Error giving permission to {} in {}", member.getUser(), channel.getName(), e);
 		}
 	}
 	

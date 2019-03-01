@@ -4,18 +4,19 @@ import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.settings.configs.QuizChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
-import fr.mrcraftcod.gunterdiscord.utils.Utilities;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
-import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import java.awt.*;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import java.awt.Color;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.time.Duration;
-import java.util.List;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
@@ -66,7 +67,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	 * @return The questions.
 	 */
 	private LinkedList<Question> generateQuestions(final int amount){
-		final LinkedList<String> lines = new LinkedList<>();
+		final var lines = new LinkedList<String>();
 		final var questionPath = Paths.get("./questions.csv").normalize().toAbsolutePath();
 		try{
 			lines.addAll(Files.readAllLines(questionPath));
@@ -80,7 +81,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 		}
 		
 		Collections.shuffle(lines);
-		final LinkedList<Question> list = new LinkedList<>();
+		final var list = new LinkedList<Question>();
 		for(var i = 0; i < amount; i++){
 			if(lines.size() < 1){
 				break;
@@ -91,7 +92,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 			final var answersList = Arrays.stream(line, 2, line.length).filter(l -> l != null && !l.trim().equalsIgnoreCase("")).collect(Collectors.toList());
 			Collections.shuffle(answersList);
 			final var ID = ThreadLocalRandom.current().nextInt(0, answersList.size() + 1);
-			final HashMap<Integer, String> answers = new HashMap<>();
+			final var answers = new HashMap<Integer, String>();
 			for(var j = 0; j < answersList.size() + 1; j++){
 				if(j == ID){
 					answers.put(j, correctAnswer);
@@ -170,14 +171,13 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 		final var QUESTION_TIME = 20;
 		try{
 			final var jda = Main.getJDA();
-			jda.getPresence().setGame(Game.playing("The Kwizzz"));
 			final var quizChannel = new QuizChannelConfig(guild).getObject();
 			
 			if(quizChannel == null){
 				return;
 			}
 			
-			Actions.sendMessage(quizChannel, "Ok @here, j'espère que vous êtes aussi chaud que mon chalumeau pour un petit kwizzz!\nLe principe est simple: une question va apparaitre avec un set de réponses possibles. Vous pouvez répondre à la question en ajoutant une réaction avec la lettre corespondante. Le temps limite pour répondre est de %ds.\n" + "Chaque bonne réponse vous donnera 1 point.\n\nOn commence dans %s!", QUESTION_TIME, waitTime.toString().replace("PT", ""));
+			Actions.sendMessage(quizChannel, "Ok @here, I hope that you're hyped for a little quiz!\nIt's very simple: a question will appear with a set of possible answers. You can pick the answer you think correct by adding the corresponding reaction. You have %ds to answer.\nEach correct answer will give you 1 point.\n\nWe're starting in %s!", QUESTION_TIME, waitTime.toString().replace("PT", ""));
 			try{
 				Thread.sleep((waitTime.getSeconds() / 2) * 1000);
 			}
@@ -185,7 +185,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 				getLogger(getGuild()).error("Error sleeping", e);
 			}
 			
-			Actions.sendMessage(quizChannel, "Encore %s!", waitTime.dividedBy(2).toString().replace("PT", ""));
+			Actions.sendMessage(quizChannel, "%s remaining!", waitTime.dividedBy(2).toString().replace("PT", ""));
 			
 			try{
 				Thread.sleep((waitTime.getSeconds() / 2) * 1000);
@@ -194,7 +194,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 				getLogger(guild).error("Error sleeping", e);
 			}
 			
-			final HashMap<Long, Integer> scores = new HashMap<>();
+			final var scores = new HashMap<Long, Integer>();
 			var i = 0;
 			while(!stopped && questions.size() > 0){
 				i++;
@@ -261,14 +261,14 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(quizChannel.getJDA().getSelfUser().getName(), null, quizChannel.getJDA().getSelfUser().getAvatarUrl());
 			builder.setColor(Color.PINK);
-			builder.setTitle("Le jeu est terminé!");
-			builder.setDescription("Voici le top des scores:");
+			builder.setTitle("The quiz is now over!");
+			builder.setDescription("Top scores:");
 			allPositions.keySet().stream().sorted(Comparator.reverseOrder()).limit(3).map(v -> new MessageEmbed.Field("Position " + (1 + allScores.indexOf(v)) + " (" + v + " points)", allPositions.get(v).stream().map(User::getAsMention).collect(Collectors.joining(", ")), false)).forEach(builder::addField);
 			Actions.sendMessage(quizChannel, builder.build());
 			
 			allPositions.keySet().forEach(score -> {
 				final var position = 1 + allScores.indexOf(score);
-				final var format = "Vous avez terminé à la position {0} avec {1} points" + (allPositions.get(score).size() > 1 ? ", vous partagez cette place avec {2} autre personne(s)" : "") + ".";
+				final var format = "You finished the quiz #{0} with {1} points" + (allPositions.get(score).size() > 1 ? ", you share this position with {2} other people" : "") + ".";
 				final var message = MessageFormat.format(format, position, score, allPositions.get(score).size() - 1);
 				allPositions.get(score).forEach(user -> Actions.replyPrivate(getGuild(), user, message));
 			});
@@ -289,12 +289,12 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 					final var emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
 					if(emote == null){
 						event.getReaction().removeReaction(event.getUser()).queue();
-						Actions.replyPrivate(event.getGuild(), event.getUser(), "Merci de n'utilser que les lettres.");
+						Actions.replyPrivate(event.getGuild(), event.getUser(), "Please use only letters.");
 					}
 					else{
 						if(answers.containsKey(event.getUser().getIdLong())){
 							event.getReaction().removeReaction(event.getUser()).queue();
-							Actions.replyPrivate(event.getGuild(), event.getUser(), "Merci de ne mettre qu'une seule réaction par question.");
+							Actions.replyPrivate(event.getGuild(), event.getUser(), "Please select only one reaction per question.");
 						}
 						else{
 							answers.put(event.getUser().getIdLong(), mapEmote(emote));
@@ -318,7 +318,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 						final var emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
 						if(answers.get(event.getUser().getIdLong()) == mapEmote(emote)){
 							answers.remove(event.getUser().getIdLong());
-							getLogger(event.getGuild()).info("User {} removed answer", Utilities.getUserToLog(event.getUser()));
+							getLogger(event.getGuild()).info("User {} removed answer", event.getUser());
 						}
 					}
 				}

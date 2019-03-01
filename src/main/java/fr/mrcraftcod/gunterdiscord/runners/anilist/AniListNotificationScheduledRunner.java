@@ -1,17 +1,15 @@
 package fr.mrcraftcod.gunterdiscord.runners.anilist;
 
+import fr.mrcraftcod.gunterdiscord.runners.ScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListDatedObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.airing.AniListAiringNotification;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListNotificationsPagedQuery;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Consumer;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -20,12 +18,32 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-10-08
  */
-public class AniListNotificationScheduledRunner implements AniListRunner<AniListAiringNotification, AniListNotificationsPagedQuery>{
+public class AniListNotificationScheduledRunner implements AniListRunner<AniListAiringNotification, AniListNotificationsPagedQuery>, ScheduledRunner{
 	private final JDA jda;
 	
 	public AniListNotificationScheduledRunner(final JDA jda){
 		getLogger(null).info("Creating AniList {} runner", getRunnerName());
 		this.jda = jda;
+	}
+	
+	@Override
+	public void run(){
+		runQueryOnEveryUserAndDefaultChannels();
+	}
+	
+	@Override
+	public long getPeriod(){
+		return 15;
+	}
+	
+	@Override
+	public TimeUnit getPeriodUnit(){
+		return TimeUnit.MINUTES;
+	}
+	
+	@Override
+	public long getDelay(){
+		return 1;
 	}
 	
 	@Override
@@ -55,6 +73,19 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 	
 	@Override
 	public void sendMessages(final List<TextChannel> channels, final Map<User, List<AniListAiringNotification>> userElements){
-		userElements.values().stream().flatMap(List::stream).distinct().sorted(Comparator.comparing(AniListDatedObject::getDate)).map(change -> buildMessage(null, change)).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
+		final var notifications = new HashMap<AniListAiringNotification, List<User>>();
+		for(final var user : userElements.keySet()){
+			for(final var notification : userElements.get(user)){
+				notifications.putIfAbsent(notification, new LinkedList<>());
+				notifications.get(notification).add(user);
+			}
+		}
+		notifications.entrySet().stream().sorted(Comparator.comparing(e -> e.getKey().getDate())).forEachOrdered(e -> channels.forEach(c -> {
+			final var mentions = e.getValue().stream().filter(u -> sendToChannel(c, u)).map(User::getAsMention).collect(Collectors.toList());
+			if(!mentions.isEmpty()){
+				Actions.sendMessage(c, String.join("\n", mentions));
+				Actions.sendMessage(c, buildMessage(null, e.getKey()));
+			}
+		}));
 	}
 }

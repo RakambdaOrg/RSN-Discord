@@ -3,7 +3,7 @@ package fr.mrcraftcod.gunterdiscord.utils.anilist.media;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.JSONFiller;
-import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -17,7 +17,7 @@ import java.util.Optional;
  * @since 2018-10-10
  */
 public abstract class AniListMedia implements JSONFiller, AniListObject{
-	private static final String QUERY = "media {\n" + "id\n" + "title {\n" + "userPreferred\n" + "}\n" + "season\n" + "type\n" + "format\n" + "status\n" + "episodes\n" + "chapters\n" + "isAdult\n" + "coverImage{\n" + "large\n" + "}\n" + "siteUrl" + "}";
+	private static final String QUERY = "media {\n" + "id\n" + "title {\n" + "userPreferred\n" + "}\n" + "season\n" + "type\n" + "format\n" + "status\n" + "episodes\n" + "chapters\n" + "volumes\n" + "isAdult\n" + "coverImage{\n" + "large\n" + "}\n" + "siteUrl" + "}";
 	
 	private String title;
 	private final AniListMediaType type;
@@ -99,7 +99,7 @@ public abstract class AniListMedia implements JSONFiller, AniListObject{
 		builder.addField("Format", Optional.ofNullable(getFormat()).map(Enum::toString).orElse("UNKNOWN"), true);
 		builder.addField("Status", Optional.ofNullable(getStatus()).map(Enum::toString).orElse("UNKNOWN"), true);
 		if(isAdult()){
-			builder.addField("Adult content", "true", true);
+			builder.addField("Adult content", "", true);
 		}
 		//builder.addField("Link", getUrl(), false);
 		builder.setThumbnail(getCoverUrl());

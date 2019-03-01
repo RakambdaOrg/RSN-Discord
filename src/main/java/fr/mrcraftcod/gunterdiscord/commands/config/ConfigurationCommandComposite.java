@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.config;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
-import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.api.entities.ChannelType;
 import java.util.List;
 import static fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand.ChangeConfigType.*;
 import static fr.mrcraftcod.gunterdiscord.commands.generic.Command.AccessLevel.ADMIN;
@@ -42,7 +42,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 	
 	@Override
 	public String getDescription(){
-		return "Modifie la configuration du bot";
+		return "Interact with the bot's configuration";
 	}
 	
 	@Override

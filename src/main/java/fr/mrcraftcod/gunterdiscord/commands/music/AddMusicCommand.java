@@ -5,16 +5,21 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
+import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.commands.music.NowPlayingMusicCommand.getDuration;
 
 /**
@@ -36,14 +41,17 @@ public class AddMusicCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("lien", "Le lien de la musique", false);
+		builder.addField("link", "Music link", false);
+		builder.addField("skip", "The number of tracks to skip before adding them", false);
+		builder.addField("max", "The maximum number of tracks to add", false);
+		builder.addField("repeat", "Either to repeat this track or not (true/false)", false);
 	}
 	
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.isEmpty()){
-			Actions.reply(event, "Merci de donner un lien");
+			Actions.reply(event, "Please give a link");
 		}
 		else if(event.getMember().getVoiceState().inVoiceChannel()){
 			final var identifier = Objects.requireNonNull(args.poll()).trim();
@@ -63,13 +71,27 @@ public class AddMusicCommand extends BasicCommand{
 				}
 				return 10;
 			}).filter(value -> value >= 0).orElse(10);
+			final var repeat = Optional.ofNullable(args.poll()).map(Boolean::valueOf).orElse(false);
 			GunterAudioManager.play(event.getAuthor(), event.getMember().getVoiceState().getChannel(), null, track -> {
 				if(Objects.isNull(track)){
-					Actions.reply(event, "%s, musique inconnue", event.getAuthor().getAsMention());
+					Actions.reply(event, "%s, unknown music", event.getAuthor().getAsMention());
 				}
 				else if(track instanceof AudioTrack){
+					final var audioTrack = (AudioTrack) track;
+					if(repeat){
+						if(audioTrack.getUserData() instanceof TrackUserFields){
+							audioTrack.getUserData(TrackUserFields.class).fill(new ReplayTrackUserField(), true);
+						}
+					}
 					final var queue = GunterAudioManager.getQueue(event.getGuild());
-					Actions.reply(event, "%s a ajouté %s, temps d'attente estimé: %s", event.getAuthor().getAsMention(), ((AudioTrack) track).getInfo().title, getDuration(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + queue.stream().takeWhile(t -> !track.equals(t)).mapToLong(AudioTrack::getDuration).sum()));
+					final var before = queue.stream().takeWhile(t -> !track.equals(t)).collect(Collectors.toList());
+					final var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Music added", audioTrack.getInfo().uri);
+					embed.setDescription(audioTrack.getInfo().title);
+					embed.addField("Requester", event.getAuthor().getAsMention(), true);
+					embed.addField("ETA", getDuration(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + before.stream().mapToLong(AudioTrack::getDuration).sum()), true);
+					embed.addField("Repeating", "" + repeat, true);
+					embed.addField("Position in queue", "" + (GunterAudioManager.currentTrack(event.getGuild()).equals(track) ? 0 : (1 + before.size())), true);
+					Actions.reply(event, embed.build());
 				}
 				else{
 					Actions.reply(event, track.toString());
@@ -77,14 +99,14 @@ public class AddMusicCommand extends BasicCommand{
 			}, skipCount, maxTracks, identifier);
 		}
 		else{
-			Actions.reply(event, "Vous devez être dans un channel vocal");
+			Actions.reply(event, "You must be in a voice channel");
 		}
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " <lien>";
+		return super.getCommandUsage() + " <link> [skip] [max] [repeat]";
 	}
 	
 	@Override
@@ -94,7 +116,7 @@ public class AddMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Ajouter musique";
+		return "Add";
 	}
 	
 	@Override
@@ -104,7 +126,7 @@ public class AddMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Ajoute une musique dans la liste";
+		return "Adds a music to the queue";
 	}
 	
 	@Override

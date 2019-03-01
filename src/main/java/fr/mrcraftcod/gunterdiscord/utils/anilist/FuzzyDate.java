@@ -1,7 +1,9 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist;
 
+import fr.mrcraftcod.gunterdiscord.utils.GunterDuration;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import org.json.JSONObject;
+import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -32,6 +34,10 @@ public class FuzzyDate{
 			return null;
 		}
 		return fuzzyDate;
+	}
+	
+	public GunterDuration durationTo(FuzzyDate toDate){
+		return new GunterDuration(Duration.between(this.asDate().toInstant(), toDate.asDate().toInstant()));
 	}
 	
 	private void setYear(final Integer year){

@@ -5,10 +5,10 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,10 +39,10 @@ public class PauseMusicCommand extends BasicCommand{
 		super.execute(event, args);
 		switch(GunterAudioManager.pause(event.getGuild())){
 			case NO_MUSIC:
-				Actions.reply(event, "%s, aucune musique n'est en cours", event.getAuthor().getAsMention());
+				Actions.reply(event, "%s, no music are being played", event.getAuthor().getAsMention());
 				break;
 			case OK:
-				Actions.reply(event, "%s a mis en pause la musique", event.getAuthor().getAsMention());
+				Actions.reply(event, "%s paused the music", event.getAuthor().getAsMention());
 				break;
 		}
 		return CommandResult.SUCCESS;
@@ -55,7 +55,7 @@ public class PauseMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Pauser musique";
+		return "Pause";
 	}
 	
 	@Override
@@ -65,7 +65,7 @@ public class PauseMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Pause la musique";
+		return "Pauses the music";
 	}
 	
 	@Override

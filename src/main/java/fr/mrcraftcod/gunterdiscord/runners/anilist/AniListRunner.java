@@ -7,14 +7,13 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListDatedObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListPagedQuery;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -24,32 +23,28 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-10-11
  */
-public interface AniListRunner<T extends AniListObject, U extends AniListPagedQuery<T>> extends Runnable{
-	@Override
-	default void run(){
+public interface AniListRunner<T extends AniListObject, U extends AniListPagedQuery<T>>{
+	default void runQueryOnEveryUserAndDefaultChannels(){
+		final var channels = getJDA().getGuilds().stream().map(g -> new AniListChannelConfig(g).getObject(null)).filter(Objects::nonNull).collect(Collectors.toList());
+		final var members = channels.stream().flatMap(c -> new AniListAccessTokenConfig(c.getGuild()).getAsMap().keySet().stream().map(k -> c.getGuild().getMemberById(k))).collect(Collectors.toList());
+		runQuery(members, channels);
+	}
+	
+	default void runQuery(final List<Member> members, final List<TextChannel> channels){
 		getLogger(null).info("Starting AniList {} runner", getRunnerName());
 		try{
-			final var channels = new ArrayList<TextChannel>();
 			final var userElements = new HashMap<User, List<T>>();
-			for(final var guild : getJDA().getGuilds()){
-				final var channel = new AniListChannelConfig(guild).getObject(null);
-				if(Objects.nonNull(channel)){
-					channels.add(channel);
-					final var tokens = new AniListAccessTokenConfig(guild);
-					for(final var userID : tokens.getAsMap().keySet()){
-						final var member = guild.getMemberById(userID);
-						if(!userElements.containsKey(member.getUser())){
-							try{
-								userElements.put(member.getUser(), getElements(member));
-							}
-							catch(final Exception e){
-								getLogger(guild).error("Error fetching user {} on AniList", member, e);
-							}
-						}
+			for(var member : members){
+				if(!userElements.containsKey(member.getUser())){
+					try{
+						userElements.put(member.getUser(), getElements(member));
+					}
+					catch(final Exception e){
+						getLogger(member.getGuild()).error("Error fetching user {} on AniList", member, e);
 					}
 				}
 			}
-			getLogger(null).info("AniList API done");
+			getLogger(null).debug("AniList API done");
 			sendMessages(channels, userElements);
 			
 			getLogger(null).info("AniList {} runner done", getRunnerName());
@@ -60,10 +55,23 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 	}
 	
 	default void sendMessages(final List<TextChannel> channels, final Map<User, List<T>> userElements){
-		for(final var user : userElements.keySet()){
-			final var element = userElements.get(user);
-			element.stream().sorted().map(change -> buildMessage(user, change)).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
+		if(sortedByUser()){
+			for(final var user : userElements.keySet()){
+				final var element = userElements.get(user);
+				element.stream().sorted().map(change -> buildMessage(user, change)).forEach(message -> channels.stream().filter(c -> sendToChannel(c, user)).forEach(c -> Actions.sendMessage(c, message)));
+			}
 		}
+		else{
+			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> Map.entry(change.getKey(), buildMessage(change.getKey(), change.getValue()))).forEach(infos -> channels.stream().filter(chan -> sendToChannel(chan, infos.getKey())).forEach(chan -> Actions.sendMessage(chan, infos.getValue())));
+		}
+	}
+	
+	default boolean sendToChannel(TextChannel channel, User user){
+		return new AniListAccessTokenConfig(channel.getGuild()).getAsMap().keySet().contains(user.getIdLong());
+	}
+	
+	default boolean sortedByUser(){
+		return false;
 	}
 	
 	String getRunnerName();
@@ -71,7 +79,7 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 	JDA getJDA();
 	
 	default List<T> getElements(final Member member) throws Exception{
-		getLogger(member.getGuild()).info("Fetching user {}", member);
+		getLogger(member.getGuild()).debug("Fetching user {}", member);
 		final var userInfoConf = new AniListLastAccessConfig(member.getGuild());
 		final var userInfo = userInfoConf.getValue(member.getUser().getIdLong());
 		var elementList = initQuery(userInfo).getResult(member);
@@ -80,7 +88,7 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 			elementList = elementList.stream().filter(e -> e instanceof AniListDatedObject).filter(e -> ((AniListDatedObject) e).getDate().after(baseDate)).collect(Collectors.toList());
 		}
 		elementList.stream().filter(e -> e instanceof AniListDatedObject).map(e -> (AniListDatedObject) e).map(AniListDatedObject::getDate).mapToLong(Date::getTime).max().ifPresent(val -> {
-			getLogger(member.getGuild()).info("New last fetched date for {}: {}", member, new Date(val));
+			getLogger(member.getGuild()).debug("New last fetched date for {}: {}", member, new Date(val));
 			userInfoConf.addValue(member.getUser().getIdLong(), "lastFetch" + getFetcherID(), "" + (val / 1000L));
 		});
 		return elementList;

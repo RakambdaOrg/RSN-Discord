@@ -4,12 +4,12 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.ReportChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import java.awt.*;
+import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class ReportCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Raison", "La raison du report", false);
+		builder.addField("Reason", "The reason of the report", false);
 	}
 	
 	@Override
@@ -37,19 +37,19 @@ public class ReportCommand extends BasicCommand{
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.ORANGE);
-			builder.setTitle("Nouveau report");
-			builder.addField("Utilisateur", event.getAuthor().getAsMention(), false);
-			builder.addField("Raison", String.join(" ", args), false);
-			builder.setTimestamp(event.getMessage().getCreationTime());
+			builder.setTitle("New report");
+			builder.addField("User", event.getAuthor().getAsMention(), false);
+			builder.addField("Reason", String.join(" ", args), false);
+			builder.setTimestamp(event.getMessage().getTimeCreated());
 			Actions.sendMessage(channel, builder.build());
-			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Votre message a bien été transféré. Merci à vous.");
+			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Your message have been forwarded.");
 		}
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " <raison...>";
+		return super.getCommandUsage() + " <reason...>";
 	}
 	
 	@Override
@@ -69,7 +69,7 @@ public class ReportCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Envoi un message aux modérateurs";
+		return "Sends a message to the staff";
 	}
 	
 	@Override

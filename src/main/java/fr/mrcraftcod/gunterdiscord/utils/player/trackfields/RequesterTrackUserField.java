@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils.player.trackfields;
 
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.entities.User;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 19/08/2018.

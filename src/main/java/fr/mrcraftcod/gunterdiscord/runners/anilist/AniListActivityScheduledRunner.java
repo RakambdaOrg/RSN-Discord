@@ -1,9 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.runners.anilist;
 
+import fr.mrcraftcod.gunterdiscord.runners.ScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.activity.list.AniListListActivity;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListListActivityPagedQuery;
-import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.api.JDA;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -12,12 +14,27 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-10-08
  */
-public class AniListActivityScheduledRunner implements AniListRunner<AniListListActivity, AniListListActivityPagedQuery>{
+public class AniListActivityScheduledRunner implements AniListRunner<AniListListActivity, AniListListActivityPagedQuery>, ScheduledRunner{
 	private final JDA jda;
 	
 	public AniListActivityScheduledRunner(final JDA jda){
 		getLogger(null).info("Creating AniList list change runner");
 		this.jda = jda;
+	}
+	
+	@Override
+	public long getPeriod(){
+		return 1;
+	}
+	
+	@Override
+	public TimeUnit getPeriodUnit(){
+		return TimeUnit.HOURS;
+	}
+	
+	@Override
+	public long getDelay(){
+		return 0;
 	}
 	
 	@Override
@@ -43,5 +60,10 @@ public class AniListActivityScheduledRunner implements AniListRunner<AniListList
 	@Override
 	public String getFetcherID(){
 		return "listActivity";
+	}
+	
+	@Override
+	public void run(){
+		runQueryOnEveryUserAndDefaultChannels();
 	}
 }

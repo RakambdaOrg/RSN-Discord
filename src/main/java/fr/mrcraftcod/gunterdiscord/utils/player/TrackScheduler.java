@@ -5,11 +5,10 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
-import net.dv8tion.jda.core.entities.Guild;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
+import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
+import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
+import net.dv8tion.jda.api.entities.Guild;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -24,7 +23,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 class TrackScheduler extends AudioEventAdapter{
 	private final AudioPlayer player;
-	private final BlockingQueue<AudioTrack> queue;
+	private BlockingQueue<AudioTrack> queue;
 	private final Guild guild;
 	private final Set<StatusTrackSchedulerListener> listeners;
 	
@@ -45,10 +44,12 @@ class TrackScheduler extends AudioEventAdapter{
 	 * @param track The track to play or add to queue.
 	 */
 	public void queue(final AudioTrack track){
-		if(!player.startTrack(track, true)){
-			if(queue.stream().noneMatch(track2 -> Objects.equals(track2.getInfo().identifier, track.getInfo().identifier))){
-				queue.offer(track);
-			}
+		if(queue.stream().noneMatch(track2 -> Objects.equals(track2.getInfo().identifier, track.getInfo().identifier))){
+			queue.offer(track);
+		}
+		if(player.startTrack(queue.peek(), true)){
+			queue.poll();
+			getLogger(guild).info("Playing track {}", track.getInfo().identifier);
 		}
 	}
 	
@@ -61,14 +62,40 @@ class TrackScheduler extends AudioEventAdapter{
 	@Override
 	public void onTrackEnd(final AudioPlayer player, final AudioTrack track, final AudioTrackEndReason endReason){
 		super.onTrackEnd(player, track, endReason);
-		listeners.forEach(l -> l.onTrackEnd(track));
-		getLogger(getGuild()).info("Track ended: {}", track.getIdentifier());
-		if(endReason.mayStartNext){
-			if(!nextTrack()){
-				getLogger(getGuild()).info("Playlist ended, listeners: {}", listeners.size());
-				final var executor = Executors.newSingleThreadScheduledExecutor();
-				executor.schedule(() -> listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty), 5, TimeUnit.SECONDS);
+		if(track.getUserData() instanceof TrackUserFields){
+			if(track.getUserData(TrackUserFields.class).getOrDefault(new ReplayTrackUserField(), false)){
+				getLogger(guild).info("Putting back {} into queue: repeat is enabled", track.getInfo().identifier);
+				final var clone = track.makeClone();
+				clone.setUserData(track.getUserData());
+				queue(clone);
 			}
+		}
+		listeners.forEach(l -> l.onTrackEnd(track));
+		getLogger(getGuild()).info("Track ended ({}): {}", endReason.name(), track.getIdentifier());
+		if(endReason.mayStartNext){
+			tryStartNext();
+		}
+	}
+	
+	private void tryStartNext(){
+		if(Objects.isNull(this.player.getPlayingTrack()) && !nextTrack()){
+			getLogger(getGuild()).info("Playlist ended, listeners: {}", listeners.size());
+			final var executor = Executors.newSingleThreadScheduledExecutor();
+			executor.schedule(() -> listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty), 5, TimeUnit.SECONDS);
+		}
+	}
+	
+	public void skip(){
+		this.player.startTrack(null, false);
+		tryStartNext();
+	}
+	
+	public void shuffle(){
+		if(this.queue.size() > 1){
+			final var oldList = new ArrayList<>(this.queue);
+			this.queue = new LinkedBlockingQueue<>();
+			Collections.shuffle(oldList);
+			this.queue.addAll(oldList);
 		}
 	}
 	
@@ -86,9 +113,13 @@ class TrackScheduler extends AudioEventAdapter{
 	 *
 	 * @return True if a track is available, false else.
 	 */
-	boolean nextTrack(){
+	private boolean nextTrack(){
 		getLogger(getGuild()).info("Playing next track");
-		return player.startTrack(queue.poll(), false);
+		final var next = queue.poll();
+		if(Objects.nonNull(next)){
+			getLogger(guild).info("Playing track {}", next.getInfo().identifier);
+		}
+		return player.startTrack(next, false);
 	}
 	
 	public void empty(){

@@ -6,11 +6,11 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.TrombinoscopeRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import java.awt.*;
+import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class PhotoListCommand extends BasicCommand{
 		final var builder = new EmbedBuilder();
 		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 		builder.setColor(Color.GREEN);
-		builder.setTitle("Participants du trombinoscope");
+		builder.setTitle("Users of the trombinoscope");
 		Utilities.getMembersWithRole(new TrombinoscopeRoleConfig(event.getGuild()).getObject()).stream().map(u -> u.getUser().getName()).forEach(u -> builder.addField("", u, false));
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;
@@ -49,7 +49,7 @@ public class PhotoListCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Liste";
+		return "Users";
 	}
 	
 	@Override
@@ -59,7 +59,7 @@ public class PhotoListCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Obtient la liste des participants du trombinoscope";
+		return "Lists the users of the trombinoscope";
 	}
 	
 	@Override

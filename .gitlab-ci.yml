@@ -6,10 +6,10 @@ variables:
 
 cache:
   paths:
-  - .m2/repository/
-  - target/
+    - .m2/repository/
+    - target/
 
 build:
   stage: build
   script:
-  - mvn $MAVEN_CLI_OPTS verify
+    - mvn $MAVEN_CLI_OPTS verify

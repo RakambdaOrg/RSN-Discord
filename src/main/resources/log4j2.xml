@@ -5,17 +5,35 @@
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %highlight{%-5level [%logger{36}] - %C{1}.%method:%L} - %msg%n"/>
         </Console>
         <RollingFile name="MyFile" fileName="log/log.log" filePattern="log/log-%d{yyyy-MM-dd}-%i.log">
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %l - %msg%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
                 <SizeBasedTriggeringPolicy size="10 MB"/>
             </Policies>
-            <DefaultRolloverStrategy max="14"/>
+            <DefaultRolloverStrategy>
+                <Delete basePath="log/" maxDepth="1">
+                    <IfFileName glob="log-*"/>
+                    <IfLastModified age="4d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Root level="info">
-            <AppenderRef ref="Console" />
+        <Logger name="net.dv8tion.jda" level="warn" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="MyFile"/>
+        </Logger>
+        <Logger name="com.sedmelluq.discord.lavaplayer" level="warn" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="MyFile"/>
+        </Logger>
+        <Logger name="fr.mrcraftcod" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="MyFile"/>
+        </Logger>
+        <Root level="debug">
+            <AppenderRef ref="Console"/>
             <AppenderRef ref="MyFile"/>
         </Root>
     </Loggers>

@@ -8,13 +8,13 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.TrombinoscopeRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import java.awt.*;
+import java.awt.Color;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +39,7 @@ public class PhotoAddCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Optionnel: Utilisateur", "L'utilisateur représenté par la photo (par défaut @me)", false);
+		builder.addField("User", "The user of the picture (default: @me)", false);
 	}
 	
 	@SuppressWarnings("Duplicates")
@@ -61,27 +61,27 @@ public class PhotoAddCommand extends BasicCommand{
 			}
 			
 			if(user.getIdLong() != event.getAuthor().getIdLong() && !Utilities.isAdmin(event.getMember())){
-				Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Vous ne pouvez pas ajouter une image pour quelqu'un d'autre");
+				Actions.replyPrivate(event.getGuild(), event.getAuthor(), "You can't add a picture for someone else");
 			}
 			else{
 				final var attachment = event.getMessage().getAttachments().get(0);
 				final var ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
-				final var saveFile = new File("./pictures/" + user.getIdLong() + "/", event.getMessage().getCreationTime().toEpochSecond() + ext);
+				final var saveFile = new File("./pictures/" + user.getIdLong() + "/", event.getMessage().getTimeCreated().toEpochSecond() + ext);
 				//noinspection ResultOfMethodCallIgnored
 				saveFile.getParentFile().mkdirs();
-				if(attachment.download(saveFile) && attachment.getSize() == saveFile.length()){
+				if(attachment.download(saveFile) && attachment.getSize() == saveFile.length() && saveFile.length() > 512){
 					new PhotoConfig(event.getGuild()).addValue(user.getIdLong(), saveFile.getPath());
 					Actions.giveRole(event.getGuild(), user, new TrombinoscopeRoleConfig(event.getGuild()).getObject());
 					final var builder = new EmbedBuilder();
 					builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 					builder.setColor(Color.GREEN);
-					builder.setTitle("Nouvelle photo");
-					builder.addField("Utilisateur", user.getAsMention(), true);
-					builder.addField("ID", "" + event.getMessage().getCreationTime().toEpochSecond(), true);
+					builder.setTitle("New picture");
+					builder.addField("User", user.getAsMention(), true);
+					builder.addField("ID", "" + event.getMessage().getTimeCreated().toEpochSecond(), true);
 					Actions.sendMessage(new PhotoChannelConfig(event.getGuild()).getObject(), builder.build());
 				}
 				else{
-					Actions.replyPrivate(event.getGuild(), event.getAuthor(), "L'envoi a échoué");
+					Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Upload failed");
 					if(saveFile.exists()){
 						if(!saveFile.delete()){
 							getLogger(event.getGuild()).warn("Error deleting file {}", saveFile.getAbsolutePath());
@@ -91,14 +91,14 @@ public class PhotoAddCommand extends BasicCommand{
 			}
 		}
 		else{
-			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Veuillez joindre une image");
+			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Please add an image with the command");
 		}
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " [@utilisateur]";
+		return super.getCommandUsage() + " [@user]";
 	}
 	
 	@Override
@@ -108,7 +108,7 @@ public class PhotoAddCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Ajouter photo";
+		return "Add picture";
 	}
 	
 	@Override
@@ -118,7 +118,7 @@ public class PhotoAddCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Ajoute une photo au trombinoscope";
+		return "Add a picture to the trombinoscope";
 	}
 	
 	@Override

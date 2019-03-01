@@ -5,12 +5,12 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.configs.QuestionsChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import java.awt.*;
+import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class QuestionCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Message", "La question que vous souhaitez poser", false);
+		builder.addField("Message", "The question you want to ask", false);
 	}
 	
 	@Override
@@ -34,25 +34,25 @@ public class QuestionCommand extends BasicCommand{
 		super.execute(event, args);
 		
 		if(args.size() == 0){
-			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Merci de poser une question");
+			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Please ask a question");
 		}
 		else if(args.peek().equalsIgnoreCase("message") || args.peek().equalsIgnoreCase("question")){
-			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Merci de poser une question, et pas 'message'");
+			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Please ask a question, and not 'message'");
 		}
 		else{
 			final var ID = ++nextId;
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
-			builder.setTitle("Nouvelle question");
+			builder.setTitle("New question");
 			builder.addField("ID", "" + ID, true);
-			builder.addField("Utilisateur", event.getAuthor().getAsMention(), true);
+			builder.addField("User", event.getAuthor().getAsMention(), true);
 			builder.addField("Question", String.join(" ", args), false);
 			
 			final var m = Actions.getMessage(new QuestionsChannelConfig(event.getGuild()).getObject(), builder.build());
 			m.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
 			m.addReaction(BasicEmotes.CROSS_NO.getValue()).queue();
-			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Ok, ta question a été mise en file d'attente (ID: " + ID + "): " + String.join(" ", args));
+			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Ok, you question have been added to the queue (ID: " + ID + "): " + String.join(" ", args));
 		}
 		return CommandResult.SUCCESS;
 	}
@@ -79,7 +79,7 @@ public class QuestionCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Pose une question pour la FAQ";
+		return "Ask a question for the FAQ";
 	}
 	
 	@Override

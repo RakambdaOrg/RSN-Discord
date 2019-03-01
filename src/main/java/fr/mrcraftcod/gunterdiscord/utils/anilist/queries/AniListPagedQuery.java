@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.queries;
 
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListUtils;
-import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.api.entities.Member;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;

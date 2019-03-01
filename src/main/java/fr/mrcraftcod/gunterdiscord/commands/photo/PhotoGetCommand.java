@@ -8,13 +8,13 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.PhotoConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.TrombinoscopeRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import java.awt.*;
+import java.awt.Color;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,8 +40,8 @@ public class PhotoGetCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Optionnel: Utilisateur", "L'utilisateur dont on veut la photo (par défaut @me)", false);
-		builder.addField("Optionnel: Numéro", "Le numéro de la photo à tirer (par défaut aléatoire)", false);
+		builder.addField("User", "The user of the picture (default: @me)", false);
+		builder.addField("Number", "The number of the picture (if none are provided, the pictue will be picked randomly)", false);
 	}
 	
 	@Override
@@ -65,7 +65,7 @@ public class PhotoGetCommand extends BasicCommand{
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
-			builder.setTitle("L'utilisateur ne fait pas parti du trombinoscope");
+			builder.setTitle("The user isn't part of the trombinoscope");
 			Actions.reply(event, builder.build());
 		}
 		else if(new PhotoChannelConfig(event.getGuild()).isChannel(event.getTextChannel())){
@@ -88,8 +88,8 @@ public class PhotoGetCommand extends BasicCommand{
 					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.GREEN);
-					builder.addField("Sélection", String.format("%d/%d%s", rnd + 1, paths.size(), randomGen ? " aléatoire" : ""), true);
-					builder.addField("Utilisateur", user.getAsMention(), true);
+					builder.addField("Selection", String.format("%d/%d%s", rnd + 1, paths.size(), randomGen ? " random" : ""), true);
+					builder.addField("User", user.getAsMention(), true);
 					builder.addField("ID", ID, true);
 					Actions.reply(event, builder.build());
 					Actions.sendFile(event.getTextChannel(), file);
@@ -98,7 +98,7 @@ public class PhotoGetCommand extends BasicCommand{
 					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.RED);
-					builder.setTitle("Image non trouvée");
+					builder.setTitle("Image not found");
 					Actions.reply(event, builder.build());
 				}
 			}
@@ -106,7 +106,7 @@ public class PhotoGetCommand extends BasicCommand{
 				final var builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.setColor(Color.ORANGE);
-				builder.setTitle("Cet utilisateur n'a pas d'images");
+				builder.setTitle("This user have no picture");
 				Actions.reply(event, builder.build());
 			}
 		}
@@ -115,7 +115,7 @@ public class PhotoGetCommand extends BasicCommand{
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " [@utilisateur] [numéro]";
+		return super.getCommandUsage() + " [@user] [number]";
 	}
 	
 	@Override
@@ -125,7 +125,7 @@ public class PhotoGetCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Photo";
+		return "Picture";
 	}
 	
 	@Override
@@ -135,7 +135,7 @@ public class PhotoGetCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Obtient une photo du trombinoscope";
+		return "Get a picture from the trombinoscope";
 	}
 	
 	@Override

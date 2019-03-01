@@ -4,16 +4,15 @@ import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.Configuration;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
-import java.awt.*;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.awt.Color;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import static fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand.ChangeConfigType.*;
@@ -26,6 +25,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-04-15
  */
 public abstract class ListConfiguration<T> extends Configuration{
+	private static final Logger LOGGER = LoggerFactory.getLogger(ListConfiguration.class);
 	/**
 	 * Constructor.
 	 *
@@ -50,7 +50,12 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 * @param value The value to add.
 	 */
 	private void addRawValue(final String value){
-		Settings.addValue(guild, this, value);
+		if(Objects.isNull(value)){
+			LOGGER.warn("Adding a null value inside a list ({}), skipping", getName());
+		}
+		else{
+			Settings.addValue(guild, this, value);
+		}
 	}
 	
 	/**
@@ -84,8 +89,8 @@ public abstract class ListConfiguration<T> extends Configuration{
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
-			builder.setTitle("Valeurs de " + getName());
-			getAsList().stream().map(Object::toString).forEach(o -> builder.addField("", o, false));
+			builder.setTitle("Values of " + getName());
+			getAsList().stream().filter(Objects::nonNull).map(Object::toString).forEach(o -> builder.addField("", o, false));
 			Actions.reply(event, builder.build());
 			return ConfigurationCommand.ActionResult.NONE;
 		}

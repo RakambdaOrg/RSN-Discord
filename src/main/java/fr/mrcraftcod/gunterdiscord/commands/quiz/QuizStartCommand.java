@@ -4,10 +4,10 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,8 +31,8 @@ public class QuizStartCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Optionnel: Quantité", "Le nombre de questions (par défaut le maximum disponible)", false);
-		builder.addField("Optionnel: Délais", "Le délais en secondes avant de commencer le quiz (par défaut 60 secondes)", false);
+		builder.addField("Quantity", "The maximum number of questions (default: all questions)", false);
+		builder.addField("Delay", "The delay before starting the quiz (default: 60 seconds)", false);
 	}
 	
 	@Override
@@ -60,7 +60,7 @@ public class QuizStartCommand extends BasicCommand{
 	
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " [quantité] [délais]";
+		return super.getCommandUsage() + " [quantity] [delay]";
 	}
 	
 	@Override

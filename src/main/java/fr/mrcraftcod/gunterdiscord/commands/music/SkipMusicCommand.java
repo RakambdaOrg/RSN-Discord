@@ -6,11 +6,11 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,10 +41,10 @@ public class SkipMusicCommand extends BasicCommand{
 		super.execute(event, args);
 		switch(GunterAudioManager.skip(event.getGuild())){
 			case NO_MUSIC:
-				Actions.reply(event, "%s, aucune musique n'est en cours", event.getAuthor().getAsMention());
+				Actions.reply(event, "%s, no music currently playing", event.getAuthor().getAsMention());
 				break;
 			case OK:
-				Actions.reply(event, "%s a passé la musique en cours", event.getAuthor().getAsMention());
+				Actions.reply(event, "%s skipped the music", event.getAuthor().getAsMention());
 				break;
 		}
 		return CommandResult.SUCCESS;
@@ -62,7 +62,7 @@ public class SkipMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Passer musique";
+		return "Skip";
 	}
 	
 	@Override
@@ -72,7 +72,7 @@ public class SkipMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Passe la musique actuelle";
+		return "Skips the current music";
 	}
 	
 	@Override

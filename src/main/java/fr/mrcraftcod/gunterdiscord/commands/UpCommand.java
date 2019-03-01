@@ -5,10 +5,10 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import java.awt.*;
+import java.awt.Color;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,7 +25,7 @@ public class UpCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		Actions.sendMessage(event.getTextChannel(), Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Uptime infos").addField("Dernier démarage (heure locale):", Main.bootTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME), false).addField("Temps écoulé", Duration.between(Main.bootTime, ZonedDateTime.now()).toString(), false).build());
+		Actions.sendMessage(event.getTextChannel(), Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Uptime infos").addField("Last start (local time):", Main.bootTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME), false).addField("Time elapsed", Duration.between(Main.bootTime, ZonedDateTime.now()).toString(), false).build());
 		return CommandResult.SUCCESS;
 	}
 	
@@ -46,7 +46,7 @@ public class UpCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Envoie des infos sur la durée de fonctionnement du bot";
+		return "Sends infos about the bot";
 	}
 	
 	@Override

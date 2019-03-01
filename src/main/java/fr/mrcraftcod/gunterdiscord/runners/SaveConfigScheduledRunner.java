@@ -1,10 +1,10 @@
 package fr.mrcraftcod.gunterdiscord.runners;
 
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
-import net.dv8tion.jda.core.JDA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -13,18 +13,14 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-07-14
  */
-public class SaveConfigScheduledRunner implements Runnable{
+public class SaveConfigScheduledRunner implements ScheduledRunner{
 	private static final Logger LOGGER = LoggerFactory.getLogger(SaveConfigScheduledRunner.class);
-	private final JDA jda;
 	
 	/**
 	 * Constructor.
-	 *
-	 * @param jda The JDA object.
 	 */
-	public SaveConfigScheduledRunner(final JDA jda){
-		getLogger(null).info("Creating roles runner");
-		this.jda = jda;
+	public SaveConfigScheduledRunner(){
+		getLogger(null).info("Creating saver runner");
 	}
 	
 	@Override
@@ -35,5 +31,20 @@ public class SaveConfigScheduledRunner implements Runnable{
 		catch(final IOException e){
 			LOGGER.error("Failed to save settings", e);
 		}
+	}
+	
+	@Override
+	public long getPeriod(){
+		return 5;
+	}
+	
+	@Override
+	public TimeUnit getPeriodUnit(){
+		return TimeUnit.MINUTES;
+	}
+	
+	@Override
+	public long getDelay(){
+		return 2;
 	}
 }

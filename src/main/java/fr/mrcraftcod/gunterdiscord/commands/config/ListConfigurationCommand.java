@@ -6,12 +6,12 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.Configuration;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import java.awt.*;
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class ListConfigurationCommand extends BasicCommand{
 		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 		builder.setColor(Color.ORANGE);
 		builder.setTitle("Configurations");
-		builder.addField("Configurations disponibles", Arrays.stream(Settings.SETTINGS).map(Configuration::getName).sorted().collect(Collectors.joining(", ")), false);
+		builder.addField("Configurations available", Arrays.stream(Settings.SETTINGS).map(Configuration::getName).sorted().collect(Collectors.joining(", ")), false);
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;
 	}
@@ -57,7 +57,7 @@ public class ListConfigurationCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Lister configuration";
+		return "Lists configuration";
 	}
 	
 	@Override
@@ -67,7 +67,7 @@ public class ListConfigurationCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Liste les configurations disponibles";
+		return "Lists the available configurations";
 	}
 	
 	@Override

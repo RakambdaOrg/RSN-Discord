@@ -6,15 +6,16 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.RequesterTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import java.awt.*;
+import java.awt.Color;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,15 +45,17 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, "En cours de diffusion");
+		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, "Currently playing");
 		GunterAudioManager.currentTrack(event.getGuild()).ifPresentOrElse(track -> {
+			builder.setTitle("Currently playing", track.getInfo().uri);
 			final var userData = track.getUserData(TrackUserFields.class);
-			builder.addField("Titre", track.getInfo().title, false);
-			builder.addField("Demandé par", userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Inconnu"), false);
-			builder.addField("Position", String.format("%s %s / %s", buildBar(track.getPosition(), track.getDuration()), getDuration(track.getPosition()), getDuration(track.getDuration())), false);
+			builder.setDescription(track.getInfo().title);
+			builder.addField("Requester", userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Unknown"), true);
+			builder.addField("Repeating", userData.get(new ReplayTrackUserField()).map(Object::toString).orElse("False"), true);
+			builder.addField("Position", String.format("%s %s / %s", buildBar(track.getPosition(), track.getDuration()), getDuration(track.getPosition()), getDuration(track.getDuration())), true);
 		}, () -> {
 			builder.setColor(Color.RED);
-			builder.setDescription("Aucune musique ne joue actuellement");
+			builder.setDescription("No music are currently playing");
 		});
 		
 		Actions.reply(event, builder.build());
@@ -93,7 +96,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "En cours musique";
+		return "Now playing";
 	}
 	
 	@Override
@@ -103,7 +106,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Obtient des infos sur la musique en cours";
+		return "Get information about the current music";
 	}
 	
 	@Override

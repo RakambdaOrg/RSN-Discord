@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.settings.configs;
 
 import fr.mrcraftcod.gunterdiscord.settings.configurations.BooleanValueConfiguration;
-import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.api.entities.Guild;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)

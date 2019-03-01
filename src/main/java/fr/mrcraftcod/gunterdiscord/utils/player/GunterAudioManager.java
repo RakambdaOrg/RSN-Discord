@@ -10,12 +10,13 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import fr.mrcraftcod.gunterdiscord.utils.player.sourcemanagers.httpfolder.HttpFolderAudioSourceManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.RequesterTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.entities.VoiceChannel;
-import net.dv8tion.jda.core.managers.AudioManager;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.managers.AudioManager;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -63,7 +64,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			gunterAudioManager.getAudioPlayerManager().loadItem(ident, new AudioLoadResultHandler(){
 				@Override
 				public void trackLoaded(final AudioTrack track){
-					getLogger(channel.getGuild()).info("Added `{}` to the audio queue on channel `{}`", ident, channel.getName());
+					getLogger(channel.getGuild()).debug("Added `{}` to the audio queue on channel `{}`", ident, channel.getName());
 					final var userData = new TrackUserFields();
 					userData.fill(new RequesterTrackUserField(), requester);
 					track.setUserData(userData);
@@ -80,7 +81,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 				
 				@Override
 				public void playlistLoaded(final AudioPlaylist playlist){
-					getLogger(channel.getGuild()).info("Added `{}`(size: {}) to the audio queue on channel `{}`", ident, playlist.getTracks().size(), channel.getName());
+					getLogger(channel.getGuild()).debug("Added `{}`(size: {}) to the audio queue on channel `{}`", ident, playlist.getTracks().size(), channel.getName());
 					playlist.getTracks().stream().skip(skipCount).limit(maxTracks).forEach(this::trackLoaded);
 					gunterAudioManager.isSearchingTracks = false;
 				}
@@ -90,7 +91,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 					getLogger(channel.getGuild()).warn("Player found nothing for channel `{}`", channel.getName());
 					gunterAudioManager.isSearchingTracks = false;
 					gunterAudioManager.getTrackScheduler().foundNothing();
-					onTrackAdded.accept("Aucune musique trouvée");
+					onTrackAdded.accept("No music found");
 				}
 				
 				@Override
@@ -98,7 +99,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 					getLogger(channel.getGuild()).warn("Failed to load audio for channel `{}`", channel.getName(), throwable);
 					gunterAudioManager.isSearchingTracks = false;
 					gunterAudioManager.getTrackScheduler().foundNothing();
-					onTrackAdded.accept("Erreur pendant le chargement");
+					onTrackAdded.accept("Error loading music");
 				}
 			});
 		}
@@ -123,6 +124,12 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			getLogger(channel.getGuild()).info("Audio manager Created");
 			return gunterAudioManager;
 		});
+	}
+	
+	public static void shuffle(final Guild guild){
+		if(managers.containsKey(guild)){
+			managers.get(guild).getTrackScheduler().shuffle();
+		}
 	}
 	
 	private AudioPlayerManager getAudioPlayerManager(){
@@ -253,7 +260,13 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	}
 	
 	private void skip(){
-		trackScheduler.nextTrack();
+		final var trackOptional = currentTrack(getChannel().getGuild());
+		trackOptional.ifPresent(track -> {
+			if(track.getUserData() instanceof TrackUserFields){
+				track.getUserData(TrackUserFields.class).fill(new ReplayTrackUserField(), false);
+			}
+			trackScheduler.skip();
+		});
 	}
 	
 	public AudioPlayer getAudioPlayer(){

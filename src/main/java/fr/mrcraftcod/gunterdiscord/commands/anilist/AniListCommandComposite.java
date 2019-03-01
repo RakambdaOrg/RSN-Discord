@@ -2,7 +2,7 @@ package fr.mrcraftcod.gunterdiscord.commands.anilist;
 
 import fr.mrcraftcod.gunterdiscord.commands.anilist.fetch.AniListFetchCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
-import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.api.entities.ChannelType;
 import java.util.List;
 
 /**
@@ -19,6 +19,7 @@ public class AniListCommandComposite extends CommandComposite{
 		super();
 		addSubCommand(new AniListFetchCommandComposite(this));
 		addSubCommand(new AniListRegisterCommand(this));
+		addSubCommand(new AniListGetUserEntryCommand(this));
 	}
 	
 	@Override
@@ -38,7 +39,7 @@ public class AniListCommandComposite extends CommandComposite{
 	
 	@Override
 	public String getDescription(){
-		return "Point d'entré des fonctionnalitées d'AniList";
+		return "AniList related commands";
 	}
 	
 	@Override
