@@ -42,7 +42,6 @@ public class PhotoAddCommand extends BasicCommand{
 		builder.addField("User", "The user of the picture (default: @me)", false);
 	}
 	
-	@SuppressWarnings("Duplicates")
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		Actions.deleteMessage(event.getMessage());

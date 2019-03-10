@@ -23,6 +23,7 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-10-08
  */
+@SuppressWarnings("WeakerAccess")
 public class AniListRegisterCommand extends BasicCommand{
 	public static final Logger LOGGER = LoggerFactory.getLogger(AniListRegisterCommand.class);
 	private static final String QUERY = "query{Viewer {id name}}";

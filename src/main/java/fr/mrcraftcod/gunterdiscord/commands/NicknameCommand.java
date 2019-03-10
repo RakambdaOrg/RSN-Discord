@@ -38,7 +38,6 @@ public class NicknameCommand extends BasicCommand{
 		builder.addField("Nickname", "The new surname (if none are provided, the old nickname will be removed)", false);
 	}
 	
-	@SuppressWarnings("Duplicates")
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);

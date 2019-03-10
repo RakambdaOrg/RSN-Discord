@@ -101,6 +101,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	
 	@Override
 	public List<String> getCommand(){
+		//noinspection SpellCheckingInspection
 		return List.of("nowplaying", "np");
 	}
 	

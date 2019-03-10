@@ -48,7 +48,6 @@ public class Actions{
 	 * @param event The message event.
 	 * @param text  The text to send.
 	 */
-	@SuppressWarnings("Duplicates")
 	public static void reply(@NotNull final GenericMessageEvent event, final String text){
 		switch(event.getChannelType()){
 			case PRIVATE:
@@ -94,7 +93,6 @@ public class Actions{
 	 * @param onDone  The action to do when done.
 	 * @param text    The message to send.
 	 */
-	@SuppressWarnings("Duplicates")
 	public static void sendMessage(@NotNull final TextChannel channel, final Consumer<Message> onDone, final String text){
 		if(channel.canTalk()){
 			if(onDone != null){
@@ -174,7 +172,6 @@ public class Actions{
 	 */
 	public static void removeRole(@NotNull final Member member, final Role role){
 		try{
-			//noinspection ConstantConditions
 			member.getGuild().getController().removeSingleRoleFromMember(member, role).queue();
 			getLogger(member.getGuild()).info("Removed role {} from {}", role, member.getUser());
 		}
@@ -326,7 +323,6 @@ public class Actions{
 				getLogger(guild).info("{} already have role {}", user, role);
 			}
 			else{
-				//noinspection ConstantConditions
 				guild.getController().addSingleRoleToMember(guild.getMember(user), role).queue();
 				getLogger(guild).info("Added role {} to {}", role, user);
 			}
@@ -345,7 +341,6 @@ public class Actions{
 	 * @param event The event.
 	 * @param embed The message to send.
 	 */
-	@SuppressWarnings("Duplicates")
 	public static void reply(@NotNull final GenericMessageEvent event, final MessageEmbed embed){
 		switch(event.getChannelType()){
 			case PRIVATE:
@@ -391,7 +386,6 @@ public class Actions{
 	 * @param onDone  The action to do when done.
 	 * @param embed   The message to send.
 	 */
-	@SuppressWarnings("Duplicates")
 	public static void sendMessage(@NotNull final TextChannel channel, final Consumer<Message> onDone, final MessageEmbed embed){
 		if(channel.canTalk()){
 			if(onDone != null){

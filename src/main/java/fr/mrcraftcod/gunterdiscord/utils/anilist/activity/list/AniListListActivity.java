@@ -20,6 +20,7 @@ import java.util.Objects;
  * @author Thomas Couchoud
  * @since 2018-10-10
  */
+@SuppressWarnings("ALL")
 public abstract class AniListListActivity implements JSONFiller, AniListDatedObject{
 	private static final String QUERY = "ListActivity{\n" + "id\n" + "userId\n" + "type\n" + "createdAt\n" + "progress\n" + "siteUrl\n" + AniListMedia.getQuery() + "}";
 	

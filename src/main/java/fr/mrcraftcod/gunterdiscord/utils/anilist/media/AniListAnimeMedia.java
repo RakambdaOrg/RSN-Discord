@@ -12,6 +12,7 @@ import java.util.Optional;
  * @author Thomas Couchoud
  * @since 2018-10-11
  */
+@SuppressWarnings("WeakerAccess")
 public class AniListAnimeMedia extends AniListMedia{
 	private Integer episodes;
 	

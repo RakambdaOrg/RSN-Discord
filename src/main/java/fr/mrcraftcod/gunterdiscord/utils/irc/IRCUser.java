@@ -6,6 +6,7 @@ package fr.mrcraftcod.gunterdiscord.utils.irc;
  * @author Thomas Couchoud
  * @since 2019-02-25
  */
+@SuppressWarnings("WeakerAccess")
 public class IRCUser{
 	private final String user;
 	private final String nick;

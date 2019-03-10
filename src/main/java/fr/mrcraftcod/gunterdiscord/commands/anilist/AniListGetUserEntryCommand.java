@@ -44,7 +44,6 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 		
 		public void sendMessages(final List<TextChannel> channels, final Map<User, List<AniListMediaUserList>> userElements){
 			userElements.values().forEach(l -> l.removeIf(aniListMediaUserList -> !aniListMediaUserList.getMedia().getType().equals(this.type) || aniListMediaUserList.getMedia().getId() != ID));
-			//noinspection Duplicates
 			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
 		}
 		
@@ -70,6 +69,7 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 		
 		@Override
 		public String getFetcherID(){
+			//noinspection SpellCheckingInspection
 			return "getmedia";
 		}
 	}

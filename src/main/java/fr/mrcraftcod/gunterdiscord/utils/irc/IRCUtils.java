@@ -31,6 +31,7 @@ public class IRCUtils{
 				return new ChannelJoinedIRCEvent(user, eventType, infos[2]);
 			case "PART":
 				return new ChannelLeftIRCEvent(user, eventType, infos[2]);
+			//noinspection SpellCheckingInspection
 			case "PRIVMSG":
 				if(columnIndex < 0){
 					LOGGER.error("Invalid IRC message (no message): {}", message);

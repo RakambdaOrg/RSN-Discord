@@ -13,6 +13,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
+@SuppressWarnings("WeakerAccess")
 public class OnlyImagesMessageListener extends ListenerAdapter{
 	@Override
 	public void onMessageReceived(final MessageReceivedEvent event){

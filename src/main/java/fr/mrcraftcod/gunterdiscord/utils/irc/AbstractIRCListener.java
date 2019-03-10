@@ -8,6 +8,7 @@ import fr.mrcraftcod.gunterdiscord.utils.irc.events.*;
  * @author Thomas Couchoud
  * @since 2019-02-25
  */
+@SuppressWarnings("EmptyMethod")
 public abstract class AbstractIRCListener implements IRCListener{
 	@Override
 	public void onIRCEvent(IRCEvent event){

@@ -24,6 +24,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class ListConfiguration<T> extends Configuration{
 	private static final Logger LOGGER = LoggerFactory.getLogger(ListConfiguration.class);
 	/**

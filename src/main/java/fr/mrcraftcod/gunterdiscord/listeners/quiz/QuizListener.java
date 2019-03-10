@@ -138,6 +138,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	 *
 	 * @return The game of the guild.
 	 */
+	@SuppressWarnings("UnusedReturnValue")
 	public static Optional<QuizListener> getQuiz(final Guild guild, final int amount, final int delay){
 		return getQuiz(guild, amount, delay, true);
 	}
@@ -223,7 +224,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 					catch(final InterruptedException e){
 						getLogger(guild).error("Error sleeping", e);
 					}
-					Actions.sendMessage(quizChannel, "Stoooooooooooooopu!");
+					Actions.sendMessage(quizChannel, "Stop!");
 					getLogger(getGuild()).info("Question over, answer was {}", question.getCorrectAnswerIndex());
 					waitingMsg = null;
 					answers.forEach((k, v) -> {

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
+@SuppressWarnings("WeakerAccess")
 public class Utilities{
 	/**
 	 * Check if a member have a role.

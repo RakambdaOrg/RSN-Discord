@@ -41,7 +41,7 @@ public class PhotoGetCommand extends BasicCommand{
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("User", "The user of the picture (default: @me)", false);
-		builder.addField("Number", "The number of the picture (if none are provided, the pictue will be picked randomly)", false);
+		builder.addField("Number", "The number of the picture (if none are provided, the picture will be picked randomly)", false);
 	}
 	
 	@Override

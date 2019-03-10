@@ -49,10 +49,9 @@ public abstract class ValueConfiguration<T> extends Configuration{
 		if(args.size() < 1){
 			return ConfigurationCommand.ActionResult.ERROR;
 		}
-		switch(action){
-			case SET:
-				setRawValue(getMessageParser().apply(event, args.poll()));
-				return ConfigurationCommand.ActionResult.OK;
+		if(action == SET){
+			setRawValue(getMessageParser().apply(event, args.poll()));
+			return ConfigurationCommand.ActionResult.OK;
 		}
 		return ConfigurationCommand.ActionResult.OK;
 	}

@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
+@SuppressWarnings("WeakerAccess")
 public class TempParticipationCommand extends BasicCommand{
 	public static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyyMMdd");
 	public static final DateTimeFormatter DFD = DateTimeFormatter.ofPattern("dd/MM/yyy");
@@ -71,6 +72,7 @@ public class TempParticipationCommand extends BasicCommand{
 		return "Temporary participation";
 	}
 	
+	@SuppressWarnings("SpellCheckingInspection")
 	@Override
 	public List<String> getCommand(){
 		return List.of("tempparticipation", "tp");

@@ -24,6 +24,10 @@ import static java.time.temporal.ChronoUnit.DAYS;
  * @author Thomas Couchoud
  * @since 2018-10-12
  */
+@SuppressWarnings({
+		"ALL",
+		"WeakerAccess"
+})
 public class AniListMediaUserList implements AniListDatedObject{
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 	private static final String QUERY = "mediaList(userId: $userID) {\n" + "id\n" + "private\n" + "progress\n" + "progressVolumes\n" + "priority\n" + "customLists\n" + "score(format: POINT_100)\n" + "completedAt{year month day}" + "startedAt{year month day}" + "status\n" + "updatedAt\n" + "createdAt\n" + AniListMedia.getQuery() + "}";
