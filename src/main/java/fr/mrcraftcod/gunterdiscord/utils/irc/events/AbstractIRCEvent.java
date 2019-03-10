@@ -8,6 +8,7 @@ import fr.mrcraftcod.gunterdiscord.utils.irc.IRCUser;
  * @author Thomas Couchoud
  * @since 2019-02-25
  */
+@SuppressWarnings("WeakerAccess")
 public class AbstractIRCEvent implements IRCEvent{
 	private final IRCUser user;
 	private final String eventType;

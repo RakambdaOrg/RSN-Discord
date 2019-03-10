@@ -31,7 +31,7 @@ public class AniListMediaUserListPagedQuery implements AniListPagedQuery<AniList
 	}
 	
 	@Override
-	public List<AniListMediaUserList> parseResult(final JSONObject json) throws Exception{
+	public List<AniListMediaUserList> parseResult(final JSONObject json){
 		final var changes = new ArrayList<AniListMediaUserList>();
 		for(final var change : json.getJSONObject("data").getJSONObject("Page").getJSONArray("mediaList")){
 			try{

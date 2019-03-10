@@ -12,6 +12,7 @@ import java.util.function.Function;
  * @author Thomas Couchoud
  * @since 2018-05-04
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class SingleChannelConfiguration extends ValueConfiguration<TextChannel>{
 	/**
 	 * Constructor.

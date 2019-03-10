@@ -45,6 +45,7 @@ public class AniListFetchMediaUserListCommand extends BasicCommand{
 	
 	@Override
 	public List<String> getCommand(){
+		//noinspection SpellCheckingInspection
 		return List.of("medialist", "m");
 	}
 	

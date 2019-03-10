@@ -16,6 +16,7 @@ import static fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand.C
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class MapListConfiguration<K, V> extends Configuration{
 	/**
 	 * Constructor.

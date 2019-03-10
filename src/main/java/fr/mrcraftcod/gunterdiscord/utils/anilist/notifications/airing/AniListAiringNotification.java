@@ -19,6 +19,7 @@ import java.util.Objects;
  * @author Thomas Couchoud
  * @since 2018-10-11
  */
+@SuppressWarnings("WeakerAccess")
 public class AniListAiringNotification implements JSONFiller, AniListDatedObject{
 	private static final String QUERY = "AiringNotification {\n" + "id\n" + "type\n" + "episode\n" + "createdAt\n" + AniListMedia.getQuery() + "}\n";
 	private final AniListNotificationType type;

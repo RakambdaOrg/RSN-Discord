@@ -12,6 +12,7 @@ import java.util.Objects;
  * @author Thomas Couchoud
  * @since 2019-02-25
  */
+@SuppressWarnings("WeakerAccess")
 public class IRCReaderThread extends Thread implements Closeable{
 	private static final Logger LOGGER = LoggerFactory.getLogger(IRCReaderThread.class);
 	private final BufferedReader reader;

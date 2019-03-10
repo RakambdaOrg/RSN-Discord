@@ -23,7 +23,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Thomas Couchoud
  * @since 2018-06-16
  */
+@SuppressWarnings("WeakerAccess")
 public class EmotesCommand extends BasicCommand{
+	@SuppressWarnings("SpellCheckingInspection")
 	public static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyyww");
 	public static final DateTimeFormatter DFD = DateTimeFormatter.ofPattern("ww");
 	

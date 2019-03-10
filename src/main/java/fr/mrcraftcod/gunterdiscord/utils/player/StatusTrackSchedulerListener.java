@@ -8,6 +8,10 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
  * @author Thomas Couchoud
  * @since 2018-06-16
  */
+@SuppressWarnings({
+		"EmptyMethod",
+		"WeakerAccess"
+})
 public interface StatusTrackSchedulerListener{
 	/**
 	 * Called when the queue is completed.

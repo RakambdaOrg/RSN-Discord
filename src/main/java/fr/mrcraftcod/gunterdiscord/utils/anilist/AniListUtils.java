@@ -79,13 +79,9 @@ public class AniListUtils{
 		getLogger(member.getGuild()).debug("Getting previous access token for {}", member);
 		final var accessTokens = new AniListAccessTokenConfig(member.getGuild());
 		final var access = accessTokens.getValue(member.getUser().getIdLong());
-		if(Objects.nonNull(access)){
-			for(final var time : access.keySet()){
-				getLogger(member.getGuild()).debug("Found previous access token for {}", member);
-				//if(time < System.currentTimeMillis())
-				return access.get(time);
-				//accessTokens.deleteKeyValue(user.getIdLong(), time);
-			}
+		if(Objects.nonNull(access) && !access.isEmpty()){
+			getLogger(member.getGuild()).debug("Found previous access token for {}", member);
+			return access.get(access.keySet().iterator().next());
 		}
 		getLogger(member.getGuild()).debug("No access token found for {}", member);
 		return null;

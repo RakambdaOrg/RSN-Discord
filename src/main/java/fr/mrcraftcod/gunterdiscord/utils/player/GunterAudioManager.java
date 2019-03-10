@@ -9,7 +9,6 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
-import fr.mrcraftcod.gunterdiscord.utils.player.sourcemanagers.httpfolder.HttpFolderAudioSourceManager;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.RequesterTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
@@ -30,6 +29,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.player.MusicActionResponse.*;
  * @author Thomas Couchoud
  * @since 2018-06-16
  */
+@SuppressWarnings("WeakerAccess")
 public class GunterAudioManager implements StatusTrackSchedulerListener{
 	private static final HashMap<Guild, GunterAudioManager> managers = new HashMap<>();
 	private final AudioManager audioManager;
@@ -52,14 +52,13 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		play(requester, channel, null, identifier);
 	}
 	
-	private static void play(final User requester, final VoiceChannel channel, final StatusTrackSchedulerListener listener, final String... identifier){
+	private static void play(final User requester, final VoiceChannel channel, @SuppressWarnings("SameParameterValue") final StatusTrackSchedulerListener listener, final String... identifier){
 		play(requester, channel, listener, track -> {}, 0, 10, identifier);
 	}
 	
 	public static void play(final User requester, final VoiceChannel channel, final StatusTrackSchedulerListener listener, final Consumer<Object> onTrackAdded, final int skipCount, final int maxTracks, final String... identifier){
 		final var gunterAudioManager = getGunterPlayerManager(channel, listener);
 		gunterAudioManager.isSearchingTracks = true;
-		HttpFolderAudioSourceManager.setMaxToLoad(skipCount + maxTracks);
 		for(final var ident : identifier){
 			gunterAudioManager.getAudioPlayerManager().loadItem(ident, new AudioLoadResultHandler(){
 				@Override
@@ -74,7 +73,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 					}
 					catch(final Exception e){
 						Log.getLogger(channel.getGuild()).warn("Error loading song", e);
-						onTrackAdded.accept("Erreur lors de l'ajout: " + e.getMessage());
+						onTrackAdded.accept("Error adding track: " + e.getMessage());
 					}
 					gunterAudioManager.isSearchingTracks = false;
 				}
@@ -120,7 +119,6 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			if(listener != null){
 				trackScheduler.addStatusTrackSchedulerListener(listener);
 			}
-			audioPlayerManager.registerSourceManager(new HttpFolderAudioSourceManager());
 			getLogger(channel.getGuild()).info("Audio manager Created");
 			return gunterAudioManager;
 		});

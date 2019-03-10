@@ -9,6 +9,7 @@ import java.util.Objects;
 
 public class TwitchIRC{
 	private static final Logger LOGGER = LoggerFactory.getLogger(TwitchIRC.class);
+	@SuppressWarnings("SpellCheckingInspection")
 	private static final String NICKNAME = "raksrinana";
 	private static IRCClient CLIENT = null;
 	

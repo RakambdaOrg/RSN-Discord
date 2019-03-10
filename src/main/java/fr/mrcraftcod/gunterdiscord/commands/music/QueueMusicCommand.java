@@ -94,7 +94,7 @@ public class QueueMusicCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Prints the musicc queue";
+		return "Prints the music queue";
 	}
 	
 	@Override

@@ -14,6 +14,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-10-08
  */
+@SuppressWarnings("WeakerAccess")
 public class AniListMediaUserListScheduledRunner implements AniListRunner<AniListMediaUserList, AniListMediaUserListPagedQuery>, ScheduledRunner{
 	private final JDA jda;
 	private final boolean keepOnlyNew;
@@ -75,6 +76,7 @@ public class AniListMediaUserListScheduledRunner implements AniListRunner<AniLis
 		return this.keepOnlyNew;
 	}
 	
+	@SuppressWarnings("SpellCheckingInspection")
 	@Override
 	public String getFetcherID(){
 		return "medialist";

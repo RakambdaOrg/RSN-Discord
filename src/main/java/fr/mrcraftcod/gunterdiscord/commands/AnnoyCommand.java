@@ -71,7 +71,7 @@ public class AnnoyCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Go annoy a user in a vocie channel";
+		return "Go annoy a user in a voice channel";
 	}
 	
 	@Override

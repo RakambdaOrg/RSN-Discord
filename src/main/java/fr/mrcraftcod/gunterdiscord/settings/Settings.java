@@ -143,6 +143,7 @@ public class Settings{
 	/**
 	 * Closes the settings.
 	 */
+	@SuppressWarnings("EmptyMethod")
 	public static void close(){
 	}
 	

@@ -39,7 +39,7 @@ class ConsoleHandler extends Thread{
 					try{
 						Thread.sleep(10000);
 					}
-					catch(final InterruptedException e){
+					catch(final InterruptedException ignored){
 					}
 					continue;
 				}

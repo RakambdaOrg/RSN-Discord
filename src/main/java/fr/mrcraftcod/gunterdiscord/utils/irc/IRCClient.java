@@ -14,6 +14,7 @@ import java.util.*;
  * @author Thomas Couchoud
  * @since 2019-02-25
  */
+@SuppressWarnings("WeakerAccess")
 public class IRCClient implements Closeable{
 	private static final Logger LOGGER = LoggerFactory.getLogger(IRCClient.class);
 	
@@ -23,8 +24,8 @@ public class IRCClient implements Closeable{
 	private Socket socket;
 	private PrintWriter socketWriter;
 	private boolean connected;
-	private Set<String> joinedChannels;
-	private List<IRCListener> listeners;
+	private final Set<String> joinedChannels;
+	private final List<IRCListener> listeners;
 	private IRCReaderThread ircReader;
 	
 	public IRCClient(String host, int port){

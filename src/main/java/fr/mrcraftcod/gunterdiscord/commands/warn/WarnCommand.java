@@ -30,6 +30,7 @@ public abstract class WarnCommand extends BasicCommand{
 		builder.addField("Reason", "Reason of the warn", false);
 	}
 	
+	@SuppressWarnings("SpellCheckingInspection")
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);

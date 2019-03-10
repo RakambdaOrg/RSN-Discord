@@ -98,7 +98,8 @@ public class LogListener extends ListenerAdapter{
 	public void onMessageReactionAdd(final MessageReactionAddEvent event){
 		super.onMessageReactionAdd(event);
 		try{
-			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> getLogger(event.getGuild()).debug("New reaction {} from `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), event.getUser(), event.getReaction().getTextChannel().getName(), m.getContentRaw().replace("\n", "{n}"), m.getAuthor()));
+			final var message = event.getReaction().getTextChannel().getHistory().getMessageById(event.getMessageIdLong());
+			getLogger(event.getGuild()).debug("New reaction {} from `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), event.getUser(), event.getReaction().getTextChannel().getName(), message.getContentRaw().replace("\n", "{n}"), message.getAuthor());
 		}
 		catch(final NullPointerException ignored){
 		}
@@ -111,7 +112,8 @@ public class LogListener extends ListenerAdapter{
 	public void onMessageReactionRemove(final MessageReactionRemoveEvent event){
 		super.onMessageReactionRemove(event);
 		try{
-			event.getReaction().getTextChannel().getMessageById(event.getMessageIdLong()).queue(m -> getLogger(event.getGuild()).debug("Reaction {} removed by `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), event.getUser(), event.getReaction().getTextChannel().getName(), m.getContentRaw().replace("\n", "{n}"), m.getAuthor()));
+			final var message = event.getReaction().getTextChannel().getHistory().getMessageById(event.getMessageIdLong());
+			getLogger(event.getGuild()).debug("Reaction {} removed by `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), event.getUser(), event.getReaction().getTextChannel().getName(), message.getContentRaw().replace("\n", "{n}"), message.getAuthor());
 		}
 		catch(final NullPointerException ignored){
 		}

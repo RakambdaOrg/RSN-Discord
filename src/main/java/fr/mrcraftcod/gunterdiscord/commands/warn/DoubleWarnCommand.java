@@ -31,6 +31,7 @@ public class DoubleWarnCommand extends WarnCommand{
 		return "Double warn";
 	}
 	
+	@SuppressWarnings("SpellCheckingInspection")
 	@Override
 	public List<String> getCommand(){
 		return List.of("doublewarn", "dwarn");

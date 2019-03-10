@@ -40,7 +40,7 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 	}
 	
 	@Override
-	public List<AniListAiringNotification> parseResult(final JSONObject json) throws Exception{
+	public List<AniListAiringNotification> parseResult(final JSONObject json){
 		final var changes = new ArrayList<AniListAiringNotification>();
 		for(final var change : json.getJSONObject("data").getJSONObject("Page").getJSONArray("notifications")){
 			try{
