@@ -38,11 +38,17 @@ public class IRCReaderThread extends Thread implements Closeable{
 								if(event instanceof PingIRCEvent){
 									LOGGER.debug("Replying to IRC ping message");
 									client.sendMessage("PONG");
+									final var iterator = client.getListeners().iterator();
+									while(iterator.hasNext()){
+										final var listener = iterator.next();
+										if(listener.getLastMessage() > 1.8e6){
+											iterator.remove();
+											TwitchIRC.disconnect(listener.getGuild(), listener.getUser(), false);
+										}
+									}
 								}
-								final var iterator = client.getListeners().iterator();
-								//noinspection WhileLoopReplaceableByForEach
-								while(iterator.hasNext()){
-									iterator.next().onIRCEvent(event);
+								for(IRCListener ircListener : client.getListeners()){
+									ircListener.onIRCEvent(event);
 								}
 							}
 						}
