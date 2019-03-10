@@ -37,10 +37,16 @@ public class TwitchIRC{
 	}
 	
 	public static void disconnect(Guild guild, String user){
+		disconnect(guild, user, true);
+	}
+	
+	public static void disconnect(Guild guild, String user, boolean removeListener){
 		if(Objects.nonNull(CLIENT)){
 			String channel = String.format("#%s", user.toLowerCase());
 			CLIENT.leaveChannel(channel);
-			CLIENT.getListeners().removeIf(obj -> obj instanceof TwitchIRCListener && Objects.equals(((TwitchIRCListener) obj).getUser(), user) && Objects.equals(((TwitchIRCListener) obj).getGuild(), guild));
+			if(removeListener){
+				CLIENT.getListeners().removeIf(obj -> obj instanceof TwitchIRCListener && Objects.equals(obj.getUser(), user) && Objects.equals(obj.getGuild(), guild));
+			}
 			if(CLIENT.getJoinedChannels().isEmpty()){
 				close();
 			}
