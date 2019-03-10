@@ -36,9 +36,14 @@ public class IRCReaderThread extends Thread implements Closeable{
 							final var event = IRCUtils.buildEvent(line);
 							if(Objects.nonNull(event)){
 								if(event instanceof PingIRCEvent){
+									LOGGER.debug("Replying to IRC ping message");
 									client.sendMessage("PONG");
 								}
-								client.getListeners().forEach(l -> l.onIRCEvent(event));
+								final var iterator = client.getListeners().iterator();
+								//noinspection WhileLoopReplaceableByForEach
+								while(iterator.hasNext()){
+									iterator.next().onIRCEvent(event);
+								}
 							}
 						}
 						catch(Exception e){
