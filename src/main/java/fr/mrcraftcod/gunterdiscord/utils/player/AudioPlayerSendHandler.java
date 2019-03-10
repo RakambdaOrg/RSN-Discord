@@ -3,6 +3,8 @@ package fr.mrcraftcod.gunterdiscord.utils.player;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
+import java.nio.ByteBuffer;
+import java.util.Objects;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -31,13 +33,18 @@ class AudioPlayerSendHandler implements AudioSendHandler{
 	}
 	
 	@Override
-	public byte[] provide20MsAudio(){
+	public ByteBuffer provide20MsAudio(){
 		if(lastFrame == null){
 			lastFrame = audioPlayer.provide();
+			if(Objects.nonNull(lastFrame)){
+				final var data = lastFrame.getData();
+				lastFrame = null;
+				if(Objects.nonNull(data)){
+					return ByteBuffer.wrap(data);
+				}
+			}
 		}
-		final var data = lastFrame != null ? lastFrame.getData() : null;
-		lastFrame = null;
-		return data;
+		return null;
 	}
 	
 	@Override

@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -197,9 +198,11 @@ public class Actions{
 	 *
 	 * @param message The message to delete.
 	 */
-	public static void deleteMessage(@NotNull final Message message){
-		message.delete().queue();
-		getLogger(message.getGuild()).info("Deleted message from {} : {}", message.getAuthor(), message.getContentRaw());
+	public static void deleteMessage(final Message message){
+		if(Objects.nonNull(message)){
+			message.delete().queue();
+			getLogger(message.getGuild()).info("Deleted message from {} : {}", message.getAuthor(), message.getContentRaw());
+		}
 	}
 	
 	/**

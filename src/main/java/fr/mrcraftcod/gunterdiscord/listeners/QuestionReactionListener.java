@@ -32,14 +32,15 @@ public class QuestionReactionListener extends ListenerAdapter{
 				if(!event.getUser().isBot()){
 					final var emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
 					if(emote == BasicEmotes.CHECK_OK){
-						event.getTextChannel().getMessageById(event.getReaction().getMessageIdLong()).queue(m -> {
+						final var message = event.getTextChannel().getHistory().getMessageById(event.getReaction().getMessageIdLong());
+						{
 							try{
 								final var channel = new QuestionsFinalChannelConfig(event.getGuild()).getObject();
-								Actions.sendMessage(channel, mess -> mess.addReaction(BasicEmotes.CHECK_OK.getValue()).queue(), m.getEmbeds().stream().map(Utilities::buildEmbed).map(mess -> mess.addField("Approved by", event.getUser().getAsMention(), false).setTimestamp(m.getTimeCreated())).map(EmbedBuilder::build).collect(Collectors.toList()));
-								Actions.deleteMessage(m);
+								Actions.sendMessage(channel, mess -> mess.addReaction(BasicEmotes.CHECK_OK.getValue()).queue(), message.getEmbeds().stream().map(Utilities::buildEmbed).map(mess -> mess.addField("Approved by", event.getUser().getAsMention(), false).setTimestamp(message.getTimeCreated())).map(EmbedBuilder::build).collect(Collectors.toList()));
+								Actions.deleteMessage(message);
 								try{
-									final var user = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("User")).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e.getValue()).replaceAll("")))).findAny().orElse(null);
-									final var ID = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("ID")).map(MessageEmbed.Field::getValue).findAny().orElse("");
+									final var user = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("User")).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e.getValue()).replaceAll("")))).findAny().orElse(null);
+									final var ID = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("ID")).map(MessageEmbed.Field::getValue).findAny().orElse("");
 									if(user != null){
 										Actions.replyPrivate(event.getGuild(), user, "Your question (ID: %s) has been accepted and forwarded.", ID);
 									}
@@ -51,22 +52,21 @@ public class QuestionReactionListener extends ListenerAdapter{
 							catch(final NoValueDefinedException e){
 								getLogger(event.getGuild()).error("Couldn't move message", e);
 							}
-						});
+						}
 					}
 					else if(emote == BasicEmotes.CROSS_NO){
-						event.getTextChannel().getMessageById(event.getReaction().getMessageIdLong()).queue(m -> {
-							Actions.deleteMessage(m);
-							try{
-								final var user = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("User")).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e.getValue()).replaceAll("")))).findAny().orElse(null);
-								final var ID = m.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("ID")).map(MessageEmbed.Field::getValue).findAny().orElse("");
-								if(user != null){
-									Actions.replyPrivate(event.getGuild(), user, "Your question (ID: %s) has been rejected.", ID);
-								}
+						final var message = event.getTextChannel().getHistory().getMessageById(event.getReaction().getMessageIdLong());
+						Actions.deleteMessage(message);
+						try{
+							final var user = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("User")).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e.getValue()).replaceAll("")))).findAny().orElse(null);
+							final var ID = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("ID")).map(MessageEmbed.Field::getValue).findAny().orElse("");
+							if(user != null){
+								Actions.replyPrivate(event.getGuild(), user, "Your question (ID: %s) has been rejected.", ID);
 							}
-							catch(final Exception e){
-								Log.getLogger(event.getGuild()).error("Error handling question", e);
-							}
-						});
+						}
+						catch(final Exception e){
+							Log.getLogger(event.getGuild()).error("Error handling question", e);
+						}
 					}
 				}
 			}
@@ -74,7 +74,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 				if(!event.getUser().isBot()){
 					final var emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
 					if(emote == BasicEmotes.CHECK_OK){
-						event.getChannel().getMessageById(event.getMessageId()).queue(Actions::deleteMessage);
+						Actions.deleteMessage(event.getChannel().getHistory().getMessageById(event.getMessageId()));
 					}
 				}
 			}
