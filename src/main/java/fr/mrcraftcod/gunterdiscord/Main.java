@@ -15,12 +15,15 @@ import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -32,6 +35,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-04-09
  */
 public class Main{
+	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
 	private static final String SETTINGS_NAME = "settings.json";
 	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
@@ -44,6 +48,7 @@ public class Main{
 	 * @param args Not used.
 	 */
 	public static void main(final String[] args){
+		LOGGER.info("Starting bot version {}", getRSNBotVersion());
 		try{
 			Settings.init(Paths.get(new File(SETTINGS_NAME).toURI()));
 			jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).build();
@@ -71,6 +76,7 @@ public class Main{
 		}
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			LOGGER.info("Shutdown hook triggered");
 			try{
 				Settings.save();
 			}
@@ -111,5 +117,16 @@ public class Main{
 	 */
 	public static JDA getJDA(){
 		return jda;
+	}
+	
+	public static String getRSNBotVersion(){
+		final var properties = new Properties();
+		try{
+			properties.load(Main.class.getResource("/version.properties").openStream());
+		}
+		catch(final IOException e){
+			LOGGER.warn("Error reading version jsonConfigFile", e);
+		}
+		return properties.getProperty("simulator.version", "Unknown");
 	}
 }
