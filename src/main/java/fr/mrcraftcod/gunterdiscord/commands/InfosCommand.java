@@ -21,11 +21,11 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
-public class UpCommand extends BasicCommand{
+public class InfosCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		Actions.sendMessage(event.getTextChannel(), Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Uptime infos").addField("Last start (local time):", Main.bootTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME), false).addField("Time elapsed", Duration.between(Main.bootTime, ZonedDateTime.now()).toString(), false).build());
+		Actions.sendMessage(event.getTextChannel(), Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Bot infos").addField("Bot version", Main.getRSNBotVersion(), false).addField("Last start (local time):", Main.bootTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME), false).addField("Time elapsed", Duration.between(Main.bootTime, ZonedDateTime.now()).toString(), false).build());
 		return CommandResult.SUCCESS;
 	}
 	
@@ -36,12 +36,12 @@ public class UpCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Uptime infos";
+		return "Bot infos";
 	}
 	
 	@Override
 	public List<String> getCommand(){
-		return List.of("up");
+		return List.of("info");
 	}
 	
 	@Override

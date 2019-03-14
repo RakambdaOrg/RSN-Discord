@@ -6,7 +6,7 @@
 
     <groupId>fr.mrcraftcod</groupId>
     <artifactId>GunterDiscord</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,6 +17,12 @@
     <packaging>jar</packaging>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -95,7 +101,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.ALPHA.0_58</version>
+            <version>4.ALPHA.0_61</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
@@ -156,7 +162,7 @@
         <dependency>
             <groupId>fr.mrcraftcod</groupId>
             <artifactId>utils.http</artifactId>
-            <version>5.2.0</version>
+            <version>5.2.1</version>
         </dependency>
     </dependencies>
 </project>

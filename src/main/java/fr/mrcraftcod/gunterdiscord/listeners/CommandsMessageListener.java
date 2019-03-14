@@ -47,7 +47,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new QuestionCommand(),
 			// new WerewolvesCommandComposite(),
 			new AnnoyCommand(),
-			new UpCommand(),
+			new InfosCommand(),
 			new YoutubeCommand(),
 			// new MusicPartyCommandComposite(),
 			new NormalWarnCommand(),
