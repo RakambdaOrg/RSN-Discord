@@ -43,7 +43,6 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new AvatarCommand(),
 			new NicknameCommand(),
 			new SayCommand(),
-			new BackdoorCommand(),
 			new QuestionCommand(),
 			// new WerewolvesCommandComposite(),
 			new AnnoyCommand(),
