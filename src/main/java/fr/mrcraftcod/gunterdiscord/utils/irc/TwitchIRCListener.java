@@ -28,9 +28,6 @@ public class TwitchIRCListener extends AbstractIRCListener{
 	
 	@Override
 	protected void onPingIRC(PingIRCEvent event){
-		if(System.currentTimeMillis() - lastMessage > 300000){
-			TwitchIRC.disconnect(getGuild(), getUser());
-		}
 	}
 	
 	@Override
@@ -60,8 +57,14 @@ public class TwitchIRCListener extends AbstractIRCListener{
 	
 	}
 	
+	@Override
 	public Guild getGuild(){
 		return this.guild;
+	}
+	
+	@Override
+	public String getIRCChannel(){
+		return this.ircChannel;
 	}
 	
 	@Override
@@ -69,6 +72,12 @@ public class TwitchIRCListener extends AbstractIRCListener{
 		return Objects.equals(channel, this.ircChannel);
 	}
 	
+	@Override
+	public long getLastMessage(){
+		return System.currentTimeMillis() - lastMessage;
+	}
+	
+	@Override
 	public String getUser(){
 		return user;
 	}
