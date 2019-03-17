@@ -39,6 +39,19 @@ public class AniListUtils{
 		if(handler.getStatus() == 200){
 			return handler.getRequestResult().getObject();
 		}
+		if(handler.getStatus() == 503){
+			try{
+				final var result = handler.getRequestResult().getObject();
+				if(result.has("errors")){
+					final var errors = result.getJSONArray("errors");
+					if(errors.length() > 0){
+						throw new AnilistException(handler.getStatus(), errors.getJSONObject(0).getString("message"));
+					}
+				}
+			}
+			catch(Exception ignored){
+			}
+		}
 		throw new Exception("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString() + " | query was " + query);
 	}
 	
