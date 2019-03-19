@@ -6,6 +6,7 @@ import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommandComposite
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
 import fr.mrcraftcod.gunterdiscord.commands.music.MusicCommandComposite;
+import fr.mrcraftcod.gunterdiscord.commands.photo.PhotoCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.quiz.QuizCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.twitch.TwitchCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.warn.CustomWarnCommand;
@@ -34,8 +35,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public class CommandsMessageListener extends ListenerAdapter{
 	public static final Command[] commands = new Command[]{
-			// new PhotoCommandComposite(),
-			// new HangmanCommandComposite(),
+			new PhotoCommandComposite(),
 			new QuizCommandComposite(),
 			new ReportCommand(),
 			new ConfigurationCommandComposite(),
@@ -44,11 +44,9 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new NicknameCommand(),
 			new SayCommand(),
 			new QuestionCommand(),
-			// new WerewolvesCommandComposite(),
 			new AnnoyCommand(),
 			new InfosCommand(),
 			new YoutubeCommand(),
-			// new MusicPartyCommandComposite(),
 			new NormalWarnCommand(),
 			new DoubleWarnCommand(),
 			new MegaWarnCommand(),
