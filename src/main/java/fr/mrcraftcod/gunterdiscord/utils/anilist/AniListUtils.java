@@ -36,15 +36,15 @@ public class AniListUtils{
 		body.put("query", query);
 		body.put("variables", variables);
 		final var handler = new JSONPostRequestSender(new URL("https://graphql.anilist.co"), headers, new HashMap<>(), body.toString()).getRequestHandler();
-		if(handler.getStatus() == 200){
+		if(Objects.equals(handler.getStatus(), 200)){
 			return handler.getRequestResult().getObject();
 		}
-		if(handler.getStatus() == 503){
+		if(Objects.equals(handler.getStatus(), 503)){
 			try{
 				final var result = handler.getRequestResult().getObject();
 				if(result.has("errors")){
 					final var errors = result.getJSONArray("errors");
-					if(errors.length() > 0){
+					if(!errors.isEmpty()){
 						throw new AnilistException(handler.getStatus(), errors.getJSONObject(0).getString("message"));
 					}
 				}
@@ -74,7 +74,7 @@ public class AniListUtils{
 		body.put("code", token);
 		final var sender = new JSONPostRequestSender(new URL(API_URL + "/oauth/token"), headers, new HashMap<>(), body.toString());
 		final var result = sender.getRequestHandler();
-		if(result.getStatus() != 200){
+		if(!Objects.equals(result.getStatus(), 200)){
 			throw new Exception("Getting token failed HTTP code " + result.getStatus());
 		}
 		final var json = result.getRequestResult().getObject();

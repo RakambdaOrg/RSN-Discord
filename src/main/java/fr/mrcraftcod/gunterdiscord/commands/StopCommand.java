@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.commands;
 import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
+import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -27,7 +28,7 @@ public class StopCommand extends BasicCommand{
 			getLogger(event.getGuild()).info("BOT STOPPING");
 		}
 		else{
-			return CommandResult.NOT_ALLOWED;
+			throw new NotAllowedException();
 		}
 		return CommandResult.SUCCESS;
 	}

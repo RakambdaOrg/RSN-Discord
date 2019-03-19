@@ -64,12 +64,12 @@ public class ConfigurationCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		if(args.size() > 0){
+		if(!args.isEmpty()){
 			final var configuration = Settings.getSettings(args.pop());
-			if(configuration != null){
+			if(Objects.nonNull(configuration)){
 				final List<String> beforeArgs = new LinkedList<>(args);
 				final var result = processWithValue(event, configuration.getClass(), args);
-				if(result == ActionResult.ERROR){
+				if(Objects.equals(result, ActionResult.ERROR)){
 					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.RED);
@@ -80,7 +80,7 @@ public class ConfigurationCommand extends BasicCommand{
 					Actions.reply(event, builder.build());
 					getLogger(event.getGuild()).error("Error handling configuration change");
 				}
-				else if(result != ActionResult.NONE){
+				else if(!Objects.equals(result, ActionResult.NONE)){
 					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.GREEN);

@@ -39,6 +39,21 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	}
 	
 	/**
+	 * Delete a value inside a key.
+	 *
+	 * @param key   The key.
+	 * @param value The value.
+	 */
+	public void deleteKeyValue(final K key, final V value){
+		if(Objects.isNull(value)){
+			deleteKey(key);
+		}
+		else{
+			Settings.deleteKey(guild, this, key, value, getMatcher());
+		}
+	}
+	
+	/**
 	 * Get the map of this configuration.
 	 *
 	 * @return The map.
@@ -48,7 +63,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	public Map<K, ArrayList<V>> getAsMap() throws IllegalArgumentException{
 		final Map<K, ArrayList<V>> elements = new HashMap<>();
 		final var map = getObjectMap();
-		if(map == null){
+		if(Objects.isNull(map)){
 			Settings.resetMap(guild, this);
 		}
 		else{
@@ -58,26 +73,12 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 					elements.put(kKey, new ArrayList<>());
 				}
 				final var value = map.optJSONArray(key);
-				if(value != null){
+				if(Objects.nonNull(value)){
 					value.toList().stream().map(val -> getValueParser().apply(val.toString())).forEach(o -> elements.get(kKey).add(o));
 				}
 			}
 		}
 		return elements;
-	}
-	
-	/**
-	 * Get the JSON Object.
-	 *
-	 * @return The JSON object.
-	 *
-	 * @throws IllegalArgumentException If this configuration isn't a map.
-	 */
-	private JSONObject getObjectMap() throws IllegalArgumentException{
-		if(getType() != ConfigType.MAP){
-			throw new IllegalArgumentException("Not a map config");
-		}
-		return Settings.getJSONObject(guild, getName());
 	}
 	
 	/**
@@ -105,18 +106,17 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	}
 	
 	/**
-	 * Delete a value inside a key.
+	 * Get the JSON Object.
 	 *
-	 * @param key   The key.
-	 * @param value The value.
+	 * @return The JSON object.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
-	public void deleteKeyValue(final K key, final V value){
-		if(value == null){
-			deleteKey(key);
+	private JSONObject getObjectMap() throws IllegalArgumentException{
+		if(!Objects.equals(getType(), ConfigType.MAP)){
+			throw new IllegalArgumentException("Not a map config");
 		}
-		else{
-			Settings.deleteKey(guild, this, key, value, getMatcher());
-		}
+		return Settings.getJSONObject(guild, getName());
 	}
 	
 	/**

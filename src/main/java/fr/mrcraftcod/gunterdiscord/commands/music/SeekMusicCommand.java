@@ -55,15 +55,9 @@ public class SeekMusicCommand extends BasicCommand{
 			}
 			else{
 				switch(GunterAudioManager.seek(event.getGuild(), time)){
-					case NO_MUSIC:
-						Actions.reply(event, "%s, No music currently playing", event.getAuthor().getAsMention());
-						break;
-					case OK:
-						Actions.reply(event, "%s seeked the music to %s", event.getAuthor().getAsMention(), NowPlayingMusicCommand.getDuration(time));
-						break;
-					case IMPOSSIBLE:
-						Actions.reply(event, "%s, the time of this music cannot be changed", event.getAuthor().getAsMention());
-						break;
+					case NO_MUSIC -> Actions.reply(event, "%s, No music currently playing", event.getAuthor().getAsMention());
+					case OK -> Actions.reply(event, "%s seeked the music to %s", event.getAuthor().getAsMention(), NowPlayingMusicCommand.getDuration(time));
+					case IMPOSSIBLE -> Actions.reply(event, "%s, the time of this music cannot be changed", event.getAuthor().getAsMention());
 				}
 			}
 		}
@@ -83,7 +77,7 @@ public class SeekMusicCommand extends BasicCommand{
 	}
 	
 	private int getAsInt(final Guild guild, final String str){
-		if(Objects.isNull(str) || str.isEmpty()){
+		if(Objects.isNull(str) || str.isBlank()){
 			return 0;
 		}
 		try{

@@ -7,6 +7,7 @@ import java.time.temporal.TemporalAmount;
 import java.time.temporal.TemporalUnit;
 import java.time.temporal.UnsupportedTemporalTypeException;
 import java.util.List;
+import java.util.Objects;
 import static java.time.temporal.ChronoUnit.*;
 
 public class GunterDuration implements TemporalAmount, Comparable<GunterDuration>{
@@ -27,10 +28,10 @@ public class GunterDuration implements TemporalAmount, Comparable<GunterDuration
 	
 	@Override
 	public long get(TemporalUnit unit){
-		if(unit == SECONDS || unit == NANOS){
+		if(Objects.equals(unit, SECONDS) || Objects.equals(unit, NANOS)){
 			return duration.get(unit);
 		}
-		else if(unit == DAYS){
+		else if(Objects.equals(unit, DAYS)){
 			return duration.getSeconds() / unit.getDuration().getSeconds();
 		}
 		else{

@@ -35,7 +35,7 @@ public class DogCommand extends BasicCommand{
 	private String getDogPictureURL(final Guild guild) throws Exception{
 		Log.getLogger(guild).debug("Getting random dog picture");
 		final var handler = new JSONGetRequestSender(new URL("https://dog.ceo/api/breeds/image/random")).getRequestHandler();
-		if(handler.getStatus() == 200){
+		if(Objects.equals(handler.getStatus(), 200)){
 			final var json = handler.getRequestResult().getObject();
 			if(json.has("status") && Objects.equals(json.getString("status"), "success")){
 				return json.getString("message");

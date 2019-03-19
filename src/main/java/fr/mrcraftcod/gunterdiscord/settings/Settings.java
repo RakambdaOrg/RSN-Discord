@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.stream.IntStream;
 
@@ -80,26 +81,23 @@ public class Settings{
 	}
 	
 	/**
-	 * Get the settings for the given guild.
+	 * Remove a value from a list.
 	 *
-	 * @param guild The guild.
-	 *
-	 * @return The settings of the guild.
+	 * @param guild         The guild concerned.
+	 * @param configuration The configuration.
+	 * @param value         The value to remove.
+	 * @param <T>           The type of the value.
 	 */
-	private static JSONObject getServerSettings(final Guild guild){
-		if(guild == null){
-			return new JSONObject();
+	public static <T> void removeValue(final Guild guild, final ListConfiguration configuration, final T value){
+		final var array = getArray(guild, configuration.getName());
+		if(Objects.isNull(array)){
+			return;
 		}
-		final JSONObject serverSettings;
-		final var id = "" + guild.getIdLong();
-		if(settings.has(id)){
-			serverSettings = settings.optJSONObject(id);
+		final var index = array.toList().indexOf(value);
+		if(!Objects.equals(index, -1)){
+			array.remove(index);
 		}
-		else{
-			settings.put(id, new JSONObject());
-			serverSettings = settings.optJSONObject(id);
-		}
-		return serverSettings == null ? new JSONObject() : serverSettings;
+		getServerSettings(guild).put(configuration.getName(), array);
 	}
 	
 	/**
@@ -181,23 +179,26 @@ public class Settings{
 	}
 	
 	/**
-	 * Remove a value from a list.
+	 * Get the settings for the given guild.
 	 *
-	 * @param guild         The guild concerned.
-	 * @param configuration The configuration.
-	 * @param value         The value to remove.
-	 * @param <T>           The type of the value.
+	 * @param guild The guild.
+	 *
+	 * @return The settings of the guild.
 	 */
-	public static <T> void removeValue(final Guild guild, final ListConfiguration configuration, final T value){
-		final var array = getArray(guild, configuration.getName());
-		if(array == null){
-			return;
+	private static JSONObject getServerSettings(final Guild guild){
+		if(Objects.isNull(guild)){
+			return new JSONObject();
 		}
-		final var index = array.toList().indexOf(value);
-		if(index != -1){
-			array.remove(index);
+		final JSONObject serverSettings;
+		final var id = "" + guild.getIdLong();
+		if(settings.has(id)){
+			serverSettings = settings.optJSONObject(id);
 		}
-		getServerSettings(guild).put(configuration.getName(), array);
+		else{
+			settings.put(id, new JSONObject());
+			serverSettings = settings.optJSONObject(id);
+		}
+		return Objects.isNull(serverSettings) ? new JSONObject() : serverSettings;
 	}
 	
 	/**
@@ -224,7 +225,7 @@ public class Settings{
 	 */
 	public static <K, V> void mapValue(final Guild guild, final MapConfiguration configuration, final K key, final V value){
 		var map = getServerSettings(guild).optJSONObject(configuration.getName());
-		if(map == null){
+		if(Objects.isNull(map)){
 			map = new JSONObject();
 		}
 		map.put(key.toString(), value);
@@ -241,7 +242,7 @@ public class Settings{
 	 */
 	public static <K> void deleteKey(final Guild guild, final MapConfiguration configuration, final K key){
 		final var map = getServerSettings(guild).optJSONObject(configuration.getName());
-		if(map == null){
+		if(Objects.isNull(map)){
 			return;
 		}
 		map.remove(key.toString());
@@ -291,7 +292,7 @@ public class Settings{
 	 */
 	public static <K, V> void mapListValue(final Guild guild, final MapListConfiguration configuration, final K key, final V value){
 		var map = getServerSettings(guild).optJSONObject(configuration.getName());
-		if(map == null){
+		if(Objects.isNull(map)){
 			map = new JSONObject();
 		}
 		map.append(key.toString(), value);
@@ -309,7 +310,7 @@ public class Settings{
 	 */
 	public static <K, V> void deleteKey(final Guild guild, final MapListConfiguration<K, V> configuration, final K key){
 		final var map = getServerSettings(guild).optJSONObject(configuration.getName());
-		if(map == null){
+		if(Objects.isNull(map)){
 			return;
 		}
 		map.remove(key.toString());
@@ -328,16 +329,16 @@ public class Settings{
 	 */
 	public static <K, V> void deleteKey(final Guild guild, final MapListConfiguration configuration, final K key, final V value, final BiFunction<Object, V, Boolean> matcher){
 		final var map = getServerSettings(guild).optJSONObject(configuration.getName());
-		if(map == null){
+		if(Objects.isNull(map)){
 			return;
 		}
 		final var array = map.optJSONArray(key.toString());
-		if(array != null){
+		if(Objects.nonNull(array)){
 			final var index = IntStream.range(0, array.length()).filter(i -> matcher.apply(array.get(i), value)).findFirst().orElse(-1);
-			if(index != -1){
+			if(!Objects.equals(index, -1)){
 				array.remove(index);
 			}
-			if(array.length() == 0){
+			if(array.isEmpty()){
 				map.remove(key.toString());
 			}
 			else{

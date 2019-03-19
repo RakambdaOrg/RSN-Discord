@@ -35,7 +35,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	private final Duration waitTime;
 	private final LinkedList<Question> questions;
 	private Message waitingMsg = null;
-	private HashMap<Long, Integer> answers;
+	private HashMap<User, Integer> answers;
 	private boolean stopped;
 	
 	/**
@@ -60,50 +60,27 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	}
 	
 	/**
-	 * Pick some random questions from the CSV file.
+	 * Get the current instance of the game.
 	 *
-	 * @param amount The maximum number of question.
+	 * @param guild        The guild.
+	 * @param amount       The amount of questions.
+	 * @param shouldCreate If a new game should be created if not found.
+	 * @param delay        The delay before starting the quiz.
 	 *
-	 * @return The questions.
+	 * @return The game of the guild.
 	 */
-	private LinkedList<Question> generateQuestions(final int amount){
-		final var lines = new LinkedList<String>();
-		final var questionPath = Paths.get("./questions.csv").normalize().toAbsolutePath();
-		try{
-			lines.addAll(Files.readAllLines(questionPath));
-		}
-		catch(final Exception e){
-			getLogger(getGuild()).error("Error reading questions file {}", questionPath, e);
-		}
-		
-		if(lines.isEmpty()){
-			throw new IllegalStateException("No questions found");
-		}
-		
-		Collections.shuffle(lines);
-		final var list = new LinkedList<Question>();
-		for(var i = 0; i < amount; i++){
-			if(lines.size() < 1){
-				break;
-			}
-			final var line = lines.pop().split("[,;]");
-			final var correctAnswer = line[1];
-			
-			final var answersList = Arrays.stream(line, 2, line.length).filter(l -> l != null && !l.trim().equalsIgnoreCase("")).collect(Collectors.toList());
-			Collections.shuffle(answersList);
-			final var ID = ThreadLocalRandom.current().nextInt(0, answersList.size() + 1);
-			final var answers = new HashMap<Integer, String>();
-			for(var j = 0; j < answersList.size() + 1; j++){
-				if(j == ID){
-					answers.put(j, correctAnswer);
-				}
-				else{
-					answers.put(j, answersList.get(j - (j > ID ? 1 : 0)));
+	public static Optional<QuizListener> getQuiz(final Guild guild, final int amount, final int delay, final boolean shouldCreate){
+		return quizzes.stream().filter(q -> Objects.equals(q.getGuild(), guild)).findAny().or(() -> {
+			try{
+				if(shouldCreate){
+					return Optional.of(new QuizListener(guild, amount, delay));
 				}
 			}
-			list.add(new Question(line[0], answers, ID));
-		}
-		return list;
+			catch(final Exception e){
+				getLogger(guild).error("Error create a new quiz game", e);
+			}
+			return Optional.empty();
+		});
 	}
 	
 	/**
@@ -144,27 +121,50 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	}
 	
 	/**
-	 * Get the current instance of the game.
+	 * Pick some random questions from the CSV file.
 	 *
-	 * @param guild        The guild.
-	 * @param amount       The amount of questions.
-	 * @param shouldCreate If a new game should be created if not found.
-	 * @param delay        The delay before starting the quiz.
+	 * @param amount The maximum number of question.
 	 *
-	 * @return The game of the guild.
+	 * @return The questions.
 	 */
-	public static Optional<QuizListener> getQuiz(final Guild guild, final int amount, final int delay, final boolean shouldCreate){
-		return quizzes.stream().filter(q -> q.getGuild().getIdLong() == guild.getIdLong()).findAny().or(() -> {
-			try{
-				if(shouldCreate){
-					return Optional.of(new QuizListener(guild, amount, delay));
+	private LinkedList<Question> generateQuestions(final int amount){
+		final var lines = new LinkedList<String>();
+		final var questionPath = Paths.get("./questions.csv").normalize().toAbsolutePath();
+		try{
+			lines.addAll(Files.readAllLines(questionPath));
+		}
+		catch(final Exception e){
+			getLogger(getGuild()).error("Error reading questions file {}", questionPath, e);
+		}
+		
+		if(lines.isEmpty()){
+			throw new IllegalStateException("No questions found");
+		}
+		
+		Collections.shuffle(lines);
+		final var list = new LinkedList<Question>();
+		for(var i = 0; i < amount; i++){
+			if(lines.isEmpty()){
+				break;
+			}
+			final var line = lines.pop().split("[,;]");
+			final var correctAnswer = line[1];
+			
+			final var answersList = Arrays.stream(line, 2, line.length).filter(l -> Objects.nonNull(l) && !l.trim().equalsIgnoreCase("")).collect(Collectors.toList());
+			Collections.shuffle(answersList);
+			final var ID = ThreadLocalRandom.current().nextInt(0, answersList.size() + 1);
+			final var answers = new HashMap<Integer, String>();
+			for(var j = 0; j < answersList.size() + 1; j++){
+				if(Objects.equals(j, ID)){
+					answers.put(j, correctAnswer);
+				}
+				else{
+					answers.put(j, answersList.get(j - (j > ID ? 1 : 0)));
 				}
 			}
-			catch(final Exception e){
-				getLogger(guild).error("Error create a new quiz game", e);
-			}
-			return Optional.empty();
-		});
+			list.add(new Question(line[0], answers, ID));
+		}
+		return list;
 	}
 	
 	@Override
@@ -174,7 +174,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 			final var jda = Main.getJDA();
 			final var quizChannel = new QuizChannelConfig(guild).getObject();
 			
-			if(quizChannel == null){
+			if(Objects.isNull(quizChannel)){
 				return;
 			}
 			
@@ -195,9 +195,9 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 				getLogger(guild).error("Error sleeping", e);
 			}
 			
-			final var scores = new HashMap<Long, Integer>();
+			final var scores = new HashMap<User, Integer>();
 			var i = 0;
-			while(!stopped && questions.size() > 0){
+			while(!stopped && !questions.isEmpty()){
 				i++;
 				try{
 					final var question = questions.pop();
@@ -228,7 +228,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 					getLogger(getGuild()).info("Question over, answer was {}", question.getCorrectAnswerIndex());
 					waitingMsg = null;
 					answers.forEach((k, v) -> {
-						if(v == question.getCorrectAnswerIndex()){
+						if(Objects.equals(v, question.getCorrectAnswerIndex())){
 							final var newScore = scores.getOrDefault(k, 0) + 1;
 							scores.put(k, newScore);
 							getLogger(getGuild()).info("{} +1 pt - now: {}", k, newScore);
@@ -256,7 +256,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 			allPositions = allScores.stream().mapToInt(score -> score).boxed().collect(Collectors.toMap(score -> score, score -> new ArrayList<>(), (a, b) -> b, HashMap::new));
 			scores.forEach((k, v) -> {
 				if(allPositions.containsKey(v)){
-					allPositions.get(v).add(jda.getUserById(k));
+					allPositions.get(v).add(k);
 				}
 			});
 			final var builder = new EmbedBuilder();
@@ -285,20 +285,20 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	public void onMessageReactionAdd(final MessageReactionAddEvent event){
 		super.onMessageReactionAdd(event);
 		try{
-			if(event.getGuild().getIdLong() == getGuild().getIdLong() && waitingMsg != null && event.getMessageIdLong() == waitingMsg.getIdLong() && event.getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong()){
-				if(answers != null){
+			if(Objects.equals(event.getGuild(), getGuild()) && Objects.nonNull(waitingMsg) && Objects.equals(event.getMessageIdLong(), waitingMsg.getIdLong()) && !Objects.equals(event.getUser(), event.getJDA().getSelfUser())){
+				if(Objects.nonNull(answers)){
 					final var emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
-					if(emote == null){
+					if(Objects.isNull(emote)){
 						event.getReaction().removeReaction(event.getUser()).queue();
 						Actions.replyPrivate(event.getGuild(), event.getUser(), "Please use only letters.");
 					}
 					else{
-						if(answers.containsKey(event.getUser().getIdLong())){
+						if(answers.containsKey(event.getUser())){
 							event.getReaction().removeReaction(event.getUser()).queue();
 							Actions.replyPrivate(event.getGuild(), event.getUser(), "Please select only one reaction per question.");
 						}
 						else{
-							answers.put(event.getUser().getIdLong(), mapEmote(emote));
+							answers.put(event.getUser(), mapEmote(emote));
 						}
 					}
 				}
@@ -313,12 +313,12 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	public void onMessageReactionRemove(final MessageReactionRemoveEvent event){
 		super.onMessageReactionRemove(event);
 		try{
-			if(event.getGuild().getIdLong() == getGuild().getIdLong() && waitingMsg != null && event.getMessageIdLong() == waitingMsg.getIdLong()){
-				if(answers != null){
-					if(answers.containsKey(event.getUser().getIdLong())){
+			if(Objects.equals(event.getGuild(), getGuild()) && Objects.nonNull(waitingMsg) && Objects.equals(event.getMessageIdLong(), waitingMsg.getIdLong())){
+				if(Objects.nonNull(answers)){
+					if(answers.containsKey(event.getUser())){
 						final var emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
-						if(answers.get(event.getUser().getIdLong()) == mapEmote(emote)){
-							answers.remove(event.getUser().getIdLong());
+						if(Objects.equals(answers.get(event.getUser()), mapEmote(emote))){
+							answers.remove(event.getUser());
 							getLogger(event.getGuild()).info("User {} removed answer", event.getUser());
 						}
 					}

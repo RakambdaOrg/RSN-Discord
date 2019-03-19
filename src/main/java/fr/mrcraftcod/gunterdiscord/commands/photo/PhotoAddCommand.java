@@ -15,9 +15,10 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
-import java.io.File;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -45,13 +46,11 @@ public class PhotoAddCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		Actions.deleteMessage(event.getMessage());
-		if(super.execute(event, args) == CommandResult.NOT_ALLOWED){
-			return CommandResult.NOT_ALLOWED;
-		}
-		if(event.getMessage().getAttachments().size() > 0){
+		super.execute(event, args);
+		if(!event.getMessage().getAttachments().isEmpty()){
 			final User user;
 			final var users = event.getMessage().getMentionedUsers();
-			if(users.size() > 0){
+			if(!users.isEmpty()){
 				user = users.get(0);
 				args.poll();
 			}
@@ -59,33 +58,34 @@ public class PhotoAddCommand extends BasicCommand{
 				user = event.getAuthor();
 			}
 			
-			if(user.getIdLong() != event.getAuthor().getIdLong() && !Utilities.isAdmin(event.getMember())){
+			if(!Objects.equals(user, event.getAuthor()) && !Utilities.isAdmin(event.getMember())){
 				Actions.replyPrivate(event.getGuild(), event.getAuthor(), "You can't add a picture for someone else");
 			}
 			else{
-				final var attachment = event.getMessage().getAttachments().get(0);
-				final var ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
-				final var saveFile = new File("./pictures/" + user.getIdLong() + "/", event.getMessage().getTimeCreated().toEpochSecond() + ext);
-				//noinspection ResultOfMethodCallIgnored
-				saveFile.getParentFile().mkdirs();
-				final var future = attachment.downloadToFile(saveFile);
-				future.get();
-				if(!future.isCompletedExceptionally() && attachment.getSize() == saveFile.length() && saveFile.length() > 512){
-					new PhotoConfig(event.getGuild()).addValue(user.getIdLong(), saveFile.getPath());
-					Actions.giveRole(event.getGuild(), user, new TrombinoscopeRoleConfig(event.getGuild()).getObject());
-					final var builder = new EmbedBuilder();
-					builder.setAuthor(user.getName(), null, user.getAvatarUrl());
-					builder.setColor(Color.GREEN);
-					builder.setTitle("New picture");
-					builder.addField("User", user.getAsMention(), true);
-					builder.addField("ID", "" + event.getMessage().getTimeCreated().toEpochSecond(), true);
-					Actions.sendMessage(new PhotoChannelConfig(event.getGuild()).getObject(), builder.build());
-				}
-				else{
-					Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Upload failed");
-					if(saveFile.exists()){
-						if(!saveFile.delete()){
-							getLogger(event.getGuild()).warn("Error deleting file {}", saveFile.getAbsolutePath());
+				for(final var attachment : event.getMessage().getAttachments()){
+					final var ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
+					final var savePath = Paths.get("./pictures").resolve("" + user.getIdLong()).resolve(event.getMessage().getTimeCreated().toEpochSecond() + ext);
+					//noinspection ResultOfMethodCallIgnored
+					savePath.getParent().toFile().mkdirs();
+					final var future = attachment.downloadToFile(savePath.toFile());
+					final var saveFile = future.get();
+					if(!future.isCompletedExceptionally() && Objects.equals(attachment.getSize(), saveFile.length()) && saveFile.length() > 512){
+						new PhotoConfig(event.getGuild()).addValue(user.getIdLong(), saveFile.getPath());
+						Actions.giveRole(event.getGuild(), user, new TrombinoscopeRoleConfig(event.getGuild()).getObject());
+						final var builder = new EmbedBuilder();
+						builder.setAuthor(user.getName(), null, user.getAvatarUrl());
+						builder.setColor(Color.GREEN);
+						builder.setTitle("New picture");
+						builder.addField("User", user.getAsMention(), true);
+						builder.addField("ID", "" + event.getMessage().getTimeCreated().toEpochSecond(), true);
+						Actions.sendMessage(new PhotoChannelConfig(event.getGuild()).getObject(), builder.build());
+					}
+					else{
+						Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Upload failed");
+						if(saveFile.exists()){
+							if(!saveFile.delete()){
+								getLogger(event.getGuild()).warn("Error deleting file {}", saveFile.getAbsolutePath());
+							}
 						}
 					}
 				}

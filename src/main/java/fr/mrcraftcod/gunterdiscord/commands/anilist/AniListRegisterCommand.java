@@ -46,7 +46,7 @@ public class AniListRegisterCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		if(args.size() < 1){
+		if(args.isEmpty()){
 			Actions.reply(event, "Please provide your API code");
 		}
 		else{

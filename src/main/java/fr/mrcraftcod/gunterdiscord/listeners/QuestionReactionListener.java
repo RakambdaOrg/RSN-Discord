@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -31,7 +32,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 			if(new QuestionsChannelConfig(event.getGuild()).isChannel(event.getTextChannel())){
 				if(!event.getUser().isBot()){
 					final var emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
-					if(emote == BasicEmotes.CHECK_OK){
+					if(Objects.equals(emote, BasicEmotes.CHECK_OK)){
 						final var message = event.getTextChannel().getHistory().getMessageById(event.getReaction().getMessageIdLong());
 						{
 							try{
@@ -41,7 +42,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 								try{
 									final var user = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("User")).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e.getValue()).replaceAll("")))).findAny().orElse(null);
 									final var ID = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("ID")).map(MessageEmbed.Field::getValue).findAny().orElse("");
-									if(user != null){
+									if(Objects.nonNull(user)){
 										Actions.replyPrivate(event.getGuild(), user, "Your question (ID: %s) has been accepted and forwarded.", ID);
 									}
 								}
@@ -54,13 +55,13 @@ public class QuestionReactionListener extends ListenerAdapter{
 							}
 						}
 					}
-					else if(emote == BasicEmotes.CROSS_NO){
+					else if(Objects.equals(emote, BasicEmotes.CROSS_NO)){
 						final var message = event.getTextChannel().getHistory().getMessageById(event.getReaction().getMessageIdLong());
 						Actions.deleteMessage(message);
 						try{
 							final var user = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("User")).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e.getValue()).replaceAll("")))).findAny().orElse(null);
 							final var ID = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("ID")).map(MessageEmbed.Field::getValue).findAny().orElse("");
-							if(user != null){
+							if(Objects.nonNull(user)){
 								Actions.replyPrivate(event.getGuild(), user, "Your question (ID: %s) has been rejected.", ID);
 							}
 						}

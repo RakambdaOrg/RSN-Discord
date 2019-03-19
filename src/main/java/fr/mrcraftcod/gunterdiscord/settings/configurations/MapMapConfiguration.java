@@ -39,42 +39,34 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 	}
 	
 	/**
-	 * Get the map of this configuration.
+	 * Add a value to the map list.
 	 *
-	 * @return The map.
-	 *
-	 * @throws IllegalArgumentException If this configuration isn't a map.
+	 * @param key         The key to add into.
+	 * @param value       The second key key.
+	 * @param insideValue The value inside the second map.
 	 */
-	public Map<K, Map<V, W>> getAsMap() throws IllegalArgumentException{
-		final Map<K, Map<V, W>> elements = new HashMap<>();
-		final var map = getObjectMap();
-		if(map == null){
-			Settings.resetMap(guild, this);
+	public void addValue(final K key, final V value, final W insideValue){
+		if(Objects.isNull(value) || Objects.isNull(insideValue)){
+			addValue(key);
 		}
 		else{
-			for(final var key : map.keySet()){
-				final var kKey = getFirstKeyParser().apply(key);
-				final var value = map.optJSONObject(key);
-				if(value != null){
-					elements.put(kKey, value.keySet().stream().collect(Collectors.toMap(k -> getSecondKeyParser().apply(k), k -> getValueParser().apply(value.get(k).toString()))));
-				}
-			}
+			Settings.mapMapValue(guild, this, key, value, insideValue);
 		}
-		return elements;
 	}
 	
 	/**
-	 * Get the JSON Object.
+	 * Delete a value inside a key.
 	 *
-	 * @return The JSON object.
-	 *
-	 * @throws IllegalArgumentException If this configuration isn't a map.
+	 * @param key   The key.
+	 * @param value The value.
 	 */
-	private JSONObject getObjectMap() throws IllegalArgumentException{
-		if(getType() != ConfigType.MAP){
-			throw new IllegalArgumentException("Not a map config");
+	public void deleteKeyValue(final K key, final V value){
+		if(Objects.isNull(value)){
+			deleteKey(key);
 		}
-		return Settings.getJSONObject(guild, getName());
+		else{
+			Settings.deleteKey(guild, this, key, value);
+		}
 	}
 	
 	/**
@@ -99,19 +91,28 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 	protected abstract Function<String, W> getValueParser();
 	
 	/**
-	 * Add a value to the map list.
+	 * Get the map of this configuration.
 	 *
-	 * @param key         The key to add into.
-	 * @param value       The second key key.
-	 * @param insideValue The value inside the second map.
+	 * @return The map.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
-	public void addValue(final K key, final V value, final W insideValue){
-		if(value == null || insideValue == null){
-			addValue(key);
+	public Map<K, Map<V, W>> getAsMap() throws IllegalArgumentException{
+		final Map<K, Map<V, W>> elements = new HashMap<>();
+		final var map = getObjectMap();
+		if(Objects.isNull(map)){
+			Settings.resetMap(guild, this);
 		}
 		else{
-			Settings.mapMapValue(guild, this, key, value, insideValue);
+			for(final var key : map.keySet()){
+				final var kKey = getFirstKeyParser().apply(key);
+				final var value = map.optJSONObject(key);
+				if(Objects.nonNull(value)){
+					elements.put(kKey, value.keySet().stream().collect(Collectors.toMap(k -> getSecondKeyParser().apply(k), k -> getValueParser().apply(value.get(k).toString()))));
+				}
+			}
 		}
+		return elements;
 	}
 	
 	/**
@@ -124,18 +125,17 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 	}
 	
 	/**
-	 * Delete a value inside a key.
+	 * Get the JSON Object.
 	 *
-	 * @param key   The key.
-	 * @param value The value.
+	 * @return The JSON object.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a map.
 	 */
-	public void deleteKeyValue(final K key, final V value){
-		if(value == null){
-			deleteKey(key);
+	private JSONObject getObjectMap() throws IllegalArgumentException{
+		if(!Objects.equals(getType(), ConfigType.MAP)){
+			throw new IllegalArgumentException("Not a map config");
 		}
-		else{
-			Settings.deleteKey(guild, this, key, value);
-		}
+		return Settings.getJSONObject(guild, getName());
 	}
 	
 	/**

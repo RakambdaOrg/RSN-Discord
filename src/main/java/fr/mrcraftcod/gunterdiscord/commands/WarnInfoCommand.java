@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
@@ -36,7 +37,7 @@ public class WarnInfoCommand extends BasicCommand{
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Warns info");
 		builder.addField("User", target.getAsMention(), false);
 		final var bans = new RemoveRoleConfig(event.getGuild()).getValue(target.getIdLong());
-		if(bans == null || bans.isEmpty()){
+		if(Objects.isNull(bans) || bans.isEmpty()){
 			builder.setColor(Color.GREEN);
 			builder.setDescription("The user have no warns");
 		}

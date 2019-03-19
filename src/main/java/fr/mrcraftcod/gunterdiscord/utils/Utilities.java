@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import java.awt.Color;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -108,7 +109,7 @@ public class Utilities{
 	 */
 	public static String getEmoteMention(final Guild guild, final String name){
 		final var emotes = guild.getEmotesByName(name, true);
-		if(emotes.size() < 1){
+		if(emotes.isEmpty()){
 			return "";
 		}
 		return emotes.get(0).getAsMention();
@@ -187,7 +188,7 @@ public class Utilities{
 	 */
 	public static EmbedBuilder buildEmbed(final User author, final Color color, final String title, final String titleURL){
 		final var builder = new EmbedBuilder();
-		if(author != null){
+		if(Objects.nonNull(author)){
 			builder.setAuthor(author.getName(), null, author.getAvatarUrl());
 		}
 		builder.setColor(color);
@@ -219,7 +220,7 @@ public class Utilities{
 	public static <T> T getJSONMaybe(final JSONObject json, final Class<? extends T> klass, final String key){
 		if(json.has(key)){
 			final var value = json.get(key);
-			if(value != JSONObject.NULL){
+			if(!Objects.equals(value, JSONObject.NULL)){
 				return klass.cast(json.get(key));
 			}
 		}

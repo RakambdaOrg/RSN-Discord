@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.events.self.SelfUpdateNameEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import java.time.LocalDate;
+import java.util.Objects;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -125,7 +126,7 @@ public class LogListener extends ListenerAdapter{
 	@Override
 	public void onGuildVoiceGuildMute(final GuildVoiceGuildMuteEvent event){
 		super.onGuildVoiceGuildMute(event);
-		if(event.getMember().getUser().getIdLong() == event.getJDA().getSelfUser().getIdLong()){
+		if(Objects.equals(event.getMember().getUser(), event.getJDA().getSelfUser())){
 			getLogger(event.getGuild()).info("Unmuting bot");
 			event.getGuild().getController().setMute(event.getMember(), false).queue();
 			event.getGuild().getController().setDeafen(event.getMember(), false).queue();
