@@ -16,6 +16,7 @@ module fr.mrcraftcod.gunterdiscord {
 	requires org.slf4j;
 	requires org.apache.logging.log4j;
 	requires org.apache.logging.log4j.slf4j;
+	requires java.scripting;
 	
 	requires net.dv8tion.jda;
 	requires lavaplayer;
