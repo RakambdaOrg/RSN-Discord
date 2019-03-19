@@ -145,7 +145,7 @@ public class Utilities{
 	 * @return True if the creator, false otherwise.
 	 */
 	public static boolean isCreator(final Member member){
-		return member.getUser().getIdLong() == 170119951498084352L || member.getUser().getIdLong() == 432628353024131085L;
+		return Objects.equals(member.getUser().getIdLong(), 170119951498084352L) || Objects.equals(member.getUser().getIdLong(), 432628353024131085L);
 	}
 	
 	/**
@@ -205,7 +205,7 @@ public class Utilities{
 	 */
 	static String getEmbedForLog(final MessageEmbed embed){
 		final var builder = new StringBuilder("Embed " + embed.hashCode());
-		builder.append("\n").append("Author: ").append(embed.getAuthor() == null ? "<NONE>" : embed.getAuthor());
+		builder.append("\n").append("Author: ").append(Objects.isNull(embed.getAuthor()) ? "<NONE>" : embed.getAuthor());
 		builder.append("\n").append("Title: ").append(embed.getTitle());
 		builder.append("\n").append("Description: ").append(embed.getDescription());
 		builder.append("\n").append("Color: ").append(embed.getColor());

@@ -31,7 +31,7 @@ public class IRCReaderThread extends Thread implements Closeable{
 			try{
 				if(reader.ready()){
 					String line;
-					while((line = reader.readLine()) != null){
+					while(Objects.nonNull(line = reader.readLine())){
 						try{
 							final var event = IRCUtils.buildEvent(line);
 							if(Objects.nonNull(event)){

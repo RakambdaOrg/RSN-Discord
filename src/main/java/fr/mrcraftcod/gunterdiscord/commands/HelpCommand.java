@@ -53,7 +53,7 @@ public class HelpCommand extends BasicCommand{
 			}
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-			if(command != null){
+			if(Objects.nonNull(command)){
 				builder.setColor(Color.GREEN);
 				builder.setTitle(getName());
 				builder.addField("Name", command.getName(), true);

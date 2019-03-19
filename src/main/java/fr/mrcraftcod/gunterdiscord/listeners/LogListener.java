@@ -48,7 +48,7 @@ public class LogListener extends ListenerAdapter{
 					if(diff < 3600000){
 						final var warnRole = new MegaWarnRoleConfig(guild).getObject();
 						final var removeRoleConfig = new RemoveRoleConfig(guild);
-						final var currentRoleRemove = removeRoleConfig.getAsMap().keySet().stream().filter(k -> k == event.getEntity().getIdLong()).map(removeRoleConfig::getValue).map(map -> map.getOrDefault(warnRole.getIdLong(), 0L)).findFirst().orElse(0L);
+						final var currentRoleRemove = removeRoleConfig.getAsMap().keySet().stream().filter(k -> Objects.equals(k, event.getEntity().getIdLong())).map(removeRoleConfig::getValue).map(map -> map.getOrDefault(warnRole.getIdLong(), 0L)).findFirst().orElse(0L);
 						Actions.giveRole(guild, event.getEntity(), warnRole);
 						removeRoleConfig.addValue(event.getEntity().getIdLong(), warnRole.getIdLong(), Math.max(currentRoleRemove, System.currentTimeMillis() + 6 * 60 * 60 * 1000L));
 						Actions.replyPrivate(guild, event.getEntity(), "You've been warned in the server `%s` because you changed your name too often.", guild.getName());

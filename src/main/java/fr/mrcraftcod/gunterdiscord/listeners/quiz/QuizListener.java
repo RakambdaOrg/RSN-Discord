@@ -338,6 +338,6 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	 * @return The choice selected.
 	 */
 	private static int mapEmote(final BasicEmotes name){
-		return name == null ? -1 : name.name().toLowerCase().charAt(0) - 'a';
+		return Objects.isNull(name) ? -1 : name.name().toLowerCase().charAt(0) - 'a';
 	}
 }

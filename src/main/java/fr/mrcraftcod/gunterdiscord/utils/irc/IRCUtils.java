@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.utils.irc;
 import fr.mrcraftcod.gunterdiscord.utils.irc.events.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Objects;
 
 /**
  * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-02-25.
@@ -23,7 +24,7 @@ public class IRCUtils{
 		}
 		message = message.substring(1);
 		final var columnIndex = message.indexOf(':');
-		final var infos = message.substring(0, columnIndex == -1 ? message.length() : columnIndex).split(" ");
+		final var infos = message.substring(0, Objects.equals(columnIndex, -1) ? message.length() : columnIndex).split(" ");
 		final var user = new IRCUser(infos[0]);
 		final var eventType = infos[1];
 		switch(eventType){

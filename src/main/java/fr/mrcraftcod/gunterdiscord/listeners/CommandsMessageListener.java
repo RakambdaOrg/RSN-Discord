@@ -91,7 +91,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 					if(Objects.equals(command.getScope(), -5) || Objects.equals(command.getScope(), event.getChannel().getType().getId())){
 						try{
 							getLogger(event.getGuild()).info("Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(), event.getAuthor(), args);
-							if(command.execute(event, args) == CommandResult.FAILED){
+							if(Objects.equals(command.execute(event, args), CommandResult.FAILED)){
 								Actions.replyPrivate(event.getGuild(), event.getAuthor(), "An error occurred");
 							}
 						}

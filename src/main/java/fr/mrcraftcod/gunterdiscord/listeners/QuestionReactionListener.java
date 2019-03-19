@@ -74,7 +74,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 			else if(new QuestionsFinalChannelConfig(event.getGuild()).isChannel(event.getTextChannel())){
 				if(!event.getUser().isBot()){
 					final var emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
-					if(emote == BasicEmotes.CHECK_OK){
+					if(Objects.equals(emote, BasicEmotes.CHECK_OK)){
 						Actions.deleteMessage(event.getChannel().getHistory().getMessageById(event.getMessageId()));
 					}
 				}

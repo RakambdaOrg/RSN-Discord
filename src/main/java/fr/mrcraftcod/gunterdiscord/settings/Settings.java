@@ -357,7 +357,7 @@ public class Settings{
 	 */
 	public static <K> void mapMapValue(final Guild guild, final MapMapConfiguration configuration, final K key){
 		var map = getServerSettings(guild).optJSONObject(configuration.getName());
-		if(map == null){
+		if(Objects.isNull(map)){
 			map = new JSONObject();
 		}
 		if(!map.has(key.toString())){
@@ -380,7 +380,7 @@ public class Settings{
 	 */
 	public static <K, V, W> void mapMapValue(final Guild guild, final MapMapConfiguration configuration, final K key, final V value, final W insideValue){
 		var map = getServerSettings(guild).optJSONObject(configuration.getName());
-		if(map == null){
+		if(Objects.isNull(map)){
 			map = new JSONObject();
 		}
 		if(!map.has(key.toString())){
@@ -400,7 +400,7 @@ public class Settings{
 	 */
 	public static <K> void deleteKey(final Guild guild, final MapMapConfiguration configuration, final K key){
 		final var map = getServerSettings(guild).optJSONObject(configuration.getName());
-		if(map == null){
+		if(Objects.isNull(map)){
 			return;
 		}
 		map.remove(key.toString());
@@ -428,13 +428,13 @@ public class Settings{
 	 */
 	public static <K, V> void deleteKey(final Guild guild, final MapMapConfiguration configuration, final K key, final V value){
 		final var map = getServerSettings(guild).optJSONObject(configuration.getName());
-		if(map == null){
+		if(Objects.isNull(map)){
 			return;
 		}
 		final var map2 = map.optJSONObject(key.toString());
-		if(map2 != null){
+		if(Objects.nonNull(map2)){
 			map2.remove(value.toString());
-			if(map2.length() == 0){
+			if(Objects.equals(map2.length(), 0)){
 				map.remove(key.toString());
 			}
 		}

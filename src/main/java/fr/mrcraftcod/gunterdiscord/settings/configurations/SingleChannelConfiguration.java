@@ -50,7 +50,7 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration<Text
 		if(Objects.isNull(channel)){
 			return false;
 		}
-		return ID == channel.getIdLong();
+		return Objects.equals(ID, channel.getIdLong());
 	}
 	
 	@Override
