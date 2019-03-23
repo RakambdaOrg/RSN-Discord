@@ -3,6 +3,6 @@ while :
 do
 	git pull
 	mvn clean package -U
-	java -jar target/GunterDiscord.jar
+	java --enable-preview -jar target/GunterDiscord.jar
 done
 
