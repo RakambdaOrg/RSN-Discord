@@ -37,7 +37,7 @@ public abstract class ValueConfiguration<T> extends Configuration{
 	
 	@Override
 	public ConfigurationCommand.ActionResult handleChange(final MessageReceivedEvent event, final ConfigurationCommand.ChangeConfigType action, final LinkedList<String> args) throws NoValueDefinedException{
-		if(action == SHOW){
+		if(Objects.equals(action, SHOW)){
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
@@ -46,10 +46,10 @@ public abstract class ValueConfiguration<T> extends Configuration{
 			Actions.reply(event, builder.build());
 			return ConfigurationCommand.ActionResult.NONE;
 		}
-		if(args.size() < 1){
+		if(args.isEmpty()){
 			return ConfigurationCommand.ActionResult.ERROR;
 		}
-		if(action == SET){
+		if(Objects.equals(action, SET)){
 			setRawValue(getMessageParser().apply(event, args.poll()));
 			return ConfigurationCommand.ActionResult.OK;
 		}
@@ -65,7 +65,7 @@ public abstract class ValueConfiguration<T> extends Configuration{
 	 * @throws NoValueDefinedException  If no value is set.
 	 */
 	public T getObject() throws IllegalArgumentException, NoValueDefinedException{
-		if(getType() != ConfigType.VALUE){
+		if(!Objects.equals(getType(), ConfigType.VALUE)){
 			throw new IllegalArgumentException("Not a value config");
 		}
 		final var obj = Settings.getObject(guild, getName());

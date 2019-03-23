@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.util.LinkedList;
+import java.util.Objects;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -34,7 +35,7 @@ public abstract class WarnCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		if(event.getMessage().getMentionedUsers().size() > 0){
+		if(!event.getMessage().getMentionedUsers().isEmpty()){
 			final var user = event.getMessage().getMentionedUsers().get(0);
 			args.poll();
 			final var role = getRole(event.getGuild(), event.getMessage(), args);
@@ -42,7 +43,7 @@ public abstract class WarnCommand extends BasicCommand{
 			final var reason = String.join(" ", args);
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
-			if(role == null){
+			if(Objects.isNull(role)){
 				builder.setColor(Color.RED);
 				builder.addField("Error", "Please configure a role to give", true);
 			}

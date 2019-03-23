@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import static fr.mrcraftcod.gunterdiscord.commands.generic.Command.AccessLevel.*;
 
 /**
@@ -39,13 +40,13 @@ public interface Command extends Comparable<Command>{
 	 * @return True if allowed, false otherwise.
 	 */
 	default boolean isAllowed(final Member member){
-		if(getAccessLevel() == ALL){
+		if(Objects.equals(getAccessLevel(), ALL)){
 			return true;
 		}
-		if(getAccessLevel() == MODERATOR && Utilities.isModerator(member)){
+		if(Objects.equals(getAccessLevel(), MODERATOR) && Utilities.isModerator(member)){
 			return true;
 		}
-		if(getAccessLevel() == ADMIN && Utilities.isAdmin(member)){
+		if(Objects.equals(getAccessLevel(), ADMIN) && Utilities.isAdmin(member)){
 			return true;
 		}
 		return Utilities.isCreator(member);

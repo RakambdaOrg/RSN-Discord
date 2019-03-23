@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -69,7 +70,7 @@ public abstract class CommandComposite extends BasicCommand{
 			throw new NotAllowedException();
 		}
 		final var switchStr = args.poll();
-		if(switchStr == null){
+		if(Objects.isNull(switchStr)){
 			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.RED, "Error while executing command").addField("Command", getName(), false).addField("Reason", getCommandUsage(), false).addField("Arguments available", subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false).build());
 		}
 		else{

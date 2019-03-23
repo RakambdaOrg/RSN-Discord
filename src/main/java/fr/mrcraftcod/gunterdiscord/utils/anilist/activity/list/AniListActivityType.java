@@ -1,6 +1,5 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.activity.list;
 
-import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -9,11 +8,12 @@ import java.lang.reflect.InvocationTargetException;
  * @author Thomas Couchoud
  * @since 2018-10-10
  */
-public enum AniListActivityType{ANIME_LIST(AniListAnimeListActivity.class, Color.CYAN), MANGA_LIST(AniListMangaListActivity.class, Color.PINK);
+public enum AniListActivityType{
+	ANIME_LIST(AniListAnimeListActivity.class), MANGA_LIST(AniListMangaListActivity.class);
 
 	private final Class<? extends AniListListActivity> klass;
 	
-	AniListActivityType(final Class<? extends AniListListActivity> klass, final Color color){
+	AniListActivityType(final Class<? extends AniListListActivity> klass){
 		this.klass = klass;
 	}
 	

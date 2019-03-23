@@ -33,7 +33,7 @@ public class QuestionCommand extends BasicCommand{
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		
-		if(args.size() == 0){
+		if(args.isEmpty()){
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Please ask a question");
 		}
 		else if(args.peek().equalsIgnoreCase("message") || args.peek().equalsIgnoreCase("question")){

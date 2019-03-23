@@ -4,8 +4,10 @@ import fr.mrcraftcod.gunterdiscord.commands.*;
 import fr.mrcraftcod.gunterdiscord.commands.anilist.AniListCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
 import fr.mrcraftcod.gunterdiscord.commands.music.MusicCommandComposite;
+import fr.mrcraftcod.gunterdiscord.commands.photo.PhotoCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.quiz.QuizCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.twitch.TwitchCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.warn.CustomWarnCommand;
@@ -23,6 +25,7 @@ import java.awt.Color;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -34,8 +37,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public class CommandsMessageListener extends ListenerAdapter{
 	public static final Command[] commands = new Command[]{
-			// new PhotoCommandComposite(),
-			// new HangmanCommandComposite(),
+			new PhotoCommandComposite(),
 			new QuizCommandComposite(),
 			new ReportCommand(),
 			new ConfigurationCommandComposite(),
@@ -44,11 +46,9 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new NicknameCommand(),
 			new SayCommand(),
 			new QuestionCommand(),
-			// new WerewolvesCommandComposite(),
 			new AnnoyCommand(),
 			new InfosCommand(),
 			new YoutubeCommand(),
-			// new MusicPartyCommandComposite(),
 			new NormalWarnCommand(),
 			new DoubleWarnCommand(),
 			new MegaWarnCommand(),
@@ -71,7 +71,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 		final var counts = new HashMap<String, Integer>();
 		Arrays.asList(commands).forEach(c -> c.getCommand().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
 		final var clash = counts.keySet().stream().filter(k -> counts.get(k) > 1).collect(Collectors.joining(", "));
-		if(clash != null && !clash.isEmpty()){
+		if(Objects.nonNull(clash) && !clash.isEmpty()){
 			getLogger(null).error("Command clash: {}", clash);
 		}
 	}
@@ -81,25 +81,18 @@ public class CommandsMessageListener extends ListenerAdapter{
 		super.onMessageReceived(event);
 		try{
 			if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
-				if(event.getChannelType() != ChannelType.PRIVATE && event.getChannelType() != ChannelType.GROUP){
+				if(!Objects.equals(event.getChannelType(), ChannelType.PRIVATE) && !Objects.equals(event.getChannelType(), ChannelType.GROUP)){
 					Actions.deleteMessage(event.getMessage());
 				}
 				final var args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 				final var cmdText = args.pop().substring(new PrefixConfig(event.getGuild()).getObject("g?").length());
 				final var command = getCommand(cmdText);
-				if(command != null){
-					if(command.getScope() == -5 || command.getScope() == event.getChannel().getType().getId()){
+				if(Objects.nonNull(command)){
+					if(Objects.equals(command.getScope(), -5) || Objects.equals(command.getScope(), event.getChannel().getType().getId())){
 						try{
 							getLogger(event.getGuild()).info("Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(), event.getAuthor(), args);
-							switch(command.execute(event, args)){
-								case NOT_ALLOWED:
-									Actions.replyPrivate(event.getGuild(), event.getAuthor(), "You're not allowed to use this command");
-									break;
-								case FAILED:
-									Actions.replyPrivate(event.getGuild(), event.getAuthor(), "An error occurred");
-									break;
-								default:
-								case SUCCESS:
+							if(Objects.equals(command.execute(event, args), CommandResult.FAILED)){
+								Actions.replyPrivate(event.getGuild(), event.getAuthor(), "An error occurred");
 							}
 						}
 						catch(final NotAllowedException e){

@@ -40,14 +40,14 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 		public void sendMessages(final List<TextChannel> channels, final Map<User, List<AniListMediaUserList>> userElements){
 			for(final var user : userElements.keySet()){
 				userElements.keySet().parallelStream().filter(user2 -> !Objects.equals(user, user2)).forEach(userCompare -> {
-					final var it1 = userElements.get(user).iterator();
-					while(it1.hasNext()){
-						final var media = it1.next().getMedia();
-						final var it2 = userElements.get(userCompare).iterator();
-						while(it2.hasNext()){
-							if(Objects.equals(media, it2.next().getMedia())){
-								it1.remove();
-								it2.remove();
+					final var iterator1 = userElements.get(user).iterator();
+					while(iterator1.hasNext()){
+						final var media = iterator1.next().getMedia();
+						final var iterator2 = userElements.get(userCompare).iterator();
+						while(iterator2.hasNext()){
+							if(Objects.equals(media, iterator2.next().getMedia())){
+								iterator1.remove();
+								iterator2.remove();
 								break;
 							}
 						}

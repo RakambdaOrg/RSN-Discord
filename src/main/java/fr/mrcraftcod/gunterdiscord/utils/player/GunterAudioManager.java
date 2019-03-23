@@ -116,7 +116,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			audioPlayer.addListener(trackScheduler);
 			final var gunterAudioManager = new GunterAudioManager(channel, audioManager, audioPlayerManager, audioPlayer, trackScheduler);
 			trackScheduler.addStatusTrackSchedulerListener(gunterAudioManager);
-			if(listener != null){
+			if(Objects.nonNull(listener)){
 				trackScheduler.addStatusTrackSchedulerListener(listener);
 			}
 			getLogger(channel.getGuild()).info("Audio manager Created");

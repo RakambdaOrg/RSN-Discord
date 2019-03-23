@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
+import java.util.Objects;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
@@ -45,7 +46,7 @@ public abstract class BasicCommand implements Command{
 	
 	@Override
 	public String getCommandUsage(){
-		return getParent() == null || getParent() instanceof CommandComposite ? "" : getParent().getCommandUsage();
+		return Objects.isNull(getParent()) || getParent() instanceof CommandComposite ? "" : getParent().getCommandUsage();
 	}
 	
 	@Override

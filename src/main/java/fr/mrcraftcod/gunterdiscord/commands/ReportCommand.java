@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
@@ -30,7 +31,7 @@ public class ReportCommand extends BasicCommand{
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final var channel = new ReportChannelConfig(event.getGuild()).getObject();
-		if(channel == null){
+		if(Objects.isNull(channel)){
 			return CommandResult.FAILED;
 		}
 		else{

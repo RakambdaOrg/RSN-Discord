@@ -50,12 +50,8 @@ public class Actions{
 	 */
 	public static void reply(@NotNull final GenericMessageEvent event, final String text){
 		switch(event.getChannelType()){
-			case PRIVATE:
-				sendMessage(event.getGuild(), event.getPrivateChannel(), text);
-				break;
-			case TEXT:
-				sendMessage(event.getTextChannel(), text);
-				break;
+			case PRIVATE -> sendMessage(event.getGuild(), event.getPrivateChannel(), text);
+			case TEXT -> sendMessage(event.getTextChannel(), text);
 		}
 	}
 	
@@ -95,7 +91,7 @@ public class Actions{
 	 */
 	public static void sendMessage(@NotNull final TextChannel channel, final Consumer<Message> onDone, final String text){
 		if(channel.canTalk()){
-			if(onDone != null){
+			if(Objects.nonNull(onDone)){
 				channel.sendMessage(text).queue(onDone);
 			}
 			else{
@@ -343,12 +339,8 @@ public class Actions{
 	 */
 	public static void reply(@NotNull final GenericMessageEvent event, final MessageEmbed embed){
 		switch(event.getChannelType()){
-			case PRIVATE:
-				sendPrivateMessage(event.getGuild(), event.getPrivateChannel(), embed);
-				break;
-			case TEXT:
-				sendMessage(event.getTextChannel(), embed);
-				break;
+			case PRIVATE -> sendPrivateMessage(event.getGuild(), event.getPrivateChannel(), embed);
+			case TEXT -> sendMessage(event.getTextChannel(), embed);
 		}
 	}
 	
@@ -360,7 +352,7 @@ public class Actions{
 	 * @param embed   The message to send.
 	 */
 	public static void sendPrivateMessage(final Guild guild, final PrivateChannel channel, final MessageEmbed embed){
-		if(channel != null){
+		if(Objects.nonNull(channel)){
 			channel.sendMessage(embed).queue();
 			getLogger(guild).info("Sent private message to {} : {}", channel.getUser(), Utilities.getEmbedForLog(embed));
 		}
@@ -388,7 +380,7 @@ public class Actions{
 	 */
 	public static void sendMessage(@NotNull final TextChannel channel, final Consumer<Message> onDone, final MessageEmbed embed){
 		if(channel.canTalk()){
-			if(onDone != null){
+			if(Objects.nonNull(onDone)){
 				channel.sendMessage(embed).queue(onDone);
 			}
 			else{

@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-12.
@@ -40,9 +41,9 @@ public class FuzzyDate{
 		return new GunterDuration(Duration.between(this.asDate().toInstant(), toDate.asDate().toInstant()));
 	}
 	
-	private void setYear(final Integer year){
-		if(year != null){
-			calendar.set(Calendar.YEAR, year);
+	private void setDay(final Integer day){
+		if(Objects.nonNull(day)){
+			calendar.set(Calendar.DAY_OF_MONTH, day);
 		}
 		else{
 			throw new IllegalArgumentException("Integer is null");
@@ -50,7 +51,7 @@ public class FuzzyDate{
 	}
 	
 	private void setMonth(final Integer month){
-		if(month != null){
+		if(Objects.nonNull(month)){
 			calendar.set(Calendar.MONTH, month);
 		}
 		else{
@@ -58,9 +59,9 @@ public class FuzzyDate{
 		}
 	}
 	
-	private void setDay(final Integer day){
-		if(day != null){
-			calendar.set(Calendar.DAY_OF_MONTH, day);
+	private void setYear(final Integer year){
+		if(Objects.nonNull(year)){
+			calendar.set(Calendar.YEAR, year);
 		}
 		else{
 			throw new IllegalArgumentException("Integer is null");

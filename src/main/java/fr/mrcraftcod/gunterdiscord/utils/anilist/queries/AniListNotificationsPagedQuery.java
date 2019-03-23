@@ -63,7 +63,7 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 	}
 	
 	private AniListAiringNotification buildChange(final JSONObject change) throws Exception{
-		if(change.keySet().size() > 0){
+		if(!change.keySet().isEmpty()){
 			return AniListAiringNotification.buildFromJSON(change);
 		}
 		return null;
