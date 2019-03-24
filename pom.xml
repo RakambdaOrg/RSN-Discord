@@ -105,10 +105,15 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-            <id>central</id>
-            <name>bintray</name>
+            <id>jcentral</id>
+            <name>jcenter-bintray</name>
             <url>https://jcenter.bintray.com</url>
         </repository>
+        <!--        <repository>-->
+        <!--            <id>bintray</id>-->
+        <!--            <name>bintray</name>-->
+        <!--            <url>https://dl.bintray.com/natanbc/mave</url>-->
+        <!--        </repository>-->
     </repositories>
     <dependencies>
         <dependency>
@@ -142,6 +147,11 @@
             <groupId>com.sedmelluq</groupId>
             <artifactId>lavaplayer</artifactId>
             <version>1.3.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.natanbc</groupId>
+            <artifactId>lavaplayer-arm-natives</artifactId>
+            <version>1.3.10</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
