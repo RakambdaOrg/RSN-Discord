@@ -3,8 +3,6 @@ package fr.mrcraftcod.gunterdiscord.utils.player;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.nio.ByteBuffer;
 import java.util.Objects;
 
@@ -15,7 +13,6 @@ import java.util.Objects;
  * @since 2018-06-16
  */
 class AudioPlayerSendHandler implements AudioSendHandler{
-	private static final Logger LOGGER = LoggerFactory.getLogger(AudioPlayerSendHandler.class);
 	private final AudioPlayer audioPlayer;
 	private AudioFrame lastFrame;
 	
@@ -31,7 +28,6 @@ class AudioPlayerSendHandler implements AudioSendHandler{
 	public boolean canProvide(){
 		if(Objects.isNull(lastFrame)){
 			lastFrame = audioPlayer.provide();
-			LOGGER.debug("Provided frame");
 		}
 		return Objects.nonNull(lastFrame);
 	}
