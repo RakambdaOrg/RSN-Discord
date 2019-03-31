@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
@@ -42,10 +43,8 @@ public class PhotoDeleteCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		Actions.deleteMessage(event.getMessage());
-		if(super.execute(event, args) == CommandResult.NOT_ALLOWED){
-			return CommandResult.NOT_ALLOWED;
-		}
-		if(args.size() > 0){
+		super.execute(event, args);
+		if(!args.isEmpty()){
 			final User user;
 			final var users = event.getMessage().getMentionedUsers();
 			if(users.size() > 0){
@@ -56,7 +55,7 @@ public class PhotoDeleteCommand extends BasicCommand{
 				user = event.getAuthor();
 			}
 			
-			if(user.getIdLong() != event.getAuthor().getIdLong()){
+			if(!Objects.equals(user, event.getAuthor())){
 				if(Utilities.isModerator(event.getMember()) || Utilities.isAdmin(event.getMember())){
 					new PhotoConfig(event.getGuild()).deleteKeyValue(user.getIdLong(), args.poll());
 					if(new PhotoConfig(event.getGuild()).getValue(user.getIdLong()).isEmpty()){

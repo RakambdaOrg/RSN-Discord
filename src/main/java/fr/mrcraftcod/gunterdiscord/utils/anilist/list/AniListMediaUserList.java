@@ -191,4 +191,8 @@ public class AniListMediaUserList implements AniListDatedObject{
 	public String toString(){
 		return ToStringBuilder.reflectionToString(this);
 	}
+	
+	public HashMap<String, Boolean> getCustomLists(){
+		return customLists;
+	}
 }

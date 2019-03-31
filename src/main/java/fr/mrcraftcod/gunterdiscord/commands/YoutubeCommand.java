@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
@@ -33,12 +34,12 @@ public class YoutubeCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		if(event.getMessage().getMentionedMembers().size() > 0){
+		if(!event.getMessage().getMentionedMembers().isEmpty()){
 			args.poll();
 			final var member = event.getMessage().getMentionedMembers().get(0);
 			if(Utilities.hasRole(member, new YoutubeRoleConfig(event.getGuild()).getObject())){
 				final var strUrl = args.poll();
-				if(strUrl != null){
+				if(Objects.nonNull(strUrl)){
 					if(Utilities.isAdmin(event.getMember())){
 						try{
 							final var url = new URL(strUrl);

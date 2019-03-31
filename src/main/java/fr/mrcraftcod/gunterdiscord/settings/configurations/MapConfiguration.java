@@ -48,59 +48,9 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 		return null;
 	}
 	
-	/**
-	 * Get the map of this configuration.
-	 *
-	 * @return The map.
-	 *
-	 * @throws IllegalArgumentException If this configuration isn't a map.
-	 */
-	public Map<K, V> getAsMap() throws IllegalArgumentException{
-		final Map<K, V> elements = new HashMap<>();
-		final var map = getObjectMap();
-		if(map == null){
-			Settings.resetMap(guild, this);
-		}
-		else{
-			for(final var key : map.keySet()){
-				final var value = map.get(key);
-				elements.put(getKeyParser().apply(key), getValueParser().apply(value.toString()));
-			}
-		}
-		return elements;
-	}
-	
-	/**
-	 * Get the JSON Object.
-	 *
-	 * @return The JSON object.
-	 *
-	 * @throws IllegalArgumentException If this configuration isn't a map.
-	 */
-	private JSONObject getObjectMap() throws IllegalArgumentException{
-		if(getType() != ConfigType.MAP){
-			throw new IllegalArgumentException("Not a map config");
-		}
-		return Settings.getJSONObject(guild, getName());
-	}
-	
-	/**
-	 * Get the parser to parse back string keys to K.
-	 *
-	 * @return The parser.
-	 */
-	protected abstract Function<String, K> getKeyParser();
-	
-	/**
-	 * Get the parser to parse back string values to V.
-	 *
-	 * @return The parser.
-	 */
-	protected abstract Function<String, V> getValueParser();
-	
 	@Override
 	public ConfigurationCommand.ActionResult handleChange(final MessageReceivedEvent event, final ConfigurationCommand.ChangeConfigType action, final LinkedList<String> args){
-		if(action == SHOW){
+		if(Objects.equals(action, SHOW)){
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
@@ -119,13 +69,63 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 				addValue(getKeyParser().apply(args.poll()), getValueParser().apply(args.poll()));
 				return ConfigurationCommand.ActionResult.OK;
 			case REMOVE:
-				if(args.size() < 1){
+				if(args.isEmpty()){
 					return ConfigurationCommand.ActionResult.ERROR;
 				}
 				deleteKey(getKeyParser().apply(args.poll()));
 				return ConfigurationCommand.ActionResult.OK;
 		}
 		return ConfigurationCommand.ActionResult.ERROR;
+	}
+	
+	/**
+	 * Get the map of this configuration.
+	 *
+	 * @return The map.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a map.
+	 */
+	public Map<K, V> getAsMap() throws IllegalArgumentException{
+		final Map<K, V> elements = new HashMap<>();
+		final var map = getObjectMap();
+		if(Objects.isNull(map)){
+			Settings.resetMap(guild, this);
+		}
+		else{
+			for(final var key : map.keySet()){
+				final var value = map.get(key);
+				elements.put(getKeyParser().apply(key), getValueParser().apply(value.toString()));
+			}
+		}
+		return elements;
+	}
+	
+	/**
+	 * Get the parser to parse back string keys to K.
+	 *
+	 * @return The parser.
+	 */
+	protected abstract Function<String, K> getKeyParser();
+	
+	/**
+	 * Get the parser to parse back string values to V.
+	 *
+	 * @return The parser.
+	 */
+	protected abstract Function<String, V> getValueParser();
+	
+	/**
+	 * Get the JSON Object.
+	 *
+	 * @return The JSON object.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a map.
+	 */
+	private JSONObject getObjectMap() throws IllegalArgumentException{
+		if(!Objects.equals(getType(), ConfigType.MAP)){
+			throw new IllegalArgumentException("Not a map config");
+		}
+		return Settings.getJSONObject(guild, getName());
 	}
 	
 	@Override

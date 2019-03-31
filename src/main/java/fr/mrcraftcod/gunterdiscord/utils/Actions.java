@@ -87,6 +87,23 @@ public class Actions{
 	}
 	
 	/**
+	 * Send a message to a channel with an embed.
+	 *
+	 * @param channel The channel to send to.
+	 * @param text    The message to send.
+	 * @param embed   The embed to attach.
+	 */
+	public static void sendMessage(@NotNull final TextChannel channel, final String text, final MessageEmbed embed){
+		if(channel.canTalk()){
+			channel.sendMessage(text).embed(embed).queue();
+			getLogger(channel.getGuild()).info("Sent message to {} : {}", channel.getName(), text);
+		}
+		else{
+			getLogger(channel.getGuild()).error("Access denied to text channel: {}", channel.getAsMention());
+		}
+	}
+	
+	/**
 	 * Send a message to a channel.
 	 *
 	 * @param channel The channel to send to.
@@ -95,7 +112,7 @@ public class Actions{
 	 */
 	public static void sendMessage(@NotNull final TextChannel channel, final Consumer<Message> onDone, final String text){
 		if(channel.canTalk()){
-			if(onDone != null){
+			if(Objects.nonNull(onDone)){
 				channel.sendMessage(text).queue(onDone);
 			}
 			else{
@@ -360,7 +377,7 @@ public class Actions{
 	 * @param embed   The message to send.
 	 */
 	public static void sendPrivateMessage(final Guild guild, final PrivateChannel channel, final MessageEmbed embed){
-		if(channel != null){
+		if(Objects.nonNull(channel)){
 			channel.sendMessage(embed).queue();
 			getLogger(guild).info("Sent private message to {} : {}", channel.getUser(), Utilities.getEmbedForLog(embed));
 		}
@@ -376,7 +393,7 @@ public class Actions{
 	 * @param embed   The message to send.
 	 */
 	public static void sendMessage(@NotNull final TextChannel channel, final MessageEmbed embed){
-		sendMessage(channel, null, embed);
+		sendMessage(channel, (Consumer<Message>) null, embed);
 	}
 	
 	/**
@@ -388,7 +405,7 @@ public class Actions{
 	 */
 	public static void sendMessage(@NotNull final TextChannel channel, final Consumer<Message> onDone, final MessageEmbed embed){
 		if(channel.canTalk()){
-			if(onDone != null){
+			if(Objects.nonNull(onDone)){
 				channel.sendMessage(embed).queue(onDone);
 			}
 			else{

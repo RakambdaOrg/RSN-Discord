@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.settings.configurations;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -31,7 +32,7 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration<Text
 	 * @return True if the same channels, false otherwise.
 	 */
 	public boolean isChannel(final TextChannel channel){
-		if(channel == null){
+		if(Objects.isNull(channel)){
 			return false;
 		}
 		return isChannel(channel.getIdLong());
@@ -46,10 +47,10 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration<Text
 	 */
 	public boolean isChannel(final long ID){
 		final var channel = getObject(null);
-		if(channel == null){
+		if(Objects.isNull(channel)){
 			return false;
 		}
-		return ID == channel.getIdLong();
+		return Objects.equals(ID, channel.getIdLong());
 	}
 	
 	@Override

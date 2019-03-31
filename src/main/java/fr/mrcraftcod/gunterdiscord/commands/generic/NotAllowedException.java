@@ -12,7 +12,7 @@ public class NotAllowedException extends Exception{
 	/**
 	 * Constructor.
 	 */
-	NotAllowedException(){
+	public NotAllowedException(){
 		super();
 	}
 }

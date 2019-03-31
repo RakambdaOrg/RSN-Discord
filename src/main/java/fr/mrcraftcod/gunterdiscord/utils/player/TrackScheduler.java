@@ -91,7 +91,7 @@ class TrackScheduler extends AudioEventAdapter{
 	}
 	
 	public void shuffle(){
-		if(this.queue.size() > 1){
+		if(!this.queue.isEmpty()){
 			final var oldList = new ArrayList<>(this.queue);
 			this.queue = new LinkedBlockingQueue<>();
 			Collections.shuffle(oldList);
@@ -138,7 +138,7 @@ class TrackScheduler extends AudioEventAdapter{
 	
 	void foundNothing(){
 		getLogger(getGuild()).info("Scheduler nothing found (track: {}, queue: {})", player.getPlayingTrack(), queue.size());
-		if(player.getPlayingTrack() == null && queue.isEmpty()){
+		if(Objects.isNull(player.getPlayingTrack()) && queue.isEmpty()){
 			listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty);
 		}
 	}

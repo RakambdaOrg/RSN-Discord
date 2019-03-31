@@ -6,4 +6,4 @@ package fr.mrcraftcod.gunterdiscord.commands.generic;
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-public enum CommandResult{SUCCESS, NOT_ALLOWED, FAILED}
+public enum CommandResult{SUCCESS, FAILED}

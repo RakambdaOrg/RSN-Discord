@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.events.self.SelfUpdateNameEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import java.time.LocalDate;
+import java.util.Objects;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -47,7 +48,7 @@ public class LogListener extends ListenerAdapter{
 					if(diff < 3600000){
 						final var warnRole = new MegaWarnRoleConfig(guild).getObject();
 						final var removeRoleConfig = new RemoveRoleConfig(guild);
-						final var currentRoleRemove = removeRoleConfig.getAsMap().keySet().stream().filter(k -> k == event.getEntity().getIdLong()).map(removeRoleConfig::getValue).map(map -> map.getOrDefault(warnRole.getIdLong(), 0L)).findFirst().orElse(0L);
+						final var currentRoleRemove = removeRoleConfig.getAsMap().keySet().stream().filter(k -> Objects.equals(k, event.getEntity().getIdLong())).map(removeRoleConfig::getValue).map(map -> map.getOrDefault(warnRole.getIdLong(), 0L)).findFirst().orElse(0L);
 						Actions.giveRole(guild, event.getEntity(), warnRole);
 						removeRoleConfig.addValue(event.getEntity().getIdLong(), warnRole.getIdLong(), Math.max(currentRoleRemove, System.currentTimeMillis() + 6 * 60 * 60 * 1000L));
 						Actions.replyPrivate(guild, event.getEntity(), "You've been warned in the server `%s` because you changed your name too often.", guild.getName());
@@ -125,7 +126,7 @@ public class LogListener extends ListenerAdapter{
 	@Override
 	public void onGuildVoiceGuildMute(final GuildVoiceGuildMuteEvent event){
 		super.onGuildVoiceGuildMute(event);
-		if(event.getMember().getUser().getIdLong() == event.getJDA().getSelfUser().getIdLong()){
+		if(Objects.equals(event.getMember().getUser(), event.getJDA().getSelfUser())){
 			getLogger(event.getGuild()).info("Unmuting bot");
 			event.getGuild().getController().setMute(event.getMember(), false).queue();
 			event.getGuild().getController().setDeafen(event.getMember(), false).queue();

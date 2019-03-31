@@ -86,7 +86,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	
 	@Override
 	public ConfigurationCommand.ActionResult handleChange(final MessageReceivedEvent event, final ConfigurationCommand.ChangeConfigType action, final LinkedList<String> args){
-		if(action == ConfigurationCommand.ChangeConfigType.SHOW){
+		if(Objects.equals(action, ConfigurationCommand.ChangeConfigType.SHOW)){
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
@@ -95,7 +95,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 			Actions.reply(event, builder.build());
 			return ConfigurationCommand.ActionResult.NONE;
 		}
-		if(args.size() < 1){
+		if(args.isEmpty()){
 			return ConfigurationCommand.ActionResult.ERROR;
 		}
 		switch(action){
@@ -119,7 +119,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	public List<T> getAsList() throws IllegalArgumentException{
 		final List<T> elements = new LinkedList<>();
 		final var array = getObjectList();
-		if(array == null){
+		if(Objects.isNull(array)){
 			Settings.resetList(guild, this);
 		}
 		else{
@@ -145,7 +145,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 * @throws IllegalArgumentException If the configuration isn't a list.
 	 */
 	private JSONArray getObjectList() throws IllegalArgumentException{
-		if(getType() != ConfigType.LIST){
+		if(!Objects.equals(getType(), ConfigType.LIST)){
 			throw new IllegalArgumentException("Not a list config");
 		}
 		try{

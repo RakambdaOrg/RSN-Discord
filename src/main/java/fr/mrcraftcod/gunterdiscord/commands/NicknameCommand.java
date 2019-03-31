@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -42,10 +43,10 @@ public class NicknameCommand extends BasicCommand{
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final Member member;
-		if(event.getMessage().getMentionedUsers().size() > 0){
+		if(!event.getMessage().getMentionedUsers().isEmpty()){
 			args.pop();
 			member = event.getGuild().getMember(event.getMessage().getMentionedUsers().get(0));
-			if(event.getAuthor().getIdLong() != member.getUser().getIdLong() && !Utilities.isTeam(event.getMember())){
+			if(Objects.equals(event.getAuthor(), member.getUser()) && !Utilities.isTeam(event.getMember())){
 				final var builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.addField("User", member.getAsMention(), true);
@@ -60,13 +61,13 @@ public class NicknameCommand extends BasicCommand{
 		}
 		final var oldName = member.getNickname();
 		final var lastChangeRaw = new NickLastChangeConfig(event.getGuild()).getValue(member.getUser().getIdLong());
-		final var lastChange = new Date(lastChangeRaw == null ? 0 : lastChangeRaw);
+		final var lastChange = new Date(Objects.isNull(lastChangeRaw) ? 0 : lastChangeRaw);
 		final var delay = Duration.ofMinutes(new NickDelayConfig(event.getGuild()).getObject(6 * 60));
 		if(!Utilities.isTeam(event.getMember()) && (lastChange.getTime() + delay.getSeconds() * 1000) >= new Date().getTime()){
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
-			builder.addField("Old nickname", oldName == null ? "*NONE*" : oldName, true);
+			builder.addField("Old nickname", Objects.isNull(oldName) ? "*NONE*" : oldName, true);
 			builder.addField("User", member.getAsMention(), true);
 			builder.addField("Reason", "You can change your nickname once every " + delay.toString().replace("PT", ""), true);
 			builder.addField("Last change", sdf.format(lastChange), true);
@@ -75,7 +76,7 @@ public class NicknameCommand extends BasicCommand{
 		}
 		else{
 			final String newName;
-			if(args.size() == 0){
+			if(args.isEmpty()){
 				newName = null;
 			}
 			else{
@@ -83,8 +84,8 @@ public class NicknameCommand extends BasicCommand{
 			}
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-			builder.addField("Old nickname", oldName == null ? "*NONE*" : oldName, true);
-			builder.addField("New nickname", newName == null ? "*NONE*" : newName, true);
+			builder.addField("Old nickname", Objects.isNull(oldName) ? "*NONE*" : oldName, true);
+			builder.addField("New nickname", Objects.isNull(newName) ? "*NONE*" : newName, true);
 			builder.addField("User", member.getAsMention(), true);
 			try{
 				member.getGuild().getController().setNickname(member, newName).complete();

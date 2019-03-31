@@ -24,7 +24,11 @@
             <AppenderRef ref="Console"/>
             <AppenderRef ref="MyFile"/>
         </Logger>
-        <Logger name="com.sedmelluq.discord.lavaplayer" level="warn" additivity="false">
+        <Logger name="com.sedmelluq.discord.lavaplayer" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="MyFile"/>
+        </Logger>
+        <Logger name="com.sedmelluq.lava" level="info" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="MyFile"/>
         </Logger>

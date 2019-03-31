@@ -28,7 +28,7 @@ public class AvatarCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		if(event.getMessage().getMentionedUsers().size() > 0){
+		if(!event.getMessage().getMentionedUsers().isEmpty()){
 			final var user = event.getMessage().getMentionedUsers().get(0);
 			final var builder = new EmbedBuilder();
 			builder.setColor(Color.GREEN);

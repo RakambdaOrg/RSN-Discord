@@ -83,7 +83,7 @@ public class SeekMusicCommand extends BasicCommand{
 	}
 	
 	private int getAsInt(final Guild guild, final String str){
-		if(Objects.isNull(str) || str.isEmpty()){
+		if(Objects.isNull(str) || str.isBlank()){
 			return 0;
 		}
 		try{

@@ -13,10 +13,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
@@ -35,7 +32,7 @@ public class HelpCommand extends BasicCommand{
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final var prefix = new PrefixConfig(event.getGuild()).getObject("");
-		if(args.size() < 1){
+		if(args.isEmpty()){
 			final var builder = new EmbedBuilder();
 			builder.setColor(Color.GREEN);
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
@@ -48,7 +45,7 @@ public class HelpCommand extends BasicCommand{
 			args.poll();
 			while(!args.isEmpty() && command instanceof CommandComposite){
 				final var command2 = ((CommandComposite) command).getSubCommand(args.get(0).toLowerCase());
-				if(command2 == null){
+				if(Objects.isNull(command2)){
 					break;
 				}
 				command = command2;
@@ -56,7 +53,7 @@ public class HelpCommand extends BasicCommand{
 			}
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-			if(command != null){
+			if(Objects.nonNull(command)){
 				builder.setColor(Color.GREEN);
 				builder.setTitle(getName());
 				builder.addField("Name", command.getName(), true);

@@ -18,6 +18,7 @@ import java.awt.Color;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -47,12 +48,10 @@ public class PhotoGetCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		Actions.deleteMessage(event.getMessage());
-		if(super.execute(event, args) == CommandResult.NOT_ALLOWED){
-			return CommandResult.NOT_ALLOWED;
-		}
+		super.execute(event, args);
 		final User user;
 		final var users = event.getMessage().getMentionedUsers();
-		if(users.size() > 0){
+		if(!users.isEmpty()){
 			user = users.get(0);
 			args.poll();
 		}
@@ -61,7 +60,7 @@ public class PhotoGetCommand extends BasicCommand{
 		}
 		
 		final var member = event.getGuild().getMember(user);
-		if(member == null || !Utilities.hasRole(member, new TrombinoscopeRoleConfig(event.getGuild()).getObject())){
+		if(Objects.isNull(member) || !Utilities.hasRole(member, new TrombinoscopeRoleConfig(event.getGuild()).getObject())){
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
@@ -70,10 +69,10 @@ public class PhotoGetCommand extends BasicCommand{
 		}
 		else if(new PhotoChannelConfig(event.getGuild()).isChannel(event.getTextChannel())){
 			final var paths = new PhotoConfig(event.getGuild()).getValue(user.getIdLong());
-			if(paths != null && !paths.isEmpty()){
+			if(Objects.nonNull(paths) && !paths.isEmpty()){
 				var randomGen = true;
 				var rnd = ThreadLocalRandom.current().nextInt(paths.size());
-				if(args.peek() != null){
+				if(!args.isEmpty()){
 					try{
 						rnd = Math.max(0, Math.min(paths.size(), Integer.parseInt(args.pop())) - 1);
 						randomGen = false;

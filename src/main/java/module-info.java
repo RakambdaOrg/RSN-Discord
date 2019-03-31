@@ -14,8 +14,12 @@ module fr.mrcraftcod.gunterdiscord {
 	requires fr.mrcraftcod.utils.http;
 	
 	requires org.slf4j;
+	//noinspection Java9RedundantRequiresStatement
 	requires org.apache.logging.log4j;
+	//noinspection Java9RedundantRequiresStatement
 	requires org.apache.logging.log4j.slf4j;
+	//noinspection Java9RedundantRequiresStatement
+	requires java.scripting;
 	
 	requires net.dv8tion.jda;
 	requires lavaplayer;
