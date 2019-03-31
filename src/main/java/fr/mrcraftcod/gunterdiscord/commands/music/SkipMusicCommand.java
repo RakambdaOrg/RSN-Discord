@@ -40,8 +40,12 @@ public class SkipMusicCommand extends BasicCommand{
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		switch(GunterAudioManager.skip(event.getGuild())){
-			case NO_MUSIC -> Actions.reply(event, "%s, no music currently playing", event.getAuthor().getAsMention());
-			case OK -> Actions.reply(event, "%s skipped the music", event.getAuthor().getAsMention());
+			case NO_MUSIC:
+				Actions.reply(event, "%s, no music currently playing", event.getAuthor().getAsMention());
+				break;
+			case OK:
+				Actions.reply(event, "%s skipped the music", event.getAuthor().getAsMention());
+				break;
 		}
 		return CommandResult.SUCCESS;
 	}

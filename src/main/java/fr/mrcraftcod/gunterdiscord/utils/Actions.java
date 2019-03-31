@@ -50,8 +50,12 @@ public class Actions{
 	 */
 	public static void reply(@NotNull final GenericMessageEvent event, final String text){
 		switch(event.getChannelType()){
-			case PRIVATE -> sendMessage(event.getGuild(), event.getPrivateChannel(), text);
-			case TEXT -> sendMessage(event.getTextChannel(), text);
+			case PRIVATE:
+				sendMessage(event.getGuild(), event.getPrivateChannel(), text);
+				break;
+			case TEXT:
+				sendMessage(event.getTextChannel(), text);
+				break;
 		}
 	}
 	
@@ -339,8 +343,12 @@ public class Actions{
 	 */
 	public static void reply(@NotNull final GenericMessageEvent event, final MessageEmbed embed){
 		switch(event.getChannelType()){
-			case PRIVATE -> sendPrivateMessage(event.getGuild(), event.getPrivateChannel(), embed);
-			case TEXT -> sendMessage(event.getTextChannel(), embed);
+			case PRIVATE:
+				sendPrivateMessage(event.getGuild(), event.getPrivateChannel(), embed);
+				break;
+			case TEXT:
+				sendMessage(event.getTextChannel(), embed);
+				break;
 		}
 	}
 	

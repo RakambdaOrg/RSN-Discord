@@ -38,8 +38,12 @@ public class PauseMusicCommand extends BasicCommand{
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		switch(GunterAudioManager.pause(event.getGuild())){
-			case NO_MUSIC -> Actions.reply(event, "%s, no music are being played", event.getAuthor().getAsMention());
-			case OK -> Actions.reply(event, "%s paused the music", event.getAuthor().getAsMention());
+			case NO_MUSIC:
+				Actions.reply(event, "%s, no music are being played", event.getAuthor().getAsMention());
+				break;
+			case OK:
+				Actions.reply(event, "%s paused the music", event.getAuthor().getAsMention());
+				break;
 		}
 		return CommandResult.SUCCESS;
 	}
