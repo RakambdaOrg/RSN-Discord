@@ -62,7 +62,9 @@ public class Settings{
 			new EmotesParticipationConfig(null),
 			new EmotesParticipationChannelConfig(null),
 			new EmotesParticipationPinConfig(null),
-			new TwitchIRCChannelConfig(null)
+			new TwitchIRCChannelConfig(null),
+			new AnilistThaChannelConfig(null),
+			new AnilistThaUserConfig(null)
 	};
 	private static Path path;
 	private static JSONObject settings;

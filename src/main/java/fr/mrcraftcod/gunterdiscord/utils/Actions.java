@@ -87,6 +87,23 @@ public class Actions{
 	}
 	
 	/**
+	 * Send a message to a channel with an embed.
+	 *
+	 * @param channel The channel to send to.
+	 * @param text    The message to send.
+	 * @param embed   The embed to attach.
+	 */
+	public static void sendMessage(@NotNull final TextChannel channel, final String text, final MessageEmbed embed){
+		if(channel.canTalk()){
+			channel.sendMessage(text).embed(embed).queue();
+			getLogger(channel.getGuild()).info("Sent message to {} : {}", channel.getName(), text);
+		}
+		else{
+			getLogger(channel.getGuild()).error("Access denied to text channel: {}", channel.getAsMention());
+		}
+	}
+	
+	/**
 	 * Send a message to a channel.
 	 *
 	 * @param channel The channel to send to.
@@ -376,7 +393,7 @@ public class Actions{
 	 * @param embed   The message to send.
 	 */
 	public static void sendMessage(@NotNull final TextChannel channel, final MessageEmbed embed){
-		sendMessage(channel, null, embed);
+		sendMessage(channel, (Consumer<Message>) null, embed);
 	}
 	
 	/**
