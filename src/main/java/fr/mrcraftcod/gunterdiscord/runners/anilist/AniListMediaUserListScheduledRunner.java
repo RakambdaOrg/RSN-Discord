@@ -101,7 +101,7 @@ public class AniListMediaUserListScheduledRunner implements AniListRunner<AniLis
 		this.getJDA().getGuilds().stream().map(g -> new AnilistThaChannelConfig(g).getObject(null)).filter(Objects::nonNull).forEach(textChannel -> {
 			final var member = new AnilistThaUserConfig(textChannel.getGuild()).getObject(null);
 			if(Objects.nonNull(member)){
-				userElements.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> ImmutablePair.of(e.getKey(), v))).filter(v -> v.getRight().getCustomLists().entrySet().stream().filter(Map.Entry::getValue).anyMatch(c -> Objects.equals("ThaReading", c.getKey()) || Objects.equals("ThaWatching", c.getKey()))).forEach(p -> Actions.sendMessage(textChannel, "" + member.getAsMention(), buildMessage(p.getLeft(), p.getRight())));
+				userElements.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> ImmutablePair.of(e.getKey(), v))).filter(v -> v.getRight().getCustomLists().entrySet().stream().filter(Map.Entry::getValue).anyMatch(c -> Objects.equals("ThaPending", c.getKey()) || Objects.equals("ThaReading", c.getKey()) || Objects.equals("ThaWatching", c.getKey()))).forEach(p -> Actions.sendMessage(textChannel, "" + member.getAsMention(), buildMessage(p.getLeft(), p.getRight())));
 			}
 		});
 	}
