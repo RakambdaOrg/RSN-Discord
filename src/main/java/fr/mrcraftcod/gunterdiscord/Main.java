@@ -49,9 +49,10 @@ public class Main{
 	 */
 	public static void main(final String[] args){
 		LOGGER.info("Starting bot version {}", getRSNBotVersion());
+		final var token = getToken();
 		try{
 			Settings.init(Paths.get(new File(SETTINGS_NAME).toURI()));
-			jda = new JDABuilder(AccountType.BOT).setToken(System.getenv("GUNTER_TOKEN")).build();
+			jda = new JDABuilder(AccountType.BOT).setToken(token).build();
 			jda.awaitReady();
 			jda.addEventListener(new CommandsMessageListener());
 			// jda.addEventListener(new OnlyImagesMessageListener());
@@ -72,7 +73,7 @@ public class Main{
 			getLogger(null).error("Couldn't load settings", e);
 		}
 		catch(final LoginException | InterruptedException e){
-			getLogger(null).error("Couldn't start bot", e);
+			getLogger(null).error("Couldn't start bot, token length was {}", token.length(), e);
 		}
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -88,6 +89,10 @@ public class Main{
 		
 		consoleHandler = new ConsoleHandler(jda);
 		consoleHandler.start();
+	}
+	
+	private static String getToken(){
+		return System.getenv("GUNTER_TOKEN");
 	}
 	
 	/**

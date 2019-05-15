@@ -1,10 +1,7 @@
 package fr.mrcraftcod.gunterdiscord;
 
 import net.dv8tion.jda.api.JDA;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -51,7 +48,9 @@ class ConsoleHandler extends Thread{
 				final var arg1 = args.poll();
 				if(quitList.contains(arg1)){
 					Main.close();
-					jda.shutdownNow();
+					if(Objects.nonNull(jda)){
+						jda.shutdownNow();
+					}
 				}
 				else if(arg1.equalsIgnoreCase("leave")){
 					if(args.isEmpty()){
