@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -17,9 +17,9 @@ public class LuxBusUtils{
 	public static Map<String, String> stops;
 	private static long lastCheck = System.currentTimeMillis();
 	
-	public static Optional<String> getStopID(final String stop){
+	public static List<String> getStopID(final String stop){
 		final var stopKey = stop.toLowerCase();
-		return getStopIDs().entrySet().stream().filter(s -> Objects.equals(s.getKey(), stopKey)).map(Map.Entry::getValue).findFirst();
+		return getStopIDs().entrySet().stream().filter(s -> Objects.equals(s.getKey(), stopKey)).map(Map.Entry::getValue).collect(Collectors.toList());
 	}
 	
 	public static Map<String, String> getStopIDs(){
