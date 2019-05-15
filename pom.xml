@@ -13,7 +13,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>12</java.version>
         <main.class>fr.mrcraftcod.gunterdiscord.Main</main.class>
-        <log4j.version>2.11.2</log4j.version>
     </properties>
     <packaging>jar</packaging>
 
@@ -44,7 +43,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
                             <shadedClassifierName>jar-with-dependencies</shadedClassifierName>
                             <finalName>${project.artifactId}</finalName>
                             <artifactSet>
@@ -86,8 +85,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
                 <configuration>
-                    <source>12</source>
-                    <target>12</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                     <release>${java.version}</release>
                     <showWarnings>true</showWarnings>
                     <showDeprecation>true</showDeprecation>
@@ -114,7 +113,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.ALPHA.0_82</version>
+            <version>4.ALPHA.0_86</version>
             <exclusions>
                 <exclusion>
                     <groupId>club.minnced</groupId>
@@ -162,7 +161,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.11.3</version>
+            <version>1.12.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -172,7 +171,7 @@
         <dependency>
             <groupId>fr.mrcraftcod</groupId>
             <artifactId>utils.http</artifactId>
-            <version>12.0.4</version>
+            <version>12.0.5</version>
         </dependency>
     </dependencies>
 </project>
