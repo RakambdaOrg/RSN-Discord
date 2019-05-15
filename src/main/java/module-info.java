@@ -4,7 +4,7 @@
  * @author Thomas Couchoud
  * @since 2018-05-03
  */
-module fr.mrcraftcod.gunterdiscord {
+open module fr.mrcraftcod.gunterdiscord {
 	requires java.desktop;
 	
 	requires org.json;
