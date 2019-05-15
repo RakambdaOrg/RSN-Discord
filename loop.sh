@@ -3,6 +3,6 @@ while :
 do
 	git pull
 	mvn clean package -U
-	java -jar target/RSNDiscord.jar -tf gunter_token -s settings.json
+	java -jar target/RSNDiscord.jar -c config.properties -s settings.json
 done
 
