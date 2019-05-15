@@ -4,6 +4,10 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import java.util.List;
 
 public class LuxBusCommandComposite extends CommandComposite{
+	public LuxBusCommandComposite(){
+		this.addSubCommand(new LuxBusGetStopCommand(this));
+	}
+	
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
