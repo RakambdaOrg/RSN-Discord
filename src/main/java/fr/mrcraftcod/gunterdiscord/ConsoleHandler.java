@@ -29,7 +29,7 @@ class ConsoleHandler extends Thread{
 	
 	@Override
 	public void run(){
-		final var quitList = List.of("stop", "quit");
+		final var quitList = List.of("stop", "quit", "exit");
 		try(final var sc = new Scanner(System.in)){
 			while(!stop){
 				if(!sc.hasNext()){
