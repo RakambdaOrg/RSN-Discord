@@ -12,6 +12,7 @@ module fr.mrcraftcod.gunterdiscord {
 	requires org.apache.commons.lang3;
 	requires org.jetbrains.annotations;
 	requires fr.mrcraftcod.utils.http;
+	requires jcommander;
 	
 	requires org.slf4j;
 	requires ch.qos.logback.classic;

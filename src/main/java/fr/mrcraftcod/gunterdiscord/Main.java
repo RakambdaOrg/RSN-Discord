@@ -1,5 +1,7 @@
 package fr.mrcraftcod.gunterdiscord;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
 import fr.mrcraftcod.gunterdiscord.listeners.*;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
 import fr.mrcraftcod.gunterdiscord.runners.DisplayDailyStatsScheduledRunner;
@@ -18,11 +20,12 @@ import net.dv8tion.jda.api.entities.Activity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.security.auth.login.LoginException;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -49,9 +52,19 @@ public class Main{
 	 */
 	public static void main(final String[] args){
 		LOGGER.info("Starting bot version {}", getRSNBotVersion());
-		final var token = getToken();
+		final var parameters = new CLIParameters();
 		try{
-			Settings.init(Paths.get(new File(SETTINGS_NAME).toURI()));
+			JCommander.newBuilder().addObject(parameters).build().parse(args);
+		}
+		catch(final ParameterException e){
+			LOGGER.error("Failed to parse arguments", e);
+			e.usage();
+			return;
+		}
+		
+		final var token = getToken(parameters);
+		try{
+			Settings.init(Paths.get(parameters.getSettingsFile().toURI()));
 			jda = new JDABuilder(AccountType.BOT).setToken(token).build();
 			jda.awaitReady();
 			jda.addEventListener(new CommandsMessageListener());
@@ -91,8 +104,28 @@ public class Main{
 		consoleHandler.start();
 	}
 	
-	private static String getToken(){
-		return System.getenv("GUNTER_TOKEN");
+	private static String getToken(CLIParameters parameters){
+		final var envToken = System.getenv("RSN_TOKEN");
+		if(Objects.nonNull(envToken) && !envToken.isBlank()){
+			LOGGER.debug("Loaded token from env variable");
+			return envToken;
+		}
+		if(Objects.nonNull(parameters.getToken()) && !parameters.getToken().isBlank()){
+			LOGGER.debug("Loaded token from parameters");
+			return parameters.getToken();
+		}
+		if(Objects.nonNull(parameters.getTokenFile())){
+			try{
+				final var fileToken = String.join("", Files.readAllLines(Paths.get(parameters.getTokenFile().toURI())));
+				if(!fileToken.isBlank()){
+					return fileToken;
+				}
+			}
+			catch(IOException e){
+				LOGGER.warn("Failed to read file {}", parameters.getTokenFile());
+			}
+		}
+		return "";
 	}
 	
 	/**
