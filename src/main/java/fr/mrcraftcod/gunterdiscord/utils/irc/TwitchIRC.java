@@ -16,7 +16,7 @@ public class TwitchIRC{
 	public static void connect(Guild guild, String user) throws IOException, NoValueDefinedException{
 		if(Objects.isNull(CLIENT)){
 			CLIENT = new IRCClient("irc.chat.twitch.tv", 6667);
-			CLIENT.setSecureKeyPassword(String.format("oauth:%s", System.getenv("TWITCH_TOKEN")));
+			CLIENT.setSecureKeyPassword(String.format("oauth:%s", System.getProperty("TWITCH_TOKEN")));
 			CLIENT.connect();
 			CLIENT.setNick(NICKNAME);
 		}

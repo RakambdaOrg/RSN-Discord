@@ -20,8 +20,8 @@ import net.dv8tion.jda.api.entities.Activity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.security.auth.login.LoginException;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -62,10 +62,21 @@ public class Main{
 			return;
 		}
 		
-		final var token = getToken(parameters);
+		if(Objects.nonNull(parameters.getConfigurationFile())){
+			final var prop = new Properties();
+			try(final var is = new FileInputStream(parameters.getConfigurationFile())){
+				prop.load(is);
+			}
+			catch(IOException e){
+				LOGGER.warn("Failed to read file {}", parameters.getConfigurationFile());
+			}
+			System.setProperties(prop);
+			LOGGER.debug("Loaded {} properties from file", prop.keySet().size());
+		}
+		
 		try{
 			Settings.init(Paths.get(parameters.getSettingsFile().toURI()));
-			jda = new JDABuilder(AccountType.BOT).setToken(token).build();
+			jda = new JDABuilder(AccountType.BOT).setToken(System.getProperty("RSN_TOKEN")).build();
 			jda.awaitReady();
 			jda.addEventListener(new CommandsMessageListener());
 			// jda.addEventListener(new OnlyImagesMessageListener());
@@ -86,7 +97,7 @@ public class Main{
 			getLogger(null).error("Couldn't load settings", e);
 		}
 		catch(final LoginException | InterruptedException e){
-			getLogger(null).error("Couldn't start bot, token length was {}", token.length(), e);
+			getLogger(null).error("Couldn't start bot", e);
 		}
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -102,30 +113,6 @@ public class Main{
 		
 		consoleHandler = new ConsoleHandler(jda);
 		consoleHandler.start();
-	}
-	
-	private static String getToken(CLIParameters parameters){
-		final var envToken = System.getenv("RSN_TOKEN");
-		if(Objects.nonNull(envToken) && !envToken.isBlank()){
-			LOGGER.debug("Loaded token from env variable");
-			return envToken;
-		}
-		if(Objects.nonNull(parameters.getToken()) && !parameters.getToken().isBlank()){
-			LOGGER.debug("Loaded token from parameters");
-			return parameters.getToken();
-		}
-		if(Objects.nonNull(parameters.getTokenFile())){
-			try{
-				final var fileToken = String.join("", Files.readAllLines(Paths.get(parameters.getTokenFile().toURI())));
-				if(!fileToken.isBlank()){
-					return fileToken;
-				}
-			}
-			catch(IOException e){
-				LOGGER.warn("Failed to read file {}", parameters.getTokenFile());
-			}
-		}
-		return "";
 	}
 	
 	/**

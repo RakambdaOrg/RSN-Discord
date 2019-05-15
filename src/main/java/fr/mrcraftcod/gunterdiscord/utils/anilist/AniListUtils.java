@@ -69,7 +69,7 @@ public class AniListUtils{
 		final var body = new JSONObject();
 		body.put("grant_type", "authorization_code");
 		body.put("client_id", "" + APP_ID);
-		body.put("client_secret", System.getenv("ANILIST_SECRET"));
+		body.put("client_secret", System.getProperty("ANILIST_SECRET"));
 		body.put("redirect_uri", REDIRECT_URI);
 		body.put("code", token);
 		final var sender = new JSONPostRequestSender(new URL(API_URL + "/oauth/token"), headers, new HashMap<>(), body.toString());

@@ -12,16 +12,10 @@ public class CLIParameters{
 	private File settingsFile = new File("settings.json");
 	
 	@Parameter(names = {
-			"-t",
-			"--token"
-	}, description = "The token to use")
-	private String token = null;
-	
-	@Parameter(names = {
-			"-tf",
-			"--token-file"
-	}, description = "The settings file for the token", converter = FileConverter.class)
-	private File tokenFile = null;
+			"-c",
+			"--config"
+	}, description = "The configuration file", converter = FileConverter.class)
+	private File configurationFile = null;
 	
 	public CLIParameters(){
 	}
@@ -30,11 +24,7 @@ public class CLIParameters{
 		return this.settingsFile.getAbsoluteFile();
 	}
 	
-	public String getToken(){
-		return token;
-	}
-	
-	public File getTokenFile(){
-		return tokenFile;
+	public File getConfigurationFile(){
+		return configurationFile;
 	}
 }

@@ -1,12 +1,12 @@
 GunterDiscord.iml
 .idea
 target
-settings.json
 
 pictures/
 log/*
 logs/*
 
+/settings.json
 /questions.csv
 /settings2.json
-/gunter_token
+/config.properties
