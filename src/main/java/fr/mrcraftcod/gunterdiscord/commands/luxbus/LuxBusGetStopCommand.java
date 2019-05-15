@@ -35,7 +35,7 @@ public class LuxBusGetStopCommand extends BasicCommand{
 	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		try{
-			Actions.reply(event, String.join("\n", LuxBusUtils.getStopIDs()));
+			Actions.reply(event, LuxBusUtils.getStopID(args.pop()).orElse("Not found"));
 		}
 		catch(Exception e){
 			LOGGER.error("", e);
