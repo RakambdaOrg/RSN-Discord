@@ -70,7 +70,7 @@ public class Main{
 			catch(IOException e){
 				LOGGER.warn("Failed to read file {}", parameters.getConfigurationFile());
 			}
-			System.setProperties(prop);
+			prop.forEach((key, value) -> System.setProperty(key.toString(), value.toString()));
 			LOGGER.debug("Loaded {} properties from file", prop.keySet().size());
 		}
 		
