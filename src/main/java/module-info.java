@@ -19,4 +19,10 @@ open module fr.mrcraftcod.gunterdiscord {
 	
 	requires net.dv8tion.jda;
 	requires lavaplayer;
+	
+	requires com.fasterxml.jackson.core;
+	requires com.fasterxml.jackson.annotation;
+	requires com.fasterxml.jackson.databind;
+	
+	requires java.sql;
 }

@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.commands.luxbus;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
+import fr.mrcraftcod.gunterdiscord.commands.luxbus.utils.LuxBusUtils;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -15,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class LuxBusGetStopCommand extends BasicCommand{
 	public static final Logger LOGGER = LoggerFactory.getLogger(LuxBusGetStopCommand.class);
@@ -44,7 +44,7 @@ public class LuxBusGetStopCommand extends BasicCommand{
 				Actions.reply(event, embed.build());
 				return CommandResult.SUCCESS;
 			}
-			final var stops = LuxBusUtils.getStopID(args.pop());
+			final var stops = LuxBusUtils.searchStopByName(String.join(" ", args));
 			if(stops.isEmpty()){
 				final var embed = Utilities.buildEmbed(event.getAuthor(), Color.RED, "Command failed");
 				embed.addField("Reason", "Your query didn't match any stop", false);
@@ -53,11 +53,13 @@ public class LuxBusGetStopCommand extends BasicCommand{
 			else if(stops.size() > 1){
 				final var embed = Utilities.buildEmbed(event.getAuthor(), Color.RED, "Command failed");
 				embed.addField("Reason", "There was several stops matching your query", false);
-				embed.addField("Stops", stops.stream().map(LuxBusStopID::toString).collect(Collectors.joining(", ")), false);
 				Actions.reply(event, embed.build());
+				stops.forEach(s -> Actions.reply(event, s.getName()));
 			}
 			else{
-				Actions.reply(event, "{}", LuxBusUtils.getDepartures(stops.get(0)));
+				final var stop = stops.get(0);
+				Actions.reply(event, "Displaying stops for stop %s", stop);
+				LuxBusUtils.getDepartures(stop).stream().sorted().forEachOrdered(dep -> Actions.reply(event, dep.getAsEmbed(new EmbedBuilder()).build()));
 			}
 		}
 		catch(Exception e){
