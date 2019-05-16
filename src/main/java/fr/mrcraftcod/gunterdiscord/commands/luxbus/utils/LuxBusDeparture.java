@@ -27,8 +27,8 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	private LuxBusProduct product;
 	@JsonProperty("direction")
 	private String direction;
-	private DateTimeFormatter dateTimeFormatterEmbedShort = new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").toFormatter();
-	private DateTimeFormatter dateTimeFormatterEmbedLong = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm:ss").toFormatter();
+	private DateTimeFormatter dateTimeFormatterEmbedShort = new DateTimeFormatterBuilder().appendPattern("HH:mm").toFormatter();
+	private DateTimeFormatter dateTimeFormatterEmbedLong = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm").toFormatter();
 	
 	@JsonCreator
 	public static LuxBusDeparture createDeparture(@JsonProperty("date") String date, @JsonProperty("time") String time, @JsonProperty("rtDate") String rtDate, @JsonProperty("rtTime") String rtTime){
