@@ -15,7 +15,12 @@
         </encoder>
     </appender>
 
-    <root level="DEBUG">
+    <logger name="fr.mrcraftcod.*" level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
     </root>
