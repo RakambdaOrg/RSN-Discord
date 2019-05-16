@@ -62,11 +62,11 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	}
 	
 	public EmbedBuilder getAsEmbed(EmbedBuilder builder){
-		final long delay = getRealTimeDateTime().until(getPlannedDateTime(), ChronoUnit.MINUTES);
-		if(delay <= 0){
+		final long delay = getPlannedDateTime().until(getRealTimeDateTime(), ChronoUnit.MINUTES);
+		if(delay <= 2){
 			builder.setColor(Color.GREEN);
 		}
-		else if(delay <= 3){
+		else if(delay <= 4){
 			builder.setColor(Color.ORANGE);
 		}
 		else{
