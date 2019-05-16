@@ -74,7 +74,7 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 		}
 		builder.setTitle(stop.getName());
 		builder.setDescription(String.format("%s direction %s", this.getProduct().getName().replaceAll(" +", " "), this.getDirection()));
-		builder.addField("Real at", getEmbedDate(getRealTimeDateTime()), false);
+		builder.addField("Real at", String.format("%s (+%d)", getEmbedDate(getRealTimeDateTime()), delay), false);
 		builder.addField("Planned at", getEmbedDate(getPlannedDateTime()), false);
 		return builder;
 	}
