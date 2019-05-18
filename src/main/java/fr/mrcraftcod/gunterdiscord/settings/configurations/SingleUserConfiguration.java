@@ -2,7 +2,7 @@ package fr.mrcraftcod.gunterdiscord.settings.configurations;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -54,7 +54,7 @@ public abstract class SingleUserConfiguration extends ValueConfiguration<Member>
 	}
 	
 	@Override
-	protected BiFunction<MessageReceivedEvent, String, String> getMessageParser(){
+	protected BiFunction<GuildMessageReceivedEvent, String, String> getMessageParser(){
 		return (event, arg) -> {
 			if(event.getMessage().getMentionedMembers().isEmpty()){
 				throw new IllegalStateException("Please mention a member");

@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.util.LinkedList;
@@ -33,7 +33,7 @@ public abstract class WarnCommand extends BasicCommand{
 	
 	@SuppressWarnings("SpellCheckingInspection")
 	@Override
-	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(!event.getMessage().getMentionedUsers().isEmpty()){
 			final var user = event.getMessage().getMentionedUsers().get(0);

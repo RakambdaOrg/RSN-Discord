@@ -4,6 +4,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import fr.mrcraftcod.gunterdiscord.listeners.*;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
+import fr.mrcraftcod.gunterdiscord.listeners.reply.ReplyMessageListener;
 import fr.mrcraftcod.gunterdiscord.runners.DisplayDailyStatsScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.RemoveRolesScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.SaveConfigScheduledRunner;
@@ -85,6 +86,7 @@ public class Main{
 			jda.addEventListener(new AutoRolesListener());
 			jda.addEventListener(new IdeaChannelMessageListener());
 			jda.addEventListener(new QuestionReactionListener());
+			jda.addEventListener(new ReplyMessageListener());
 			jda.setAutoReconnect(true);
 			jda.getPresence().setActivity(Activity.playing("g?help for the help"));
 			

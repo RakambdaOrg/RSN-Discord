@@ -2,7 +2,7 @@ package fr.mrcraftcod.gunterdiscord.settings.configurations;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -23,7 +23,7 @@ public abstract class SingleRoleConfiguration extends ValueConfiguration<Role>{
 	}
 	
 	@Override
-	protected BiFunction<MessageReceivedEvent, String, String> getMessageParser(){
+	protected BiFunction<GuildMessageReceivedEvent, String, String> getMessageParser(){
 		return (event, arg) -> {
 			if(event.getMessage().getMentionedRoles().isEmpty()){
 				throw new IllegalStateException("Please mention a role");

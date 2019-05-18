@@ -9,9 +9,10 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
-import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -282,8 +283,8 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	}
 	
 	@Override
-	public void onMessageReactionAdd(final MessageReactionAddEvent event){
-		super.onMessageReactionAdd(event);
+	public void onGuildMessageReactionAdd(@NotNull final GuildMessageReactionAddEvent event){
+		super.onGuildMessageReactionAdd(event);
 		try{
 			if(Objects.equals(event.getGuild(), getGuild()) && Objects.nonNull(waitingMsg) && Objects.equals(event.getMessageIdLong(), waitingMsg.getIdLong()) && !Objects.equals(event.getUser(), event.getJDA().getSelfUser())){
 				if(Objects.nonNull(answers)){
@@ -310,8 +311,8 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	}
 	
 	@Override
-	public void onMessageReactionRemove(final MessageReactionRemoveEvent event){
-		super.onMessageReactionRemove(event);
+	public void onGuildMessageReactionRemove(@NotNull final GuildMessageReactionRemoveEvent event){
+		super.onGuildMessageReactionRemove(event);
 		try{
 			if(Objects.equals(event.getGuild(), getGuild()) && Objects.nonNull(waitingMsg) && Objects.equals(event.getMessageIdLong(), waitingMsg.getIdLong())){
 				if(Objects.nonNull(answers)){

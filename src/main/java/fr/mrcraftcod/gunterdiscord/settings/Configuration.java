@@ -2,7 +2,7 @@ package fr.mrcraftcod.gunterdiscord.settings;
 
 import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -38,7 +38,7 @@ public abstract class Configuration{
 	 *
 	 * @throws Exception If anything too bad happened.
 	 */
-	public abstract ConfigurationCommand.ActionResult handleChange(MessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args) throws Exception;
+	public abstract ConfigurationCommand.ActionResult handleChange(GuildMessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args) throws Exception;
 	
 	/**
 	 * Define what actions can be performed.

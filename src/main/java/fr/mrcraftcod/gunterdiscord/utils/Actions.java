@@ -3,7 +3,7 @@ package fr.mrcraftcod.gunterdiscord.utils;
 import fr.mrcraftcod.gunterdiscord.Main;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.message.GenericMessageEvent;
+import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import org.jetbrains.annotations.NotNull;
@@ -38,25 +38,20 @@ public class Actions{
 	 * @param format The message format.
 	 * @param args   The message parameters.
 	 */
-	public static void reply(@NotNull final GenericMessageEvent event, @NotNull final String format, final Object... args){
-		reply(event, String.format(format, args));
+	public static void reply(@NotNull final GenericGuildMessageEvent event, @NotNull final String format, final Object... args){
+		sendMessage(event.getChannel(), String.format(format, args));
 	}
 	
 	/**
 	 * Reply to a message.
 	 *
-	 * @param event The message event.
-	 * @param text  The text to send.
+	 * @param event  The message event.
+	 * @param onDone The action to do when done.
+	 * @param format The message format.
+	 * @param args   The message parameters.
 	 */
-	public static void reply(@NotNull final GenericMessageEvent event, final String text){
-		switch(event.getChannelType()){
-			case PRIVATE:
-				sendMessage(event.getGuild(), event.getPrivateChannel(), text);
-				break;
-			case TEXT:
-				sendMessage(event.getTextChannel(), text);
-				break;
-		}
+	public static void reply(@NotNull final GenericGuildMessageEvent event, Consumer<Message> onDone, @NotNull final String format, final Object... args){
+		sendMessage(event.getChannel(), onDone, String.format(format, args));
 	}
 	
 	/**
@@ -358,15 +353,8 @@ public class Actions{
 	 * @param event The event.
 	 * @param embed The message to send.
 	 */
-	public static void reply(@NotNull final GenericMessageEvent event, final MessageEmbed embed){
-		switch(event.getChannelType()){
-			case PRIVATE:
-				sendPrivateMessage(event.getGuild(), event.getPrivateChannel(), embed);
-				break;
-			case TEXT:
-				sendMessage(event.getTextChannel(), embed);
-				break;
-		}
+	public static void reply(@NotNull final GenericGuildMessageEvent event, final MessageEmbed embed){
+		sendMessage(event.getChannel(), embed);
 	}
 	
 	/**

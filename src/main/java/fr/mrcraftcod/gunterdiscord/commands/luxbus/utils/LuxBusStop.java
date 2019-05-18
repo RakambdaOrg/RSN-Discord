@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.luxbus.utils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.text.DecimalFormat;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LuxBusStop{
 	private static final Logger LOGGER = LoggerFactory.getLogger(LuxBusStop.class);
 	private final String ID;

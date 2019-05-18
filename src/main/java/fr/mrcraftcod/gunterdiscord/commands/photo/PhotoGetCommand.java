@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.io.File;
@@ -46,7 +46,7 @@ public class PhotoGetCommand extends BasicCommand{
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		Actions.deleteMessage(event.getMessage());
 		super.execute(event, args);
 		final User user;
@@ -67,7 +67,7 @@ public class PhotoGetCommand extends BasicCommand{
 			builder.setTitle("The user isn't part of the trombinoscope");
 			Actions.reply(event, builder.build());
 		}
-		else if(new PhotoChannelConfig(event.getGuild()).isChannel(event.getTextChannel())){
+		else if(new PhotoChannelConfig(event.getGuild()).isChannel(event.getChannel())){
 			final var paths = new PhotoConfig(event.getGuild()).getValue(user.getIdLong());
 			if(Objects.nonNull(paths) && !paths.isEmpty()){
 				var randomGen = true;
@@ -91,7 +91,7 @@ public class PhotoGetCommand extends BasicCommand{
 					builder.addField("User", user.getAsMention(), true);
 					builder.addField("ID", ID, true);
 					Actions.reply(event, builder.build());
-					Actions.sendFile(event.getTextChannel(), file);
+					Actions.sendFile(event.getChannel(), file);
 				}
 				else{
 					final var builder = new EmbedBuilder();

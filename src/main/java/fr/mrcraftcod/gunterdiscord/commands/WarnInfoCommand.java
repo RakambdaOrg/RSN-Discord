@@ -8,7 +8,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
@@ -31,7 +31,7 @@ public class WarnInfoCommand extends BasicCommand{
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final var target = event.getMessage().getMentionedUsers().stream().findFirst().orElse(event.getAuthor());
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Warns info");

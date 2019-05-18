@@ -10,7 +10,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
@@ -62,7 +62,7 @@ public class ConfigurationCommand extends BasicCommand{
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(!args.isEmpty()){
 			final var configuration = Settings.getSettings(args.pop());
@@ -125,7 +125,7 @@ public class ConfigurationCommand extends BasicCommand{
 	 *
 	 * @return The result that happened.
 	 */
-	private ActionResult processWithValue(final MessageReceivedEvent event, final Class<? extends Configuration> configuration, final LinkedList<String> args){
+	private ActionResult processWithValue(final GuildMessageReceivedEvent event, final Class<? extends Configuration> configuration, final LinkedList<String> args){
 		try{
 			final var configInstance = configuration.getConstructor(Guild.class).newInstance(event.getGuild());
 			if(configInstance.getAllowedActions().contains(getType())){

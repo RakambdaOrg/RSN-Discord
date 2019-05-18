@@ -2,7 +2,7 @@ package fr.mrcraftcod.gunterdiscord.commands.generic;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -37,7 +37,7 @@ public abstract class BasicCommand implements Command{
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull final MessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		if(!isAllowed(event.getMember())){
 			throw new NotAllowedException();
 		}

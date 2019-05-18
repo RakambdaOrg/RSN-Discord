@@ -18,10 +18,10 @@ import fr.mrcraftcod.gunterdiscord.commands.warn.NormalWarnCommand;
 import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -65,6 +65,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new TwitchCommandComposite(),
 			new LuxBusCommandComposite()
 	};
+	private final static String defaultPrefix = "g?";
 	
 	/**
 	 * Constructor.
@@ -79,15 +80,13 @@ public class CommandsMessageListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onMessageReceived(final MessageReceivedEvent event){
-		super.onMessageReceived(event);
+	public void onGuildMessageReceived(@NotNull final GuildMessageReceivedEvent event){
+		super.onGuildMessageReceived(event);
 		try{
 			if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
-				if(!Objects.equals(event.getChannelType(), ChannelType.PRIVATE) && !Objects.equals(event.getChannelType(), ChannelType.GROUP)){
-					Actions.deleteMessage(event.getMessage());
-				}
+				Actions.deleteMessage(event.getMessage());
 				final var args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
-				final var cmdText = args.pop().substring(new PrefixConfig(event.getGuild()).getObject("g?").length());
+				final var cmdText = args.pop().substring(new PrefixConfig(event.getGuild()).getObject(defaultPrefix).length());
 				final var command = getCommand(cmdText);
 				if(Objects.nonNull(command)){
 					if(Objects.equals(command.getScope(), -5) || Objects.equals(command.getScope(), event.getChannel().getType().getId())){
@@ -146,7 +145,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 	 * @return True if a command, false otherwise.
 	 */
 	private static boolean isCommand(final Guild guild, final String text){
-		return text.startsWith(new PrefixConfig(guild).getObject("g?"));
+		return text.startsWith(new PrefixConfig(guild).getObject(defaultPrefix));
 	}
 	
 	/**

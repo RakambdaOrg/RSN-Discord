@@ -3,7 +3,7 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 import fr.mrcraftcod.gunterdiscord.settings.configs.OnlyImagesConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -16,8 +16,8 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 @SuppressWarnings("WeakerAccess")
 public class OnlyImagesMessageListener extends ListenerAdapter{
 	@Override
-	public void onMessageReceived(final MessageReceivedEvent event){
-		super.onMessageReceived(event);
+	public void onGuildMessageReceived(final GuildMessageReceivedEvent event){
+		super.onGuildMessageReceived(event);
 		try{
 			if(new OnlyImagesConfig(event.getGuild()).contains(event.getMessage().getTextChannel()) && event.getMessage().getAttachments().size() < 1){
 				if(!Utilities.isTeam(event.getMember())){

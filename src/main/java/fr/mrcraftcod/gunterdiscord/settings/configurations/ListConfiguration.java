@@ -6,7 +6,7 @@ import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.slf4j.Logger;
@@ -85,7 +85,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	}
 	
 	@Override
-	public ConfigurationCommand.ActionResult handleChange(final MessageReceivedEvent event, final ConfigurationCommand.ChangeConfigType action, final LinkedList<String> args){
+	public ConfigurationCommand.ActionResult handleChange(final GuildMessageReceivedEvent event, final ConfigurationCommand.ChangeConfigType action, final LinkedList<String> args){
 		if(Objects.equals(action, ConfigurationCommand.ChangeConfigType.SHOW)){
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
@@ -135,7 +135,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @return The parser.
 	 */
-	protected abstract BiFunction<MessageReceivedEvent, String, String> getMessageParser();
+	protected abstract BiFunction<GuildMessageReceivedEvent, String, String> getMessageParser();
 	
 	/**
 	 * Get the JSON array.

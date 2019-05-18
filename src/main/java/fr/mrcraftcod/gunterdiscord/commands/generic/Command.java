@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,7 +69,7 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @throws Exception If something bad happened.
 	 */
-	CommandResult execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception;
+	CommandResult execute(GuildMessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception;
 	
 	@Override
 	default int compareTo(@NotNull final Command o){

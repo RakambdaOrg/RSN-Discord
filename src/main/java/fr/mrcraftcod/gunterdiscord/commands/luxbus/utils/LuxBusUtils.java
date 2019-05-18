@@ -64,7 +64,7 @@ public class LuxBusUtils{
 					final var departures = response.getJSONArray("Departure");
 					for(int i = 0; i < departures.length(); i++){
 						try{
-							final var obj = (LuxBusDeparture) new ObjectMapper().readerFor(LuxBusDeparture.class).readValue(departures.get(i).toString());
+							final var obj = (LuxBusDeparture) new ObjectMapper().readerFor(LuxBusDeparture.class).readValue(departures.getJSONObject(i).toString());
 							departuresList.add(obj);
 						}
 						catch(IOException e){
