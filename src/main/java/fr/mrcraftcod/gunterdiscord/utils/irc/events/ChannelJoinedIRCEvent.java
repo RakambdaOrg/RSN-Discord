@@ -9,7 +9,7 @@ import fr.mrcraftcod.gunterdiscord.utils.irc.IRCUser;
  * @since 2019-02-25
  */
 public class ChannelJoinedIRCEvent extends AbstractIRCEvent{
-	public ChannelJoinedIRCEvent(IRCUser user, String eventType, String channel){
+	public ChannelJoinedIRCEvent(final IRCUser user, final String eventType, final String channel){
 		super(user, eventType, channel);
 	}
 }

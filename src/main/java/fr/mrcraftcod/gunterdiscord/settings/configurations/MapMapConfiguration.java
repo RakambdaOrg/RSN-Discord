@@ -50,23 +50,17 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 			addValue(key);
 		}
 		else{
-			Settings.mapMapValue(guild, this, key, value, insideValue);
+			Settings.mapMapValue(this.guild, this, key, value, insideValue);
 		}
 	}
 	
 	/**
-	 * Delete a value inside a key.
+	 * Add an empty value to the map list.
 	 *
-	 * @param key   The key.
-	 * @param value The value.
+	 * @param key The key to add into.
 	 */
-	public void deleteKeyValue(final K key, final V value){
-		if(Objects.isNull(value)){
-			deleteKey(key);
-		}
-		else{
-			Settings.deleteKey(guild, this, key, value);
-		}
+	public void addValue(final K key){
+		Settings.mapMapValue(this.guild, this, key);
 	}
 	
 	/**
@@ -91,6 +85,30 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 	protected abstract Function<String, W> getValueParser();
 	
 	/**
+	 * Delete a value inside a key.
+	 *
+	 * @param key   The key.
+	 * @param value The value.
+	 */
+	public void deleteKeyValue(final K key, final V value){
+		if(Objects.isNull(value)){
+			deleteKey(key);
+		}
+		else{
+			Settings.deleteKey(this.guild, this, key, value);
+		}
+	}
+	
+	/**
+	 * Delete the key.
+	 *
+	 * @param key The key.
+	 */
+	public void deleteKey(final K key){
+		Settings.deleteKey(this.guild, this, key);
+	}
+	
+	/**
 	 * Get the map of this configuration.
 	 *
 	 * @return The map.
@@ -101,27 +119,18 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 		final Map<K, Map<V, W>> elements = new HashMap<>();
 		final var map = getObjectMap();
 		if(Objects.isNull(map)){
-			Settings.resetMap(guild, this);
+			Settings.resetMap(this.guild, this);
 		}
 		else{
 			for(final var key : map.keySet()){
 				final var kKey = getFirstKeyParser().apply(key);
 				final var value = map.optJSONObject(key);
 				if(Objects.nonNull(value)){
-					elements.put(kKey, value.keySet().stream().collect(Collectors.toMap(k -> getSecondKeyParser().apply(k), k -> getValueParser().apply(value.get(k).toString()))));
+					elements.put(kKey, value.keySet().stream().collect(Collectors.toMap(key2 -> getSecondKeyParser().apply(key2), key2 -> getValueParser().apply(value.get(key2).toString()))));
 				}
 			}
 		}
 		return elements;
-	}
-	
-	/**
-	 * Add an empty value to the map list.
-	 *
-	 * @param key The key to add into.
-	 */
-	public void addValue(final K key){
-		Settings.mapMapValue(guild, this, key);
 	}
 	
 	/**
@@ -135,16 +144,7 @@ public abstract class MapMapConfiguration<K, V, W> extends Configuration{
 		if(!Objects.equals(getType(), ConfigType.MAP)){
 			throw new IllegalArgumentException("Not a map config");
 		}
-		return Settings.getJSONObject(guild, getName());
-	}
-	
-	/**
-	 * Delete the key.
-	 *
-	 * @param key The key.
-	 */
-	public void deleteKey(final K key){
-		Settings.deleteKey(guild, this, key);
+		return Settings.getJSONObject(this.guild, getName());
 	}
 	
 	@Override

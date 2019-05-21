@@ -14,7 +14,7 @@ interface AudioTrackUserFields<T>{
 		return (T) value;
 	}
 	
-	default Object valueForField(final T value){
+	default T valueForField(final T value){
 		return value;
 	}
 }

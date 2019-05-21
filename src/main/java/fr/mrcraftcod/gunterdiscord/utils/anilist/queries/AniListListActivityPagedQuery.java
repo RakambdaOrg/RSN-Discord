@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.queries;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.activity.list.AniListListActivity;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -18,15 +19,16 @@ public class AniListListActivityPagedQuery implements AniListPagedQuery<AniListL
 	
 	public AniListListActivityPagedQuery(final int userId, final int date){
 		this.variables = new JSONObject();
-		variables.put("userID", userId);
-		variables.put("page", 1);
-		variables.put("perPage", 50);
-		variables.put("date", date);
+		this.variables.put("userID", userId);
+		this.variables.put("page", 1);
+		this.variables.put("perPage", 50);
+		this.variables.put("date", date);
 	}
 	
 	@Override
-	public int getNextPage(){
-		return ++nextPage;
+	public JSONObject getParameters(final int page){
+		this.variables.put("page", page);
+		return this.variables;
 	}
 	
 	@Override
@@ -35,9 +37,8 @@ public class AniListListActivityPagedQuery implements AniListPagedQuery<AniListL
 	}
 	
 	@Override
-	public JSONObject getParameters(final int page){
-		variables.put("page", page);
-		return this.variables;
+	public int getNextPage(){
+		return ++this.nextPage;
 	}
 	
 	@Override
@@ -50,6 +51,6 @@ public class AniListListActivityPagedQuery implements AniListPagedQuery<AniListL
 	}
 	
 	private AniListListActivity buildChange(final JSONObject change) throws Exception{
-		return AniListListActivity.buildFromJSON(change);
+		return new ObjectMapper().readerFor(AniListListActivity.class).readValue(change.toString());
 	}
 }

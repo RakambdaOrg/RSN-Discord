@@ -55,7 +55,7 @@ public class LuxBusGetStopCommand extends BasicCommand{
 				askStop(event, stops);
 			}
 		}
-		catch(Exception e){
+		catch(final Exception e){
 			LOGGER.error("", e);
 		}
 		return CommandResult.SUCCESS;
@@ -66,7 +66,7 @@ public class LuxBusGetStopCommand extends BasicCommand{
 		super.addHelp(guild, builder);
 	}
 	
-	private void askStop(GuildMessageReceivedEvent event, List<LuxBusStop> stops){
+	private void askStop(final GuildMessageReceivedEvent event, final List<LuxBusStop> stops){
 		if(stops.size() < 2){
 			askLine(event, stops.get(0));
 		}
@@ -75,7 +75,7 @@ public class LuxBusGetStopCommand extends BasicCommand{
 		}
 	}
 	
-	public static void askLine(GuildMessageReceivedEvent event, LuxBusStop stop){
+	public static void askLine(final GuildMessageReceivedEvent event, final LuxBusStop stop){
 		try{
 			final var departures = LuxBusUtils.getDepartures(stop);
 			if(departures.stream().map(d -> d.getProduct().getLine()).distinct().count() < 2){
@@ -96,7 +96,7 @@ public class LuxBusGetStopCommand extends BasicCommand{
 		}
 	}
 	
-	public static void askDirection(GuildMessageReceivedEvent event, List<LuxBusDeparture> filtered){
+	public static void askDirection(final GuildMessageReceivedEvent event, final List<LuxBusDeparture> filtered){
 		final var directionDepartures = filtered.stream().collect(Collectors.groupingBy(LuxBusDeparture::getDirection));
 		final var directionDeparturesNumbered = new HashMap<Integer, List<LuxBusDeparture>>();
 		var i = 0;
@@ -118,7 +118,7 @@ public class LuxBusGetStopCommand extends BasicCommand{
 	
 	@Override
 	public String getName(){
-		return "Request busses at a stop";
+		return "Request buses at a stop";
 	}
 	
 	@Override
@@ -128,7 +128,7 @@ public class LuxBusGetStopCommand extends BasicCommand{
 	
 	@Override
 	public String getDescription(){
-		return "Get the next busses at a stop";
+		return "Get the next buses at a stop";
 	}
 	
 	@Override

@@ -37,7 +37,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-04-09
  */
 public class CommandsMessageListener extends ListenerAdapter{
-	public static final Command[] commands = new Command[]{
+	public static final Command[] commands = {
 			new PhotoCommandComposite(),
 			new QuizCommandComposite(),
 			new ReportCommand(),
@@ -72,8 +72,8 @@ public class CommandsMessageListener extends ListenerAdapter{
 	 */
 	public CommandsMessageListener(){
 		final var counts = new HashMap<String, Integer>();
-		Arrays.asList(commands).forEach(c -> c.getCommand().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
-		final var clash = counts.keySet().stream().filter(k -> counts.get(k) > 1).collect(Collectors.joining(", "));
+		Arrays.asList(commands).forEach(command -> command.getCommand().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
+		final var clash = counts.keySet().stream().filter(key -> counts.get(key) > 1).collect(Collectors.joining(", "));
 		if(Objects.nonNull(clash) && !clash.isEmpty()){
 			getLogger(null).error("Command clash: {}", clash);
 		}

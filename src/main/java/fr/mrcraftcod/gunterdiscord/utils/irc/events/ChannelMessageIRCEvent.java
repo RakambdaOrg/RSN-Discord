@@ -11,12 +11,12 @@ import fr.mrcraftcod.gunterdiscord.utils.irc.IRCUser;
 public class ChannelMessageIRCEvent extends AbstractIRCEvent{
 	private final String message;
 	
-	public ChannelMessageIRCEvent(IRCUser user, String eventType, String channel, String message){
+	public ChannelMessageIRCEvent(final IRCUser user, final String eventType, final String channel, final String message){
 		super(user, eventType, channel);
 		this.message = message;
 	}
 	
 	public String getMessage(){
-		return message;
+		return this.message;
 	}
 }

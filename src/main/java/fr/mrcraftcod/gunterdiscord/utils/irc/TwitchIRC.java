@@ -9,25 +9,24 @@ import java.util.Objects;
 
 public class TwitchIRC{
 	private static final Logger LOGGER = LoggerFactory.getLogger(TwitchIRC.class);
-	@SuppressWarnings("SpellCheckingInspection")
 	private static final String NICKNAME = "raksrinana";
 	private static IRCClient CLIENT = null;
 	
-	public static void connect(Guild guild, String user) throws IOException, NoValueDefinedException{
+	public static void connect(final Guild guild, final String user) throws IOException, NoValueDefinedException{
 		if(Objects.isNull(CLIENT)){
 			CLIENT = new IRCClient("irc.chat.twitch.tv", 6667);
 			CLIENT.setSecureKeyPassword(String.format("oauth:%s", System.getProperty("TWITCH_TOKEN")));
 			CLIENT.connect();
 			CLIENT.setNick(NICKNAME);
 		}
-		String channel = String.format("#%s", user.toLowerCase());
+		final var channel = String.format("#%s", user.toLowerCase());
 		if(CLIENT.getJoinedChannels().stream().noneMatch(joinedChannel -> Objects.equals(joinedChannel, channel))){
 			try{
 				final var listener = new TwitchIRCListener(guild, user, channel);
 				CLIENT.addEventListener(listener);
 				CLIENT.joinChannel(channel);
 			}
-			catch(NoValueDefinedException e){
+			catch(final NoValueDefinedException e){
 				if(CLIENT.getJoinedChannels().isEmpty()){
 					CLIENT.close();
 				}
@@ -36,13 +35,13 @@ public class TwitchIRC{
 		}
 	}
 	
-	public static void disconnect(Guild guild, String user){
+	public static void disconnect(final Guild guild, final String user){
 		disconnect(guild, user, true);
 	}
 	
-	public static void disconnect(Guild guild, String user, boolean removeListener){
+	static void disconnect(final Guild guild, final String user, final boolean removeListener){
 		if(Objects.nonNull(CLIENT)){
-			String channel = String.format("#%s", user.toLowerCase());
+			final var channel = String.format("#%s", user.toLowerCase());
 			CLIENT.leaveChannel(channel);
 			if(removeListener){
 				CLIENT.getListeners().removeIf(obj -> obj instanceof TwitchIRCListener && Objects.equals(obj.getUser(), user) && Objects.equals(obj.getGuild(), guild));
@@ -58,7 +57,7 @@ public class TwitchIRC{
 			try{
 				CLIENT.close();
 			}
-			catch(IOException e){
+			catch(final IOException e){
 				LOGGER.error("Error closing IRC connection", e);
 			}
 			CLIENT = null;

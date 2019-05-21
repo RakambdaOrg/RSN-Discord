@@ -55,7 +55,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 			LOGGER.warn("Adding a null value inside a list ({}), skipping", getName());
 		}
 		else{
-			Settings.addValue(guild, this, value);
+			Settings.addValue(this.guild, this, value);
 		}
 	}
 	
@@ -81,7 +81,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 * @param value The value to remove.
 	 */
 	private void removeRawValue(final String value){
-		Settings.removeValue(guild, this, value);
+		Settings.removeValue(this.guild, this, value);
 	}
 	
 	@Override
@@ -120,7 +120,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 		final List<T> elements = new LinkedList<>();
 		final var array = getObjectList();
 		if(Objects.isNull(array)){
-			Settings.resetList(guild, this);
+			Settings.resetList(this.guild, this);
 		}
 		else{
 			for(var i = 0; i < array.length(); i++){
@@ -149,10 +149,10 @@ public abstract class ListConfiguration<T> extends Configuration{
 			throw new IllegalArgumentException("Not a list config");
 		}
 		try{
-			return Settings.getArray(guild, getName());
+			return Settings.getArray(this.guild, getName());
 		}
 		catch(final NullPointerException e){
-			getLogger(guild).error("NullPointer", e);
+			getLogger(this.guild).error("NullPointer", e);
 		}
 		return null;
 	}

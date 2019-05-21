@@ -39,6 +39,6 @@ public abstract class MultipleRoleConfiguration extends ListConfiguration<Role>{
 	
 	@Override
 	protected Function<String, Role> getConfigParser(){
-		return guild::getRoleById;
+		return this.guild::getRoleById;
 	}
 }

@@ -80,11 +80,11 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 				notifications.get(notification).add(user);
 			}
 		}
-		notifications.entrySet().stream().sorted(Comparator.comparing(e -> e.getKey().getDate())).forEachOrdered(e -> channels.forEach(c -> {
-			final var mentions = e.getValue().stream().filter(u -> sendToChannel(c, u)).map(User::getAsMention).collect(Collectors.toList());
+		notifications.entrySet().stream().sorted(Comparator.comparing(e -> e.getKey().getDate())).forEachOrdered(e -> channels.forEach(channel -> {
+			final var mentions = e.getValue().stream().filter(u -> sendToChannel(channel, u)).map(User::getAsMention).collect(Collectors.toList());
 			if(!mentions.isEmpty()){
-				Actions.sendMessage(c, String.join("\n", mentions));
-				Actions.sendMessage(c, buildMessage(null, e.getKey()));
+				Actions.sendMessage(channel, String.join("\n", mentions));
+				Actions.sendMessage(channel, buildMessage(null, e.getKey()));
 			}
 		}));
 	}

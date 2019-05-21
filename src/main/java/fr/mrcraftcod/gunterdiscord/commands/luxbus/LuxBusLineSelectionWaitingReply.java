@@ -26,7 +26,7 @@ public class LuxBusLineSelectionWaitingReply implements WaitingUserReply{
 	private final GuildMessageReceivedEvent event;
 	private boolean handled;
 	
-	public LuxBusLineSelectionWaitingReply(GuildMessageReceivedEvent event, List<LuxBusDeparture> departures, Message infoMessage){
+	public LuxBusLineSelectionWaitingReply(final GuildMessageReceivedEvent event, final List<LuxBusDeparture> departures, final Message infoMessage){
 		this.event = event;
 		this.handled = false;
 		this.maxTime = System.currentTimeMillis() + 30000;
@@ -45,17 +45,7 @@ public class LuxBusLineSelectionWaitingReply implements WaitingUserReply{
 	}
 	
 	@Override
-	public User getUser(){
-		return event.getAuthor();
-	}
-	
-	@Override
-	public TextChannel getChannel(){
-		return event.getChannel();
-	}
-	
-	@Override
-	public boolean execute(GuildMessageReceivedEvent event, LinkedList<String> args){
+	public boolean execute(final GuildMessageReceivedEvent event, final LinkedList<String> args){
 		if(args.isEmpty()){
 			Actions.reply(event, "Invalid selection");
 		}
@@ -66,7 +56,7 @@ public class LuxBusLineSelectionWaitingReply implements WaitingUserReply{
 				Actions.reply(event, "Invalid selection");
 			}
 			else{
-				Actions.deleteMessage(infoMessage);
+				Actions.deleteMessage(this.infoMessage);
 				Actions.deleteMessage(event.getMessage());
 				this.handled = true;
 				if(filtered.stream().map(LuxBusDeparture::getDirection).distinct().count() < 2){
@@ -82,9 +72,19 @@ public class LuxBusLineSelectionWaitingReply implements WaitingUserReply{
 	
 	@Override
 	public boolean onExpire(){
-		Actions.reply(event, "%s you didn't reply in time", this.getUser().getAsMention());
-		Actions.deleteMessage(infoMessage);
+		Actions.reply(this.event, "%s you didn't reply in time", this.getUser().getAsMention());
+		Actions.deleteMessage(this.infoMessage);
 		this.handled = true;
 		return this.isHandled();
+	}
+	
+	@Override
+	public TextChannel getChannel(){
+		return this.event.getChannel();
+	}
+	
+	@Override
+	public User getUser(){
+		return this.event.getAuthor();
 	}
 }

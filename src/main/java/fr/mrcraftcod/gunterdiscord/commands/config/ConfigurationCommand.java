@@ -167,7 +167,7 @@ public class ConfigurationCommand extends BasicCommand{
 	
 	@Override
 	public List<String> getCommand(){
-		return commands;
+		return this.commands;
 	}
 	
 	@Override
@@ -186,6 +186,6 @@ public class ConfigurationCommand extends BasicCommand{
 	 * @return The type.
 	 */
 	private ChangeConfigType getType(){
-		return type;
+		return this.type;
 	}
 }

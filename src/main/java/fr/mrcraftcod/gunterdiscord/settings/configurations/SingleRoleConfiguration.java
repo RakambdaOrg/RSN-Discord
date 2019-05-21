@@ -34,7 +34,7 @@ public abstract class SingleRoleConfiguration extends ValueConfiguration<Role>{
 	
 	@Override
 	protected Function<String, Role> getConfigParser(){
-		return guild::getRoleById;
+		return this.guild::getRoleById;
 	}
 	
 	@Override

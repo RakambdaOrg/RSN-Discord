@@ -26,7 +26,7 @@ public abstract class CommandComposite extends BasicCommand{
 	 */
 	protected CommandComposite(){
 		super();
-		subCommands = new LinkedHashSet<>();
+		this.subCommands = new LinkedHashSet<>();
 	}
 	
 	/**
@@ -36,7 +36,7 @@ public abstract class CommandComposite extends BasicCommand{
 	 */
 	protected CommandComposite(final Command parent){
 		super(parent);
-		subCommands = new LinkedHashSet<>();
+		this.subCommands = new LinkedHashSet<>();
 	}
 	
 	/**
@@ -45,7 +45,7 @@ public abstract class CommandComposite extends BasicCommand{
 	 * @param command The command to add.
 	 */
 	protected void addSubCommand(final Command command){
-		subCommands.add(command);
+		this.subCommands.add(command);
 	}
 	
 	/**
@@ -56,12 +56,12 @@ public abstract class CommandComposite extends BasicCommand{
 	 * @return The command or null if not found.
 	 */
 	public Command getSubCommand(@NotNull final String command){
-		return subCommands.stream().filter(c -> c.getCommand().contains(command)).findAny().orElse(null);
+		return this.subCommands.stream().filter(c -> c.getCommand().contains(command)).findAny().orElse(null);
 	}
 	
 	@Override
 	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
-		builder.addField("Sub-command", subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false);
+		builder.addField("Sub-command", this.subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false);
 	}
 	
 	@Override
@@ -71,15 +71,15 @@ public abstract class CommandComposite extends BasicCommand{
 		}
 		final var switchStr = args.poll();
 		if(Objects.isNull(switchStr)){
-			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.RED, "Error while executing command").addField("Command", getName(), false).addField("Reason", getCommandUsage(), false).addField("Arguments available", subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false).build());
+			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.RED, "Error while executing command").addField("Command", getName(), false).addField("Reason", getCommandUsage(), false).addField("Arguments available", this.subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false).build());
 		}
 		else{
-			final var toExecute = subCommands.stream().filter(c -> c.getCommand().contains(switchStr.toLowerCase())).findFirst();
+			final var toExecute = this.subCommands.stream().filter(c -> c.getCommand().contains(switchStr.toLowerCase())).findFirst();
 			if(toExecute.isPresent()){
 				toExecute.get().execute(event, args);
 			}
 			else{
-				Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Error while executing command").addField("Command", getName(), false).addField("Reason", "Invalid argument", false).addField("Arguments available", subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false).build());
+				Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Error while executing command").addField("Command", getName(), false).addField("Reason", "Invalid argument", false).addField("Arguments available", this.subCommands.stream().flatMap(c -> c.getCommand().stream()).collect(Collectors.joining(", ")), false).build());
 			}
 		}
 		return CommandResult.SUCCESS;

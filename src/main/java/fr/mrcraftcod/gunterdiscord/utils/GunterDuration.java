@@ -17,22 +17,22 @@ public class GunterDuration implements TemporalAmount, Comparable<GunterDuration
 		static final List<TemporalUnit> UNITS = List.of(SECONDS, NANOS, DAYS);
 	}
 	
-	public GunterDuration(Duration duration){
+	public GunterDuration(final Duration duration){
 		this.duration = duration;
 	}
 	
 	@Override
-	public int compareTo(@NotNull GunterDuration o){
+	public int compareTo(@NotNull final GunterDuration o){
 		return this.duration.compareTo(o.duration);
 	}
 	
 	@Override
-	public long get(TemporalUnit unit){
+	public long get(final TemporalUnit unit){
 		if(Objects.equals(unit, SECONDS) || Objects.equals(unit, NANOS)){
-			return duration.get(unit);
+			return this.duration.get(unit);
 		}
 		else if(Objects.equals(unit, DAYS)){
-			return duration.getSeconds() / unit.getDuration().getSeconds();
+			return this.duration.getSeconds() / unit.getDuration().getSeconds();
 		}
 		else{
 			throw new UnsupportedTemporalTypeException("Unsupported unit: " + unit);
@@ -45,12 +45,12 @@ public class GunterDuration implements TemporalAmount, Comparable<GunterDuration
 	}
 	
 	@Override
-	public Temporal addTo(Temporal temporal){
-		return duration.addTo(temporal);
+	public Temporal addTo(final Temporal temporal){
+		return this.duration.addTo(temporal);
 	}
 	
 	@Override
-	public Temporal subtractFrom(Temporal temporal){
-		return duration.subtractFrom(temporal);
+	public Temporal subtractFrom(final Temporal temporal){
+		return this.duration.subtractFrom(temporal);
 	}
 }

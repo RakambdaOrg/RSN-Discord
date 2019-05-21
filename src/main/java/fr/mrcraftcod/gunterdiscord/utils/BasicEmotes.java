@@ -54,19 +54,19 @@ public enum BasicEmotes{A("\uD83C\uDDE6", "a"), B("\uD83C\uDDE7", "b"), C("\uD83
 	}
 	
 	/**
-	 * Get the value of this emote.
-	 *
-	 * @return The emote's value.
-	 */
-	public String getValue(){
-		return name;
-	}
-	
-	/**
 	 * Get the other representations.
 	 *
 	 * @return The other representations.
 	 */
 	private String[] getOthers(){
-		return others;
+		return this.others;
+	}
+	
+	/**
+	 * Get the value of this emote.
+	 *
+	 * @return The emote's value.
+	 */
+	public String getValue(){
+		return this.name;
 	}}

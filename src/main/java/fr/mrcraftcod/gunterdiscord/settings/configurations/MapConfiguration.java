@@ -43,7 +43,7 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 			return getAsMap().get(key);
 		}
 		catch(final Exception e){
-			getLogger(guild).error("Can't get value {} with key {}", getName(), key, e);
+			getLogger(this.guild).error("Can't get value {} with key {}", getName(), key, e);
 		}
 		return null;
 	}
@@ -89,7 +89,7 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 		final Map<K, V> elements = new HashMap<>();
 		final var map = getObjectMap();
 		if(Objects.isNull(map)){
-			Settings.resetMap(guild, this);
+			Settings.resetMap(this.guild, this);
 		}
 		else{
 			for(final var key : map.keySet()){
@@ -125,7 +125,7 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 		if(!Objects.equals(getType(), ConfigType.MAP)){
 			throw new IllegalArgumentException("Not a map config");
 		}
-		return Settings.getJSONObject(guild, getName());
+		return Settings.getJSONObject(this.guild, getName());
 	}
 	
 	@Override
@@ -145,7 +145,7 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 	 * @param value The value to set at the key.
 	 */
 	public void addValue(final K key, final V value){
-		Settings.mapValue(guild, this, key, value);
+		Settings.mapValue(this.guild, this, key, value);
 	}
 	
 	/**
@@ -154,6 +154,6 @@ public abstract class MapConfiguration<K, V> extends Configuration{
 	 * @param key The key.
 	 */
 	public void deleteKey(final K key){
-		Settings.deleteKey(guild, this, key);
+		Settings.deleteKey(this.guild, this, key);
 	}
 }

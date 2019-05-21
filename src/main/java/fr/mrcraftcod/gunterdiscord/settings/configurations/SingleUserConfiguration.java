@@ -27,20 +27,6 @@ public abstract class SingleUserConfiguration extends ValueConfiguration<Member>
 	/**
 	 * Tells if this config represents the given member.
 	 *
-	 * @param member The member.
-	 *
-	 * @return True if the same members, false otherwise.
-	 */
-	public boolean isMember(final Member member){
-		if(Objects.isNull(member)){
-			return false;
-		}
-		return isMember(member.getIdLong());
-	}
-	
-	/**
-	 * Tells if this config represents the given member.
-	 *
 	 * @param ID The ID of the member.
 	 *
 	 * @return True if the same members, false otherwise.
@@ -65,7 +51,7 @@ public abstract class SingleUserConfiguration extends ValueConfiguration<Member>
 	
 	@Override
 	protected Function<String, Member> getConfigParser(){
-		return guild::getMemberById;
+		return this.guild::getMemberById;
 	}
 	
 	@Override

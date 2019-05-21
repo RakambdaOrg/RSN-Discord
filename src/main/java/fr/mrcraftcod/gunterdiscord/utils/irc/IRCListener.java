@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.entities.Guild;
  * @author Thomas Couchoud
  * @since 2019-02-25
  */
-@SuppressWarnings("WeakerAccess")
 public interface IRCListener{
 	void onIRCEvent(IRCEvent event);
 	

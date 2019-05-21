@@ -65,7 +65,7 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration<Text
 	
 	@Override
 	protected Function<String, TextChannel> getConfigParser(){
-		return guild::getTextChannelById;
+		return this.guild::getTextChannelById;
 	}
 	
 	@Override

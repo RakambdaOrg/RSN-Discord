@@ -30,7 +30,7 @@ public class RemoveRolesScheduledRunner implements ScheduledRunner{
 	public void run(){
 		getLogger(null).info("Starting roles runner");
 		final var currentTime = System.currentTimeMillis();
-		for(final var guild : jda.getGuilds()){
+		for(final var guild : this.jda.getGuilds()){
 			final var config = new RemoveRoleConfig(guild);
 			getLogger(guild).debug("Processing guild {}", guild);
 			final var guildConfig = config.getAsMap();

@@ -25,7 +25,7 @@ public class LuxBusCommandComposite extends CommandComposite{
 	
 	@Override
 	public String getDescription(){
-		return "Interact with the busses command";
+		return "Interact with the buses command";
 	}
 	
 	@Override

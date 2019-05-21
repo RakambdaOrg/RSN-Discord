@@ -1,16 +1,17 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.activity.list;
 
-import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import com.fasterxml.jackson.annotation.*;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListDatedObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
-import fr.mrcraftcod.gunterdiscord.utils.anilist.JSONFiller;
+import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListAnimeMedia;
+import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMangaMedia;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMedia;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 import java.awt.Color;
+import java.net.URL;
 import java.util.Date;
 import java.util.Objects;
 
@@ -21,33 +22,29 @@ import java.util.Objects;
  * @since 2018-10-10
  */
 @SuppressWarnings("ALL")
-public abstract class AniListListActivity implements JSONFiller, AniListDatedObject{
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type")
+@JsonSubTypes(value = {
+		@JsonSubTypes.Type(value = AniListAnimeMedia.class, name = "ANIME_LIST"),
+		@JsonSubTypes.Type(value = AniListMangaMedia.class, name = "MANGA_LIST")
+})
+public abstract class AniListListActivity implements AniListDatedObject{
 	private static final String QUERY = "ListActivity{\n" + "id\n" + "userId\n" + "type\n" + "createdAt\n" + "progress\n" + "siteUrl\n" + AniListMedia.getQuery() + "}";
 	
-	private final AniListActivityType type;
 	private Date createdAt;
-	private String url;
+	@JsonProperty("siteUrl")
+	private URL url;
+	@JsonProperty("progress")
 	private String progress;
+	@JsonProperty("media")
 	private AniListMedia media;
+	@JsonProperty("id")
 	private int id;
 	
-	protected AniListListActivity(final AniListActivityType type){
-		this.type = type;
-	}
-	
-	public static AniListListActivity buildFromJSON(final JSONObject json) throws Exception{
-		final var change = AniListActivityType.valueOf(json.getString("type")).getInstance();
-		change.fromJSON(json);
-		return change;
-	}
-	
-	@Override
-	public void fromJSON(final JSONObject json) throws Exception{
-		this.id = json.getInt("id");
-		this.createdAt = new Date(json.optInt("createdAt") * 1000L);
-		this.url = json.getString("siteUrl");
-		this.progress = Utilities.getJSONMaybe(json, String.class, "progress");
-		this.media = AniListMedia.buildFromJSON(json.getJSONObject("media"));
+	@JsonCreator
+	public void fromJSON(@JsonProperty("createdAt") final long createdAt) throws Exception{
+		this.createdAt = new Date(createdAt * 1000L);
 	}
 	
 	@Override
@@ -96,12 +93,8 @@ public abstract class AniListListActivity implements JSONFiller, AniListDatedObj
 		return createdAt;
 	}
 	
-	public AniListActivityType getType(){
-		return type;
-	}
-	
 	@Override
-	public String getUrl(){
+	public URL getUrl(){
 		return url;
 	}
 	

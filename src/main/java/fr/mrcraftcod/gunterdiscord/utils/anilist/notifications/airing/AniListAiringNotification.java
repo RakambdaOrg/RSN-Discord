@@ -1,15 +1,18 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.airing;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListDatedObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
-import fr.mrcraftcod.gunterdiscord.utils.anilist.JSONFiller;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMedia;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.AniListNotificationType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 import java.awt.Color;
+import java.net.URL;
 import java.util.Date;
 import java.util.Objects;
 
@@ -20,30 +23,27 @@ import java.util.Objects;
  * @since 2018-10-11
  */
 @SuppressWarnings("WeakerAccess")
-public class AniListAiringNotification implements JSONFiller, AniListDatedObject{
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class AniListAiringNotification implements AniListDatedObject{
 	private static final String QUERY = "AiringNotification {\n" + "id\n" + "type\n" + "episode\n" + "createdAt\n" + AniListMedia.getQuery() + "}\n";
+	@JsonProperty("type")
 	private final AniListNotificationType type;
+	@JsonProperty("episode")
 	private int episode;
 	private Date createdAt;
+	@JsonProperty("media")
 	private AniListMedia media;
+	@JsonProperty("id")
 	private int id;
 	
 	public AniListAiringNotification(){
 		this.type = AniListNotificationType.AIRING;
 	}
 	
-	public static AniListAiringNotification buildFromJSON(final JSONObject json) throws Exception{
-		final var notification = new AniListAiringNotification();
-		notification.fromJSON(json);
-		return notification;
-	}
-	
-	@Override
-	public void fromJSON(final JSONObject json) throws Exception{
-		this.id = json.getInt("id");
-		this.episode = json.getInt("episode");
-		this.createdAt = new Date(json.optInt("createdAt") * 1000L);
-		this.media = AniListMedia.buildFromJSON(json.getJSONObject("media"));
+	@JsonCreator
+	public void fromJSON(@JsonProperty("createdAt") final long createdAt){
+		this.createdAt = new Date(createdAt * 1000L);
 	}
 	
 	@Override
@@ -69,7 +69,7 @@ public class AniListAiringNotification implements JSONFiller, AniListDatedObject
 	public void fillEmbed(final EmbedBuilder builder){
 		builder.setTimestamp(getDate().toInstant());
 		builder.setColor(Color.GREEN);
-		builder.setTitle("New release", getMedia().getUrl());
+		builder.setTitle("New release", getMedia().getUrl().toString());
 		builder.addField("Episode", "" + getEpisode(), true);
 		
 		builder.addBlankField(false);
@@ -79,11 +79,11 @@ public class AniListAiringNotification implements JSONFiller, AniListDatedObject
 	
 	@Override
 	public Date getDate(){
-		return createdAt;
+		return this.createdAt;
 	}
 	
 	public int getEpisode(){
-		return episode;
+		return this.episode;
 	}
 	
 	private AniListMedia getMedia(){
@@ -91,7 +91,7 @@ public class AniListAiringNotification implements JSONFiller, AniListDatedObject
 	}
 	
 	@Override
-	public String getUrl(){
+	public URL getUrl(){
 		return null;
 	}
 	
@@ -100,7 +100,7 @@ public class AniListAiringNotification implements JSONFiller, AniListDatedObject
 	}
 	
 	public AniListNotificationType getType(){
-		return type;
+		return this.type;
 	}
 	
 	@Override

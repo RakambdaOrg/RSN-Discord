@@ -31,54 +31,59 @@ class ConsoleHandler extends Thread{
 	public void run(){
 		final var quitList = List.of("stop", "quit", "exit");
 		try(final var sc = new Scanner(System.in)){
-			while(!stop){
-				if(!sc.hasNext()){
-					try{
-						Thread.sleep(10000);
+			while(!this.stop){
+				try{
+					if(!sc.hasNext()){
+						try{
+							Thread.sleep(10000);
+						}
+						catch(final InterruptedException ignored){
+						}
+						continue;
 					}
-					catch(final InterruptedException ignored){
-					}
-					continue;
-				}
-				final var line = sc.nextLine();
-				final var args = new LinkedList<>(Arrays.asList(line.split(" ")));
-				if(args.isEmpty()){
-					continue;
-				}
-				final var arg1 = args.poll();
-				if(quitList.contains(arg1)){
-					Main.close();
-					if(Objects.nonNull(jda)){
-						jda.shutdownNow();
-					}
-				}
-				else if(arg1.equalsIgnoreCase("leave")){
+					final var line = sc.nextLine();
+					final var args = new LinkedList<>(Arrays.asList(line.split(" ")));
 					if(args.isEmpty()){
-						getLogger(null).warn("Please pass the guild as an argument");
+						continue;
 					}
-					else{
-						final var guild = jda.getGuildById(args.poll());
-						guild.leave().queue();
-						getLogger(null).info("Guild {} left", guild);
+					final var arg1 = args.poll();
+					if(quitList.contains(arg1)){
+						Main.close();
+						if(Objects.nonNull(this.jda)){
+							this.jda.shutdownNow();
+						}
+					}
+					else if(arg1.equalsIgnoreCase("leave")){
+						if(args.isEmpty()){
+							getLogger(null).warn("Please pass the guild as an argument");
+						}
+						else{
+							final var guild = this.jda.getGuildById(args.poll());
+							Objects.requireNonNull(guild).leave().queue();
+							getLogger(null).info("Guild {} left", guild);
+						}
+					}
+					else if(arg1.equalsIgnoreCase("gid")){
+						if(args.isEmpty()){
+							getLogger(null).warn("Please pass the guild as an argument");
+						}
+						else{
+							final var guilds = this.jda.getGuildsByName(args.poll(), true);
+							getLogger(null).info("Guilds {} matcher", guilds);
+						}
+					}
+					else if(arg1.equalsIgnoreCase("listMembers")){
+						if(args.isEmpty()){
+							getLogger(null).warn("Please pass the guild as an argument");
+						}
+						else{
+							final var guild = this.jda.getGuildById(args.poll());
+							getLogger(null).info("Members of {}: {}", guild, Objects.requireNonNull(guild).getMembers());
+						}
 					}
 				}
-				else if(arg1.equalsIgnoreCase("gid")){
-					if(args.isEmpty()){
-						getLogger(null).warn("Please pass the guild as an argument");
-					}
-					else{
-						final var guilds = jda.getGuildsByName(args.poll(), true);
-						getLogger(null).info("Guilds {} matcher", guilds);
-					}
-				}
-				else if(arg1.equalsIgnoreCase("listMembers")){
-					if(args.isEmpty()){
-						getLogger(null).warn("Please pass the guild as an argument");
-					}
-					else{
-						final var guild = jda.getGuildById(args.poll());
-						getLogger(null).info("Members of {}: {}", guild, guild.getMembers());
-					}
+				catch(final Exception e){
+					getLogger(null).warn("Error executing console command", e);
 				}
 			}
 		}

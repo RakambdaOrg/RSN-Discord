@@ -41,7 +41,6 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 public class Main{
 	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
-	private static final String SETTINGS_NAME = "settings.json";
 	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 	private static JDA jda;
 	private static ConsoleHandler consoleHandler;
@@ -68,7 +67,7 @@ public class Main{
 			try(final var is = new FileInputStream(parameters.getConfigurationFile())){
 				prop.load(is);
 			}
-			catch(IOException e){
+			catch(final IOException e){
 				LOGGER.warn("Failed to read file {}", parameters.getConfigurationFile());
 			}
 			prop.forEach((key, value) -> System.setProperty(key.toString(), value.toString()));

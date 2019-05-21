@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.queries;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.airing.AniListAiringNotification;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -24,14 +25,15 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 	public AniListNotificationsPagedQuery(final int userId, final int date){
 		this.date = new Date(date * 1000L);
 		this.variables = new JSONObject();
-		variables.put("userID", userId);
-		variables.put("page", 1);
-		variables.put("perPage", 50);
+		this.variables.put("userID", userId);
+		this.variables.put("page", 1);
+		this.variables.put("perPage", 50);
 	}
 	
 	@Override
-	public int getNextPage(){
-		return ++nextPage;
+	public JSONObject getParameters(final int page){
+		this.variables.put("page", page);
+		return this.variables;
 	}
 	
 	@Override
@@ -57,15 +59,11 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 	}
 	
 	@Override
-	public JSONObject getParameters(final int page){
-		variables.put("page", page);
-		return this.variables;
+	public int getNextPage(){
+		return ++this.nextPage;
 	}
 	
 	private AniListAiringNotification buildChange(final JSONObject change) throws Exception{
-		if(!change.keySet().isEmpty()){
-			return AniListAiringNotification.buildFromJSON(change);
-		}
-		return null;
+		return new ObjectMapper().readerFor(AniListAiringNotification.class).readValue(change.toString());
 	}
 }

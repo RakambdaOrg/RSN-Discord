@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
  * @since 2018-04-09
  */
 public class Settings{
-	public static final Configuration[] SETTINGS = new Configuration[]{
+	public static final Configuration[] SETTINGS = {
 			new ModoRolesConfig(null),
 			new OnlyIdeasConfig(null),
 			new OnlyImagesConfig(null),
