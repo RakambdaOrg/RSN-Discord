@@ -95,6 +95,7 @@ public class Main{
 			for(final var scheduledRunner : scheduledRunners){
 				executorService.scheduleAtFixedRate(scheduledRunner, scheduledRunner.getDelay(), scheduledRunner.getPeriod(), scheduledRunner.getPeriodUnit());
 			}
+			LOGGER.info("Started");
 		}
 		catch(final IOException e){
 			getLogger(null).error("Couldn't load settings", e);
@@ -113,6 +114,7 @@ public class Main{
 			}
 			Settings.close();
 		}));
+		LOGGER.info("Shutdown hook registered");
 		
 		consoleHandler = new ConsoleHandler(jda);
 		consoleHandler.start();

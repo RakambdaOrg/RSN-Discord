@@ -1,6 +1,8 @@
 package fr.mrcraftcod.gunterdiscord;
 
 import net.dv8tion.jda.api.JDA;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.*;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -11,6 +13,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-05-29
  */
 class ConsoleHandler extends Thread{
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleHandler.class);
 	private final JDA jda;
 	private boolean stop;
 	
@@ -25,10 +28,12 @@ class ConsoleHandler extends Thread{
 		this.stop = false;
 		setDaemon(true);
 		setName("Console watcher");
+		LOGGER.info("Console handler created");
 	}
 	
 	@Override
 	public void run(){
+		LOGGER.info("Console handler started");
 		final var quitList = List.of("stop", "quit", "exit");
 		try(final var sc = new Scanner(System.in)){
 			while(!stop){
