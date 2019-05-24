@@ -113,7 +113,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.ALPHA.0_86</version>
+            <version>4.ALPHA.0_89</version>
             <exclusions>
                 <exclusion>
                     <groupId>club.minnced</groupId>
@@ -171,7 +171,7 @@
         <dependency>
             <groupId>com.konghq</groupId>
             <artifactId>unirest-java</artifactId>
-            <version>2.2.02</version>
+            <version>2.3.01</version>
         </dependency>
         <dependency>
             <groupId>fr.mrcraftcod</groupId>
@@ -187,13 +187,13 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.9.8</version>
+            <version>2.9.9</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.9.8</version>
+            <version>2.9.9</version>
         </dependency>
     </dependencies>
 </project>
