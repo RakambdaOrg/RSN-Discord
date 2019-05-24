@@ -5,6 +5,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
 /**
@@ -15,10 +17,19 @@ import java.util.stream.Collectors;
  */
 public class ReplyMessageListener extends ListenerAdapter{
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReplyMessageListener.class);
+	private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	private static final List<WaitingUserReply> replies = new ArrayList<>();
 	
 	public static void handleReply(WaitingUserReply reply){
 		replies.add(reply);
+	}
+	
+	public static void stopAll(){
+		executor.shutdown();
+	}
+	
+	public static ScheduledExecutorService getExecutor(){
+		return executor;
 	}
 	
 	@Override

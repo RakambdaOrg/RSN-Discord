@@ -122,6 +122,7 @@ public class Main{
 	 */
 	public static void close(){
 		QuizListener.stopAll();
+		ReplyMessageListener.stopAll();
 		GunterAudioManager.stopAll();
 		TwitchIRC.close();
 		
@@ -156,4 +157,5 @@ public class Main{
 		}
 		return properties.getProperty("simulator.version", "Unknown");
 	}
+	//https://api.overwatchleague.com/schedule
 }
