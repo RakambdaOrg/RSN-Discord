@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,6 +26,8 @@ import java.util.stream.IntStream;
  * @since 2018-04-09
  */
 public class Settings{
+	private static final Logger LOGGER = LoggerFactory.getLogger(Settings.class);
+	
 	public static final Configuration[] SETTINGS = new Configuration[]{
 			new ModoRolesConfig(null),
 			new OnlyIdeasConfig(null),
@@ -110,6 +114,7 @@ public class Settings{
 	 * @throws IOException If something went wrong.
 	 */
 	public static void init(final Path path) throws IOException{
+		LOGGER.info("Initializing settings");
 		Settings.path = path;
 		if(path.toFile().exists()){
 			settings = new JSONObject(String.join("", Files.readAllLines(path)));

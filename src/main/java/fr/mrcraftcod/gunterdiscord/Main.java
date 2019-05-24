@@ -41,7 +41,6 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 public class Main{
 	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
-	private static final String SETTINGS_NAME = "settings.json";
 	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 	private static JDA jda;
 	private static ConsoleHandler consoleHandler;
@@ -77,6 +76,7 @@ public class Main{
 		
 		try{
 			Settings.init(Paths.get(parameters.getSettingsFile().toURI()));
+			LOGGER.info("Building JDA");
 			jda = new JDABuilder(AccountType.BOT).setToken(System.getProperty("RSN_TOKEN")).build();
 			jda.awaitReady();
 			jda.addEventListener(new CommandsMessageListener());
