@@ -90,6 +90,7 @@ public class Main{
 			jda.setAutoReconnect(true);
 			jda.getPresence().setActivity(Activity.playing("g?help for the help"));
 			
+			LOGGER.info("Creating runners");
 			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaUserListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda));
 			for(final var scheduledRunner : scheduledRunners){
 				executorService.scheduleAtFixedRate(scheduledRunner, scheduledRunner.getDelay(), scheduledRunner.getPeriod(), scheduledRunner.getPeriodUnit());
