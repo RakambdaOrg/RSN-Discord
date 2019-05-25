@@ -15,11 +15,11 @@
         </encoder>
     </appender>
 
-    <!--<logger name="fr.mrcraftcod" level="DEBUG" additivity="false">
+    <logger name="net.dv8tion.jda" level="WARN" additivity="false">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
     </logger>
--->
+
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>

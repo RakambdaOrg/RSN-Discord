@@ -27,8 +27,9 @@ public class FuzzyDate{
 		final var date = json.getJSONObject(key);
 		final var fuzzyDate = new FuzzyDate();
 		try{
+			Integer month = Utilities.getJSONMaybe(date, Integer.class, "month");
 			fuzzyDate.setYear(Utilities.getJSONMaybe(date, Integer.class, "year"));
-			fuzzyDate.setMonth(Utilities.getJSONMaybe(date, Integer.class, "month"));
+			fuzzyDate.setMonth(month == null ? null : month - 1);
 			fuzzyDate.setDay(Utilities.getJSONMaybe(date, Integer.class, "day"));
 		}
 		catch(final IllegalArgumentException e){
