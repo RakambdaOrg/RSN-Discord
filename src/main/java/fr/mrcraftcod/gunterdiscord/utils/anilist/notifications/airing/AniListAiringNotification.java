@@ -22,7 +22,6 @@ import java.util.Objects;
  * @author Thomas Couchoud
  * @since 2018-10-11
  */
-@SuppressWarnings("WeakerAccess")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AniListAiringNotification implements AniListDatedObject{
@@ -31,7 +30,7 @@ public class AniListAiringNotification implements AniListDatedObject{
 	private final AniListNotificationType type;
 	@JsonProperty("episode")
 	private int episode;
-	private Date createdAt;
+	private Date createdAt = new Date(0);
 	@JsonProperty("media")
 	private AniListMedia media;
 	@JsonProperty("id")

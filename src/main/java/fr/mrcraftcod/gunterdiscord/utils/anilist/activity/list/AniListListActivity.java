@@ -1,11 +1,13 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.activity.list;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListDatedObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListAnimeMedia;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMangaMedia;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMedia;
+import fr.mrcraftcod.gunterdiscord.utils.json.SQLTimestampDeserializer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -24,7 +26,7 @@ import java.util.Objects;
 @SuppressWarnings("ALL")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes(value = {
 		@JsonSubTypes.Type(value = AniListAnimeMedia.class, name = "ANIME_LIST"),
 		@JsonSubTypes.Type(value = AniListMangaMedia.class, name = "MANGA_LIST")
@@ -32,6 +34,8 @@ import java.util.Objects;
 public abstract class AniListListActivity implements AniListDatedObject{
 	private static final String QUERY = "ListActivity{\n" + "id\n" + "userId\n" + "type\n" + "createdAt\n" + "progress\n" + "siteUrl\n" + AniListMedia.getQuery() + "}";
 	
+	@JsonProperty("createdAt")
+	@JsonDeserialize(using = SQLTimestampDeserializer.class)
 	private Date createdAt;
 	@JsonProperty("siteUrl")
 	private URL url;
@@ -41,11 +45,6 @@ public abstract class AniListListActivity implements AniListDatedObject{
 	private AniListMedia media;
 	@JsonProperty("id")
 	private int id;
-	
-	@JsonCreator
-	public void fromJSON(@JsonProperty("createdAt") final long createdAt) throws Exception{
-		this.createdAt = new Date(createdAt * 1000L);
-	}
 	
 	@Override
 	public boolean equals(final Object obj){

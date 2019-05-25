@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.utils.anilist.media;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import java.util.Optional;
 @SuppressWarnings("WeakerAccess")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonTypeName("MANGA")
 public class AniListMangaMedia extends AniListMedia{
 	@JsonProperty("chapters")
 	private Integer chapters;

@@ -18,7 +18,7 @@ import java.util.Optional;
 @SuppressWarnings("WeakerAccess")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes(value = {
 		@JsonSubTypes.Type(value = AniListAnimeMedia.class, name = "ANIME"),
 		@JsonSubTypes.Type(value = AniListMangaMedia.class, name = "MANGA")

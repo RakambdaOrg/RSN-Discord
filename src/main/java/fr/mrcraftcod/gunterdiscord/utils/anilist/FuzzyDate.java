@@ -35,9 +35,6 @@ public class FuzzyDate{
 		if(Objects.nonNull(day)){
 			this.calendar.set(Calendar.DAY_OF_MONTH, day);
 		}
-		else{
-			throw new IllegalArgumentException("Integer is null");
-		}
 	}
 	
 	@JsonSetter("month")
@@ -45,18 +42,12 @@ public class FuzzyDate{
 		if(Objects.nonNull(month)){
 			this.calendar.set(Calendar.MONTH, month);
 		}
-		else{
-			throw new IllegalArgumentException("Integer is null");
-		}
 	}
 	
 	@JsonSetter("year")
 	private void setYear(final Integer year){
 		if(Objects.nonNull(year)){
 			this.calendar.set(Calendar.YEAR, year);
-		}
-		else{
-			throw new IllegalArgumentException("Integer is null");
 		}
 	}
 }

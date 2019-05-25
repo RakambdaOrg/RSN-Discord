@@ -7,7 +7,7 @@ import java.io.File;
 class CLIParameters{
 	@Parameter(names = {
 			"-s",
-			"--settings"
+			"--jackson "
 	}, description = "The settings file to use", converter = FileConverter.class)
 	private File settingsFile = new File("settings.json");
 	

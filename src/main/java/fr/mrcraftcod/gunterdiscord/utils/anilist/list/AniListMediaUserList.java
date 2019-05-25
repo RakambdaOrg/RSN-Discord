@@ -1,14 +1,15 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.list;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListDatedObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.FuzzyDate;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMangaMedia;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMedia;
+import fr.mrcraftcod.gunterdiscord.utils.json.SQLTimestampDeserializer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +51,11 @@ public class AniListMediaUserList implements AniListDatedObject{
 	private Integer progress;
 	@JsonProperty("progressVolumes")
 	private Integer progressVolumes;
+	@JsonProperty("createdAt")
+	@JsonDeserialize(using = SQLTimestampDeserializer.class)
 	private Date createdAt;
+	@JsonProperty("updatedAt")
+	@JsonDeserialize(using = SQLTimestampDeserializer.class)
 	private Date updatedAt;
 	@JsonProperty("startedAt")
 	private FuzzyDate startedAt;
@@ -60,12 +65,6 @@ public class AniListMediaUserList implements AniListDatedObject{
 	private HashMap<String, Boolean> customLists;
 	@JsonProperty("score")
 	private Integer score;
-	
-	@JsonCreator
-	public void fromJSON(@JsonProperty("createdAt") long createdAt, @JsonProperty("updatedAt") long updatedAt) throws Exception{
-		this.createdAt = new Date(createdAt * 1000L);
-		this.updatedAt = new Date(updatedAt * 1000L);
-	}
 	
 	@Override
 	public void fillEmbed(final EmbedBuilder builder){
