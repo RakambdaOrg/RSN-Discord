@@ -78,15 +78,15 @@ public class AniListMediaUserList implements AniListDatedObject{
 		if(Objects.equals(isPrivateItem(), Boolean.TRUE)){
 			builder.addField("Private", "Yes", true);
 		}
-		if(Objects.nonNull(getStartedAt())){
-			builder.addField("Started at", SIMPLE_DATE_FORMAT.format(getStartedAt().asDate()), true);
-		}
-		if(Objects.nonNull(getCompletedAt())){
-			builder.addField("Completed at", SIMPLE_DATE_FORMAT.format(getCompletedAt().asDate()), true);
-		}
-		if(Objects.nonNull(getStartedAt()) && Objects.nonNull(getCompletedAt())){
-			builder.addField("Time to complete", String.format("%d days", getStartedAt().durationTo(getCompletedAt()).get(DAYS)), true);
-		}
+		getStartedAt().asDate().ifPresent(date -> {
+			builder.addField("Started at", SIMPLE_DATE_FORMAT.format(date), true);
+		});
+		getCompletedAt().asDate().ifPresent(date -> {
+			builder.addField("Completed at", SIMPLE_DATE_FORMAT.format(date), true);
+			getStartedAt().durationTo(date).ifPresent(duration -> {
+				builder.addField("Time to complete", String.format("%d days", duration.get(DAYS)), true);
+			});
+		});
 		builder.addField("Progress", getProgress() + "/" + Optional.ofNullable(getMedia().getItemCount()).map(Object::toString).orElse("?"), true);
 		if(Objects.nonNull(getProgressVolumes()) && getMedia() instanceof AniListMangaMedia){
 			builder.addField("Volumes progress", getProgressVolumes() + "/" + Optional.ofNullable(((AniListMangaMedia) getMedia()).getVolumes()).map(Object::toString).orElse("?"), true);
