@@ -3,13 +3,14 @@ package fr.mrcraftcod.gunterdiscord.utils;
 import fr.mrcraftcod.gunterdiscord.settings.configs.ModoRolesConfig;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
 import org.json.JSONObject;
 import java.awt.Color;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
@@ -29,18 +30,6 @@ public class Utilities{
 	 */
 	public static boolean hasRole(final Member member, final List<Role> roles){
 		return roles.stream().anyMatch(r -> hasRole(member, r));
-	}
-	
-	/**
-	 * Get a role.
-	 *
-	 * @param guild The guild the role is in.
-	 * @param name  The role to search for.
-	 *
-	 * @return The role or null if not found.
-	 */
-	public static List<Role> getRole(final Guild guild, final String name){
-		return guild.getJDA().getRoles().stream().filter(r -> r.getName().equalsIgnoreCase(name)).filter(r -> r.getGuild().equals(guild)).collect(Collectors.toList());
 	}
 	
 	/**
@@ -80,50 +69,12 @@ public class Utilities{
 	 * Check if a member have a role.
 	 *
 	 * @param member The member to test.
-	 * @param roles  The roles to search for.
-	 *
-	 * @return True if the member have the role, false otherwise.
-	 */
-	public static boolean hasRoleIDs(final Member member, final List<Long> roles){
-		return roles.stream().map(r -> member.getGuild().getRoleById(r)).anyMatch(r -> hasRole(member, r));
-	}
-	
-	/**
-	 * Check if a member have a role.
-	 *
-	 * @param member The member to test.
 	 * @param role   The role to search for.
 	 *
 	 * @return True if the member have the role, false otherwise.
 	 */
 	public static boolean hasRole(final Member member, final Role role){
 		return member.getRoles().contains(role);
-	}
-	
-	/**
-	 * Get a server emote as a mention.
-	 *
-	 * @param name The name of the emote.
-	 *
-	 * @return The mention, or empty string if not found.
-	 */
-	public static String getEmoteMention(final Guild guild, final String name){
-		final var emotes = guild.getEmotesByName(name, true);
-		if(emotes.isEmpty()){
-			return "";
-		}
-		return emotes.get(0).getAsMention();
-	}
-	
-	/**
-	 * Get all the members that have a role.
-	 *
-	 * @param roles The roles to search for.
-	 *
-	 * @return The members that have this role.
-	 */
-	public static List<Member> getMembersWithRole(final List<Role> roles){
-		return roles.stream().map(Utilities::getMembersWithRole).flatMap(Collection::stream).collect(Collectors.toList());
 	}
 	
 	/**
@@ -157,7 +108,9 @@ public class Utilities{
 	 */
 	public static EmbedBuilder buildEmbed(final MessageEmbed messageEmbed){
 		final var builder = buildEmbed(null, messageEmbed.getColor(), messageEmbed.getTitle());
-		builder.setAuthor(messageEmbed.getAuthor().getName(), messageEmbed.getAuthor().getUrl(), messageEmbed.getAuthor().getIconUrl());
+		if(Objects.nonNull(messageEmbed.getAuthor())){
+			builder.setAuthor(messageEmbed.getAuthor().getName(), messageEmbed.getAuthor().getUrl(), messageEmbed.getAuthor().getIconUrl());
+		}
 		builder.setDescription(messageEmbed.getDescription());
 		messageEmbed.getFields().forEach(builder::addField);
 		return builder;
@@ -209,10 +162,10 @@ public class Utilities{
 		builder.append("\n").append("Title: ").append(embed.getTitle());
 		builder.append("\n").append("Description: ").append(embed.getDescription());
 		builder.append("\n").append("Color: ").append(embed.getColor());
-		embed.getFields().forEach(f -> {
+		embed.getFields().forEach(field -> {
 			builder.append("\n").append("FIELD:");
-			builder.append("\n\t").append("Name: ").append(f.getName());
-			builder.append("\n\t").append("Value: ").append(f.getValue());
+			builder.append("\n\t").append("Name: ").append(field.getName());
+			builder.append("\n\t").append("Value: ").append(field.getValue());
 		});
 		return builder.toString();
 	}

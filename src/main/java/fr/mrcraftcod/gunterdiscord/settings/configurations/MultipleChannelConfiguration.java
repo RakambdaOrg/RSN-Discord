@@ -40,6 +40,6 @@ public abstract class MultipleChannelConfiguration extends ListConfiguration<Tex
 	
 	@Override
 	protected Function<String, TextChannel> getConfigParser(){
-		return guild::getTextChannelById;
+		return this.guild::getTextChannelById;
 	}
 }

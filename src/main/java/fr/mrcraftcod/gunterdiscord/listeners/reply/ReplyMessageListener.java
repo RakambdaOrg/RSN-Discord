@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord.listeners.reply;
 
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.*;
@@ -20,7 +21,7 @@ public class ReplyMessageListener extends ListenerAdapter{
 	private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	private static final List<WaitingUserReply> replies = new ArrayList<>();
 	
-	public static void handleReply(WaitingUserReply reply){
+	public static void handleReply(final WaitingUserReply reply){
 		replies.add(reply);
 	}
 	
@@ -33,7 +34,7 @@ public class ReplyMessageListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildMessageReceived(GuildMessageReceivedEvent event){
+	public void onGuildMessageReceived(@NotNull final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
 			replies.removeIf(reply -> reply.isHandled() || (Objects.equals(reply.getUser(), event.getAuthor()) && Objects.equals(reply.getChannel(), event.getChannel()) && reply.execute(event, Arrays.stream(event.getMessage().getContentRaw().split(" ")).collect(Collectors.toCollection(LinkedList::new)))) || (reply.isExpired() && reply.onExpire()));

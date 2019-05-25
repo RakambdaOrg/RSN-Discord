@@ -52,7 +52,7 @@ public class AniListRegisterCommand extends BasicCommand{
 		else{
 			try{
 				final var code = args.poll();
-				AniListUtils.getAccessToken(event.getMember(), code);
+				AniListUtils.generateToken(event.getMember(), code);
 				final var userInfos = AniListUtils.getQuery(event.getMember(), QUERY, new JSONObject());
 				final var userInfoConf = new AniListLastAccessConfig(event.getGuild());
 				userInfoConf.addValue(event.getAuthor().getIdLong(), "userId", "" + userInfos.getJSONObject("data").getJSONObject("Viewer").getInt("id"));

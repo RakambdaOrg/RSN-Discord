@@ -1,9 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.media;
 
-import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.json.JSONObject;
 import java.util.Optional;
 
 /**
@@ -13,7 +15,11 @@ import java.util.Optional;
  * @since 2018-10-11
  */
 @SuppressWarnings("WeakerAccess")
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonTypeName("ANIME")
 public class AniListAnimeMedia extends AniListMedia{
+	@JsonProperty("episodes")
 	private Integer episodes;
 	
 	public AniListAnimeMedia(){
@@ -25,12 +31,6 @@ public class AniListAnimeMedia extends AniListMedia{
 		super.fillEmbed(builder);
 		Optional.ofNullable(getEpisodes()).map(Object::toString).ifPresent(val -> builder.addField("Episodes", val, true));
 		Optional.ofNullable(getSeason()).map(Enum::toString).ifPresent(val -> builder.addField("Season", val, true));
-	}
-	
-	@Override
-	public void fromJSON(final JSONObject json) throws Exception{
-		super.fromJSON(json);
-		this.episodes = Utilities.getJSONMaybe(json, Integer.class, "episodes");
 	}
 	
 	@Override
@@ -49,6 +49,6 @@ public class AniListAnimeMedia extends AniListMedia{
 	}
 	
 	public Integer getEpisodes(){
-		return episodes;
+		return this.episodes;
 	}
 }

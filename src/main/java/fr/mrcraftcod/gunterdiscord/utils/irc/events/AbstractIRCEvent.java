@@ -14,21 +14,21 @@ public class AbstractIRCEvent implements IRCEvent{
 	private final String eventType;
 	private final String channel;
 	
-	public AbstractIRCEvent(IRCUser user, String eventType, String channel){
+	public AbstractIRCEvent(final IRCUser user, final String eventType, final String channel){
 		this.user = user;
 		this.eventType = eventType;
 		this.channel = channel;
 	}
 	
 	public String getChannel(){
-		return channel;
+		return this.channel;
 	}
 	
 	public String getEventType(){
-		return eventType;
+		return this.eventType;
 	}
 	
 	public IRCUser getUser(){
-		return user;
+		return this.user;
 	}
 }

@@ -1,9 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.media;
 
-import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.json.JSONObject;
 import java.util.Optional;
 
 /**
@@ -13,19 +15,17 @@ import java.util.Optional;
  * @since 2018-10-11
  */
 @SuppressWarnings("WeakerAccess")
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonTypeName("MANGA")
 public class AniListMangaMedia extends AniListMedia{
+	@JsonProperty("chapters")
 	private Integer chapters;
+	@JsonProperty("volumes")
 	private Integer volumes;
 	
 	public AniListMangaMedia(){
 		super(AniListMediaType.MANGA);
-	}
-	
-	@Override
-	public void fromJSON(final JSONObject json) throws Exception{
-		super.fromJSON(json);
-		this.chapters = Utilities.getJSONMaybe(json, Integer.class, "chapters");
-		this.volumes = Utilities.getJSONMaybe(json, Integer.class, "volumes");
 	}
 	
 	@Override
@@ -41,7 +41,7 @@ public class AniListMangaMedia extends AniListMedia{
 	 * @return The number of chapters.
 	 */
 	public Integer getChapters(){
-		return chapters;
+		return this.chapters;
 	}
 	
 	@Override
@@ -65,6 +65,6 @@ public class AniListMangaMedia extends AniListMedia{
 	 * @return The number of volumes.
 	 */
 	public Integer getVolumes(){
-		return volumes;
+		return this.volumes;
 	}
 }

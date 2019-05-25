@@ -1,5 +1,8 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import fr.mrcraftcod.gunterdiscord.utils.GunterDuration;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import org.json.JSONObject;
@@ -14,62 +17,39 @@ import java.util.Objects;
  * @author Thomas Couchoud
  * @since 2018-10-12
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class FuzzyDate{
-	
 	private final Calendar calendar;
 	
-	private FuzzyDate(){calendar = Calendar.getInstance();}
+	private FuzzyDate(){this.calendar = Calendar.getInstance();}
 	
-	public static FuzzyDate buildFromJSON(final JSONObject json, final String key){
-		if(!json.has(key)){
-			return null;
-		}
-		final var date = json.getJSONObject(key);
-		final var fuzzyDate = new FuzzyDate();
-		try{
-			Integer month = Utilities.getJSONMaybe(date, Integer.class, "month");
-			fuzzyDate.setYear(Utilities.getJSONMaybe(date, Integer.class, "year"));
-			fuzzyDate.setMonth(month == null ? null : month - 1);
-			fuzzyDate.setDay(Utilities.getJSONMaybe(date, Integer.class, "day"));
-		}
-		catch(final IllegalArgumentException e){
-			return null;
-		}
-		return fuzzyDate;
-	}
-	
-	public GunterDuration durationTo(FuzzyDate toDate){
+	public GunterDuration durationTo(final FuzzyDate toDate){
 		return new GunterDuration(Duration.between(this.asDate().toInstant(), toDate.asDate().toInstant()));
 	}
 	
+	public Date asDate(){
+		return this.calendar.getTime();
+	}
+	
+	@JsonSetter("day")
 	private void setDay(final Integer day){
 		if(Objects.nonNull(day)){
-			calendar.set(Calendar.DAY_OF_MONTH, day);
-		}
-		else{
-			throw new IllegalArgumentException("Integer is null");
+			this.calendar.set(Calendar.DAY_OF_MONTH, day);
 		}
 	}
 	
+	@JsonSetter("month")
 	private void setMonth(final Integer month){
 		if(Objects.nonNull(month)){
-			calendar.set(Calendar.MONTH, month);
-		}
-		else{
-			throw new IllegalArgumentException("Integer is null");
+			this.calendar.set(Calendar.MONTH, month - 1);
 		}
 	}
 	
+	@JsonSetter("year")
 	private void setYear(final Integer year){
 		if(Objects.nonNull(year)){
-			calendar.set(Calendar.YEAR, year);
+			this.calendar.set(Calendar.YEAR, year);
 		}
-		else{
-			throw new IllegalArgumentException("Integer is null");
-		}
-	}
-	
-	public Date asDate(){
-		return calendar.getTime();
 	}
 }

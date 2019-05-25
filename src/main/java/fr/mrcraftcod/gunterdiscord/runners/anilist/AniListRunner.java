@@ -26,7 +26,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 public interface AniListRunner<T extends AniListObject, U extends AniListPagedQuery<T>>{
 	default void runQueryOnEveryUserAndDefaultChannels(){
 		final var channels = getJDA().getGuilds().stream().map(g -> new AniListChannelConfig(g).getObject(null)).filter(Objects::nonNull).collect(Collectors.toList());
-		final var members = channels.stream().flatMap(c -> new AniListAccessTokenConfig(c.getGuild()).getAsMap().keySet().stream().map(k -> c.getGuild().getMemberById(k))).collect(Collectors.toList());
+		final var members = channels.stream().flatMap(channel -> new AniListAccessTokenConfig(channel.getGuild()).getAsMap().keySet().stream().map(key -> channel.getGuild().getMemberById(key))).collect(Collectors.toList());
 		runQuery(members, channels);
 	}
 	
@@ -34,7 +34,7 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		getLogger(null).info("Starting AniList {} runner", getRunnerName());
 		try{
 			final var userElements = new HashMap<User, List<T>>();
-			for(var member : members){
+			for(final var member : members){
 				if(!userElements.containsKey(member.getUser())){
 					try{
 						userElements.put(member.getUser(), getElements(member));
@@ -58,7 +58,7 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		if(sortedByUser()){
 			for(final var user : userElements.keySet()){
 				final var element = userElements.get(user);
-				element.stream().sorted().map(change -> buildMessage(user, change)).forEach(message -> channels.stream().filter(c -> sendToChannel(c, user)).forEach(c -> Actions.sendMessage(c, message)));
+				element.stream().sorted().map(change -> buildMessage(user, change)).forEach(message -> channels.stream().filter(channel -> sendToChannel(channel, user)).forEach(channel -> Actions.sendMessage(channel, message)));
 			}
 		}
 		else{
@@ -66,8 +66,16 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		}
 	}
 	
-	default boolean sendToChannel(TextChannel channel, User user){
-		return new AniListAccessTokenConfig(channel.getGuild()).getAsMap().keySet().contains(user.getIdLong());
+	default MessageEmbed buildMessage(final User user, final T change){
+		final var builder = new EmbedBuilder();
+		if(Objects.isNull(user)){
+			builder.setAuthor(getJDA().getSelfUser().getName(), change.getUrl().toString(), getJDA().getSelfUser().getAvatarUrl());
+		}
+		else{
+			builder.setAuthor(user.getName(), change.getUrl().toString(), user.getAvatarUrl());
+		}
+		change.fillEmbed(builder);
+		return builder.build();
 	}
 	
 	default boolean sortedByUser(){
@@ -94,16 +102,8 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		return elementList;
 	}
 	
-	default MessageEmbed buildMessage(final User user, final T change){
-		final var builder = new EmbedBuilder();
-		if(Objects.isNull(user)){
-			builder.setAuthor(getJDA().getSelfUser().getName(), change.getUrl(), getJDA().getSelfUser().getAvatarUrl());
-		}
-		else{
-			builder.setAuthor(user.getName(), change.getUrl(), user.getAvatarUrl());
-		}
-		change.fillEmbed(builder);
-		return builder.build();
+	default boolean sendToChannel(final TextChannel channel, final User user){
+		return new AniListAccessTokenConfig(channel.getGuild()).getAsMap().keySet().contains(user.getIdLong());
 	}
 	
 	U initQuery(Map<String, String> userInfo);

@@ -25,7 +25,7 @@ public class LuxBusDirectionSelectionWaitingReply implements WaitingUserReply{
 	private final GuildMessageReceivedEvent event;
 	private boolean handled;
 	
-	public LuxBusDirectionSelectionWaitingReply(GuildMessageReceivedEvent event, Map<Integer, List<LuxBusDeparture>> departures, Message infoMessage){
+	public LuxBusDirectionSelectionWaitingReply(final GuildMessageReceivedEvent event, final Map<Integer, List<LuxBusDeparture>> departures, final Message infoMessage){
 		this.event = event;
 		this.handled = false;
 		this.maxTime = System.currentTimeMillis() + 30000;
@@ -44,17 +44,7 @@ public class LuxBusDirectionSelectionWaitingReply implements WaitingUserReply{
 	}
 	
 	@Override
-	public User getUser(){
-		return event.getAuthor();
-	}
-	
-	@Override
-	public TextChannel getChannel(){
-		return event.getChannel();
-	}
-	
-	@Override
-	public boolean execute(GuildMessageReceivedEvent event, LinkedList<String> args){
+	public boolean execute(final GuildMessageReceivedEvent event, final LinkedList<String> args){
 		if(args.isEmpty()){
 			Actions.reply(event, "Invalid selection");
 		}
@@ -62,7 +52,7 @@ public class LuxBusDirectionSelectionWaitingReply implements WaitingUserReply{
 			try{
 				final var direction = Integer.parseInt(args.pop());
 				if(this.departures.containsKey(direction)){
-					Actions.deleteMessage(infoMessage);
+					Actions.deleteMessage(this.infoMessage);
 					Actions.deleteMessage(event.getMessage());
 					this.handled = true;
 					this.departures.get(direction).stream().sorted().forEachOrdered(d -> Actions.reply(event, d.getAsEmbed(new EmbedBuilder()).build()));
@@ -80,9 +70,19 @@ public class LuxBusDirectionSelectionWaitingReply implements WaitingUserReply{
 	
 	@Override
 	public boolean onExpire(){
-		Actions.reply(event, "%s you didn't reply in time", this.getUser().getAsMention());
-		Actions.deleteMessage(infoMessage);
+		Actions.reply(this.event, "%s you didn't reply in time", this.getUser().getAsMention());
+		Actions.deleteMessage(this.infoMessage);
 		this.handled = true;
 		return this.isHandled();
+	}
+	
+	@Override
+	public TextChannel getChannel(){
+		return this.event.getChannel();
+	}
+	
+	@Override
+	public User getUser(){
+		return this.event.getAuthor();
 	}
 }

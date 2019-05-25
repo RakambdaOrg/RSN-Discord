@@ -12,7 +12,7 @@ public class IRCUser{
 	private final String nick;
 	private final String host;
 	
-	public IRCUser(String infos){
+	public IRCUser(final String infos){
 		if(infos.contains("!")){
 			this.nick = infos.substring(0, infos.indexOf("!"));
 			this.user = infos.substring(infos.indexOf("!") + 1, infos.indexOf("@"));
@@ -30,15 +30,15 @@ public class IRCUser{
 		return this.getNick();
 	}
 	
-	public String getNick(){
-		return nick;
+	public String getHost(){
+		return this.host;
 	}
 	
-	public String getHost(){
-		return host;
+	public String getNick(){
+		return this.nick;
 	}
 	
 	public String getUser(){
-		return user;
+		return this.user;
 	}
 }

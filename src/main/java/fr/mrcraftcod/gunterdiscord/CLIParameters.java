@@ -4,10 +4,10 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.FileConverter;
 import java.io.File;
 
-public class CLIParameters{
+class CLIParameters{
 	@Parameter(names = {
 			"-s",
-			"--settings"
+			"--jackson "
 	}, description = "The settings file to use", converter = FileConverter.class)
 	private File settingsFile = new File("settings.json");
 	
@@ -17,14 +17,14 @@ public class CLIParameters{
 	}, description = "The configuration file", converter = FileConverter.class)
 	private File configurationFile = null;
 	
-	public CLIParameters(){
+	CLIParameters(){
 	}
 	
-	public File getSettingsFile(){
+	File getConfigurationFile(){
+		return this.configurationFile;
+	}
+	
+	File getSettingsFile(){
 		return this.settingsFile.getAbsoluteFile();
-	}
-	
-	public File getConfigurationFile(){
-		return configurationFile;
 	}
 }

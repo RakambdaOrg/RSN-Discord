@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.queries;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.list.AniListMediaUserList;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -20,14 +21,15 @@ public class AniListMediaUserListPagedQuery implements AniListPagedQuery<AniList
 	
 	public AniListMediaUserListPagedQuery(final int userId){
 		this.variables = new JSONObject();
-		variables.put("userID", userId);
-		variables.put("page", 1);
-		variables.put("perPage", 50);
+		this.variables.put("userID", userId);
+		this.variables.put("page", 1);
+		this.variables.put("perPage", 50);
 	}
 	
 	@Override
-	public int getNextPage(){
-		return ++nextPage;
+	public JSONObject getParameters(final int page){
+		this.variables.put("page", page);
+		return this.variables;
 	}
 	
 	@Override
@@ -50,12 +52,11 @@ public class AniListMediaUserListPagedQuery implements AniListPagedQuery<AniList
 	}
 	
 	@Override
-	public JSONObject getParameters(final int page){
-		variables.put("page", page);
-		return this.variables;
+	public int getNextPage(){
+		return ++this.nextPage;
 	}
 	
 	private AniListMediaUserList buildChange(final JSONObject change) throws Exception{
-		return AniListMediaUserList.buildFromJSON(change);
+		return new ObjectMapper().readerFor(AniListMediaUserList.class).readValue(change.toString());
 	}
 }

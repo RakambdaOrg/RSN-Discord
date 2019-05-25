@@ -68,7 +68,7 @@ public abstract class ValueConfiguration<T> extends Configuration{
 		if(!Objects.equals(getType(), ConfigType.VALUE)){
 			throw new IllegalArgumentException("Not a value config");
 		}
-		final var obj = Settings.getObject(guild, getName());
+		final var obj = Settings.getObject(this.guild, getName());
 		if(Objects.isNull(obj)){
 			throw new NoValueDefinedException(this);
 		}
@@ -81,7 +81,7 @@ public abstract class ValueConfiguration<T> extends Configuration{
 	 * @param value the value to set.
 	 */
 	private void setRawValue(final String value){
-		Settings.setValue(guild, this, value);
+		Settings.setValue(this.guild, this, value);
 	}
 	
 	/**

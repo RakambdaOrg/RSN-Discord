@@ -32,16 +32,11 @@ public class AniListMediaUserListScheduledRunner implements AniListRunner<AniLis
 		this(jda, true);
 	}
 	
-	public AniListMediaUserListScheduledRunner(final JDA jda, boolean keepOnlyNew){
+	public AniListMediaUserListScheduledRunner(final JDA jda, final boolean keepOnlyNew){
 		getLogger(null).info("Creating AniList {} runner", getRunnerName());
 		this.jda = jda;
 		this.keepOnlyNew = keepOnlyNew;
 		this.sortedByUser = false;
-	}
-	
-	public AniListMediaUserListScheduledRunner sortByUser(){
-		this.sortedByUser = true;
-		return this;
 	}
 	
 	@Override
@@ -96,12 +91,12 @@ public class AniListMediaUserListScheduledRunner implements AniListRunner<AniLis
 	}
 	
 	@Override
-	public void sendMessages(List<TextChannel> channels, Map<User, List<AniListMediaUserList>> userElements){
+	public void sendMessages(final List<TextChannel> channels, final Map<User, List<AniListMediaUserList>> userElements){
 		AniListRunner.super.sendMessages(channels, userElements);
 		this.getJDA().getGuilds().stream().map(g -> new AnilistThaChannelConfig(g).getObject(null)).filter(Objects::nonNull).forEach(textChannel -> {
 			final var member = new AnilistThaUserConfig(textChannel.getGuild()).getObject(null);
 			if(Objects.nonNull(member)){
-				userElements.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> ImmutablePair.of(e.getKey(), v))).filter(v -> v.getRight().getCustomLists().entrySet().stream().filter(Map.Entry::getValue).anyMatch(c -> Objects.equals("ThaPending", c.getKey()) || Objects.equals("ThaReading", c.getKey()) || Objects.equals("ThaWatching", c.getKey()))).forEach(p -> Actions.sendMessage(textChannel, "" + member.getAsMention(), buildMessage(p.getLeft(), p.getRight())));
+				userElements.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> ImmutablePair.of(e.getKey(), v))).filter(v -> v.getRight().getCustomLists().entrySet().stream().filter(Map.Entry::getValue).anyMatch(entry -> Objects.equals("ThaPending", entry.getKey()) || Objects.equals("ThaReading", entry.getKey()) || Objects.equals("ThaWatching", entry.getKey()))).forEach(p -> Actions.sendMessage(textChannel, "" + member.getAsMention(), buildMessage(p.getLeft(), p.getRight())));
 			}
 		});
 	}

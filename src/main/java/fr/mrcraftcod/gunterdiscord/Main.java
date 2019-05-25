@@ -67,7 +67,7 @@ public class Main{
 			try(final var is = new FileInputStream(parameters.getConfigurationFile())){
 				prop.load(is);
 			}
-			catch(IOException e){
+			catch(final IOException e){
 				LOGGER.warn("Failed to read file {}", parameters.getConfigurationFile());
 			}
 			prop.forEach((key, value) -> System.setProperty(key.toString(), value.toString()));

@@ -28,7 +28,7 @@ public class IRCClient implements Closeable{
 	private final List<IRCListener> listeners;
 	private IRCReaderThread ircReader;
 	
-	public IRCClient(String host, int port){
+	public IRCClient(final String host, final int port){
 		this.host = host;
 		this.port = port;
 		this.pass = null;
@@ -50,8 +50,15 @@ public class IRCClient implements Closeable{
 		LOGGER.info("IRC connection initialized with {}:{}", this.host, this.port);
 	}
 	
-	public void sendMessage(String message){
-		this.socketWriter.println(message);
+	public void joinChannel(final String channel){
+		if(isConnected()){
+			sendMessage(String.format("JOIN %s", channel));
+			this.joinedChannels.add(channel);
+			LOGGER.info("Joined channel {} on {}:{}", channel, this.host, this.port);
+		}
+		else{
+			throw new IllegalStateException("Not connected");
+		}
 	}
 	
 	@Override
@@ -72,22 +79,15 @@ public class IRCClient implements Closeable{
 		return this.connected;
 	}
 	
-	public void joinChannel(String channel){
-		if(isConnected()){
-			sendMessage(String.format("JOIN %s", channel));
-			this.joinedChannels.add(channel);
-			LOGGER.info("Joined channel {} on {}:{}", channel, this.host, this.port);
-		}
-		else{
-			throw new IllegalStateException("Not connected");
-		}
+	public void sendMessage(final String message){
+		this.socketWriter.println(message);
 	}
 	
-	public void addEventListener(IRCListener ircListener){
+	public void addEventListener(final IRCListener ircListener){
 		this.listeners.add(ircListener);
 	}
 	
-	public void leaveChannel(String channel){
+	public void leaveChannel(final String channel){
 		if(isConnected()){
 			sendMessage(String.format("PART %s", channel));
 			this.joinedChannels.remove(channel);
@@ -99,14 +99,14 @@ public class IRCClient implements Closeable{
 	}
 	
 	public Set<String> getJoinedChannels(){
-		return joinedChannels;
+		return this.joinedChannels;
 	}
 	
 	public List<IRCListener> getListeners(){
 		return this.listeners;
 	}
 	
-	public void setNick(String nickname){
+	public void setNick(final String nickname){
 		if(isConnected()){
 			sendMessage(String.format("NICK %s", nickname));
 			LOGGER.info("Set nick to {} on {}:{}", nickname, this.host, this.port);
@@ -116,7 +116,7 @@ public class IRCClient implements Closeable{
 		}
 	}
 	
-	public void setSecureKeyPassword(String pass){
+	public void setSecureKeyPassword(final String pass){
 		this.pass = pass;
 	}
 }

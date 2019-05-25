@@ -1,12 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.media;
 
-import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import com.fasterxml.jackson.annotation.*;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
-import fr.mrcraftcod.gunterdiscord.utils.anilist.JSONFiller;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
+import java.net.URL;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -17,39 +16,36 @@ import java.util.Optional;
  * @since 2018-10-10
  */
 @SuppressWarnings("WeakerAccess")
-public abstract class AniListMedia implements JSONFiller, AniListObject{
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonSubTypes(value = {
+		@JsonSubTypes.Type(value = AniListAnimeMedia.class, name = "ANIME"),
+		@JsonSubTypes.Type(value = AniListMangaMedia.class, name = "MANGA")
+})
+public abstract class AniListMedia implements AniListObject{
 	private static final String QUERY = "media {\n" + "id\n" + "title {\n" + "userPreferred\n" + "}\n" + "season\n" + "type\n" + "format\n" + "status\n" + "episodes\n" + "chapters\n" + "volumes\n" + "isAdult\n" + "coverImage{\n" + "large\n" + "}\n" + "siteUrl" + "}";
 	
-	private String title;
 	private final AniListMediaType type;
+	@JsonProperty("title")
+	private AniListMediaTitle title;
+	@JsonProperty("season")
 	private AniListMediaSeason season;
+	@JsonProperty("format")
 	private AniListMediaFormat format;
+	@JsonProperty("status")
 	private AniListMediaStatus status;
-	private String url;
-	private String coverUrl;
+	@JsonProperty("siteUrl")
+	private URL url;
+	@JsonProperty("coverImage")
+	private AniListCoverImage coverImage;
+	@JsonProperty("isAdult")
 	private boolean isAdult;
+	@JsonProperty("id")
 	private int id;
 	
 	protected AniListMedia(final AniListMediaType type){
 		this.type = type;
-	}
-	
-	public static AniListMedia buildFromJSON(final JSONObject json) throws Exception{
-		final var media = AniListMediaType.valueOf(json.getString("type")).getInstance();
-		media.fromJSON(json);
-		return media;
-	}
-	
-	@Override
-	public void fromJSON(final JSONObject json) throws Exception{
-		this.id = json.getInt("id");
-		this.title = json.getJSONObject("title").getString("userPreferred");
-		this.season = Optional.ofNullable(Utilities.getJSONMaybe(json, String.class, "season")).map(AniListMediaSeason::valueOf).orElse(null);
-		this.format = Optional.ofNullable(Utilities.getJSONMaybe(json, String.class, "format")).map(AniListMediaFormat::valueOf).orElse(null);
-		this.status = Optional.ofNullable(Utilities.getJSONMaybe(json, String.class, "status")).map(AniListMediaStatus::valueOf).orElse(null);
-		this.url = json.optString("siteUrl", null);
-		this.isAdult = Optional.ofNullable(Utilities.getJSONMaybe(json, Boolean.class, "isAdult")).orElse(false);
-		this.coverUrl = json.getJSONObject("coverImage").getString("large");
 	}
 	
 	@Override
@@ -66,34 +62,9 @@ public abstract class AniListMedia implements JSONFiller, AniListObject{
 	
 	public abstract Integer getItemCount();
 	
-	public AniListMediaType getType(){
-		return type;
-	}
-	
-	@Override
-	public int getId(){
-		return this.id;
-	}
-	
-	public AniListMediaFormat getFormat(){
-		return format;
-	}
-	
-	public static String getQuery(){
-		return QUERY;
-	}
-	
-	public AniListMediaStatus getStatus(){
-		return status;
-	}
-	
-	public String getTitle(){
-		return title;
-	}
-	
 	@Override
 	public void fillEmbed(final EmbedBuilder builder){
-		builder.setDescription(getTitle());
+		builder.setDescription(getTitle().getUserPreferred());
 		if(getType().shouldDisplay()){
 			builder.addField("Type", getType().toString(), true);
 		}
@@ -103,24 +74,49 @@ public abstract class AniListMedia implements JSONFiller, AniListObject{
 			builder.addField("Adult content", "", true);
 		}
 		//builder.addField("Link", getUrl(), false);
-		builder.setThumbnail(getCoverUrl());
-	}
-	
-	public boolean isAdult(){
-		return isAdult;
-	}
-	
-	public AniListMediaSeason getSeason(){
-		return season;
-	}
-	
-	public String getCoverUrl(){
-		return coverUrl;
+		builder.setThumbnail(getCoverImage().getLarge().toString());
 	}
 	
 	@Override
-	public String getUrl(){
-		return url;
+	public int getId(){
+		return this.id;
+	}
+	
+	public AniListMediaTitle getTitle(){
+		return this.title;
+	}
+	
+	public static String getQuery(){
+		return QUERY;
+	}
+	
+	public AniListMediaType getType(){
+		return this.type;
+	}
+	
+	public AniListMediaFormat getFormat(){
+		return this.format;
+	}
+	
+	public AniListMediaStatus getStatus(){
+		return this.status;
+	}
+	
+	public boolean isAdult(){
+		return this.isAdult;
+	}
+	
+	public AniListCoverImage getCoverImage(){
+		return this.coverImage;
+	}
+	
+	@Override
+	public URL getUrl(){
+		return this.url;
+	}
+	
+	public AniListMediaSeason getSeason(){
+		return this.season;
 	}
 	
 	@Override

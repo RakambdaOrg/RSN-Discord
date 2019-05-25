@@ -16,7 +16,6 @@ import static fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand.C
  * @author Thomas Couchoud
  * @since 2018-04-15
  */
-@SuppressWarnings("WeakerAccess")
 public abstract class MapListConfiguration<K, V> extends Configuration{
 	/**
 	 * Constructor.
@@ -49,36 +48,17 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 			deleteKey(key);
 		}
 		else{
-			Settings.deleteKey(guild, this, key, value, getMatcher());
+			Settings.deleteKey(this.guild, this, key, value, getMatcher());
 		}
 	}
 	
 	/**
-	 * Get the map of this configuration.
+	 * Delete the key.
 	 *
-	 * @return The map.
-	 *
-	 * @throws IllegalArgumentException If this configuration isn't a map.
+	 * @param key The key.
 	 */
-	public Map<K, ArrayList<V>> getAsMap() throws IllegalArgumentException{
-		final Map<K, ArrayList<V>> elements = new HashMap<>();
-		final var map = getObjectMap();
-		if(Objects.isNull(map)){
-			Settings.resetMap(guild, this);
-		}
-		else{
-			for(final var key : map.keySet()){
-				final var kKey = getKeyParser().apply(key);
-				if(!elements.containsKey(kKey)){
-					elements.put(kKey, new ArrayList<>());
-				}
-				final var value = map.optJSONArray(key);
-				if(Objects.nonNull(value)){
-					value.toList().stream().map(val -> getValueParser().apply(val.toString())).forEach(o -> elements.get(kKey).add(o));
-				}
-			}
-		}
-		return elements;
+	public void deleteKey(final K key){
+		Settings.deleteKey(this.guild, this, key);
 	}
 	
 	/**
@@ -102,7 +82,35 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	 * @param value The value to add at the key.
 	 */
 	public void addValue(final K key, final V value){
-		Settings.mapListValue(guild, this, key, value);
+		Settings.mapListValue(this.guild, this, key, value);
+	}
+	
+	/**
+	 * Get the map of this configuration.
+	 *
+	 * @return The map.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a map.
+	 */
+	public Map<K, ArrayList<V>> getAsMap() throws IllegalArgumentException{
+		final Map<K, ArrayList<V>> elements = new HashMap<>();
+		final var map = getObjectMap();
+		if(Objects.isNull(map)){
+			Settings.resetMap(this.guild, this);
+		}
+		else{
+			for(final var key : map.keySet()){
+				final var kKey = getKeyParser().apply(key);
+				if(!elements.containsKey(kKey)){
+					elements.put(kKey, new ArrayList<>());
+				}
+				final var value = map.optJSONArray(key);
+				if(Objects.nonNull(value)){
+					value.toList().stream().map(val -> getValueParser().apply(val.toString())).forEach(o -> elements.get(kKey).add(o));
+				}
+			}
+		}
+		return elements;
 	}
 	
 	/**
@@ -116,16 +124,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 		if(!Objects.equals(getType(), ConfigType.MAP)){
 			throw new IllegalArgumentException("Not a map config");
 		}
-		return Settings.getJSONObject(guild, getName());
-	}
-	
-	/**
-	 * Delete the key.
-	 *
-	 * @param key The key.
-	 */
-	public void deleteKey(final K key){
-		Settings.deleteKey(guild, this, key);
+		return Settings.getJSONObject(this.guild, getName());
 	}
 	
 	/**

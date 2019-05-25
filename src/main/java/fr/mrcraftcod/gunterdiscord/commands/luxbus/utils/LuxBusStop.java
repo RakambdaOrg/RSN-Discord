@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.luxbus.utils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,10 +9,10 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LuxBusStop{
 	private static final Logger LOGGER = LoggerFactory.getLogger(LuxBusStop.class);
@@ -26,9 +27,9 @@ public class LuxBusStop{
 	private final int a;
 	
 	private LuxBusStop(final String id){
-		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+		final var symbols = new DecimalFormatSymbols();
 		symbols.setDecimalSeparator(',');
-		DecimalFormat format = new DecimalFormat("0.#");
+		final var format = new DecimalFormat("0.#");
 		format.setDecimalFormatSymbols(symbols);
 		
 		this.ID = id.trim();
@@ -59,7 +60,7 @@ public class LuxBusStop{
 	}
 	
 	@JsonCreator
-	public static LuxBusStop createStop(String ID){
+	public static LuxBusStop createStop(final String ID){
 		if(Objects.isNull(ID) || ID.isBlank()){
 			throw new IllegalArgumentException("Stop id must not be blank");
 		}
@@ -69,19 +70,19 @@ public class LuxBusStop{
 	
 	@Override
 	public int hashCode(){
-		return Objects.hash(ID);
+		return Objects.hash(this.ID);
 	}
 	
 	@Override
-	public boolean equals(Object o){
+	public boolean equals(final Object o){
 		if(this == o){
 			return true;
 		}
 		if(o == null || getClass() != o.getClass()){
 			return false;
 		}
-		LuxBusStop that = (LuxBusStop) o;
-		return l == that.l && name.equals(that.name);
+		final var that = (LuxBusStop) o;
+		return this.l == that.l && this.name.equals(that.name);
 	}
 	
 	@Override
@@ -89,44 +90,44 @@ public class LuxBusStop{
 		return this.getName();
 	}
 	
-	public String getName(){
-		return name;
-	}
-	
-	public boolean isStop(String id){
-		Map<String, String> fields = Arrays.stream(id.split("@")).filter(s -> !s.isBlank() && s.contains("=")).map(String::trim).collect(Collectors.toMap(s -> s.substring(0, s.indexOf("=")), s -> s.substring(s.indexOf("=") + 1)));
+	public boolean isStop(final String id){
+		final var fields = Arrays.stream(id.split("@")).filter(s -> !s.isBlank() && s.contains("=")).map(String::trim).collect(Collectors.toMap(s -> s.substring(0, s.indexOf("=")), s -> s.substring(s.indexOf("=") + 1)));
 		return Objects.equals(this.getName(), fields.getOrDefault("O", null)) && Objects.equals("" + this.getL(), fields.getOrDefault("L", null));
 	}
 	
+	public String getName(){
+		return this.name;
+	}
+	
 	public int getL(){
-		return l;
+		return this.l;
 	}
 	
 	public int getA(){
-		return a;
+		return this.a;
 	}
 	
 	public int getB(){
-		return b;
+		return this.b;
 	}
 	
 	public String getID(){
-		return ID;
+		return this.ID;
 	}
 	
 	public int getP(){
-		return p;
+		return this.p;
 	}
 	
 	public int getU(){
-		return u;
+		return this.u;
 	}
 	
 	public float getX(){
-		return x;
+		return this.x;
 	}
 	
 	public float getY(){
-		return y;
+		return this.y;
 	}
 }

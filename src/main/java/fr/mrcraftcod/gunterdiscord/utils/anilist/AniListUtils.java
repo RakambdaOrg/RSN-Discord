@@ -22,11 +22,6 @@ public class AniListUtils{
 	private static final String REDIRECT_URI = "https://anilist.co/api/v2/oauth/pin";
 	private static final String CODE_LINK = String.format("%s/oauth/authorize?client_id=%d&response_type=code&redirect_uri=%s", API_URL, APP_ID, REDIRECT_URI);
 	
-	public static JSONObject getQuery(final Member member, final String code, final String query, final JSONObject variables) throws Exception{
-		getLogger(member.getGuild()).debug("Sending query to AniList for user {}", member.getUser());
-		return getQuery(AniListUtils.getAccessToken(member, code), query, variables);
-	}
-	
 	private static JSONObject getQuery(final String token, final String query, final JSONObject variables) throws Exception{
 		final var headers = new HashMap<String, String>();
 		headers.put("Authorization", "Bearer " + token);
@@ -49,17 +44,17 @@ public class AniListUtils{
 					}
 				}
 			}
-			catch(Exception ignored){
+			catch(final Exception ignored){
 			}
 		}
 		throw new Exception("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString() + " | query was " + query);
 	}
 	
-	public static String getAccessToken(final Member member, final String token) throws Exception{
+	public static void generateToken(final Member member, final String token) throws Exception{
 		getLogger(member.getGuild()).debug("Getting access token for {}", member);
 		final var accessToken = getPreviousAccessToken(member);
 		if(Objects.nonNull(accessToken)){
-			return accessToken;
+			return;
 		}
 		
 		final var headers = new HashMap<String, String>();
@@ -85,7 +80,7 @@ public class AniListUtils{
 		final var accessTokens = new AniListAccessTokenConfig(member.getGuild());
 		conf.addValue(member.getUser().getIdLong(), json.getString("refresh_token"));
 		accessTokens.addValue(member.getUser().getIdLong(), System.currentTimeMillis() + json.getInt("expires_in") * 1000L, json.getString("access_token"));
-		return json.getString("access_token");
+		json.getString("access_token");
 	}
 	
 	private static String getPreviousAccessToken(final Member member){

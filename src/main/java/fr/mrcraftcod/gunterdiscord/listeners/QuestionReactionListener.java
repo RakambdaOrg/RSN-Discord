@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -26,7 +27,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 	private static final Pattern NUMBER_ONLY = Pattern.compile("[^0-9]");
 	
 	@Override
-	public void onGuildMessageReactionAdd(final GuildMessageReactionAddEvent event){
+	public void onGuildMessageReactionAdd(@NotNull final GuildMessageReactionAddEvent event){
 		super.onGuildMessageReactionAdd(event);
 		try{
 			if(new QuestionsChannelConfig(event.getGuild()).isChannel(event.getChannel())){

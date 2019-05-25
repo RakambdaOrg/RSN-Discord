@@ -51,6 +51,6 @@ public abstract class BasicCommand implements Command{
 	
 	@Override
 	public Command getParent(){
-		return parent;
+		return this.parent;
 	}
 }

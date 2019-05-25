@@ -1,15 +1,19 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.list;
 
-import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListDatedObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.FuzzyDate;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMangaMedia;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMedia;
+import fr.mrcraftcod.gunterdiscord.utils.json.SQLTimestampDeserializer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,57 +32,45 @@ import static java.time.temporal.ChronoUnit.DAYS;
 		"ALL",
 		"WeakerAccess"
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AniListMediaUserList implements AniListDatedObject{
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 	private static final String QUERY = "mediaList(userId: $userID) {\n" + "id\n" + "private\n" + "progress\n" + "progressVolumes\n" + "priority\n" + "customLists\n" + "score(format: POINT_100)\n" + "completedAt{year month day}" + "startedAt{year month day}" + "status\n" + "updatedAt\n" + "createdAt\n" + AniListMedia.getQuery() + "}";
+	@JsonProperty("id")
 	private int id;
-	private AniListMediaListUserStatus status;
+	@JsonProperty("status")
+	private AniListMediaListUserStatus status = AniListMediaListUserStatus.UNKNOWN;
+	@JsonProperty("media")
 	private AniListMedia media;
-	private boolean privateItem;
+	@JsonProperty("private")
+	private boolean privateItem = false;
+	@JsonProperty("priority")
 	private Integer priority;
+	@JsonProperty("progress")
 	private Integer progress;
+	@JsonProperty("progressVolumes")
 	private Integer progressVolumes;
+	@JsonProperty("createdAt")
+	@JsonDeserialize(using = SQLTimestampDeserializer.class)
 	private Date createdAt;
+	@JsonProperty("updatedAt")
+	@JsonDeserialize(using = SQLTimestampDeserializer.class)
 	private Date updatedAt;
+	@JsonProperty("startedAt")
 	private FuzzyDate startedAt;
+	@JsonProperty("completedAt")
 	private FuzzyDate completedAt;
+	@JsonProperty("customLists")
 	private HashMap<String, Boolean> customLists;
+	@JsonProperty("score")
 	private Integer score;
-	
-	public static AniListMediaUserList buildFromJSON(final JSONObject json) throws Exception{
-		final var mediaList = new AniListMediaUserList();
-		mediaList.fromJSON(json);
-		return mediaList;
-	}
-	
-	@Override
-	public void fromJSON(final JSONObject json) throws Exception{
-		this.id = json.getInt("id");
-		this.privateItem = json.getBoolean("private");
-		this.priority = Utilities.getJSONMaybe(json, Integer.class, "priority");
-		this.progress = Utilities.getJSONMaybe(json, Integer.class, "progress");
-		this.progressVolumes = Utilities.getJSONMaybe(json, Integer.class, "progressVolumes");
-		this.score = Utilities.getJSONMaybe(json, Integer.class, "score");
-		this.status = AniListMediaListUserStatus.valueOf(json.getString("status"));
-		this.media = AniListMedia.buildFromJSON(json.getJSONObject("media"));
-		this.createdAt = new Date(json.optInt("createdAt") * 1000L);
-		this.updatedAt = new Date(json.optInt("updatedAt") * 1000L);
-		this.startedAt = FuzzyDate.buildFromJSON(json, "startedAt");
-		this.completedAt = FuzzyDate.buildFromJSON(json, "completedAt");
-		this.customLists = new HashMap<>();
-		final var customListsJson = json.optJSONObject("customLists");
-		if(Objects.nonNull(customListsJson)){
-			for(final var list : customListsJson.keySet()){
-				customLists.put(list, customListsJson.getBoolean(list));
-			}
-		}
-	}
 	
 	@Override
 	public void fillEmbed(final EmbedBuilder builder){
 		builder.setTimestamp(getDate().toInstant());
 		builder.setColor(getStatus().getColor());
-		builder.setTitle("User list information", getMedia().getUrl());
+		builder.setTitle("User list information", getMedia().getUrl().toString());
 		builder.addField("List status", this.getStatus().toString(), true);
 		if(Objects.nonNull(getScore())){
 			builder.addField("Score", this.getScore() + "/100", true);
@@ -154,7 +146,7 @@ public class AniListMediaUserList implements AniListDatedObject{
 	}
 	
 	@Override
-	public String getUrl(){
+	public URL getUrl(){
 		return getMedia().getUrl();
 	}
 	

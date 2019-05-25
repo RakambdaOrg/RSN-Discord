@@ -32,7 +32,7 @@ class Question{
 	 * @return The answers.
 	 */
 	HashMap<Integer, String> getAnswers(){
-		return answers;
+		return this.answers;
 	}
 	
 	/**
@@ -41,7 +41,7 @@ class Question{
 	 * @return The index of the correct answer.
 	 */
 	int getCorrectAnswerIndex(){
-		return correctAnswer;
+		return this.correctAnswer;
 	}
 	
 	/**
@@ -50,6 +50,6 @@ class Question{
 	 * @return The question.
 	 */
 	String getQuestion(){
-		return question;
+		return this.question;
 	}
 }

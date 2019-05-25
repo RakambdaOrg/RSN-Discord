@@ -40,7 +40,7 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 			final var membersParticipationChannel = new MembersParticipationChannelConfig(guild).getObject(null);
 			if(Objects.nonNull(membersParticipationChannel)){
 				getLogger(guild).debug("Processing stats for guild {}", guild);
-				if(TempParticipationCommand.sendInfos(guild, ytd, jda.getSelfUser(), membersParticipationChannel)){
+				if(TempParticipationCommand.sendInfos(guild, ytd, this.jda.getSelfUser(), membersParticipationChannel)){
 					new MembersParticipationConfig(guild).deleteKey(TempParticipationCommand.getKey(ytd));
 					final var usersToPin = new MembersParticipationPinConfig(guild).getAsList();
 					if(!usersToPin.isEmpty()){
@@ -52,7 +52,7 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 			final var emotesParticipationChannel = new EmotesParticipationChannelConfig(guild).getObject(null);
 			if(Objects.nonNull(emotesParticipationChannel)){
 				getLogger(guild).debug("Processing stats for guild {}", guild);
-				if(EmotesCommand.sendInfos(guild, lastWeek, jda.getSelfUser(), emotesParticipationChannel, 10)){
+				if(EmotesCommand.sendInfos(guild, lastWeek, this.jda.getSelfUser(), emotesParticipationChannel, 10)){
 					new EmotesParticipationConfig(guild).deleteKey(EmotesCommand.getKey(lastWeek));
 					final var usersToPin = new EmotesParticipationPinConfig(guild).getAsList();
 					if(!usersToPin.isEmpty()){

@@ -1,9 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.commands.luxbus.utils;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LuxBusProduct{
 	@JsonProperty("line")
 	private String line;
@@ -21,30 +23,30 @@ public class LuxBusProduct{
 	private String name;
 	
 	public String getAdmin(){
-		return admin;
+		return this.admin;
 	}
 	
 	public String getCategoryCode(){
-		return categoryCode;
+		return this.categoryCode;
 	}
 	
 	public String getLine(){
-		return line;
+		return this.line;
 	}
 	
 	public String getName(){
-		return name;
+		return this.name;
 	}
 	
 	public String getNumber(){
-		return number;
+		return this.number;
 	}
 	
 	public String getOperator(){
-		return operator;
+		return this.operator;
 	}
 	
 	public String getOperatorCode(){
-		return operatorCode;
+		return this.operatorCode;
 	}
 }

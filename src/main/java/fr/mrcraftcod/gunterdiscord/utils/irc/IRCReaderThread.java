@@ -19,7 +19,7 @@ public class IRCReaderThread extends Thread implements Closeable{
 	private final IRCClient client;
 	private boolean stop;
 	
-	public IRCReaderThread(IRCClient client, InputStream inputStream){
+	public IRCReaderThread(final IRCClient client, final InputStream inputStream){
 		this.client = client;
 		this.reader = new BufferedReader(new InputStreamReader(inputStream));
 		this.stop = false;
@@ -27,18 +27,18 @@ public class IRCReaderThread extends Thread implements Closeable{
 	
 	@Override
 	public void run(){
-		while(!stop){
+		while(!this.stop){
 			try{
-				if(reader.ready()){
+				if(this.reader.ready()){
 					String line;
-					while(Objects.nonNull(line = reader.readLine())){
+					while(Objects.nonNull(line = this.reader.readLine())){
 						try{
 							final var event = IRCUtils.buildEvent(line);
 							if(Objects.nonNull(event)){
 								if(event instanceof PingIRCEvent){
 									LOGGER.debug("Replying to IRC ping message");
-									client.sendMessage("PONG");
-									final var iterator = client.getListeners().iterator();
+									this.client.sendMessage("PONG");
+									final var iterator = this.client.getListeners().iterator();
 									while(iterator.hasNext()){
 										final var listener = iterator.next();
 										if(listener.getLastMessage() > 1.8e6){
@@ -47,12 +47,12 @@ public class IRCReaderThread extends Thread implements Closeable{
 										}
 									}
 								}
-								for(IRCListener ircListener : client.getListeners()){
+								for(final var ircListener : this.client.getListeners()){
 									ircListener.onIRCEvent(event);
 								}
 							}
 						}
-						catch(Exception e){
+						catch(final Exception e){
 							LOGGER.error("Error handling IRC message: {}", line, e);
 						}
 					}
@@ -61,12 +61,12 @@ public class IRCReaderThread extends Thread implements Closeable{
 					try{
 						Thread.sleep(500);
 					}
-					catch(InterruptedException e){
+					catch(final InterruptedException e){
 						LOGGER.error("Error while sleeping", e);
 					}
 				}
 			}
-			catch(IOException e){
+			catch(final IOException e){
 				LOGGER.error("Error reading stream", e);
 			}
 		}

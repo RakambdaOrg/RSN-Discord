@@ -29,7 +29,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 		"unused"
 })
 public class Actions{
-	public static final Consumer<Message> PIN_MESSAGE = m -> m.pin().queue();
+	public static final Consumer<Message> PIN_MESSAGE = message -> message.pin().queue();
 	
 	/**
 	 * Reply to a message.
@@ -50,7 +50,7 @@ public class Actions{
 	 * @param format The message format.
 	 * @param args   The message parameters.
 	 */
-	public static void reply(@NotNull final GenericGuildMessageEvent event, Consumer<Message> onDone, @NotNull final String format, final Object... args){
+	public static void reply(@NotNull final GenericGuildMessageEvent event, final Consumer<Message> onDone, @NotNull final String format, final Object... args){
 		sendMessage(event.getChannel(), onDone, String.format(format, args));
 	}
 	
@@ -182,13 +182,15 @@ public class Actions{
 	 * @param member The user to remove the role from.
 	 * @param role   The role to remove.
 	 */
-	public static void removeRole(@NotNull final Member member, final Role role){
-		try{
-			member.getGuild().getController().removeSingleRoleFromMember(member, role).queue();
-			getLogger(member.getGuild()).info("Removed role {} from {}", role, member.getUser());
-		}
-		catch(final IllegalArgumentException e){
-			getLogger(member.getGuild()).warn("User/Role not found", e);
+	public static void removeRole(final Member member, final Role role){
+		if(Objects.nonNull(member)){
+			try{
+				member.getGuild().getController().removeSingleRoleFromMember(member, role).queue();
+				getLogger(member.getGuild()).info("Removed role {} from {}", role, member.getUser());
+			}
+			catch(final IllegalArgumentException e){
+				getLogger(member.getGuild()).warn("User/Role not found", e);
+			}
 		}
 	}
 	
@@ -331,11 +333,11 @@ public class Actions{
 	public static void giveRole(@NotNull final Guild guild, @NotNull final User user, final Role role){
 		try{
 			final var member = guild.getMember(user);
-			if(member.getRoles().contains(role)){
+			if(Objects.requireNonNull(member).getRoles().contains(role)){
 				getLogger(guild).info("{} already have role {}", user, role);
 			}
 			else{
-				guild.getController().addSingleRoleToMember(guild.getMember(user), role).queue();
+				guild.getController().addSingleRoleToMember(member, role).queue();
 				getLogger(guild).info("Added role {} to {}", role, user);
 			}
 		}
@@ -433,7 +435,7 @@ public class Actions{
 	 * @param state   True if deaf, false is not deaf.
 	 */
 	public static void deafen(@NotNull final List<Member> members, final boolean state){
-		members.forEach(m -> deafen(m, state));
+		members.forEach(member -> deafen(member, state));
 	}
 	
 	/**
@@ -463,7 +465,7 @@ public class Actions{
 	 * @param permission The permission to remove.
 	 */
 	public static void denyPermission(@NotNull final List<Member> members, @NotNull final GuildChannel channel, @NotNull final Permission permission){
-		members.forEach(m -> denyPermission(m, channel, permission));
+		members.forEach(member -> denyPermission(member, channel, permission));
 	}
 	
 	/**
@@ -494,7 +496,7 @@ public class Actions{
 	 * @param permission The permission to give.
 	 */
 	public static void allowPermission(@NotNull final List<Member> members, @NotNull final GuildChannel channel, @NotNull final Permission permission){
-		members.forEach(m -> allowPermission(m, channel, permission));
+		members.forEach(member -> allowPermission(member, channel, permission));
 	}
 	
 	/**

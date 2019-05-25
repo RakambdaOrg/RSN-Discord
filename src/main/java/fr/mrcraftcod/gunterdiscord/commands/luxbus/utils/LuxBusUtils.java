@@ -29,30 +29,6 @@ public class LuxBusUtils{
 		}).collect(Collectors.toList()));
 	}
 	
-	public static Map<String, LuxBusStop> getStopIDs(){
-		if(System.currentTimeMillis() - lastCheck > 3600000){
-			lastCheck = System.currentTimeMillis();
-			LOGGER.debug("Fetching bus stop infos");
-			try{
-				final var request = new StringGetRequestSender("http://travelplanner.mobiliteit.lu/hafas/query.exe/dot?performLocating=2&tpl=stop2csv&look_maxdist=150000&look_x=6112550&look_y=49610700&stationProxy=yes").getRequestHandler();
-				if(request.getStatus() == 200){
-					Arrays.stream(request.getRequestResult().split(";")).map(s -> s.replace("id=", "").replace("\n", "").trim()).filter(s -> !s.isBlank()).forEach(s -> stops.putIfAbsent(s.toLowerCase(), LuxBusStop.createStop(s)));
-				}
-			}
-			catch(URISyntaxException | MalformedURLException e){
-				LOGGER.warn("Failed to get bus stops", e);
-			}
-		}
-		return stops;
-	}
-	
-	public static Optional<LuxBusStop> getStopByID(final String ID){
-		if(Objects.isNull(ID) || ID.isBlank()){
-			throw new IllegalArgumentException("Stop id must not be blank");
-		}
-		return getStopIDs().values().stream().filter(s -> s.isStop(ID)).findFirst();
-	}
-	
 	public static List<LuxBusDeparture> getDepartures(final LuxBusStop stopID){
 		try{
 			LOGGER.info("Getting departures for stop {}", stopID);
@@ -62,12 +38,12 @@ public class LuxBusUtils{
 				if(response.has("Departure")){
 					final var departuresList = new ArrayList<LuxBusDeparture>();
 					final var departures = response.getJSONArray("Departure");
-					for(int i = 0; i < departures.length(); i++){
+					for(var i = 0; i < departures.length(); i++){
 						try{
 							final var obj = (LuxBusDeparture) new ObjectMapper().readerFor(LuxBusDeparture.class).readValue(departures.getJSONObject(i).toString());
 							departuresList.add(obj);
 						}
-						catch(IOException e){
+						catch(final IOException e){
 							LOGGER.error("Failed to parse JSON departure", e);
 						}
 					}
@@ -79,9 +55,33 @@ public class LuxBusUtils{
 				throw new IllegalStateException("Bus API didn't reply correctly");
 			}
 		}
-		catch(URISyntaxException | MalformedURLException e){
+		catch(final URISyntaxException | MalformedURLException e){
 			LOGGER.warn("Failed to get bus stop departures (id: {})", stopID, e);
 		}
 		return List.of();
+	}
+	
+	public static Optional<LuxBusStop> getStopByID(final String ID){
+		if(Objects.isNull(ID) || ID.isBlank()){
+			throw new IllegalArgumentException("Stop id must not be blank");
+		}
+		return getStopIDs().values().stream().filter(s -> s.isStop(ID)).findFirst();
+	}
+	
+	public static Map<String, LuxBusStop> getStopIDs(){
+		if(System.currentTimeMillis() - lastCheck > 3600000){
+			lastCheck = System.currentTimeMillis();
+			LOGGER.debug("Fetching bus stop infos");
+			try{
+				final var request = new StringGetRequestSender("http://travelplanner.mobiliteit.lu/hafas/query.exe/dot?performLocating=2&tpl=stop2csv&look_maxdist=150000&look_x=6112550&look_y=49610700&stationProxy=yes").getRequestHandler();
+				if(request.getStatus() == 200){
+					Arrays.stream(request.getRequestResult().split(";")).map(s -> s.replace("id=", "").replace("\n", "").trim()).filter(s -> !s.isBlank()).forEach(s -> stops.putIfAbsent(s.toLowerCase(), LuxBusStop.createStop(s)));
+				}
+			}
+			catch(final URISyntaxException | MalformedURLException e){
+				LOGGER.warn("Failed to get bus stops", e);
+			}
+		}
+		return stops;
 	}
 }

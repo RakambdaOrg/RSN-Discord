@@ -11,7 +11,7 @@ import fr.mrcraftcod.gunterdiscord.utils.irc.events.*;
 @SuppressWarnings("EmptyMethod")
 public abstract class AbstractIRCListener implements IRCListener{
 	@Override
-	public void onIRCEvent(IRCEvent event){
+	public void onIRCEvent(final IRCEvent event){
 		if(event instanceof ChannelJoinedIRCEvent){
 			onIRCChannelJoined((ChannelJoinedIRCEvent) event);
 		}

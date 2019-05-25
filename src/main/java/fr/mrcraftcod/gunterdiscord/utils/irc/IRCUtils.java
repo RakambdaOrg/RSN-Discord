@@ -11,10 +11,10 @@ import java.util.Objects;
  * @author Thomas Couchoud
  * @since 2019-02-25
  */
-public class IRCUtils{
+class IRCUtils{
 	private static final Logger LOGGER = LoggerFactory.getLogger(IRCUtils.class);
 	
-	public static IRCEvent buildEvent(String message){
+	static IRCEvent buildEvent(String message){
 		if(message.equals("PING :tmi.twitch.tv")){
 			return new PingIRCEvent();
 		}

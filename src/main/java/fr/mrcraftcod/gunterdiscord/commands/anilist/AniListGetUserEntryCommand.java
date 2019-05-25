@@ -33,14 +33,14 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 		private final JDA jda;
 		private final AniListMediaType type;
 		
-		AniListMediaUserListRunner(final JDA jda, final AniListMediaType type, int ID){
+		AniListMediaUserListRunner(final JDA jda, final AniListMediaType type, final int ID){
 			this.jda = jda;
 			this.type = type;
 			this.ID = ID;
 		}
 		
 		public void sendMessages(final List<TextChannel> channels, final Map<User, List<AniListMediaUserList>> userElements){
-			userElements.values().forEach(l -> l.removeIf(aniListMediaUserList -> !aniListMediaUserList.getMedia().getType().equals(this.type) || !Objects.equals(aniListMediaUserList.getMedia().getId(), ID)));
+			userElements.values().forEach(l -> l.removeIf(aniListMediaUserList -> !aniListMediaUserList.getMedia().getType().equals(this.type) || !Objects.equals(aniListMediaUserList.getMedia().getId(), this.ID)));
 			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
 		}
 		
