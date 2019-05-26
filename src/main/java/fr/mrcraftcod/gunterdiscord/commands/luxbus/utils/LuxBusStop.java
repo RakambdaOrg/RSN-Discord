@@ -65,7 +65,7 @@ public class LuxBusStop{
 			throw new IllegalArgumentException("Stop id must not be blank");
 		}
 		final var tempStop = new LuxBusStop(ID);
-		return LuxBusUtils.getStopIDs().values().stream().filter(s -> Objects.equals(s, tempStop)).findFirst().orElse(tempStop);
+		return LuxBusUtils.getStopIDs().stream().filter(s -> Objects.equals(s, tempStop)).findFirst().orElse(tempStop);
 	}
 	
 	@Override
