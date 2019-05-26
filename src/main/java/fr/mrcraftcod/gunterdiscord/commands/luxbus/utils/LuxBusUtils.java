@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class LuxBusUtils{
 	private static final Logger LOGGER = LoggerFactory.getLogger(LuxBusUtils.class);
-	public static Map<String, LuxBusStop> stops = new HashMap<>();
+	public static Set<LuxBusStop> stops = new HashSet<>();
 	private static long lastCheck = 0;
 	
 	public static List<LuxBusStop> searchStopByName(final String stop){
@@ -23,7 +23,7 @@ public class LuxBusUtils{
 			throw new IllegalArgumentException("Stop must not be blank");
 		}
 		final var stopKey = stop.toLowerCase();
-		return getStopIDs().values().stream().filter(s -> Objects.equals(stopKey, s.getName().toLowerCase())).findFirst().map(List::of).orElse(getStopIDs().values().stream().filter(s -> {
+		return getStopIDs().stream().filter(s -> Objects.equals(stopKey, s.getName().toLowerCase())).findFirst().map(List::of).orElse(getStopIDs().stream().filter(s -> {
 			final var compKey = s.getName().toLowerCase();
 			return compKey.startsWith(stopKey) || Arrays.stream(compKey.split(",")).map(String::trim).anyMatch(s2 -> s2.startsWith(stopKey));
 		}).collect(Collectors.toList()));
@@ -61,21 +61,14 @@ public class LuxBusUtils{
 		return List.of();
 	}
 	
-	public static Optional<LuxBusStop> getStopByID(final String ID){
-		if(Objects.isNull(ID) || ID.isBlank()){
-			throw new IllegalArgumentException("Stop id must not be blank");
-		}
-		return getStopIDs().values().stream().filter(s -> s.isStop(ID)).findFirst();
-	}
-	
-	public static Map<String, LuxBusStop> getStopIDs(){
+	public static Set<LuxBusStop> getStopIDs(){
 		if(System.currentTimeMillis() - lastCheck > 3600000){
 			lastCheck = System.currentTimeMillis();
 			LOGGER.debug("Fetching bus stop infos");
 			try{
 				final var request = new StringGetRequestSender("http://travelplanner.mobiliteit.lu/hafas/query.exe/dot?performLocating=2&tpl=stop2csv&look_maxdist=150000&look_x=6112550&look_y=49610700&stationProxy=yes").getRequestHandler();
 				if(request.getStatus() == 200){
-					Arrays.stream(request.getRequestResult().split(";")).map(s -> s.replace("id=", "").replace("\n", "").trim()).filter(s -> !s.isBlank()).forEach(s -> stops.putIfAbsent(s.toLowerCase(), LuxBusStop.createStop(s)));
+					Arrays.stream(request.getRequestResult().split(";")).map(s -> s.replace("id=", "").replace("\n", "").trim()).filter(s -> !s.isBlank()).map(LuxBusStop::createStop).filter(s -> !stops.contains(s)).forEach(s -> stops.add(s));
 				}
 			}
 			catch(final URISyntaxException | MalformedURLException e){
@@ -83,5 +76,12 @@ public class LuxBusUtils{
 			}
 		}
 		return stops;
+	}
+	
+	public static Optional<LuxBusStop> getStopByID(final String ID){
+		if(Objects.isNull(ID) || ID.isBlank()){
+			throw new IllegalArgumentException("Stop id must not be blank");
+		}
+		return getStopIDs().stream().filter(s -> s.isStop(ID)).findFirst();
 	}
 }
