@@ -1,7 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands.luxbus;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
-import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.commands.luxbus.utils.LuxBusDeparture;
 import fr.mrcraftcod.gunterdiscord.commands.luxbus.utils.LuxBusStop;
@@ -25,15 +24,6 @@ import java.util.stream.IntStream;
 
 public class LuxBusGetStopCommand extends BasicCommand{
 	public static final Logger LOGGER = LoggerFactory.getLogger(LuxBusGetStopCommand.class);
-	
-	/**
-	 * Constructor.
-	 *
-	 * @param parent The parent command.
-	 */
-	LuxBusGetStopCommand(final Command parent){
-		super(parent);
-	}
 	
 	@Override
 	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
@@ -123,7 +113,7 @@ public class LuxBusGetStopCommand extends BasicCommand{
 	
 	@Override
 	public List<String> getCommand(){
-		return List.of("stop", "s");
+		return List.of("luxbus", "bus");
 	}
 	
 	@Override
