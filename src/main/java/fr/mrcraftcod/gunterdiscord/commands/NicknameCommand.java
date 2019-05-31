@@ -88,7 +88,7 @@ public class NicknameCommand extends BasicCommand{
 			builder.addField("New nickname", Objects.isNull(newName) ? "*NONE*" : newName, true);
 			builder.addField("User", member.getAsMention(), true);
 			try{
-				member.getGuild().getController().setNickname(member, newName).complete();
+				member.getGuild().modifyNickname(member, newName).complete();
 				builder.setColor(Color.GREEN);
 				new NickLastChangeConfig(event.getGuild()).addValue(member.getUser().getIdLong(), new Date().getTime());
 				getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", event.getAuthor(), member.getUser(), oldName, newName);

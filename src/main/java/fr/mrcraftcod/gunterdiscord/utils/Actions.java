@@ -185,7 +185,7 @@ public class Actions{
 	public static void removeRole(final Member member, final Role role){
 		if(Objects.nonNull(member)){
 			try{
-				member.getGuild().getController().removeSingleRoleFromMember(member, role).queue();
+				member.getGuild().removeRoleFromMember(member, role).queue();
 				getLogger(member.getGuild()).info("Removed role {} from {}", role, member.getUser());
 			}
 			catch(final IllegalArgumentException e){
@@ -337,7 +337,7 @@ public class Actions{
 				getLogger(guild).info("{} already have role {}", user, role);
 			}
 			else{
-				guild.getController().addSingleRoleToMember(member, role).queue();
+				guild.addRoleToMember(member, role).queue();
 				getLogger(guild).info("Added role {} to {}", role, user);
 			}
 		}
@@ -446,7 +446,7 @@ public class Actions{
 	 */
 	private static void deafen(@NotNull final Member member, final boolean state){
 		try{
-			member.getGuild().getController().setDeafen(member, state).queue();
+			member.getGuild().deafen(member, state).queue();
 			getLogger(member.getGuild()).info("Member {} is now {}deaf", member.getUser(), state ? "" : "un");
 		}
 		catch(final HierarchyException | InsufficientPermissionException e){

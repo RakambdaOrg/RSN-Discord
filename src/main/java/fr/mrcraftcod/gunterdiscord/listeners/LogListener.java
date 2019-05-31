@@ -129,8 +129,8 @@ public class LogListener extends ListenerAdapter{
 		super.onGuildVoiceGuildMute(event);
 		if(Objects.equals(event.getMember().getUser(), event.getJDA().getSelfUser())){
 			getLogger(event.getGuild()).info("Unmuting bot");
-			event.getGuild().getController().setMute(event.getMember(), false).queue();
-			event.getGuild().getController().setDeafen(event.getMember(), false).queue();
+			event.getGuild().mute(event.getMember(), false).queue();
+			event.getGuild().deafen(event.getMember(), false).queue();
 		}
 	}
 }
