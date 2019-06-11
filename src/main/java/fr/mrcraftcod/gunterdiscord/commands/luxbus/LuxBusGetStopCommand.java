@@ -60,9 +60,14 @@ public class LuxBusGetStopCommand extends BasicCommand{
 		if(stops.size() < 2){
 			askLine(event, stops.get(0));
 		}
+		else if(stops.size() > 100){
+			Actions.reply(event, "More than 100 stops matching, please give a better name for the stop.");
+		}
 		else{
 			Actions.reply(event, "Choose a stop:");
-			IntStream.range(0, stops.size()).boxed().collect(Collectors.groupingBy(index -> index / 5)).values().stream().map(indices -> indices.stream().map(stops::get).collect(Collectors.toList())).forEach(stopsBatch -> Actions.reply(event, message -> ReplyMessageListener.handleReply(new LuxBusStopSelectionWaitingReply(event, stops, message)), "%s", stopsBatch.stream().map(stop -> String.format("%d: %s", stops.indexOf(stop) + 1, stop)).collect(Collectors.joining("\n"))));
+			final var replyHandler = new LuxBusStopSelectionWaitingReply(event, stops, event.getChannel());
+			ReplyMessageListener.handleReply(replyHandler);
+			IntStream.range(0, stops.size()).boxed().collect(Collectors.groupingBy(index -> index / 25)).values().stream().map(indices -> indices.stream().map(stops::get).collect(Collectors.toList())).forEach(stopsBatch -> Actions.reply(event, replyHandler::addMessage, "%s", stopsBatch.stream().map(stop -> String.format("%d: %s", stops.indexOf(stop) + 1, stop)).collect(Collectors.joining("\n"))));
 		}
 	}
 	
