@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.luxbus;
 
 import fr.mrcraftcod.gunterdiscord.commands.luxbus.utils.LuxBusStop;
+import fr.mrcraftcod.gunterdiscord.listeners.reply.ReplyMessageListener;
 import fr.mrcraftcod.gunterdiscord.listeners.reply.WaitingUserReply;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.entities.Message;
@@ -10,6 +11,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-05-18.
@@ -18,7 +20,6 @@ import java.util.List;
  * @since 2019-05-18
  */
 public class LuxBusStopSelectionWaitingReply implements WaitingUserReply{
-	private final long maxTime;
 	private final List<Message> infoMessages;
 	private final List<LuxBusStop> stops;
 	private final GuildMessageReceivedEvent event;
@@ -28,19 +29,18 @@ public class LuxBusStopSelectionWaitingReply implements WaitingUserReply{
 	public LuxBusStopSelectionWaitingReply(final GuildMessageReceivedEvent event, final List<LuxBusStop> stops, final TextChannel channel){
 		this.event = event;
 		this.handled = false;
-		this.maxTime = System.currentTimeMillis() + 30000;
 		this.stops = stops;
 		this.infoMessages = new ArrayList<>();
 		this.channel = channel;
+		ReplyMessageListener.getExecutor().schedule(() -> {
+			if(!isHandled()){
+				this.onExpire();
+			}
+		}, 30, TimeUnit.SECONDS);
 	}
 	
 	public void addMessage(final Message message){
 		this.infoMessages.add(message);
-	}
-	
-	@Override
-	public boolean isExpired(){
-		return System.currentTimeMillis() > this.maxTime;
 	}
 	
 	@Override

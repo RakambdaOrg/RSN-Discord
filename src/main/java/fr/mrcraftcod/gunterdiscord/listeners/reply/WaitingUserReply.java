@@ -20,7 +20,5 @@ public interface WaitingUserReply{
 	
 	User getUser();
 	
-	boolean isExpired();
-	
 	boolean isHandled();
 }
