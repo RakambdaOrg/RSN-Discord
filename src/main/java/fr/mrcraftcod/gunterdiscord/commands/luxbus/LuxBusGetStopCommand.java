@@ -61,7 +61,8 @@ public class LuxBusGetStopCommand extends BasicCommand{
 			askLine(event, stops.get(0));
 		}
 		else{
-			Actions.reply(event, message -> ReplyMessageListener.handleReply(new LuxBusStopSelectionWaitingReply(event, stops, message)), "Choose a stop:\n%s", IntStream.range(0, stops.size()).mapToObj(i -> String.format("%d: %s", i + 1, stops.get(i))).collect(Collectors.joining("\n")));
+			Actions.reply(event, "Choose a stop:");
+			IntStream.range(0, stops.size()).boxed().collect(Collectors.groupingBy(index -> index / 5)).values().stream().map(indices -> indices.stream().map(stops::get).collect(Collectors.toList())).forEach(stopsBatch -> Actions.reply(event, message -> ReplyMessageListener.handleReply(new LuxBusStopSelectionWaitingReply(event, stops, message)), "%s", stopsBatch.stream().map(stop -> String.format("%d: %s", stops.indexOf(stop) + 1, stop)).collect(Collectors.joining("\n"))));
 		}
 	}
 	
