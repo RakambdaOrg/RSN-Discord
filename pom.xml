@@ -14,6 +14,8 @@
         <java.version>12</java.version>
         <main.class>fr.mrcraftcod.gunterdiscord.Main</main.class>
         <jackson.version>2.9.9</jackson.version>
+        <jda.version>4.ALPHA.0_105</jda.version>
+        <slf4j.version>2.0.0-alpha0</slf4j.version>
     </properties>
     <packaging>jar</packaging>
 
@@ -114,7 +116,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.ALPHA.0_92</version>
+            <version>${jda.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>club.minnced</groupId>
@@ -151,7 +153,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.8.0-beta4</version>
+            <version>${slf4j.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
         <dependency>
