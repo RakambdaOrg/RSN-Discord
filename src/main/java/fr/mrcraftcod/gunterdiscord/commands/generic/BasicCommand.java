@@ -20,7 +20,7 @@ public abstract class BasicCommand implements Command{
 	 * Constructor.
 	 */
 	protected BasicCommand(){
-		this(null);
+		this.parent = null;
 	}
 	
 	/**
@@ -28,7 +28,7 @@ public abstract class BasicCommand implements Command{
 	 *
 	 * @param parent The parent command.
 	 */
-	protected BasicCommand(final Command parent){
+	protected BasicCommand(@NotNull final Command parent){
 		this.parent = parent;
 	}
 	
@@ -37,7 +37,10 @@ public abstract class BasicCommand implements Command{
 	}
 	
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+		if(event.isWebhookMessage()){
+			throw new NotHandledException("This message is from a webhook");
+		}
 		if(!isAllowed(event.getMember())){
 			throw new NotAllowedException();
 		}

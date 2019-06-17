@@ -31,7 +31,7 @@ public class QuizCommandComposite extends CommandComposite{
 	}
 	
 	@Override
-	public List<String> getCommand(){
+	public List<String> getCommandStrings(){
 		return List.of("quiz");
 	}
 	

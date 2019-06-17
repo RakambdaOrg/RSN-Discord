@@ -120,7 +120,7 @@ public class AddMusicCommand extends BasicCommand{
 	}
 	
 	@Override
-	public List<String> getCommand(){
+	public List<String> getCommandStrings(){
 		return List.of("add", "a");
 	}
 	

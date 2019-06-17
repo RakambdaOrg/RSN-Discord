@@ -32,7 +32,7 @@ public class NormalWarnCommand extends WarnCommand{
 	}
 	
 	@Override
-	public List<String> getCommand(){
+	public List<String> getCommandStrings(){
 		return List.of("warn");
 	}
 }

@@ -64,7 +64,7 @@ public class ReportCommand extends BasicCommand{
 	}
 	
 	@Override
-	public List<String> getCommand(){
+	public List<String> getCommandStrings(){
 		return List.of("report", "r");
 	}
 	

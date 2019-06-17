@@ -72,7 +72,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 	 */
 	public CommandsMessageListener(){
 		final var counts = new HashMap<String, Integer>();
-		Arrays.asList(commands).forEach(command -> command.getCommand().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
+		Arrays.asList(commands).forEach(command -> command.getCommandStrings().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
 		final var clash = counts.keySet().stream().filter(key -> counts.get(key) > 1).collect(Collectors.joining(", "));
 		if(Objects.nonNull(clash) && !clash.isEmpty()){
 			getLogger(null).error("Command clash: {}", clash);
@@ -156,6 +156,6 @@ public class CommandsMessageListener extends ListenerAdapter{
 	 * @return The command or null if not found.
 	 */
 	private static Command getCommand(final String commandText){
-		return Arrays.stream(commands).filter(command -> command.getCommand().contains(commandText.toLowerCase())).findFirst().orElse(null);
+		return Arrays.stream(commands).filter(command -> command.getCommandStrings().contains(commandText.toLowerCase())).findFirst().orElse(null);
 	}
 }

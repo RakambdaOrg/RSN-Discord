@@ -77,17 +77,19 @@ public class Main{
 		try{
 			Settings.init(Paths.get(parameters.getSettingsFile().toURI()));
 			LOGGER.info("Building JDA");
-			jda = new JDABuilder(AccountType.BOT).setToken(System.getProperty("RSN_TOKEN")).build();
+			final var jdaBuilder = new JDABuilder(AccountType.BOT).setToken(System.getProperty("RSN_TOKEN"));
+			jdaBuilder.addEventListeners(new CommandsMessageListener());
+			// jdaBuilder.addEventListeners(new OnlyImagesMessageListener());
+			jdaBuilder.addEventListeners(new ShutdownListener());
+			jdaBuilder.addEventListeners(new LogListener());
+			jdaBuilder.addEventListeners(new AutoRolesListener());
+			jdaBuilder.addEventListeners(new IdeaChannelMessageListener());
+			jdaBuilder.addEventListeners(new QuestionReactionListener());
+			jdaBuilder.addEventListeners(new ReplyMessageListener());
+			jdaBuilder.setAutoReconnect(true);
+			jda = jdaBuilder.build();
+			Log.setJDA(jda);
 			jda.awaitReady();
-			jda.addEventListener(new CommandsMessageListener());
-			// jda.addEventListener(new OnlyImagesMessageListener());
-			jda.addEventListener(new ShutdownListener());
-			jda.addEventListener(new LogListener());
-			jda.addEventListener(new AutoRolesListener());
-			jda.addEventListener(new IdeaChannelMessageListener());
-			jda.addEventListener(new QuestionReactionListener());
-			jda.addEventListener(new ReplyMessageListener());
-			jda.setAutoReconnect(true);
 			jda.getPresence().setActivity(Activity.playing("g?help for the help"));
 			
 			LOGGER.info("Creating runners");

@@ -50,7 +50,7 @@ public class ConnectCommand extends BasicCommand{
 			try{
 				TwitchIRC.connect(event.getGuild(), args.poll());
 			}
-			catch(NoValueDefinedException e){
+			catch(final NoValueDefinedException e){
 				Actions.reply(event, "Server needs to be configured to use this feature");
 				LOGGER.warn("Missing configuration for IRC", e);
 			}
@@ -74,7 +74,7 @@ public class ConnectCommand extends BasicCommand{
 	}
 	
 	@Override
-	public List<String> getCommand(){
+	public List<String> getCommandStrings(){
 		return List.of("connect", "c", "j");
 	}
 	

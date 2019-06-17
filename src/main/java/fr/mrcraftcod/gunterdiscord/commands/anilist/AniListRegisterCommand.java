@@ -23,7 +23,6 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-10-08
  */
-@SuppressWarnings("WeakerAccess")
 public class AniListRegisterCommand extends BasicCommand{
 	public static final Logger LOGGER = LoggerFactory.getLogger(AniListRegisterCommand.class);
 	private static final String QUERY = "query{Viewer {id name}}";
@@ -33,7 +32,7 @@ public class AniListRegisterCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	AniListRegisterCommand(final Command parent){
+	AniListRegisterCommand(@NotNull final Command parent){
 		super(parent);
 	}
 	
@@ -44,7 +43,7 @@ public class AniListRegisterCommand extends BasicCommand{
 	}
 	
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.isEmpty()){
 			Actions.reply(event, "Please provide your API code");
@@ -82,7 +81,7 @@ public class AniListRegisterCommand extends BasicCommand{
 	}
 	
 	@Override
-	public List<String> getCommand(){
+	public List<String> getCommandStrings(){
 		return List.of("register", "r");
 	}
 	

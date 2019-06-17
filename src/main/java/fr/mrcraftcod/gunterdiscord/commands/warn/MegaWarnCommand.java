@@ -32,7 +32,7 @@ public class MegaWarnCommand extends WarnCommand{
 	}
 	
 	@Override
-	public List<String> getCommand(){
+	public List<String> getCommandStrings(){
 		//noinspection SpellCheckingInspection
 		return List.of("megawarn", "mwarn");
 	}

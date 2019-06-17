@@ -37,11 +37,11 @@ public class HelpCommand extends BasicCommand{
 			builder.setColor(Color.GREEN);
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setTitle("Available commands");
-			Arrays.stream(CommandsMessageListener.commands).filter(c -> c.isAllowed(event.getMember())).map(s -> new MessageEmbed.Field(prefix + s.getCommand().get(0), s.getDescription(), false)).sorted(Comparator.comparing(MessageEmbed.Field::getName)).forEach(builder::addField);
+			Arrays.stream(CommandsMessageListener.commands).filter(c -> c.isAllowed(event.getMember())).map(s -> new MessageEmbed.Field(prefix + s.getCommandStrings().get(0), s.getDescription(), false)).sorted(Comparator.comparing(MessageEmbed.Field::getName)).forEach(builder::addField);
 			Actions.reply(event, builder.build());
 		}
 		else{
-			var command = Arrays.stream(CommandsMessageListener.commands).filter(s -> s.getCommand().contains(args.get(0).toLowerCase())).filter(c -> c.isAllowed(event.getMember())).findAny().orElse(null);
+			var command = Arrays.stream(CommandsMessageListener.commands).filter(s -> s.getCommandStrings().contains(args.get(0).toLowerCase())).filter(c -> c.isAllowed(event.getMember())).findAny().orElse(null);
 			args.poll();
 			while(!args.isEmpty() && command instanceof CommandComposite){
 				final var command2 = ((CommandComposite) command).getSubCommand(args.get(0).toLowerCase());
@@ -58,7 +58,7 @@ public class HelpCommand extends BasicCommand{
 				builder.setTitle(getName());
 				builder.addField("Name", command.getName(), true);
 				builder.addField("Description", command.getDescription(), true);
-				builder.addField("Command", String.join(", ", command.getCommand()), false);
+				builder.addField("Command", String.join(", ", command.getCommandStrings()), false);
 				builder.addField("Usage", command.getCommandUsage(), false);
 				builder.addBlankField(true);
 				builder.addField("", "Arguments", false);
@@ -90,7 +90,7 @@ public class HelpCommand extends BasicCommand{
 	}
 	
 	@Override
-	public List<String> getCommand(){
+	public List<String> getCommandStrings(){
 		return List.of("help", "h");
 	}
 	

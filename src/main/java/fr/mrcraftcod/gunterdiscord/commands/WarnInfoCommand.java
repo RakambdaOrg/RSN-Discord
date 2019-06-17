@@ -67,7 +67,7 @@ public class WarnInfoCommand extends BasicCommand{
 	
 	@SuppressWarnings("SpellCheckingInspection")
 	@Override
-	public List<String> getCommand(){
+	public List<String> getCommandStrings(){
 		return List.of("warninfo", "wi");
 	}
 	

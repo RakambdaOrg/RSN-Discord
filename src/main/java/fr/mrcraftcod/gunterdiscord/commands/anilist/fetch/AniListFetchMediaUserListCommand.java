@@ -22,12 +22,12 @@ public class AniListFetchMediaUserListCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	AniListFetchMediaUserListCommand(final Command parent){
+	AniListFetchMediaUserListCommand(@NotNull final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		new AniListMediaUserListScheduledRunner(event.getJDA()).run();
 		return CommandResult.SUCCESS;
@@ -44,7 +44,7 @@ public class AniListFetchMediaUserListCommand extends BasicCommand{
 	}
 	
 	@Override
-	public List<String> getCommand(){
+	public List<String> getCommandStrings(){
 		//noinspection SpellCheckingInspection
 		return List.of("medialist", "m");
 	}

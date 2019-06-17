@@ -28,20 +28,21 @@ import java.util.function.Consumer;
  * @since 2018-10-08
  */
 public class AniListGetUserEntryCommand extends BasicCommand{
-	class AniListMediaUserListRunner implements AniListRunner<AniListMediaUserList, AniListMediaUserListPagedQuery>{
+	static class AniListMediaUserListRunner implements AniListRunner<AniListMediaUserList, AniListMediaUserListPagedQuery>{
 		private final int ID;
 		private final JDA jda;
 		private final AniListMediaType type;
 		
-		AniListMediaUserListRunner(final JDA jda, final AniListMediaType type, final int ID){
+		AniListMediaUserListRunner(@NotNull final JDA jda, @NotNull final AniListMediaType type, final int ID){
 			this.jda = jda;
 			this.type = type;
 			this.ID = ID;
 		}
 		
-		public void sendMessages(final List<TextChannel> channels, final Map<User, List<AniListMediaUserList>> userElements){
-			userElements.values().forEach(l -> l.removeIf(aniListMediaUserList -> !aniListMediaUserList.getMedia().getType().equals(this.type) || !Objects.equals(aniListMediaUserList.getMedia().getId(), this.ID)));
-			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
+		@Override
+		public void sendMessages(@NotNull final List<TextChannel> channels, @NotNull final Map<User, List<AniListMediaUserList>> userElements){
+			userElements.values().forEach(listMediaUserLists -> listMediaUserLists.removeIf(aniListMediaUserList -> !aniListMediaUserList.getMedia().getType().equals(this.type) || !Objects.equals(aniListMediaUserList.getMedia().getId(), this.ID)));
+			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
 		}
 		
 		@Override
@@ -89,7 +90,7 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 	}
 	
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.size() < 3 || event.getMessage().getMentionedUsers().isEmpty()){
 			final var embed = Utilities.buildEmbed(event.getAuthor(), Color.RED, "Invalid parameters");
@@ -120,7 +121,7 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 	}
 	
 	@Override
-	public List<String> getCommand(){
+	public List<String> getCommandStrings(){
 		return List.of("get", "g");
 	}
 	

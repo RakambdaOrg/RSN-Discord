@@ -29,7 +29,7 @@ public class ListConfigurationCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	ListConfigurationCommand(final Command parent){
+	ListConfigurationCommand(@NotNull final Command parent){
 		super(parent);
 	}
 	
@@ -39,7 +39,7 @@ public class ListConfigurationCommand extends BasicCommand{
 	}
 	
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final var builder = new EmbedBuilder();
 		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
@@ -61,7 +61,7 @@ public class ListConfigurationCommand extends BasicCommand{
 	}
 	
 	@Override
-	public List<String> getCommand(){
+	public List<String> getCommandStrings(){
 		return List.of("list", "l");
 	}
 	

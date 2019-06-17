@@ -48,7 +48,7 @@ public class ConfigurationCommand extends BasicCommand{
 	 * @param type     The operation that will be done on the configuration.
 	 * @param commands The commands to call this command.
 	 */
-	ConfigurationCommand(final Command parent, final ChangeConfigType type, final List<String> commands){
+	ConfigurationCommand(@NotNull final Command parent, @NotNull final ChangeConfigType type, @NotNull final List<String> commands){
 		super(parent);
 		this.type = type;
 		this.commands = commands;
@@ -62,52 +62,43 @@ public class ConfigurationCommand extends BasicCommand{
 	}
 	
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
+		final var builder = new EmbedBuilder();
+		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 		if(!args.isEmpty()){
 			final var configuration = Settings.getSettings(args.pop());
 			if(Objects.nonNull(configuration)){
 				final List<String> beforeArgs = new LinkedList<>(args);
 				final var result = processWithValue(event, configuration.getClass(), args);
 				if(Objects.equals(result, ActionResult.ERROR)){
-					final var builder = new EmbedBuilder();
-					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.RED);
 					builder.setTitle("Error performing the operation");
 					builder.setDescription("Command: " + getName());
 					builder.addField("Reason", "It's complicated", false);
 					builder.addField("Configuration", configuration.getName(), false);
-					Actions.reply(event, builder.build());
 					getLogger(event.getGuild()).error("Error handling configuration change");
 				}
 				else if(!Objects.equals(result, ActionResult.NONE)){
-					final var builder = new EmbedBuilder();
-					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.GREEN);
 					builder.setTitle("Value changed");
 					builder.setDescription("Command: " + getName());
 					builder.addField("Configuration:", configuration.getName(), false);
 					builder.addField("Value:", beforeArgs.toString(), false);
-					Actions.reply(event, builder.build());
 					getLogger(event.getGuild()).info("Config value {} changed", configuration.getName());
 				}
 			}
 			else{
-				final var builder = new EmbedBuilder();
-				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.setColor(Color.ORANGE);
 				builder.setTitle("Configuration not found");
 				builder.addField("Available configurations", Arrays.stream(Settings.SETTINGS).map(Configuration::getName).collect(Collectors.joining(", ")), false);
-				Actions.reply(event, builder.build());
 			}
 		}
 		else{
-			final var builder = new EmbedBuilder();
-			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.ORANGE);
 			builder.setTitle("Please give the name of the configuration to modify");
-			Actions.reply(event, builder.build());
 		}
+		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;
 	}
 	
@@ -125,7 +116,7 @@ public class ConfigurationCommand extends BasicCommand{
 	 *
 	 * @return The result that happened.
 	 */
-	private ActionResult processWithValue(final GuildMessageReceivedEvent event, final Class<? extends Configuration> configuration, final LinkedList<String> args){
+	private ActionResult processWithValue(@NotNull final GuildMessageReceivedEvent event, @NotNull final Class<? extends Configuration> configuration, @NotNull final LinkedList<String> args){
 		try{
 			final var configInstance = configuration.getConstructor(Guild.class).newInstance(event.getGuild());
 			if(configInstance.getAllowedActions().contains(getType())){
@@ -166,7 +157,7 @@ public class ConfigurationCommand extends BasicCommand{
 	}
 	
 	@Override
-	public List<String> getCommand(){
+	public List<String> getCommandStrings(){
 		return this.commands;
 	}
 	

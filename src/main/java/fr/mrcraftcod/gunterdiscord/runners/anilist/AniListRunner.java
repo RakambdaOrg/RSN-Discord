@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -30,19 +31,20 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		runQuery(members, channels);
 	}
 	
-	default void runQuery(final List<Member> members, final List<TextChannel> channels){
+	default void runQuery(@NotNull final List<Member> members, @NotNull final List<TextChannel> channels){
 		getLogger(null).info("Starting AniList {} runner", getRunnerName());
 		try{
 			final var userElements = new HashMap<User, List<T>>();
 			for(final var member : members){
-				if(!userElements.containsKey(member.getUser())){
+				userElements.computeIfAbsent(member.getUser(), user -> {
 					try{
-						userElements.put(member.getUser(), getElements(member));
+						return getElements(member);
 					}
 					catch(final Exception e){
 						getLogger(member.getGuild()).error("Error fetching user {} on AniList", member, e);
 					}
-				}
+					return null;
+				});
 			}
 			getLogger(null).debug("AniList API done");
 			sendMessages(channels, userElements);
@@ -54,39 +56,7 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		}
 	}
 	
-	default void sendMessages(final List<TextChannel> channels, final Map<User, List<T>> userElements){
-		if(sortedByUser()){
-			for(final var user : userElements.keySet()){
-				final var element = userElements.get(user);
-				element.stream().sorted().map(change -> buildMessage(user, change)).forEach(message -> channels.stream().filter(channel -> sendToChannel(channel, user)).forEach(channel -> Actions.sendMessage(channel, message)));
-			}
-		}
-		else{
-			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> Map.entry(change.getKey(), buildMessage(change.getKey(), change.getValue()))).forEach(infos -> channels.stream().filter(chan -> sendToChannel(chan, infos.getKey())).forEach(chan -> Actions.sendMessage(chan, infos.getValue())));
-		}
-	}
-	
-	default MessageEmbed buildMessage(final User user, final T change){
-		final var builder = new EmbedBuilder();
-		if(Objects.isNull(user)){
-			builder.setAuthor(getJDA().getSelfUser().getName(), change.getUrl().toString(), getJDA().getSelfUser().getAvatarUrl());
-		}
-		else{
-			builder.setAuthor(user.getName(), change.getUrl().toString(), user.getAvatarUrl());
-		}
-		change.fillEmbed(builder);
-		return builder.build();
-	}
-	
-	default boolean sortedByUser(){
-		return false;
-	}
-	
-	String getRunnerName();
-	
-	JDA getJDA();
-	
-	default List<T> getElements(final Member member) throws Exception{
+	default List<T> getElements(@NotNull final Member member) throws Exception{
 		getLogger(member.getGuild()).debug("Fetching user {}", member);
 		final var userInfoConf = new AniListLastAccessConfig(member.getGuild());
 		final var userInfo = userInfoConf.getValue(member.getUser().getIdLong());
@@ -102,8 +72,40 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		return elementList;
 	}
 	
-	default boolean sendToChannel(final TextChannel channel, final User user){
-		return new AniListAccessTokenConfig(channel.getGuild()).getAsMap().keySet().contains(user.getIdLong());
+	default void sendMessages(@NotNull final List<TextChannel> channels, @NotNull final Map<User, List<T>> userElements){
+		if(sortedByUser()){
+			for(final var user : userElements.keySet()){
+				final var element = userElements.get(user);
+				element.stream().sorted().map(change -> buildMessage(user, change)).forEach(message -> channels.stream().filter(channel -> sendToChannel(channel, user)).forEach(channel -> Actions.sendMessage(channel, message)));
+			}
+		}
+		else{
+			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> Map.entry(change.getKey(), buildMessage(change.getKey(), change.getValue()))).forEach(infos -> channels.stream().filter(chan -> sendToChannel(chan, infos.getKey())).forEach(chan -> Actions.sendMessage(chan, infos.getValue())));
+		}
+	}
+	
+	default boolean sortedByUser(){
+		return false;
+	}
+	
+	String getRunnerName();
+	
+	JDA getJDA();
+	
+	default MessageEmbed buildMessage(final User user, @NotNull final T change){
+		final var builder = new EmbedBuilder();
+		if(Objects.isNull(user)){
+			builder.setAuthor(getJDA().getSelfUser().getName(), change.getUrl().toString(), getJDA().getSelfUser().getAvatarUrl());
+		}
+		else{
+			builder.setAuthor(user.getName(), change.getUrl().toString(), user.getAvatarUrl());
+		}
+		change.fillEmbed(builder);
+		return builder.build();
+	}
+	
+	default boolean sendToChannel(@NotNull final TextChannel channel, @NotNull final User user){
+		return new AniListAccessTokenConfig(channel.getGuild()).getAsMap().containsKey(user.getIdLong());
 	}
 	
 	U initQuery(Map<String, String> userInfo);

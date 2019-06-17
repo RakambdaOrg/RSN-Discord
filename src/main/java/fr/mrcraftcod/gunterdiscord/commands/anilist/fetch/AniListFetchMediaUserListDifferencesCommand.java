@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.util.*;
@@ -28,16 +29,17 @@ import java.util.function.Consumer;
  * @since 2018-10-08
  */
 public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
-	class AniListMediaUserListDifferencesRunner implements AniListRunner<AniListMediaUserList, AniListMediaUserListPagedQuery>{
+	static class AniListMediaUserListDifferencesRunner implements AniListRunner<AniListMediaUserList, AniListMediaUserListPagedQuery>{
 		private final JDA jda;
 		private final AniListMediaType type;
 		
-		AniListMediaUserListDifferencesRunner(final JDA jda, final AniListMediaType type){
+		AniListMediaUserListDifferencesRunner(@NotNull final JDA jda, @NotNull final AniListMediaType type){
 			this.jda = jda;
 			this.type = type;
 		}
 		
-		public void sendMessages(final List<TextChannel> channels, final Map<User, List<AniListMediaUserList>> userElements){
+		@Override
+		public void sendMessages(@NotNull final List<TextChannel> channels, @NotNull final Map<User, List<AniListMediaUserList>> userElements){
 			for(final var user : userElements.keySet()){
 				userElements.keySet().parallelStream().filter(user2 -> !Objects.equals(user, user2)).forEach(userCompare -> {
 					final var iterator1 = userElements.get(user).iterator();
@@ -54,7 +56,7 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 					}
 				});
 			}
-			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).filter(m -> Objects.nonNull(this.type) && m.getValue().getMedia().getType().equals(this.type)).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> c -> Actions.sendMessage(c, message)).forEach(channels::forEach);
+			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> ImmutablePair.of(es.getKey(), val))).filter(pair -> pair.getValue().getMedia().getType().equals(this.type)).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
 		}
 		
 		@Override
@@ -68,7 +70,7 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 		}
 		
 		@Override
-		public AniListMediaUserListPagedQuery initQuery(final Map<String, String> userInfo){
+		public AniListMediaUserListPagedQuery initQuery(@NotNull final Map<String, String> userInfo){
 			return new AniListMediaUserListPagedQuery(Integer.parseInt(userInfo.get("userId")));
 		}
 		
@@ -88,7 +90,7 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	AniListFetchMediaUserListDifferencesCommand(final Command parent){
+	AniListFetchMediaUserListDifferencesCommand(@NotNull final Command parent){
 		super(parent);
 	}
 	
@@ -101,7 +103,7 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 	}
 	
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.size() < 3 || event.getMessage().getMentionedUsers().size() < 2){
 			final var embed = Utilities.buildEmbed(event.getAuthor(), Color.RED, "Invalid parameters");
@@ -131,7 +133,7 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 	}
 	
 	@Override
-	public List<String> getCommand(){
+	public List<String> getCommandStrings(){
 		//noinspection SpellCheckingInspection
 		return List.of("mediadiff", "d");
 	}

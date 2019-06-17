@@ -69,7 +69,7 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @throws Exception If something bad happened.
 	 */
-	CommandResult execute(GuildMessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception;
+	CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception;
 	
 	@Override
 	default int compareTo(@NotNull final Command o){
@@ -88,7 +88,7 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return The command.
 	 */
-	List<String> getCommand();
+	List<String> getCommandStrings();
 	
 	/**
 	 * Get a description of the usage of command.

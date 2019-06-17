@@ -22,12 +22,12 @@ public class AniListFetchActivityCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	AniListFetchActivityCommand(final Command parent){
+	AniListFetchActivityCommand(@NotNull final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		new AniListActivityScheduledRunner(event.getJDA()).run();
 		return CommandResult.SUCCESS;
@@ -44,7 +44,7 @@ public class AniListFetchActivityCommand extends BasicCommand{
 	}
 	
 	@Override
-	public List<String> getCommand(){
+	public List<String> getCommandStrings(){
 		return List.of("activity", "a");
 	}
 	
