@@ -41,12 +41,12 @@ public class ListConfigurationCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		final var builder = new EmbedBuilder();
-		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-		builder.setColor(Color.ORANGE);
-		builder.setTitle("Configurations");
-		builder.addField("Configurations available", Arrays.stream(Settings.SETTINGS).map(Configuration::getName).sorted().collect(Collectors.joining(", ")), false);
-		Actions.reply(event, builder.build());
+		final var embedBuilder = new EmbedBuilder();
+		embedBuilder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+		embedBuilder.setColor(Color.ORANGE);
+		embedBuilder.setTitle("Configurations");
+		embedBuilder.addField("Configurations available", Arrays.stream(Settings.SETTINGS).map(Configuration::getName).sorted().collect(Collectors.joining(", ")), false);
+		Actions.reply(event, embedBuilder.build());
 		return CommandResult.SUCCESS;
 	}
 	

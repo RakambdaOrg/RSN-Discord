@@ -40,6 +40,9 @@ public interface Command extends Comparable<Command>{
 	 * @return True if allowed, false otherwise.
 	 */
 	default boolean isAllowed(final Member member){
+		if(Objects.isNull(member)){
+			return false;
+		}
 		if(Objects.equals(getAccessLevel(), ALL)){
 			return true;
 		}
@@ -72,8 +75,8 @@ public interface Command extends Comparable<Command>{
 	CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception;
 	
 	@Override
-	default int compareTo(@NotNull final Command o){
-		return getName().compareTo(o.getName());
+	default int compareTo(@NotNull final Command otherCommand){
+		return getName().compareTo(otherCommand.getName());
 	}
 	
 	/**

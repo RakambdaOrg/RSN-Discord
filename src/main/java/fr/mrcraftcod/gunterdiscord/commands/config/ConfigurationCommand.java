@@ -55,50 +55,50 @@ public class ConfigurationCommand extends BasicCommand{
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
-		super.addHelp(guild, builder);
-		builder.addField("Configuration", "Configuration's name", false);
-		builder.addField("Value", "Value of the sub command", false);
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder embedBuilder){
+		super.addHelp(guild, embedBuilder);
+		embedBuilder.addField("Configuration", "Configuration's name", false);
+		embedBuilder.addField("Value", "Value of the sub command", false);
 	}
 	
 	@Override
 	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		final var builder = new EmbedBuilder();
-		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+		final var embedBuilder = new EmbedBuilder();
+		embedBuilder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 		if(!args.isEmpty()){
 			final var configuration = Settings.getSettings(args.pop());
 			if(Objects.nonNull(configuration)){
 				final List<String> beforeArgs = new LinkedList<>(args);
 				final var result = processWithValue(event, configuration.getClass(), args);
 				if(Objects.equals(result, ActionResult.ERROR)){
-					builder.setColor(Color.RED);
-					builder.setTitle("Error performing the operation");
-					builder.setDescription("Command: " + getName());
-					builder.addField("Reason", "It's complicated", false);
-					builder.addField("Configuration", configuration.getName(), false);
+					embedBuilder.setColor(Color.RED);
+					embedBuilder.setTitle("Error performing the operation");
+					embedBuilder.setDescription("Command: " + getName());
+					embedBuilder.addField("Reason", "It's complicated", false);
+					embedBuilder.addField("Configuration", configuration.getName(), false);
 					getLogger(event.getGuild()).error("Error handling configuration change");
 				}
 				else if(!Objects.equals(result, ActionResult.NONE)){
-					builder.setColor(Color.GREEN);
-					builder.setTitle("Value changed");
-					builder.setDescription("Command: " + getName());
-					builder.addField("Configuration:", configuration.getName(), false);
-					builder.addField("Value:", beforeArgs.toString(), false);
+					embedBuilder.setColor(Color.GREEN);
+					embedBuilder.setTitle("Value changed");
+					embedBuilder.setDescription("Command: " + getName());
+					embedBuilder.addField("Configuration:", configuration.getName(), false);
+					embedBuilder.addField("Value:", beforeArgs.toString(), false);
 					getLogger(event.getGuild()).info("Config value {} changed", configuration.getName());
 				}
 			}
 			else{
-				builder.setColor(Color.ORANGE);
-				builder.setTitle("Configuration not found");
-				builder.addField("Available configurations", Arrays.stream(Settings.SETTINGS).map(Configuration::getName).collect(Collectors.joining(", ")), false);
+				embedBuilder.setColor(Color.ORANGE);
+				embedBuilder.setTitle("Configuration not found");
+				embedBuilder.addField("Available configurations", Arrays.stream(Settings.SETTINGS).map(Configuration::getName).collect(Collectors.joining(", ")), false);
 			}
 		}
 		else{
-			builder.setColor(Color.ORANGE);
-			builder.setTitle("Please give the name of the configuration to modify");
+			embedBuilder.setColor(Color.ORANGE);
+			embedBuilder.setTitle("Please give the name of the configuration to modify");
 		}
-		Actions.reply(event, builder.build());
+		Actions.reply(event, embedBuilder.build());
 		return CommandResult.SUCCESS;
 	}
 	
@@ -125,14 +125,14 @@ public class ConfigurationCommand extends BasicCommand{
 					return configInstance.handleChange(event, getType(), args);
 				}
 				catch(final Exception e){
-					final var builder = new EmbedBuilder();
-					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-					builder.setColor(Color.RED);
-					builder.setTitle("Error performing the operation");
-					builder.setDescription("Command: " + getName());
-					builder.addField("Reason", (Objects.isNull(e.getMessage()) || e.getMessage().isBlank()) ? e.getClass().getName() : e.getMessage(), false);
-					builder.addField("Configuration", configuration.getName(), false);
-					Actions.reply(event, builder.build());
+					final var embedBuilder = new EmbedBuilder();
+					embedBuilder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+					embedBuilder.setColor(Color.RED);
+					embedBuilder.setTitle("Error performing the operation");
+					embedBuilder.setDescription("Command: " + getName());
+					embedBuilder.addField("Reason", (Objects.isNull(e.getMessage()) || e.getMessage().isBlank()) ? e.getClass().getName() : e.getMessage(), false);
+					embedBuilder.addField("Configuration", configuration.getName(), false);
+					Actions.reply(event, embedBuilder.build());
 					getLogger(event.getGuild()).error("Error handling configuration change", e);
 				}
 			}

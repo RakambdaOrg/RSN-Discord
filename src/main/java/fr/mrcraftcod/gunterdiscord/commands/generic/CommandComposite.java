@@ -60,8 +60,8 @@ public abstract class CommandComposite extends BasicCommand{
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
-		builder.addField("Sub-command", this.subCommands.stream().flatMap(command -> command.getCommandStrings().stream()).collect(Collectors.joining(", ")), false);
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder embedBuilder){
+		embedBuilder.addField("Sub-command", this.subCommands.stream().flatMap(command -> command.getCommandStrings().stream()).collect(Collectors.joining(", ")), false);
 	}
 	
 	@Override

@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.util.*;
@@ -40,9 +41,9 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 		}
 		
 		@Override
-		public void sendMessages(@NotNull final List<TextChannel> channels, @NotNull final Map<User, List<AniListMediaUserList>> userElements){
-			userElements.values().forEach(listMediaUserLists -> listMediaUserLists.removeIf(aniListMediaUserList -> !aniListMediaUserList.getMedia().getType().equals(this.type) || !Objects.equals(aniListMediaUserList.getMedia().getId(), this.ID)));
-			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
+		public void sendMessages(@NotNull final List<TextChannel> channels, @NotNull final Map<User, List<AniListMediaUserList>> userMedias){
+			userMedias.values().forEach(medias -> medias.removeIf(aniListMediaUserList -> !aniListMediaUserList.getMedia().getType().equals(this.type) || !Objects.equals(aniListMediaUserList.getMedia().getId(), this.ID)));
+			userMedias.entrySet().stream().flatMap(userMedia -> userMedia.getValue().stream().map(media -> ImmutablePair.of(userMedia.getKey(), media))).sorted(Comparator.comparing(Map.Entry::getValue)).map(userMedia -> buildMessage(userMedia.getKey(), userMedia.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
 		}
 		
 		@Override
@@ -77,30 +78,30 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	AniListGetUserEntryCommand(final Command parent){
+	AniListGetUserEntryCommand(@NotNull final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
-		super.addHelp(guild, builder);
-		builder.addField("filter", "What kind of media to get the differences", false);
-		builder.addField("mediaID", "The ID of the media", false);
-		builder.addField("user", "Mention of the users to get", false);
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder embedBuilder){
+		super.addHelp(guild, embedBuilder);
+		embedBuilder.addField("filter", "What kind of media to get the differences", false);
+		embedBuilder.addField("mediaID", "The ID of the media", false);
+		embedBuilder.addField("user", "Mention of the users to get", false);
 	}
 	
 	@Override
 	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.size() < 3 || event.getMessage().getMentionedUsers().isEmpty()){
-			final var embed = Utilities.buildEmbed(event.getAuthor(), Color.RED, "Invalid parameters");
-			embed.addField("Reason", "Please mention a user to compare and a kind of media", false);
-			Actions.reply(event, embed.build());
+			final var embedBuilder = Utilities.buildEmbed(event.getAuthor(), Color.RED, "Invalid parameters");
+			embedBuilder.addField("Reason", "Please mention a user to compare and a kind of media", false);
+			Actions.reply(event, embedBuilder.build());
 			return CommandResult.SUCCESS;
 		}
 		final var type = AniListMediaType.valueOf(args.poll());
-		final var ID = Integer.parseInt(args.pop());
-		final var runner = new AniListMediaUserListRunner(event.getJDA(), type, ID);
+		final var mediaId = Integer.parseInt(args.pop());
+		final var runner = new AniListMediaUserListRunner(event.getJDA(), type, mediaId);
 		runner.runQuery(event.getMessage().getMentionedMembers(), List.of(event.getChannel()));
 		return CommandResult.SUCCESS;
 	}

@@ -39,24 +39,24 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 		}
 		
 		@Override
-		public void sendMessages(@NotNull final List<TextChannel> channels, @NotNull final Map<User, List<AniListMediaUserList>> userElements){
-			for(final var user : userElements.keySet()){
-				userElements.keySet().parallelStream().filter(user2 -> !Objects.equals(user, user2)).forEach(userCompare -> {
-					final var iterator1 = userElements.get(user).iterator();
-					while(iterator1.hasNext()){
-						final var media = iterator1.next().getMedia();
-						final var iterator2 = userElements.get(userCompare).iterator();
-						while(iterator2.hasNext()){
-							if(Objects.equals(media, iterator2.next().getMedia())){
-								iterator1.remove();
-								iterator2.remove();
+		public void sendMessages(@NotNull final List<TextChannel> channels, @NotNull final Map<User, List<AniListMediaUserList>> userMedias){
+			for(final var user : userMedias.keySet()){
+				userMedias.keySet().parallelStream().filter(user2 -> !Objects.equals(user, user2)).forEach(userCompare -> {
+					final var user1Iterator = userMedias.get(user).iterator();
+					while(user1Iterator.hasNext()){
+						final var media = user1Iterator.next().getMedia();
+						final var user2Iterator = userMedias.get(userCompare).iterator();
+						while(user2Iterator.hasNext()){
+							if(Objects.equals(media, user2Iterator.next().getMedia())){
+								user1Iterator.remove();
+								user2Iterator.remove();
 								break;
 							}
 						}
 					}
 				});
 			}
-			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> ImmutablePair.of(es.getKey(), val))).filter(pair -> pair.getValue().getMedia().getType().equals(this.type)).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
+			userMedias.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> ImmutablePair.of(es.getKey(), val))).filter(pair -> pair.getValue().getMedia().getType().equals(this.type)).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
 		}
 		
 		@Override
@@ -95,20 +95,20 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
-		super.addHelp(guild, builder);
-		builder.addField("filter", "What kind of media to get the differences", false);
-		builder.addField("user1", "Mention of the first user to compare", false);
-		builder.addField("user2", "Mention of the second user to compare", false);
+	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder embedBuilder){
+		super.addHelp(guild, embedBuilder);
+		embedBuilder.addField("filter", "What kind of media to get the differences", false);
+		embedBuilder.addField("user1", "Mention of the first user to compare", false);
+		embedBuilder.addField("user2", "Mention of the second user to compare", false);
 	}
 	
 	@Override
 	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.size() < 3 || event.getMessage().getMentionedUsers().size() < 2){
-			final var embed = Utilities.buildEmbed(event.getAuthor(), Color.RED, "Invalid parameters");
-			embed.addField("Reason", "Please mention 2 users to compare", false);
-			Actions.reply(event, embed.build());
+			final var embedBuilder = Utilities.buildEmbed(event.getAuthor(), Color.RED, "Invalid parameters");
+			embedBuilder.addField("Reason", "Please mention 2 users to compare", false);
+			Actions.reply(event, embedBuilder.build());
 			return CommandResult.SUCCESS;
 		}
 		final var type = AniListMediaType.valueOf(args.poll());

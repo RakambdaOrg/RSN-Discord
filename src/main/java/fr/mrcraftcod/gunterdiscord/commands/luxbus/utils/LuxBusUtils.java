@@ -23,13 +23,13 @@ public class LuxBusUtils{
 			throw new IllegalArgumentException("Stop must not be blank");
 		}
 		final var stopKey = stopName.toLowerCase();
-		return getStopIDs().stream().filter(stop -> Objects.equals(stopKey, stop.getName().toLowerCase())).findFirst().map(List::of).orElse(getStopIDs().stream().filter(stop -> {
+		return getStopIds().stream().filter(stop -> Objects.equals(stopKey, stop.getName().toLowerCase())).findFirst().map(List::of).orElse(getStopIds().stream().filter(stop -> {
 			final var compKey = stop.getName().toLowerCase();
 			return compKey.startsWith(stopKey) || Arrays.stream(compKey.split(",")).map(String::trim).anyMatch(s2 -> s2.startsWith(stopKey));
 		}).collect(Collectors.toList()));
 	}
 	
-	public static Set<LuxBusStop> getStopIDs(){
+	public static Set<LuxBusStop> getStopIds(){
 		if(System.currentTimeMillis() - lastCheck > 3600000){
 			lastCheck = System.currentTimeMillis();
 			LOGGER.debug("Fetching bus stop infos");
@@ -49,7 +49,7 @@ public class LuxBusUtils{
 	public static List<LuxBusDeparture> getDepartures(final LuxBusStop stop){
 		try{
 			LOGGER.info("Getting departures for stop {}", stop);
-			final var request = new JSONGetRequestSender(String.format("http://travelplanner.mobiliteit.lu/restproxy/departureBoard?accessId=cdt&format=json&id=%s", URLEncoder.encode(stop.getID(), StandardCharsets.UTF_8))).getRequestHandler();
+			final var request = new JSONGetRequestSender(String.format("http://travelplanner.mobiliteit.lu/restproxy/departureBoard?accessId=cdt&format=json&id=%s", URLEncoder.encode(stop.getId(), StandardCharsets.UTF_8))).getRequestHandler();
 			if(request.getStatus() == 200){
 				final var response = request.getRequestResult().getObject();
 				if(response.has("Departure")){
@@ -78,10 +78,10 @@ public class LuxBusUtils{
 		return List.of();
 	}
 	
-	public static Optional<LuxBusStop> getStopByID(final String id){
+	public static Optional<LuxBusStop> getStopById(final String id){
 		if(Objects.isNull(id) || id.isBlank()){
 			throw new IllegalArgumentException("Stop id must not be blank");
 		}
-		return getStopIDs().stream().filter(stop -> stop.isStop(id)).findFirst();
+		return getStopIds().stream().filter(stop -> stop.isStop(id)).findFirst();
 	}
 }

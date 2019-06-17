@@ -5,10 +5,10 @@ import fr.mrcraftcod.gunterdiscord.listeners.reply.ReplyMessageListener;
 import fr.mrcraftcod.gunterdiscord.listeners.reply.WaitingUserReply;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -23,15 +23,17 @@ import java.util.stream.Collectors;
  */
 public class LuxBusLineSelectionWaitingReply implements WaitingUserReply{
 	private final List<LuxBusDeparture> departures;
-	private final Message infoMessage;
+	private final long infoMessageId;
 	private final GuildMessageReceivedEvent event;
 	private boolean handled;
+	private final long infoTextChannelId;
 	
-	public LuxBusLineSelectionWaitingReply(final GuildMessageReceivedEvent event, final List<LuxBusDeparture> departures, final Message infoMessage){
+	public LuxBusLineSelectionWaitingReply(@NotNull final GuildMessageReceivedEvent event, @NotNull final List<LuxBusDeparture> departures, final long infoTextChannelId, final long infoMessageId){
 		this.event = event;
 		this.handled = false;
 		this.departures = departures;
-		this.infoMessage = infoMessage;
+		this.infoMessageId = infoMessageId;
+		this.infoTextChannelId = infoTextChannelId;
 		ReplyMessageListener.getExecutor().schedule(() -> {
 			if(!this.isHandled()){
 				this.onExpire();
@@ -45,18 +47,18 @@ public class LuxBusLineSelectionWaitingReply implements WaitingUserReply{
 	}
 	
 	@Override
-	public boolean execute(final GuildMessageReceivedEvent event, final LinkedList<String> args){
+	public boolean execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args){
 		if(args.isEmpty()){
 			Actions.reply(event, "Invalid selection");
 		}
 		else{
 			final var line = args.pop();
-			final var filtered = this.departures.stream().filter(d -> Objects.equals(d.getProduct().getLine(), line)).collect(Collectors.toList());
+			final var filtered = this.departures.stream().filter(departure -> Objects.equals(departure.getProduct().getLine(), line)).collect(Collectors.toList());
 			if(filtered.isEmpty()){
 				Actions.reply(event, "Invalid selection");
 			}
 			else{
-				Actions.deleteMessage(this.infoMessage);
+				Actions.deleteMessageById(this.infoTextChannelId, this.infoMessageId);
 				Actions.deleteMessage(event.getMessage());
 				this.handled = true;
 				if(filtered.stream().map(LuxBusDeparture::getDirection).distinct().count() < 2){
@@ -73,7 +75,7 @@ public class LuxBusLineSelectionWaitingReply implements WaitingUserReply{
 	@Override
 	public boolean onExpire(){
 		Actions.reply(this.event, "%s you didn't reply in time", this.getUser().getAsMention());
-		Actions.deleteMessage(this.infoMessage);
+		Actions.deleteMessage(this.infoMessageId);
 		this.handled = true;
 		return this.isHandled();
 	}

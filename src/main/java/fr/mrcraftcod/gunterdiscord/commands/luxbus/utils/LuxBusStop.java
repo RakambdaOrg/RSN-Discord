@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LuxBusStop{
 	private static final Logger LOGGER = LoggerFactory.getLogger(LuxBusStop.class);
-	private final String ID;
+	private final String id;
 	private final String name;
 	private final float x;
 	private final float y;
@@ -31,57 +31,56 @@ public class LuxBusStop{
 		symbols.setDecimalSeparator(',');
 		final var format = new DecimalFormat("0.#");
 		format.setDecimalFormatSymbols(symbols);
-		
-		this.ID = id.trim();
-		this.name = Arrays.stream(id.split("@")).filter(s -> s.startsWith("O=")).map(s -> s.substring("O=".length())).findFirst().orElse("Unknown name");
-		this.x = Arrays.stream(id.split("@")).filter(s -> s.startsWith("X=")).map(s -> s.substring("X=".length())).map(s -> {
+		this.id = id.trim();
+		this.name = Arrays.stream(id.split("@")).filter(str -> str.startsWith("O=")).map(str -> str.substring("O=".length())).findFirst().orElse("Unknown name");
+		this.x = Arrays.stream(id.split("@")).filter(str -> str.startsWith("X=")).map(str -> str.substring("X=".length())).map(str -> {
 			try{
-				return format.parse(s).floatValue();
+				return format.parse(str).floatValue();
 			}
 			catch(ParseException e){
-				LOGGER.warn("Failed to parse float {}", s, e);
+				LOGGER.warn("Failed to parse float {}", str, e);
 			}
 			return null;
 		}).filter(Objects::nonNull).findFirst().orElse(0F);
-		this.y = Arrays.stream(id.split("@")).filter(s -> s.startsWith("Y=")).map(s -> s.substring("Y=".length())).map(s -> {
+		this.y = Arrays.stream(id.split("@")).filter(str -> str.startsWith("Y=")).map(str -> str.substring("Y=".length())).map(str -> {
 			try{
-				return format.parse(s).floatValue();
+				return format.parse(str).floatValue();
 			}
 			catch(ParseException e){
-				LOGGER.warn("Failed to parse float {}", s, e);
+				LOGGER.warn("Failed to parse float {}", str, e);
 			}
 			return null;
 		}).filter(Objects::nonNull).findFirst().orElse(0F);
-		this.u = Arrays.stream(id.split("@")).filter(s -> s.startsWith("U=")).map(s -> s.substring("U=".length())).map(Integer::parseInt).findFirst().orElse(0);
-		this.l = Arrays.stream(id.split("@")).filter(s -> s.startsWith("L=")).map(s -> s.substring("L=".length())).map(Integer::parseInt).findFirst().orElse(0);
-		this.b = Arrays.stream(id.split("@")).filter(s -> s.startsWith("B=")).map(s -> s.substring("B=".length())).map(Integer::parseInt).findFirst().orElse(0);
-		this.p = Arrays.stream(id.split("@")).filter(s -> s.startsWith("p=")).map(s -> s.substring("p=".length())).map(Integer::parseInt).findFirst().orElse(0);
-		this.a = Arrays.stream(id.split("@")).filter(s -> s.startsWith("A=")).map(s -> s.substring("A=".length())).map(Integer::parseInt).findFirst().orElse(0);
+		this.u = Arrays.stream(id.split("@")).filter(str -> str.startsWith("U=")).map(str -> str.substring("U=".length())).map(Integer::parseInt).findFirst().orElse(0);
+		this.l = Arrays.stream(id.split("@")).filter(str -> str.startsWith("L=")).map(str -> str.substring("L=".length())).map(Integer::parseInt).findFirst().orElse(0);
+		this.b = Arrays.stream(id.split("@")).filter(str -> str.startsWith("B=")).map(str -> str.substring("B=".length())).map(Integer::parseInt).findFirst().orElse(0);
+		this.p = Arrays.stream(id.split("@")).filter(str -> str.startsWith("p=")).map(str -> str.substring("p=".length())).map(Integer::parseInt).findFirst().orElse(0);
+		this.a = Arrays.stream(id.split("@")).filter(str -> str.startsWith("A=")).map(str -> str.substring("A=".length())).map(Integer::parseInt).findFirst().orElse(0);
 	}
 	
 	@JsonCreator
-	public static LuxBusStop createStop(final String ID){
-		if(Objects.isNull(ID) || ID.isBlank()){
+	public static LuxBusStop createStop(final String id){
+		if(Objects.isNull(id) || id.isBlank()){
 			throw new IllegalArgumentException("Stop id must not be blank");
 		}
-		final var tempStop = new LuxBusStop(ID);
-		return LuxBusUtils.getStopIDs().stream().filter(s -> Objects.equals(s, tempStop)).findFirst().orElse(tempStop);
+		final var tempStop = new LuxBusStop(id);
+		return LuxBusUtils.getStopIds().stream().filter(stop -> Objects.equals(stop, tempStop)).findFirst().orElse(tempStop);
 	}
 	
 	@Override
 	public int hashCode(){
-		return Objects.hash(this.ID);
+		return Objects.hash(this.id);
 	}
 	
 	@Override
-	public boolean equals(final Object o){
-		if(this == o){
+	public boolean equals(final Object other){
+		if(this == other){
 			return true;
 		}
-		if(o == null || getClass() != o.getClass()){
+		if(other == null || getClass() != other.getClass()){
 			return false;
 		}
-		final var that = (LuxBusStop) o;
+		final var that = (LuxBusStop) other;
 		return this.l == that.l && this.name.equals(that.name);
 	}
 	
@@ -111,8 +110,8 @@ public class LuxBusStop{
 		return this.b;
 	}
 	
-	public String getID(){
-		return this.ID;
+	public String getId(){
+		return this.id;
 	}
 	
 	public int getP(){
