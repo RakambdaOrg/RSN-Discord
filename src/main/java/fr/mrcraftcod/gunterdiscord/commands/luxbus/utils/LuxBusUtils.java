@@ -34,7 +34,7 @@ public class LuxBusUtils{
 			LOGGER.info("Getting departures for stop {}", stopID);
 			final var request = new JSONGetRequestSender(String.format("http://travelplanner.mobiliteit.lu/restproxy/departureBoard?accessId=cdt&format=json&id=%s", URLEncoder.encode(stopID.getID(), StandardCharsets.UTF_8))).getRequestHandler();
 			if(request.getStatus() == 200){
-				final var response = request.getRequestResult();
+				final var response = request.getRequestResult().getObject();
 				if(response.has("Departure")){
 					final var departuresList = new ArrayList<LuxBusDeparture>();
 					final var departures = response.getJSONArray("Departure");
