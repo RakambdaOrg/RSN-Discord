@@ -5,7 +5,6 @@ import fr.mrcraftcod.gunterdiscord.listeners.reply.ReplyMessageListener;
 import fr.mrcraftcod.gunterdiscord.listeners.reply.WaitingUserReply;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -24,9 +23,9 @@ import java.util.stream.Collectors;
 public class LuxBusLineSelectionWaitingReply implements WaitingUserReply{
 	private final List<LuxBusDeparture> departures;
 	private final long infoMessageId;
+	private final long infoTextChannelId;
 	private final GuildMessageReceivedEvent event;
 	private boolean handled;
-	private final long infoTextChannelId;
 	
 	public LuxBusLineSelectionWaitingReply(@NotNull final GuildMessageReceivedEvent event, @NotNull final List<LuxBusDeparture> departures, final long infoTextChannelId, final long infoMessageId){
 		this.event = event;
@@ -75,14 +74,14 @@ public class LuxBusLineSelectionWaitingReply implements WaitingUserReply{
 	@Override
 	public boolean onExpire(){
 		Actions.reply(this.event, "%s you didn't reply in time", this.getUser().getAsMention());
-		Actions.deleteMessage(this.infoMessageId);
+		Actions.deleteMessageById(this.infoTextChannelId, this.infoMessageId);
 		this.handled = true;
 		return this.isHandled();
 	}
 	
 	@Override
-	public TextChannel getChannel(){
-		return this.event.getChannel();
+	public long getChannel(){
+		return this.infoTextChannelId;
 	}
 	
 	@Override

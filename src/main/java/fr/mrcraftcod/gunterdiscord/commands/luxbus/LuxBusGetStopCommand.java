@@ -26,13 +26,13 @@ public class LuxBusGetStopCommand extends BasicCommand{
 	public static final Logger LOGGER = LoggerFactory.getLogger(LuxBusGetStopCommand.class);
 	
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		try{
 			if(args.size() < 1){
-				final var embed = Utilities.buildEmbed(event.getAuthor(), Color.RED, "Invalid parameters");
-				embed.addField("Reason", "Please provide a stop name", false);
-				Actions.reply(event, embed.build());
+				final var embedBuilder = Utilities.buildEmbed(event.getAuthor(), Color.RED, "Invalid parameters");
+				embedBuilder.addField("Reason", "Please provide a stop name", false);
+				Actions.reply(event, embedBuilder.build());
 				return CommandResult.SUCCESS;
 			}
 			final var stops = LuxBusUtils.searchStopByName(String.join(" ", args));
@@ -56,7 +56,7 @@ public class LuxBusGetStopCommand extends BasicCommand{
 		super.addHelp(guild, builder);
 	}
 	
-	private void askStop(final GuildMessageReceivedEvent event, final List<LuxBusStop> stops){
+	private void askStop(@NotNull final GuildMessageReceivedEvent event, @NotNull final List<LuxBusStop> stops){
 		if(stops.size() < 2){
 			askLine(event, stops.get(0));
 		}
@@ -65,25 +65,25 @@ public class LuxBusGetStopCommand extends BasicCommand{
 		}
 		else{
 			Actions.reply(event, "Choose a stop:");
-			final var replyHandler = new LuxBusStopSelectionWaitingReply(event, stops, event.getChannel());
+			final var replyHandler = new LuxBusStopSelectionWaitingReply(event, stops, event.getChannel().getIdLong());
 			ReplyMessageListener.handleReply(replyHandler);
 			IntStream.range(0, stops.size()).boxed().collect(Collectors.groupingBy(index -> index / 25)).values().stream().map(indices -> indices.stream().map(stops::get).collect(Collectors.toList())).forEach(stopsBatch -> Actions.reply(event, replyHandler::addMessage, "%s", stopsBatch.stream().map(stop -> String.format("%d: %s", stops.indexOf(stop) + 1, stop)).collect(Collectors.joining("\n"))));
 		}
 	}
 	
-	public static void askLine(final GuildMessageReceivedEvent event, final LuxBusStop stop){
+	public static void askLine(@NotNull final GuildMessageReceivedEvent event, @NotNull final LuxBusStop stop){
 		try{
 			final var departures = LuxBusUtils.getDepartures(stop);
-			if(departures.stream().map(d -> d.getProduct().getLine()).distinct().count() < 2){
+			if(departures.stream().map(departure -> departure.getProduct().getLine()).distinct().count() < 2){
 				if(departures.stream().map(LuxBusDeparture::getDirection).distinct().count() < 2){
-					departures.stream().sorted().forEachOrdered(d -> Actions.reply(event, d.getAsEmbed(new EmbedBuilder()).build()));
+					departures.stream().sorted().forEachOrdered(departure -> Actions.reply(event, departure.getAsEmbed(new EmbedBuilder()).build()));
 				}
 				else{
 					askDirection(event, departures);
 				}
 			}
 			else{
-				Actions.reply(event, message -> ReplyMessageListener.handleReply(new LuxBusLineSelectionWaitingReply(event, departures, message)), "Choose a line:\n%s", departures.stream().map(d -> d.getProduct().getLine()).distinct().sorted().collect(Collectors.joining("\n")));
+				Actions.reply(event, message -> ReplyMessageListener.handleReply(new LuxBusLineSelectionWaitingReply(event, departures, message.getIdLong(), message.getTextChannel().getIdLong())), "Choose a line:\n%s", departures.stream().map(departure -> departure.getProduct().getLine()).distinct().sorted().collect(Collectors.joining("\n")));
 			}
 		}
 		catch(final Exception e){
@@ -99,7 +99,7 @@ public class LuxBusGetStopCommand extends BasicCommand{
 		for(final var oldKey : directionDepartures.keySet()){
 			directionDeparturesNumbered.put(++i, directionDepartures.get(oldKey));
 		}
-		Actions.reply(event, message -> ReplyMessageListener.handleReply(new LuxBusDirectionSelectionWaitingReply(event, directionDeparturesNumbered, message)), "Choose a direction:\n%s", directionDeparturesNumbered.keySet().stream().map(k -> String.format("%s: %s", k, directionDeparturesNumbered.get(k).stream().findFirst().map(LuxBusDeparture::getDirection).orElse("???"))).sorted().collect(Collectors.joining("\n")));
+		Actions.reply(event, message -> ReplyMessageListener.handleReply(new LuxBusDirectionSelectionWaitingReply(event, directionDeparturesNumbered, message.getTextChannel().getIdLong(), message.getIdLong())), "Choose a direction:\n%s", directionDeparturesNumbered.keySet().stream().map(k -> String.format("%s: %s", k, directionDeparturesNumbered.get(k).stream().findFirst().map(LuxBusDeparture::getDirection).orElse("???"))).sorted().collect(Collectors.joining("\n")));
 	}
 	
 	@Override

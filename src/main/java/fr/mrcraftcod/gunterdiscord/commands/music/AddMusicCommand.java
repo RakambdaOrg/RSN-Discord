@@ -34,7 +34,7 @@ public class AddMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	AddMusicCommand(final Command parent){
+	AddMusicCommand(@NotNull final Command parent){
 		super(parent);
 	}
 	
@@ -48,7 +48,7 @@ public class AddMusicCommand extends BasicCommand{
 	}
 	
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.isEmpty()){
 			Actions.reply(event, "Please give a link");

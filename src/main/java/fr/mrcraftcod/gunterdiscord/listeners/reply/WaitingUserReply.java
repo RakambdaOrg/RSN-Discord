@@ -1,6 +1,5 @@
 package fr.mrcraftcod.gunterdiscord.listeners.reply;
 
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
@@ -16,7 +15,7 @@ public interface WaitingUserReply{
 	
 	boolean onExpire();
 	
-	TextChannel getChannel();
+	long getChannel();
 	
 	User getUser();
 	

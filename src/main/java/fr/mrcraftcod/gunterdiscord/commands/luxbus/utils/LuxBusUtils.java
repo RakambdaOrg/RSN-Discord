@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.commands.luxbus.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.mrcraftcod.utils.http.requestssenders.get.JSONGetRequestSender;
 import fr.mrcraftcod.utils.http.requestssenders.get.StringGetRequestSender;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class LuxBusUtils{
 		return stops;
 	}
 	
-	public static List<LuxBusDeparture> getDepartures(final LuxBusStop stop){
+	public static List<LuxBusDeparture> getDepartures(@NotNull final LuxBusStop stop){
 		try{
 			LOGGER.info("Getting departures for stop {}", stop);
 			final var request = new JSONGetRequestSender(String.format("http://travelplanner.mobiliteit.lu/restproxy/departureBoard?accessId=cdt&format=json&id=%s", URLEncoder.encode(stop.getId(), StandardCharsets.UTF_8))).getRequestHandler();

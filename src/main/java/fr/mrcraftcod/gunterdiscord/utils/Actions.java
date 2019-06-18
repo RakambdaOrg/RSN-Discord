@@ -543,4 +543,8 @@ public class Actions{
 		getLogger(channel.getGuild()).info("Sent message to {} : {}", channel.getName(), embed);
 		return channel.sendMessage(embed).complete();
 	}
+	
+	public static void deleteMessageById(final long channelId, final long messageId){
+		Optional.ofNullable(Main.getJDA().getTextChannelById(channelId)).ifPresent(channel -> channel.deleteMessageById(messageId).queue());
+	}
 }

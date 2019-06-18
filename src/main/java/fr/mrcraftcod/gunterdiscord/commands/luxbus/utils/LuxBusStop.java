@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.commands.luxbus.utils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.text.DecimalFormat;
@@ -26,7 +27,7 @@ public class LuxBusStop{
 	private final int p;
 	private final int a;
 	
-	private LuxBusStop(final String id){
+	private LuxBusStop(@NotNull final String id){
 		final var symbols = new DecimalFormatSymbols();
 		symbols.setDecimalSeparator(',');
 		final var format = new DecimalFormat("0.#");
@@ -89,7 +90,7 @@ public class LuxBusStop{
 		return this.getName();
 	}
 	
-	public boolean isStop(final String id){
+	public boolean isStop(@NotNull final String id){
 		final var fields = Arrays.stream(id.split("@")).filter(s -> !s.isBlank() && s.contains("=")).map(String::trim).collect(Collectors.toMap(s -> s.substring(0, s.indexOf("=")), s -> s.substring(s.indexOf("=") + 1)));
 		return Objects.equals(this.getName(), fields.getOrDefault("O", null)) && Objects.equals("" + this.getL(), fields.getOrDefault("L", null));
 	}
