@@ -8,9 +8,7 @@ import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
 import net.dv8tion.jda.api.entities.Guild;
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -22,7 +20,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 class TrackScheduler extends AudioEventAdapter{
 	private final AudioPlayer player;
-	private BlockingQueue<AudioTrack> queue;
+	private LinkedList<AudioTrack> queue;
 	private final Guild guild;
 	private final Set<StatusTrackSchedulerListener> listeners;
 	
@@ -33,7 +31,7 @@ class TrackScheduler extends AudioEventAdapter{
 	TrackScheduler(final Guild guild, final AudioPlayer player){
 		this.guild = guild;
 		this.player = player;
-		this.queue = new LinkedBlockingQueue<>();
+		this.queue = new LinkedList<>();
 		this.listeners = new LinkedHashSet<>();
 	}
 	
@@ -115,7 +113,7 @@ class TrackScheduler extends AudioEventAdapter{
 	void shuffle(){
 		if(!this.queue.isEmpty()){
 			final var oldList = new ArrayList<>(this.queue);
-			this.queue = new LinkedBlockingQueue<>();
+			this.queue = new LinkedList<>();
 			Collections.shuffle(oldList);
 			this.queue.addAll(oldList);
 		}
@@ -137,7 +135,7 @@ class TrackScheduler extends AudioEventAdapter{
 		}
 	}
 	
-	public Collection<AudioTrack> getQueue(){
+	public List<AudioTrack> getQueue(){
 		return this.queue;
 	}
 }

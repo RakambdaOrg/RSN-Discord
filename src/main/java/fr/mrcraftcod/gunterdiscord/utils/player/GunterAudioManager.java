@@ -16,7 +16,10 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -150,7 +153,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		return this.audioPlayerManager;
 	}
 	
-	public static Collection<AudioTrack> getQueue(final Guild guild){
+	public static List<AudioTrack> getQueue(final Guild guild){
 		if(managers.containsKey(guild)){
 			return managers.get(guild).getTrackScheduler().getQueue();
 		}

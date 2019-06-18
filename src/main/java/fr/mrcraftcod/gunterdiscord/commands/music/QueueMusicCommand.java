@@ -50,15 +50,15 @@ public class QueueMusicCommand extends BasicCommand{
 	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final var perPage = 10;
-		final var page = Optional.ofNullable(args.poll()).map(i -> {
+		final var page = Optional.ofNullable(args.poll()).map(pageStr -> {
 			try{
-				return Integer.parseInt(i);
+				return Integer.parseInt(pageStr);
 			}
 			catch(final Exception ignored){
 			}
 			return null;
 		}).orElse(1) - 1;
-		final var position = new AtomicInteger(0);
+		final var position = new AtomicInteger(perPage * page);
 		final var queue = GunterAudioManager.getQueue(event.getGuild());
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, "Music queue (Page " + page + "/" + ((int) Math.ceil(queue.size() / (double) perPage)) + " - 10 max)");
 		builder.setDescription(String.format("%d musics queued", queue.size()));

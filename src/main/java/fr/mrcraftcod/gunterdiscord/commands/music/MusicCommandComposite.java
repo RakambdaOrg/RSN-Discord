@@ -27,6 +27,7 @@ public class MusicCommandComposite extends CommandComposite{
 		addSubCommand(new SkipMusicCommand(this));
 		addSubCommand(new QueueMusicCommand(this));
 		addSubCommand(new ShuffleMusicCommand(this));
+		addSubCommand(new MoveMusicCommand(this));
 	}
 	
 	@Override
