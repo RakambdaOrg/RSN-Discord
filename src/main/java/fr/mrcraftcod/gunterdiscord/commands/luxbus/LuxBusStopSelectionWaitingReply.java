@@ -5,10 +5,9 @@ import fr.mrcraftcod.gunterdiscord.listeners.reply.ReplyMessageListener;
 import fr.mrcraftcod.gunterdiscord.listeners.reply.WaitingUserReply;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,18 +20,16 @@ import java.util.concurrent.TimeUnit;
  * @since 2019-05-18
  */
 public class LuxBusStopSelectionWaitingReply implements WaitingUserReply{
-	private final List<Pair<Long, Long>> infoMessages;
+	private final List<Message> infoMessages;
 	private final List<LuxBusStop> stops;
 	private final GuildMessageReceivedEvent event;
-	private final long infoTextChannelId;
 	private boolean handled;
 	
-	public LuxBusStopSelectionWaitingReply(final GuildMessageReceivedEvent event, final List<LuxBusStop> stops, final long infoTextChannelId){
+	public LuxBusStopSelectionWaitingReply(final GuildMessageReceivedEvent event, final List<LuxBusStop> stops){
 		this.event = event;
 		this.handled = false;
 		this.stops = stops;
 		this.infoMessages = new ArrayList<>();
-		this.infoTextChannelId = infoTextChannelId;
 		ReplyMessageListener.getExecutor().schedule(() -> {
 			if(!isHandled()){
 				this.onExpire();
@@ -41,7 +38,7 @@ public class LuxBusStopSelectionWaitingReply implements WaitingUserReply{
 	}
 	
 	public void addMessage(final Message message){
-		this.infoMessages.add(ImmutablePair.of(message.getTextChannel().getIdLong(), message.getIdLong()));
+		this.infoMessages.add(message);
 	}
 	
 	@Override
@@ -58,7 +55,7 @@ public class LuxBusStopSelectionWaitingReply implements WaitingUserReply{
 			try{
 				final var stop = Integer.parseInt(args.pop());
 				if(stop > 0 && stop <= this.stops.size()){
-					this.infoMessages.forEach(pair -> Actions.deleteMessageById(pair.getLeft(), pair.getRight()));
+					this.infoMessages.forEach(Actions::deleteMessage);
 					Actions.deleteMessage(event.getMessage());
 					this.handled = true;
 					LuxBusGetStopCommand.askLine(event, this.stops.get(stop - 1));
@@ -77,14 +74,14 @@ public class LuxBusStopSelectionWaitingReply implements WaitingUserReply{
 	@Override
 	public boolean onExpire(){
 		Actions.reply(this.event, "%s you didn't reply in time", this.getUser().getAsMention());
-		this.infoMessages.forEach(pair -> Actions.deleteMessageById(pair.getLeft(), pair.getRight()));
+		this.infoMessages.forEach(Actions::deleteMessage);
 		this.handled = true;
 		return this.isHandled();
 	}
 	
 	@Override
-	public long getChannel(){
-		return this.infoTextChannelId;
+	public TextChannel getChannel(){
+		return this.infoMessages.stream().map(Message::getTextChannel).findFirst().orElse(null);
 	}
 	
 	@Override

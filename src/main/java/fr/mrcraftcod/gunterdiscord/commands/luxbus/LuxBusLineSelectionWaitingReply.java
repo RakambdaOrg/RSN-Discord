@@ -5,6 +5,8 @@ import fr.mrcraftcod.gunterdiscord.listeners.reply.ReplyMessageListener;
 import fr.mrcraftcod.gunterdiscord.listeners.reply.WaitingUserReply;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -22,17 +24,15 @@ import java.util.stream.Collectors;
  */
 public class LuxBusLineSelectionWaitingReply implements WaitingUserReply{
 	private final List<LuxBusDeparture> departures;
-	private final long infoMessageId;
-	private final long infoTextChannelId;
 	private final GuildMessageReceivedEvent event;
+	private final Message infoMessage;
 	private boolean handled;
 	
-	public LuxBusLineSelectionWaitingReply(@NotNull final GuildMessageReceivedEvent event, @NotNull final List<LuxBusDeparture> departures, final long infoTextChannelId, final long infoMessageId){
+	public LuxBusLineSelectionWaitingReply(@NotNull final GuildMessageReceivedEvent event, @NotNull final List<LuxBusDeparture> departures, @NotNull final Message infoMessage){
 		this.event = event;
 		this.handled = false;
 		this.departures = departures;
-		this.infoMessageId = infoMessageId;
-		this.infoTextChannelId = infoTextChannelId;
+		this.infoMessage = infoMessage;
 		ReplyMessageListener.getExecutor().schedule(() -> {
 			if(!this.isHandled()){
 				this.onExpire();
@@ -57,7 +57,7 @@ public class LuxBusLineSelectionWaitingReply implements WaitingUserReply{
 				Actions.reply(event, "Invalid selection");
 			}
 			else{
-				Actions.deleteMessageById(this.infoTextChannelId, this.infoMessageId);
+				Actions.deleteMessage(this.infoMessage);
 				Actions.deleteMessage(event.getMessage());
 				this.handled = true;
 				if(filtered.stream().map(LuxBusDeparture::getDirection).distinct().count() < 2){
@@ -74,14 +74,14 @@ public class LuxBusLineSelectionWaitingReply implements WaitingUserReply{
 	@Override
 	public boolean onExpire(){
 		Actions.reply(this.event, "%s you didn't reply in time", this.getUser().getAsMention());
-		Actions.deleteMessageById(this.infoTextChannelId, this.infoMessageId);
+		Actions.deleteMessage(this.infoMessage);
 		this.handled = true;
 		return this.isHandled();
 	}
 	
 	@Override
-	public long getChannel(){
-		return this.infoTextChannelId;
+	public TextChannel getChannel(){
+		return this.infoMessage.getTextChannel();
 	}
 	
 	@Override

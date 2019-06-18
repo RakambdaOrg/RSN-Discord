@@ -37,7 +37,7 @@ public class ReplyMessageListener extends ListenerAdapter{
 	public void onGuildMessageReceived(@NotNull final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
-			replies.removeIf(reply -> reply.isHandled() || (Objects.equals(reply.getUser(), event.getAuthor()) && Objects.equals(reply.getChannel(), event.getChannel().getIdLong()) && reply.execute(event, Arrays.stream(event.getMessage().getContentRaw().split(" ")).collect(Collectors.toCollection(LinkedList::new)))));
+			replies.removeIf(reply -> reply.isHandled() || (Objects.equals(reply.getUser(), event.getAuthor()) && Objects.equals(reply.getChannel(), event.getChannel()) && reply.execute(event, Arrays.stream(event.getMessage().getContentRaw().split(" ")).collect(Collectors.toCollection(LinkedList::new)))));
 		}
 		catch(final Exception e){
 			LOGGER.error("Failed to handle user reply", e);

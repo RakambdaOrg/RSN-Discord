@@ -5,6 +5,8 @@ import fr.mrcraftcod.gunterdiscord.listeners.reply.ReplyMessageListener;
 import fr.mrcraftcod.gunterdiscord.listeners.reply.WaitingUserReply;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -20,18 +22,16 @@ import java.util.concurrent.TimeUnit;
  * @since 2019-05-18
  */
 public class LuxBusDirectionSelectionWaitingReply implements WaitingUserReply{
-	private final long infoMessageId;
-	private final long infoTextChannelId;
 	private final Map<Integer, List<LuxBusDeparture>> departures;
 	private final GuildMessageReceivedEvent event;
+	private final Message infoMessage;
 	private boolean handled;
 	
-	public LuxBusDirectionSelectionWaitingReply(@NotNull final GuildMessageReceivedEvent event, @NotNull final Map<Integer, List<LuxBusDeparture>> departures, final long infoTextChannelId, final long infoMessageId){
+	public LuxBusDirectionSelectionWaitingReply(@NotNull final GuildMessageReceivedEvent event, @NotNull final Map<Integer, List<LuxBusDeparture>> departures, @NotNull final Message infoMessage){
 		this.event = event;
 		this.handled = false;
 		this.departures = departures;
-		this.infoMessageId = infoMessageId;
-		this.infoTextChannelId = infoTextChannelId;
+		this.infoMessage = infoMessage;
 		ReplyMessageListener.getExecutor().schedule(() -> {
 			if(!this.isHandled()){
 				this.onExpire();
@@ -53,7 +53,7 @@ public class LuxBusDirectionSelectionWaitingReply implements WaitingUserReply{
 			try{
 				final var direction = Integer.parseInt(args.pop());
 				if(this.departures.containsKey(direction)){
-					Actions.deleteMessageById(this.infoTextChannelId, this.infoMessageId);
+					Actions.deleteMessage(this.infoMessage);
 					Actions.deleteMessage(event.getMessage());
 					this.handled = true;
 					this.departures.get(direction).stream().sorted().forEachOrdered(departure -> Actions.reply(event, departure.getAsEmbed(new EmbedBuilder()).build()));
@@ -72,14 +72,14 @@ public class LuxBusDirectionSelectionWaitingReply implements WaitingUserReply{
 	@Override
 	public boolean onExpire(){
 		Actions.reply(this.event, "%s you didn't reply in time", this.getUser().getAsMention());
-		Actions.deleteMessageById(this.infoTextChannelId, this.infoMessageId);
+		Actions.deleteMessage(this.infoMessage);
 		this.handled = true;
 		return this.isHandled();
 	}
 	
 	@Override
-	public long getChannel(){
-		return this.infoTextChannelId;
+	public TextChannel getChannel(){
+		return this.infoMessage.getTextChannel();
 	}
 	
 	@Override
