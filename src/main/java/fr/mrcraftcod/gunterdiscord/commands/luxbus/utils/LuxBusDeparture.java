@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
+import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -36,7 +37,7 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	public static LuxBusDeparture createDeparture(@JsonProperty("date") final String date, @JsonProperty("time") final String time, @JsonProperty("rtDate") final String realTimeDate, @JsonProperty("rtTime") final String realTimeTime){
 		final var departure = new LuxBusDeparture();
 		departure.plannedDateTime = LocalDateTime.parse(String.format("%s %s", date, time), dateTimeFormatter);
-		departure.realTimeDateTime = LocalDateTime.parse(String.format("%s %s", realTimeDate, realTimeTime), dateTimeFormatter);
+		departure.realTimeDateTime = Objects.nonNull(realTimeDate) && Objects.nonNull(realTimeTime) ? LocalDateTime.parse(String.format("%s %s", realTimeDate, realTimeTime), dateTimeFormatter) : null;
 		return departure;
 	}
 	
@@ -64,24 +65,28 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	}
 	
 	public EmbedBuilder getAsEmbed(final EmbedBuilder embedBuilder){
-		final var delayMinutes = getPlannedDateTime().until(getRealTimeDateTime(), ChronoUnit.MINUTES);
-		if(delayMinutes <= 2){
-			embedBuilder.setColor(Color.GREEN);
-		}
-		else if(delayMinutes <= 4){
-			embedBuilder.setColor(Color.ORANGE);
-		}
-		else{
-			embedBuilder.setColor(Color.RED);
+		final var delayMinutes = getRealTimeDateTime().map(realDateTime -> getPlannedDateTime().until(realDateTime, ChronoUnit.MINUTES)).orElse(null);
+		var pattern = "%s";
+		if(Objects.nonNull(delayMinutes)){
+			pattern = "%s +%d";
+			if(delayMinutes <= 2){
+				embedBuilder.setColor(Color.GREEN);
+			}
+			else if(delayMinutes <= 4){
+				embedBuilder.setColor(Color.ORANGE);
+			}
+			else{
+				embedBuilder.setColor(Color.RED);
+			}
 		}
 		embedBuilder.setTitle(this.stop.getName());
 		embedBuilder.setDescription(String.format("%s direction %s", this.getProduct().getName().replaceAll(" +", " "), this.getDirection()));
-		embedBuilder.addField("Time", String.format("%s +%d", getEmbedDate(getPlannedDateTime()), delayMinutes), false);
+		embedBuilder.addField("Time", String.format(pattern, getEmbedDate(getPlannedDateTime()), delayMinutes), false);
 		return embedBuilder;
 	}
 	
-	public LocalDateTime getRealTimeDateTime(){
-		return this.realTimeDateTime;
+	public Optional<LocalDateTime> getRealTimeDateTime(){
+		return Optional.ofNullable(this.realTimeDateTime);
 	}
 	
 	private String getEmbedDate(final LocalDateTime dateTime){
