@@ -5,11 +5,13 @@ import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -34,7 +36,7 @@ public abstract class CommandComposite extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	protected CommandComposite(@NotNull final Command parent){
+	protected CommandComposite(@Nullable final Command parent){
 		super(parent);
 		this.subCommands = new LinkedHashSet<>();
 	}
@@ -44,7 +46,7 @@ public abstract class CommandComposite extends BasicCommand{
 	 *
 	 * @param command The command to add.
 	 */
-	protected void addSubCommand(@NotNull final Command command){
+	protected void addSubCommand(@Nonnull final Command command){
 		this.subCommands.add(command);
 	}
 	
@@ -55,17 +57,19 @@ public abstract class CommandComposite extends BasicCommand{
 	 *
 	 * @return The command or null if not found.
 	 */
-	public Command getSubCommand(@NotNull final String commandStr){
-		return this.subCommands.stream().filter(command -> command.getCommandStrings().contains(commandStr)).findAny().orElse(null);
+	@Nonnull
+	public Optional<Command> getSubCommand(final String commandStr){
+		return this.subCommands.stream().filter(command -> command.getCommandStrings().contains(commandStr)).findAny();
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder embedBuilder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder embedBuilder){
 		embedBuilder.addField("Sub-command", this.subCommands.stream().flatMap(command -> command.getCommandStrings().stream()).collect(Collectors.joining(", ")), false);
 	}
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		if(!isAllowed(event.getMember())){
 			throw new NotAllowedException();
 		}
@@ -85,6 +89,7 @@ public abstract class CommandComposite extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [sub-command]";

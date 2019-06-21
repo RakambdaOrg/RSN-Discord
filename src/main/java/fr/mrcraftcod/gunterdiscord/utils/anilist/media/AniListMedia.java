@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.*;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jetbrains.annotations.NotNull;
 import java.net.URL;
 import java.util.Objects;
 import java.util.Optional;
@@ -125,7 +124,7 @@ public abstract class AniListMedia implements AniListObject{
 	}
 	
 	@Override
-	public int compareTo(@NotNull final AniListObject o){
+	public int compareTo( final AniListObject o){
 		return Integer.compare(getId(), o.getId());
 	}
 }

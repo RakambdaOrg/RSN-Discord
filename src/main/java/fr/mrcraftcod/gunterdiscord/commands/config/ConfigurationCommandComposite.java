@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord.commands.config;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.api.entities.ChannelType;
+import javax.annotation.Nonnull;
 import java.util.List;
 import static fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand.ChangeConfigType.*;
 import static fr.mrcraftcod.gunterdiscord.commands.generic.Command.AccessLevel.ADMIN;
@@ -25,21 +26,25 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		addSubCommand(new ListConfigurationCommand(this));
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return ADMIN;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Config";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("config");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Interact with the bot's configuration";

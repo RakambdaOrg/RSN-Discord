@@ -12,7 +12,6 @@ import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMedia;
 import fr.mrcraftcod.gunterdiscord.utils.json.SQLTimestampDeserializer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jetbrains.annotations.NotNull;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -151,7 +150,7 @@ public class AniListMediaUserList implements AniListDatedObject{
 	}
 	
 	@Override
-	public int compareTo(@NotNull final AniListObject o){
+	public int compareTo( final AniListObject o){
 		if(o instanceof AniListDatedObject){
 			return getDate().compareTo(((AniListDatedObject) o).getDate());
 		}

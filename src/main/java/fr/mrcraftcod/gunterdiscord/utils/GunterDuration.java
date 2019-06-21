@@ -1,6 +1,5 @@
 package fr.mrcraftcod.gunterdiscord.utils;
 
-import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
@@ -22,7 +21,7 @@ public class GunterDuration implements TemporalAmount, Comparable<GunterDuration
 	}
 	
 	@Override
-	public int compareTo(@NotNull final GunterDuration o){
+	public int compareTo( final GunterDuration o){
 		return this.duration.compareTo(o.duration);
 	}
 	

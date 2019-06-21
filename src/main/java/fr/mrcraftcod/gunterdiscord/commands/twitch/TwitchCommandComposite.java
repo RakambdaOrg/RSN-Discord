@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord.commands.twitch;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.api.entities.ChannelType;
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -20,21 +21,25 @@ public class TwitchCommandComposite extends CommandComposite{
 		addSubCommand(new QuitCommand(this));
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ADMIN;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Twitch";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("twitch", "tw");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Handles twitch interactions";

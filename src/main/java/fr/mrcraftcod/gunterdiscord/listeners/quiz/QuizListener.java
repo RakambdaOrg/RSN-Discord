@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -281,7 +280,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	}
 	
 	@Override
-	public void onGuildMessageReactionAdd(@NotNull final GuildMessageReactionAddEvent event){
+	public void onGuildMessageReactionAdd( final GuildMessageReactionAddEvent event){
 		super.onGuildMessageReactionAdd(event);
 		try{
 			if(Objects.equals(event.getGuild(), getGuild()) && Objects.nonNull(this.waitingMsg) && Objects.equals(event.getMessageIdLong(), this.waitingMsg.getIdLong()) && !Objects.equals(event.getUser(), event.getJDA().getSelfUser())){
@@ -309,7 +308,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	}
 	
 	@Override
-	public void onGuildMessageReactionRemove(@NotNull final GuildMessageReactionRemoveEvent event){
+	public void onGuildMessageReactionRemove( final GuildMessageReactionRemoveEvent event){
 		super.onGuildMessageReactionRemove(event);
 		try{
 			if(Objects.equals(event.getGuild(), getGuild()) && Objects.nonNull(this.waitingMsg) && Objects.equals(event.getMessageIdLong(), this.waitingMsg.getIdLong())){

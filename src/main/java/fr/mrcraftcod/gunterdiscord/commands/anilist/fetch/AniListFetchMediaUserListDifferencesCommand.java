@@ -17,7 +17,8 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.util.*;
 import java.util.function.Consumer;
@@ -33,13 +34,13 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 		private final JDA jda;
 		private final AniListMediaType type;
 		
-		AniListMediaUserListDifferencesRunner(@NotNull final JDA jda, @NotNull final AniListMediaType type){
+		AniListMediaUserListDifferencesRunner( final JDA jda,  final AniListMediaType type){
 			this.jda = jda;
 			this.type = type;
 		}
 		
 		@Override
-		public void sendMessages(@NotNull final List<TextChannel> channels, @NotNull final Map<User, List<AniListMediaUserList>> userMedias){
+		public void sendMessages( final List<TextChannel> channels,  final Map<User, List<AniListMediaUserList>> userMedias){
 			for(final var user : userMedias.keySet()){
 				userMedias.keySet().parallelStream().filter(user2 -> !Objects.equals(user, user2)).forEach(userCompare -> {
 					final var user1Iterator = userMedias.get(user).iterator();
@@ -70,7 +71,7 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 		}
 		
 		@Override
-		public AniListMediaUserListPagedQuery initQuery(@NotNull final Map<String, String> userInfo){
+		public AniListMediaUserListPagedQuery initQuery( final Map<String, String> userInfo){
 			return new AniListMediaUserListPagedQuery(Integer.parseInt(userInfo.get("userId")));
 		}
 		
@@ -90,20 +91,22 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	AniListFetchMediaUserListDifferencesCommand(@NotNull final Command parent){
+	AniListFetchMediaUserListDifferencesCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder embedBuilder){
+	public void addHelp( @Nonnull final Guild guild,  @Nonnull final EmbedBuilder embedBuilder){
 		super.addHelp(guild, embedBuilder);
 		embedBuilder.addField("filter", "What kind of media to get the differences", false);
 		embedBuilder.addField("user1", "Mention of the first user to compare", false);
 		embedBuilder.addField("user2", "Mention of the second user to compare", false);
 	}
 	
+	
+	@Nonnull
 	@Override
-	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute( @Nonnull final GuildMessageReceivedEvent event,  @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.size() < 3 || event.getMessage().getMentionedUsers().size() < 2){
 			final var embedBuilder = Utilities.buildEmbed(event.getAuthor(), Color.RED, "Invalid parameters");
@@ -117,26 +120,36 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
+	
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <@user1> <@user2>";
 	}
 	
+	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "AniList fetch media user list differences";
 	}
+	
+	@Nonnull
 	
 	@Override
 	public List<String> getCommandStrings(){
 		//noinspection SpellCheckingInspection
 		return List.of("mediadiff", "d");
 	}
+	
+	@Nonnull
 	
 	@Override
 	public String getDescription(){

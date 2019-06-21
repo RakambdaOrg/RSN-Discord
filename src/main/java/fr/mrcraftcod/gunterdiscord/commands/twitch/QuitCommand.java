@@ -6,7 +6,8 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.irc.TwitchIRC;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,32 +23,37 @@ public class QuitCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	QuitCommand(final Command parent){
+	QuitCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		TwitchIRC.close();
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ADMIN;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Quit";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("quit", "q");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Disconnect from all channels";

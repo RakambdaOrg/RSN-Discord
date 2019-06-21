@@ -13,7 +13,8 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.io.File;
 import java.util.LinkedList;
@@ -34,19 +35,20 @@ public class PhotoGetCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	PhotoGetCommand(final Command parent){
+	PhotoGetCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("User", "The user of the picture (default: @me)", false);
 		builder.addField("Number", "The number of the picture (if none are provided, the picture will be picked randomly)", false);
 	}
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		Actions.deleteMessage(event.getMessage());
 		super.execute(event, args);
 		final User user;
@@ -58,7 +60,6 @@ public class PhotoGetCommand extends BasicCommand{
 		else{
 			user = event.getAuthor();
 		}
-		
 		final var member = event.getGuild().getMember(user);
 		if(Objects.isNull(member) || !Utilities.hasRole(member, new TrombinoscopeRoleConfig(event.getGuild()).getObject())){
 			final var builder = new EmbedBuilder();
@@ -112,26 +113,31 @@ public class PhotoGetCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [@user] [number]";
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Picture";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("photo", "p", "g", "get");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Get a picture from the trombinoscope";

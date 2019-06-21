@@ -7,7 +7,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -22,28 +22,33 @@ import java.util.List;
  * @since 2018-04-12
  */
 public class InfosCommand extends BasicCommand{
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Bot infos").addField("Bot version", Main.getRSNBotVersion(), false).addField("Last start (local time):", Main.bootTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME), false).addField("Time elapsed", Duration.between(Main.bootTime, ZonedDateTime.now()).toString(), false).build());
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Bot infos";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("info");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Sends infos about the bot";

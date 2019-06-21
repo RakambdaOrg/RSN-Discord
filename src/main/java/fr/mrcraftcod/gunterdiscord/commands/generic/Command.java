@@ -6,7 +6,8 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -30,7 +31,7 @@ public interface Command extends Comparable<Command>{
 	 * @param guild   The guild.
 	 * @param builder The help menu.
 	 */
-	void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder);
+	void addHelp(@Nonnull Guild guild, @Nonnull EmbedBuilder builder);
 	
 	/**
 	 * Tell if a member is allowed to run the command.
@@ -39,7 +40,7 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return True if allowed, false otherwise.
 	 */
-	default boolean isAllowed(final Member member){
+	default boolean isAllowed(@Nullable final Member member){
 		if(Objects.isNull(member)){
 			return false;
 		}
@@ -60,6 +61,7 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return The access level.
 	 */
+	@Nonnull
 	AccessLevel getAccessLevel();
 	
 	/**
@@ -72,10 +74,11 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @throws Exception If something bad happened.
 	 */
-	CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args) throws Exception;
+	@Nonnull
+	CommandResult execute(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws Exception;
 	
 	@Override
-	default int compareTo(@NotNull final Command otherCommand){
+	default int compareTo(@Nonnull final Command otherCommand){
 		return getName().compareTo(otherCommand.getName());
 	}
 	
@@ -84,6 +87,7 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return The name.
 	 */
+	@Nonnull
 	String getName();
 	
 	/**
@@ -91,6 +95,7 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return The command.
 	 */
+	@Nonnull
 	List<String> getCommandStrings();
 	
 	/**
@@ -98,6 +103,7 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return The description.
 	 */
+	@Nonnull
 	String getCommandUsage();
 	
 	/**
@@ -105,6 +111,7 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return The description.
 	 */
+	@Nonnull
 	String getDescription();
 	
 	/**
@@ -112,6 +119,7 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return The parent command.
 	 */
+	@Nullable
 	Command getParent();
 	
 	/**

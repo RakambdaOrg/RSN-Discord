@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -25,15 +25,16 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public abstract class WarnCommand extends BasicCommand{
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("User", "L'The user to warn", false);
 		builder.addField("Reason", "Reason of the warn", false);
 	}
 	
+	@Nonnull
 	@SuppressWarnings("SpellCheckingInspection")
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(!event.getMessage().getMentionedUsers().isEmpty()){
 			final var user = event.getMessage().getMentionedUsers().get(0);
@@ -73,35 +74,38 @@ public abstract class WarnCommand extends BasicCommand{
 	/**
 	 * Get the configuration of the role to apply.
 	 *
-	 * @param guild The guild of the event.
-	 * @param message
-	 * @param args  The args that were passed.
+	 * @param guild   The guild of the event.
+	 * @param message The message to get the rome from.
+	 * @param args    The args that were passed.
 	 *
 	 * @return The config.
 	 */
-	protected abstract Role getRole(Guild guild, Message message, LinkedList<String> args) throws NoValueDefinedException;
+	protected abstract Role getRole(@Nonnull Guild guild, @Nonnull Message message, @Nonnull LinkedList<String> args) throws NoValueDefinedException;
 	
 	/**
 	 * Get the configuration of the length for the role to be applied.
 	 *
-	 * @param guild The guild of the event.
-	 * @param message
-	 * @param args  The args that were passed.
+	 * @param guild   The guild of the event.
+	 * @param message The message to get the time from.
+	 * @param args    The args that were passed.
 	 *
 	 * @return The config.
 	 */
-	protected abstract double getTime(Guild guild, Message message, LinkedList<String> args);
+	protected abstract double getTime(@Nonnull Guild guild, @Nonnull Message message, @Nonnull LinkedList<String> args);
 	
+	@Nonnull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <@user> [reason]";
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.MODERATOR;
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Warn a user (by giving a role) for a defined period of time";

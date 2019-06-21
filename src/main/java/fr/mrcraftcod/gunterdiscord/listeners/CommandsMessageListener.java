@@ -6,6 +6,7 @@ import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommandComposite
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
+import fr.mrcraftcod.gunterdiscord.commands.generic.NotHandledException;
 import fr.mrcraftcod.gunterdiscord.commands.luxbus.LuxBusGetStopCommand;
 import fr.mrcraftcod.gunterdiscord.commands.music.MusicCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.photo.PhotoCommandComposite;
@@ -21,7 +22,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -80,7 +80,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildMessageReceived(@NotNull final GuildMessageReceivedEvent event){
+	public void onGuildMessageReceived( final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
 			if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
@@ -103,6 +103,9 @@ public class CommandsMessageListener extends ListenerAdapter{
 							builder.setColor(Color.RED);
 							builder.setTitle("You're not allowed to execute this command");
 							Actions.reply(event, builder.build());
+						}
+						catch(final NotHandledException e){
+							getLogger(event.getGuild()).warn("Command {} isn't handled for {} ({})", command, event.getAuthor(), e.getMessage());
 						}
 						catch(final Exception e){
 							getLogger(event.getGuild()).error("Error executing command {}", command, e);

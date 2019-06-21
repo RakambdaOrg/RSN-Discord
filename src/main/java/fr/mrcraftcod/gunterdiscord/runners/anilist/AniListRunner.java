@@ -13,7 +13,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -31,7 +30,7 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		runQuery(members, channels);
 	}
 	
-	default void runQuery(@NotNull final List<Member> members, @NotNull final List<TextChannel> channels){
+	default void runQuery( final List<Member> members,  final List<TextChannel> channels){
 		getLogger(null).info("Starting AniList {} runner", getRunnerName());
 		try{
 			final var userElements = new HashMap<User, List<T>>();
@@ -56,7 +55,7 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		}
 	}
 	
-	default List<T> getElements(@NotNull final Member member) throws Exception{
+	default List<T> getElements( final Member member) throws Exception{
 		getLogger(member.getGuild()).debug("Fetching user {}", member);
 		final var userInfoConf = new AniListLastAccessConfig(member.getGuild());
 		final var userInfo = userInfoConf.getValue(member.getUser().getIdLong());
@@ -72,7 +71,7 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		return elementList;
 	}
 	
-	default void sendMessages(@NotNull final List<TextChannel> channels, @NotNull final Map<User, List<T>> userElements){
+	default void sendMessages( final List<TextChannel> channels,  final Map<User, List<T>> userElements){
 		if(sortedByUser()){
 			for(final var user : userElements.keySet()){
 				final var element = userElements.get(user);
@@ -92,7 +91,7 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 	
 	JDA getJDA();
 	
-	default MessageEmbed buildMessage(final User user, @NotNull final T change){
+	default MessageEmbed buildMessage(final User user,  final T change){
 		final var builder = new EmbedBuilder();
 		if(Objects.isNull(user)){
 			builder.setAuthor(getJDA().getSelfUser().getName(), change.getUrl().toString(), getJDA().getSelfUser().getAvatarUrl());
@@ -104,7 +103,7 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		return builder.build();
 	}
 	
-	default boolean sendToChannel(@NotNull final TextChannel channel, @NotNull final User user){
+	default boolean sendToChannel( final TextChannel channel,  final User user){
 		return new AniListAccessTokenConfig(channel.getGuild()).getAsMap().containsKey(user.getIdLong());
 	}
 	

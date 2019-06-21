@@ -7,7 +7,6 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +40,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @param value The value to add.
 	 */
-	public void addValue(@NotNull final T value){
+	public void addValue( final T value){
 		addRawValue(getValueParser().apply(value));
 	}
 	
@@ -71,7 +70,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @param value The value to remove.
 	 */
-	public void removeValue(@NotNull final T value){
+	public void removeValue( final T value){
 		removeRawValue(getValueParser().apply(value));
 	}
 	

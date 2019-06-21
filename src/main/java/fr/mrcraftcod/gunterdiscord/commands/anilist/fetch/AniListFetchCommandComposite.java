@@ -3,7 +3,8 @@ package fr.mrcraftcod.gunterdiscord.commands.anilist.fetch;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.api.entities.ChannelType;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ public class AniListFetchCommandComposite extends CommandComposite{
 	 *
 	 * @param parent The parent command.
 	 */
-	public AniListFetchCommandComposite(@NotNull final Command parent){
+	public AniListFetchCommandComposite(@Nullable final Command parent){
 		super(parent);
 		addSubCommand(new AniListFetchActivityCommand(this));
 		addSubCommand(new AniListFetchNotificationCommand(this));
@@ -26,20 +27,28 @@ public class AniListFetchCommandComposite extends CommandComposite{
 		addSubCommand(new AniListFetchMediaUserListDifferencesCommand(this));
 	}
 	
+	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.MODERATOR;
 	}
 	
+	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "AniList fetcher";
 	}
 	
+	@Nonnull
+	
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("fetch", "f");
 	}
+	
+	@Nonnull
 	
 	@Override
 	public String getDescription(){

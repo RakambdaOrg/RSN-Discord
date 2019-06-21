@@ -12,9 +12,9 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -25,8 +25,9 @@ import java.util.stream.IntStream;
 public class LuxBusGetStopCommand extends BasicCommand{
 	public static final Logger LOGGER = LoggerFactory.getLogger(LuxBusGetStopCommand.class);
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		try{
 			if(args.size() < 1){
@@ -52,11 +53,11 @@ public class LuxBusGetStopCommand extends BasicCommand{
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 	}
 	
-	private void askStop(@NotNull final GuildMessageReceivedEvent event, @NotNull final List<LuxBusStop> stops){
+	private void askStop(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final List<LuxBusStop> stops){
 		if(stops.size() < 2){
 			askLine(event, stops.get(0));
 		}
@@ -71,7 +72,7 @@ public class LuxBusGetStopCommand extends BasicCommand{
 		}
 	}
 	
-	public static void askLine(@NotNull final GuildMessageReceivedEvent event, @NotNull final LuxBusStop stop){
+	static void askLine(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LuxBusStop stop){
 		try{
 			final var departures = LuxBusUtils.getDepartures(stop);
 			if(departures.stream().map(departure -> departure.getProduct().getLine()).distinct().count() < 2){
@@ -92,7 +93,7 @@ public class LuxBusGetStopCommand extends BasicCommand{
 		}
 	}
 	
-	public static void askDirection(final GuildMessageReceivedEvent event, final List<LuxBusDeparture> filtered){
+	static void askDirection(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final List<LuxBusDeparture> filtered){
 		final var directionDepartures = filtered.stream().collect(Collectors.groupingBy(LuxBusDeparture::getDirection));
 		final var directionDeparturesNumbered = new HashMap<Integer, List<LuxBusDeparture>>();
 		var i = 0;
@@ -102,26 +103,31 @@ public class LuxBusGetStopCommand extends BasicCommand{
 		Actions.reply(event, message -> ReplyMessageListener.handleReply(new LuxBusDirectionSelectionWaitingReply(event, directionDeparturesNumbered, message)), "Choose a direction:\n%s", directionDeparturesNumbered.keySet().stream().map(k -> String.format("%s: %s", k, directionDeparturesNumbered.get(k).stream().findFirst().map(LuxBusDeparture::getDirection).orElse("???"))).sorted().collect(Collectors.joining("\n")));
 	}
 	
+	@Nonnull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage();
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Request buses at a stop";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("luxbus", "bus");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Get the next buses at a stop";

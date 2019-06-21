@@ -1,17 +1,12 @@
 package fr.mrcraftcod.gunterdiscord.commands.luxbus;
 
 import fr.mrcraftcod.gunterdiscord.commands.luxbus.utils.LuxBusStop;
-import fr.mrcraftcod.gunterdiscord.listeners.reply.ReplyMessageListener;
-import fr.mrcraftcod.gunterdiscord.listeners.reply.WaitingUserReply;
+import fr.mrcraftcod.gunterdiscord.listeners.reply.BasicWaitingUserReply;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.util.ArrayList;
+import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-05-18.
@@ -19,35 +14,16 @@ import java.util.concurrent.TimeUnit;
  * @author Thomas Couchoud
  * @since 2019-05-18
  */
-public class LuxBusStopSelectionWaitingReply implements WaitingUserReply{
-	private final List<Message> infoMessages;
+public class LuxBusStopSelectionWaitingReply extends BasicWaitingUserReply{
 	private final List<LuxBusStop> stops;
-	private final GuildMessageReceivedEvent event;
-	private boolean handled;
 	
-	public LuxBusStopSelectionWaitingReply(final GuildMessageReceivedEvent event, final List<LuxBusStop> stops){
-		this.event = event;
-		this.handled = false;
+	LuxBusStopSelectionWaitingReply(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final List<LuxBusStop> stops){
+		super(event);
 		this.stops = stops;
-		this.infoMessages = new ArrayList<>();
-		ReplyMessageListener.getExecutor().schedule(() -> {
-			if(!isHandled()){
-				this.onExpire();
-			}
-		}, 30, TimeUnit.SECONDS);
-	}
-	
-	public void addMessage(final Message message){
-		this.infoMessages.add(message);
 	}
 	
 	@Override
-	public boolean isHandled(){
-		return this.handled;
-	}
-	
-	@Override
-	public boolean execute(final GuildMessageReceivedEvent event, final LinkedList<String> args){
+	protected boolean onExecute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
 		if(args.isEmpty()){
 			Actions.reply(event, "Invalid selection");
 		}
@@ -55,10 +31,9 @@ public class LuxBusStopSelectionWaitingReply implements WaitingUserReply{
 			try{
 				final var stop = Integer.parseInt(args.pop());
 				if(stop > 0 && stop <= this.stops.size()){
-					this.infoMessages.forEach(Actions::deleteMessage);
 					Actions.deleteMessage(event.getMessage());
-					this.handled = true;
 					LuxBusGetStopCommand.askLine(event, this.stops.get(stop - 1));
+					return true;
 				}
 				else{
 					Actions.reply(event, "Invalid selection");
@@ -68,24 +43,6 @@ public class LuxBusStopSelectionWaitingReply implements WaitingUserReply{
 				Actions.reply(event, "Please enter the corresponding number");
 			}
 		}
-		return this.isHandled();
-	}
-	
-	@Override
-	public boolean onExpire(){
-		Actions.reply(this.event, "%s you didn't reply in time", this.getUser().getAsMention());
-		this.infoMessages.forEach(Actions::deleteMessage);
-		this.handled = true;
-		return this.isHandled();
-	}
-	
-	@Override
-	public TextChannel getChannel(){
-		return this.infoMessages.stream().map(Message::getTextChannel).findFirst().orElse(null);
-	}
-	
-	@Override
-	public User getUser(){
-		return this.event.getAuthor();
+		return false;
 	}
 }

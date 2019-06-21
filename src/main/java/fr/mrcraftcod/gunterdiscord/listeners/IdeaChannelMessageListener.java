@@ -4,7 +4,6 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.OnlyIdeasConfig;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -15,7 +14,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public class IdeaChannelMessageListener extends ListenerAdapter{
 	@Override
-	public void onGuildMessageReceived(@NotNull final GuildMessageReceivedEvent event){
+	public void onGuildMessageReceived( final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
 			if(new OnlyIdeasConfig(event.getGuild()).contains(event.getMessage().getTextChannel())){

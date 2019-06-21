@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,14 +25,16 @@ import java.util.Objects;
  */
 public class YoutubeCommand extends BasicCommand{
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
+	public void addHelp( @Nonnull final Guild guild,  @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("User", "The user to get the channel", false);
 		builder.addField("URL", "The URL to the user's channel", false);
 	}
 	
+	
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute( @Nonnull final GuildMessageReceivedEvent event,  @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(!event.getMessage().getMentionedMembers().isEmpty()){
 			args.poll();
@@ -68,25 +70,35 @@ public class YoutubeCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
+	
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <@user> [URL]";
 	}
 	
+	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "YouTube";
 	}
 	
+	@Nonnull
+	
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("youtube", "yt");
 	}
+	
+	@Nonnull
 	
 	@Override
 	public String getDescription(){

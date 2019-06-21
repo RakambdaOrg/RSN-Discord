@@ -6,6 +6,7 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.MegaWarnTimeConfig;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
+import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,20 +18,22 @@ import java.util.List;
  */
 public class MegaWarnCommand extends WarnCommand{
 	@Override
-	protected Role getRole(final Guild guild, final Message message, final LinkedList<String> args) throws NoValueDefinedException{
+	protected Role getRole(@Nonnull final Guild guild, @Nonnull final Message message, @Nonnull final LinkedList<String> args) throws NoValueDefinedException{
 		return new MegaWarnRoleConfig(guild).getObject();
 	}
 	
 	@Override
-	protected double getTime(final Guild guild, final Message message, final LinkedList<String> args){
+	protected double getTime(@Nonnull final Guild guild, @Nonnull final Message message, @Nonnull final LinkedList<String> args){
 		return new MegaWarnTimeConfig(guild).getObject(1D);
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Mega warn";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		//noinspection SpellCheckingInspection

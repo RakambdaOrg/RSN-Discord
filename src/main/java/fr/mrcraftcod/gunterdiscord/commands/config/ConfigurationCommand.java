@@ -11,7 +11,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -48,21 +49,22 @@ public class ConfigurationCommand extends BasicCommand{
 	 * @param type     The operation that will be done on the configuration.
 	 * @param commands The commands to call this command.
 	 */
-	ConfigurationCommand(@NotNull final Command parent, @NotNull final ChangeConfigType type, @NotNull final List<String> commands){
+	ConfigurationCommand(@Nullable final Command parent, @Nonnull final ChangeConfigType type, @Nonnull final List<String> commands){
 		super(parent);
 		this.type = type;
 		this.commands = commands;
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder embedBuilder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder embedBuilder){
 		super.addHelp(guild, embedBuilder);
 		embedBuilder.addField("Configuration", "Configuration's name", false);
 		embedBuilder.addField("Value", "Value of the sub command", false);
 	}
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final var embedBuilder = new EmbedBuilder();
 		embedBuilder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
@@ -102,6 +104,7 @@ public class ConfigurationCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <configuration> [value]";
@@ -116,7 +119,8 @@ public class ConfigurationCommand extends BasicCommand{
 	 *
 	 * @return The result that happened.
 	 */
-	private ActionResult processWithValue(@NotNull final GuildMessageReceivedEvent event, @NotNull final Class<? extends Configuration> configuration, @NotNull final LinkedList<String> args){
+	@Nonnull
+	private ActionResult processWithValue(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final Class<? extends Configuration> configuration, @Nonnull final LinkedList<String> args){
 		try{
 			final var configInstance = configuration.getConstructor(Guild.class).newInstance(event.getGuild());
 			if(configInstance.getAllowedActions().contains(getType())){
@@ -146,21 +150,25 @@ public class ConfigurationCommand extends BasicCommand{
 		return ActionResult.ERROR;
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ADMIN;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Operation " + getType().name();
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return this.commands;
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Applies an operation " + getType().name() + " on this configuration";
@@ -176,6 +184,7 @@ public class ConfigurationCommand extends BasicCommand{
 	 *
 	 * @return The type.
 	 */
+	@Nonnull
 	private ChangeConfigType getType(){
 		return this.type;
 	}

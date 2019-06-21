@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -29,8 +29,9 @@ public class EmotesCommand extends BasicCommand{
 	public static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyyww");
 	public static final DateTimeFormatter DFD = DateTimeFormatter.ofPattern("ww");
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		sendInfos(event.getGuild(), LocalDate.now(), event.getAuthor(), event.getChannel(), Optional.ofNullable(args.poll()).map(e -> {
 			try{
@@ -43,39 +44,43 @@ public class EmotesCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
-	public static boolean sendInfos(final Guild guild, final LocalDate localDate, final User author, final TextChannel channel, final int limit){
+	public static boolean sendInfos(@Nonnull final Guild guild, @Nonnull final LocalDate localDate, @Nonnull final User author, @Nonnull final TextChannel channel, final int limit){
 		final var weekKey = getKey(localDate);
 		final var date = localDate.format(DFD);
 		final var stats = new EmotesParticipationConfig(guild).getValue(weekKey);
 		if(Objects.nonNull(stats)){
-			final var i = new AtomicInteger(1);
+			final var participationCount = new AtomicInteger(1);
 			final var builder = Utilities.buildEmbed(author, Color.MAGENTA, "Participation of the week " + date + " (UTC)");
-			stats.entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).map(e -> guild.getEmotesByName(e.getKey(), true).stream().findFirst().map(e2 -> Map.entry(e2, e.getValue())).orElse(null)).filter(Objects::nonNull).limit(limit).forEachOrdered(e -> builder.addField("#" + i.getAndIncrement(), e.getKey().getAsMention() + " Use count: " + e.getValue(), false));
+			stats.entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).map(e -> guild.getEmotesByName(e.getKey(), true).stream().findFirst().map(e2 -> Map.entry(e2, e.getValue())).orElse(null)).filter(Objects::nonNull).limit(limit).forEachOrdered(e -> builder.addField("#" + participationCount.getAndIncrement(), e.getKey().getAsMention() + " Use count: " + e.getValue(), false));
 			Actions.sendMessage(channel, builder.build());
 			return true;
 		}
 		return false;
 	}
 	
-	public static String getKey(final LocalDate localDate){
+	public static String getKey(@Nonnull final LocalDate localDate){
 		return localDate.format(DF);
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ADMIN;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Utilisation emotes";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("emote");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Gets the usage of the emotes for the current week";

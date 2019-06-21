@@ -5,7 +5,6 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -16,7 +15,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public class OnlyImagesMessageListener extends ListenerAdapter{
 	@Override
-	public void onGuildMessageReceived(@NotNull final GuildMessageReceivedEvent event){
+	public void onGuildMessageReceived( final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
 			if(new OnlyImagesConfig(event.getGuild()).contains(event.getMessage().getTextChannel()) && event.getMessage().getAttachments().size() < 1){

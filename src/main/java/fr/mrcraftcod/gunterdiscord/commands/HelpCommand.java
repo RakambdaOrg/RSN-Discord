@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.util.*;
 
@@ -23,13 +23,14 @@ import java.util.*;
  */
 public class HelpCommand extends BasicCommand{
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Command", "The command to get information for (default: displays the list of the available commands)", false);
 	}
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final var prefix = new PrefixConfig(event.getGuild()).getObject("");
 		if(args.isEmpty()){
@@ -37,32 +38,34 @@ public class HelpCommand extends BasicCommand{
 			builder.setColor(Color.GREEN);
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setTitle("Available commands");
-			Arrays.stream(CommandsMessageListener.commands).filter(c -> c.isAllowed(event.getMember())).map(s -> new MessageEmbed.Field(prefix + s.getCommandStrings().get(0), s.getDescription(), false)).sorted(Comparator.comparing(MessageEmbed.Field::getName)).forEach(builder::addField);
+			Arrays.stream(CommandsMessageListener.commands).filter(command -> command.isAllowed(event.getMember())).map(command -> new MessageEmbed.Field(prefix + command.getCommandStrings().get(0), command.getDescription(), false)).filter(message -> Objects.nonNull(message.getName())).sorted(Comparator.comparing(MessageEmbed.Field::getName)).forEach(builder::addField);
 			Actions.reply(event, builder.build());
 		}
 		else{
-			var command = Arrays.stream(CommandsMessageListener.commands).filter(s -> s.getCommandStrings().contains(args.get(0).toLowerCase())).filter(c -> c.isAllowed(event.getMember())).findAny().orElse(null);
+			var command = Arrays.stream(CommandsMessageListener.commands).filter(command1 -> command1.getCommandStrings().contains(args.get(0).toLowerCase())).filter(command1 -> command1.isAllowed(event.getMember())).findAny();
 			args.poll();
-			while(!args.isEmpty() && command instanceof CommandComposite){
-				final var command2 = ((CommandComposite) command).getSubCommand(args.get(0).toLowerCase());
-				if(Objects.isNull(command2)){
+			while(!args.isEmpty() && command.isPresent() && command.get() instanceof CommandComposite){
+				final var command2 = ((CommandComposite) command.get()).getSubCommand(args.get(0).toLowerCase());
+				if(command2.isPresent()){
+					command = command2;
+				}
+				else{
 					break;
 				}
-				command = command2;
 				args.poll();
 			}
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-			if(Objects.nonNull(command)){
+			if(command.isPresent()){
 				builder.setColor(Color.GREEN);
 				builder.setTitle(getName());
-				builder.addField("Name", command.getName(), true);
-				builder.addField("Description", command.getDescription(), true);
-				builder.addField("Command", String.join(", ", command.getCommandStrings()), false);
-				builder.addField("Usage", command.getCommandUsage(), false);
+				builder.addField("Name", command.get().getName(), true);
+				builder.addField("Description", command.get().getDescription(), true);
+				builder.addField("Command", String.join(", ", command.get().getCommandStrings()), false);
+				builder.addField("Usage", command.get().getCommandUsage(), false);
 				builder.addBlankField(true);
 				builder.addField("", "Arguments", false);
-				command.addHelp(event.getGuild(), builder);
+				command.get().addHelp(event.getGuild(), builder);
 			}
 			else{
 				builder.setColor(Color.ORANGE);
@@ -70,30 +73,34 @@ public class HelpCommand extends BasicCommand{
 			}
 			Actions.reply(event, builder.build());
 		}
-		
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [command...]";
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Help";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("help", "h");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Gets the help";

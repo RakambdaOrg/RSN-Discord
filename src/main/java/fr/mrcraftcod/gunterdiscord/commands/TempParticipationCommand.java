@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -31,8 +31,9 @@ public class TempParticipationCommand extends BasicCommand{
 	public static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyyMMdd");
 	public static final DateTimeFormatter DFD = DateTimeFormatter.ofPattern("dd/MM/yyy");
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		sendInfos(event.getGuild(), LocalDate.now(), event.getAuthor(), event.getChannel());
 		return CommandResult.SUCCESS;
@@ -62,22 +63,26 @@ public class TempParticipationCommand extends BasicCommand{
 		return localDate.format(DF);
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ADMIN;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Temporary participation";
 	}
 	
+	@Nonnull
 	@SuppressWarnings("SpellCheckingInspection")
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("tempparticipation", "tp");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Display the temporary ranking for the day";

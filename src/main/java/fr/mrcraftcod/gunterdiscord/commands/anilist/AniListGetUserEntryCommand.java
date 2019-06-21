@@ -17,7 +17,8 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.util.*;
 import java.util.function.Consumer;
@@ -34,14 +35,14 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 		private final JDA jda;
 		private final AniListMediaType type;
 		
-		AniListMediaUserListRunner(@NotNull final JDA jda, @NotNull final AniListMediaType type, final int ID){
+		AniListMediaUserListRunner( final JDA jda,  final AniListMediaType type, final int ID){
 			this.jda = jda;
 			this.type = type;
 			this.ID = ID;
 		}
 		
 		@Override
-		public void sendMessages(@NotNull final List<TextChannel> channels, @NotNull final Map<User, List<AniListMediaUserList>> userMedias){
+		public void sendMessages( final List<TextChannel> channels,  final Map<User, List<AniListMediaUserList>> userMedias){
 			userMedias.values().forEach(medias -> medias.removeIf(aniListMediaUserList -> !aniListMediaUserList.getMedia().getType().equals(this.type) || !Objects.equals(aniListMediaUserList.getMedia().getId(), this.ID)));
 			userMedias.entrySet().stream().flatMap(userMedia -> userMedia.getValue().stream().map(media -> ImmutablePair.of(userMedia.getKey(), media))).sorted(Comparator.comparing(Map.Entry::getValue)).map(userMedia -> buildMessage(userMedia.getKey(), userMedia.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
 		}
@@ -78,20 +79,22 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	AniListGetUserEntryCommand(@NotNull final Command parent){
+	AniListGetUserEntryCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder embedBuilder){
+	public void addHelp( @Nonnull final Guild guild,  @Nonnull final EmbedBuilder embedBuilder){
 		super.addHelp(guild, embedBuilder);
 		embedBuilder.addField("filter", "What kind of media to get the differences", false);
 		embedBuilder.addField("mediaID", "The ID of the media", false);
 		embedBuilder.addField("user", "Mention of the users to get", false);
 	}
 	
+	
+	@Nonnull
 	@Override
-	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute( @Nonnull final GuildMessageReceivedEvent event,  @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.size() < 3 || event.getMessage().getMentionedUsers().isEmpty()){
 			final var embedBuilder = Utilities.buildEmbed(event.getAuthor(), Color.RED, "Invalid parameters");
@@ -106,25 +109,35 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
+	
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <filter> <mediaID> <@user...>";
 	}
 	
+	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "AniList fetch media user list";
 	}
 	
+	@Nonnull
+	
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("get", "g");
 	}
+	
+	@Nonnull
 	
 	@Override
 	public String getDescription(){

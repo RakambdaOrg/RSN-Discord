@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Optional;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -51,16 +52,17 @@ public class AniListUtils{
 	}
 	
 	public static void generateToken(final Member member, final String token) throws Exception{
+		if(Objects.isNull(member)){
+			return;
+		}
 		getLogger(member.getGuild()).debug("Getting access token for {}", member);
 		final var accessToken = getPreviousAccessToken(member);
 		if(Objects.nonNull(accessToken)){
 			return;
 		}
-		
 		final var headers = new HashMap<String, String>();
 		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "application/json");
-		
 		final var body = new JSONObject();
 		body.put("grant_type", "authorization_code");
 		body.put("client_id", "" + APP_ID);
@@ -95,9 +97,11 @@ public class AniListUtils{
 		return null;
 	}
 	
-	public static JSONObject getQuery(final Member member, final String query, final JSONObject variables) throws Exception{
+	public static Optional<JSONObject> getQuery(final Member member, final String query, final JSONObject variables) throws Exception{
+		if(Objects.isNull(member))
+			return Optional.empty();
 		getLogger(member.getGuild()).debug("Sending query to AniList for user {}", member.getUser());
-		return getQuery(AniListUtils.getPreviousAccessToken(member), query, variables);
+		return Optional.of(getQuery(AniListUtils.getPreviousAccessToken(member), query, variables));
 	}
 	
 	public static String getCodeLink(){

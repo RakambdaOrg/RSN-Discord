@@ -9,7 +9,8 @@ import fr.mrcraftcod.utils.http.requestssenders.get.JSONGetRequestSender;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.net.URL;
 import java.util.LinkedList;
@@ -23,8 +24,9 @@ import java.util.Objects;
  * @since 2018-04-12
  */
 public class DogCommand extends BasicCommand{
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, ":dog: ** | Here's your random dog:**");
 		embed.setImage(getDogPictureURL(event.getGuild()));
@@ -32,7 +34,7 @@ public class DogCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
-	private String getDogPictureURL(final Guild guild) throws Exception{
+	private String getDogPictureURL(@Nullable final Guild guild) throws Exception{
 		Log.getLogger(guild).debug("Getting random dog picture");
 		final var handler = new JSONGetRequestSender(new URL("https://dog.ceo/api/breeds/image/random")).getRequestHandler();
 		if(Objects.equals(handler.getStatus(), 200)){
@@ -45,21 +47,25 @@ public class DogCommand extends BasicCommand{
 		throw new Exception("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString());
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Dog";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("dog");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Gets a random picture of a dog";

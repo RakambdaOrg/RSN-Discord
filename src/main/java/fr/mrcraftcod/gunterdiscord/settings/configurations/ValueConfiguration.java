@@ -8,7 +8,6 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -131,7 +130,7 @@ public abstract class ValueConfiguration<T> extends Configuration{
 	 *
 	 * @param value the value to set.
 	 */
-	public void setValue(@NotNull final T value){
+	public void setValue( final T value){
 		setRawValue(getValueParser().apply(value));
 	}
 	

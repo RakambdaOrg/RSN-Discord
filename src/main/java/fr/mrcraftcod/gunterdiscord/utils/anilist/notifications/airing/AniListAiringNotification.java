@@ -10,7 +10,6 @@ import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMedia;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.AniListNotificationType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.net.URL;
 import java.util.Date;
@@ -108,7 +107,7 @@ public class AniListAiringNotification implements AniListDatedObject{
 	}
 	
 	@Override
-	public int compareTo(@NotNull final AniListObject o){
+	public int compareTo( final AniListObject o){
 		if(o instanceof AniListDatedObject){
 			return getDate().compareTo(((AniListDatedObject) o).getDate());
 		}

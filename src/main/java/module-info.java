@@ -24,4 +24,5 @@ open module fr.mrcraftcod.gunterdiscord {
 	requires com.fasterxml.jackson.databind;
 	
 	requires java.sql;
+	requires jsr305;
 }

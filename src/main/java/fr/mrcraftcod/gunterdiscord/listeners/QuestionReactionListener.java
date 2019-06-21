@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -27,7 +26,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 	private static final Pattern NUMBER_ONLY = Pattern.compile("[^0-9]");
 	
 	@Override
-	public void onGuildMessageReactionAdd(@NotNull final GuildMessageReactionAddEvent event){
+	public void onGuildMessageReactionAdd( final GuildMessageReactionAddEvent event){
 		super.onGuildMessageReactionAdd(event);
 		try{
 			if(new QuestionsChannelConfig(event.getGuild()).isChannel(event.getChannel())){
@@ -63,7 +62,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 							final var user = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("User")).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e.getValue()).replaceAll("")))).findAny().orElse(null);
 							final var ID = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("ID")).map(MessageEmbed.Field::getValue).findAny().orElse("");
 							if(Objects.nonNull(user)){
-								Actions.replyPrivate(event.getGuild(), user, "Your question (ID: %s) has been rejected.", (Object) ID);
+								Actions.replyPrivate(event.getGuild(), user, "Your question (ID: %s) has been rejected.", ID);
 							}
 						}
 						catch(final Exception e){
