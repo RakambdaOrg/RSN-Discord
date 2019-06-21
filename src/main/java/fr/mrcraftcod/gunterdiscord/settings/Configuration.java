@@ -3,6 +3,8 @@ package fr.mrcraftcod.gunterdiscord.settings;
 import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -25,7 +27,7 @@ public abstract class Configuration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected Configuration(final Guild guild){this.guild = guild;}
+	protected Configuration(@Nullable final Guild guild){this.guild = guild;}
 	
 	/**
 	 * Handle the changes requested.
@@ -38,13 +40,15 @@ public abstract class Configuration{
 	 *
 	 * @throws Exception If anything too bad happened.
 	 */
-	public abstract ConfigurationCommand.ActionResult handleChange(GuildMessageReceivedEvent event, ConfigurationCommand.ChangeConfigType action, LinkedList<String> args) throws Exception;
+	@Nonnull
+	public abstract ConfigurationCommand.ActionResult handleChange(@Nonnull GuildMessageReceivedEvent event, @Nonnull ConfigurationCommand.ChangeConfigType action, @Nonnull LinkedList<String> args) throws Exception;
 	
 	/**
 	 * Define what actions can be performed.
 	 *
 	 * @return A collection of actions.
 	 */
+	@Nonnull
 	public abstract Collection<ConfigurationCommand.ChangeConfigType> getAllowedActions();
 	
 	/**
@@ -52,6 +56,7 @@ public abstract class Configuration{
 	 *
 	 * @return The name.
 	 */
+	@Nonnull
 	public abstract String getName();
 	
 	/**
@@ -59,5 +64,6 @@ public abstract class Configuration{
 	 *
 	 * @return The type.
 	 */
+	@Nonnull
 	public abstract ConfigType getType();
 }

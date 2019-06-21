@@ -2,6 +2,8 @@ package fr.mrcraftcod.gunterdiscord.settings.configs;
 
 import fr.mrcraftcod.gunterdiscord.settings.configurations.SingleChannelConfiguration;
 import net.dv8tion.jda.api.entities.Guild;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -15,10 +17,11 @@ public class AnilistThaChannelConfig extends SingleChannelConfiguration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public AnilistThaChannelConfig(final Guild guild){
+	public AnilistThaChannelConfig(@Nullable final Guild guild){
 		super(guild);
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "anilistThaChannel";

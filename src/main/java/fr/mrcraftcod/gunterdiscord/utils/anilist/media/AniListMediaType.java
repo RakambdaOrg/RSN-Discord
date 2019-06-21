@@ -3,6 +3,8 @@ package fr.mrcraftcod.gunterdiscord.utils.anilist.media;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -15,12 +17,11 @@ import java.lang.reflect.InvocationTargetException;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public enum AniListMediaType{
 	ANIME(AniListAnimeMedia.class, true, "Anime"), MANGA(AniListMangaMedia.class, false, "Manga");
-	
 	private final Class<? extends AniListMedia> klass;
 	private final boolean shouldDisplay;
 	private final String display;
 	
-	AniListMediaType(final Class<? extends AniListMedia> klass, final boolean shouldDisplay, final String display){
+	AniListMediaType(@Nonnull final Class<? extends AniListMedia> klass, final boolean shouldDisplay, @Nullable final String display){
 		this.klass = klass;
 		this.shouldDisplay = shouldDisplay;
 		this.display = display;
@@ -36,10 +37,12 @@ public enum AniListMediaType{
 	}
 	
 	@JsonCreator
-	public static AniListMediaType getFromString(final String value){
+	@Nonnull
+	public static AniListMediaType getFromString(@Nonnull final String value){
 		return AniListMediaType.valueOf(value);
 	}
 	
+	@Nonnull
 	public AniListMedia getInstance() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException{
 		return this.klass.getConstructor().newInstance();
 	}

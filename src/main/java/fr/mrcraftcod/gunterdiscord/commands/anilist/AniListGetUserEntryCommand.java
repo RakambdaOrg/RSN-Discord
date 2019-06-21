@@ -42,23 +42,26 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 		}
 		
 		@Override
-		public void sendMessages( final List<TextChannel> channels,  final Map<User, List<AniListMediaUserList>> userMedias){
+		public void sendMessages( @Nonnull final List<TextChannel> channels,  @Nonnull final Map<User, List<AniListMediaUserList>> userMedias){
 			userMedias.values().forEach(medias -> medias.removeIf(aniListMediaUserList -> !aniListMediaUserList.getMedia().getType().equals(this.type) || !Objects.equals(aniListMediaUserList.getMedia().getId(), this.ID)));
 			userMedias.entrySet().stream().flatMap(userMedia -> userMedia.getValue().stream().map(media -> ImmutablePair.of(userMedia.getKey(), media))).sorted(Comparator.comparing(Map.Entry::getValue)).map(userMedia -> buildMessage(userMedia.getKey(), userMedia.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
 		}
 		
+		@Nonnull
 		@Override
 		public String getRunnerName(){
 			return "get media";
 		}
 		
+		@Nonnull
 		@Override
 		public JDA getJDA(){
 			return this.jda;
 		}
 		
+		@Nonnull
 		@Override
-		public AniListMediaUserListPagedQuery initQuery(final Map<String, String> userInfo){
+		public AniListMediaUserListPagedQuery initQuery(@Nonnull final Map<String, String> userInfo){
 			return new AniListMediaUserListPagedQuery(Integer.parseInt(userInfo.get("userId")));
 		}
 		
@@ -67,6 +70,7 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 			return false;
 		}
 		
+		@Nonnull
 		@Override
 		public String getFetcherID(){
 			//noinspection SpellCheckingInspection

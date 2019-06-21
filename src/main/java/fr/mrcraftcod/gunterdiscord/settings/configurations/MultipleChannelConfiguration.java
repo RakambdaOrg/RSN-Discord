@@ -3,6 +3,9 @@ package fr.mrcraftcod.gunterdiscord.settings.configurations;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -19,15 +22,17 @@ public abstract class MultipleChannelConfiguration extends ListConfiguration<Tex
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected MultipleChannelConfiguration(final Guild guild){
+	protected MultipleChannelConfiguration(@Nullable final Guild guild){
 		super(guild);
 	}
 	
+	@Nonnull
 	@Override
 	protected Function<TextChannel, String> getValueParser(){
-		return channel -> "" + channel.getIdLong();
+		return channel -> Objects.isNull(channel) ? null : "" + channel.getIdLong();
 	}
 	
+	@Nonnull
 	@Override
 	protected BiFunction<GuildMessageReceivedEvent, String, String> getMessageParser(){
 		return (event, arg) -> {
@@ -38,8 +43,9 @@ public abstract class MultipleChannelConfiguration extends ListConfiguration<Tex
 		};
 	}
 	
+	@Nonnull
 	@Override
 	protected Function<String, TextChannel> getConfigParser(){
-		return this.guild::getTextChannelById;
+		return Objects.isNull(this.guild) ? channel -> null : this.guild::getTextChannelById;
 	}
 }

@@ -5,8 +5,10 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.AniListCodeConfig;
 import fr.mrcraftcod.utils.http.requestssenders.post.JSONPostRequestSender;
 import net.dv8tion.jda.api.entities.Member;
 import org.json.JSONObject;
+import javax.annotation.Nonnull;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -23,41 +25,10 @@ public class AniListUtils{
 	private static final String REDIRECT_URI = "https://anilist.co/api/v2/oauth/pin";
 	private static final String CODE_LINK = String.format("%s/oauth/authorize?client_id=%d&response_type=code&redirect_uri=%s", API_URL, APP_ID, REDIRECT_URI);
 	
-	private static JSONObject getQuery(final String token, final String query, final JSONObject variables) throws Exception{
-		final var headers = new HashMap<String, String>();
-		headers.put("Authorization", "Bearer " + token);
-		headers.put("Content-Type", "application/json");
-		headers.put("Accept", "application/json");
-		final var body = new JSONObject();
-		body.put("query", query);
-		body.put("variables", variables);
-		final var handler = new JSONPostRequestSender(new URL("https://graphql.anilist.co"), headers, new HashMap<>(), body.toString()).getRequestHandler();
-		if(Objects.equals(handler.getStatus(), 200)){
-			return handler.getRequestResult().getObject();
-		}
-		if(Objects.equals(handler.getStatus(), 503)){
-			try{
-				final var result = handler.getRequestResult().getObject();
-				if(result.has("errors")){
-					final var errors = result.getJSONArray("errors");
-					if(!errors.isEmpty()){
-						throw new AnilistException(handler.getStatus(), errors.getJSONObject(0).getString("message"));
-					}
-				}
-			}
-			catch(final Exception ignored){
-			}
-		}
-		throw new Exception("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString() + " | query was " + query);
-	}
-	
-	public static void generateToken(final Member member, final String token) throws Exception{
-		if(Objects.isNull(member)){
-			return;
-		}
+	public static void generateToken(@Nonnull final Member member, @Nonnull final String token) throws Exception{
 		getLogger(member.getGuild()).debug("Getting access token for {}", member);
 		final var accessToken = getPreviousAccessToken(member);
-		if(Objects.nonNull(accessToken)){
+		if(accessToken.isPresent()){
 			return;
 		}
 		final var headers = new HashMap<String, String>();
@@ -85,25 +56,56 @@ public class AniListUtils{
 		json.getString("access_token");
 	}
 	
-	private static String getPreviousAccessToken(final Member member){
+	@Nonnull
+	private static Optional<String> getPreviousAccessToken(@Nonnull final Member member){
 		getLogger(member.getGuild()).debug("Getting previous access token for {}", member);
 		final var accessTokens = new AniListAccessTokenConfig(member.getGuild());
 		final var access = accessTokens.getValue(member.getUser().getIdLong());
-		if(Objects.nonNull(access) && !access.isEmpty()){
+		if(Objects.nonNull(access) && access.isPresent()){
 			getLogger(member.getGuild()).debug("Found previous access token for {}", member);
-			return access.get(access.keySet().iterator().next());
+			return access.get().entrySet().stream().filter(entry -> entry.getKey() > System.currentTimeMillis()).map(Map.Entry::getValue).findAny();
 		}
 		getLogger(member.getGuild()).debug("No access token found for {}", member);
-		return null;
+		return Optional.empty();
 	}
 	
-	public static Optional<JSONObject> getQuery(final Member member, final String query, final JSONObject variables) throws Exception{
-		if(Objects.isNull(member))
-			return Optional.empty();
+	@Nonnull
+	public static JSONObject getQuery(@Nonnull final Member member, @Nonnull final String query, @Nonnull final JSONObject variables) throws Exception{
 		getLogger(member.getGuild()).debug("Sending query to AniList for user {}", member.getUser());
-		return Optional.of(getQuery(AniListUtils.getPreviousAccessToken(member), query, variables));
+		final var token = AniListUtils.getPreviousAccessToken(member).orElseThrow(() -> new IllegalStateException("No valid token found, please register again"));
+		return getQuery(token, query, variables);
 	}
 	
+	@Nonnull
+	private static JSONObject getQuery(@Nonnull final String token, @Nonnull final String query, @Nonnull final JSONObject variables) throws Exception{
+		final var headers = new HashMap<String, String>();
+		headers.put("Authorization", "Bearer " + token);
+		headers.put("Content-Type", "application/json");
+		headers.put("Accept", "application/json");
+		final var body = new JSONObject();
+		body.put("query", query);
+		body.put("variables", variables);
+		final var handler = new JSONPostRequestSender(new URL("https://graphql.anilist.co"), headers, new HashMap<>(), body.toString()).getRequestHandler();
+		if(Objects.equals(handler.getStatus(), 200)){
+			return handler.getRequestResult().getObject();
+		}
+		if(Objects.equals(handler.getStatus(), 503)){
+			try{
+				final var result = handler.getRequestResult().getObject();
+				if(result.has("errors")){
+					final var errors = result.getJSONArray("errors");
+					if(!errors.isEmpty()){
+						throw new AnilistException(handler.getStatus(), errors.getJSONObject(0).getString("message"));
+					}
+				}
+			}
+			catch(final Exception ignored){
+			}
+		}
+		throw new Exception("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString() + " | query was " + query);
+	}
+	
+	@Nonnull
 	public static String getCodeLink(){
 		return CODE_LINK;
 	}

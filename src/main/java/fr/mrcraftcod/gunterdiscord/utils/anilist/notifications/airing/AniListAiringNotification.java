@@ -10,6 +10,8 @@ import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMedia;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.AniListNotificationType;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.net.URL;
 import java.util.Date;
@@ -45,7 +47,7 @@ public class AniListAiringNotification implements AniListDatedObject{
 	}
 	
 	@Override
-	public boolean equals(final Object obj){
+	public boolean equals(@Nullable final Object obj){
 		if(!(obj instanceof AniListAiringNotification)){
 			return false;
 		}
@@ -63,42 +65,49 @@ public class AniListAiringNotification implements AniListDatedObject{
 		return this.id;
 	}
 	
+	@Nonnull
+	private AniListMedia getMedia(){
+		return this.media;
+	}
+	
 	@Override
-	public void fillEmbed(final EmbedBuilder builder){
+	public void fillEmbed(@Nonnull final EmbedBuilder builder){
 		builder.setTimestamp(getDate().toInstant());
 		builder.setColor(Color.GREEN);
 		builder.setTitle("New release", getMedia().getUrl().toString());
 		builder.addField("Episode", "" + getEpisode(), true);
-		
 		builder.addBlankField(false);
 		builder.addField("Media:", "", false);
 		getMedia().fillEmbed(builder);
-	}
-	
-	@Override
-	public Date getDate(){
-		return this.createdAt;
 	}
 	
 	public int getEpisode(){
 		return this.episode;
 	}
 	
-	private AniListMedia getMedia(){
-		return this.media;
+	@Override
+	@Nonnull
+	public Date getDate(){
+		return this.createdAt;
 	}
 	
 	@Override
+	@Nonnull
 	public URL getUrl(){
-		return null;
+		return this.getMedia().getUrl();
 	}
 	
+	@Override
+	public int compareTo(@Nonnull final AniListObject o){
+		if(o instanceof AniListDatedObject){
+			return getDate().compareTo(((AniListDatedObject) o).getDate());
+		}
+		return Integer.compare(getId(), o.getId());
+	}
+	
+	@Nonnull
 	public static String getQuery(){
 		return QUERY;
-	}
-	
-	public AniListNotificationType getType(){
-		return this.type;
 	}
 	
 	@Override
@@ -106,11 +115,8 @@ public class AniListAiringNotification implements AniListDatedObject{
 		return this.getEpisode();
 	}
 	
-	@Override
-	public int compareTo( final AniListObject o){
-		if(o instanceof AniListDatedObject){
-			return getDate().compareTo(((AniListDatedObject) o).getDate());
-		}
-		return Integer.compare(getId(), o.getId());
+	@Nonnull
+	public AniListNotificationType getType(){
+		return this.type;
 	}
 }

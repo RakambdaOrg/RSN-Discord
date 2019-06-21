@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import javax.annotation.Nonnull;
 import java.awt.Color;
 
 /**
@@ -20,6 +21,7 @@ public class AniListMangaListActivity extends AniListListActivity{
 		super();
 	}
 	
+	@Nonnull
 	@Override
 	protected Color getColor(){
 		return Color.PINK;

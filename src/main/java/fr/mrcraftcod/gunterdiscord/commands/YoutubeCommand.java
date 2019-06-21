@@ -25,16 +25,15 @@ import java.util.Objects;
  */
 public class YoutubeCommand extends BasicCommand{
 	@Override
-	public void addHelp( @Nonnull final Guild guild,  @Nonnull final EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("User", "The user to get the channel", false);
 		builder.addField("URL", "The URL to the user's channel", false);
 	}
 	
-	
 	@Nonnull
 	@Override
-	public CommandResult execute( @Nonnull final GuildMessageReceivedEvent event,  @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(!event.getMessage().getMentionedMembers().isEmpty()){
 			args.poll();
@@ -71,19 +70,16 @@ public class YoutubeCommand extends BasicCommand{
 	}
 	
 	@Nonnull
-	
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <@user> [URL]";
 	}
-	
 	
 	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
-	
 	
 	@Nonnull
 	@Override
@@ -92,14 +88,12 @@ public class YoutubeCommand extends BasicCommand{
 	}
 	
 	@Nonnull
-	
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("youtube", "yt");
 	}
 	
 	@Nonnull
-	
 	@Override
 	public String getDescription(){
 		return "Gets the link to a content creator's page";

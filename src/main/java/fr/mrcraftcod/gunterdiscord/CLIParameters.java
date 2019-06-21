@@ -2,6 +2,8 @@ package fr.mrcraftcod.gunterdiscord;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.FileConverter;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 
 class CLIParameters{
@@ -20,10 +22,12 @@ class CLIParameters{
 	CLIParameters(){
 	}
 	
+	@Nullable
 	File getConfigurationFile(){
 		return this.configurationFile;
 	}
 	
+	@Nonnull
 	File getSettingsFile(){
 		return this.settingsFile.getAbsoluteFile();
 	}

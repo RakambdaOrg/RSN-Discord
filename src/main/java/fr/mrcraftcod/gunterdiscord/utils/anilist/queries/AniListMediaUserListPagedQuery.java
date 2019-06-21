@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.utils.anilist.queries;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.list.AniListMediaUserList;
 import org.json.JSONObject;
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -26,14 +27,16 @@ public class AniListMediaUserListPagedQuery implements AniListPagedQuery<AniList
 		this.variables.put("perPage", 50);
 	}
 	
+	@Nonnull
 	@Override
 	public JSONObject getParameters(final int page){
 		this.variables.put("page", page);
 		return this.variables;
 	}
 	
+	@Nonnull
 	@Override
-	public List<AniListMediaUserList> parseResult(final JSONObject json){
+	public List<AniListMediaUserList> parseResult(@Nonnull final JSONObject json){
 		final var changes = new ArrayList<AniListMediaUserList>();
 		for(final var change : json.getJSONObject("data").getJSONObject("Page").getJSONArray("mediaList")){
 			try{
@@ -46,6 +49,7 @@ public class AniListMediaUserListPagedQuery implements AniListPagedQuery<AniList
 		return changes;
 	}
 	
+	@Nonnull
 	@Override
 	public String getQuery(){
 		return QUERY_MEDIA_LIST;
@@ -56,7 +60,8 @@ public class AniListMediaUserListPagedQuery implements AniListPagedQuery<AniList
 		return ++this.nextPage;
 	}
 	
-	private AniListMediaUserList buildChange(final JSONObject change) throws Exception{
+	@Nonnull
+	private AniListMediaUserList buildChange(@Nonnull final JSONObject change) throws Exception{
 		return new ObjectMapper().readerFor(AniListMediaUserList.class).readValue(change.toString());
 	}
 }

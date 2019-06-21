@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.utils.anilist.queries;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.airing.AniListAiringNotification;
 import org.json.JSONObject;
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,19 +31,16 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 		this.variables.put("perPage", 50);
 	}
 	
+	@Nonnull
 	@Override
 	public JSONObject getParameters(final int page){
 		this.variables.put("page", page);
 		return this.variables;
 	}
 	
+	@Nonnull
 	@Override
-	public String getQuery(){
-		return QUERY_NOTIFICATIONS;
-	}
-	
-	@Override
-	public List<AniListAiringNotification> parseResult(final JSONObject json){
+	public List<AniListAiringNotification> parseResult(@Nonnull final JSONObject json){
 		final var changes = new ArrayList<AniListAiringNotification>();
 		for(final var change : json.getJSONObject("data").getJSONObject("Page").getJSONArray("notifications")){
 			try{
@@ -58,12 +56,19 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 		return changes;
 	}
 	
+	@Nonnull
+	@Override
+	public String getQuery(){
+		return QUERY_NOTIFICATIONS;
+	}
+	
 	@Override
 	public int getNextPage(){
 		return ++this.nextPage;
 	}
 	
-	private AniListAiringNotification buildChange(final JSONObject change) throws Exception{
+	@Nonnull
+	private AniListAiringNotification buildChange(@Nonnull final JSONObject change) throws Exception{
 		return new ObjectMapper().readerFor(AniListAiringNotification.class).readValue(change.toString());
 	}
 }

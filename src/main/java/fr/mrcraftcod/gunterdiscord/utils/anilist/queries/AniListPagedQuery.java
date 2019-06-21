@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.utils.anilist.queries;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListUtils;
 import net.dv8tion.jda.api.entities.Member;
 import org.json.JSONObject;
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,8 @@ public interface AniListPagedQuery<T>{
 		return "query($page: Int, $perPage: Int" + additionalParams + "){\n" + "  Page (page: $page, perPage: $perPage) {\n" + "    pageInfo {\n" + "      total\n" + "      currentPage\n" + "      lastPage\n" + "      hasNextPage\n" + "      perPage\n" + "    }\n" + query + "  }\n" + "}";
 	}
 	
-	default List<T> getResult( final Member member) throws Exception{
+	@Nonnull
+	default List<T> getResult(@Nonnull final Member member) throws Exception{
 		final var elements = new ArrayList<T>();
 		var hasNext = true;
 		while(hasNext){
@@ -28,11 +30,14 @@ public interface AniListPagedQuery<T>{
 		return elements;
 	}
 	
+	@Nonnull
+	String getQuery();
+	
+	@Nonnull
 	JSONObject getParameters(int page);
 	
-	List<T> parseResult( JSONObject json) throws Exception;
-	
-	String getQuery();
+	@Nonnull
+	List<T> parseResult(@Nonnull JSONObject json) throws Exception;
 	
 	int getNextPage();
 }

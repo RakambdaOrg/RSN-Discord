@@ -16,6 +16,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -42,7 +44,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	private final VoiceChannel channel;
 	private boolean isSearchingTracks;
 	
-	private GunterAudioManager(final VoiceChannel channel, final AudioManager audioManager, final AudioPlayerManager audioPlayerManager, final AudioPlayer audioPlayer, final TrackScheduler trackScheduler){
+	private GunterAudioManager(@Nonnull final VoiceChannel channel, @Nonnull final AudioManager audioManager, @Nonnull final AudioPlayerManager audioPlayerManager, @Nonnull final AudioPlayer audioPlayer, @Nonnull final TrackScheduler trackScheduler){
 		this.channel = channel;
 		this.audioManager = audioManager;
 		this.audioPlayerManager = audioPlayerManager;
@@ -51,21 +53,21 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		this.isSearchingTracks = false;
 	}
 	
-	public static void play(final User requester, final VoiceChannel channel, final String... identifier){
+	public static void play(@Nonnull final User requester, @Nonnull final VoiceChannel channel, @Nonnull final String... identifier){
 		play(requester, channel, null, identifier);
 	}
 	
-	private static void play(final User requester, final VoiceChannel channel, @SuppressWarnings("SameParameterValue") final StatusTrackSchedulerListener listener, final String... identifier){
+	private static void play(@Nonnull final User requester, @Nonnull final VoiceChannel channel, @SuppressWarnings("SameParameterValue") @Nullable final StatusTrackSchedulerListener listener, @Nonnull final String... identifier){
 		play(requester, channel, listener, track -> {}, 0, 10, identifier);
 	}
 	
-	public static void play(final User requester, final VoiceChannel channel, final StatusTrackSchedulerListener listener, final Consumer<Object> onTrackAdded, final int skipCount, final int maxTracks, final String... identifier){
+	public static void play(@Nonnull final User requester, @Nonnull final VoiceChannel channel, @Nullable final StatusTrackSchedulerListener listener, @Nonnull final Consumer<Object> onTrackAdded, final int skipCount, final int maxTracks, @Nonnull final String... identifier){
 		final var gunterAudioManager = getGunterPlayerManager(channel, listener);
 		gunterAudioManager.isSearchingTracks = true;
 		for(final var ident : identifier){
 			gunterAudioManager.getAudioPlayerManager().loadItem(ident, new AudioLoadResultHandler(){
 				@Override
-				public void trackLoaded(final AudioTrack track){
+				public void trackLoaded(@Nonnull final AudioTrack track){
 					getLogger(channel.getGuild()).debug("Added `{}` to the audio queue on channel `{}`", ident, channel.getName());
 					final var userData = new TrackUserFields();
 					userData.fill(new RequesterTrackUserField(), requester);
@@ -82,7 +84,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 				}
 				
 				@Override
-				public void playlistLoaded(final AudioPlaylist playlist){
+				public void playlistLoaded(@Nonnull final AudioPlaylist playlist){
 					getLogger(channel.getGuild()).debug("Added `{}`(size: {}) to the audio queue on channel `{}`", ident, playlist.getTracks().size(), channel.getName());
 					playlist.getTracks().stream().skip(skipCount).limit(maxTracks).forEach(this::trackLoaded);
 					gunterAudioManager.isSearchingTracks = false;
@@ -97,7 +99,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 				}
 				
 				@Override
-				public void loadFailed(final FriendlyException throwable){
+				public void loadFailed(@Nonnull final FriendlyException throwable){
 					getLogger(channel.getGuild()).warn("Failed to load audio for channel `{}`", channel.getName(), throwable);
 					gunterAudioManager.isSearchingTracks = false;
 					gunterAudioManager.getTrackScheduler().foundNothing();
@@ -107,7 +109,8 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		}
 	}
 	
-	private static GunterAudioManager getGunterPlayerManager(final VoiceChannel channel, final StatusTrackSchedulerListener listener){
+	@Nonnull
+	private static GunterAudioManager getGunterPlayerManager(@Nonnull final VoiceChannel channel, @Nullable final StatusTrackSchedulerListener listener){
 		return managers.computeIfAbsent(channel.getGuild(), g -> {
 			final var audioManager = channel.getGuild().getAudioManager();
 			audioManager.openAudioConnection(channel);
@@ -127,10 +130,9 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		});
 	}
 	
-	public static void shuffle(final Guild guild){
-		if(managers.containsKey(guild)){
-			managers.get(guild).getTrackScheduler().shuffle();
-		}
+	@Nonnull
+	private AudioPlayerManager getAudioPlayerManager(){
+		return this.audioPlayerManager;
 	}
 	
 	private void close(){
@@ -149,15 +151,15 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		}
 	}
 	
-	private AudioPlayerManager getAudioPlayerManager(){
-		return this.audioPlayerManager;
+	@Nonnull
+	private TrackScheduler getTrackScheduler(){
+		return this.trackScheduler;
 	}
 	
-	public static List<AudioTrack> getQueue(final Guild guild){
+	public static void shuffle(@Nonnull final Guild guild){
 		if(managers.containsKey(guild)){
-			return managers.get(guild).getTrackScheduler().getQueue();
+			managers.get(guild).getTrackScheduler().shuffle();
 		}
-		return List.of();
 	}
 	
 	public static void stopAll(){
@@ -166,16 +168,21 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		}
 	}
 	
-	public static MusicActionResponse leave(final Guild guild){
+	@Nonnull
+	public static List<AudioTrack> getQueue(@Nonnull final Guild guild){
+		if(managers.containsKey(guild)){
+			return managers.get(guild).getTrackScheduler().getQueue();
+		}
+		return List.of();
+	}
+	
+	@Nonnull
+	public static MusicActionResponse leave(@Nonnull final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).close();
 			return OK;
 		}
 		return NO_MUSIC;
-	}
-	
-	private AudioManager getAudioManager(){
-		return this.audioManager;
 	}
 	
 	@Override
@@ -184,11 +191,8 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		close();
 	}
 	
-	private VoiceChannel getChannel(){
-		return this.channel;
-	}
-	
-	public static MusicActionResponse seek(final Guild guild, final long time){
+	@Nonnull
+	public static MusicActionResponse seek(@Nonnull final Guild guild, final long time){
 		if(managers.containsKey(guild)){
 			final var track = currentTrack(guild);
 			if(track.isPresent()){
@@ -204,11 +208,17 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		return NO_MUSIC;
 	}
 	
-	public static Optional<AudioTrack> currentTrack(final Guild guild){
+	@Nonnull
+	public static Optional<AudioTrack> currentTrack(@Nonnull final Guild guild){
 		if(managers.containsKey(guild)){
 			return Optional.ofNullable(managers.get(guild).getAudioPlayer().getPlayingTrack());
 		}
 		return Optional.empty();
+	}
+	
+	@Nonnull
+	public AudioPlayer getAudioPlayer(){
+		return this.audioPlayer;
 	}
 	
 	private void skip(){
@@ -221,11 +231,11 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		});
 	}
 	
-	public static boolean isRequester(final Guild guild, final User user){
+	public static boolean isRequester(@Nonnull final Guild guild, @Nonnull final User user){
 		if(managers.containsKey(guild)){
 			return currentTrack(guild).map(track -> {
 				if(track.getUserData() instanceof TrackUserFields){
-					return Objects.equals(user, track.getUserData(TrackUserFields.class).getOrDefault(new RequesterTrackUserField(), null));
+					return track.getUserData(TrackUserFields.class).get(new RequesterTrackUserField()).map(u -> Objects.equals(user, u)).orElse(false);
 				}
 				else{
 					return false;
@@ -235,14 +245,8 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		return false;
 	}
 	
-	public static VoiceChannel currentAudioChannel(final Guild guild){
-		if(managers.containsKey(guild)){
-			return managers.get(guild).getChannel();
-		}
-		return null;
-	}
-	
-	public static MusicActionResponse pause(final Guild guild){
+	@Nonnull
+	public static MusicActionResponse pause(@Nonnull final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).getAudioPlayer().setPaused(true);
 			return OK;
@@ -250,7 +254,8 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		return NO_MUSIC;
 	}
 	
-	public static MusicActionResponse resume(final Guild guild){
+	@Nonnull
+	public static MusicActionResponse resume(@Nonnull final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).getAudioPlayer().setPaused(false);
 			return OK;
@@ -258,7 +263,8 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		return NO_MUSIC;
 	}
 	
-	public static MusicActionResponse skip(final Guild guild){
+	@Nonnull
+	public static MusicActionResponse skip(@Nonnull final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).skip();
 			return OK;
@@ -266,19 +272,21 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		return NO_MUSIC;
 	}
 	
-	public AudioPlayer getAudioPlayer(){
-		return this.audioPlayer;
-	}
-	
-	private TrackScheduler getTrackScheduler(){
-		return this.trackScheduler;
+	@Override
+	public void onTrackEnd(@Nonnull final AudioTrack track){
 	}
 	
 	@Override
-	public void onTrackEnd(final AudioTrack track){
+	public void onTrackStart(@Nonnull final AudioTrack track){
 	}
 	
-	@Override
-	public void onTrackStart(final AudioTrack track){
+	@Nonnull
+	private AudioManager getAudioManager(){
+		return this.audioManager;
+	}
+	
+	@Nonnull
+	private VoiceChannel getChannel(){
+		return this.channel;
 	}
 }

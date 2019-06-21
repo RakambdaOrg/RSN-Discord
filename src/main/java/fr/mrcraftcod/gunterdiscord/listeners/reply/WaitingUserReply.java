@@ -13,7 +13,7 @@ import java.util.LinkedList;
  * @since 2019-05-18
  */
 public interface WaitingUserReply{
-	boolean execute(GuildMessageReceivedEvent event, LinkedList<String> args);
+	boolean execute(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args);
 	
 	boolean onExpire();
 	

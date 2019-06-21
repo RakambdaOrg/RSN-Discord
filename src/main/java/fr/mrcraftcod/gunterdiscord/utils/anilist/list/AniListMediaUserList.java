@@ -12,6 +12,8 @@ import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMedia;
 import fr.mrcraftcod.gunterdiscord.utils.json.SQLTimestampDeserializer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -66,7 +68,7 @@ public class AniListMediaUserList implements AniListDatedObject{
 	private Integer score;
 	
 	@Override
-	public void fillEmbed(final EmbedBuilder builder){
+	public void fillEmbed(@Nonnull final EmbedBuilder builder){
 		builder.setTimestamp(getDate().toInstant());
 		builder.setColor(getStatus().getColor());
 		builder.setTitle("User list information", getMedia().getUrl().toString());
@@ -101,42 +103,49 @@ public class AniListMediaUserList implements AniListDatedObject{
 		getMedia().fillEmbed(builder);
 	}
 	
-	private Integer getProgressVolumes(){
-		return progressVolumes;
-	}
-	
 	@Override
+	@Nonnull
 	public Date getDate(){
 		return this.updatedAt;
 	}
 	
-	public Integer getScore(){
-		return score;
+	@Nonnull
+	public AniListMediaListUserStatus getStatus(){
+		return status;
 	}
 	
-	@Override
-	public boolean equals(final Object obj){
-		return obj instanceof AniListMediaUserList && Objects.equals(((AniListMediaUserList) obj).getId(), getId());
+	@Nonnull
+	public AniListMedia getMedia(){
+		return media;
+	}
+	
+	@Nullable
+	public Integer getScore(){
+		return score;
 	}
 	
 	public boolean isPrivateItem(){
 		return privateItem;
 	}
 	
+	@Nullable
 	public FuzzyDate getStartedAt(){
 		return startedAt;
 	}
 	
+	@Nullable
 	public FuzzyDate getCompletedAt(){
 		return completedAt;
 	}
 	
+	@Nullable
 	public Integer getProgress(){
 		return progress;
 	}
 	
-	public AniListMedia getMedia(){
-		return media;
+	@Nullable
+	private Integer getProgressVolumes(){
+		return progressVolumes;
 	}
 	
 	@Override
@@ -145,16 +154,14 @@ public class AniListMediaUserList implements AniListDatedObject{
 	}
 	
 	@Override
+	@Nonnull
 	public URL getUrl(){
 		return getMedia().getUrl();
 	}
 	
 	@Override
-	public int compareTo( final AniListObject o){
-		if(o instanceof AniListDatedObject){
-			return getDate().compareTo(((AniListDatedObject) o).getDate());
-		}
-		return Integer.compare(getId(), o.getId());
+	public boolean equals(@Nullable final Object obj){
+		return obj instanceof AniListMediaUserList && Objects.equals(((AniListMediaUserList) obj).getId(), getId());
 	}
 	
 	@Override
@@ -162,20 +169,27 @@ public class AniListMediaUserList implements AniListDatedObject{
 		return this.getId();
 	}
 	
-	public AniListMediaListUserStatus getStatus(){
-		return status;
+	@Override
+	public int compareTo(@Nonnull final AniListObject o){
+		if(o instanceof AniListDatedObject){
+			return getDate().compareTo(((AniListDatedObject) o).getDate());
+		}
+		return Integer.compare(getId(), o.getId());
 	}
 	
+	@Nonnull
 	public Date getCreatedAt(){
 		return createdAt;
 	}
 	
-	public Integer getPriority(){
-		return priority;
+	@Nonnull
+	public HashMap<String, Boolean> getCustomLists(){
+		return customLists;
 	}
 	
-	public static String getQuery(){
-		return QUERY;
+	@Nullable
+	public Integer getPriority(){
+		return priority;
 	}
 	
 	@Override
@@ -183,7 +197,8 @@ public class AniListMediaUserList implements AniListDatedObject{
 		return ToStringBuilder.reflectionToString(this);
 	}
 	
-	public HashMap<String, Boolean> getCustomLists(){
-		return customLists;
+	@Nonnull
+	public static String getQuery(){
+		return QUERY;
 	}
 }

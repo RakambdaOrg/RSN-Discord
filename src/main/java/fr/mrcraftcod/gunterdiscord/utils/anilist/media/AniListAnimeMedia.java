@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
@@ -27,15 +29,15 @@ public class AniListAnimeMedia extends AniListMedia{
 	}
 	
 	@Override
-	public void fillEmbed(final EmbedBuilder builder){
-		super.fillEmbed(builder);
-		Optional.ofNullable(getEpisodes()).map(Object::toString).ifPresent(val -> builder.addField("Episodes", val, true));
-		Optional.ofNullable(getSeason()).map(Enum::toString).ifPresent(val -> builder.addField("Season", val, true));
+	@Nonnull
+	public String getProgressType(final boolean contains){
+		return "watched episode";
 	}
 	
 	@Override
-	public String getProgressType(final boolean contains){
-		return "watched episode";
+	@Nullable
+	public Integer getItemCount(){
+		return getEpisodes();
 	}
 	
 	@Override
@@ -44,10 +46,13 @@ public class AniListAnimeMedia extends AniListMedia{
 	}
 	
 	@Override
-	public Integer getItemCount(){
-		return getEpisodes();
+	public void fillEmbed(@Nonnull final EmbedBuilder builder){
+		super.fillEmbed(builder);
+		Optional.ofNullable(getEpisodes()).map(Object::toString).ifPresent(val -> builder.addField("Episodes", val, true));
+		Optional.ofNullable(getSeason()).map(Enum::toString).ifPresent(val -> builder.addField("Season", val, true));
 	}
 	
+	@Nullable
 	public Integer getEpisodes(){
 		return this.episodes;
 	}

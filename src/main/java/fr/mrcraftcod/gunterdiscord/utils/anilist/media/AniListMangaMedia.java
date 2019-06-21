@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
@@ -29,24 +31,22 @@ public class AniListMangaMedia extends AniListMedia{
 	}
 	
 	@Override
-	public void fillEmbed(final EmbedBuilder builder){
-		super.fillEmbed(builder);
-		Optional.ofNullable(getChapters()).map(Object::toString).ifPresent(val -> builder.addField("Chapters", val, true));
-		Optional.ofNullable(getVolumes()).map(Object::toString).ifPresent(val -> builder.addField("Volumes", val, true));
-	}
-	
-	/**
-	 * Get the number of chapters for this manga.
-	 *
-	 * @return The number of chapters.
-	 */
-	public Integer getChapters(){
-		return this.chapters;
+	@Nonnull
+	public String getProgressType(final boolean contains){
+		return "read chapter";
 	}
 	
 	@Override
-	public String getProgressType(final boolean contains){
-		return "read chapter";
+	@Nullable
+	public Integer getItemCount(){
+		return getChapters();
+	}
+	
+	@Override
+	public void fillEmbed(@Nonnull final EmbedBuilder builder){
+		super.fillEmbed(builder);
+		Optional.ofNullable(getChapters()).map(Object::toString).ifPresent(val -> builder.addField("Chapters", val, true));
+		Optional.ofNullable(getVolumes()).map(Object::toString).ifPresent(val -> builder.addField("Volumes", val, true));
 	}
 	
 	@Override
@@ -54,9 +54,14 @@ public class AniListMangaMedia extends AniListMedia{
 		return ToStringBuilder.reflectionToString(this);
 	}
 	
-	@Override
-	public Integer getItemCount(){
-		return getChapters();
+	/**
+	 * Get the number of chapters for this manga.
+	 *
+	 * @return The number of chapters.
+	 */
+	@Nullable
+	public Integer getChapters(){
+		return this.chapters;
 	}
 	
 	/**
@@ -64,6 +69,7 @@ public class AniListMangaMedia extends AniListMedia{
 	 *
 	 * @return The number of volumes.
 	 */
+	@Nullable
 	public Integer getVolumes(){
 		return this.volumes;
 	}

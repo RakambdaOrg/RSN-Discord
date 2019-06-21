@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils.player.trackfields;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -16,15 +17,12 @@ public class TrackUserFields{
 		this.map = new HashMap<>();
 	}
 	
-	public <T> void fill(final AudioTrackUserFields<T> field, final T value){
+	public <T> void fill(@Nonnull final AudioTrackUserFields<T> field, @Nonnull final T value){
 		this.map.put(field.getName(), field.valueForField(value));
 	}
 	
-	public <T> T getOrDefault(final AudioTrackUserFields<T> field, final T defaultValue){
-		return get(field).orElse(defaultValue);
-	}
-	
-	public <T> Optional<T> get(final AudioTrackUserFields<T> field){
+	@Nonnull
+	public <T> Optional<T> get(@Nonnull final AudioTrackUserFields<T> field){
 		return Optional.ofNullable(this.map.get(field.getName())).map(field::parseObject);
 	}
 }

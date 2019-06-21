@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.runners;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -38,6 +39,7 @@ public class SaveConfigScheduledRunner implements ScheduledRunner{
 		return 5;
 	}
 	
+	@Nonnull
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.MINUTES;

@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -28,18 +29,19 @@ public class ReplyMessageListener extends ListenerAdapter{
 		executor.shutdown();
 	}
 	
-	public static ScheduledExecutorService getExecutor(){
-		return executor;
-	}
-	
 	@Override
-	public void onGuildMessageReceived( final GuildMessageReceivedEvent event){
+	public void onGuildMessageReceived(@Nonnull final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
-			replies.removeIf(reply -> reply.isHandled() || (Objects.equals(reply.getUser(), event.getAuthor()) && Objects.equals(reply.getChannel(), event.getChannel()) && reply.execute(event, Arrays.stream(event.getMessage().getContentRaw().split(" ")).collect(Collectors.toCollection(LinkedList::new)))));
+			replies.removeIf(reply -> reply.isHandled() || (Objects.equals(reply.getUser(), event.getAuthor()) && Objects.equals(reply.getWaitChannel(), event.getChannel()) && reply.execute(event, Arrays.stream(event.getMessage().getContentRaw().split(" ")).collect(Collectors.toCollection(LinkedList::new)))));
 		}
 		catch(final Exception e){
 			LOGGER.error("Failed to handle user reply", e);
 		}
+	}
+	
+	@Nonnull
+	static ScheduledExecutorService getExecutor(){
+		return executor;
 	}
 }

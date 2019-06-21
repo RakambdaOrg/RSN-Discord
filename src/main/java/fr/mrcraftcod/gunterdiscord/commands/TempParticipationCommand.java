@@ -39,7 +39,7 @@ public class TempParticipationCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
-	public static boolean sendInfos(final Guild guild, final LocalDate localDate, final User author, final TextChannel channel){
+	public static boolean sendInfos(@Nonnull final Guild guild, @Nonnull final LocalDate localDate, @Nonnull final User author, @Nonnull final TextChannel channel){
 		final var ytdKey = getKey(localDate);
 		final var date = localDate.format(DFD);
 		final var stats = new MembersParticipationConfig(guild).getValue(ytdKey);
@@ -59,7 +59,8 @@ public class TempParticipationCommand extends BasicCommand{
 		return false;
 	}
 	
-	public static String getKey(final LocalDate localDate){
+	@Nonnull
+	public static String getKey(@Nonnull final LocalDate localDate){
 		return localDate.format(DF);
 	}
 	

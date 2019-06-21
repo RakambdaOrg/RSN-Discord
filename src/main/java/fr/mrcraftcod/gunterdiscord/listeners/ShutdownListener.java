@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 import fr.mrcraftcod.gunterdiscord.ForceShutdownThread;
 import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import javax.annotation.Nonnull;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -13,7 +14,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public class ShutdownListener extends ListenerAdapter{
 	@Override
-	public void onShutdown( final ShutdownEvent event){
+	public void onShutdown(@Nonnull final ShutdownEvent event){
 		super.onShutdown(event);
 		getLogger(null).info("BOT STOPPED");
 		new ForceShutdownThread().start();

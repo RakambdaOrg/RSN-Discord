@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.*;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.net.URL;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,15 +45,16 @@ public abstract class AniListMedia implements AniListObject{
 	@JsonProperty("id")
 	private int id;
 	
-	protected AniListMedia(final AniListMediaType type){
+	protected AniListMedia(@Nonnull final AniListMediaType type){
 		this.type = type;
 	}
 	
 	@Override
-	public boolean equals(final Object obj){
+	public boolean equals(@Nullable final Object obj){
 		return obj instanceof AniListMedia && Objects.equals(((AniListMedia) obj).getId(), getId());
 	}
 	
+	@Nonnull
 	public abstract String getProgressType(final boolean contains);
 	
 	@Override
@@ -59,10 +62,8 @@ public abstract class AniListMedia implements AniListObject{
 		return ToStringBuilder.reflectionToString(this);
 	}
 	
-	public abstract Integer getItemCount();
-	
 	@Override
-	public void fillEmbed(final EmbedBuilder builder){
+	public void fillEmbed(@Nonnull final EmbedBuilder builder){
 		builder.setDescription(getTitle().getUserPreferred());
 		if(getType().shouldDisplay()){
 			builder.addField("Type", getType().toString(), true);
@@ -76,46 +77,57 @@ public abstract class AniListMedia implements AniListObject{
 		builder.setThumbnail(getCoverImage().getLarge().toString());
 	}
 	
+	@Nonnull
+	public AniListMediaTitle getTitle(){
+		return this.title;
+	}
+	
 	@Override
 	public int getId(){
 		return this.id;
 	}
 	
-	public AniListMediaTitle getTitle(){
-		return this.title;
-	}
-	
-	public static String getQuery(){
-		return QUERY;
-	}
-	
+	@Nonnull
 	public AniListMediaType getType(){
 		return this.type;
 	}
-	
+
+	@Nonnull
 	public AniListMediaFormat getFormat(){
 		return this.format;
 	}
-	
+
+	@Nonnull
 	public AniListMediaStatus getStatus(){
 		return this.status;
+	}
+
+	@Nonnull
+	public AniListCoverImage getCoverImage(){
+		return this.coverImage;
+	}
+
+	@Override
+	@Nonnull
+	public URL getUrl(){
+		return this.url;
 	}
 	
 	public boolean isAdult(){
 		return this.isAdult;
 	}
-	
-	public AniListCoverImage getCoverImage(){
-		return this.coverImage;
-	}
-	
+
 	@Override
-	public URL getUrl(){
-		return this.url;
+	public int compareTo(@Nonnull final AniListObject o){
+		return Integer.compare(getId(), o.getId());
 	}
 	
-	public AniListMediaSeason getSeason(){
-		return this.season;
+	@Nullable
+	public abstract Integer getItemCount();
+
+	@Nonnull
+	public static String getQuery(){
+		return QUERY;
 	}
 	
 	@Override
@@ -123,8 +135,8 @@ public abstract class AniListMedia implements AniListObject{
 		return this.getId();
 	}
 	
-	@Override
-	public int compareTo( final AniListObject o){
-		return Integer.compare(getId(), o.getId());
+	@Nullable
+	public AniListMediaSeason getSeason(){
+		return this.season;
 	}
 }

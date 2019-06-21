@@ -1,11 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
-import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.TwitchIRCChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.irc.events.*;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public class TwitchIRCListener extends AbstractIRCListener{
@@ -15,34 +15,30 @@ public class TwitchIRCListener extends AbstractIRCListener{
 	private final TextChannel channel;
 	private long lastMessage;
 	
-	TwitchIRCListener(final Guild guild, final String user, final String channel) throws NoValueDefinedException{
+	TwitchIRCListener(@Nonnull final Guild guild, @Nonnull final String user, @Nonnull final String channel){
 		this.guild = guild;
 		this.user = user;
 		this.ircChannel = channel;
 		this.lastMessage = System.currentTimeMillis();
-		this.channel = new TwitchIRCChannelConfig(this.getGuild()).getObject();
+		this.channel = new TwitchIRCChannelConfig(this.getGuild()).getObject().orElseThrow(() -> new IllegalStateException("The channel to output chat to isn't set"));
 	}
 	
 	@Override
-	protected void onPingIRC(final PingIRCEvent event){
-	}
-	
-	@Override
-	protected void onIRCChannelJoined(final ChannelJoinedIRCEvent event){
+	protected void onIRCChannelJoined(@Nonnull final ChannelJoinedIRCEvent event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
 			Actions.sendMessage(this.channel, "Joined %s", event.getChannel());
 		}
 	}
 	
 	@Override
-	protected void onIRCChannelLeft(final ChannelLeftIRCEvent event){
+	protected void onIRCChannelLeft(@Nonnull final ChannelLeftIRCEvent event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
 			Actions.sendMessage(this.channel, "Left %s", event.getChannel());
 		}
 	}
 	
 	@Override
-	protected void onIRCMessage(final ChannelMessageIRCEvent event){
+	protected void onIRCMessage(@Nonnull final ChannelMessageIRCEvent event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
 			this.lastMessage = System.currentTimeMillis();
 			Actions.sendMessage(this.channel, "**`%s`** %s", event.getUser().toString(), event.getMessage());
@@ -50,23 +46,28 @@ public class TwitchIRCListener extends AbstractIRCListener{
 	}
 	
 	@Override
-	protected void onIRCUnknownEvent(final IRCEvent event){
-	
+	protected void onPingIRC(@Nonnull final PingIRCEvent event){
 	}
 	
+	@Override
+	protected void onIRCUnknownEvent(@Nonnull final IRCEvent event){
+	}
+	
+	@Override
+	public boolean handlesChannel(@Nonnull final String channel){
+		return Objects.equals(channel, this.ircChannel);
+	}
+	
+	@Nonnull
 	@Override
 	public Guild getGuild(){
 		return this.guild;
 	}
 	
+	@Nonnull
 	@Override
 	public String getIRCChannel(){
 		return this.ircChannel;
-	}
-	
-	@Override
-	public boolean handlesChannel(final String channel){
-		return Objects.equals(channel, this.ircChannel);
 	}
 	
 	@Override
@@ -74,6 +75,7 @@ public class TwitchIRCListener extends AbstractIRCListener{
 		return System.currentTimeMillis() - this.lastMessage;
 	}
 	
+	@Nonnull
 	@Override
 	public String getUser(){
 		return this.user;

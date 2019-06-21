@@ -25,15 +25,14 @@ import java.util.Objects;
  */
 public class WarnInfoCommand extends BasicCommand{
 	@Override
-	public void addHelp( @Nonnull final Guild guild,  @Nonnull final EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("user", "The user to get the infos for (default: @me)", false);
 	}
 	
-	
 	@Nonnull
 	@Override
-	public CommandResult execute( @Nonnull final GuildMessageReceivedEvent event,  @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final var target = event.getMessage().getMentionedUsers().stream().findFirst().orElse(event.getAuthor());
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Warns info");
@@ -46,26 +45,23 @@ public class WarnInfoCommand extends BasicCommand{
 		else{
 			final var formatter = new SimpleDateFormat("dd MMM at HH:mm:ssZ");
 			builder.setDescription("Warns will be removed with a maximum delay of 15 minutes");
-			bans.keySet().forEach(key -> builder.addField("Role " + event.getGuild().getRoleById(key).getName(), "Ends the " + formatter.format(new Date(bans.get(key))), false));
+			bans.keySet().stream().map(key -> event.getGuild().getRoleById(key)).filter(Objects::nonNull).forEach(role -> builder.addField("Role " + role.getName(), "Ends the " + formatter.format(new Date(bans.get(role.getIdLong()))), false));
 		}
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;
 	}
 	
 	@Nonnull
-	
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [@user]";
 	}
-	
 	
 	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
-	
 	
 	@Nonnull
 	@Override
@@ -74,7 +70,6 @@ public class WarnInfoCommand extends BasicCommand{
 	}
 	
 	@Nonnull
-	
 	@SuppressWarnings("SpellCheckingInspection")
 	@Override
 	public List<String> getCommandStrings(){
@@ -82,7 +77,6 @@ public class WarnInfoCommand extends BasicCommand{
 	}
 	
 	@Nonnull
-	
 	@Override
 	public String getDescription(){
 		return "Gets information about the warns in progress";

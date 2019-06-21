@@ -22,11 +22,9 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import javax.annotation.Nonnull;
 import java.awt.Color;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -80,15 +78,14 @@ public class CommandsMessageListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildMessageReceived( final GuildMessageReceivedEvent event){
+	public void onGuildMessageReceived(@Nonnull final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
 			if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
 				Actions.deleteMessage(event.getMessage());
 				final var args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 				final var cmdText = args.pop().substring(new PrefixConfig(event.getGuild()).getObject(defaultPrefix).length());
-				final var command = getCommand(cmdText);
-				if(Objects.nonNull(command)){
+				getCommand(cmdText).ifPresentOrElse(command -> {
 					if(Objects.equals(command.getScope(), -5) || Objects.equals(command.getScope(), event.getChannel().getType().getId())){
 						try{
 							getLogger(event.getGuild()).info("Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(), event.getAuthor(), args);
@@ -123,15 +120,14 @@ public class CommandsMessageListener extends ListenerAdapter{
 						builder.setTitle("You can't use this command in this kind of channel");
 						Actions.reply(event, builder.build());
 					}
-				}
-				else{
+				}, () -> {
 					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.ORANGE);
 					builder.setTitle("Command not found");
 					builder.addField("Command", cmdText, false);
 					Actions.reply(event, builder.build());
-				}
+				});
 			}
 		}
 		catch(final Exception e){
@@ -147,7 +143,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 	 *
 	 * @return True if a command, false otherwise.
 	 */
-	private static boolean isCommand(final Guild guild, final String text){
+	private static boolean isCommand(@Nonnull final Guild guild, @Nonnull final String text){
 		return text.startsWith(new PrefixConfig(guild).getObject(defaultPrefix));
 	}
 	
@@ -158,7 +154,8 @@ public class CommandsMessageListener extends ListenerAdapter{
 	 *
 	 * @return The command or null if not found.
 	 */
-	private static Command getCommand(final String commandText){
-		return Arrays.stream(commands).filter(command -> command.getCommandStrings().contains(commandText.toLowerCase())).findFirst().orElse(null);
+	@Nonnull
+	private static Optional<Command> getCommand(@Nonnull final String commandText){
+		return Arrays.stream(commands).filter(command -> command.getCommandStrings().contains(commandText.toLowerCase())).findFirst();
 	}
 }

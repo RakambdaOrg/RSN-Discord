@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
 import fr.mrcraftcod.gunterdiscord.utils.irc.events.*;
+import javax.annotation.Nonnull;
 
 /**
  * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-02-25.
@@ -11,7 +12,7 @@ import fr.mrcraftcod.gunterdiscord.utils.irc.events.*;
 @SuppressWarnings("EmptyMethod")
 public abstract class AbstractIRCListener implements IRCListener{
 	@Override
-	public void onIRCEvent(final IRCEvent event){
+	public void onIRCEvent(@Nonnull final IRCEvent event){
 		if(event instanceof ChannelJoinedIRCEvent){
 			onIRCChannelJoined((ChannelJoinedIRCEvent) event);
 		}
@@ -29,13 +30,13 @@ public abstract class AbstractIRCListener implements IRCListener{
 		}
 	}
 	
-	protected abstract void onPingIRC(PingIRCEvent event);
+	protected abstract void onIRCChannelJoined(@Nonnull ChannelJoinedIRCEvent event);
 	
-	protected abstract void onIRCChannelJoined(ChannelJoinedIRCEvent event);
+	protected abstract void onIRCChannelLeft(@Nonnull ChannelLeftIRCEvent event);
 	
-	protected abstract void onIRCChannelLeft(ChannelLeftIRCEvent event);
+	protected abstract void onIRCMessage(@Nonnull ChannelMessageIRCEvent event);
 	
-	protected abstract void onIRCMessage(ChannelMessageIRCEvent event);
+	protected abstract void onPingIRC(@Nonnull PingIRCEvent event);
 	
-	protected abstract void onIRCUnknownEvent(IRCEvent event);
+	protected abstract void onIRCUnknownEvent(@Nonnull IRCEvent event);
 }

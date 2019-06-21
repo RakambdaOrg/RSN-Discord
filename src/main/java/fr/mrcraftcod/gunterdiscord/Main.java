@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -50,7 +51,7 @@ public class Main{
 	 *
 	 * @param args Not used.
 	 */
-	public static void main(final String[] args){
+	public static void main(@Nonnull final String[] args){
 		LOGGER.info("Starting bot version {}", getRSNBotVersion());
 		final var parameters = new CLIParameters();
 		try{
@@ -143,15 +144,7 @@ public class Main{
 		Settings.close();
 	}
 	
-	/**
-	 * Get the running JDA.
-	 *
-	 * @return The JDA.
-	 */
-	public static JDA getJDA(){
-		return jda;
-	}
-	
+	@Nonnull
 	public static String getRSNBotVersion(){
 		final var properties = new Properties();
 		try{
@@ -161,6 +154,16 @@ public class Main{
 			LOGGER.warn("Error reading version jsonConfigFile", e);
 		}
 		return properties.getProperty("simulator.version", "Unknown");
+	}
+	
+	/**
+	 * Get the running JDA.
+	 *
+	 * @return The JDA.
+	 */
+	@Nonnull
+	public static JDA getJDA(){
+		return jda;
 	}
 	//https://api.overwatchleague.com/schedule
 }

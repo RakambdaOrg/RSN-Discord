@@ -2,6 +2,9 @@ package fr.mrcraftcod.gunterdiscord.settings.configs;
 
 import fr.mrcraftcod.gunterdiscord.settings.configurations.MapConfiguration;
 import net.dv8tion.jda.api.entities.Guild;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -16,20 +19,23 @@ public class YoutubeChannelConfig extends MapConfiguration<Long, String>{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public YoutubeChannelConfig(final Guild guild){
+	public YoutubeChannelConfig(@Nullable final Guild guild){
 		super(guild);
 	}
 	
+	@Nonnull
 	@Override
 	protected Function<String, Long> getKeyParser(){
-		return Long::parseLong;
+		return value -> Objects.isNull(value) ? null : Long.parseLong(value);
 	}
 	
+	@Nonnull
 	@Override
 	protected Function<String, String> getValueParser(){
 		return s -> s;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "youtubeChannel";

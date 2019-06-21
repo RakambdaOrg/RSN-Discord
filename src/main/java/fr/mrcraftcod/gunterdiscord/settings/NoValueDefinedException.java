@@ -1,5 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.settings;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
  *
@@ -14,7 +16,7 @@ public class NoValueDefinedException extends Exception{
 	 *
 	 * @param configuration The configuration concerned.
 	 */
-	public NoValueDefinedException(final Configuration configuration){
+	public NoValueDefinedException(@Nonnull final Configuration configuration){
 		super("The value of " + configuration.getName() + " isn't set.");
 	}
 }

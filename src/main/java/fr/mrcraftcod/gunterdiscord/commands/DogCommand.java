@@ -34,6 +34,7 @@ public class DogCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	private String getDogPictureURL(@Nullable final Guild guild) throws Exception{
 		Log.getLogger(guild).debug("Getting random dog picture");
 		final var handler = new JSONGetRequestSender(new URL("https://dog.ceo/api/breeds/image/random")).getRequestHandler();

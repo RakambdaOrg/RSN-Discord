@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.listeners.quiz;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 
 /**
@@ -20,7 +21,7 @@ class Question{
 	 * @param answers       The answers available.
 	 * @param correctAnswer The index of teh correct answer.
 	 */
-	Question(final String question, final HashMap<Integer, String> answers, final int correctAnswer){
+	Question(@Nonnull final String question, @Nonnull final HashMap<Integer, String> answers, final int correctAnswer){
 		this.question = question;
 		this.answers = answers;
 		this.correctAnswer = correctAnswer;
@@ -31,6 +32,7 @@ class Question{
 	 *
 	 * @return The answers.
 	 */
+	@Nonnull
 	HashMap<Integer, String> getAnswers(){
 		return this.answers;
 	}
@@ -49,6 +51,7 @@ class Question{
 	 *
 	 * @return The question.
 	 */
+	@Nonnull
 	String getQuestion(){
 		return this.question;
 	}

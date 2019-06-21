@@ -9,7 +9,7 @@ open module fr.mrcraftcod.gunterdiscord {
 	
 	requires org.json;
 	requires org.apache.commons.lang3;
-	requires org.jetbrains.annotations;
+	requires org.apache.commons.io;
 	requires fr.mrcraftcod.utils.http;
 	requires jcommander;
 	

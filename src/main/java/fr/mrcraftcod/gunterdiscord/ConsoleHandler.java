@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord;
 import net.dv8tion.jda.api.JDA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.annotation.Nonnull;
 import java.util.*;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -22,7 +23,7 @@ class ConsoleHandler extends Thread{
 	 *
 	 * @param jda The JDA object.
 	 */
-	ConsoleHandler(final JDA jda){
+	ConsoleHandler(@Nonnull final JDA jda){
 		super();
 		this.jda = jda;
 		this.stop = false;

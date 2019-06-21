@@ -4,6 +4,7 @@ import fr.mrcraftcod.gunterdiscord.runners.ScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.activity.list.AniListListActivity;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListListActivityPagedQuery;
 import net.dv8tion.jda.api.JDA;
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -17,7 +18,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 public class AniListActivityScheduledRunner implements AniListRunner<AniListListActivity, AniListListActivityPagedQuery>, ScheduledRunner{
 	private final JDA jda;
 	
-	public AniListActivityScheduledRunner(final JDA jda){
+	public AniListActivityScheduledRunner(@Nonnull final JDA jda){
 		getLogger(null).info("Creating AniList list change runner");
 		this.jda = jda;
 	}
@@ -27,6 +28,7 @@ public class AniListActivityScheduledRunner implements AniListRunner<AniListList
 		return 1;
 	}
 	
+	@Nonnull
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.HOURS;
@@ -37,18 +39,21 @@ public class AniListActivityScheduledRunner implements AniListRunner<AniListList
 		return 0;
 	}
 	
+	@Nonnull
 	@Override
 	public String getRunnerName(){
 		return "list activity";
 	}
 	
+	@Nonnull
 	@Override
 	public JDA getJDA(){
 		return this.jda;
 	}
 	
+	@Nonnull
 	@Override
-	public AniListListActivityPagedQuery initQuery(final Map<String, String> userInfo){
+	public AniListListActivityPagedQuery initQuery(@Nonnull final Map<String, String> userInfo){
 		return new AniListListActivityPagedQuery(Integer.parseInt(userInfo.get("userId")), Integer.parseInt(userInfo.get("lastFetch" + getFetcherID())));
 	}
 	
@@ -57,6 +62,7 @@ public class AniListActivityScheduledRunner implements AniListRunner<AniListList
 		return true;
 	}
 	
+	@Nonnull
 	@Override
 	public String getFetcherID(){
 		return "listActivity";

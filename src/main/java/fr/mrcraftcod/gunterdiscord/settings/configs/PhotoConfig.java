@@ -7,6 +7,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -25,42 +27,47 @@ public class PhotoConfig extends MapListConfiguration<Long, String>{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	public PhotoConfig(final Guild guild){
+	public PhotoConfig(@Nullable final Guild guild){
 		super(guild);
 	}
 	
+	@SuppressWarnings("DuplicatedCode")
+	@Nonnull
 	@Override
-	public ConfigurationCommand.ActionResult handleChange(final GuildMessageReceivedEvent event, final ConfigurationCommand.ChangeConfigType action, final LinkedList<String> args){
+	public ConfigurationCommand.ActionResult handleChange(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final ConfigurationCommand.ChangeConfigType action, @Nonnull final LinkedList<String> args){
 		if(Objects.equals(action, ConfigurationCommand.ChangeConfigType.SHOW)){
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("Values of " + getName());
-			final var map = getAsMap();
-			map.keySet().stream().map(k -> new MessageEmbed.Field(k.toString(), map.get(k).toString(), false)).forEach(builder::addField);
+			getAsMap().ifPresent(map -> map.entrySet().stream().map(entry -> new MessageEmbed.Field(entry.getKey().toString(), entry.getValue().toString(), false)).forEach(builder::addField));
 			Actions.reply(event, builder.build());
 			return ConfigurationCommand.ActionResult.NONE;
 		}
 		return ConfigurationCommand.ActionResult.ERROR;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "photo";
 	}
 	
+	@Nonnull
 	@Override
 	protected Function<String, Long> getKeyParser(){
-		return Long::parseLong;
+		return value -> Objects.isNull(value) ? null : Long.parseLong(value);
 	}
 	
+	@Nonnull
 	@Override
 	protected Function<String, String> getValueParser(){
 		return s -> s;
 	}
 	
+	@Nonnull
 	@Override
 	protected BiFunction<Object, String, Boolean> getMatcher(){
-		return (o1, o2) -> o1.toString().contains(o2);
+		return (o1, o2) -> Objects.nonNull(o1) && o1.toString().contains(o2);
 	}
 }

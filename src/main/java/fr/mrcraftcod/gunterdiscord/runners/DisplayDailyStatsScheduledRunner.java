@@ -6,6 +6,7 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.*;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
+import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +27,7 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 	 *
 	 * @param jda The JDA object.
 	 */
-	public DisplayDailyStatsScheduledRunner(final JDA jda){
+	public DisplayDailyStatsScheduledRunner(@Nonnull final JDA jda){
 		getLogger(null).info("Creating daily stats runner");
 		this.jda = jda;
 	}
@@ -69,6 +70,7 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 		return 2;
 	}
 	
+	@Nonnull
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.HOURS;

@@ -3,6 +3,8 @@ package fr.mrcraftcod.gunterdiscord.settings.configurations;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -20,7 +22,7 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration<Text
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected SingleChannelConfiguration(final Guild guild){
+	protected SingleChannelConfiguration(@Nullable final Guild guild){
 		super(guild);
 	}
 	
@@ -31,7 +33,7 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration<Text
 	 *
 	 * @return True if the same channels, false otherwise.
 	 */
-	public boolean isChannel(final TextChannel channel){
+	public boolean isChannel(@Nullable final TextChannel channel){
 		if(Objects.isNull(channel)){
 			return false;
 		}
@@ -46,13 +48,10 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration<Text
 	 * @return True if the same channels, false otherwise.
 	 */
 	public boolean isChannel(final long ID){
-		final var channel = getObject(null);
-		if(Objects.isNull(channel)){
-			return false;
-		}
-		return Objects.equals(ID, channel.getIdLong());
+		return getObject().map(channel -> Objects.equals(ID, channel.getIdLong())).orElse(false);
 	}
 	
+	@Nonnull
 	@Override
 	protected BiFunction<GuildMessageReceivedEvent, String, String> getMessageParser(){
 		return (event, arg) -> {
@@ -63,13 +62,15 @@ public abstract class SingleChannelConfiguration extends ValueConfiguration<Text
 		};
 	}
 	
+	@Nonnull
 	@Override
 	protected Function<String, TextChannel> getConfigParser(){
-		return this.guild::getTextChannelById;
+		return Objects.isNull(guild) ? channel -> null : this.guild::getTextChannelById;
 	}
 	
+	@Nonnull
 	@Override
 	protected Function<TextChannel, String> getValueParser(){
-		return channel -> "" + channel.getIdLong();
+		return channel -> Objects.isNull(channel) ? null : "" + channel.getIdLong();
 	}
 }

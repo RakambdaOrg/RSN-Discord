@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import fr.mrcraftcod.gunterdiscord.utils.GunterDuration;
+import javax.annotation.Nonnull;
 import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,10 +28,12 @@ public class FuzzyDate{
 		this.isSet = false;
 	}
 	
-	public Optional<GunterDuration> durationTo(final Date toDate){
+	@Nonnull
+	public Optional<GunterDuration> durationTo(@Nonnull final Date toDate){
 		return this.asDate().map(date -> new GunterDuration(Duration.between(date.toInstant(), toDate.toInstant())));
 	}
 	
+	@Nonnull
 	public Optional<Date> asDate(){
 		return this.isSet() ? Optional.of(this.calendar.getTime()) : Optional.empty();
 	}

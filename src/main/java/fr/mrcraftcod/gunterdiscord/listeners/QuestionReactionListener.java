@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import javax.annotation.Nonnull;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -25,8 +26,9 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 public class QuestionReactionListener extends ListenerAdapter{
 	private static final Pattern NUMBER_ONLY = Pattern.compile("[^0-9]");
 	
+	@SuppressWarnings("DuplicatedCode")
 	@Override
-	public void onGuildMessageReactionAdd( final GuildMessageReactionAddEvent event){
+	public void onGuildMessageReactionAdd(@Nonnull final GuildMessageReactionAddEvent event){
 		super.onGuildMessageReactionAdd(event);
 		try{
 			if(new QuestionsChannelConfig(event.getGuild()).isChannel(event.getChannel())){
@@ -34,17 +36,15 @@ public class QuestionReactionListener extends ListenerAdapter{
 					final var emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
 					if(Objects.equals(emote, BasicEmotes.CHECK_OK)){
 						final var message = event.getChannel().getHistory().getMessageById(event.getReaction().getMessageIdLong());
-						{
+						if(Objects.nonNull(message)){
 							try{
 								final var channel = new QuestionsFinalChannelConfig(event.getGuild()).getObject();
 								Actions.sendMessage(channel, mess -> mess.addReaction(BasicEmotes.CHECK_OK.getValue()).queue(), message.getEmbeds().stream().map(Utilities::buildEmbed).map(mess -> mess.addField("Approved by", event.getUser().getAsMention(), false).setTimestamp(message.getTimeCreated())).map(EmbedBuilder::build).collect(Collectors.toList()));
 								Actions.deleteMessage(message);
 								try{
-									final var user = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("User")).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e.getValue()).replaceAll("")))).findAny().orElse(null);
-									final var ID = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("ID")).map(MessageEmbed.Field::getValue).findAny().orElse("");
-									if(Objects.nonNull(user)){
-										Actions.replyPrivate(event.getGuild(), user, "Your question (ID: %s) has been accepted and forwarded.", ID);
-									}
+									final var user = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> Objects.equals(e.getName(), "User")).map(MessageEmbed.Field::getValue).filter(Objects::nonNull).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e).replaceAll("")))).findAny();
+									final var ID = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> Objects.equals(e.getName(), "ID")).map(MessageEmbed.Field::getValue).findAny();
+									user.ifPresent(value -> Actions.replyPrivate(event.getGuild(), value, "Your question (ID: %s) has been accepted and forwarded.", ID.orElse("")));
 								}
 								catch(final Exception e){
 									Log.getLogger(event.getGuild()).error("Error handling question", e);
@@ -57,16 +57,16 @@ public class QuestionReactionListener extends ListenerAdapter{
 					}
 					else if(Objects.equals(emote, BasicEmotes.CROSS_NO)){
 						final var message = event.getChannel().getHistory().getMessageById(event.getReaction().getMessageIdLong());
-						Actions.deleteMessage(message);
-						try{
-							final var user = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("User")).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e.getValue()).replaceAll("")))).findAny().orElse(null);
-							final var ID = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> e.getName().equals("ID")).map(MessageEmbed.Field::getValue).findAny().orElse("");
-							if(Objects.nonNull(user)){
-								Actions.replyPrivate(event.getGuild(), user, "Your question (ID: %s) has been rejected.", ID);
+						if(Objects.nonNull(message)){
+							Actions.deleteMessage(message);
+							try{
+								final var user = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> Objects.equals(e.getName(), "User")).map(MessageEmbed.Field::getValue).filter(Objects::nonNull).map(e -> event.getJDA().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e).replaceAll("")))).findAny();
+								final var ID = message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> Objects.equals(e.getName(), "ID")).map(MessageEmbed.Field::getValue).findAny();
+								user.ifPresent(value -> Actions.replyPrivate(event.getGuild(), value, "Your question (ID: %s) has been rejected.", ID.orElse("")));
 							}
-						}
-						catch(final Exception e){
-							Log.getLogger(event.getGuild()).error("Error handling question", e);
+							catch(final Exception e){
+								Log.getLogger(event.getGuild()).error("Error handling question", e);
+							}
 						}
 					}
 				}

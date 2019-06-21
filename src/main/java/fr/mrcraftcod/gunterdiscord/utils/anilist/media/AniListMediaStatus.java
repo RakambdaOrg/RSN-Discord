@@ -3,6 +3,8 @@ package fr.mrcraftcod.gunterdiscord.utils.anilist.media;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-10.
@@ -16,12 +18,13 @@ public enum AniListMediaStatus{FINISHED("Finished"), RELEASING("Releasing"), NOT
 	
 	private final String display;
 	
-	AniListMediaStatus(final String display){
+	AniListMediaStatus(@Nullable final String display){
 		this.display = display;
 	}
 	
 	@JsonCreator
-	public static AniListMediaStatus getFromString(final String value){
+	@Nonnull
+	public static AniListMediaStatus getFromString(@Nonnull final String value){
 		return AniListMediaStatus.valueOf(value);
 	}
 	

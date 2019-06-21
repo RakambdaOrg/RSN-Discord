@@ -5,6 +5,7 @@ import fr.mrcraftcod.gunterdiscord.commands.TempParticipationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.configs.*;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.entities.Emote;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildMuteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
@@ -12,8 +13,10 @@ import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemove
 import net.dv8tion.jda.api.events.self.SelfUpdateNameEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Optional;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -24,7 +27,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public class LogListener extends ListenerAdapter{
 	@Override
-	public void onUserUpdateName( final UserUpdateNameEvent event){
+	public void onUserUpdateName(@Nonnull final UserUpdateNameEvent event){
 		super.onUserUpdateName(event);
 		try{
 			getLogger(null).debug("User {} changed name of {} `{}` to `{}`", event.getUser(), event.getEntity(), event.getOldName(), event.getNewName());
@@ -37,7 +40,7 @@ public class LogListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onSelfUpdateName( final SelfUpdateNameEvent event){
+	public void onSelfUpdateName(@Nonnull final SelfUpdateNameEvent event){
 		super.onSelfUpdateName(event);
 		try{
 			getLogger(null).debug("User {} changed name `{}` to `{}`", event.getEntity(), event.getOldName(), event.getNewName());
@@ -65,7 +68,7 @@ public class LogListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildMessageReceived( final GuildMessageReceivedEvent event){
+	public void onGuildMessageReceived(@Nonnull final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
 			if(!event.getAuthor().equals(event.getJDA().getSelfUser())){
@@ -96,11 +99,10 @@ public class LogListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildMessageReactionAdd( final GuildMessageReactionAddEvent event){
+	public void onGuildMessageReactionAdd(@Nonnull final GuildMessageReactionAddEvent event){
 		super.onGuildMessageReactionAdd(event);
 		try{
-			final var message = event.getReaction().getTextChannel().getHistory().getMessageById(event.getMessageIdLong());
-			getLogger(event.getGuild()).debug("New reaction {} from `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), event.getUser(), event.getReaction().getTextChannel().getName(), message.getContentRaw().replace("\n", "{n}"), message.getAuthor());
+			Optional.ofNullable(event.getReaction().getTextChannel()).map(TextChannel::getHistory).map(history -> history.getMessageById(event.getMessageIdLong())).ifPresent(message -> getLogger(event.getGuild()).debug("New reaction {} from `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), event.getUser(), event.getReaction().getTextChannel().getName(), message.getContentRaw().replace("\n", "{n}"), message.getAuthor()));
 		}
 		catch(final NullPointerException ignored){
 		}
@@ -110,11 +112,10 @@ public class LogListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildMessageReactionRemove( final GuildMessageReactionRemoveEvent event){
+	public void onGuildMessageReactionRemove(@Nonnull final GuildMessageReactionRemoveEvent event){
 		super.onGuildMessageReactionRemove(event);
 		try{
-			final var message = event.getReaction().getTextChannel().getHistory().getMessageById(event.getMessageIdLong());
-			getLogger(event.getGuild()).debug("Reaction {} removed by `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), event.getUser(), event.getReaction().getTextChannel().getName(), message.getContentRaw().replace("\n", "{n}"), message.getAuthor());
+			Optional.ofNullable(event.getReaction().getTextChannel()).map(TextChannel::getHistory).map(history -> history.getMessageById(event.getMessageIdLong())).ifPresent(message -> getLogger(event.getGuild()).debug("Reaction {} removed by `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), event.getUser(), event.getReaction().getTextChannel().getName(), message.getContentRaw().replace("\n", "{n}"), message.getAuthor()));
 		}
 		catch(final NullPointerException ignored){
 		}
@@ -124,7 +125,7 @@ public class LogListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildVoiceGuildMute( final GuildVoiceGuildMuteEvent event){
+	public void onGuildVoiceGuildMute(@Nonnull final GuildVoiceGuildMuteEvent event){
 		super.onGuildVoiceGuildMute(event);
 		if(Objects.equals(event.getMember().getUser(), event.getJDA().getSelfUser())){
 			getLogger(event.getGuild()).info("Unmuting bot");
