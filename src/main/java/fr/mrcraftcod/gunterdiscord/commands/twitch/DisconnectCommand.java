@@ -44,7 +44,7 @@ public class DisconnectCommand extends BasicCommand{
 			Actions.reply(event, "Please give a twitch user");
 		}
 		else{
-			TwitchIRC.disconnect(event.getGuild(), args.poll());
+			TwitchIRC.disconnect(event.getGuild(), args.pop());
 		}
 		return CommandResult.SUCCESS;
 	}

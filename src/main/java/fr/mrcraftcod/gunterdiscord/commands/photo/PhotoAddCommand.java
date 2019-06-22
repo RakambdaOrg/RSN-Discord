@@ -71,14 +71,14 @@ public class PhotoAddCommand extends BasicCommand{
 					final var saveFile = future.get();
 					if(!future.isCompletedExceptionally() && Objects.equals(attachment.getSize(), saveFile.length()) && saveFile.length() > 512){
 						new PhotoConfig(event.getGuild()).addValue(user.getIdLong(), saveFile.getPath());
-						Actions.giveRole(event.getGuild(), user, new TrombinoscopeRoleConfig(event.getGuild()).getObject());
+						new TrombinoscopeRoleConfig(event.getGuild()).getObject().ifPresent(role -> Actions.giveRole(event.getGuild(), user, role));
 						final var builder = new EmbedBuilder();
 						builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 						builder.setColor(Color.GREEN);
 						builder.setTitle("New picture");
 						builder.addField("User", user.getAsMention(), true);
 						builder.addField("ID", "" + event.getMessage().getTimeCreated().toEpochSecond(), true);
-						Actions.sendMessage(new PhotoChannelConfig(event.getGuild()).getObject(), builder.build());
+						Actions.sendMessage(new PhotoChannelConfig(event.getGuild()).getObject().orElse(event.getChannel()), builder.build());
 					}
 					else{
 						Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Upload failed");

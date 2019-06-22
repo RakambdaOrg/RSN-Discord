@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import javax.annotation.Nonnull;
 import java.time.Duration;
-import java.util.Objects;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -21,19 +20,20 @@ public class AutoRolesListener extends ListenerAdapter{
 	public void onGuildMemberJoin(@Nonnull final GuildMemberJoinEvent event){
 		super.onGuildMemberJoin(event);
 		try{
-			Actions.giveRole(event.getUser(), new AutoRolesConfig(event.getGuild()).getAsList());
-			final var currentTime = System.currentTimeMillis();
-			final var config = new RemoveRoleConfig(event.getGuild());
-			final var userGuildConfig = config.getValue(event.getUser().getIdLong());
-			if(Objects.nonNull(userGuildConfig)){
-				for(final var roleID : userGuildConfig.keySet()){
-					final var diff = Duration.ofMillis(userGuildConfig.get(roleID) - currentTime);
-					final var role = event.getGuild().getRoleById(roleID);
-					if(!diff.isNegative()){
-						Actions.giveRole(event.getGuild(), event.getUser(), role);
+			new AutoRolesConfig(event.getGuild()).getAsList().ifPresent(roles -> {
+				Actions.giveRole(event.getUser(), roles);
+				final var currentTime = System.currentTimeMillis();
+				final var config = new RemoveRoleConfig(event.getGuild());
+				config.getValue(event.getUser().getIdLong()).ifPresent(userGuildConfig -> {
+					for(final var roleID : userGuildConfig.keySet()){
+						final var diff = Duration.ofMillis(userGuildConfig.get(roleID) - currentTime);
+						final var role = event.getGuild().getRoleById(roleID);
+						if(!diff.isNegative()){
+							Actions.giveRole(event.getGuild(), event.getUser(), role);
+						}
 					}
-				}
-			}
+				});
+			});
 		}
 		catch(final Exception e){
 			getLogger(event.getGuild()).error("Error on user join", e);

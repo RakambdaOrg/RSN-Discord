@@ -61,7 +61,7 @@ public class PhotoGetCommand extends BasicCommand{
 			user = event.getAuthor();
 		}
 		final var member = event.getGuild().getMember(user);
-		if(Objects.isNull(member) || !Utilities.hasRole(member, new TrombinoscopeRoleConfig(event.getGuild()).getObject())){
+		if(Objects.isNull(member) || !new TrombinoscopeRoleConfig(event.getGuild()).getObject().map(role -> Utilities.hasRole(member, role)).orElse(false)){
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
@@ -70,25 +70,25 @@ public class PhotoGetCommand extends BasicCommand{
 		}
 		else if(new PhotoChannelConfig(event.getGuild()).isChannel(event.getChannel())){
 			final var paths = new PhotoConfig(event.getGuild()).getValue(user.getIdLong());
-			if(Objects.nonNull(paths) && !paths.isEmpty()){
+			if(paths.map(p -> !p.isEmpty()).orElse(false)){
 				var randomGen = true;
-				var rnd = ThreadLocalRandom.current().nextInt(paths.size());
+				var rnd = ThreadLocalRandom.current().nextInt(paths.get().size());
 				if(!args.isEmpty()){
 					try{
-						rnd = Math.max(0, Math.min(paths.size(), Integer.parseInt(args.pop())) - 1);
+						rnd = Math.max(0, Math.min(paths.get().size(), Integer.parseInt(args.pop())) - 1);
 						randomGen = false;
 					}
 					catch(final Exception e){
 						getLogger(event.getGuild()).warn("Provided photo index isn't an integer", e);
 					}
 				}
-				final var file = new File(paths.get(rnd));
+				final var file = new File(paths.get().get(rnd));
 				if(file.exists()){
 					final var ID = file.getName().substring(0, file.getName().lastIndexOf("."));
 					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.GREEN);
-					builder.addField("Selection", String.format("%d/%d%s", rnd + 1, paths.size(), randomGen ? " random" : ""), true);
+					builder.addField("Selection", String.format("%d/%d%s", rnd + 1, paths.get().size(), randomGen ? " random" : ""), true);
 					builder.addField("User", user.getAsMention(), true);
 					builder.addField("ID", ID, true);
 					Actions.reply(event, builder.build());

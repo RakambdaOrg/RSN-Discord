@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.util.LinkedList;
-import java.util.Objects;
+import java.util.Optional;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -39,16 +39,12 @@ public abstract class WarnCommand extends BasicCommand{
 		if(!event.getMessage().getMentionedUsers().isEmpty()){
 			final var user = event.getMessage().getMentionedUsers().get(0);
 			args.poll();
-			final var role = getRole(event.getGuild(), event.getMessage(), args);
+			final var roleOptional = getRole(event.getGuild(), event.getMessage(), args);
 			final var duration = getTime(event.getGuild(), event.getMessage(), args);
 			final var reason = String.join(" ", args);
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
-			if(Objects.isNull(role)){
-				builder.setColor(Color.RED);
-				builder.addField("Error", "Please configure a role to give", true);
-			}
-			else{
+			roleOptional.ifPresentOrElse(role -> {
 				Actions.giveRole(event.getGuild(), user, role);
 				new RemoveRoleConfig(event.getGuild()).addValue(user.getIdLong(), role.getIdLong(), (long) (System.currentTimeMillis() + duration * 24 * 60 * 60 * 1000L));
 				builder.setColor(Color.GREEN);
@@ -58,7 +54,10 @@ public abstract class WarnCommand extends BasicCommand{
 				if(!reason.isEmpty()){
 					Actions.replyPrivate(event.getGuild(), user, "Warn reason: %s", reason);
 				}
-			}
+			}, () -> {
+				builder.setColor(Color.RED);
+				builder.addField("Error", "Please configure a role to give", true);
+			});
 			Actions.reply(event, builder.build());
 		}
 		else{
@@ -80,7 +79,8 @@ public abstract class WarnCommand extends BasicCommand{
 	 *
 	 * @return The config.
 	 */
-	protected abstract Role getRole(@Nonnull Guild guild, @Nonnull Message message, @Nonnull LinkedList<String> args) throws NoValueDefinedException;
+	@Nonnull
+	protected abstract Optional<Role> getRole(@Nonnull Guild guild, @Nonnull Message message, @Nonnull LinkedList<String> args) throws NoValueDefinedException;
 	
 	/**
 	 * Get the configuration of the length for the role to be applied.

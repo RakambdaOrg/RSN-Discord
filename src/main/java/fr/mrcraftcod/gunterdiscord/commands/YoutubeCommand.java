@@ -38,30 +38,32 @@ public class YoutubeCommand extends BasicCommand{
 		if(!event.getMessage().getMentionedMembers().isEmpty()){
 			args.poll();
 			final var member = event.getMessage().getMentionedMembers().get(0);
-			if(Utilities.hasRole(member, new YoutubeRoleConfig(event.getGuild()).getObject())){
-				final var strUrl = args.poll();
-				if(Objects.nonNull(strUrl)){
-					if(Utilities.isAdmin(event.getMember())){
-						try{
-							final var url = new URL(strUrl);
-							new YoutubeChannelConfig(event.getGuild()).addValue(member.getUser().getIdLong(), url.toString());
+			new YoutubeRoleConfig(event.getGuild()).getObject().ifPresent(role -> {
+				if(Utilities.hasRole(member, role)){
+					final var strUrl = args.poll();
+					if(Objects.nonNull(strUrl)){
+						if(Utilities.isAdmin(event.getMember())){
+							try{
+								final var url = new URL(strUrl);
+								new YoutubeChannelConfig(event.getGuild()).addValue(member.getUser().getIdLong(), url.toString());
+							}
+							catch(final Exception e){
+								Log.getLogger(event.getGuild()).warn("Provided YouTube link isn't valid {}", strUrl);
+								Actions.reply(event, "Invalid link");
+							}
 						}
-						catch(final Exception e){
-							Log.getLogger(event.getGuild()).warn("Provided YouTube link isn't valid {}", strUrl);
-							Actions.reply(event, "Invalid link");
+						else{
+							Actions.reply(event, "You can't modify the link to a user's channel");
 						}
 					}
 					else{
-						Actions.reply(event, "You can't modify the link to a user's channel");
+						Actions.reply(event, "%s's channel is available at %s", member.getAsMention(), new YoutubeChannelConfig(event.getGuild()).getValue(member.getUser().getIdLong()));
 					}
 				}
 				else{
-					Actions.reply(event, "%s's channel is available at %s", member.getAsMention(), new YoutubeChannelConfig(event.getGuild()).getValue(member.getUser().getIdLong()));
+					Actions.reply(event, "This user isn't a content creator");
 				}
-			}
-			else{
-				Actions.reply(event, "This user isn't a content creator");
-			}
+			});
 		}
 		else{
 			Actions.reply(event, "Please mention a user");

@@ -7,7 +7,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -45,7 +44,7 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 		for(final var change : json.getJSONObject("data").getJSONObject("Page").getJSONArray("notifications")){
 			try{
 				final var changeObj = buildChange((JSONObject) change);
-				if(Objects.nonNull(changeObj) && changeObj.getDate().after(this.date)){
+				if(changeObj.getDate().after(this.date)){
 					changes.add(changeObj);
 				}
 			}

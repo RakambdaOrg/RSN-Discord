@@ -71,7 +71,7 @@ public abstract class CommandComposite extends BasicCommand{
 	@Override
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		if(!isAllowed(event.getMember())){
-			throw new NotAllowedException();
+			throw new NotAllowedException("You're not allowed to execute this command");
 		}
 		final var switchStr = args.poll();
 		if(Objects.isNull(switchStr)){

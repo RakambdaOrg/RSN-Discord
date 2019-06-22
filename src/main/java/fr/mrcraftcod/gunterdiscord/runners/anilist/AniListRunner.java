@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -28,7 +29,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 public interface AniListRunner<T extends AniListObject, U extends AniListPagedQuery<T>>{
 	default void runQueryOnEveryUserAndDefaultChannels(){
 		final var channels = getJDA().getGuilds().stream().map(g -> new AniListChannelConfig(g).getObject(null)).filter(Objects::nonNull).collect(Collectors.toList());
-		final var members = channels.stream().flatMap(channel -> new AniListAccessTokenConfig(channel.getGuild()).getAsMap().keySet().stream().map(key -> channel.getGuild().getMemberById(key))).collect(Collectors.toList());
+		final var members = channels.stream().flatMap(channel -> new AniListAccessTokenConfig(channel.getGuild()).getAsMap().map(tokens -> tokens.keySet().stream().map(key -> channel.getGuild().getMemberById(key))).orElse(Stream.empty())).collect(Collectors.toList());
 		runQuery(members, channels);
 	}
 	
@@ -64,9 +65,12 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		getLogger(member.getGuild()).debug("Fetching user {}", member);
 		final var userInfoConf = new AniListLastAccessConfig(member.getGuild());
 		final var userInfo = userInfoConf.getValue(member.getUser().getIdLong());
-		var elementList = initQuery(userInfo).getResult(member);
+		if(userInfo.isEmpty()){
+			return List.of();
+		}
+		var elementList = initQuery(userInfo.get()).getResult(member);
 		if(keepOnlyNew()){
-			final var baseDate = new Date(Optional.ofNullable(userInfo.getOrDefault("lastFetch" + getFetcherID(), null)).map(Integer::parseInt).orElse(0) * 1000L);
+			final var baseDate = new Date(userInfo.map(map -> map.get("lastFetch" + getFetcherID())).map(Integer::parseInt).orElse(0) * 1000L);
 			elementList = elementList.stream().filter(e -> e instanceof AniListDatedObject).filter(e -> ((AniListDatedObject) e).getDate().after(baseDate)).collect(Collectors.toList());
 		}
 		elementList.stream().filter(e -> e instanceof AniListDatedObject).map(e -> (AniListDatedObject) e).map(AniListDatedObject::getDate).mapToLong(Date::getTime).max().ifPresent(val -> {
@@ -112,7 +116,7 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 	}
 	
 	default boolean sendToChannel(final TextChannel channel, final User user){
-		return new AniListAccessTokenConfig(channel.getGuild()).getAsMap().containsKey(user.getIdLong());
+		return new AniListAccessTokenConfig(channel.getGuild()).getAsMap().map(list -> list.containsKey(user.getIdLong())).orElse(false);
 	}
 	
 	boolean keepOnlyNew();

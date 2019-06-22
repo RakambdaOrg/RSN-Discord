@@ -45,16 +45,19 @@ public class LogListener extends ListenerAdapter{
 		try{
 			getLogger(null).debug("User {} changed name `{}` to `{}`", event.getEntity(), event.getOldName(), event.getNewName());
 			for(final var guild : event.getEntity().getMutualGuilds()){
-				if(new EnableNameChangeLimitConfig(guild).getObject(false)){
+				if(new EnableNameChangeLimitConfig(guild).getObject().orElse(false)){
 					final var config = new NameLastChangeConfig(guild);
-					final var diff = System.currentTimeMillis() - config.getAsMap().getOrDefault(event.getEntity().getIdLong(), 0L);
+					final var diff = System.currentTimeMillis() - config.getAsMap().map(map -> map.getOrDefault(event.getEntity().getIdLong(), 0L)).orElse(0L);
 					if(diff < 3600000){
-						final var warnRole = new MegaWarnRoleConfig(guild).getObject();
-						final var removeRoleConfig = new RemoveRoleConfig(guild);
-						final var currentRoleRemove = removeRoleConfig.getAsMap().keySet().stream().filter(key -> Objects.equals(key, event.getEntity().getIdLong())).map(removeRoleConfig::getValue).map(map -> map.getOrDefault(warnRole.getIdLong(), 0L)).findFirst().orElse(0L);
-						Actions.giveRole(guild, event.getEntity(), warnRole);
-						removeRoleConfig.addValue(event.getEntity().getIdLong(), warnRole.getIdLong(), Math.max(currentRoleRemove, System.currentTimeMillis() + 6 * 60 * 60 * 1000L));
-						Actions.replyPrivate(guild, event.getEntity(), "You've been warned in the server `%s` because you changed your name too often.", guild.getName());
+						new MegaWarnRoleConfig(guild).getObject().ifPresent(warnRole -> {
+							final var removeRoleConfig = new RemoveRoleConfig(guild);
+							config.getAsMap().ifPresent(removeRoleMap -> {
+								final var currentRoleRemove = removeRoleMap.keySet().stream().filter(key -> Objects.equals(key, event.getEntity().getIdLong())).map(removeRoleConfig::getValue).map(map -> map.map(map2 -> map2.getOrDefault(warnRole.getIdLong(), 0L)).orElse(0L)).findFirst().orElse(0L);
+								Actions.giveRole(guild, event.getEntity(), warnRole);
+								removeRoleConfig.addValue(event.getEntity().getIdLong(), warnRole.getIdLong(), Math.max(currentRoleRemove, System.currentTimeMillis() + 6 * 60 * 60 * 1000L));
+								Actions.replyPrivate(guild, event.getEntity(), "You've been warned in the server `%s` because you changed your name too often.", guild.getName());
+							});
+						});
 					}
 					config.addValue(event.getEntity().getIdLong(), System.currentTimeMillis());
 				}
@@ -73,24 +76,26 @@ public class LogListener extends ListenerAdapter{
 		try{
 			if(!event.getAuthor().equals(event.getJDA().getSelfUser())){
 				final var now = LocalDate.now();
-				if(!new NoXPChannelsConfig(event.getGuild()).getAsList().contains(event.getChannel())){
+				if(!new NoXPChannelsConfig(event.getGuild()).getAsList().map(list -> list.contains(event.getChannel())).orElse(false)){
 					final var participation = new MembersParticipationConfig(event.getGuild());
-					final var participationMap = participation.getAsMap();
-					final var todayKey = TempParticipationCommand.DF.format(now);
-					if(participationMap.containsKey(todayKey)){
-						participation.addValue(todayKey, event.getAuthor().getIdLong(), participationMap.get(todayKey).getOrDefault(event.getAuthor().getIdLong(), 0L) + 1);
-					}
-					else{
-						participation.addValue(todayKey, event.getAuthor().getIdLong(), 1L);
-					}
+					participation.getAsMap().ifPresent(participationMap -> {
+						final var todayKey = TempParticipationCommand.DF.format(now);
+						if(participationMap.containsKey(todayKey)){
+							participation.addValue(todayKey, event.getAuthor().getIdLong(), participationMap.get(todayKey).getOrDefault(event.getAuthor().getIdLong(), 0L) + 1);
+						}
+						else{
+							participation.addValue(todayKey, event.getAuthor().getIdLong(), 1L);
+						}
+					});
 				}
 				final var emotes = new EmotesParticipationConfig(event.getGuild());
-				final var emotesMap = emotes.getAsMap();
-				final var weekKey = EmotesCommand.DF.format(now);
-				if(!emotesMap.containsKey(weekKey)){
-					emotes.addValue(weekKey);
-				}
-				event.getMessage().getEmotes().stream().map(Emote::getName).forEach(id -> emotes.addValue(weekKey, id, emotesMap.get(weekKey).getOrDefault(id, 0L) + 1));
+				emotes.getAsMap().ifPresent(emotesMap -> {
+					final var weekKey = EmotesCommand.DF.format(now);
+					if(!emotesMap.containsKey(weekKey)){
+						emotes.addValue(weekKey);
+					}
+					event.getMessage().getEmotes().stream().map(Emote::getName).forEach(id -> emotes.addValue(weekKey, id, emotesMap.get(weekKey).getOrDefault(id, 0L) + 1));
+				});
 			}
 		}
 		catch(final Exception e){

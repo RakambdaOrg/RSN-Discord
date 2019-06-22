@@ -84,7 +84,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 			if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
 				Actions.deleteMessage(event.getMessage());
 				final var args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
-				final var cmdText = args.pop().substring(new PrefixConfig(event.getGuild()).getObject(defaultPrefix).length());
+				final var cmdText = args.pop().substring(new PrefixConfig(event.getGuild()).getObject().orElse(defaultPrefix).length());
 				getCommand(cmdText).ifPresentOrElse(command -> {
 					if(Objects.equals(command.getScope(), -5) || Objects.equals(command.getScope(), event.getChannel().getType().getId())){
 						try{
@@ -144,7 +144,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 	 * @return True if a command, false otherwise.
 	 */
 	private static boolean isCommand(@Nonnull final Guild guild, @Nonnull final String text){
-		return text.startsWith(new PrefixConfig(guild).getObject(defaultPrefix));
+		return text.startsWith(new PrefixConfig(guild).getObject().orElse(defaultPrefix));
 	}
 	
 	/**

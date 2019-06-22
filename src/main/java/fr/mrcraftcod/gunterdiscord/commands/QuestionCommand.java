@@ -48,10 +48,12 @@ public class QuestionCommand extends BasicCommand{
 			builder.addField("ID", "" + ID, true);
 			builder.addField("User", event.getAuthor().getAsMention(), true);
 			builder.addField("Question", String.join(" ", args), false);
-			final var message = Actions.getMessage(new QuestionsChannelConfig(event.getGuild()).getObject(), builder.build());
-			message.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
-			message.addReaction(BasicEmotes.CROSS_NO.getValue()).queue();
-			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Ok, you question have been added to the queue (ID: " + ID + "): " + String.join(" ", args));
+			new QuestionsChannelConfig(event.getGuild()).getObject().ifPresentOrElse(channel -> {
+				final var message = Actions.getMessage(channel, builder.build());
+				message.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
+				message.addReaction(BasicEmotes.CROSS_NO.getValue()).queue();
+				Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Ok, you question have been added to the queue (ID: " + ID + "): " + String.join(" ", args));
+			}, () -> Actions.replyPrivate(event.getGuild(), event.getAuthor(), "This feature isn't configured yet"));
 		}
 		return CommandResult.SUCCESS;
 	}

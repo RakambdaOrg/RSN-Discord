@@ -37,14 +37,16 @@ public class AnnoyCommand extends BasicCommand{
 		event.getMessage().getMentionedUsers().stream().findAny().ifPresentOrElse(u -> {
 			final var member = event.getGuild().getMember(u);
 			if(Optional.ofNullable(member).map(Member::getVoiceState).map(GuildVoiceState::inVoiceChannel).orElse(false)){
-				final var botChannel = GunterAudioManager.currentAudioChannel(event.getGuild());
-				if(Objects.isNull(botChannel) || Objects.equals(botChannel, member.getVoiceState().getChannel())){
-					final var identifier = String.join(" ", args).trim();
-					GunterAudioManager.play(event.getAuthor(), member.getVoiceState().getChannel(), identifier.equals("") ? "https://www.youtube.com/watch?v=J4X2b-CEGNg" : identifier);
-				}
-				else{
-					Actions.reply(event, "Sorry, the user is in another channel");
-				}
+				GunterAudioManager.getFor(event.getGuild()).ifPresent(audioManager -> {
+					final var botChannel = audioManager.getChannel();
+					if(Objects.equals(botChannel, member.getVoiceState().getChannel())){
+						final var identifier = String.join(" ", args).trim();
+						GunterAudioManager.play(event.getAuthor(), member.getVoiceState().getChannel(), identifier.equals("") ? "https://www.youtube.com/watch?v=J4X2b-CEGNg" : identifier);
+					}
+					else{
+						Actions.reply(event, "Sorry, the user is in another channel");
+					}
+				});
 			}
 			else{
 				Actions.reply(event, "The user isn't in a voice channel");

@@ -42,9 +42,9 @@ public class TempParticipationCommand extends BasicCommand{
 	public static boolean sendInfos(@Nonnull final Guild guild, @Nonnull final LocalDate localDate, @Nonnull final User author, @Nonnull final TextChannel channel){
 		final var ytdKey = getKey(localDate);
 		final var date = localDate.format(DFD);
-		final var stats = new MembersParticipationConfig(guild).getValue(ytdKey);
-		if(Objects.nonNull(stats)){
-			final var i = new AtomicInteger(1);
+		final var statsOptional = new MembersParticipationConfig(guild).getValue(ytdKey);
+		return statsOptional.map(stats -> {
+			final var position = new AtomicInteger(1);
 			final var builder = Utilities.buildEmbed(author, Color.MAGENTA, "Participation of the " + date + " (UTC)");
 			stats.entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).map(e -> {
 				final var user = guild.getJDA().getUserById(e.getKey());
@@ -52,11 +52,10 @@ public class TempParticipationCommand extends BasicCommand{
 					return Map.entry(user, e.getValue());
 				}
 				return null;
-			}).filter(Objects::nonNull).limit(10).forEachOrdered(e -> builder.addField("#" + i.getAndIncrement(), e.getKey().getAsMention() + " Messages: " + e.getValue(), false));
+			}).filter(Objects::nonNull).limit(10).forEachOrdered(e -> builder.addField("#" + position.getAndIncrement(), e.getKey().getAsMention() + " Messages: " + e.getValue(), false));
 			Actions.sendMessage(channel, builder.build());
 			return true;
-		}
-		return false;
+		}).orElse(false);
 	}
 	
 	@Nonnull

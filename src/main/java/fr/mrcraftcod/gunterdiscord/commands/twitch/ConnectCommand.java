@@ -50,7 +50,7 @@ public class ConnectCommand extends BasicCommand{
 		}
 		else{
 			try{
-				TwitchIRC.connect(event.getGuild(), args.poll());
+				TwitchIRC.connect(event.getGuild(), args.pop());
 			}
 			catch(final NoValueDefinedException e){
 				Actions.reply(event, "Server needs to be configured to use this feature");

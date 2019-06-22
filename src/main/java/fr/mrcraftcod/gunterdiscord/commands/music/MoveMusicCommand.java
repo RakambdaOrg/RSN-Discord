@@ -45,6 +45,7 @@ public class MoveMusicCommand extends BasicCommand{
 		builder.addField("repeat", "Either to repeat this track or not (true/false)", false);
 	}
 	
+	@SuppressWarnings("DuplicatedCode")
 	@Nonnull
 	@Override
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{

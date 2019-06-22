@@ -69,8 +69,8 @@ public class ConfigurationCommand extends BasicCommand{
 		final var embedBuilder = new EmbedBuilder();
 		embedBuilder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 		if(!args.isEmpty()){
-			final var configuration = Settings.getSettings(args.pop());
-			if(Objects.nonNull(configuration)){
+			final var configurationOptional = Settings.getSettings(args.pop());
+			configurationOptional.ifPresentOrElse(configuration -> {
 				final List<String> beforeArgs = new LinkedList<>(args);
 				final var result = processWithValue(event, configuration.getClass(), args);
 				if(Objects.equals(result, ActionResult.ERROR)){
@@ -89,12 +89,11 @@ public class ConfigurationCommand extends BasicCommand{
 					embedBuilder.addField("Value:", beforeArgs.toString(), false);
 					getLogger(event.getGuild()).info("Config value {} changed", configuration.getName());
 				}
-			}
-			else{
+			}, () -> {
 				embedBuilder.setColor(Color.ORANGE);
 				embedBuilder.setTitle("Configuration not found");
 				embedBuilder.addField("Available configurations", Arrays.stream(Settings.SETTINGS).map(Configuration::getName).collect(Collectors.joining(", ")), false);
-			}
+			});
 		}
 		else{
 			embedBuilder.setColor(Color.ORANGE);

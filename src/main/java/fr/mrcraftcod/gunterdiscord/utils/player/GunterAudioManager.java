@@ -131,6 +131,11 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	}
 	
 	@Nonnull
+	public static Optional<GunterAudioManager> getFor(@Nonnull final Guild guild){
+		return Optional.ofNullable(managers.get(guild));
+	}
+	
+	@Nonnull
 	private AudioPlayerManager getAudioPlayerManager(){
 		return this.audioPlayerManager;
 	}
@@ -286,7 +291,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	}
 	
 	@Nonnull
-	private VoiceChannel getChannel(){
+	public VoiceChannel getChannel(){
 		return this.channel;
 	}
 }

@@ -12,7 +12,6 @@ import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
@@ -31,11 +30,8 @@ public class ReportCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		final var channel = new ReportChannelConfig(event.getGuild()).getObject();
-		if(Objects.isNull(channel)){
-			return CommandResult.FAILED;
-		}
-		else{
+		final var channelOptional = new ReportChannelConfig(event.getGuild()).getObject();
+		return channelOptional.map(channel -> {
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.ORANGE);
@@ -45,8 +41,8 @@ public class ReportCommand extends BasicCommand{
 			builder.setTimestamp(event.getMessage().getTimeCreated());
 			Actions.sendMessage(channel, builder.build());
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Your message have been forwarded.");
-		}
-		return CommandResult.SUCCESS;
+			return CommandResult.SUCCESS;
+		}).orElse(CommandResult.FAILED);
 	}
 	
 	@Nonnull

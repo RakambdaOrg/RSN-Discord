@@ -60,7 +60,7 @@ public class PhotoDeleteCommand extends BasicCommand{
 				if(Utilities.isModerator(event.getMember()) || Utilities.isAdmin(event.getMember())){
 					new PhotoConfig(event.getGuild()).deleteKeyValue(user.getIdLong(), args.poll());
 					if(new PhotoConfig(event.getGuild()).getValue(user.getIdLong()).isEmpty()){
-						Actions.removeRole(user, new TrombinoscopeRoleConfig(event.getGuild()).getObject());
+						new TrombinoscopeRoleConfig(event.getGuild()).getObject().ifPresent(role -> Actions.removeRole(user, role));
 					}
 					Actions.replyPrivate(event.getGuild(), event.getAuthor(), "%s's pictures deleted", user.getAsMention());
 				}
@@ -71,14 +71,14 @@ public class PhotoDeleteCommand extends BasicCommand{
 			else{
 				new PhotoConfig(event.getGuild()).deleteKeyValue(user.getIdLong(), args.poll());
 				if(new PhotoConfig(event.getGuild()).getValue(user.getIdLong()).isEmpty()){
-					Actions.removeRole(user, new TrombinoscopeRoleConfig(event.getGuild()).getObject());
+					new TrombinoscopeRoleConfig(event.getGuild()).getObject().ifPresent(role -> Actions.removeRole(user, role));
 				}
 				Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Picture deleted");
 			}
 		}
 		else{
 			new PhotoConfig(event.getGuild()).deleteKey(event.getAuthor().getIdLong());
-			Actions.removeRole(event.getAuthor(), new TrombinoscopeRoleConfig(event.getGuild()).getObject());
+			new TrombinoscopeRoleConfig(event.getGuild()).getObject().ifPresent(role -> Actions.removeRole(event.getAuthor(), role));
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Pictures deleted");
 		}
 		return CommandResult.SUCCESS;

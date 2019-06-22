@@ -34,22 +34,23 @@ public class RemoveRolesScheduledRunner implements ScheduledRunner{
 		for(final var guild : this.jda.getGuilds()){
 			final var config = new RemoveRoleConfig(guild);
 			getLogger(guild).debug("Processing guild {}", guild);
-			final var guildConfig = config.getAsMap();
-			for(final var userID : guildConfig.keySet()){
-				final var member = guild.getMemberById(userID);
-				getLogger(guild).debug("Processing user {}", member);
-				final var userGuildConfig = guildConfig.get(userID);
-				for(final var roleID : userGuildConfig.keySet()){
-					final var diff = Duration.ofMillis(userGuildConfig.get(roleID) - currentTime);
-					final var role = guild.getRoleById(roleID);
-					getLogger(guild).debug("Processing role {}, diff is: {}", role, diff);
-					if(diff.isNegative()){
-						getLogger(guild).debug("Removed role for the user");
-						Actions.removeRole(member, role);
-						config.deleteKeyValue(userID, roleID);
+			config.getAsMap().ifPresent(guildConfig -> {
+				for(final var userID : guildConfig.keySet()){
+					final var member = guild.getMemberById(userID);
+					getLogger(guild).debug("Processing user {}", member);
+					final var userGuildConfig = guildConfig.get(userID);
+					for(final var roleID : userGuildConfig.keySet()){
+						final var diff = Duration.ofMillis(userGuildConfig.get(roleID) - currentTime);
+						final var role = guild.getRoleById(roleID);
+						getLogger(guild).debug("Processing role {}, diff is: {}", role, diff);
+						if(diff.isNegative()){
+							getLogger(guild).debug("Removed role for the user");
+							Actions.removeRole(member, role);
+							config.deleteKeyValue(userID, roleID);
+						}
 					}
 				}
-			}
+			});
 		}
 		getLogger(null).info("Roles runner done");
 	}

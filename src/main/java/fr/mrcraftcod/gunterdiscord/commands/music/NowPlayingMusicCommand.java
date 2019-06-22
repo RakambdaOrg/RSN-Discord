@@ -43,6 +43,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 		super.addHelp(guild, builder);
 	}
 	
+	@SuppressWarnings("DuplicatedCode")
 	@Nonnull
 	@Override
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{

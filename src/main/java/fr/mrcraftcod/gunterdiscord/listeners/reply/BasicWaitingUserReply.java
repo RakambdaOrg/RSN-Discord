@@ -5,7 +5,6 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,7 +47,7 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 		this.infoMessages.add(message);
 	}
 	
-	@NotNull
+	@Nonnull
 	@Override
 	public TextChannel getWaitChannel(){
 		return this.waitChannel;
@@ -81,7 +80,7 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 		return true;
 	}
 	
-	@NotNull
+	@Nonnull
 	@Override
 	public User getUser(){
 		return this.waitUser;

@@ -22,17 +22,9 @@ public class TwitchIRC{
 		}
 		final var channel = String.format("#%s", user.toLowerCase());
 		if(CLIENT.getJoinedChannels().stream().noneMatch(joinedChannel -> Objects.equals(joinedChannel, channel))){
-			try{
-				final var listener = new TwitchIRCListener(guild, user, channel);
-				CLIENT.addEventListener(listener);
-				CLIENT.joinChannel(channel);
-			}
-			catch(final NoValueDefinedException e){
-				if(CLIENT.getJoinedChannels().isEmpty()){
-					CLIENT.close();
-				}
-				throw e;
-			}
+			final var listener = new TwitchIRCListener(guild, user, channel);
+			CLIENT.addEventListener(listener);
+			CLIENT.joinChannel(channel);
 		}
 	}
 	

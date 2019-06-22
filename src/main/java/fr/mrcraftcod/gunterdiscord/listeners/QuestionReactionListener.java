@@ -1,6 +1,5 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.settings.configs.QuestionsChannelConfig;
 import fr.mrcraftcod.gunterdiscord.settings.configs.QuestionsFinalChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
@@ -37,8 +36,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 					if(Objects.equals(emote, BasicEmotes.CHECK_OK)){
 						final var message = event.getChannel().getHistory().getMessageById(event.getReaction().getMessageIdLong());
 						if(Objects.nonNull(message)){
-							try{
-								final var channel = new QuestionsFinalChannelConfig(event.getGuild()).getObject();
+							new QuestionsFinalChannelConfig(event.getGuild()).getObject().ifPresentOrElse(channel -> {
 								Actions.sendMessage(channel, mess -> mess.addReaction(BasicEmotes.CHECK_OK.getValue()).queue(), message.getEmbeds().stream().map(Utilities::buildEmbed).map(mess -> mess.addField("Approved by", event.getUser().getAsMention(), false).setTimestamp(message.getTimeCreated())).map(EmbedBuilder::build).collect(Collectors.toList()));
 								Actions.deleteMessage(message);
 								try{
@@ -49,10 +47,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 								catch(final Exception e){
 									Log.getLogger(event.getGuild()).error("Error handling question", e);
 								}
-							}
-							catch(final NoValueDefinedException e){
-								getLogger(event.getGuild()).error("Couldn't move message", e);
-							}
+							}, () -> getLogger(event.getGuild()).error("Couldn't move message"));
 						}
 					}
 					else if(Objects.equals(emote, BasicEmotes.CROSS_NO)){

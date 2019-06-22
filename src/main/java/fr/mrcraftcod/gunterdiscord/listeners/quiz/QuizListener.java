@@ -171,10 +171,11 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	public void run(){
 		final var QUESTION_TIME = 20;
 		try{
-			final var quizChannel = new QuizChannelConfig(this.guild).getObject();
-			if(Objects.isNull(quizChannel)){
+			final var quizChannelOptional = new QuizChannelConfig(this.guild).getObject();
+			if(quizChannelOptional.isEmpty()){
 				return;
 			}
+			final var quizChannel = quizChannelOptional.get();
 			Actions.sendMessage(quizChannel, "Ok @here, I hope that you're hyped for a little quiz!\nIt's very simple: a question will appear with a set of possible answers. You can pick the answer you think correct by adding the corresponding reaction. You have %ds to answer.\nEach correct answer will give you 1 point.\n\nWe're starting in %s!", QUESTION_TIME, this.waitTime.toString().replace("PT", ""));
 			try{
 				Thread.sleep((this.waitTime.getSeconds() / 2) * 1000);

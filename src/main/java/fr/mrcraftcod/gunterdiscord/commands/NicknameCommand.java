@@ -60,8 +60,8 @@ public class NicknameCommand extends BasicCommand{
 		memberOptional.ifPresentOrElse(member -> {
 			final var oldName = Optional.ofNullable(member.getNickname());
 			final var lastChangeRaw = new NickLastChangeConfig(event.getGuild()).getValue(member.getUser().getIdLong());
-			final var lastChange = new Date(Objects.isNull(lastChangeRaw) ? 0 : lastChangeRaw);
-			final var delay = Duration.ofMinutes(new NickDelayConfig(event.getGuild()).getObject(6 * 60));
+			final var lastChange = new Date(lastChangeRaw.orElse(0L));
+			final var delay = Duration.ofMinutes(new NickDelayConfig(event.getGuild()).getObject().orElse(6 * 60));
 			if(!Utilities.isTeam(event.getMember()) && (lastChange.getTime() + delay.getSeconds() * 1000) >= new Date().getTime()){
 				final var builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());

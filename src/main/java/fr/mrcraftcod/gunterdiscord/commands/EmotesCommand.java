@@ -47,15 +47,13 @@ public class EmotesCommand extends BasicCommand{
 	public static boolean sendInfos(@Nonnull final Guild guild, @Nonnull final LocalDate localDate, @Nonnull final User author, @Nonnull final TextChannel channel, final int limit){
 		final var weekKey = getKey(localDate);
 		final var date = localDate.format(DFD);
-		final var stats = new EmotesParticipationConfig(guild).getValue(weekKey);
-		if(Objects.nonNull(stats)){
-			final var participationCount = new AtomicInteger(1);
+		return new EmotesParticipationConfig(guild).getValue(weekKey).map(stats -> {
+			final var position = new AtomicInteger(1);
 			final var builder = Utilities.buildEmbed(author, Color.MAGENTA, "Participation of the week " + date + " (UTC)");
-			stats.entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).map(e -> guild.getEmotesByName(e.getKey(), true).stream().findFirst().map(e2 -> Map.entry(e2, e.getValue())).orElse(null)).filter(Objects::nonNull).limit(limit).forEachOrdered(e -> builder.addField("#" + participationCount.getAndIncrement(), e.getKey().getAsMention() + " Use count: " + e.getValue(), false));
+			stats.entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).map(e -> guild.getEmotesByName(e.getKey(), true).stream().findFirst().map(e2 -> Map.entry(e2, e.getValue())).orElse(null)).filter(Objects::nonNull).limit(limit).forEachOrdered(e -> builder.addField("#" + position.getAndIncrement(), e.getKey().getAsMention() + " Use count: " + e.getValue(), false));
 			Actions.sendMessage(channel, builder.build());
 			return true;
-		}
-		return false;
+		}).orElse(false);
 	}
 	
 	public static String getKey(@Nonnull final LocalDate localDate){
