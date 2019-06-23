@@ -1,13 +1,14 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.airing;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListDatedObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMedia;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.AniListNotificationType;
+import fr.mrcraftcod.gunterdiscord.utils.json.SQLTimestampDeserializer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import javax.annotation.Nonnull;
@@ -31,6 +32,8 @@ public class AniListAiringNotification implements AniListDatedObject{
 	private final AniListNotificationType type;
 	@JsonProperty("episode")
 	private int episode;
+	@JsonProperty("createdAt")
+	@JsonDeserialize(using = SQLTimestampDeserializer.class)
 	private Date createdAt = new Date(0);
 	@JsonProperty("media")
 	private AniListMedia media;
@@ -39,11 +42,6 @@ public class AniListAiringNotification implements AniListDatedObject{
 	
 	public AniListAiringNotification(){
 		this.type = AniListNotificationType.AIRING;
-	}
-	
-	@JsonCreator
-	public void fromJSON(@JsonProperty("createdAt") final long createdAt){
-		this.createdAt = new Date(createdAt * 1000L);
 	}
 	
 	@Override

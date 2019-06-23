@@ -63,7 +63,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new TwitchCommandComposite(),
 			new LuxBusGetStopCommand()
 	};
-	private final static String defaultPrefix = "g?";
+	private final static String defaultPrefix = System.getenv().getOrDefault("RSN_DEFAULT_PREFIX", "g?");
 	
 	/**
 	 * Constructor.
