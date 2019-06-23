@@ -97,7 +97,7 @@ public class Settings{
 	 *
 	 * @return The settings of the guild.
 	 */
-	private static Optional<JSONObject> getServerSettings(@Nullable final Guild guild){
+	static Optional<JSONObject> getServerSettings(@Nullable final Guild guild){
 		if(Objects.isNull(guild)){
 			return Optional.empty();
 		}

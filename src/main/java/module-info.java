@@ -12,6 +12,7 @@ open module fr.mrcraftcod.gunterdiscord {
 	requires org.apache.commons.io;
 	requires fr.mrcraftcod.utils.http;
 	requires jcommander;
+	// requires lombok;
 	
 	requires org.slf4j;
 	requires ch.qos.logback.classic;

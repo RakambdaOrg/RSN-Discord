@@ -28,9 +28,11 @@
         <commons.io.version>2.6</commons.io.version>
         <jcommander.version>1.72</jcommander.version>
         <javax.annotation.version>1.3.2</javax.annotation.version>
+        <lombok.version>1.18.8</lombok.version>
 
         <source.plugin.version>3.1.0</source.plugin.version>
         <compiler.plugin.version>3.8.1</compiler.plugin.version>
+        <lombok.plugin.version>1.18.6.0</lombok.plugin.version>
     </properties>
     <packaging>jar</packaging>
 
@@ -110,6 +112,19 @@
                     <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
+            <!--            <plugin>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-maven-plugin</artifactId>
+                            <version>${lombok.plugin.version}</version>
+                            <executions>
+                                <execution>
+                                    <phase>generate-sources</phase>
+                                    <goals>
+                                        <goal>delombok</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>-->
         </plugins>
     </build>
 
@@ -215,5 +230,10 @@
         <!--            <artifactId>javax.annotation-api</artifactId>-->
         <!--            <version>${javax.annotation.version}</version>-->
         <!--        </dependency>-->
+        <!--        <dependency>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok</artifactId>
+                    <version>${lombok.version}</version>
+                </dependency>-->
     </dependencies>
 </project>
