@@ -6,7 +6,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -20,27 +20,37 @@ import java.util.List;
  * @since 2018-04-12
  */
 public class TimeCommand extends BasicCommand{
+	
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute( @Nonnull final GuildMessageReceivedEvent event,  @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Server time infos").addField("Time:", ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME), false).addField("Ms", "" + System.currentTimeMillis(), false).build());
 		return CommandResult.SUCCESS;
 	}
 	
+	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.MODERATOR;
 	}
 	
+	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Get server time";
 	}
 	
+	@Nonnull
+	
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("time");
 	}
+	
+	@Nonnull
 	
 	@Override
 	public String getDescription(){

@@ -1,5 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-02-25.
  *
@@ -12,7 +14,7 @@ public class IRCUser{
 	private final String nick;
 	private final String host;
 	
-	public IRCUser(final String infos){
+	public IRCUser(@Nonnull final String infos){
 		if(infos.contains("!")){
 			this.nick = infos.substring(0, infos.indexOf("!"));
 			this.user = infos.substring(infos.indexOf("!") + 1, infos.indexOf("@"));
@@ -30,14 +32,17 @@ public class IRCUser{
 		return this.getNick();
 	}
 	
+	@Nonnull
 	public String getHost(){
 		return this.host;
 	}
 	
+	@Nonnull
 	public String getNick(){
 		return this.nick;
 	}
 	
+	@Nonnull
 	public String getUser(){
 		return this.user;
 	}

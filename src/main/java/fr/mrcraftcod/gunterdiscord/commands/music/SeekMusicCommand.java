@@ -12,7 +12,8 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -32,24 +33,25 @@ public class SeekMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	SeekMusicCommand(final Command parent){
+	SeekMusicCommand(@Nonnull final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Time", "The time to seek, must be in the format hh:mm:ss ou mm:ss or ss", false);
 	}
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.isEmpty()){
 			Actions.reply(event, "Please give the time to seek");
 		}
 		else{
-			final var time = parseTime(event.getGuild(), args.poll());
+			final var time = parseTime(event.getGuild(), args.pop());
 			if(time < 0){
 				Actions.reply(event, "Invalid format");
 			}
@@ -70,7 +72,7 @@ public class SeekMusicCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
-	private long parseTime(final Guild guild, final String time){
+	private long parseTime(@Nonnull final Guild guild, @Nonnull final String time){
 		final var matcher = TIME_PATTERN.matcher(time);
 		if(!matcher.matches()){
 			return -1;
@@ -95,31 +97,36 @@ public class SeekMusicCommand extends BasicCommand{
 		return 0;
 	}
 	
+	@Nonnull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + "<time>";
 	}
 	
 	@Override
-	public boolean isAllowed(final Member member){
-		return Utilities.isTeam(member) || GunterAudioManager.isRequester(member.getGuild(), member.getUser());
+	public boolean isAllowed(@Nullable final Member member){
+		return Objects.nonNull(member) && (Utilities.isTeam(member) || GunterAudioManager.isRequester(member.getGuild(), member.getUser()));
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Seek";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("seek");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Seek a time into the music";

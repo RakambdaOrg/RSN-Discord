@@ -1,5 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.generic;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
  *
@@ -12,7 +14,7 @@ public class NotAllowedException extends Exception{
 	/**
 	 * Constructor.
 	 */
-	public NotAllowedException(){
-		super();
+	public NotAllowedException(@Nonnull final String message){
+		super(message);
 	}
 }

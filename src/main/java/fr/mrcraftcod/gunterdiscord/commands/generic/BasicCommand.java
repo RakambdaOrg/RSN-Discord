@@ -3,7 +3,8 @@ package fr.mrcraftcod.gunterdiscord.commands.generic;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.Objects;
 
@@ -20,7 +21,7 @@ public abstract class BasicCommand implements Command{
 	 * Constructor.
 	 */
 	protected BasicCommand(){
-		this.parent = null;
+		this(null);
 	}
 	
 	/**
@@ -28,30 +29,33 @@ public abstract class BasicCommand implements Command{
 	 *
 	 * @param parent The parent command.
 	 */
-	protected BasicCommand(@NotNull final Command parent){
+	protected BasicCommand(@Nullable final Command parent){
 		this.parent = parent;
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 	}
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		if(event.isWebhookMessage()){
 			throw new NotHandledException("This message is from a webhook");
 		}
 		if(!isAllowed(event.getMember())){
-			throw new NotAllowedException();
+			throw new NotAllowedException("You're not allowed to execute this command");
 		}
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	@Override
 	public String getCommandUsage(){
 		return Objects.isNull(getParent()) || getParent() instanceof CommandComposite ? "" : getParent().getCommandUsage();
 	}
 	
+	@Nullable
 	@Override
 	public Command getParent(){
 		return this.parent;

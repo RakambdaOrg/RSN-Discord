@@ -12,8 +12,11 @@ import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.GuildVoiceState;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,12 +37,12 @@ public class AddMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	AddMusicCommand(@NotNull final Command parent){
+	AddMusicCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("link", "Music link", false);
 		builder.addField("skip", "The number of tracks to skip before adding them", false);
@@ -47,56 +50,59 @@ public class AddMusicCommand extends BasicCommand{
 		builder.addField("repeat", "Either to repeat this track or not (true/false)", false);
 	}
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.isEmpty()){
 			Actions.reply(event, "Please give a link");
 		}
-		else if(event.getMember().getVoiceState().inVoiceChannel()){
-			final var identifier = Objects.requireNonNull(args.poll()).trim();
-			final var skipCount = Optional.ofNullable(args.poll()).map(value -> {
-				try{
-					return Integer.parseInt(value);
-				}
-				catch(Exception ignored){
-				}
-				return 0;
-			}).filter(value -> value >= 0).orElse(0);
-			final var maxTracks = Optional.ofNullable(args.poll()).map(value -> {
-				try{
-					return Integer.parseInt(value);
-				}
-				catch(Exception ignored){
-				}
-				return 10;
-			}).filter(value -> value >= 0).orElse(10);
-			final var repeat = Optional.ofNullable(args.poll()).map(Boolean::valueOf).orElse(false);
-			GunterAudioManager.play(event.getAuthor(), event.getMember().getVoiceState().getChannel(), null, track -> {
-				if(Objects.isNull(track)){
-					Actions.reply(event, "%s, unknown music", event.getAuthor().getAsMention());
-				}
-				else if(track instanceof AudioTrack){
-					final var audioTrack = (AudioTrack) track;
-					if(repeat){
-						if(audioTrack.getUserData() instanceof TrackUserFields){
-							audioTrack.getUserData(TrackUserFields.class).fill(new ReplayTrackUserField(), true);
-						}
+		else if(Optional.ofNullable(event.getMember()).map(Member::getVoiceState).map(GuildVoiceState::inVoiceChannel).orElse(false)){
+			Optional.ofNullable(event.getMember()).map(Member::getVoiceState).map(GuildVoiceState::getChannel).ifPresent(voiceChannel -> {
+				final var identifier = Objects.requireNonNull(args.poll()).trim();
+				final var skipCount = Optional.ofNullable(args.poll()).map(value -> {
+					try{
+						return Integer.parseInt(value);
 					}
-					final var queue = GunterAudioManager.getQueue(event.getGuild());
-					final var before = queue.stream().takeWhile(t -> !Objects.equals(track, t)).collect(Collectors.toList());
-					final var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Music added", audioTrack.getInfo().uri);
-					embed.setDescription(audioTrack.getInfo().title);
-					embed.addField("Requester", event.getAuthor().getAsMention(), true);
-					embed.addField("ETA", getDuration(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + before.stream().mapToLong(AudioTrack::getDuration).sum()), true);
-					embed.addField("Repeating", "" + repeat, true);
-					embed.addField("Position in queue", "" + (GunterAudioManager.currentTrack(event.getGuild()).equals(track) ? 0 : (1 + before.size())), true);
-					Actions.reply(event, embed.build());
-				}
-				else{
-					Actions.reply(event, track.toString());
-				}
-			}, skipCount, maxTracks, identifier);
+					catch(Exception ignored){
+					}
+					return 0;
+				}).filter(value -> value >= 0).orElse(0);
+				final var maxTracks = Optional.ofNullable(args.poll()).map(value -> {
+					try{
+						return Integer.parseInt(value);
+					}
+					catch(Exception ignored){
+					}
+					return 10;
+				}).filter(value -> value >= 0).orElse(10);
+				final var repeat = Optional.ofNullable(args.poll()).map(Boolean::valueOf).orElse(false);
+				GunterAudioManager.play(event.getAuthor(), voiceChannel, null, track -> {
+					if(Objects.isNull(track)){
+						Actions.reply(event, "%s, unknown music", event.getAuthor().getAsMention());
+					}
+					else if(track instanceof AudioTrack){
+						final var audioTrack = (AudioTrack) track;
+						if(repeat){
+							if(audioTrack.getUserData() instanceof TrackUserFields){
+								audioTrack.getUserData(TrackUserFields.class).fill(new ReplayTrackUserField(), true);
+							}
+						}
+						final var queue = GunterAudioManager.getQueue(event.getGuild());
+						final var before = queue.stream().takeWhile(t -> !Objects.equals(track, t)).collect(Collectors.toList());
+						final var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Music added", audioTrack.getInfo().uri);
+						embed.setDescription(audioTrack.getInfo().title);
+						embed.addField("Requester", event.getAuthor().getAsMention(), true);
+						embed.addField("ETA", getDuration(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + before.stream().mapToLong(AudioTrack::getDuration).sum()), true);
+						embed.addField("Repeating", "" + repeat, true);
+						embed.addField("Position in queue", "" + (GunterAudioManager.currentTrack(event.getGuild()).equals(track) ? 0 : (1 + before.size())), true);
+						Actions.reply(event, embed.build());
+					}
+					else{
+						Actions.reply(event, track.toString());
+					}
+				}, skipCount, maxTracks, identifier);
+			});
 		}
 		else{
 			Actions.reply(event, "You must be in a voice channel");
@@ -104,26 +110,31 @@ public class AddMusicCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <link> [skip] [max] [repeat]";
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Add";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("add", "a");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Adds a music to the queue";

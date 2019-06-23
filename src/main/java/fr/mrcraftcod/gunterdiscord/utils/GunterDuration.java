@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import java.time.Duration;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
@@ -17,17 +17,17 @@ public class GunterDuration implements TemporalAmount, Comparable<GunterDuration
 		static final List<TemporalUnit> UNITS = List.of(SECONDS, NANOS, DAYS);
 	}
 	
-	public GunterDuration(final Duration duration){
+	public GunterDuration(@Nonnull final Duration duration){
 		this.duration = duration;
 	}
 	
 	@Override
-	public int compareTo(@NotNull final GunterDuration o){
+	public int compareTo(@Nonnull final GunterDuration o){
 		return this.duration.compareTo(o.duration);
 	}
 	
 	@Override
-	public long get(final TemporalUnit unit){
+	public long get(@Nonnull final TemporalUnit unit){
 		if(Objects.equals(unit, SECONDS) || Objects.equals(unit, NANOS)){
 			return this.duration.get(unit);
 		}
@@ -40,17 +40,20 @@ public class GunterDuration implements TemporalAmount, Comparable<GunterDuration
 	}
 	
 	@Override
+	@Nonnull
 	public List<TemporalUnit> getUnits(){
 		return DurationUnits.UNITS;
 	}
 	
 	@Override
-	public Temporal addTo(final Temporal temporal){
+	@Nonnull
+	public Temporal addTo(@Nonnull final Temporal temporal){
 		return this.duration.addTo(temporal);
 	}
 	
 	@Override
-	public Temporal subtractFrom(final Temporal temporal){
+	@Nonnull
+	public Temporal subtractFrom(@Nonnull final Temporal temporal){
 		return this.duration.subtractFrom(temporal);
 	}
 }

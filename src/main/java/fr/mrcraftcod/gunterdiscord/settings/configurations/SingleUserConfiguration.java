@@ -3,7 +3,10 @@ package fr.mrcraftcod.gunterdiscord.settings.configurations;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -13,14 +16,13 @@ import java.util.function.Function;
  * @author Thomas Couchoud
  * @since 2018-05-04
  */
-@SuppressWarnings("WeakerAccess")
 public abstract class SingleUserConfiguration extends ValueConfiguration<Member>{
 	/**
 	 * Constructor.
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected SingleUserConfiguration(final Guild guild){
+	protected SingleUserConfiguration(@Nullable final Guild guild){
 		super(guild);
 	}
 	
@@ -32,13 +34,10 @@ public abstract class SingleUserConfiguration extends ValueConfiguration<Member>
 	 * @return True if the same members, false otherwise.
 	 */
 	public boolean isMember(final long ID){
-		final var member = getObject(null);
-		if(Objects.isNull(member)){
-			return false;
-		}
-		return Objects.equals(ID, member.getIdLong());
+		return Optional.ofNullable(getObject(null)).map(user -> Objects.equals(ID,  user.getIdLong())).orElse(false);
 	}
 	
+	@Nonnull
 	@Override
 	protected BiFunction<GuildMessageReceivedEvent, String, String> getMessageParser(){
 		return (event, arg) -> {
@@ -49,13 +48,15 @@ public abstract class SingleUserConfiguration extends ValueConfiguration<Member>
 		};
 	}
 	
+	@Nonnull
 	@Override
 	protected Function<String, Member> getConfigParser(){
-		return this.guild::getMemberById;
+		return Objects.isNull(this.guild) ? user -> null : this.guild::getMemberById;
 	}
 	
+	@Nonnull
 	@Override
 	protected Function<Member, String> getValueParser(){
-		return member -> "" + member.getIdLong();
+		return member -> Objects.isNull(member) ? null : "" + member.getIdLong();
 	}
 }

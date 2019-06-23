@@ -13,9 +13,11 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -27,11 +29,11 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 public interface AniListRunner<T extends AniListObject, U extends AniListPagedQuery<T>>{
 	default void runQueryOnEveryUserAndDefaultChannels(){
 		final var channels = getJDA().getGuilds().stream().map(g -> new AniListChannelConfig(g).getObject(null)).filter(Objects::nonNull).collect(Collectors.toList());
-		final var members = channels.stream().flatMap(channel -> new AniListAccessTokenConfig(channel.getGuild()).getAsMap().keySet().stream().map(key -> channel.getGuild().getMemberById(key))).collect(Collectors.toList());
+		final var members = channels.stream().flatMap(channel -> new AniListAccessTokenConfig(channel.getGuild()).getAsMap().map(tokens -> tokens.keySet().stream().map(key -> channel.getGuild().getMemberById(key))).orElse(Stream.empty())).collect(Collectors.toList());
 		runQuery(members, channels);
 	}
 	
-	default void runQuery(@NotNull final List<Member> members, @NotNull final List<TextChannel> channels){
+	default void runQuery(@Nonnull final List<Member> members, @Nonnull final List<TextChannel> channels){
 		getLogger(null).info("Starting AniList {} runner", getRunnerName());
 		try{
 			final var userElements = new HashMap<User, List<T>>();
@@ -48,7 +50,6 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 			}
 			getLogger(null).debug("AniList API done");
 			sendMessages(channels, userElements);
-			
 			getLogger(null).info("AniList {} runner done", getRunnerName());
 		}
 		catch(final Exception e){
@@ -56,13 +57,20 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		}
 	}
 	
-	default List<T> getElements(@NotNull final Member member) throws Exception{
+	@Nonnull
+	String getRunnerName();
+	
+	@Nonnull
+	default List<T> getElements(@Nonnull final Member member) throws Exception{
 		getLogger(member.getGuild()).debug("Fetching user {}", member);
 		final var userInfoConf = new AniListLastAccessConfig(member.getGuild());
 		final var userInfo = userInfoConf.getValue(member.getUser().getIdLong());
-		var elementList = initQuery(userInfo).getResult(member);
+		if(userInfo.isEmpty()){
+			return List.of();
+		}
+		var elementList = initQuery(userInfo.get()).getResult(member);
 		if(keepOnlyNew()){
-			final var baseDate = new Date(Optional.ofNullable(userInfo.getOrDefault("lastFetch" + getFetcherID(), null)).map(Integer::parseInt).orElse(0) * 1000L);
+			final var baseDate = new Date(userInfo.map(map -> map.get("lastFetch" + getFetcherID())).map(Integer::parseInt).orElse(0) * 1000L);
 			elementList = elementList.stream().filter(e -> e instanceof AniListDatedObject).filter(e -> ((AniListDatedObject) e).getDate().after(baseDate)).collect(Collectors.toList());
 		}
 		elementList.stream().filter(e -> e instanceof AniListDatedObject).map(e -> (AniListDatedObject) e).map(AniListDatedObject::getDate).mapToLong(Date::getTime).max().ifPresent(val -> {
@@ -72,7 +80,11 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		return elementList;
 	}
 	
-	default void sendMessages(@NotNull final List<TextChannel> channels, @NotNull final Map<User, List<T>> userElements){
+	default boolean sortedByUser(){
+		return false;
+	}
+	
+	default void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<T>> userElements){
 		if(sortedByUser()){
 			for(final var user : userElements.keySet()){
 				final var element = userElements.get(user);
@@ -84,15 +96,14 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		}
 	}
 	
-	default boolean sortedByUser(){
-		return false;
-	}
+	@Nonnull
+	U initQuery(@Nonnull Map<String, String> userInfo);
 	
-	String getRunnerName();
+	@Nonnull
+	String getFetcherID();
 	
-	JDA getJDA();
-	
-	default MessageEmbed buildMessage(final User user, @NotNull final T change){
+	@Nonnull
+	default MessageEmbed buildMessage(@Nullable final User user, @Nonnull final T change){
 		final var builder = new EmbedBuilder();
 		if(Objects.isNull(user)){
 			builder.setAuthor(getJDA().getSelfUser().getName(), change.getUrl().toString(), getJDA().getSelfUser().getAvatarUrl());
@@ -104,13 +115,12 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		return builder.build();
 	}
 	
-	default boolean sendToChannel(@NotNull final TextChannel channel, @NotNull final User user){
-		return new AniListAccessTokenConfig(channel.getGuild()).getAsMap().containsKey(user.getIdLong());
+	default boolean sendToChannel(final TextChannel channel, final User user){
+		return new AniListAccessTokenConfig(channel.getGuild()).getAsMap().map(list -> list.containsKey(user.getIdLong())).orElse(false);
 	}
-	
-	U initQuery(Map<String, String> userInfo);
 	
 	boolean keepOnlyNew();
 	
-	String getFetcherID();
+	@Nonnull
+	JDA getJDA();
 }

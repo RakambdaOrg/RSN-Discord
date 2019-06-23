@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.runners;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -11,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 public interface ScheduledRunner extends Runnable{
 	long getPeriod();
 	
+	@Nonnull
 	TimeUnit getPeriodUnit();
 	
 	long getDelay();

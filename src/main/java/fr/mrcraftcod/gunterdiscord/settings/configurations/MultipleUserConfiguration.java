@@ -3,6 +3,9 @@ package fr.mrcraftcod.gunterdiscord.settings.configurations;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -18,15 +21,17 @@ public abstract class MultipleUserConfiguration extends ListConfiguration<User>{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected MultipleUserConfiguration(final Guild guild){
+	protected MultipleUserConfiguration(@Nullable final Guild guild){
 		super(guild);
 	}
 	
+	@Nonnull
 	@Override
 	protected Function<User, String> getValueParser(){
-		return user -> "" + user.getIdLong();
+		return user -> Objects.isNull(user) ? null : "" + user.getIdLong();
 	}
 	
+	@Nonnull
 	@Override
 	protected BiFunction<GuildMessageReceivedEvent, String, String> getMessageParser(){
 		return (event, arg) -> {
@@ -37,8 +42,9 @@ public abstract class MultipleUserConfiguration extends ListConfiguration<User>{
 		};
 	}
 	
+	@Nonnull
 	@Override
 	protected Function<String, User> getConfigParser(){
-		return id -> this.guild.getJDA().getUserById(id);
+		return Objects.isNull(this.guild) ? id -> null : id -> this.guild.getJDA().getUserById(id);
 	}
 }

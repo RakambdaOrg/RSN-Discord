@@ -1,19 +1,15 @@
 package fr.mrcraftcod.gunterdiscord.commands.luxbus;
 
 import fr.mrcraftcod.gunterdiscord.commands.luxbus.utils.LuxBusDeparture;
-import fr.mrcraftcod.gunterdiscord.listeners.reply.ReplyMessageListener;
-import fr.mrcraftcod.gunterdiscord.listeners.reply.WaitingUserReply;
+import fr.mrcraftcod.gunterdiscord.listeners.reply.BasicWaitingUserReply;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-05-18.
@@ -21,31 +17,16 @@ import java.util.concurrent.TimeUnit;
  * @author Thomas Couchoud
  * @since 2019-05-18
  */
-public class LuxBusDirectionSelectionWaitingReply implements WaitingUserReply{
+public class LuxBusDirectionSelectionWaitingReply extends BasicWaitingUserReply{
 	private final Map<Integer, List<LuxBusDeparture>> departures;
-	private final GuildMessageReceivedEvent event;
-	private final Message infoMessage;
-	private boolean handled;
 	
-	public LuxBusDirectionSelectionWaitingReply(@NotNull final GuildMessageReceivedEvent event, @NotNull final Map<Integer, List<LuxBusDeparture>> departures, @NotNull final Message infoMessage){
-		this.event = event;
-		this.handled = false;
+	LuxBusDirectionSelectionWaitingReply(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final Map<Integer, List<LuxBusDeparture>> departures, @Nonnull final Message infoMessage){
+		super(event, infoMessage);
 		this.departures = departures;
-		this.infoMessage = infoMessage;
-		ReplyMessageListener.getExecutor().schedule(() -> {
-			if(!this.isHandled()){
-				this.onExpire();
-			}
-		}, 30, TimeUnit.SECONDS);
 	}
 	
 	@Override
-	public boolean isHandled(){
-		return this.handled;
-	}
-	
-	@Override
-	public boolean execute(final GuildMessageReceivedEvent event, final LinkedList<String> args){
+	protected boolean onExecute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
 		if(args.isEmpty()){
 			Actions.reply(event, "Invalid selection");
 		}
@@ -53,10 +34,9 @@ public class LuxBusDirectionSelectionWaitingReply implements WaitingUserReply{
 			try{
 				final var direction = Integer.parseInt(args.pop());
 				if(this.departures.containsKey(direction)){
-					Actions.deleteMessage(this.infoMessage);
 					Actions.deleteMessage(event.getMessage());
-					this.handled = true;
 					this.departures.get(direction).stream().sorted().forEachOrdered(departure -> Actions.reply(event, departure.getAsEmbed(new EmbedBuilder()).build()));
+					return true;
 				}
 				else{
 					Actions.reply(event, "Invalid selection");
@@ -67,23 +47,5 @@ public class LuxBusDirectionSelectionWaitingReply implements WaitingUserReply{
 			}
 		}
 		return this.isHandled();
-	}
-	
-	@Override
-	public boolean onExpire(){
-		Actions.reply(this.event, "%s you didn't reply in time", this.getUser().getAsMention());
-		Actions.deleteMessage(this.infoMessage);
-		this.handled = true;
-		return this.isHandled();
-	}
-	
-	@Override
-	public TextChannel getChannel(){
-		return this.infoMessage.getTextChannel();
-	}
-	
-	@Override
-	public User getUser(){
-		return this.event.getAuthor();
 	}
 }

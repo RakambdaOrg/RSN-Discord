@@ -11,7 +11,8 @@ import fr.mrcraftcod.gunterdiscord.utils.json.SQLTimestampDeserializer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.net.URL;
 import java.util.Date;
@@ -47,7 +48,7 @@ public abstract class AniListListActivity implements AniListDatedObject{
 	private int id;
 	
 	@Override
-	public boolean equals(final Object obj){
+	public boolean equals(@Nullable final Object obj){
 		return obj instanceof AniListListActivity && Objects.equals(((AniListListActivity) obj).getId(), getId());
 	}
 	
@@ -56,23 +57,8 @@ public abstract class AniListListActivity implements AniListDatedObject{
 		return ToStringBuilder.reflectionToString(this);
 	}
 	
-	protected abstract Color getColor();
-	
 	@Override
-	public int getId(){
-		return this.id;
-	}
-	
-	public AniListMedia getMedia(){
-		return media;
-	}
-	
-	public String getProgress(){
-		return progress;
-	}
-	
-	@Override
-	public void fillEmbed(final EmbedBuilder builder){
+	public void fillEmbed(@Nonnull final EmbedBuilder builder){
 		builder.setColor(getColor());
 		builder.setTimestamp(getDate().toInstant());
 		
@@ -88,17 +74,41 @@ public abstract class AniListListActivity implements AniListDatedObject{
 		getMedia().fillEmbed(builder);
 	}
 	
+	@Override
+	public int getId(){
+		return this.id;
+	}
+	
+	@Nonnull
+	protected abstract Color getColor();
+	
+	@Nonnull
 	public Date getDate(){
 		return createdAt;
 	}
 	
+	@Nonnull
+	public String getProgress(){
+		return progress;
+	}
+	
+	@Nonnull
+	public AniListMedia getMedia(){
+		return media;
+	}
+	
 	@Override
+	@Nonnull
 	public URL getUrl(){
 		return url;
 	}
 	
-	public static String getQuery(){
-		return QUERY;
+	@Override
+	public int compareTo(@Nonnull final AniListObject o){
+		if(o instanceof AniListDatedObject){
+			return getDate().compareTo(((AniListDatedObject) o).getDate());
+		}
+		return Integer.compare(getId(), o.getId());
 	}
 	
 	@Override
@@ -106,11 +116,8 @@ public abstract class AniListListActivity implements AniListDatedObject{
 		return this.getId();
 	}
 	
-	@Override
-	public int compareTo(@NotNull final AniListObject o){
-		if(o instanceof AniListDatedObject){
-			return getDate().compareTo(((AniListDatedObject) o).getDate());
-		}
-		return Integer.compare(getId(), o.getId());
+	@Nonnull
+	public static String getQuery(){
+		return QUERY;
 	}
 }

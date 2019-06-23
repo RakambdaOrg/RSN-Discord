@@ -7,9 +7,9 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Date;
 
-public class SQLTimestampDeserializer extends JsonDeserializer<Date>{
+public class TimestampDeserializer extends JsonDeserializer<Date>{
 	@Override
 	public Date deserialize(@Nonnull final JsonParser jsonParser, @Nonnull final DeserializationContext deserializationContext) throws IOException{
-		return new Date(jsonParser.getValueAsLong() * 1000L);
+		return new Date(jsonParser.getValueAsLong());
 	}
 }

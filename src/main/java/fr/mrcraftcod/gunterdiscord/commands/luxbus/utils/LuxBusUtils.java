@@ -3,9 +3,10 @@ package fr.mrcraftcod.gunterdiscord.commands.luxbus.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.mrcraftcod.utils.http.requestssenders.get.JSONGetRequestSender;
 import fr.mrcraftcod.utils.http.requestssenders.get.StringGetRequestSender;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -16,10 +17,11 @@ import java.util.stream.Collectors;
 
 public class LuxBusUtils{
 	private static final Logger LOGGER = LoggerFactory.getLogger(LuxBusUtils.class);
-	public static Set<LuxBusStop> stops = new HashSet<>();
+	private static Set<LuxBusStop> stops = new HashSet<>();
 	private static long lastCheck = 0;
 	
-	public static List<LuxBusStop> searchStopByName(final String stopName){
+	@Nonnull
+	public static List<LuxBusStop> searchStopByName(@Nullable final String stopName){
 		if(Objects.isNull(stopName) || stopName.isBlank()){
 			throw new IllegalArgumentException("Stop must not be blank");
 		}
@@ -30,7 +32,8 @@ public class LuxBusUtils{
 		}).collect(Collectors.toList()));
 	}
 	
-	public static Set<LuxBusStop> getStopIds(){
+	@Nonnull
+	static Set<LuxBusStop> getStopIds(){
 		if(System.currentTimeMillis() - lastCheck > 3600000){
 			lastCheck = System.currentTimeMillis();
 			LOGGER.debug("Fetching bus stop infos");
@@ -47,7 +50,8 @@ public class LuxBusUtils{
 		return stops;
 	}
 	
-	public static List<LuxBusDeparture> getDepartures(@NotNull final LuxBusStop stop){
+	@Nonnull
+	public static List<LuxBusDeparture> getDepartures(@Nonnull final LuxBusStop stop){
 		try{
 			LOGGER.info("Getting departures for stop {}", stop);
 			final var request = new JSONGetRequestSender(String.format("http://travelplanner.mobiliteit.lu/restproxy/departureBoard?accessId=cdt&format=json&id=%s", URLEncoder.encode(stop.getId(), StandardCharsets.UTF_8))).getRequestHandler();
@@ -77,12 +81,5 @@ public class LuxBusUtils{
 			LOGGER.warn("Failed to get bus stop departures (id: {})", stop, e);
 		}
 		return List.of();
-	}
-	
-	public static Optional<LuxBusStop> getStopById(final String id){
-		if(Objects.isNull(id) || id.isBlank()){
-			throw new IllegalArgumentException("Stop id must not be blank");
-		}
-		return getStopIds().stream().filter(stop -> stop.isStop(id)).findFirst();
 	}
 }

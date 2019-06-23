@@ -3,6 +3,9 @@ package fr.mrcraftcod.gunterdiscord.settings.configurations;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -18,10 +21,11 @@ public abstract class SingleRoleConfiguration extends ValueConfiguration<Role>{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected SingleRoleConfiguration(final Guild guild){
+	protected SingleRoleConfiguration(@Nullable final Guild guild){
 		super(guild);
 	}
 	
+	@Nonnull
 	@Override
 	protected BiFunction<GuildMessageReceivedEvent, String, String> getMessageParser(){
 		return (event, arg) -> {
@@ -32,13 +36,15 @@ public abstract class SingleRoleConfiguration extends ValueConfiguration<Role>{
 		};
 	}
 	
+	@Nonnull
 	@Override
 	protected Function<String, Role> getConfigParser(){
-		return this.guild::getRoleById;
+		return Objects.isNull(this.guild) ? role -> null : this.guild::getRoleById;
 	}
 	
+	@Nonnull
 	@Override
 	protected Function<Role, String> getValueParser(){
-		return role -> "" + role.getIdLong();
+		return role -> Objects.isNull(role) ? null : "" + role.getIdLong();
 	}
 }

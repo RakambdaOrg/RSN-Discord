@@ -5,7 +5,10 @@ import fr.mrcraftcod.gunterdiscord.settings.configs.DJRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Member;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -31,25 +34,29 @@ public class MusicCommandComposite extends CommandComposite{
 	}
 	
 	@Override
-	public boolean isAllowed(final Member member){
-		return Utilities.isTeam(member) || Utilities.hasRole(member, new DJRoleConfig(member.getGuild()).getObject(null));
+	public boolean isAllowed(@Nullable final Member member){
+		return Objects.nonNull(member) && (Utilities.isTeam(member) || Utilities.hasRole(member, new DJRoleConfig(member.getGuild()).getObject(null)));
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Music";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("music", "m");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Handles music interactions";

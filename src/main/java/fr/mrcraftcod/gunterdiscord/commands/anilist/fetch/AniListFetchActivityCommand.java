@@ -6,7 +6,8 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListActivityScheduledRunner;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,32 +23,38 @@ public class AniListFetchActivityCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	AniListFetchActivityCommand(@NotNull final Command parent){
+	AniListFetchActivityCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	@Nonnull
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		new AniListActivityScheduledRunner(event.getJDA()).run();
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
+	@Nonnull
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.MODERATOR;
 	}
 	
+	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "AniList fetch activity";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("activity", "a");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Fetch user's activity from AniList";

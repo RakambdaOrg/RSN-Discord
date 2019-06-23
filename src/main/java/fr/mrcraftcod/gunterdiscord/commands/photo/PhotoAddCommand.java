@@ -13,7 +13,8 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -33,19 +34,19 @@ public class PhotoAddCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	PhotoAddCommand(final Command parent){
+	PhotoAddCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("User", "The user of the picture (default: @me)", false);
 	}
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
-		Actions.deleteMessage(event.getMessage());
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(!event.getMessage().getAttachments().isEmpty()){
 			final User user;
@@ -57,7 +58,6 @@ public class PhotoAddCommand extends BasicCommand{
 			else{
 				user = event.getAuthor();
 			}
-			
 			if(!Objects.equals(user, event.getAuthor()) && !Utilities.isAdmin(event.getMember())){
 				Actions.replyPrivate(event.getGuild(), event.getAuthor(), "You can't add a picture for someone else");
 			}
@@ -71,14 +71,14 @@ public class PhotoAddCommand extends BasicCommand{
 					final var saveFile = future.get();
 					if(!future.isCompletedExceptionally() && Objects.equals(attachment.getSize(), saveFile.length()) && saveFile.length() > 512){
 						new PhotoConfig(event.getGuild()).addValue(user.getIdLong(), saveFile.getPath());
-						Actions.giveRole(event.getGuild(), user, new TrombinoscopeRoleConfig(event.getGuild()).getObject());
+						new TrombinoscopeRoleConfig(event.getGuild()).getObject().ifPresent(role -> Actions.giveRole(event.getGuild(), user, role));
 						final var builder = new EmbedBuilder();
 						builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 						builder.setColor(Color.GREEN);
 						builder.setTitle("New picture");
 						builder.addField("User", user.getAsMention(), true);
 						builder.addField("ID", "" + event.getMessage().getTimeCreated().toEpochSecond(), true);
-						Actions.sendMessage(new PhotoChannelConfig(event.getGuild()).getObject(), builder.build());
+						Actions.sendMessage(new PhotoChannelConfig(event.getGuild()).getObject().orElse(event.getChannel()), builder.build());
 					}
 					else{
 						Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Upload failed");
@@ -94,29 +94,35 @@ public class PhotoAddCommand extends BasicCommand{
 		else{
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Please add an image with the command");
 		}
+		Actions.deleteMessage(event.getMessage());
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [@user]";
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Add picture";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("add", "a");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Add a picture to the trombinoscope";

@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist;
 
+import javax.annotation.Nonnull;
 import java.util.Date;
 
 /**
@@ -9,5 +10,6 @@ import java.util.Date;
  * @since 2018-10-11
  */
 public interface AniListDatedObject extends AniListObject{
+	@Nonnull
 	Date getDate();
 }

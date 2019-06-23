@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.utils.irc;
 import fr.mrcraftcod.gunterdiscord.utils.irc.events.PingIRCEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.util.Objects;
 
@@ -19,7 +20,7 @@ public class IRCReaderThread extends Thread implements Closeable{
 	private final IRCClient client;
 	private boolean stop;
 	
-	public IRCReaderThread(final IRCClient client, final InputStream inputStream){
+	public IRCReaderThread(@Nonnull final IRCClient client, @Nonnull final InputStream inputStream){
 		this.client = client;
 		this.reader = new BufferedReader(new InputStreamReader(inputStream));
 		this.stop = false;
@@ -33,8 +34,7 @@ public class IRCReaderThread extends Thread implements Closeable{
 					String line;
 					while(Objects.nonNull(line = this.reader.readLine())){
 						try{
-							final var event = IRCUtils.buildEvent(line);
-							if(Objects.nonNull(event)){
+							IRCUtils.buildEvent(line).ifPresent(event -> {
 								if(event instanceof PingIRCEvent){
 									LOGGER.debug("Replying to IRC ping message");
 									this.client.sendMessage("PONG");
@@ -50,7 +50,7 @@ public class IRCReaderThread extends Thread implements Closeable{
 								for(final var ircListener : this.client.getListeners()){
 									ircListener.onIRCEvent(event);
 								}
-							}
+							});
 						}
 						catch(final Exception e){
 							LOGGER.error("Error handling IRC message: {}", line, e);

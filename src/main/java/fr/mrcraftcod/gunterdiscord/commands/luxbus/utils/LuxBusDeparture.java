@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import net.dv8tion.jda.api.EmbedBuilder;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -34,7 +35,8 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	private DateTimeFormatter dateTimeFormatterEmbedLong = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm").toFormatter();
 	
 	@JsonCreator
-	public static LuxBusDeparture createDeparture(@JsonProperty("date") final String date, @JsonProperty("time") final String time, @JsonProperty("rtDate") final String realTimeDate, @JsonProperty("rtTime") final String realTimeTime){
+	@Nonnull
+	public static LuxBusDeparture createDeparture(@Nonnull @JsonProperty("date") final String date, @Nonnull @JsonProperty("time") final String time, @Nullable  @JsonProperty("rtDate") final String realTimeDate, @Nullable @JsonProperty("rtTime") final String realTimeTime){
 		final var departure = new LuxBusDeparture();
 		departure.plannedDateTime = LocalDateTime.parse(String.format("%s %s", date, time), dateTimeFormatter);
 		departure.realTimeDateTime = Objects.nonNull(realTimeDate) && Objects.nonNull(realTimeTime) ? LocalDateTime.parse(String.format("%s %s", realTimeDate, realTimeTime), dateTimeFormatter) : null;
@@ -42,7 +44,7 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	}
 	
 	@Override
-	public int compareTo(@NotNull final LuxBusDeparture departure){
+	public int compareTo(@Nonnull final LuxBusDeparture departure){
 		if(!Objects.equals(this.getProduct().getName(), departure.getProduct().getName())){
 			return this.getProduct().getName().compareTo(departure.getProduct().getName());
 		}
@@ -52,19 +54,23 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 		return this.getPlannedDateTime().compareTo(departure.getPlannedDateTime());
 	}
 	
+	@Nonnull
 	public LuxBusProduct getProduct(){
 		return this.product;
 	}
 	
+	@Nonnull
 	public String getDirection(){
 		return this.direction;
 	}
 	
-	public LocalDateTime getPlannedDateTime(){
+	@Nonnull
+	private LocalDateTime getPlannedDateTime(){
 		return this.plannedDateTime;
 	}
 	
-	public EmbedBuilder getAsEmbed(final EmbedBuilder embedBuilder){
+	@Nonnull
+	public EmbedBuilder getAsEmbed(@Nonnull final EmbedBuilder embedBuilder){
 		final var delayMinutes = getRealTimeDateTime().map(realDateTime -> getPlannedDateTime().until(realDateTime, ChronoUnit.MINUTES)).orElse(null);
 		var pattern = "%s";
 		if(Objects.nonNull(delayMinutes)){
@@ -85,21 +91,25 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 		return embedBuilder;
 	}
 	
-	public Optional<LocalDateTime> getRealTimeDateTime(){
+	@Nonnull
+	private Optional<LocalDateTime> getRealTimeDateTime(){
 		return Optional.ofNullable(this.realTimeDateTime);
 	}
 	
-	private String getEmbedDate(final LocalDateTime dateTime){
+	@Nonnull
+	private String getEmbedDate(@Nonnull final LocalDateTime dateTime){
 		if(LocalDate.now().equals(dateTime.toLocalDate())){
 			return dateTime.format(this.dateTimeFormatterEmbedShort);
 		}
 		return dateTime.format(this.dateTimeFormatterEmbedLong);
 	}
 	
+	@Nonnull
 	public String getEntityNumber(){
 		return this.entityNumber;
 	}
 	
+	@Nonnull
 	public LuxBusStop getStop(){
 		return this.stop;
 	}

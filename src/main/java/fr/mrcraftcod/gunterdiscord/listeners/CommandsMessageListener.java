@@ -6,6 +6,7 @@ import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommandComposite
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
+import fr.mrcraftcod.gunterdiscord.commands.generic.NotHandledException;
 import fr.mrcraftcod.gunterdiscord.commands.luxbus.LuxBusGetStopCommand;
 import fr.mrcraftcod.gunterdiscord.commands.music.MusicCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.photo.PhotoCommandComposite;
@@ -21,12 +22,9 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import java.awt.Color;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -65,7 +63,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new TwitchCommandComposite(),
 			new LuxBusGetStopCommand()
 	};
-	private final static String defaultPrefix = "g?";
+	private final static String defaultPrefix = System.getenv().getOrDefault("RSN_DEFAULT_PREFIX", "g?");
 	
 	/**
 	 * Constructor.
@@ -80,15 +78,14 @@ public class CommandsMessageListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildMessageReceived(@NotNull final GuildMessageReceivedEvent event){
+	public void onGuildMessageReceived(@Nonnull final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
 			if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
 				Actions.deleteMessage(event.getMessage());
 				final var args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
-				final var cmdText = args.pop().substring(new PrefixConfig(event.getGuild()).getObject(defaultPrefix).length());
-				final var command = getCommand(cmdText);
-				if(Objects.nonNull(command)){
+				final var cmdText = args.pop().substring(new PrefixConfig(event.getGuild()).getObject().orElse(defaultPrefix).length());
+				getCommand(cmdText).ifPresentOrElse(command -> {
 					if(Objects.equals(command.getScope(), -5) || Objects.equals(command.getScope(), event.getChannel().getType().getId())){
 						try{
 							getLogger(event.getGuild()).info("Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(), event.getAuthor(), args);
@@ -103,6 +100,9 @@ public class CommandsMessageListener extends ListenerAdapter{
 							builder.setColor(Color.RED);
 							builder.setTitle("You're not allowed to execute this command");
 							Actions.reply(event, builder.build());
+						}
+						catch(final NotHandledException e){
+							getLogger(event.getGuild()).warn("Command {} isn't handled for {} ({})", command, event.getAuthor(), e.getMessage());
 						}
 						catch(final Exception e){
 							getLogger(event.getGuild()).error("Error executing command {}", command, e);
@@ -120,15 +120,14 @@ public class CommandsMessageListener extends ListenerAdapter{
 						builder.setTitle("You can't use this command in this kind of channel");
 						Actions.reply(event, builder.build());
 					}
-				}
-				else{
+				}, () -> {
 					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.ORANGE);
 					builder.setTitle("Command not found");
 					builder.addField("Command", cmdText, false);
 					Actions.reply(event, builder.build());
-				}
+				});
 			}
 		}
 		catch(final Exception e){
@@ -144,8 +143,8 @@ public class CommandsMessageListener extends ListenerAdapter{
 	 *
 	 * @return True if a command, false otherwise.
 	 */
-	private static boolean isCommand(final Guild guild, final String text){
-		return text.startsWith(new PrefixConfig(guild).getObject(defaultPrefix));
+	private static boolean isCommand(@Nonnull final Guild guild, @Nonnull final String text){
+		return text.startsWith(new PrefixConfig(guild).getObject().orElse(defaultPrefix));
 	}
 	
 	/**
@@ -155,7 +154,8 @@ public class CommandsMessageListener extends ListenerAdapter{
 	 *
 	 * @return The command or null if not found.
 	 */
-	private static Command getCommand(final String commandText){
-		return Arrays.stream(commands).filter(command -> command.getCommandStrings().contains(commandText.toLowerCase())).findFirst().orElse(null);
+	@Nonnull
+	private static Optional<Command> getCommand(@Nonnull final String commandText){
+		return Arrays.stream(commands).filter(command -> command.getCommandStrings().contains(commandText.toLowerCase())).findFirst();
 	}
 }

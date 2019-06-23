@@ -7,10 +7,11 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -32,7 +33,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected ListConfiguration(final Guild guild){
+	protected ListConfiguration(@Nullable final Guild guild){
 		super(guild);
 	}
 	
@@ -41,7 +42,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @param value The value to add.
 	 */
-	public void addValue(@NotNull final T value){
+	public void addValue(@Nullable final T value){
 		addRawValue(getValueParser().apply(value));
 	}
 	
@@ -50,7 +51,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @param value The value to add.
 	 */
-	private void addRawValue(final String value){
+	private void addRawValue(@Nullable final String value){
 		if(Objects.isNull(value)){
 			LOGGER.warn("Adding a null value inside a list ({}), skipping", getName());
 		}
@@ -64,6 +65,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @return The parser.
 	 */
+	@Nonnull
 	protected abstract Function<T, String> getValueParser();
 	
 	/**
@@ -71,7 +73,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @param value The value to remove.
 	 */
-	public void removeValue(@NotNull final T value){
+	public void removeValue(@Nonnull final T value){
 		removeRawValue(getValueParser().apply(value));
 	}
 	
@@ -80,12 +82,14 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @param value The value to remove.
 	 */
-	private void removeRawValue(final String value){
+	private void removeRawValue(@Nonnull final String value){
 		Settings.removeValue(this.guild, this, value);
 	}
 	
+	@SuppressWarnings("DuplicatedCode")
+	@Nonnull
 	@Override
-	public ConfigurationCommand.ActionResult handleChange(final GuildMessageReceivedEvent event, final ConfigurationCommand.ChangeConfigType action, final LinkedList<String> args){
+	public ConfigurationCommand.ActionResult handleChange(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final ConfigurationCommand.ChangeConfigType action, @Nonnull final LinkedList<String> args){
 		if(Objects.equals(action, ConfigurationCommand.ChangeConfigType.SHOW)){
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
@@ -116,18 +120,15 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @throws IllegalArgumentException If the configuration isn't a list.
 	 */
-	public List<T> getAsList() throws IllegalArgumentException{
-		final List<T> elements = new LinkedList<>();
-		final var array = getObjectList();
-		if(Objects.isNull(array)){
-			Settings.resetList(this.guild, this);
-		}
-		else{
+	@Nonnull
+	public Optional<List<T>> getAsList() throws IllegalArgumentException{
+		return getObjectList().map(array -> {
+			final List<T> elements = new LinkedList<>();
 			for(var i = 0; i < array.length(); i++){
 				elements.add(getConfigParser().apply(array.get(i).toString()));
 			}
-		}
-		return elements;
+			return elements;
+		});
 	}
 	
 	/**
@@ -135,6 +136,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @return The parser.
 	 */
+	@Nonnull
 	protected abstract BiFunction<GuildMessageReceivedEvent, String, String> getMessageParser();
 	
 	/**
@@ -144,7 +146,8 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @throws IllegalArgumentException If the configuration isn't a list.
 	 */
-	private JSONArray getObjectList() throws IllegalArgumentException{
+	@Nonnull
+	private Optional<JSONArray> getObjectList() throws IllegalArgumentException{
 		if(!Objects.equals(getType(), ConfigType.LIST)){
 			throw new IllegalArgumentException("Not a list config");
 		}
@@ -154,7 +157,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 		catch(final NullPointerException e){
 			getLogger(this.guild).error("NullPointer", e);
 		}
-		return null;
+		return Optional.empty();
 	}
 	
 	/**
@@ -162,13 +165,16 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @return The parser.
 	 */
+	@Nonnull
 	protected abstract Function<String, T> getConfigParser();
 	
+	@Nonnull
 	@Override
 	public Collection<ConfigurationCommand.ChangeConfigType> getAllowedActions(){
 		return Set.of(ADD, REMOVE, SHOW);
 	}
 	
+	@Nonnull
 	@Override
 	public ConfigType getType(){
 		return ConfigType.LIST;
@@ -181,7 +187,7 @@ public abstract class ListConfiguration<T> extends Configuration{
 	 *
 	 * @return True if the value is inside, false otherwise.
 	 */
-	public boolean contains(final T value){
-		return getAsList().contains(value);
+	public boolean contains(@Nullable final T value){
+		return getAsList().map(list -> list.contains(value)).orElse(false);
 	}
 }

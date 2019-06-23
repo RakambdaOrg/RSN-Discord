@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord.commands.photo;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.api.entities.ChannelType;
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -22,20 +23,28 @@ public class PhotoCommandComposite extends CommandComposite{
 		addSubCommand(new PhotoListCommand(this));
 	}
 	
+	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Trombinoscope";
 	}
 	
+	@Nonnull
+	
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("photo");
 	}
+	
+	@Nonnull
 	
 	@Override
 	public String getDescription(){

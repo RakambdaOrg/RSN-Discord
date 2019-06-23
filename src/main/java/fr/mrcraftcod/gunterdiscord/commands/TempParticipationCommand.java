@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -31,19 +31,20 @@ public class TempParticipationCommand extends BasicCommand{
 	public static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyyMMdd");
 	public static final DateTimeFormatter DFD = DateTimeFormatter.ofPattern("dd/MM/yyy");
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		sendInfos(event.getGuild(), LocalDate.now(), event.getAuthor(), event.getChannel());
 		return CommandResult.SUCCESS;
 	}
 	
-	public static boolean sendInfos(final Guild guild, final LocalDate localDate, final User author, final TextChannel channel){
+	public static boolean sendInfos(@Nonnull final Guild guild, @Nonnull final LocalDate localDate, @Nonnull final User author, @Nonnull final TextChannel channel){
 		final var ytdKey = getKey(localDate);
 		final var date = localDate.format(DFD);
-		final var stats = new MembersParticipationConfig(guild).getValue(ytdKey);
-		if(Objects.nonNull(stats)){
-			final var i = new AtomicInteger(1);
+		final var statsOptional = new MembersParticipationConfig(guild).getValue(ytdKey);
+		return statsOptional.map(stats -> {
+			final var position = new AtomicInteger(1);
 			final var builder = Utilities.buildEmbed(author, Color.MAGENTA, "Participation of the " + date + " (UTC)");
 			stats.entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).map(e -> {
 				final var user = guild.getJDA().getUserById(e.getKey());
@@ -51,33 +52,37 @@ public class TempParticipationCommand extends BasicCommand{
 					return Map.entry(user, e.getValue());
 				}
 				return null;
-			}).filter(Objects::nonNull).limit(10).forEachOrdered(e -> builder.addField("#" + i.getAndIncrement(), e.getKey().getAsMention() + " Messages: " + e.getValue(), false));
+			}).filter(Objects::nonNull).limit(10).forEachOrdered(e -> builder.addField("#" + position.getAndIncrement(), e.getKey().getAsMention() + " Messages: " + e.getValue(), false));
 			Actions.sendMessage(channel, builder.build());
 			return true;
-		}
-		return false;
+		}).orElse(false);
 	}
 	
-	public static String getKey(final LocalDate localDate){
+	@Nonnull
+	public static String getKey(@Nonnull final LocalDate localDate){
 		return localDate.format(DF);
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ADMIN;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Temporary participation";
 	}
 	
+	@Nonnull
 	@SuppressWarnings("SpellCheckingInspection")
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("tempparticipation", "tp");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Display the temporary ranking for the day";

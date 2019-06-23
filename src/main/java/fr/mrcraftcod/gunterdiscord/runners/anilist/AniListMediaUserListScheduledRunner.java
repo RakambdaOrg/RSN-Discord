@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,11 +29,11 @@ public class AniListMediaUserListScheduledRunner implements AniListRunner<AniLis
 	private final boolean keepOnlyNew;
 	private boolean sortedByUser;
 	
-	public AniListMediaUserListScheduledRunner(final JDA jda){
+	public AniListMediaUserListScheduledRunner(@Nonnull final JDA jda){
 		this(jda, true);
 	}
 	
-	public AniListMediaUserListScheduledRunner(final JDA jda, final boolean keepOnlyNew){
+	public AniListMediaUserListScheduledRunner(@Nonnull final JDA jda, final boolean keepOnlyNew){
 		getLogger(null).info("Creating AniList {} runner", getRunnerName());
 		this.jda = jda;
 		this.keepOnlyNew = keepOnlyNew;
@@ -50,8 +51,14 @@ public class AniListMediaUserListScheduledRunner implements AniListRunner<AniLis
 	}
 	
 	@Override
-	public TimeUnit getPeriodUnit(){
-		return TimeUnit.HOURS;
+	public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<AniListMediaUserList>> userElements){
+		AniListRunner.super.sendMessages(channels, userElements);
+		this.getJDA().getGuilds().stream().map(g -> new AnilistThaChannelConfig(g).getObject(null)).filter(Objects::nonNull).forEach(textChannel -> {
+			final var member = new AnilistThaUserConfig(textChannel.getGuild()).getObject(null);
+			if(Objects.nonNull(member)){
+				userElements.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> ImmutablePair.of(e.getKey(), v))).filter(v -> v.getRight().getCustomLists().entrySet().stream().filter(Map.Entry::getValue).anyMatch(entry -> Objects.equals("ThaPending", entry.getKey()) || Objects.equals("ThaReading", entry.getKey()) || Objects.equals("ThaWatching", entry.getKey()))).forEach(p -> Actions.sendMessage(textChannel, "" + member.getAsMention(), buildMessage(p.getLeft(), p.getRight())));
+			}
+		});
 	}
 	
 	@Override
@@ -59,18 +66,21 @@ public class AniListMediaUserListScheduledRunner implements AniListRunner<AniLis
 		return 0;
 	}
 	
+	@Nonnull
 	@Override
 	public String getRunnerName(){
 		return "media list";
 	}
 	
+	@Nonnull
 	@Override
 	public JDA getJDA(){
 		return this.jda;
 	}
 	
+	@Nonnull
 	@Override
-	public AniListMediaUserListPagedQuery initQuery(final Map<String, String> userInfo){
+	public AniListMediaUserListPagedQuery initQuery(@Nonnull final Map<String, String> userInfo){
 		return new AniListMediaUserListPagedQuery(Integer.parseInt(userInfo.get("userId")));
 	}
 	
@@ -79,6 +89,7 @@ public class AniListMediaUserListScheduledRunner implements AniListRunner<AniLis
 		return this.keepOnlyNew;
 	}
 	
+	@Nonnull
 	@SuppressWarnings("SpellCheckingInspection")
 	@Override
 	public String getFetcherID(){
@@ -90,14 +101,9 @@ public class AniListMediaUserListScheduledRunner implements AniListRunner<AniLis
 		runQueryOnEveryUserAndDefaultChannels();
 	}
 	
+	@Nonnull
 	@Override
-	public void sendMessages(final List<TextChannel> channels, final Map<User, List<AniListMediaUserList>> userElements){
-		AniListRunner.super.sendMessages(channels, userElements);
-		this.getJDA().getGuilds().stream().map(g -> new AnilistThaChannelConfig(g).getObject(null)).filter(Objects::nonNull).forEach(textChannel -> {
-			final var member = new AnilistThaUserConfig(textChannel.getGuild()).getObject(null);
-			if(Objects.nonNull(member)){
-				userElements.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> ImmutablePair.of(e.getKey(), v))).filter(v -> v.getRight().getCustomLists().entrySet().stream().filter(Map.Entry::getValue).anyMatch(entry -> Objects.equals("ThaPending", entry.getKey()) || Objects.equals("ThaReading", entry.getKey()) || Objects.equals("ThaWatching", entry.getKey()))).forEach(p -> Actions.sendMessage(textChannel, "" + member.getAsMention(), buildMessage(p.getLeft(), p.getRight())));
-			}
-		});
+	public TimeUnit getPeriodUnit(){
+		return TimeUnit.HOURS;
 	}
 }

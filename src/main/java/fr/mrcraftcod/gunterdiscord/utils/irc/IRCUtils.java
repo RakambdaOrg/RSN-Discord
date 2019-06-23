@@ -3,7 +3,9 @@ package fr.mrcraftcod.gunterdiscord.utils.irc;
 import fr.mrcraftcod.gunterdiscord.utils.irc.events.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.annotation.Nonnull;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-02-25.
@@ -14,13 +16,14 @@ import java.util.Objects;
 class IRCUtils{
 	private static final Logger LOGGER = LoggerFactory.getLogger(IRCUtils.class);
 	
-	static IRCEvent buildEvent(String message){
+	@Nonnull
+	static Optional<IRCEvent> buildEvent(@Nonnull String message){
 		if(message.equals("PING :tmi.twitch.tv")){
-			return new PingIRCEvent();
+			return Optional.of(new PingIRCEvent());
 		}
 		if(!message.startsWith(":")){
 			LOGGER.warn("IRC message doesn't start with ':' => {}", message);
-			return null;
+			return Optional.empty();
 		}
 		message = message.substring(1);
 		final var columnIndex = message.indexOf(':');
@@ -29,18 +32,18 @@ class IRCUtils{
 		final var eventType = infos[1];
 		switch(eventType){
 			case "JOIN":
-				return new ChannelJoinedIRCEvent(user, eventType, infos[2]);
+				return Optional.of(new ChannelJoinedIRCEvent(user, eventType, infos[2]));
 			case "PART":
-				return new ChannelLeftIRCEvent(user, eventType, infos[2]);
+				return Optional.of(new ChannelLeftIRCEvent(user, eventType, infos[2]));
 			//noinspection SpellCheckingInspection
 			case "PRIVMSG":
 				if(columnIndex < 0){
 					LOGGER.error("Invalid IRC message (no message): {}", message);
-					return null;
+					return Optional.empty();
 				}
-				return new ChannelMessageIRCEvent(user, eventType, infos[2], message.substring(columnIndex + 1));
+				return Optional.of(new ChannelMessageIRCEvent(user, eventType, infos[2], message.substring(columnIndex + 1)));
 			case "PING":
-				return new PingIRCEvent();
+				return Optional.of(new PingIRCEvent());
 			case "001":
 			case "002":
 			case "003":
@@ -56,6 +59,6 @@ class IRCUtils{
 			default:
 				LOGGER.warn("Unknown IRC event type {} in {}", eventType, message);
 		}
-		return null;
+		return Optional.empty();
 	}
 }

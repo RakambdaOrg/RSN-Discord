@@ -9,7 +9,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,17 +26,18 @@ public class StopMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	StopMusicCommand(final Command parent){
+	StopMusicCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 	}
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		switch(GunterAudioManager.leave(event.getGuild())){
 			case NO_MUSIC:
@@ -48,21 +50,25 @@ public class StopMusicCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
-		return AccessLevel.ALL;
+		return AccessLevel.MODERATOR;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Stop";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("stop", "s");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Stops the music";

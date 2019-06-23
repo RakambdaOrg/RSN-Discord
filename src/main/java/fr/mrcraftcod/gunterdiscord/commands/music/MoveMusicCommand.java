@@ -10,11 +10,10 @@ import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.RequesterTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.ChannelType;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -33,12 +32,12 @@ public class MoveMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	MoveMusicCommand(@NotNull final Command parent){
+	MoveMusicCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("link", "Music link", false);
 		builder.addField("skip", "The number of tracks to skip before adding them", false);
@@ -46,13 +45,15 @@ public class MoveMusicCommand extends BasicCommand{
 		builder.addField("repeat", "Either to repeat this track or not (true/false)", false);
 	}
 	
+	@SuppressWarnings("DuplicatedCode")
+	@Nonnull
 	@Override
-	public CommandResult execute(@NotNull final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.isEmpty()){
 			Actions.reply(event, "Please give a music position from the queue");
 		}
-		else if(event.getMember().getVoiceState().inVoiceChannel()){
+		else if(Optional.ofNullable(event.getMember()).map(Member::getVoiceState).map(GuildVoiceState::inVoiceChannel).orElse(false)){
 			final var queue = GunterAudioManager.getQueue(event.getGuild());
 			final var moveFromPosition = Optional.ofNullable(args.poll()).map(value -> {
 				try{
@@ -86,26 +87,31 @@ public class MoveMusicCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <current position in queue> [new position in queue]";
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
-		return AccessLevel.ALL;
+		return AccessLevel.MODERATOR;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Move";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("move");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Move a music in the queue";

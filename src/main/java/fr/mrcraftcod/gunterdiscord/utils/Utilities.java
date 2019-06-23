@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import org.json.JSONObject;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.util.List;
 import java.util.Objects;
@@ -18,7 +19,6 @@ import java.util.Objects;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
-@SuppressWarnings("WeakerAccess")
 public class Utilities{
 	/**
 	 * Check if a member have a role.
@@ -51,7 +51,7 @@ public class Utilities{
 	 * @return True if moderator, false otherwise.
 	 */
 	public static boolean isModerator(final Member member){
-		return Utilities.hasRole(member, new ModoRolesConfig(member.getGuild()).getAsList()) || isAdmin(member);
+		return new ModoRolesConfig(member.getGuild()).getAsList().map(list -> Utilities.hasRole(member, list)).orElse(isAdmin(member));
 	}
 	
 	/**
@@ -61,8 +61,8 @@ public class Utilities{
 	 *
 	 * @return True if admin, false otherwise.
 	 */
-	public static boolean isAdmin(final Member member){
-		return member.getRoles().stream().anyMatch(role -> role.hasPermission(Permission.ADMINISTRATOR)) || isCreator(member);
+	public static boolean isAdmin(@Nullable final Member member){
+		return Objects.nonNull(member) && member.getRoles().stream().anyMatch(role -> role.hasPermission(Permission.ADMINISTRATOR)) || isCreator(member);
 	}
 	
 	/**
@@ -95,8 +95,8 @@ public class Utilities{
 	 *
 	 * @return True if the creator, false otherwise.
 	 */
-	public static boolean isCreator(final Member member){
-		return Objects.equals(member.getUser().getIdLong(), 170119951498084352L) || Objects.equals(member.getUser().getIdLong(), 432628353024131085L);
+	public static boolean isCreator(@Nullable final Member member){
+		return Objects.nonNull(member) && (Objects.equals(member.getUser().getIdLong(), 170119951498084352L) || Objects.equals(member.getUser().getIdLong(), 432628353024131085L));
 	}
 	
 	/**

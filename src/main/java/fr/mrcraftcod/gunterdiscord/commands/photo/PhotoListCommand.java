@@ -9,7 +9,8 @@ import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,37 +27,42 @@ public class PhotoListCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	PhotoListCommand(final Command parent){
+	PhotoListCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final var builder = new EmbedBuilder();
 		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 		builder.setColor(Color.GREEN);
 		builder.setTitle("Users of the trombinoscope");
-		Utilities.getMembersWithRole(new TrombinoscopeRoleConfig(event.getGuild()).getObject()).stream().map(u -> u.getUser().getName()).forEach(u -> builder.addField("", u, false));
+		new TrombinoscopeRoleConfig(event.getGuild()).getObject().ifPresent(role -> Utilities.getMembersWithRole(role).stream().map(u -> u.getUser().getName()).forEach(u -> builder.addField("", u, false)));
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Users";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("l", "list");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Lists the users of the trombinoscope";

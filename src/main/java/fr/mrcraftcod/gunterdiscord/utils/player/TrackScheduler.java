@@ -7,6 +7,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
 import net.dv8tion.jda.api.entities.Guild;
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +29,7 @@ class TrackScheduler extends AudioEventAdapter{
 	 * @param guild  The guild the scheduler is for.
 	 * @param player The audio player this scheduler uses
 	 */
-	TrackScheduler(final Guild guild, final AudioPlayer player){
+	TrackScheduler(@Nonnull final Guild guild, @Nonnull final AudioPlayer player){
 		this.guild = guild;
 		this.player = player;
 		this.queue = new LinkedList<>();
@@ -36,16 +37,16 @@ class TrackScheduler extends AudioEventAdapter{
 	}
 	
 	@Override
-	public void onTrackStart(final AudioPlayer player, final AudioTrack track){
+	public void onTrackStart(@Nonnull final AudioPlayer player, @Nonnull final AudioTrack track){
 		super.onTrackStart(player, track);
 		this.listeners.forEach(listener -> listener.onTrackStart(track));
 	}
 	
 	@Override
-	public void onTrackEnd(final AudioPlayer player, final AudioTrack track, final AudioTrackEndReason endReason){
+	public void onTrackEnd(@Nonnull final AudioPlayer player, @Nonnull final AudioTrack track, @Nonnull final AudioTrackEndReason endReason){
 		super.onTrackEnd(player, track, endReason);
 		if(track.getUserData() instanceof TrackUserFields){
-			if(track.getUserData(TrackUserFields.class).getOrDefault(new ReplayTrackUserField(), false)){
+			if(track.getUserData(TrackUserFields.class).get(new ReplayTrackUserField()).orElse(false)){
 				getLogger(this.guild).info("Putting back {} into queue: repeat is enabled", track.getInfo().identifier);
 				final var clone = track.makeClone();
 				clone.setUserData(track.getUserData());
@@ -64,7 +65,7 @@ class TrackScheduler extends AudioEventAdapter{
 	 *
 	 * @param track The track to play or add to queue.
 	 */
-	public void queue(final AudioTrack track){
+	public void queue(@Nonnull final AudioTrack track){
 		if(this.queue.stream().noneMatch(track2 -> Objects.equals(track2.getInfo().identifier, track.getInfo().identifier))){
 			this.queue.offer(track);
 		}
@@ -79,6 +80,7 @@ class TrackScheduler extends AudioEventAdapter{
 	 *
 	 * @return The guild.
 	 */
+	@Nonnull
 	private Guild getGuild(){
 		return this.guild;
 	}
@@ -124,7 +126,7 @@ class TrackScheduler extends AudioEventAdapter{
 	 *
 	 * @param statusTrackSchedulerListener The listener to add.
 	 */
-	void addStatusTrackSchedulerListener(final StatusTrackSchedulerListener statusTrackSchedulerListener){
+	void addStatusTrackSchedulerListener(@Nonnull final StatusTrackSchedulerListener statusTrackSchedulerListener){
 		this.listeners.add(statusTrackSchedulerListener);
 	}
 	
@@ -135,6 +137,7 @@ class TrackScheduler extends AudioEventAdapter{
 		}
 	}
 	
+	@Nonnull
 	public List<AudioTrack> getQueue(){
 		return this.queue;
 	}

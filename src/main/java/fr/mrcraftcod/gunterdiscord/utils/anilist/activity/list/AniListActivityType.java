@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.utils.anilist.activity.list;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -18,19 +19,22 @@ public enum AniListActivityType{
 	
 	private final Class<? extends AniListListActivity> klass;
 	
-	AniListActivityType(final Class<? extends AniListListActivity> klass){
+	AniListActivityType(@Nonnull final Class<? extends AniListListActivity> klass){
 		this.klass = klass;
 	}
 	
+	@JsonCreator
+	@Nonnull
+	public static AniListActivityType getFromString(@Nonnull final String value){
+		return AniListActivityType.valueOf(value);
+	}
+	
+	@Nonnull
 	public AniListListActivity getInstance() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException{
 		return getKlass().getConstructor().newInstance();
 	}
 	
-	@JsonCreator
-	public static AniListActivityType getFromString(final String value){
-		return AniListActivityType.valueOf(value);
-	}
-	
+	@Nonnull
 	private Class<? extends AniListListActivity> getKlass(){
 		return this.klass;
 	}

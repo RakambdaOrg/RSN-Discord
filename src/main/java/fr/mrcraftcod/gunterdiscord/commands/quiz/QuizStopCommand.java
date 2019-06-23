@@ -6,7 +6,8 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,32 +23,37 @@ public class QuizStopCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	QuizStopCommand(final Command parent){
+	QuizStopCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		QuizListener.getQuiz(event.getGuild(), 0, 2, false).ifPresent(QuizListener::stop);
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.MODERATOR;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Stop quiz";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("stop");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Stop a quiz";

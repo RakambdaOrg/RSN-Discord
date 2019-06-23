@@ -13,7 +13,8 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.io.File;
 import java.util.LinkedList;
@@ -34,19 +35,20 @@ public class PhotoGetCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	PhotoGetCommand(final Command parent){
+	PhotoGetCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("User", "The user of the picture (default: @me)", false);
 		builder.addField("Number", "The number of the picture (if none are provided, the picture will be picked randomly)", false);
 	}
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		Actions.deleteMessage(event.getMessage());
 		super.execute(event, args);
 		final User user;
@@ -58,9 +60,8 @@ public class PhotoGetCommand extends BasicCommand{
 		else{
 			user = event.getAuthor();
 		}
-		
 		final var member = event.getGuild().getMember(user);
-		if(Objects.isNull(member) || !Utilities.hasRole(member, new TrombinoscopeRoleConfig(event.getGuild()).getObject())){
+		if(Objects.isNull(member) || !new TrombinoscopeRoleConfig(event.getGuild()).getObject().map(role -> Utilities.hasRole(member, role)).orElse(false)){
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
@@ -69,25 +70,25 @@ public class PhotoGetCommand extends BasicCommand{
 		}
 		else if(new PhotoChannelConfig(event.getGuild()).isChannel(event.getChannel())){
 			final var paths = new PhotoConfig(event.getGuild()).getValue(user.getIdLong());
-			if(Objects.nonNull(paths) && !paths.isEmpty()){
+			if(paths.map(p -> !p.isEmpty()).orElse(false)){
 				var randomGen = true;
-				var rnd = ThreadLocalRandom.current().nextInt(paths.size());
+				var rnd = ThreadLocalRandom.current().nextInt(paths.get().size());
 				if(!args.isEmpty()){
 					try{
-						rnd = Math.max(0, Math.min(paths.size(), Integer.parseInt(args.pop())) - 1);
+						rnd = Math.max(0, Math.min(paths.get().size(), Integer.parseInt(args.pop())) - 1);
 						randomGen = false;
 					}
 					catch(final Exception e){
 						getLogger(event.getGuild()).warn("Provided photo index isn't an integer", e);
 					}
 				}
-				final var file = new File(paths.get(rnd));
+				final var file = new File(paths.get().get(rnd));
 				if(file.exists()){
 					final var ID = file.getName().substring(0, file.getName().lastIndexOf("."));
 					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.GREEN);
-					builder.addField("Selection", String.format("%d/%d%s", rnd + 1, paths.size(), randomGen ? " random" : ""), true);
+					builder.addField("Selection", String.format("%d/%d%s", rnd + 1, paths.get().size(), randomGen ? " random" : ""), true);
 					builder.addField("User", user.getAsMention(), true);
 					builder.addField("ID", ID, true);
 					Actions.reply(event, builder.build());
@@ -112,26 +113,31 @@ public class PhotoGetCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [@user] [number]";
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Picture";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("photo", "p", "g", "get");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Get a picture from the trombinoscope";

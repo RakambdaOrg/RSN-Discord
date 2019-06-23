@@ -7,7 +7,8 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,32 +24,42 @@ public class ShuffleMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	ShuffleMusicCommand(final Command parent){
+	ShuffleMusicCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
+	
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute( @Nonnull final GuildMessageReceivedEvent event,  @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		GunterAudioManager.shuffle(event.getGuild());
 		Actions.reply(event, event.getAuthor().getAsMention() + " shuffled the queue");
 		return CommandResult.SUCCESS;
 	}
 	
+	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.MODERATOR;
 	}
 	
+	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Shuffle";
 	}
 	
+	@Nonnull
+	
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("shuffle", "sh");
 	}
+	
+	@Nonnull
 	
 	@Override
 	public String getDescription(){

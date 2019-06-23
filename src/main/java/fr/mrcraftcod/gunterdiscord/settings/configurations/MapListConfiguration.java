@@ -5,6 +5,8 @@ import fr.mrcraftcod.gunterdiscord.settings.Configuration;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import net.dv8tion.jda.api.entities.Guild;
 import org.json.JSONObject;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -22,7 +24,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	protected MapListConfiguration(final Guild guild){
+	protected MapListConfiguration(@Nullable final Guild guild){
 		super(guild);
 	}
 	
@@ -33,9 +35,68 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	 *
 	 * @return The values or null if not found.
 	 */
-	public List<V> getValue(final K key){
-		return getAsMap().get(key);
+	@Nonnull
+	public Optional<List<V>> getValue(@Nonnull final K key){
+		return getAsMap().map(map -> map.get(key));
 	}
+	
+	/**
+	 * Get the map of this configuration.
+	 *
+	 * @return The map.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a map.
+	 */
+	@Nonnull
+	public Optional<Map<K, ArrayList<V>>> getAsMap() throws IllegalArgumentException{
+		return getObjectMap().map(map -> {
+			final Map<K, ArrayList<V>> elements = new HashMap<>();
+			for(final var key : map.keySet()){
+				final var kKey = getKeyParser().apply(key);
+				if(Objects.nonNull(kKey)){
+					if(!elements.containsKey(kKey)){
+						elements.put(kKey, new ArrayList<>());
+					}
+					final var value = map.optJSONArray(key);
+					if(Objects.nonNull(value)){
+						value.toList().stream().map(val -> getValueParser().apply(val.toString())).forEach(o -> elements.get(kKey).add(o));
+					}
+				}
+			}
+			return elements;
+		});
+	}
+	
+	/**
+	 * Get the JSON Object.
+	 *
+	 * @return The JSON object.
+	 *
+	 * @throws IllegalArgumentException If this configuration isn't a map.
+	 */
+	@Nonnull
+	private Optional<JSONObject> getObjectMap() throws IllegalArgumentException{
+		if(!Objects.equals(getType(), ConfigType.MAP)){
+			throw new IllegalArgumentException("Not a map config");
+		}
+		return Settings.getJSONObject(this.guild, getName());
+	}
+	
+	/**
+	 * Get the parser to parse back string keys to K.
+	 *
+	 * @return The parser.
+	 */
+	@Nonnull
+	protected abstract Function<String, K> getKeyParser();
+	
+	/**
+	 * Get the parser to parse back values to V.
+	 *
+	 * @return The parser.
+	 */
+	@Nonnull
+	protected abstract Function<String, V> getValueParser();
 	
 	/**
 	 * Delete a value inside a key.
@@ -43,7 +104,7 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	 * @param key   The key.
 	 * @param value The value.
 	 */
-	public void deleteKeyValue(final K key, final V value){
+	public void deleteKeyValue(@Nonnull final K key, @Nullable final V value){
 		if(Objects.isNull(value)){
 			deleteKey(key);
 		}
@@ -57,74 +118,8 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	 *
 	 * @param key The key.
 	 */
-	public void deleteKey(final K key){
+	public void deleteKey(@Nonnull final K key){
 		Settings.deleteKey(this.guild, this, key);
-	}
-	
-	/**
-	 * Get the parser to parse back string keys to K.
-	 *
-	 * @return The parser.
-	 */
-	protected abstract Function<String, K> getKeyParser();
-	
-	/**
-	 * Get the parser to parse back values to V.
-	 *
-	 * @return The parser.
-	 */
-	protected abstract Function<String, V> getValueParser();
-	
-	/**
-	 * Add a value to the map list.
-	 *
-	 * @param key   The key to add into.
-	 * @param value The value to add at the key.
-	 */
-	public void addValue(final K key, final V value){
-		Settings.mapListValue(this.guild, this, key, value);
-	}
-	
-	/**
-	 * Get the map of this configuration.
-	 *
-	 * @return The map.
-	 *
-	 * @throws IllegalArgumentException If this configuration isn't a map.
-	 */
-	public Map<K, ArrayList<V>> getAsMap() throws IllegalArgumentException{
-		final Map<K, ArrayList<V>> elements = new HashMap<>();
-		final var map = getObjectMap();
-		if(Objects.isNull(map)){
-			Settings.resetMap(this.guild, this);
-		}
-		else{
-			for(final var key : map.keySet()){
-				final var kKey = getKeyParser().apply(key);
-				if(!elements.containsKey(kKey)){
-					elements.put(kKey, new ArrayList<>());
-				}
-				final var value = map.optJSONArray(key);
-				if(Objects.nonNull(value)){
-					value.toList().stream().map(val -> getValueParser().apply(val.toString())).forEach(o -> elements.get(kKey).add(o));
-				}
-			}
-		}
-		return elements;
-	}
-	
-	/**
-	 * Get the JSON Object.
-	 *
-	 * @return The JSON object.
-	 *
-	 * @throws IllegalArgumentException If this configuration isn't a map.
-	 */
-	private JSONObject getObjectMap() throws IllegalArgumentException{
-		if(!Objects.equals(getType(), ConfigType.MAP)){
-			throw new IllegalArgumentException("Not a map config");
-		}
-		return Settings.getJSONObject(this.guild, getName());
 	}
 	
 	/**
@@ -132,15 +127,28 @@ public abstract class MapListConfiguration<K, V> extends Configuration{
 	 *
 	 * @return The matcher.
 	 */
+	@Nonnull
 	protected BiFunction<Object, V, Boolean> getMatcher(){
 		return Objects::equals;
 	}
 	
+	/**
+	 * Add a value to the map list.
+	 *
+	 * @param key   The key to add into.
+	 * @param value The value to add at the key.
+	 */
+	public void addValue(@Nonnull final K key, @Nullable final V value){
+		Settings.mapListValue(this.guild, this, key, value);
+	}
+	
+	@Nonnull
 	@Override
 	public Collection<ConfigurationCommand.ChangeConfigType> getAllowedActions(){
 		return Set.of(ADD, REMOVE, SHOW);
 	}
 	
+	@Nonnull
 	@Override
 	public ConfigType getType(){
 		return ConfigType.MAP;

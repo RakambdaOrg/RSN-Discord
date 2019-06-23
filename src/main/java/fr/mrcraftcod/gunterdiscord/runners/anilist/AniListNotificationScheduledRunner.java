@@ -7,6 +7,7 @@ import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListNotificationsPag
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -21,7 +22,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 public class AniListNotificationScheduledRunner implements AniListRunner<AniListAiringNotification, AniListNotificationsPagedQuery>, ScheduledRunner{
 	private final JDA jda;
 	
-	public AniListNotificationScheduledRunner(final JDA jda){
+	public AniListNotificationScheduledRunner(@Nonnull final JDA jda){
 		getLogger(null).info("Creating AniList {} runner", getRunnerName());
 		this.jda = jda;
 	}
@@ -37,42 +38,7 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 	}
 	
 	@Override
-	public TimeUnit getPeriodUnit(){
-		return TimeUnit.MINUTES;
-	}
-	
-	@Override
-	public long getDelay(){
-		return 1;
-	}
-	
-	@Override
-	public String getRunnerName(){
-		return "notification";
-	}
-	
-	@Override
-	public JDA getJDA(){
-		return this.jda;
-	}
-	
-	@Override
-	public AniListNotificationsPagedQuery initQuery(final Map<String, String> userInfo){
-		return new AniListNotificationsPagedQuery(Integer.parseInt(userInfo.get("userId")), Optional.ofNullable(userInfo.getOrDefault("lastFetch" + getFetcherID(), null)).map(Integer::parseInt).orElse(0));
-	}
-	
-	@Override
-	public boolean keepOnlyNew(){
-		return true;
-	}
-	
-	@Override
-	public String getFetcherID(){
-		return "notification";
-	}
-	
-	@Override
-	public void sendMessages(final List<TextChannel> channels, final Map<User, List<AniListAiringNotification>> userElements){
+	public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<AniListAiringNotification>> userElements){
 		final var notifications = new HashMap<AniListAiringNotification, List<User>>();
 		for(final var user : userElements.keySet()){
 			for(final var notification : userElements.get(user)){
@@ -87,5 +53,45 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 				Actions.sendMessage(channel, buildMessage(null, e.getKey()));
 			}
 		}));
+	}
+	
+	@Override
+	public long getDelay(){
+		return 1;
+	}
+	
+	@Nonnull
+	@Override
+	public String getRunnerName(){
+		return "notification";
+	}
+	
+	@Nonnull
+	@Override
+	public JDA getJDA(){
+		return this.jda;
+	}
+	
+	@Nonnull
+	@Override
+	public AniListNotificationsPagedQuery initQuery(@Nonnull final Map<String, String> userInfo){
+		return new AniListNotificationsPagedQuery(Integer.parseInt(userInfo.get("userId")), Optional.ofNullable(userInfo.getOrDefault("lastFetch" + getFetcherID(), null)).map(Integer::parseInt).orElse(0));
+	}
+	
+	@Override
+	public boolean keepOnlyNew(){
+		return true;
+	}
+	
+	@Nonnull
+	@Override
+	public String getFetcherID(){
+		return "notification";
+	}
+	
+	@Nonnull
+	@Override
+	public TimeUnit getPeriodUnit(){
+		return TimeUnit.MINUTES;
 	}
 }

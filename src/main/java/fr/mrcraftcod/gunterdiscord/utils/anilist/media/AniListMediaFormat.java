@@ -3,6 +3,8 @@ package fr.mrcraftcod.gunterdiscord.utils.anilist.media;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -21,12 +23,13 @@ public enum AniListMediaFormat{TV("TV"), TV_SHORT("TV Short"), MOVIE("Movie"), S
 		this(null);
 	}
 	
-	AniListMediaFormat(final String display){
+	AniListMediaFormat(@Nullable final String display){
 		this.display = display;
 	}
 	
 	@JsonCreator
-	public static AniListMediaFormat getFromString(final String value){
+	@Nonnull
+	public static AniListMediaFormat getFromString(@Nonnull final String value){
 		return AniListMediaFormat.valueOf(value);
 	}
 	

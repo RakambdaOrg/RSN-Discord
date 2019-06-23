@@ -14,7 +14,8 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.time.Duration;
 import java.util.LinkedList;
@@ -33,17 +34,19 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	NowPlayingMusicCommand(final Command parent){
+	NowPlayingMusicCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 	}
 	
+	@SuppressWarnings("DuplicatedCode")
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, "Currently playing");
 		GunterAudioManager.currentTrack(event.getGuild()).ifPresentOrElse(track -> {
@@ -57,11 +60,11 @@ public class NowPlayingMusicCommand extends BasicCommand{
 			builder.setColor(Color.RED);
 			builder.setDescription("No music are currently playing");
 		});
-		
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	private String buildBar(double current, final double total){
 		final var charCount = 10;
 		if(current > total){
@@ -81,6 +84,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	 *
 	 * @return A readable version of this duration.
 	 */
+	@Nonnull
 	static String getDuration(final long time){
 		final var duration = Duration.ofMillis(time);
 		if(duration.toHoursPart() > 0){
@@ -89,22 +93,26 @@ public class NowPlayingMusicCommand extends BasicCommand{
 		return String.format("%02d:%02d", duration.toMinutesPart(), duration.toSecondsPart());
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Now playing";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		//noinspection SpellCheckingInspection
 		return List.of("nowplaying", "np");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Get information about the current music";

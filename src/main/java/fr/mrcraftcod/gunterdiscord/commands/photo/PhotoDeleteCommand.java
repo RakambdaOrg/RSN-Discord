@@ -12,7 +12,8 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -29,19 +30,20 @@ public class PhotoDeleteCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	PhotoDeleteCommand(final Command parent){
+	PhotoDeleteCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("User", "The user that will have its picture deleted (default: @me)", false);
 		builder.addField("ID", "The ID of the picture to delete (if none is provided, every picture will be deleted)", false);
 	}
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		Actions.deleteMessage(event.getMessage());
 		super.execute(event, args);
 		if(!args.isEmpty()){
@@ -54,12 +56,11 @@ public class PhotoDeleteCommand extends BasicCommand{
 			else{
 				user = event.getAuthor();
 			}
-			
 			if(!Objects.equals(user, event.getAuthor())){
 				if(Utilities.isModerator(event.getMember()) || Utilities.isAdmin(event.getMember())){
 					new PhotoConfig(event.getGuild()).deleteKeyValue(user.getIdLong(), args.poll());
 					if(new PhotoConfig(event.getGuild()).getValue(user.getIdLong()).isEmpty()){
-						Actions.removeRole(user, new TrombinoscopeRoleConfig(event.getGuild()).getObject());
+						new TrombinoscopeRoleConfig(event.getGuild()).getObject().ifPresent(role -> Actions.removeRole(user, role));
 					}
 					Actions.replyPrivate(event.getGuild(), event.getAuthor(), "%s's pictures deleted", user.getAsMention());
 				}
@@ -70,39 +71,44 @@ public class PhotoDeleteCommand extends BasicCommand{
 			else{
 				new PhotoConfig(event.getGuild()).deleteKeyValue(user.getIdLong(), args.poll());
 				if(new PhotoConfig(event.getGuild()).getValue(user.getIdLong()).isEmpty()){
-					Actions.removeRole(user, new TrombinoscopeRoleConfig(event.getGuild()).getObject());
+					new TrombinoscopeRoleConfig(event.getGuild()).getObject().ifPresent(role -> Actions.removeRole(user, role));
 				}
 				Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Picture deleted");
 			}
 		}
 		else{
 			new PhotoConfig(event.getGuild()).deleteKey(event.getAuthor().getIdLong());
-			Actions.removeRole(event.getAuthor(), new TrombinoscopeRoleConfig(event.getGuild()).getObject());
+			new TrombinoscopeRoleConfig(event.getGuild()).getObject().ifPresent(role -> Actions.removeRole(event.getAuthor(), role));
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Pictures deleted");
 		}
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [@user] [ID]";
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "Delete picture";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("del", "d", "rm", "s");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Deletes pictures from the trombinoscope";

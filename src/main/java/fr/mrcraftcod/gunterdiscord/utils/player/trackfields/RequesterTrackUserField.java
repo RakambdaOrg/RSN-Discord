@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.utils.player.trackfields;
 
 import net.dv8tion.jda.api.entities.User;
+import javax.annotation.Nonnull;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 19/08/2018.
@@ -10,6 +11,7 @@ import net.dv8tion.jda.api.entities.User;
  */
 public class RequesterTrackUserField implements AudioTrackUserFields<User>{
 	@Override
+	@Nonnull
 	public String getName(){
 		return "requester";
 	}

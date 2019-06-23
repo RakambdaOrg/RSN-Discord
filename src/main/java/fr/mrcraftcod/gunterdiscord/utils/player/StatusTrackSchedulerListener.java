@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.utils.player;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import javax.annotation.Nonnull;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -19,12 +20,12 @@ public interface StatusTrackSchedulerListener{
 	 *
 	 * @param track The track that ended.
 	 */
-	void onTrackEnd(AudioTrack track);
+	void onTrackEnd(@Nonnull AudioTrack track);
 	
 	/**
 	 * Called when a track starts.
 	 *
 	 * @param track The track that started.
 	 */
-	void onTrackStart(AudioTrack track);
+	void onTrackStart(@Nonnull AudioTrack track);
 }

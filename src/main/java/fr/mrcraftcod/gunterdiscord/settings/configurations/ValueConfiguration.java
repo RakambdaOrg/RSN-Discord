@@ -8,12 +8,10 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.Color;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import static fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand.ChangeConfigType.SET;
@@ -31,12 +29,13 @@ public abstract class ValueConfiguration<T> extends Configuration{
 	 *
 	 * @param guild The guild for this config.
 	 */
-	ValueConfiguration(final Guild guild){
+	ValueConfiguration(@Nullable final Guild guild){
 		super(guild);
 	}
 	
+	@Nonnull
 	@Override
-	public ConfigurationCommand.ActionResult handleChange(final GuildMessageReceivedEvent event, final ConfigurationCommand.ChangeConfigType action, final LinkedList<String> args) throws NoValueDefinedException{
+	public ConfigurationCommand.ActionResult handleChange(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final ConfigurationCommand.ChangeConfigType action, @Nonnull final LinkedList<String> args) throws NoValueDefinedException{
 		if(Objects.equals(action, SHOW)){
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
@@ -62,17 +61,13 @@ public abstract class ValueConfiguration<T> extends Configuration{
 	 * @return The object or null if not found.
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a value.
-	 * @throws NoValueDefinedException  If no value is set.
 	 */
-	public T getObject() throws IllegalArgumentException, NoValueDefinedException{
+	@Nonnull
+	public Optional<T> getObject() throws IllegalArgumentException{
 		if(!Objects.equals(getType(), ConfigType.VALUE)){
 			throw new IllegalArgumentException("Not a value config");
 		}
-		final var obj = Settings.getObject(this.guild, getName());
-		if(Objects.isNull(obj)){
-			throw new NoValueDefinedException(this);
-		}
-		return getConfigParser().apply(obj.toString());
+		return Settings.getObject(this.guild, getName()).map(object -> getConfigParser().apply(object.toString()));
 	}
 	
 	/**
@@ -80,7 +75,7 @@ public abstract class ValueConfiguration<T> extends Configuration{
 	 *
 	 * @param value the value to set.
 	 */
-	private void setRawValue(final String value){
+	private void setRawValue(@Nullable final String value){
 		Settings.setValue(this.guild, this, value);
 	}
 	
@@ -89,6 +84,7 @@ public abstract class ValueConfiguration<T> extends Configuration{
 	 *
 	 * @return The parser.
 	 */
+	@Nonnull
 	protected abstract BiFunction<GuildMessageReceivedEvent, String, String> getMessageParser();
 	
 	/**
@@ -96,13 +92,16 @@ public abstract class ValueConfiguration<T> extends Configuration{
 	 *
 	 * @return The parser.
 	 */
+	@Nonnull
 	protected abstract Function<String, T> getConfigParser();
 	
+	@Nonnull
 	@Override
 	public Collection<ConfigurationCommand.ChangeConfigType> getAllowedActions(){
 		return Set.of(SET, SHOW);
 	}
 	
+	@Nonnull
 	@Override
 	public ConfigType getType(){
 		return ConfigType.VALUE;
@@ -117,13 +116,9 @@ public abstract class ValueConfiguration<T> extends Configuration{
 	 *
 	 * @throws IllegalArgumentException If this configuration isn't a value.
 	 */
-	public T getObject(final T defaultValue) throws IllegalArgumentException{
-		try{
-			return getObject();
-		}
-		catch(final NoValueDefinedException e){
-			return defaultValue;
-		}
+	@Nullable
+	public T getObject(@Nullable final T defaultValue) throws IllegalArgumentException{
+		return getObject().orElse(defaultValue);
 	}
 	
 	/**
@@ -131,7 +126,7 @@ public abstract class ValueConfiguration<T> extends Configuration{
 	 *
 	 * @param value the value to set.
 	 */
-	public void setValue(@NotNull final T value){
+	public void setValue(@Nullable final T value){
 		setRawValue(getValueParser().apply(value));
 	}
 	
@@ -140,5 +135,6 @@ public abstract class ValueConfiguration<T> extends Configuration{
 	 *
 	 * @return The parser.
 	 */
+	@Nonnull
 	protected abstract Function<T, String> getValueParser();
 }

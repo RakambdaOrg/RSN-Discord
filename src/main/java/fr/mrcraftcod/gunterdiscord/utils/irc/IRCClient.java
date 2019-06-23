@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord.utils.irc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.annotation.Nonnull;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -28,7 +29,7 @@ public class IRCClient implements Closeable{
 	private final List<IRCListener> listeners;
 	private IRCReaderThread ircReader;
 	
-	public IRCClient(final String host, final int port){
+	public IRCClient(@Nonnull final String host, final int port){
 		this.host = host;
 		this.port = port;
 		this.pass = null;
@@ -50,7 +51,7 @@ public class IRCClient implements Closeable{
 		LOGGER.info("IRC connection initialized with {}:{}", this.host, this.port);
 	}
 	
-	public void joinChannel(final String channel){
+	public void joinChannel(@Nonnull final String channel){
 		if(isConnected()){
 			sendMessage(String.format("JOIN %s", channel));
 			this.joinedChannels.add(channel);
@@ -79,15 +80,15 @@ public class IRCClient implements Closeable{
 		return this.connected;
 	}
 	
-	public void sendMessage(final String message){
+	public void sendMessage(@Nonnull final String message){
 		this.socketWriter.println(message);
 	}
 	
-	public void addEventListener(final IRCListener ircListener){
+	public void addEventListener(@Nonnull final IRCListener ircListener){
 		this.listeners.add(ircListener);
 	}
 	
-	public void leaveChannel(final String channel){
+	public void leaveChannel(@Nonnull final String channel){
 		if(isConnected()){
 			sendMessage(String.format("PART %s", channel));
 			this.joinedChannels.remove(channel);
@@ -98,15 +99,17 @@ public class IRCClient implements Closeable{
 		}
 	}
 	
+	@Nonnull
 	public Set<String> getJoinedChannels(){
 		return this.joinedChannels;
 	}
 	
+	@Nonnull
 	public List<IRCListener> getListeners(){
 		return this.listeners;
 	}
 	
-	public void setNick(final String nickname){
+	public void setNick(@Nonnull final String nickname){
 		if(isConnected()){
 			sendMessage(String.format("NICK %s", nickname));
 			LOGGER.info("Set nick to {} on {}:{}", nickname, this.host, this.port);
@@ -116,7 +119,7 @@ public class IRCClient implements Closeable{
 		}
 	}
 	
-	public void setSecureKeyPassword(final String pass){
+	public void setSecureKeyPassword(@Nonnull final String pass){
 		this.pass = pass;
 	}
 }

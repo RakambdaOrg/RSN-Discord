@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,42 +25,45 @@ import java.util.Objects;
  */
 public class YoutubeCommand extends BasicCommand{
 	@Override
-	public void addHelp(@NotNull final Guild guild, @NotNull final EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("User", "The user to get the channel", false);
 		builder.addField("URL", "The URL to the user's channel", false);
 	}
 	
+	@Nonnull
 	@Override
-	public CommandResult execute(final GuildMessageReceivedEvent event, @NotNull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(!event.getMessage().getMentionedMembers().isEmpty()){
 			args.poll();
 			final var member = event.getMessage().getMentionedMembers().get(0);
-			if(Utilities.hasRole(member, new YoutubeRoleConfig(event.getGuild()).getObject())){
-				final var strUrl = args.poll();
-				if(Objects.nonNull(strUrl)){
-					if(Utilities.isAdmin(event.getMember())){
-						try{
-							final var url = new URL(strUrl);
-							new YoutubeChannelConfig(event.getGuild()).addValue(member.getUser().getIdLong(), url.toString());
+			new YoutubeRoleConfig(event.getGuild()).getObject().ifPresent(role -> {
+				if(Utilities.hasRole(member, role)){
+					final var strUrl = args.poll();
+					if(Objects.nonNull(strUrl)){
+						if(Utilities.isAdmin(event.getMember())){
+							try{
+								final var url = new URL(strUrl);
+								new YoutubeChannelConfig(event.getGuild()).addValue(member.getUser().getIdLong(), url.toString());
+							}
+							catch(final Exception e){
+								Log.getLogger(event.getGuild()).warn("Provided YouTube link isn't valid {}", strUrl);
+								Actions.reply(event, "Invalid link");
+							}
 						}
-						catch(final Exception e){
-							Log.getLogger(event.getGuild()).warn("Provided YouTube link isn't valid {}", strUrl);
-							Actions.reply(event, "Invalid link");
+						else{
+							Actions.reply(event, "You can't modify the link to a user's channel");
 						}
 					}
 					else{
-						Actions.reply(event, "You can't modify the link to a user's channel");
+						Actions.reply(event, "%s's channel is available at %s", member.getAsMention(), new YoutubeChannelConfig(event.getGuild()).getValue(member.getUser().getIdLong()));
 					}
 				}
 				else{
-					Actions.reply(event, "%s's channel is available at %s", member.getAsMention(), new YoutubeChannelConfig(event.getGuild()).getValue(member.getUser().getIdLong()));
+					Actions.reply(event, "This user isn't a content creator");
 				}
-			}
-			else{
-				Actions.reply(event, "This user isn't a content creator");
-			}
+			});
 		}
 		else{
 			Actions.reply(event, "Please mention a user");
@@ -68,26 +71,31 @@ public class YoutubeCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
+	@Nonnull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <@user> [URL]";
 	}
 	
+	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
 	
+	@Nonnull
 	@Override
 	public String getName(){
 		return "YouTube";
 	}
 	
+	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("youtube", "yt");
 	}
 	
+	@Nonnull
 	@Override
 	public String getDescription(){
 		return "Gets the link to a content creator's page";
