@@ -3,9 +3,7 @@ package fr.mrcraftcod.gunterdiscord.settings.newConfigs;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fr.mrcraftcod.gunterdiscord.settings.configs.AniListAccessTokenConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.AniListChannelConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.AniListCodeConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.*;
 import fr.mrcraftcod.gunterdiscord.settings.newConfigs.anilist.AnilistAccessTokenConfiguration;
 import net.dv8tion.jda.api.entities.Guild;
 import javax.annotation.Nonnull;
@@ -20,7 +18,7 @@ import java.util.*;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AnilistConfiguration{
+public class AnilistConfiguration implements NewConfiguration{
 	@JsonProperty("accessToken")
 	private List<AnilistAccessTokenConfiguration> tokens = new ArrayList<>();
 	@JsonProperty("notificationsChannel")
@@ -29,27 +27,33 @@ public class AnilistConfiguration{
 	private Map<Long, String> refreshTokens = new HashMap<>();
 	@JsonProperty("lastAccess")
 	private Map<String, List<UserDateConfiguration>> lastAccess = new HashMap<>();
+	@JsonProperty("thaChannel")
+	private ChannelConfiguration thaChannel;
+	@JsonProperty("thaUser")
+	private UserConfiguration thaUser;
 	
-	public void mapOldConf(@Nonnull Guild guild){
+	public void mapOldConf(@Nonnull final Guild guild){
 		new AniListAccessTokenConfig(guild).getAsMap().ifPresent(map -> map.forEach((user, tokens) -> tokens.forEach((date, token) -> AnilistConfiguration.this.tokens.add(new AnilistAccessTokenConfiguration(user, new Date(date), token)))));
 		new AniListChannelConfig(guild).getObject().ifPresent(channel -> this.notificationsChannel = new ChannelConfiguration(channel));
-		new AniListCodeConfig(guild).getAsMap().ifPresent(map -> map.forEach((user, token) -> refreshTokens.put(user, token)));
+		new AniListCodeConfig(guild).getAsMap().ifPresent(map -> map.forEach((user, token) -> this.refreshTokens.put(user, token)));
+		new AnilistThaChannelConfig(guild).getObject().ifPresent(channel -> this.thaChannel = new ChannelConfiguration(channel));
+		new AnilistThaUserConfig(guild).getObject().ifPresent(user -> this.thaUser = new UserConfiguration(user.getUser().getIdLong()));
 	}
 	
 	@Nonnull
-	public Optional<String> getRefreshToken(long userId){
+	public Optional<String> getRefreshToken(final long userId){
 		return Optional.ofNullable(this.refreshTokens.getOrDefault(userId, null));
 	}
 	
-	public void setRefreshToken(long userId, @Nonnull String refreshToken){
+	public void setRefreshToken(final long userId, @Nonnull final String refreshToken){
 		this.refreshTokens.put(userId, refreshToken);
 	}
 	
-	public Optional<UserDateConfiguration> getLastAccess(@Nonnull String section, long userId){
+	public Optional<UserDateConfiguration> getLastAccess(@Nonnull final String section, final long userId){
 		return getLastAccess(section).stream().filter(lastAccess -> Objects.equals(lastAccess.getUserId(), userId)).findAny();
 	}
 	
-	public List<UserDateConfiguration> getLastAccess(@Nonnull String section){
+	public List<UserDateConfiguration> getLastAccess(@Nonnull final String section){
 		return Optional.ofNullable(this.lastAccess.get(section)).orElse(List.of());
 	}
 	
@@ -58,7 +62,25 @@ public class AnilistConfiguration{
 		return Optional.ofNullable(this.notificationsChannel);
 	}
 	
-	public void setNotificationsChannel(@Nullable ChannelConfiguration channel){
+	@Nonnull
+	public Optional<ChannelConfiguration> getThaChannel(){
+		return Optional.ofNullable(this.thaChannel);
+	}
+	
+	public void setThaChannel(@Nonnull final ChannelConfiguration channel){
+		this.thaChannel = channel;
+	}
+	
+	@Nonnull
+	public Optional<UserConfiguration> getThaUser(){
+		return Optional.ofNullable(this.thaUser);
+	}
+	
+	public void setThaUser(@Nonnull final UserConfiguration user){
+		this.thaUser = user;
+	}
+	
+	public void setNotificationsChannel(@Nullable final ChannelConfiguration channel){
 		this.notificationsChannel = channel;
 	}
 }

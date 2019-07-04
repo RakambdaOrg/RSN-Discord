@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.settings.newConfigs.AnilistConfiguration;
+import java.util.Objects;
 
 /**
  * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-06-23.
@@ -20,13 +21,13 @@ public class GuildConfiguration{
 	@JsonProperty("anilist")
 	private AnilistConfiguration anilistConfiguration = new AnilistConfiguration();
 	
-	GuildConfiguration(long guildId){
+	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
 	}
 	
 	public GuildConfiguration mapOldConf(){
 		final var guild = Main.getJDA().getGuildById(this.guildId);
-		anilistConfiguration.mapOldConf(guild);
+		this.anilistConfiguration.mapOldConf(Objects.requireNonNull(guild));
 		return this;
 	}
 }

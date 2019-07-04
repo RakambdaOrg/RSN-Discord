@@ -16,24 +16,24 @@ import java.util.Optional;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ChannelConfiguration{
+public class ChannelConfiguration implements NewConfiguration{
 	@JsonProperty("channelId")
 	private long channelId;
 	
-	public ChannelConfiguration(@Nonnull TextChannel channel){
+	ChannelConfiguration(@Nonnull final TextChannel channel){
 		this(channel.getIdLong());
 	}
 	
-	public ChannelConfiguration(long channelId){
+	private ChannelConfiguration(final long channelId){
 		this.channelId = channelId;
 	}
 	
 	@Nonnull
 	public Optional<TextChannel> getChannel(){
-		return Optional.ofNullable(Main.getJDA().getTextChannelById(channelId));
+		return Optional.ofNullable(Main.getJDA().getTextChannelById(this.channelId));
 	}
 	
 	public long getChannelId(){
-		return channelId;
+		return this.channelId;
 	}
 }

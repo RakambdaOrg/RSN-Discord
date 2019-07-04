@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.settings;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -21,24 +22,24 @@ import java.util.Optional;
  * @author Thomas Couchoud
  * @since 2019-06-23
  */
-public class NewSettings implements AutoCloseable{
-	private static final ObjectReader objectReader = new ObjectMapper().readerFor(GuildConfiguration.class);
-	private static final ObjectWriter objectWriter = new ObjectMapper().writerFor(GuildConfiguration.class);
+public class NewSettings{
+	private static final ObjectReader objectReader;
+	private static final ObjectWriter objectWriter;
 	private static final Map<Long, GuildConfiguration> configurations = new HashMap<>();
 	
 	@Nonnull
-	public static GuildConfiguration getConfiguration(@Nonnull Guild guild){
+	public static GuildConfiguration getConfiguration(@Nonnull final Guild guild){
 		return configurations.computeIfAbsent(guild.getIdLong(), guildId -> loadConfiguration(guildId).orElse(new GuildConfiguration(guildId)));
 	}
-	
+
 	@Nonnull
-	private static Optional<GuildConfiguration> loadConfiguration(long guildId){
+	private static Optional<GuildConfiguration> loadConfiguration(final long guildId){
 		final var guildConfPath = getConfigPath(guildId);
 		if(guildConfPath.toFile().exists()){
-			try(FileInputStream fis = new FileInputStream(guildConfPath.toFile())){
+			try(final var fis = new FileInputStream(guildConfPath.toFile())){
 				return Optional.ofNullable(objectReader.readValue(fis));
 			}
-			catch(IOException e){
+			catch(final IOException e){
 				Log.getLogger(guildId).error("Failed to read settings in {}", guildConfPath, e);
 			}
 		}
@@ -46,23 +47,30 @@ public class NewSettings implements AutoCloseable{
 	}
 	
 	@Nonnull
-	private static Path getConfigPath(long guildId){
+	private static Path getConfigPath(final long guildId){
 		return Paths.get("settings", guildId + ".json");
 	}
 	
-	@Override
-	public void close(){
-		configurations.forEach(this::saveConfiguration);
+	public static void close(){
+		configurations.forEach(NewSettings::saveConfiguration);
 	}
 	
-	private void saveConfiguration(Long guildId, GuildConfiguration value){
+	private static void saveConfiguration(final long guildId, @Nonnull final GuildConfiguration value){
 		final var guildConfPath = getConfigPath(guildId);
+		guildConfPath.getParent().toFile().mkdirs();
 		try{
 			objectWriter.writeValue(guildConfPath.toFile(), value);
 			Log.getLogger(guildId).info("Wrote settings to {}", guildConfPath);
 		}
-		catch(IOException e){
+		catch(final IOException e){
 			Log.getLogger(guildId).error("Failed to write settings to {}", guildConfPath, e);
 		}
+	}
+	
+	static{
+		final var mapper = new ObjectMapper();
+		mapper.setVisibilityChecker(mapper.getSerializationConfig().getDefaultVisibilityChecker().withFieldVisibility(JsonAutoDetect.Visibility.ANY).withGetterVisibility(JsonAutoDetect.Visibility.NONE).withSetterVisibility(JsonAutoDetect.Visibility.NONE).withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
+		objectReader = mapper.readerFor(GuildConfiguration.class);
+		objectWriter = mapper.writerFor(GuildConfiguration.class);
 	}
 }

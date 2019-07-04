@@ -10,6 +10,7 @@ import fr.mrcraftcod.gunterdiscord.runners.RemoveRolesScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.SaveConfigScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListMediaUserListScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListNotificationScheduledRunner;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.irc.TwitchIRC;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
@@ -31,6 +32,7 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -92,6 +94,7 @@ public class Main{
 			Log.setJDA(jda);
 			jda.awaitReady();
 			jda.getPresence().setActivity(Activity.playing("g?help for the help"));
+			final var configs = jda.getGuilds().stream().map(NewSettings::getConfiguration).collect(Collectors.toList());
 			
 			LOGGER.info("Creating runners");
 			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaUserListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda));
@@ -137,6 +140,7 @@ public class Main{
 		
 		try{
 			Settings.save();
+			NewSettings.close();
 		}
 		catch(final IOException e){
 			Log.getLogger(null).error("Error saving configuration", e);
