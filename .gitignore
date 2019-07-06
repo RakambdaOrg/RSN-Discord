@@ -3,10 +3,11 @@ GunterDiscord.iml
 target
 
 pictures/
+settings/
 log/*
 logs/*
 
 /settings.json
 /questions.csv
 /settings2.json
-/config.properties
+/*.properties
