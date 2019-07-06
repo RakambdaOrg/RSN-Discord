@@ -68,8 +68,8 @@ public abstract class AniListMedia implements AniListObject{
 		if(getType().shouldDisplay()){
 			builder.addField("Type", getType().toString(), true);
 		}
-		builder.addField("Format", Optional.ofNullable(getFormat()).map(Enum::toString).orElse("UNKNOWN"), true);
-		builder.addField("Status", Optional.ofNullable(getStatus()).map(Enum::toString).orElse("UNKNOWN"), true);
+		builder.addField("Format", Optional.of(getFormat()).map(Enum::toString).orElse("UNKNOWN"), true);
+		builder.addField("Status", Optional.of(getStatus()).map(Enum::toString).orElse("UNKNOWN"), true);
 		if(isAdult()){
 			builder.addField("Adult content", "", true);
 		}
