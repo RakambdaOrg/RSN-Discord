@@ -5,13 +5,12 @@ import com.beust.jcommander.ParameterException;
 import fr.mrcraftcod.gunterdiscord.listeners.*;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
 import fr.mrcraftcod.gunterdiscord.listeners.reply.ReplyMessageListener;
-import fr.mrcraftcod.gunterdiscord.newSettings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.runners.DisplayDailyStatsScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.RemoveRolesScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.SaveConfigScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListMediaUserListScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListNotificationScheduledRunner;
-import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.irc.TwitchIRC;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
@@ -25,14 +24,12 @@ import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -78,7 +75,6 @@ public class Main{
 		}
 		
 		try{
-			Settings.init(Paths.get(parameters.getSettingsFile().toURI()));
 			LOGGER.info("Building JDA");
 			final var jdaBuilder = new JDABuilder(AccountType.BOT).setToken(System.getProperty("RSN_TOKEN"));
 			jdaBuilder.addEventListeners(new CommandsMessageListener());
@@ -94,7 +90,6 @@ public class Main{
 			Log.setJDA(jda);
 			jda.awaitReady();
 			jda.getPresence().setActivity(Activity.playing("g?help for the help"));
-			final var configs = jda.getGuilds().stream().map(NewSettings::getConfiguration).collect(Collectors.toList());
 			
 			LOGGER.info("Creating runners");
 			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaUserListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda));
@@ -103,23 +98,13 @@ public class Main{
 			}
 			LOGGER.info("Started");
 		}
-		catch(final IOException e){
-			getLogger(null).error("Couldn't load settings", e);
-		}
 		catch(final LoginException | InterruptedException e){
 			getLogger(null).error("Couldn't start bot", e);
 		}
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			LOGGER.info("Shutdown hook triggered");
-			try{
-				Settings.save();
-				NewSettings.close();
-			}
-			catch(final IOException e){
-				getLogger(null).error("Error saving settings", e);
-			}
-			Settings.close();
+			NewSettings.close();
 		}));
 		LOGGER.info("Shutdown hook registered");
 		
@@ -138,15 +123,7 @@ public class Main{
 		
 		executorService.shutdownNow();
 		consoleHandler.close();
-		
-		try{
-			Settings.save();
-			NewSettings.close();
-		}
-		catch(final IOException e){
-			Log.getLogger(null).error("Error saving configuration", e);
-		}
-		Settings.close();
+		NewSettings.close();
 	}
 	
 	@Nonnull

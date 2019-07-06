@@ -22,7 +22,7 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 	private final Date date;
 	private int nextPage = 0;
 	
-	public AniListNotificationsPagedQuery(final int userId, final int date){
+	public AniListNotificationsPagedQuery(final int userId, final long date){
 		this.date = new Date(date * 1000L);
 		this.variables = new JSONObject();
 		this.variables.put("userID", userId);

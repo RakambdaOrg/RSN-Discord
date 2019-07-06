@@ -1,7 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
-import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.TwitchIRCChannelConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.irc.events.*;
 import net.dv8tion.jda.api.entities.Guild;
@@ -16,13 +15,12 @@ public class TwitchIRCListener extends AbstractIRCListener{
 	private final TextChannel channel;
 	private long lastMessage;
 	
-	TwitchIRCListener(@Nonnull final Guild guild, @Nonnull final String user, @Nonnull final String channel) throws NoValueDefinedException{
+	TwitchIRCListener(@Nonnull final Guild guild, @Nonnull final String user, @Nonnull final String channel){
 		this.guild = guild;
 		this.user = user;
 		this.ircChannel = channel;
 		this.lastMessage = System.currentTimeMillis();
-		final var config = new TwitchIRCChannelConfig(this.getGuild());
-		this.channel = config.getObject().orElseThrow(() -> new NoValueDefinedException(config));
+		this.channel = NewSettings.getConfiguration(guild).getTwitchChannel().orElseThrow().getChannel().orElseThrow();
 	}
 	
 	@Override

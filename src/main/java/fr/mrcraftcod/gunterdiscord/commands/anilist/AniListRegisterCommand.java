@@ -3,14 +3,12 @@ package fr.mrcraftcod.gunterdiscord.commands.anilist;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.AniListLastAccessConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
@@ -27,7 +25,6 @@ import java.util.Optional;
  */
 public class AniListRegisterCommand extends BasicCommand{
 	public static final Logger LOGGER = LoggerFactory.getLogger(AniListRegisterCommand.class);
-	private static final String QUERY = "query{Viewer {id name}}";
 	
 	/**
 	 * Constructor.
@@ -56,8 +53,6 @@ public class AniListRegisterCommand extends BasicCommand{
 			Optional.ofNullable(event.getMember()).ifPresent(member -> {
 				try{
 					AniListUtils.generateToken(member, code);
-					final var userInfos = AniListUtils.getQuery(event.getMember(), QUERY, new JSONObject());
-					new AniListLastAccessConfig(event.getGuild()).addValue(event.getAuthor().getIdLong(), "userId", "" + userInfos.getJSONObject("data").getJSONObject("Viewer").getInt("id"));
 					Actions.reply(event, "API code saved");
 				}
 				catch(final Exception e){

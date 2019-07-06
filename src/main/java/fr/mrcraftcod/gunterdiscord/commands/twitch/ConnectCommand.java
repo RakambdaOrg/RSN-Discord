@@ -3,7 +3,6 @@ package fr.mrcraftcod.gunterdiscord.commands.twitch;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.irc.TwitchIRC;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -16,6 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -52,7 +52,7 @@ public class ConnectCommand extends BasicCommand{
 			try{
 				TwitchIRC.connect(event.getGuild(), args.pop());
 			}
-			catch(final NoValueDefinedException e){
+			catch(final NoSuchElementException e){
 				Actions.reply(event, "Server needs to be configured to use this feature");
 				LOGGER.warn("Missing configuration for IRC", e);
 			}

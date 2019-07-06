@@ -3,9 +3,8 @@ package fr.mrcraftcod.gunterdiscord.commands.photo;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.PhotoChannelConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.PhotoConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.TrombinoscopeRoleConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.types.RoleConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -61,34 +60,34 @@ public class PhotoGetCommand extends BasicCommand{
 			user = event.getAuthor();
 		}
 		final var member = event.getGuild().getMember(user);
-		if(Objects.isNull(member) || !new TrombinoscopeRoleConfig(event.getGuild()).getObject().map(role -> Utilities.hasRole(member, role)).orElse(false)){
+		if(Objects.isNull(member) || NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).map(r -> Utilities.hasRole(member, r)).map(b -> !b).orElse(true)){
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
 			builder.setTitle("The user isn't part of the trombinoscope");
 			Actions.reply(event, builder.build());
 		}
-		else if(new PhotoChannelConfig(event.getGuild()).isChannel(event.getChannel())){
-			final var paths = new PhotoConfig(event.getGuild()).getValue(user.getIdLong());
-			if(paths.map(p -> !p.isEmpty()).orElse(false)){
+		else if(NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotoChannel().map(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong())).orElse(false)){
+			final var paths = NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotos(user);
+			if(!paths.isEmpty()){
 				var randomGen = true;
-				var rnd = ThreadLocalRandom.current().nextInt(paths.get().size());
+				var rnd = ThreadLocalRandom.current().nextInt(paths.size());
 				if(!args.isEmpty()){
 					try{
-						rnd = Math.max(0, Math.min(paths.get().size(), Integer.parseInt(args.pop())) - 1);
+						rnd = Math.max(0, Math.min(paths.size(), Integer.parseInt(args.pop())) - 1);
 						randomGen = false;
 					}
 					catch(final Exception e){
 						getLogger(event.getGuild()).warn("Provided photo index isn't an integer", e);
 					}
 				}
-				final var file = new File(paths.get().get(rnd));
+				final var file = new File(paths.get(rnd).getPhoto());
 				if(file.exists()){
 					final var ID = file.getName().substring(0, file.getName().lastIndexOf("."));
 					final var builder = new EmbedBuilder();
 					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 					builder.setColor(Color.GREEN);
-					builder.addField("Selection", String.format("%d/%d%s", rnd + 1, paths.get().size(), randomGen ? " random" : ""), true);
+					builder.addField("Selection", String.format("%d/%d%s", rnd + 1, paths.size(), randomGen ? " random" : ""), true);
 					builder.addField("User", user.getAsMention(), true);
 					builder.addField("ID", ID, true);
 					Actions.reply(event, builder.build());

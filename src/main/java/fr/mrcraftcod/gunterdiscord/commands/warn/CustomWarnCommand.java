@@ -24,8 +24,8 @@ public class CustomWarnCommand extends WarnCommand{
 	}
 	
 	@Override
-	protected double getTime(@Nonnull final Guild guild, @Nonnull final Message message, @Nonnull final LinkedList<String> args){
-		return Double.parseDouble(Objects.requireNonNull(args.poll()));
+	protected long getTime(@Nonnull final Guild guild, @Nonnull final Message message, @Nonnull final LinkedList<String> args){
+		return Long.parseLong(Objects.requireNonNull(args.poll()));
 	}
 	
 	@Nonnull

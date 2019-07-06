@@ -18,7 +18,7 @@ public class AniListListActivityPagedQuery implements AniListPagedQuery<AniListL
 	private final JSONObject variables;
 	private int nextPage = 0;
 	
-	public AniListListActivityPagedQuery(final int userId, final int date){
+	public AniListListActivityPagedQuery(final int userId, final long date){
 		this.variables = new JSONObject();
 		this.variables.put("userID", userId);
 		this.variables.put("page", 1);

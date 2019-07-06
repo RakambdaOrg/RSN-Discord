@@ -1,10 +1,14 @@
 package fr.mrcraftcod.gunterdiscord.runners.anilist;
 
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.types.UserDateConfiguration;
 import fr.mrcraftcod.gunterdiscord.runners.ScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListUtils;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.airing.AniListAiringNotification;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListNotificationsPagedQuery;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import javax.annotation.Nonnull;
@@ -74,8 +78,8 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 	
 	@Nonnull
 	@Override
-	public AniListNotificationsPagedQuery initQuery(@Nonnull final Map<String, String> userInfo){
-		return new AniListNotificationsPagedQuery(Integer.parseInt(userInfo.get("userId")), Optional.ofNullable(userInfo.getOrDefault("lastFetch" + getFetcherID(), null)).map(Integer::parseInt).orElse(0));
+	public AniListNotificationsPagedQuery initQuery(@Nonnull Member member){
+		return new AniListNotificationsPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess("lastFetch" + getFetcherID()).stream().filter(c -> Objects.equals(c.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).mapToLong(Date::getTime).map(l -> l / 1000L).findAny().orElse(0L));
 	}
 	
 	@Override

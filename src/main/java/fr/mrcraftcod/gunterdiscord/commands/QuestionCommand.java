@@ -2,7 +2,8 @@ package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.QuestionsChannelConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.types.ChannelConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -48,7 +49,7 @@ public class QuestionCommand extends BasicCommand{
 			builder.addField("ID", "" + ID, true);
 			builder.addField("User", event.getAuthor().getAsMention(), true);
 			builder.addField("Question", String.join(" ", args), false);
-			new QuestionsChannelConfig(event.getGuild()).getObject().ifPresentOrElse(channel -> {
+			NewSettings.getConfiguration(event.getGuild()).getQuestionsConfiguration().getInputChannel().flatMap(ChannelConfiguration::getChannel).ifPresentOrElse(channel -> {
 				final var message = Actions.getMessage(channel, builder.build());
 				message.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
 				message.addReaction(BasicEmotes.CROSS_NO.getValue()).queue();

@@ -1,11 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.commands.EmotesCommand;
-import fr.mrcraftcod.gunterdiscord.commands.TempParticipationCommand;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.EmotesParticipationConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.MembersParticipationConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.NoXPChannelsConfig;
-import net.dv8tion.jda.api.entities.Emote;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.guild.participation.EntityParticipation;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildMuteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -15,6 +11,7 @@ import net.dv8tion.jda.api.events.self.SelfUpdateNameEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import javax.annotation.Nonnull;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
@@ -59,30 +56,46 @@ public class LogListener extends ListenerAdapter{
 		try{
 			if(!event.getAuthor().equals(event.getJDA().getSelfUser())){
 				final var now = LocalDate.now();
-				if(!new NoXPChannelsConfig(event.getGuild()).getAsList().map(list -> list.contains(event.getChannel())).orElse(false)){
-					final var participation = new MembersParticipationConfig(event.getGuild());
-					participation.getAsMap().ifPresent(participationMap -> {
-						final var todayKey = TempParticipationCommand.DF.format(now);
-						if(participationMap.containsKey(todayKey)){
-							participation.addValue(todayKey, event.getAuthor().getIdLong(), participationMap.get(todayKey).getOrDefault(event.getAuthor().getIdLong(), 0L) + 1);
-						}
-						else{
-							participation.addValue(todayKey, event.getAuthor().getIdLong(), 1L);
-						}
+				if(NewSettings.getConfiguration(event.getGuild()).getNoXpChannels().stream().noneMatch(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong()))){
+					final var users = NewSettings.getConfiguration(event.getGuild()).getParticipationConfiguration().getUsers(now).orElseGet(() -> {
+						final var p = new EntityParticipation(now);
+						NewSettings.getConfiguration(event.getGuild()).getParticipationConfiguration().addEmoteParticipation(p);
+						return p;
 					});
+					users.increment(event.getAuthor().getIdLong());
 				}
-				final var emotes = new EmotesParticipationConfig(event.getGuild());
-				emotes.getAsMap().ifPresent(emotesMap -> {
-					final var weekKey = EmotesCommand.DF.format(now);
-					if(!emotesMap.containsKey(weekKey)){
-						emotes.addValue(weekKey);
-					}
-					event.getMessage().getEmotes().stream().map(Emote::getName).forEach(id -> emotes.addValue(weekKey, id, emotesMap.get(weekKey).getOrDefault(id, 0L) + 1));
+
+				final var weekKey = now.minusDays(getDaysToRemove(now.getDayOfWeek()));
+				final var emotes = NewSettings.getConfiguration(event.getGuild()).getParticipationConfiguration().getEmotes(weekKey).orElseGet(() -> {
+					final var p = new EntityParticipation(weekKey);
+					NewSettings.getConfiguration(event.getGuild()).getParticipationConfiguration().addEmoteParticipation(p);
+					return p;
 				});
+				event.getMessage().getEmotes().forEach(emote -> emotes.increment(emote.getIdLong()));
 			}
 		}
 		catch(final Exception e){
 			getLogger(event.getGuild()).error("", e);
+		}
+	}
+	
+	public static long getDaysToRemove(DayOfWeek dayOfWeek){
+		switch(dayOfWeek){
+			default:
+			case MONDAY:
+				return 0;
+			case TUESDAY:
+				return 1;
+			case WEDNESDAY:
+				return 2;
+			case THURSDAY:
+				return 3;
+			case FRIDAY:
+				return 4;
+			case SATURDAY:
+				return 5;
+			case SUNDAY:
+				return 6;
 		}
 	}
 	

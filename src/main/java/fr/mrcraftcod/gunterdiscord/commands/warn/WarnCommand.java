@@ -2,8 +2,8 @@ package fr.mrcraftcod.gunterdiscord.commands.warn;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.RemoveRoleConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.types.RemoveRoleConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
 import java.awt.Color;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -46,9 +47,9 @@ public abstract class WarnCommand extends BasicCommand{
 			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 			roleOptional.ifPresentOrElse(role -> {
 				Actions.giveRole(event.getGuild(), user, role);
-				new RemoveRoleConfig(event.getGuild()).addValue(user.getIdLong(), role.getIdLong(), (long) (System.currentTimeMillis() + duration * 24 * 60 * 60 * 1000L));
+				NewSettings.getConfiguration(event.getGuild()).removeRole(new RemoveRoleConfiguration(user, role, new Date(System.currentTimeMillis() + duration * 1000L)));
 				builder.setColor(Color.GREEN);
-				builder.addField("Congratulations", user.getAsMention() + " joined the role " + role.getAsMention() + " for " + duration + " day(s)", false);
+				builder.addField("Congratulations", user.getAsMention() + " joined the role " + role.getAsMention() + " for " + duration + " seconds(s)", false);
 				builder.addField("", "To know how your warn is doing, user the magic command: g?warninfo " + user.getAsMention(), false);
 				getLogger(event.getGuild()).info("{} warned {} for {} days with role {}", event.getAuthor(), user, duration, role);
 				if(!reason.isEmpty()){
@@ -80,7 +81,7 @@ public abstract class WarnCommand extends BasicCommand{
 	 * @return The config.
 	 */
 	@Nonnull
-	protected abstract Optional<Role> getRole(@Nonnull Guild guild, @Nonnull Message message, @Nonnull LinkedList<String> args) throws NoValueDefinedException;
+	protected abstract Optional<Role> getRole(@Nonnull Guild guild, @Nonnull Message message, @Nonnull LinkedList<String> args);
 	
 	/**
 	 * Get the configuration of the length for the role to be applied.
@@ -91,7 +92,7 @@ public abstract class WarnCommand extends BasicCommand{
 	 *
 	 * @return The config.
 	 */
-	protected abstract double getTime(@Nonnull Guild guild, @Nonnull Message message, @Nonnull LinkedList<String> args);
+	protected abstract long getTime(@Nonnull Guild guild, @Nonnull Message message, @Nonnull LinkedList<String> args);
 	
 	@Nonnull
 	@Override

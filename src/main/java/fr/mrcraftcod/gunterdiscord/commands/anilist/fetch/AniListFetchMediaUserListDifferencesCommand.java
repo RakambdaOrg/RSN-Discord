@@ -6,15 +6,13 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListRunner;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListUtils;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.list.AniListMediaUserList;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMediaType;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListMediaUserListPagedQuery;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.ChannelType;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import javax.annotation.Nonnull;
@@ -34,13 +32,13 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 		private final JDA jda;
 		private final AniListMediaType type;
 		
-		AniListMediaUserListDifferencesRunner( final JDA jda,  final AniListMediaType type){
+		AniListMediaUserListDifferencesRunner(final JDA jda, final AniListMediaType type){
 			this.jda = jda;
 			this.type = type;
 		}
 		
 		@Override
-		public void sendMessages( @Nonnull final List<TextChannel> channels,  @Nonnull final Map<User, List<AniListMediaUserList>> userMedias){
+		public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<AniListMediaUserList>> userMedias){
 			for(final var user : userMedias.keySet()){
 				userMedias.keySet().parallelStream().filter(user2 -> !Objects.equals(user, user2)).forEach(userCompare -> {
 					final var user1Iterator = userMedias.get(user).iterator();
@@ -74,8 +72,8 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 		
 		@Nonnull
 		@Override
-		public AniListMediaUserListPagedQuery initQuery( @Nonnull final Map<String, String> userInfo){
-			return new AniListMediaUserListPagedQuery(Integer.parseInt(userInfo.get("userId")));
+		public AniListMediaUserListPagedQuery initQuery(@Nonnull Member member){
+			return new AniListMediaUserListPagedQuery(AniListUtils.getUserId(member).orElseThrow());
 		}
 		
 		@Override
@@ -100,17 +98,16 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 	}
 	
 	@Override
-	public void addHelp( @Nonnull final Guild guild,  @Nonnull final EmbedBuilder embedBuilder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder embedBuilder){
 		super.addHelp(guild, embedBuilder);
 		embedBuilder.addField("filter", "What kind of media to get the differences", false);
 		embedBuilder.addField("user1", "Mention of the first user to compare", false);
 		embedBuilder.addField("user2", "Mention of the second user to compare", false);
 	}
 	
-	
 	@Nonnull
 	@Override
-	public CommandResult execute( @Nonnull final GuildMessageReceivedEvent event,  @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.size() < 3 || event.getMessage().getMentionedUsers().size() < 2){
 			final var embedBuilder = Utilities.buildEmbed(event.getAuthor(), Color.RED, "Invalid parameters");
@@ -125,19 +122,16 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 	}
 	
 	@Nonnull
-	
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <@user1> <@user2>";
 	}
-	
 	
 	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
-	
 	
 	@Nonnull
 	@Override
@@ -146,7 +140,6 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 	}
 	
 	@Nonnull
-	
 	@Override
 	public List<String> getCommandStrings(){
 		//noinspection SpellCheckingInspection
@@ -154,7 +147,6 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 	}
 	
 	@Nonnull
-	
 	@Override
 	public String getDescription(){
 		return "Fetch media user list differences from AniList";

@@ -2,8 +2,7 @@ package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.NickDelayConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.NickLastChangeConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -59,10 +58,9 @@ public class NicknameCommand extends BasicCommand{
 		}
 		memberOptional.ifPresentOrElse(member -> {
 			final var oldName = Optional.ofNullable(member.getNickname());
-			final var lastChangeRaw = new NickLastChangeConfig(event.getGuild()).getValue(member.getUser().getIdLong());
-			final var lastChange = new Date(lastChangeRaw.orElse(0L));
-			final var delay = Duration.ofMinutes(new NickDelayConfig(event.getGuild()).getObject().orElse(6 * 60));
-			if(!Utilities.isTeam(event.getMember()) && (lastChange.getTime() + delay.getSeconds() * 1000) >= new Date().getTime()){
+			final var lastChange = NewSettings.getConfiguration(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser()).orElse(0L);
+			final var delay = Duration.ofSeconds(NewSettings.getConfiguration(event.getGuild()).getNicknameConfiguration().getChangeDelay());
+			if(!Utilities.isTeam(event.getMember()) && (lastChange + delay.getSeconds() * 1000) >= new Date().getTime()){
 				final var builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.setColor(Color.RED);
@@ -89,7 +87,7 @@ public class NicknameCommand extends BasicCommand{
 				try{
 					member.getGuild().modifyNickname(member, newName).complete();
 					builder.setColor(Color.GREEN);
-					new NickLastChangeConfig(event.getGuild()).addValue(member.getUser().getIdLong(), new Date().getTime());
+					NewSettings.getConfiguration(event.getGuild()).getNicknameConfiguration().setLastChange(member.getUser(), new Date());
 					getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", event.getAuthor(), member.getUser(), oldName, newName);
 				}
 				catch(final HierarchyException e){

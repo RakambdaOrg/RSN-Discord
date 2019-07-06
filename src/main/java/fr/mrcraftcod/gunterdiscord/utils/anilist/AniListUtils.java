@@ -1,16 +1,13 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist;
 
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.AniListAccessTokenConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.AniListCodeConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.guild.anilist.AnilistAccessTokenConfiguration;
 import fr.mrcraftcod.utils.http.requestssenders.post.JSONPostRequestSender;
 import net.dv8tion.jda.api.entities.Member;
 import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -24,6 +21,7 @@ public class AniListUtils{
 	private static final int APP_ID = 1230;
 	private static final String REDIRECT_URI = "https://anilist.co/api/v2/oauth/pin";
 	private static final String CODE_LINK = String.format("%s/oauth/authorize?client_id=%d&response_type=code&redirect_uri=%s", API_URL, APP_ID, REDIRECT_URI);
+	private static final String USER_INFO_QUERY = "query{Viewer {id name}}";
 	
 	public static void generateToken(@Nonnull final Member member, @Nonnull final String token) throws Exception{
 		getLogger(member.getGuild()).debug("Getting access token for {}", member);
@@ -49,21 +47,17 @@ public class AniListUtils{
 		if(json.has("error") || !json.has("access_token") || !json.has("refresh_token")){
 			throw new Exception("Getting token failed with error: " + json.getString("error"));
 		}
-		final var conf = new AniListCodeConfig(member.getGuild());
-		final var accessTokens = new AniListAccessTokenConfig(member.getGuild());
-		conf.addValue(member.getUser().getIdLong(), json.getString("refresh_token"));
-		accessTokens.addValue(member.getUser().getIdLong(), System.currentTimeMillis() + json.getInt("expires_in") * 1000L, json.getString("access_token"));
-		json.getString("access_token");
+		NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().setRefreshToken(member.getUser().getIdLong(), json.getString("refresh_token"));
+		NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().addAccessToken(new AnilistAccessTokenConfiguration(member.getUser().getIdLong(), new Date(System.currentTimeMillis() + json.getInt("expires_in") * 1000L), json.getString("access_token")));
 	}
 	
 	@Nonnull
-	private static Optional<String> getPreviousAccessToken(@Nonnull final Member member){
+	private static Optional<AnilistAccessTokenConfiguration> getPreviousAccessToken(@Nonnull final Member member){
 		getLogger(member.getGuild()).debug("Getting previous access token for {}", member);
-		final var accessTokens = new AniListAccessTokenConfig(member.getGuild());
-		final var access = accessTokens.getValue(member.getUser().getIdLong());
-		if(Objects.nonNull(access) && access.isPresent()){
+		final var accessToken = NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getAccessToken(member.getUser().getIdLong());
+		if(accessToken.isPresent()){
 			getLogger(member.getGuild()).debug("Found previous access token for {}", member);
-			return access.get().entrySet().stream().filter(entry -> entry.getKey() > System.currentTimeMillis()).map(Map.Entry::getValue).findAny();
+			return accessToken;
 		}
 		getLogger(member.getGuild()).debug("No access token found for {}", member);
 		return Optional.empty();
@@ -77,9 +71,9 @@ public class AniListUtils{
 	}
 	
 	@Nonnull
-	private static JSONObject getQuery(@Nonnull final String token, @Nonnull final String query, @Nonnull final JSONObject variables) throws Exception{
+	private static JSONObject getQuery(@Nonnull final AnilistAccessTokenConfiguration token, @Nonnull final String query, @Nonnull final JSONObject variables) throws Exception{
 		final var headers = new HashMap<String, String>();
-		headers.put("Authorization", "Bearer " + token);
+		headers.put("Authorization", "Bearer " + token.getToken());
 		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "application/json");
 		final var body = new JSONObject();
@@ -103,6 +97,21 @@ public class AniListUtils{
 			}
 		}
 		throw new Exception("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString() + " | query was " + query);
+	}
+	
+	public static Optional<Integer> getUserId(Member member){
+		return NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getUserId(member.getUser().getIdLong()).map(Optional::of).orElseGet(() -> {
+			try{
+				final var userInfos = AniListUtils.getQuery(member, USER_INFO_QUERY, new JSONObject());
+				final var userId = userInfos.getJSONObject("data").getJSONObject("Viewer").getInt("id");
+				NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().setUserId(member.getUser().getIdLong(), userId);
+				return Optional.of(userId);
+			}
+			catch(Exception e){
+				getLogger(member.getGuild()).error("Failed to get AniList user id for {}", member);
+			}
+			return Optional.empty();
+		});
 	}
 	
 	@Nonnull

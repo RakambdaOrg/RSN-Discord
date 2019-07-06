@@ -2,7 +2,8 @@ package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.ReportChannelConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.types.ChannelConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -30,8 +31,7 @@ public class ReportCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		final var channelOptional = new ReportChannelConfig(event.getGuild()).getObject();
-		return channelOptional.map(channel -> {
+		return NewSettings.getConfiguration(event.getGuild()).getReportChannel().map(ChannelConfiguration::getChannel).map(channelOptional -> channelOptional.map(channel -> {
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.ORANGE);
@@ -42,7 +42,7 @@ public class ReportCommand extends BasicCommand{
 			Actions.sendMessage(channel, builder.build());
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Your message have been forwarded.");
 			return CommandResult.SUCCESS;
-		}).orElse(CommandResult.FAILED);
+		}).orElse(CommandResult.FAILED)).orElse(CommandResult.FAILED);
 	}
 	
 	@Nonnull

@@ -1,11 +1,12 @@
 package fr.mrcraftcod.gunterdiscord.runners;
 
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.RemoveRoleConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.JDA;
 import javax.annotation.Nonnull;
-import java.time.Duration;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -30,27 +31,13 @@ public class RemoveRolesScheduledRunner implements ScheduledRunner{
 	@Override
 	public void run(){
 		getLogger(null).info("Starting roles runner");
-		final var currentTime = System.currentTimeMillis();
+		final var currentDate = new Date();
 		for(final var guild : this.jda.getGuilds()){
-			final var config = new RemoveRoleConfig(guild);
 			getLogger(guild).debug("Processing guild {}", guild);
-			config.getAsMap().ifPresent(guildConfig -> {
-				for(final var userID : guildConfig.keySet()){
-					final var member = guild.getMemberById(userID);
-					getLogger(guild).debug("Processing user {}", member);
-					final var userGuildConfig = guildConfig.get(userID);
-					for(final var roleID : userGuildConfig.keySet()){
-						final var diff = Duration.ofMillis(userGuildConfig.get(roleID) - currentTime);
-						final var role = guild.getRoleById(roleID);
-						getLogger(guild).debug("Processing role {}, diff is: {}", role, diff);
-						if(diff.isNegative()){
-							getLogger(guild).debug("Removed role for the user");
-							Actions.removeRole(member, role);
-							config.deleteKeyValue(userID, roleID);
-						}
-					}
-				}
-			});
+			NewSettings.getConfiguration(guild).getRemoveRoles().removeAll(NewSettings.getConfiguration(guild).getRemoveRoles().stream().filter(ban -> ban.getEndDate().after(currentDate)).peek(ban -> ban.getRole().ifPresent(role -> ban.getUser().ifPresent(user -> {
+				getLogger(guild).debug("Removed role {} for user {}", role, user);
+				Actions.removeRole(user, role);
+			}))).collect(Collectors.toList()));
 		}
 		getLogger(null).info("Roles runner done");
 	}

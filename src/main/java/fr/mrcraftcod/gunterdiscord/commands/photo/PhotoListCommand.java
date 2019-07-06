@@ -3,7 +3,8 @@ package fr.mrcraftcod.gunterdiscord.commands.photo;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.TrombinoscopeRoleConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.types.RoleConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -39,7 +40,7 @@ public class PhotoListCommand extends BasicCommand{
 		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 		builder.setColor(Color.GREEN);
 		builder.setTitle("Users of the trombinoscope");
-		new TrombinoscopeRoleConfig(event.getGuild()).getObject().ifPresent(role -> Utilities.getMembersWithRole(role).stream().map(u -> u.getUser().getName()).forEach(u -> builder.addField("", u, false)));
+		NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Utilities.getMembersWithRole(role).stream().map(u -> u.getUser().getName()).forEach(u -> builder.addField("", u, false)));
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;
 	}
