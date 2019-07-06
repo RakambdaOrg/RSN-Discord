@@ -1,8 +1,8 @@
 package fr.mrcraftcod.gunterdiscord.runners.anilist;
 
 import fr.mrcraftcod.gunterdiscord.runners.ScheduledRunner;
-import fr.mrcraftcod.gunterdiscord.settings.configs.AnilistThaChannelConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.AnilistThaUserConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.AnilistThaChannelConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.AnilistThaUserConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.list.AniListMediaUserList;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListMediaUserListPagedQuery;

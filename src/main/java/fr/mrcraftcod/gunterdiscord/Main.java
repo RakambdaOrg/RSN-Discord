@@ -5,12 +5,12 @@ import com.beust.jcommander.ParameterException;
 import fr.mrcraftcod.gunterdiscord.listeners.*;
 import fr.mrcraftcod.gunterdiscord.listeners.quiz.QuizListener;
 import fr.mrcraftcod.gunterdiscord.listeners.reply.ReplyMessageListener;
+import fr.mrcraftcod.gunterdiscord.newSettings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.runners.DisplayDailyStatsScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.RemoveRolesScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.SaveConfigScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListMediaUserListScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListNotificationScheduledRunner;
-import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import fr.mrcraftcod.gunterdiscord.utils.irc.TwitchIRC;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
@@ -114,6 +114,7 @@ public class Main{
 			LOGGER.info("Shutdown hook triggered");
 			try{
 				Settings.save();
+				NewSettings.close();
 			}
 			catch(final IOException e){
 				getLogger(null).error("Error saving settings", e);

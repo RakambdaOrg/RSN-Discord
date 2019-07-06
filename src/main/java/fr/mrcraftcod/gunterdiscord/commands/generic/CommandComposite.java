@@ -78,7 +78,7 @@ public abstract class CommandComposite extends BasicCommand{
 			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.RED, "Error while executing command").addField("Command", getName(), false).addField("Reason", getCommandUsage(), false).addField("Arguments available", this.subCommands.stream().flatMap(command -> command.getCommandStrings().stream()).collect(Collectors.joining(", ")), false).build());
 		}
 		else{
-			final var toExecute = this.subCommands.stream().filter(command -> command.getCommandStrings().contains(switchStr.toLowerCase())).findFirst();
+			final var toExecute = this.subCommands.stream().filter(command -> command.getCommandStrings().contains(switchStr)).findFirst();
 			if(toExecute.isPresent()){
 				toExecute.get().execute(event, args);
 			}

@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.runners;
 
-import fr.mrcraftcod.gunterdiscord.settings.configs.RemoveRoleConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.RemoveRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.JDA;
 import javax.annotation.Nonnull;

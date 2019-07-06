@@ -1,8 +1,8 @@
 package fr.mrcraftcod.gunterdiscord.runners.anilist;
 
-import fr.mrcraftcod.gunterdiscord.settings.configs.AniListAccessTokenConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.AniListChannelConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.AniListLastAccessConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.AniListAccessTokenConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.AniListChannelConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.AniListLastAccessConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListDatedObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;

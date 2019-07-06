@@ -3,7 +3,7 @@ package fr.mrcraftcod.gunterdiscord.commands.warn;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
-import fr.mrcraftcod.gunterdiscord.settings.configs.RemoveRoleConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.RemoveRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;

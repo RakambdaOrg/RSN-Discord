@@ -1,8 +1,8 @@
 package fr.mrcraftcod.gunterdiscord.commands.warn;
 
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
-import fr.mrcraftcod.gunterdiscord.settings.configs.WarnRoleConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.WarnTimeConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.WarnRoleConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.WarnTimeConfig;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;

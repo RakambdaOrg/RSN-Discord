@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.music;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
-import fr.mrcraftcod.gunterdiscord.settings.configs.DJRoleConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.DJRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Member;

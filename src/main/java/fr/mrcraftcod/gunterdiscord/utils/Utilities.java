@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils;
 
-import fr.mrcraftcod.gunterdiscord.settings.configs.ModoRolesConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.ModoRolesConfig;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -178,5 +178,15 @@ public class Utilities{
 			}
 		}
 		return null;
+	}
+	
+	public static String capitalize(String s){
+		if(Objects.isNull(s) || s.isBlank()){
+			return s;
+		}
+		if(s.length() == 1){
+			return s;
+		}
+		return s.substring(0, 1).toUpperCase() + s.substring(1);
 	}
 }

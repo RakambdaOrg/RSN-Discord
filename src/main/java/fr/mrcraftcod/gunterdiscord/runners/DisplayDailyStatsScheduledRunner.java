@@ -2,7 +2,7 @@ package fr.mrcraftcod.gunterdiscord.runners;
 
 import fr.mrcraftcod.gunterdiscord.commands.EmotesCommand;
 import fr.mrcraftcod.gunterdiscord.commands.TempParticipationCommand;
-import fr.mrcraftcod.gunterdiscord.settings.configs.*;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.*;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;

@@ -16,7 +16,7 @@ import fr.mrcraftcod.gunterdiscord.commands.warn.CustomWarnCommand;
 import fr.mrcraftcod.gunterdiscord.commands.warn.DoubleWarnCommand;
 import fr.mrcraftcod.gunterdiscord.commands.warn.MegaWarnCommand;
 import fr.mrcraftcod.gunterdiscord.commands.warn.NormalWarnCommand;
-import fr.mrcraftcod.gunterdiscord.settings.configs.PrefixConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.PrefixConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -47,7 +47,6 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new QuestionCommand(),
 			new AnnoyCommand(),
 			new InfosCommand(),
-			new YoutubeCommand(),
 			new NormalWarnCommand(),
 			new DoubleWarnCommand(),
 			new MegaWarnCommand(),
@@ -61,9 +60,10 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new TempParticipationCommand(),
 			new DogCommand(),
 			new TwitchCommandComposite(),
-			new LuxBusGetStopCommand()
+			new LuxBusGetStopCommand(),
+			new fr.mrcraftcod.gunterdiscord.commands.newconfig.ConfigurationCommandComposite()
 	};
-	private final static String defaultPrefix = System.getenv().getOrDefault("RSN_DEFAULT_PREFIX", "g?");
+	private final static String defaultPrefix = System.getProperty("RSN_DEFAULT_PREFIX", "g?");
 	
 	/**
 	 * Constructor.

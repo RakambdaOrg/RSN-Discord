@@ -2,8 +2,9 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.commands.EmotesCommand;
 import fr.mrcraftcod.gunterdiscord.commands.TempParticipationCommand;
-import fr.mrcraftcod.gunterdiscord.settings.configs.*;
-import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.EmotesParticipationConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.MembersParticipationConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.NoXPChannelsConfig;
 import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildMuteEvent;
@@ -44,24 +45,6 @@ public class LogListener extends ListenerAdapter{
 		super.onSelfUpdateName(event);
 		try{
 			getLogger(null).debug("User {} changed name `{}` to `{}`", event.getEntity(), event.getOldName(), event.getNewName());
-			for(final var guild : event.getEntity().getMutualGuilds()){
-				if(new EnableNameChangeLimitConfig(guild).getObject().orElse(false)){
-					final var config = new NameLastChangeConfig(guild);
-					final var diff = System.currentTimeMillis() - config.getAsMap().map(map -> map.getOrDefault(event.getEntity().getIdLong(), 0L)).orElse(0L);
-					if(diff < 3600000){
-						new MegaWarnRoleConfig(guild).getObject().ifPresent(warnRole -> {
-							final var removeRoleConfig = new RemoveRoleConfig(guild);
-							config.getAsMap().ifPresent(removeRoleMap -> {
-								final var currentRoleRemove = removeRoleMap.keySet().stream().filter(key -> Objects.equals(key, event.getEntity().getIdLong())).map(removeRoleConfig::getValue).map(map -> map.map(map2 -> map2.getOrDefault(warnRole.getIdLong(), 0L)).orElse(0L)).findFirst().orElse(0L);
-								Actions.giveRole(guild, event.getEntity(), warnRole);
-								removeRoleConfig.addValue(event.getEntity().getIdLong(), warnRole.getIdLong(), Math.max(currentRoleRemove, System.currentTimeMillis() + 6 * 60 * 60 * 1000L));
-								Actions.replyPrivate(guild, event.getEntity(), "You've been warned in the server `%s` because you changed your name too often.", guild.getName());
-							});
-						});
-					}
-					config.addValue(event.getEntity().getIdLong(), System.currentTimeMillis());
-				}
-			}
 		}
 		catch(final NullPointerException ignored){
 		}

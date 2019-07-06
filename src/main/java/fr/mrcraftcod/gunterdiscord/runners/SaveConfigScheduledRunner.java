@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.runners;
 
+import fr.mrcraftcod.gunterdiscord.newSettings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.settings.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ public class SaveConfigScheduledRunner implements ScheduledRunner{
 	public void run(){
 		try{
 			Settings.save();
+			NewSettings.close();
 		}
 		catch(final IOException e){
 			LOGGER.error("Failed to save settings", e);

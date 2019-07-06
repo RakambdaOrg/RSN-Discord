@@ -16,7 +16,7 @@ class CLIParameters{
 	@Parameter(names = {
 			"-c",
 			"--config"
-	}, description = "The configuration file", converter = FileConverter.class)
+	}, description = "The configuration file", converter = FileConverter.class, required = true)
 	private File configurationFile = null;
 	
 	CLIParameters(){

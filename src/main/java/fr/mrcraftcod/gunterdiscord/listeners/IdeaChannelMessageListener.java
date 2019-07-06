@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.settings.configs.OnlyIdeasConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.OnlyIdeasConfig;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

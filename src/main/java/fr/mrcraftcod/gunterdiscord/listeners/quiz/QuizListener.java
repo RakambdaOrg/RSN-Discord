@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.listeners.quiz;
 
-import fr.mrcraftcod.gunterdiscord.settings.configs.QuizChannelConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.QuizChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import net.dv8tion.jda.api.EmbedBuilder;

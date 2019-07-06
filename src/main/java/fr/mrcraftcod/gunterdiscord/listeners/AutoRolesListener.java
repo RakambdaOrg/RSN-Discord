@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.settings.configs.AutoRolesConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.RemoveRoleConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.AutoRolesConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.RemoveRoleConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

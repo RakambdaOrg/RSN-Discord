@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.settings;
 
 import fr.mrcraftcod.gunterdiscord.Main;
-import fr.mrcraftcod.gunterdiscord.settings.configs.*;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.*;
 import fr.mrcraftcod.gunterdiscord.settings.configurations.*;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.api.entities.Guild;
@@ -35,7 +35,6 @@ public class Settings{
 	public static final Configuration[] SETTINGS = new Configuration[]{
 			new ModoRolesConfig(null),
 			new OnlyIdeasConfig(null),
-			new OnlyImagesConfig(null),
 			new PrefixConfig(null),
 			new ReportChannelConfig(null),
 			// new PhotoChannelConfig(null),
@@ -47,8 +46,6 @@ public class Settings{
 			// new TrombinoscopeRoleConfig(null),
 			new QuestionsChannelConfig(null),
 			new QuestionsFinalChannelConfig(null),
-			new YoutubeChannelConfig(null),
-			new YoutubeRoleConfig(null),
 			new WarnRoleConfig(null),
 			new DoubleWarnRoleConfig(null),
 			new MegaWarnRoleConfig(null),
@@ -57,8 +54,6 @@ public class Settings{
 			new MegaWarnTimeConfig(null),
 			new RemoveRoleConfig(null),
 			new DJRoleConfig(null),
-			new NameLastChangeConfig(null),
-			new EnableNameChangeLimitConfig(null),
 			new AniListCodeConfig(null),
 			new AniListChannelConfig(null),
 			new AniListAccessTokenConfig(null),
@@ -97,7 +92,7 @@ public class Settings{
 	 *
 	 * @return The settings of the guild.
 	 */
-	static Optional<JSONObject> getServerSettings(@Nullable final Guild guild){
+	public static Optional<JSONObject> getServerSettings(@Nullable final Guild guild){
 		if(Objects.isNull(guild)){
 			return Optional.empty();
 		}

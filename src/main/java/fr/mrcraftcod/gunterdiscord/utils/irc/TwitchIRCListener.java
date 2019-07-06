@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
 import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
-import fr.mrcraftcod.gunterdiscord.settings.configs.TwitchIRCChannelConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.TwitchIRCChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.irc.events.*;
 import net.dv8tion.jda.api.entities.Guild;

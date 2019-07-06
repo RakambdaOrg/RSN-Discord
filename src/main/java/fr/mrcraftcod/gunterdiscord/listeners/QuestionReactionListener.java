@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.settings.configs.QuestionsChannelConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.QuestionsFinalChannelConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.QuestionsChannelConfig;
+import fr.mrcraftcod.gunterdiscord.settings.configs.done.QuestionsFinalChannelConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
