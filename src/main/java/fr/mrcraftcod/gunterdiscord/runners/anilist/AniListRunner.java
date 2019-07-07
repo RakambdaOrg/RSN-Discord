@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.Color;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -101,13 +102,19 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 	@Nonnull
 	default MessageEmbed buildMessage(@Nullable final User user, @Nonnull final T change){
 		final var builder = new EmbedBuilder();
-		if(Objects.isNull(user)){
-			builder.setAuthor(getJDA().getSelfUser().getName(), change.getUrl().toString(), getJDA().getSelfUser().getAvatarUrl());
+		try{
+			if(Objects.isNull(user)){
+				builder.setAuthor(getJDA().getSelfUser().getName(), change.getUrl().toString(), getJDA().getSelfUser().getAvatarUrl());
+			}
+			else{
+				builder.setAuthor(user.getName(), change.getUrl().toString(), user.getAvatarUrl());
+			}
+			change.fillEmbed(builder);
 		}
-		else{
-			builder.setAuthor(user.getName(), change.getUrl().toString(), user.getAvatarUrl());
+		catch(Exception e){
+			builder.addField("Error", e.getMessage(), false);
+			builder.setColor(Color.RED);
 		}
-		change.fillEmbed(builder);
 		return builder.build();
 	}
 	

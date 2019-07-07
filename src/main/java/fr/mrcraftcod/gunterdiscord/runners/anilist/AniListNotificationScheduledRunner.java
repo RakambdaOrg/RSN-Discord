@@ -52,7 +52,7 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 			}
 		}
 		notifications.entrySet().stream().sorted(Comparator.comparing(e -> e.getKey().getDate())).forEachOrdered(e -> channels.forEach(channel -> {
-			final var mentions = e.getValue().stream().filter(u -> sendToChannel(channel, u)).map(User::getAsMention).collect(Collectors.toList());
+			final var mentions = e.getValue().stream().filter(u -> sendToChannel(channel, u)).distinct().map(User::getAsMention).collect(Collectors.toList());
 			if(!mentions.isEmpty()){
 				Actions.sendMessage(channel, String.join("\n", mentions));
 				Actions.sendMessage(channel, buildMessage(null, e.getKey()));
