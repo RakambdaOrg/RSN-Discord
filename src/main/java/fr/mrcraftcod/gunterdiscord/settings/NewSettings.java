@@ -12,9 +12,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-06-23.
@@ -25,7 +25,7 @@ import java.util.Optional;
 public class NewSettings{
 	private static final ObjectReader objectReader;
 	private static final ObjectWriter objectWriter;
-	private static final Map<Long, GuildConfiguration> configurations = new HashMap<>();
+	private static final Map<Long, GuildConfiguration> configurations = new ConcurrentHashMap<>();
 	
 	@Nonnull
 	public static GuildConfiguration getConfiguration(@Nonnull final Guild guild){

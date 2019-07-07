@@ -1,7 +1,9 @@
 package fr.mrcraftcod.gunterdiscord.utils.anilist;
 
+import fr.mrcraftcod.gunterdiscord.listeners.CommandsMessageListener;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.settings.guild.anilist.AnilistAccessTokenConfiguration;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.utils.http.requestssenders.post.JSONPostRequestSender;
 import net.dv8tion.jda.api.entities.Member;
 import org.json.JSONObject;
@@ -69,7 +71,11 @@ public class AniListUtils{
 	@Nonnull
 	public static JSONObject getQuery(@Nonnull final Member member, @Nonnull final String query, @Nonnull final JSONObject variables) throws Exception{
 		getLogger(member.getGuild()).debug("Sending query to AniList for user {}", member.getUser());
-		final var token = AniListUtils.getPreviousAccessToken(member).orElseThrow(() -> new IllegalStateException("No valid token found, please register again"));
+		final var token = AniListUtils.getPreviousAccessToken(member).orElseThrow(() -> {
+			NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().removeUser(member.getUser());
+			Actions.sendMessage(member.getGuild(), member.getUser().openPrivateChannel().complete(), "Your token for AniList on " + member.getGuild().getName() + " expired. Please use `" + NewSettings.getConfiguration(member.getGuild()).getPrefix().orElse(CommandsMessageListener.defaultPrefix) + "al r` to register again if you want to continue receiving informations");
+			return new IllegalStateException("No valid token found, please register again");
+		});
 		return getQuery(token, query, variables);
 	}
 	

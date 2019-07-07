@@ -83,6 +83,13 @@ public class AniListConfiguration{
 		this.tokens.add(value);
 	}
 	
+	public void removeUser(@Nonnull User user){
+		tokens.removeIf(t -> Objects.equals(t.getUserId(), user.getIdLong()));
+		refreshTokens.remove(user.getIdLong());
+		lastAccess.values().forEach(l -> l.removeIf(v -> Objects.equals(v.getUserId(), user.getIdLong())));
+		userIds.remove(user.getIdLong());
+	}
+	
 	@Nonnull
 	public Map<String, List<UserDateConfiguration>> getLastAccess(){
 		return this.lastAccess;
