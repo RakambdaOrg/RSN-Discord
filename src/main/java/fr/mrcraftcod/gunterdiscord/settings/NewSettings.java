@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.api.entities.Guild;
 import javax.annotation.Nonnull;
@@ -69,6 +70,7 @@ public class NewSettings{
 	static{
 		final var mapper = new ObjectMapper();
 		mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker().withFieldVisibility(JsonAutoDetect.Visibility.ANY).withGetterVisibility(JsonAutoDetect.Visibility.NONE).withSetterVisibility(JsonAutoDetect.Visibility.NONE).withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
+		mapper.enable(SerializationFeature.INDENT_OUTPUT);
 		objectReader = mapper.readerFor(GuildConfiguration.class);
 		objectWriter = mapper.writerFor(GuildConfiguration.class);
 	}
