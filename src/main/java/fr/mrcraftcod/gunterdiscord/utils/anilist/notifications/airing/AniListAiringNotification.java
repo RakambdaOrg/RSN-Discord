@@ -34,7 +34,7 @@ public class AniListAiringNotification implements AniListDatedObject{
 	private int episode;
 	@JsonProperty("createdAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private LocalDateTime createdAt = LocalDateTime.of(1970, 1, 1, 0, 0);
+	private LocalDateTime createdAt = LocalDateTime.now();
 	@JsonProperty("media")
 	private AniListMedia media;
 	@JsonProperty("id")
