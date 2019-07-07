@@ -65,7 +65,7 @@
                         <configuration>
                             <shadedArtifactAttached>false</shadedArtifactAttached>
                             <shadedClassifierName>jar-with-dependencies</shadedClassifierName>
-                            <finalName>${project.artifactId}</finalName>
+                            <finalName>${project.name}</finalName>
                             <artifactSet>
                                 <includes>
                                     <include>*:*</include>
