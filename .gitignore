@@ -1,13 +1,12 @@
-GunterDiscord.iml
-.idea
-target
+/.idea
+/target
+/pictures/
+/settings/
+/log/*
+/logs/*
 
-pictures/
-settings/
-log/*
-logs/*
-
-/settings.json
-/questions.csv
-/settings2.json
+*.iml
 /*.properties
+/*.csv
+/*.json
+
