@@ -52,7 +52,7 @@ public class NewSettings{
 	}
 	
 	public static void close(){
-		configurations.forEach(NewSettings::saveConfiguration);
+		save();
 	}
 	
 	private static void saveConfiguration(final long guildId, @Nonnull final GuildConfiguration value){
@@ -65,6 +65,10 @@ public class NewSettings{
 		catch(final IOException e){
 			Log.getLogger(guildId).error("Failed to write settings to {}", guildConfPath, e);
 		}
+	}
+	
+	public static void save(){
+		configurations.forEach(NewSettings::saveConfiguration);
 	}
 	
 	static{

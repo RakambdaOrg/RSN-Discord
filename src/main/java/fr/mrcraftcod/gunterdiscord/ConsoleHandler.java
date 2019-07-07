@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord;
 
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import net.dv8tion.jda.api.JDA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +87,9 @@ class ConsoleHandler extends Thread{
 							final var guild = this.jda.getGuildById(args.poll());
 							getLogger(null).info("Members of {}: {}", guild, Objects.requireNonNull(guild).getMembers());
 						}
+					}
+					else if(arg1.equalsIgnoreCase("save")){
+						NewSettings.save();
 					}
 				}
 				catch(final Exception e){
