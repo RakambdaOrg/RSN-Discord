@@ -66,7 +66,7 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		final var lastAccess = NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess();
 		var elementList = initQuery(member).getResult(member);
 		if(keepOnlyNew()){
-			final var baseDate = NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess("lastFetch", member.getUser().getIdLong()).map(UserDateConfiguration::getDate).orElse(LocalDateTime.MIN);
+			final var baseDate = NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess("lastFetch", member.getUser().getIdLong()).map(UserDateConfiguration::getDate).orElse(LocalDateTime.of(1970, 1, 1, 0, 0));
 			elementList = elementList.stream().filter(e -> e instanceof AniListDatedObject).filter(e -> ((AniListDatedObject) e).getDate().isAfter(baseDate)).collect(Collectors.toList());
 		}
 		elementList.stream().filter(e -> e instanceof AniListDatedObject).map(e -> (AniListDatedObject) e).map(AniListDatedObject::getDate).max(LocalDateTime::compareTo).ifPresent(val -> {
