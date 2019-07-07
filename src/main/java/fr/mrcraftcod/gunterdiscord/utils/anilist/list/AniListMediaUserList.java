@@ -92,7 +92,7 @@ public class AniListMediaUserList implements AniListDatedObject{
 		if(Objects.nonNull(getProgressVolumes()) && getMedia() instanceof AniListMangaMedia){
 			builder.addField("Volumes progress", getProgressVolumes() + "/" + Optional.ofNullable(((AniListMangaMedia) getMedia()).getVolumes()).map(Object::toString).orElse("?"), true);
 		}
-		final var lists = this.customLists.keySet().stream().filter(k -> customLists.get(k) == true).collect(Collectors.joining(", "));
+		final var lists = Optional.ofNullable(this.customLists).orElse(new HashMap<>()).entrySet().stream().filter(k -> Objects.nonNull(k.getValue()) && k.getValue()).map(k -> k.getKey()).collect(Collectors.joining(", "));
 		if(Objects.nonNull(lists) && !lists.isBlank()){
 			builder.addField("In custom lists", lists, true);
 		}
