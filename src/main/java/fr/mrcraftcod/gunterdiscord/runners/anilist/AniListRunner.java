@@ -65,7 +65,6 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 	@Nonnull
 	default List<T> getElements(@Nonnull final Member member) throws Exception{
 		getLogger(member.getGuild()).debug("Fetching user {}", member);
-		final var lastAccess = NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess();
 		var elementList = initQuery(member).getResult(member);
 		if(keepOnlyNew()){
 			final var baseDate = NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess("lastFetch", member.getUser().getIdLong()).map(UserDateConfiguration::getDate).orElse(LocalDateTime.now());
