@@ -25,7 +25,8 @@ public class AniListListActivityPagedQuery implements AniListPagedQuery<AniListL
 		this.variables.put("userID", userId);
 		this.variables.put("page", 1);
 		this.variables.put("perPage", 50);
-		this.variables.put("date", date.atZone(ZoneId.of("UTC")).toEpochSecond());
+		final var s = date.atZone(ZoneId.of("UTC")).toEpochSecond();
+		this.variables.put("date", s >= 0 ? s : 0);
 	}
 	
 	@Override
