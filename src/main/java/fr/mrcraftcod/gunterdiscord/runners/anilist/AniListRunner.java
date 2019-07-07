@@ -7,6 +7,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListDatedObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListPagedQuery;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
@@ -112,7 +113,8 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 			change.fillEmbed(builder);
 		}
 		catch(Exception e){
-			builder.addField("Error", e.getMessage(), false);
+			Log.getLogger(null).error("Error with AniList {} runner", getRunnerName(), e);
+			builder.addField("Error", e.getClass().getName() + " => " + e.getMessage(), false);
 			builder.setColor(Color.RED);
 		}
 		return builder.build();
