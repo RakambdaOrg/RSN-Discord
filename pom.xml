@@ -6,7 +6,7 @@
 
     <name>RSNDiscord</name>
     <groupId>fr.mrcraftcod</groupId>
-    <artifactId>RSNDiscord</artifactId>
+    <artifactId>rsn-discord</artifactId>
     <version>1.3</version>
 
     <properties>
