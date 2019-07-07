@@ -7,7 +7,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import javax.annotation.Nonnull;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -24,8 +24,9 @@ public class AutoRolesListener extends ListenerAdapter{
 	public void onGuildMemberJoin(@Nonnull final GuildMemberJoinEvent event){
 		super.onGuildMemberJoin(event);
 		try{
+			final var now = LocalDateTime.now();
 			NewSettings.getConfiguration(event.getGuild()).getAutoRoles().stream().map(RoleConfiguration::getRole).filter(Optional::isPresent).map(Optional::get).forEach(role -> Actions.giveRole(event.getUser(), List.of(role)));
-			NewSettings.getConfiguration(event.getGuild()).getRemoveRoles().stream().filter(b -> Objects.equals(b.getUserId(), event.getUser().getIdLong())).filter( b -> b.getEndDate().after(new Date())).map(RemoveRoleConfiguration::getRole).filter(Optional::isPresent).map(Optional::get).forEach(r -> Actions.giveRole(event.getGuild(), event.getUser(), r));
+			NewSettings.getConfiguration(event.getGuild()).getRemoveRoles().stream().filter(b -> Objects.equals(b.getUserId(), event.getUser().getIdLong())).filter(b -> b.getEndDate().isAfter(now)).map(RemoveRoleConfiguration::getRole).filter(Optional::isPresent).map(Optional::get).forEach(r -> Actions.giveRole(event.getGuild(), event.getUser(), r));
 		}
 		catch(final Exception e){
 			getLogger(event.getGuild()).error("Error on user join", e);

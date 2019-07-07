@@ -7,7 +7,10 @@ import net.dv8tion.jda.api.entities.Member;
 import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import java.net.URL;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.Optional;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -48,7 +51,7 @@ public class AniListUtils{
 			throw new Exception("Getting token failed with error: " + json.getString("error"));
 		}
 		NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().setRefreshToken(member.getUser().getIdLong(), json.getString("refresh_token"));
-		NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().addAccessToken(new AnilistAccessTokenConfiguration(member.getUser().getIdLong(), new Date(System.currentTimeMillis() + json.getInt("expires_in") * 1000L), json.getString("access_token")));
+		NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().addAccessToken(new AnilistAccessTokenConfiguration(member.getUser().getIdLong(), LocalDateTime.now().plusSeconds(json.getInt("expires_in")), json.getString("access_token")));
 	}
 	
 	@Nonnull

@@ -6,12 +6,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.mrcraftcod.gunterdiscord.Main;
-import fr.mrcraftcod.gunterdiscord.utils.json.SQLTimestampDeserializer;
-import fr.mrcraftcod.gunterdiscord.utils.json.SQLTimestampSerializer;
+import fr.mrcraftcod.gunterdiscord.utils.json.LocalDateTimeDeserializer;
+import fr.mrcraftcod.gunterdiscord.utils.json.LocalDateTimeSerializer;
 import net.dv8tion.jda.api.entities.User;
 import javax.annotation.Nonnull;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -28,18 +28,18 @@ public class UserDateConfiguration{
 	@JsonProperty("userId")
 	private long userId;
 	@JsonProperty("date")
-	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	@JsonSerialize(using = SQLTimestampSerializer.class)
-	private Date date;
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
+	@JsonSerialize(using = LocalDateTimeSerializer.class)
+	private LocalDateTime date;
 	
 	public UserDateConfiguration(){
 	}
 	
-	public UserDateConfiguration(@Nonnull User user, @Nonnull Date date){
+	public UserDateConfiguration(@Nonnull User user, @Nonnull LocalDateTime date){
 		this(user.getIdLong(), date);
 	}
 	
-	public UserDateConfiguration(long userId, @Nonnull Date date){
+	public UserDateConfiguration(long userId, @Nonnull LocalDateTime date){
 		this.userId = userId;
 		this.date = date;
 	}
@@ -60,11 +60,11 @@ public class UserDateConfiguration{
 	}
 	
 	@Nonnull
-	public Date getDate(){
+	public LocalDateTime getDate(){
 		return this.date;
 	}
 	
-	public void setDate(@Nonnull Date date){
+	public void setDate(@Nonnull LocalDateTime date){
 		this.date = date;
 	}
 	

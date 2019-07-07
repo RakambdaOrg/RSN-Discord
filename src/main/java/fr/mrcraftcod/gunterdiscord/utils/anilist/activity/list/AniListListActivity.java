@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.Color;
 import java.net.URL;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -37,7 +37,7 @@ public abstract class AniListListActivity implements AniListDatedObject{
 	
 	@JsonProperty("createdAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private Date createdAt;
+	private LocalDateTime createdAt;
 	@JsonProperty("siteUrl")
 	private URL url;
 	@JsonProperty("progress")
@@ -60,7 +60,7 @@ public abstract class AniListListActivity implements AniListDatedObject{
 	@Override
 	public void fillEmbed(@Nonnull final EmbedBuilder builder){
 		builder.setColor(getColor());
-		builder.setTimestamp(getDate().toInstant());
+		builder.setTimestamp(getDate());
 		
 		if(Objects.isNull(getProgress())){
 			builder.setDescription("Added to list");
@@ -83,7 +83,7 @@ public abstract class AniListListActivity implements AniListDatedObject{
 	protected abstract Color getColor();
 	
 	@Nonnull
-	public Date getDate(){
+	public LocalDateTime getDate(){
 		return createdAt;
 	}
 	

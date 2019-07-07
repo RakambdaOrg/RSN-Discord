@@ -11,6 +11,7 @@ import fr.mrcraftcod.gunterdiscord.settings.types.UserDateConfiguration;
 import net.dv8tion.jda.api.entities.User;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,7 +51,7 @@ public class AniListConfiguration{
 		this.refreshTokens.put(userId, refreshToken);
 	}
 	
-	public void setLastAccess(User user, String section, Date date){
+	public void setLastAccess(User user, String section, LocalDateTime date){
 		this.getLastAccess(section, user.getIdLong()).ifPresentOrElse(lastAccess -> lastAccess.setDate(date), () -> this.lastAccess.computeIfAbsent(section, sec -> new ArrayList<>()).add(new UserDateConfiguration(user, date)));
 	}
 	
@@ -66,7 +67,8 @@ public class AniListConfiguration{
 	
 	@Nonnull
 	public Optional<AnilistAccessTokenConfiguration> getAccessToken(long userId){
-		return this.tokens.stream().filter(t -> Objects.equals(t.getUserId(), userId)).filter(t -> t.getExpireDate().after(new Date())).sorted(Comparator.comparing(AnilistAccessTokenConfiguration::getExpireDate).reversed()).findAny();
+		final var now = LocalDateTime.now();
+		return this.tokens.stream().filter(t -> Objects.equals(t.getUserId(), userId)).filter(t -> t.getExpireDate().isAfter(now)).sorted(Comparator.comparing(AnilistAccessTokenConfiguration::getExpireDate).reversed()).findAny();
 	}
 	
 	public void setUserId(long userId, int aniListUserId){

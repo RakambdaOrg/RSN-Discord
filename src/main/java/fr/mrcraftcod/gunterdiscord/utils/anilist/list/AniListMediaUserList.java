@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
@@ -54,10 +54,10 @@ public class AniListMediaUserList implements AniListDatedObject{
 	private Integer progressVolumes;
 	@JsonProperty("createdAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private Date createdAt;
+	private LocalDateTime createdAt;
 	@JsonProperty("updatedAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private Date updatedAt;
+	private LocalDateTime updatedAt;
 	@JsonProperty("startedAt")
 	private FuzzyDate startedAt;
 	@JsonProperty("completedAt")
@@ -69,7 +69,7 @@ public class AniListMediaUserList implements AniListDatedObject{
 	
 	@Override
 	public void fillEmbed(@Nonnull final EmbedBuilder builder){
-		builder.setTimestamp(getDate().toInstant());
+		builder.setTimestamp(getDate());
 		builder.setColor(getStatus().getColor());
 		builder.setTitle("User list information", getMedia().getUrl().toString());
 		builder.addField("List status", this.getStatus().toString(), true);
@@ -104,7 +104,7 @@ public class AniListMediaUserList implements AniListDatedObject{
 	
 	@Override
 	@Nonnull
-	public Date getDate(){
+	public LocalDateTime getDate(){
 		return this.updatedAt;
 	}
 	
@@ -177,7 +177,7 @@ public class AniListMediaUserList implements AniListDatedObject{
 	}
 	
 	@Nonnull
-	public Date getCreatedAt(){
+	public LocalDateTime getCreatedAt(){
 		return createdAt;
 	}
 	

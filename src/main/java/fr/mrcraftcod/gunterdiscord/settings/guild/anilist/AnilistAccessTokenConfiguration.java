@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import fr.mrcraftcod.gunterdiscord.utils.json.LocalDateTimeSerializer;
 import fr.mrcraftcod.gunterdiscord.utils.json.SQLTimestampDeserializer;
-import fr.mrcraftcod.gunterdiscord.utils.json.SQLTimestampSerializer;
 import javax.annotation.Nonnull;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-06-23.
@@ -23,22 +23,22 @@ public class AnilistAccessTokenConfiguration{
 	private long userId;
 	@JsonProperty("expireDate")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	@JsonSerialize(using = SQLTimestampSerializer.class)
-	private Date expireDate;
+	@JsonSerialize(using = LocalDateTimeSerializer.class)
+	private LocalDateTime expireDate;
 	@JsonProperty("token")
 	private String token;
 	
 	public AnilistAccessTokenConfiguration(){
 	}
 	
-	public AnilistAccessTokenConfiguration(final long userId, @Nonnull final Date expireDate, @Nonnull final String token){
+	public AnilistAccessTokenConfiguration(final long userId, @Nonnull final LocalDateTime expireDate, @Nonnull final String token){
 		this.userId = userId;
 		this.expireDate = expireDate;
 		this.token = token;
 	}
 	
 	@Nonnull
-	public Date getExpireDate(){
+	public LocalDateTime getExpireDate(){
 		return this.expireDate;
 	}
 	

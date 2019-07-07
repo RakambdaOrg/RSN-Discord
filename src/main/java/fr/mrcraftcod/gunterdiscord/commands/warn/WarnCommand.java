@@ -13,7 +13,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
 import java.awt.Color;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Optional;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -47,7 +47,7 @@ public abstract class WarnCommand extends BasicCommand{
 			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 			roleOptional.ifPresentOrElse(role -> {
 				Actions.giveRole(event.getGuild(), user, role);
-				NewSettings.getConfiguration(event.getGuild()).removeRole(new RemoveRoleConfiguration(user, role, new Date(System.currentTimeMillis() + duration * 1000L)));
+				NewSettings.getConfiguration(event.getGuild()).removeRole(new RemoveRoleConfiguration(user, role, LocalDateTime.now().plusSeconds(duration)));
 				builder.setColor(Color.GREEN);
 				builder.addField("Congratulations", user.getAsMention() + " joined the role " + role.getAsMention() + " for " + duration + " seconds(s)", false);
 				builder.addField("", "To know how your warn is doing, user the magic command: g?warninfo " + user.getAsMention(), false);

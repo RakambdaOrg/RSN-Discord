@@ -4,7 +4,7 @@ import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.JDA;
 import javax.annotation.Nonnull;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -31,10 +31,10 @@ public class RemoveRolesScheduledRunner implements ScheduledRunner{
 	@Override
 	public void run(){
 		getLogger(null).info("Starting roles runner");
-		final var currentDate = new Date();
+		final var currentDate = LocalDateTime.now();
 		for(final var guild : this.jda.getGuilds()){
 			getLogger(guild).debug("Processing guild {}", guild);
-			NewSettings.getConfiguration(guild).getRemoveRoles().removeAll(NewSettings.getConfiguration(guild).getRemoveRoles().stream().filter(ban -> ban.getEndDate().after(currentDate)).peek(ban -> ban.getRole().ifPresent(role -> ban.getUser().ifPresent(user -> {
+			NewSettings.getConfiguration(guild).getRemoveRoles().removeAll(NewSettings.getConfiguration(guild).getRemoveRoles().stream().filter(ban -> ban.getEndDate().isAfter(currentDate)).peek(ban -> ban.getRole().ifPresent(role -> ban.getUser().ifPresent(user -> {
 				getLogger(guild).debug("Removed role {} for user {}", role, user);
 				Actions.removeRole(user, role);
 			}))).collect(Collectors.toList()));
