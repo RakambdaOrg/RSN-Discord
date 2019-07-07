@@ -46,7 +46,7 @@ public class AniListRegisterCommand extends BasicCommand{
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.isEmpty()){
-			Actions.reply(event, "Please provide your API code");
+			Actions.reply(event, "Please provide your API code from " + AniListUtils.getCodeLink());
 		}
 		else{
 			final var code = args.poll();
