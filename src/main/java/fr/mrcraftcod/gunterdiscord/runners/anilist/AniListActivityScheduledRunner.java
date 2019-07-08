@@ -9,7 +9,6 @@ import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListListActivityPage
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import javax.annotation.Nonnull;
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -59,7 +58,7 @@ public class AniListActivityScheduledRunner implements AniListRunner<AniListList
 	@Nonnull
 	@Override
 	public AniListListActivityPagedQuery initQuery(@Nonnull Member member){
-		return new AniListListActivityPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess("lastFetch" + getFetcherID()).stream().filter(a -> Objects.equals(a.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(LocalDateTime.now()));
+		return new AniListListActivityPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess("lastFetch" + getFetcherID()).stream().filter(a -> Objects.equals(a.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
 	}
 	
 	@Override

@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import javax.annotation.Nonnull;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -80,7 +79,7 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 	@Nonnull
 	@Override
 	public AniListNotificationsPagedQuery initQuery(@Nonnull Member member){
-		return new AniListNotificationsPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess("lastFetch" + getFetcherID()).stream().filter(c -> Objects.equals(c.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(LocalDateTime.now()));
+		return new AniListNotificationsPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess("lastFetch" + getFetcherID()).stream().filter(c -> Objects.equals(c.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
 	}
 	
 	@Override

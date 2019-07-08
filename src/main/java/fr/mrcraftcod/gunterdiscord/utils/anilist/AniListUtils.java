@@ -108,7 +108,7 @@ public class AniListUtils{
 		throw new Exception("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString() + " | query was " + query);
 	}
 	
-	public static Optional<Integer> getUserId(Member member){
+	public static Optional<Integer> getUserId(@Nonnull Member member){
 		return NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getUserId(member.getUser().getIdLong()).map(Optional::of).orElseGet(() -> {
 			try{
 				final var userInfos = AniListUtils.getQuery(member, USER_INFO_QUERY, new JSONObject());
@@ -121,6 +121,10 @@ public class AniListUtils{
 			}
 			return Optional.empty();
 		});
+	}
+	
+	public static LocalDateTime getDefaultDate(@Nonnull Member member){
+		return LocalDateTime.of(2019, 7, 7, 0, 0);
 	}
 	
 	@Nonnull
