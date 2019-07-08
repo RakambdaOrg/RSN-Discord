@@ -17,7 +17,6 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniListAiringNotification>{
 	private static final String QUERY_NOTIFICATIONS = AniListPagedQuery.pagedQuery("", "notifications{\n" + "... on " + AniListAiringNotification.getQuery() + "}\n");
-	
 	private final JSONObject variables;
 	private final LocalDateTime date;
 	private int nextPage = 0;
@@ -43,9 +42,15 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 		final var changes = new ArrayList<AniListAiringNotification>();
 		for(final var change : json.getJSONObject("data").getJSONObject("Page").getJSONArray("notifications")){
 			try{
-				final var changeObj = buildChange((JSONObject) change);
-				if(changeObj.getDate().isAfter(this.date)){
-					changes.add(changeObj);
+				final var changeJSONObj = (JSONObject) change;
+				if(changeJSONObj.length() > 0){
+					final var changeObj = buildChange(changeJSONObj);
+					if(changeObj.getDate().isAfter(this.date)){
+						changes.add(changeObj);
+					}
+				}
+				else{
+					getLogger(null).warn("Skipped AniList object, json: {}", change);
 				}
 			}
 			catch(final Exception e){

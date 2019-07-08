@@ -10,8 +10,8 @@ import fr.mrcraftcod.gunterdiscord.utils.json.LocalDateTimeDeserializer;
 import fr.mrcraftcod.gunterdiscord.utils.json.LocalDateTimeSerializer;
 import net.dv8tion.jda.api.entities.User;
 import javax.annotation.Nonnull;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -24,7 +24,7 @@ import java.util.Optional;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDateConfiguration{
-	private static final SimpleDateFormat SDF = new SimpleDateFormat("YYYY-MM-DD HH:mm:ss");
+	public static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	@JsonProperty("userId")
 	private long userId;
 	@JsonProperty("date")
@@ -51,7 +51,7 @@ public class UserDateConfiguration{
 	
 	@Override
 	public String toString(){
-		return this.getUser().map(User::getAsMention).map(s -> s + " " + SDF.format(this.getDate())).orElse("");
+		return this.getUser().map(User::getAsMention).map(s -> s + " " + this.getDate().format(DF)).orElse("");
 	}
 	
 	@Nonnull

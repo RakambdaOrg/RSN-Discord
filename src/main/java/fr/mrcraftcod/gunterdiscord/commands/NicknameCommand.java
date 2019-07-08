@@ -14,8 +14,9 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 import javax.annotation.Nonnull;
 import java.awt.Color;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -26,7 +27,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-04-12
  */
 public class NicknameCommand extends BasicCommand{
-	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 	
 	@Override
 	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
@@ -58,16 +59,16 @@ public class NicknameCommand extends BasicCommand{
 		}
 		memberOptional.ifPresentOrElse(member -> {
 			final var oldName = Optional.ofNullable(member.getNickname());
-			final var lastChange = NewSettings.getConfiguration(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser()).orElse(0L);
+			final var lastChange = NewSettings.getConfiguration(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser()).orElse(LocalDateTime.MIN);
 			final var delay = Duration.ofSeconds(NewSettings.getConfiguration(event.getGuild()).getNicknameConfiguration().getChangeDelay());
-			if(!Utilities.isTeam(event.getMember()) && (lastChange + delay.getSeconds() * 1000) >= new Date().getTime()){
+			if(!Utilities.isTeam(event.getMember()) && lastChange.plus(delay).isAfter(LocalDateTime.now())){
 				final var builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.setColor(Color.RED);
 				builder.addField("Old nickname", oldName.orElse("*NONE*"), true);
 				builder.addField("User", member.getAsMention(), true);
 				builder.addField("Reason", "You can change your nickname once every " + delay.toString().replace("PT", ""), true);
-				builder.addField("Last change", sdf.format(lastChange), true);
+				builder.addField("Last change", DF.format(lastChange), true);
 				builder.setTimestamp(new Date().toInstant());
 				Actions.reply(event, builder.build());
 			}
@@ -87,7 +88,7 @@ public class NicknameCommand extends BasicCommand{
 				try{
 					member.getGuild().modifyNickname(member, newName).complete();
 					builder.setColor(Color.GREEN);
-					NewSettings.getConfiguration(event.getGuild()).getNicknameConfiguration().setLastChange(member.getUser(), new Date());
+					NewSettings.getConfiguration(event.getGuild()).getNicknameConfiguration().setLastChange(member.getUser(), LocalDateTime.now());
 					getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", event.getAuthor(), member.getUser(), oldName, newName);
 				}
 				catch(final HierarchyException e){

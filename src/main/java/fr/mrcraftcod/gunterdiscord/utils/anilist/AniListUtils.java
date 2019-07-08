@@ -4,10 +4,12 @@ import fr.mrcraftcod.gunterdiscord.listeners.CommandsMessageListener;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.settings.guild.anilist.AnilistAccessTokenConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import fr.mrcraftcod.utils.http.requestssenders.post.JSONPostRequestSender;
 import net.dv8tion.jda.api.entities.Member;
 import org.json.JSONObject;
 import javax.annotation.Nonnull;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -27,7 +29,15 @@ public class AniListUtils{
 	private static final String REDIRECT_URI = "https://anilist.co/api/v2/oauth/pin";
 	private static final String CODE_LINK = String.format("%s/oauth/authorize?client_id=%d&response_type=code&redirect_uri=%s", API_URL, APP_ID, REDIRECT_URI);
 	private static final String USER_INFO_QUERY = "query{Viewer {id name}}";
-	
+	public static URL FALLBACK_URL;
+	static{
+		try{
+			FALLBACK_URL = new URL("https://anilist.co");
+		}
+		catch(MalformedURLException e){
+			Log.getLogger(null).error("Failed to create default URL", e);
+		}
+	}
 	public static void generateToken(@Nonnull final Member member, @Nonnull final String token) throws Exception{
 		getLogger(member.getGuild()).debug("Getting access token for {}", member);
 		final var accessToken = getPreviousAccessToken(member);

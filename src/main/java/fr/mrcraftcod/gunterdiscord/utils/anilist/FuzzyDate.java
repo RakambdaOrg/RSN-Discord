@@ -6,8 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import fr.mrcraftcod.gunterdiscord.utils.GunterDuration;
 import javax.annotation.Nonnull;
 import java.time.Duration;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -20,22 +19,22 @@ import java.util.Optional;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FuzzyDate{
-	private final Calendar calendar;
+	private LocalDate date;
 	private boolean isSet;
 	
 	private FuzzyDate(){
-		this.calendar = Calendar.getInstance();
+		this.date = LocalDate.now();
 		this.isSet = false;
 	}
 	
 	@Nonnull
-	public Optional<GunterDuration> durationTo(@Nonnull final Date toDate){
-		return this.asDate().map(date -> new GunterDuration(Duration.between(date.toInstant(), toDate.toInstant())));
+	public Optional<GunterDuration> durationTo(@Nonnull final LocalDate toDate){
+		return this.asDate().map(date -> new GunterDuration(Duration.between(date, toDate)));
 	}
 	
 	@Nonnull
-	public Optional<Date> asDate(){
-		return this.isSet() ? Optional.of(this.calendar.getTime()) : Optional.empty();
+	public Optional<LocalDate> asDate(){
+		return this.isSet() ? Optional.of(this.date) : Optional.empty();
 	}
 	
 	public boolean isSet(){
@@ -46,7 +45,7 @@ public class FuzzyDate{
 	private void setDay(final Integer day){
 		if(Objects.nonNull(day)){
 			this.isSet = true;
-			this.calendar.set(Calendar.DAY_OF_MONTH, day);
+			this.date = LocalDate.of(this.date.getYear(), date.getMonth(), day);
 		}
 	}
 	
@@ -54,7 +53,7 @@ public class FuzzyDate{
 	private void setMonth(final Integer month){
 		if(Objects.nonNull(month)){
 			this.isSet = true;
-			this.calendar.set(Calendar.MONTH, month - 1);
+			this.date = LocalDate.of(this.date.getYear(), month, this.date.getDayOfMonth());
 		}
 	}
 	
@@ -62,7 +61,7 @@ public class FuzzyDate{
 	private void setYear(final Integer year){
 		if(Objects.nonNull(year)){
 			this.isSet = true;
-			this.calendar.set(Calendar.YEAR, year);
+			this.date = LocalDate.of(year, this.date.getMonth(), this.date.getDayOfMonth());
 		}
 	}
 }

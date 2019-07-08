@@ -79,7 +79,7 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 	@Nonnull
 	@Override
 	public AniListNotificationsPagedQuery initQuery(@Nonnull Member member){
-		return new AniListNotificationsPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess("lastFetch" + getFetcherID()).stream().filter(c -> Objects.equals(c.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
+		return new AniListNotificationsPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(getFetcherID()).stream().filter(c -> Objects.equals(c.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
 	}
 	
 	@Override
