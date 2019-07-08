@@ -68,7 +68,7 @@ public class NewSettings{
 	}
 	
 	public static void save(){
-		configurations.forEach(NewSettings::saveConfiguration);
+		// configurations.forEach(NewSettings::saveConfiguration);
 	}
 	
 	static{

@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import fr.mrcraftcod.gunterdiscord.utils.json.LocalDateTimeDeserializer;
 import fr.mrcraftcod.gunterdiscord.utils.json.LocalDateTimeSerializer;
-import fr.mrcraftcod.gunterdiscord.utils.json.SQLTimestampDeserializer;
 import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
 
@@ -22,7 +22,7 @@ public class AnilistAccessTokenConfiguration{
 	@JsonProperty("userId")
 	private long userId;
 	@JsonProperty("expireDate")
-	@JsonDeserialize(using = SQLTimestampDeserializer.class)
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime expireDate;
 	@JsonProperty("token")
