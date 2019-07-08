@@ -29,7 +29,7 @@ public class FuzzyDate{
 	
 	@Nonnull
 	public Optional<GunterDuration> durationTo(@Nonnull final LocalDate toDate){
-		return this.asDate().map(date -> new GunterDuration(Duration.between(date.atTime(0, 0, 0), toDate.atTime(0, 0, 0))));
+		return this.asDate().map(date -> new GunterDuration(Duration.between(date.atStartOfDay(), toDate.atStartOfDay())));
 	}
 	
 	@Nonnull
