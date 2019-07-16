@@ -1,7 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
-import fr.mrcraftcod.gunterdiscord.settings.guild.participation.EntityParticipation;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildMuteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -57,20 +56,12 @@ public class LogListener extends ListenerAdapter{
 			if(!event.getAuthor().equals(event.getJDA().getSelfUser())){
 				final var now = LocalDate.now();
 				if(NewSettings.getConfiguration(event.getGuild()).getNoXpChannels().stream().noneMatch(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong()))){
-					final var users = NewSettings.getConfiguration(event.getGuild()).getParticipationConfiguration().getUsers(now).orElseGet(() -> {
-						final var p = new EntityParticipation(now);
-						NewSettings.getConfiguration(event.getGuild()).getParticipationConfiguration().addEmoteParticipation(p);
-						return p;
-					});
+					final var users = NewSettings.getConfiguration(event.getGuild()).getParticipationConfiguration().getUsers(now);
 					users.increment(event.getAuthor().getIdLong());
 				}
 
 				final var weekKey = now.minusDays(getDaysToRemove(now.getDayOfWeek()));
-				final var emotes = NewSettings.getConfiguration(event.getGuild()).getParticipationConfiguration().getEmotes(weekKey).orElseGet(() -> {
-					final var p = new EntityParticipation(weekKey);
-					NewSettings.getConfiguration(event.getGuild()).getParticipationConfiguration().addEmoteParticipation(p);
-					return p;
-				});
+				final var emotes = NewSettings.getConfiguration(event.getGuild()).getParticipationConfiguration().getEmotes(weekKey);
 				event.getMessage().getEmotes().forEach(emote -> emotes.increment(emote.getIdLong()));
 			}
 		}

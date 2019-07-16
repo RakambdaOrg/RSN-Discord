@@ -17,6 +17,8 @@ import java.util.Optional;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ParticipationConfig{
+	private final Object usersLock = new Object();
+	private final Object emotesLock = new Object();
 	@JsonProperty("emotes")
 	private List<EntityParticipation> emotesParticipation = new ArrayList<>();
 	@JsonProperty("users")
@@ -29,12 +31,30 @@ public class ParticipationConfig{
 	public ParticipationConfig(){
 	}
 	
-	public void addEmoteParticipation(@Nonnull EntityParticipation entityParticipation){
-		this.emotesParticipation.add(entityParticipation);
+	public EntityParticipation getUsers(@Nonnull LocalDate date){
+		return this.getUsers(date, true).orElseThrow();
 	}
 	
-	public Optional<EntityParticipation> getUsers(@Nonnull LocalDate date){
-		return this.usersParticipation.stream().filter(p -> Objects.equals(date, p.getDate())).findFirst();
+	public Optional<EntityParticipation> getUsers(@Nonnull LocalDate date, boolean create){
+		synchronized(usersLock){
+			return this.usersParticipation.stream().filter(p -> Objects.equals(date, p.getDate())).findFirst().or(() -> {
+				if(create){
+					final var p = new EntityParticipation(date);
+					this.addUserParticipation(p);
+					return Optional.of(p);
+				}
+				return Optional.empty();
+			});
+		}
+	}
+	
+	private void addUserParticipation(@Nonnull EntityParticipation entityParticipation){
+		this.usersParticipation.add(entityParticipation);
+	}
+	
+	@Nonnull
+	public EntityParticipation getEmotes(@Nonnull LocalDate date){
+		return this.getEmotes(date, true).orElseThrow();
 	}
 	
 	public void removeUsers(@Nonnull LocalDate date){
@@ -45,9 +65,21 @@ public class ParticipationConfig{
 		this.emotesParticipation.removeIf(p -> Objects.equals(p.getDate(), date));
 	}
 	
-	@Nonnull
-	public Optional<EntityParticipation> getEmotes(@Nonnull LocalDate date){
-		return this.emotesParticipation.stream().filter(p -> Objects.equals(date, p.getDate())).findFirst();
+	public Optional<EntityParticipation> getEmotes(LocalDate date, boolean create){
+		synchronized(emotesLock){
+			return this.emotesParticipation.stream().filter(p -> Objects.equals(date, p.getDate())).findFirst().or(() -> {
+				if(create){
+					final var p = new EntityParticipation(date);
+					this.addEmoteParticipation(p);
+					return Optional.of(p);
+				}
+				return Optional.empty();
+			});
+		}
+	}
+	
+	private void addEmoteParticipation(@Nonnull EntityParticipation entityParticipation){
+		this.emotesParticipation.add(entityParticipation);
 	}
 	
 	@Nonnull

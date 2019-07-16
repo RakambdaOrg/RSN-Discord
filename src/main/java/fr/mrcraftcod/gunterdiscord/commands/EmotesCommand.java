@@ -12,7 +12,9 @@ import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -44,7 +46,7 @@ public class EmotesCommand extends BasicCommand{
 	
 	public static boolean sendInfos(@Nonnull final Guild guild, @Nonnull final LocalDate localDate, @Nonnull final User author, @Nonnull final TextChannel channel, final int limit){
 		final var weekKey = localDate.minusDays(LogListener.getDaysToRemove(localDate.getDayOfWeek()));
-		return NewSettings.getConfiguration(guild).getParticipationConfiguration().getEmotes(weekKey).map(stats -> {
+		return NewSettings.getConfiguration(guild).getParticipationConfiguration().getEmotes(weekKey, false).map(stats -> {
 			final var position = new AtomicInteger(1);
 			final var builder = Utilities.buildEmbed(author, Color.MAGENTA, "Participation of the week " + localDate.format(DFD) + " (UTC)");
 			stats.getScores().entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).forEachOrdered(e -> builder.addField("#" + position.getAndIncrement(), Optional.ofNullable(guild.getEmoteById(e.getKey())).map(Emote::getAsMention).orElse("<<UNKNOWN>>") + " Use count: " + e.getValue(), false));
