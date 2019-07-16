@@ -37,64 +37,18 @@ public class Actions{
 	 * @param format The message format.
 	 * @param args   The message parameters.
 	 */
-	public static void reply( final GenericGuildMessageEvent event,  final String format, final Object... args){
+	public static void reply(final GenericGuildMessageEvent event, final String format, final Object... args){
 		sendMessage(event.getChannel(), String.format(format, args));
 	}
 	
 	/**
-	 * Reply to a message.
-	 *
-	 * @param event  The message event.
-	 * @param onDone The action to do when done.
-	 * @param format The message format.
-	 * @param args   The message parameters.
-	 */
-	public static void reply( final GenericGuildMessageEvent event, final Consumer<Message> onDone,  final String format, final Object... args){
-		sendMessage(event.getChannel(), onDone, String.format(format, args));
-	}
-	
-	/**
-	 * Send a message to a channel.
-	 *
-	 * @param guild   The guild that initiated the event.
-	 * @param channel The channel to send to.
-	 * @param text    The message to send.
-	 */
-	public static void sendMessage(final Guild guild,  final PrivateChannel channel, final String text){
-		if(channel.getUser().isBot()){
-			getLogger(guild).info("Cannot send private message to bot {} : {}", channel.getUser(), text);
-		}
-		else{
-			channel.sendMessage(text).queue();
-			getLogger(guild).info("Sent private message to {} : {}", channel.getUser(), text);
-		}
-	}
-	
-	/**
 	 * Send a message to a channel.
 	 *
 	 * @param channel The channel to send to.
 	 * @param text    The message to send.
 	 */
-	public static void sendMessage( final TextChannel channel, final String text){
+	public static void sendMessage(final TextChannel channel, final String text){
 		sendMessage(channel, null, text);
-	}
-	
-	/**
-	 * Send a message to a channel with an embed.
-	 *
-	 * @param channel The channel to send to.
-	 * @param text    The message to send.
-	 * @param embed   The embed to attach.
-	 */
-	public static void sendMessage( final TextChannel channel, final String text, final MessageEmbed embed){
-		if(channel.canTalk()){
-			channel.sendMessage(text).embed(embed).queue();
-			getLogger(channel.getGuild()).info("Sent message to {} : {}", channel.getName(), text);
-		}
-		else{
-			getLogger(channel.getGuild()).error("Access denied to text channel: {}", channel.getAsMention());
-		}
 	}
 	
 	/**
@@ -104,7 +58,7 @@ public class Actions{
 	 * @param onDone  The action to do when done.
 	 * @param text    The message to send.
 	 */
-	public static void sendMessage( final TextChannel channel, final Consumer<Message> onDone, final String text){
+	public static void sendMessage(final TextChannel channel, final Consumer<Message> onDone, final String text){
 		if(channel.canTalk()){
 			if(Objects.nonNull(onDone)){
 				channel.sendMessage(text).queue(onDone);
@@ -120,13 +74,75 @@ public class Actions{
 	}
 	
 	/**
+	 * Reply to a message.
+	 *
+	 * @param event  The message event.
+	 * @param onDone The action to do when done.
+	 * @param format The message format.
+	 * @param args   The message parameters.
+	 */
+	public static void reply(final GenericGuildMessageEvent event, final Consumer<Message> onDone, final String format, final Object... args){
+		sendMessage(event.getChannel(), onDone, String.format(format, args));
+	}
+	
+	/**
+	 * Reply to a message.
+	 *
+	 * @param event   The message event.
+	 * @param onDone  The action to do when done.
+	 * @param message The embed to send.
+	 */
+	public static void reply(final GenericGuildMessageEvent event, final Consumer<Message> onDone, final MessageEmbed message){
+		sendMessage(event.getChannel(), onDone, message);
+	}
+	
+	/**
+	 * Send a message to a channel.
+	 *
+	 * @param channel The channel to send to.
+	 * @param onDone  The action to do when done.
+	 * @param embed   The message to send.
+	 */
+	public static void sendMessage(final TextChannel channel, final Consumer<Message> onDone, final MessageEmbed embed){
+		if(channel.canTalk()){
+			if(Objects.nonNull(onDone)){
+				channel.sendMessage(embed).queue(onDone);
+			}
+			else{
+				channel.sendMessage(embed).queue();
+			}
+			getLogger(channel.getGuild()).info("Sent message to {} : {}", channel.getName(), Utilities.getEmbedForLog(embed));
+		}
+		else{
+			getLogger(channel.getGuild()).error("Access denied to text channel: {}, when sending: {}", channel.getAsMention(), Utilities.getEmbedForLog(embed));
+		}
+	}
+	
+	/**
+	 * Send a message to a channel with an embed.
+	 *
+	 * @param channel The channel to send to.
+	 * @param text    The message to send.
+	 * @param embed   The embed to attach.
+	 */
+	public static void sendMessage(final TextChannel channel, final String text, final MessageEmbed embed){
+		if(channel.canTalk()){
+			channel.sendMessage(text).embed(embed).queue();
+			getLogger(channel.getGuild()).info("Sent message to {} : {}", channel.getName(), text);
+		}
+		else{
+			getLogger(channel.getGuild()).error("Access denied to text channel: {}", channel.getAsMention());
+		}
+	}
+	
+	/**
 	 * Send a message to a channel.
 	 *
 	 * @param channel The channel to send to.
 	 * @param format  The format fo the message.
 	 * @param args    The message parameters.
 	 */
-	public static void sendMessage( final TextChannel channel,  final String format, final Object... args){
+	public static void sendMessage(final TextChannel channel, final String format, final Object... args){
 		sendMessage(channel, String.format(format, args));
 	}
 	
@@ -138,7 +154,7 @@ public class Actions{
 	 * @param format  The format fo the message.
 	 * @param args    The message parameters.
 	 */
-	public static void sendMessage( final TextChannel channel, final Consumer<Message> onDone,  final String format, final Object... args){
+	public static void sendMessage(final TextChannel channel, final Consumer<Message> onDone, final String format, final Object... args){
 		sendMessage(channel, onDone, String.format(format, args));
 	}
 	
@@ -150,7 +166,7 @@ public class Actions{
 	 * @param format The format fo the message.
 	 * @param args   The message parameters.
 	 */
-	public static void replyPrivate(final Guild guild,  final User user, final String format, final Object... args){
+	public static void replyPrivate(final Guild guild, final User user, final String format, final Object... args){
 		replyPrivate(guild, user, String.format(format, args));
 	}
 	
@@ -161,18 +177,25 @@ public class Actions{
 	 * @param user  The user to send to.
 	 * @param text  The message to send.
 	 */
-	public static void replyPrivate(final Guild guild,  final User user, final String text){
+	public static void replyPrivate(final Guild guild, final User user, final String text){
 		user.openPrivateChannel().queue(channel -> sendMessage(guild, channel, text));
 	}
 	
 	/**
-	 * Remove a role from a user.
+	 * Send a message to a channel.
 	 *
-	 * @param user The user to remove the role from.
-	 * @param role The role to remove.
+	 * @param guild   The guild that initiated the event.
+	 * @param channel The channel to send to.
+	 * @param text    The message to send.
 	 */
-	public static void removeRole(final User user,  final Role role){
-		Optional.ofNullable(role.getGuild().getMember(user)).ifPresentOrElse(member -> removeRole(member, role), () -> getLogger(role.getGuild()).info("Couldn't find {} in guild {}", user, role.getGuild()));
+	public static void sendMessage(final Guild guild, final PrivateChannel channel, final String text){
+		if(channel.getUser().isBot()){
+			getLogger(guild).info("Cannot send private message to bot {} : {}", channel.getUser(), text);
+		}
+		else{
+			channel.sendMessage(text).queue();
+			getLogger(guild).info("Sent private message to {} : {}", channel.getUser(), text);
+		}
 	}
 	
 	/**
@@ -194,13 +217,13 @@ public class Actions{
 	}
 	
 	/**
-	 * Remove roles from a user.
+	 * Remove a role from a user.
 	 *
-	 * @param member The user to remove the roles from.
-	 * @param roles  The roles to remove.
+	 * @param user The user to remove the role from.
+	 * @param role The role to remove.
 	 */
-	public static void removeRole(final Member member,  final List<Role> roles){
-		roles.forEach(role -> removeRole(member, role));
+	public static void removeRole(final User user, final Role role){
+		Optional.ofNullable(role.getGuild().getMember(user)).ifPresentOrElse(member -> removeRole(member, role), () -> getLogger(role.getGuild()).info("Couldn't find {} in guild {}", user, role.getGuild()));
 	}
 	
 	/**
@@ -227,13 +250,23 @@ public class Actions{
 	}
 	
 	/**
+	 * Remove roles from a user.
+	 *
+	 * @param member The user to remove the roles from.
+	 * @param roles  The roles to remove.
+	 */
+	public static void removeRole(final Member member, final List<Role> roles){
+		roles.forEach(role -> removeRole(member, role));
+	}
+	
+	/**
 	 * Send a file to a channel.
 	 *
 	 * @param channel  The channel to send to.
 	 * @param resource The resource to send.
 	 * @param name     The name of the file.
 	 */
-	public static void sendFile( final TextChannel channel, final String resource, final String name){
+	public static void sendFile(final TextChannel channel, final String resource, final String name){
 		sendFile(channel, Main.class.getResourceAsStream(resource), name);
 	}
 	
@@ -244,7 +277,7 @@ public class Actions{
 	 * @param stream  The data to send.
 	 * @param name    The name of the file.
 	 */
-	public static void sendFile( final TextChannel channel, final InputStream stream, final String name){
+	public static void sendFile(final TextChannel channel, final InputStream stream, final String name){
 		channel.sendFile(stream, name).queue();
 		getLogger(channel.getGuild()).info("Sent file {} to {}", name, channel.getName());
 	}
@@ -258,7 +291,7 @@ public class Actions{
 	 *
 	 * @return The message sent or null fi there was a problem.
 	 */
-	public static Message getMessage( final TextChannel channel,  final String format, final Object... args){
+	public static Message getMessage(final TextChannel channel, final String format, final Object... args){
 		return getMessage(channel, String.format(format, args));
 	}
 	
@@ -270,7 +303,7 @@ public class Actions{
 	 *
 	 * @return The message sent or null fi there was a problem.
 	 */
-	public static Message getMessage( final TextChannel channel, final String text){
+	public static Message getMessage(final TextChannel channel, final String text){
 		getLogger(channel.getGuild()).info("Sent message to {} : {}", channel.getName(), text);
 		return channel.sendMessage(text).complete();
 	}
@@ -281,7 +314,7 @@ public class Actions{
 	 * @param channel The channel to send to.
 	 * @param file    The file to send.
 	 */
-	public static void sendFile( final TextChannel channel,  final File file){
+	public static void sendFile(final TextChannel channel, final File file){
 		try{
 			sendFile(channel, new FileInputStream(file), file.getName());
 		}
@@ -296,7 +329,7 @@ public class Actions{
 	 * @param member The member.
 	 * @param roles  The roles IDs.
 	 */
-	public static void giveRole( final Member member,  final List<Long> roles){
+	public static void giveRole(final Member member, final List<Long> roles){
 		giveRole(member.getUser(), roles.stream().map(r -> getRoleByID(member.getGuild(), r)).collect(Collectors.toList()));
 	}
 	
@@ -306,7 +339,7 @@ public class Actions{
 	 * @param user  The user to set the role to.
 	 * @param roles The roles to set.
 	 */
-	public static void giveRole( final User user,  final List<Role> roles){
+	public static void giveRole(final User user, final List<Role> roles){
 		roles.forEach(role -> giveRole(role.getGuild(), user, role));
 	}
 	
@@ -318,7 +351,7 @@ public class Actions{
 	 *
 	 * @return The role or null if not found.
 	 */
-	public static Role getRoleByID( final Guild guild, final Long role){
+	public static Role getRoleByID(final Guild guild, final Long role){
 		return guild.getRoleById(role);
 	}
 	
@@ -329,7 +362,7 @@ public class Actions{
 	 * @param user  The user to set the role to.
 	 * @param role  The role to set.
 	 */
-	public static void giveRole( final Guild guild,  final User user, final Role role){
+	public static void giveRole(final Guild guild, final User user, final Role role){
 		try{
 			final var member = guild.getMember(user);
 			if(Objects.requireNonNull(member).getRoles().contains(role)){
@@ -346,16 +379,6 @@ public class Actions{
 		catch(final Exception e){
 			getLogger(guild).error("Error giving role {} to {}", role, user, e);
 		}
-	}
-	
-	/**
-	 * Reply to an event?
-	 *
-	 * @param event The event.
-	 * @param embed The message to send.
-	 */
-	public static void reply( final GenericGuildMessageEvent event, final MessageEmbed embed){
-		sendMessage(event.getChannel(), embed);
 	}
 	
 	/**
@@ -376,35 +399,23 @@ public class Actions{
 	}
 	
 	/**
-	 * Send a message to a channel.
+	 * Reply to an event?
 	 *
-	 * @param channel The channel to send to.
-	 * @param embed   The message to send.
+	 * @param event The event.
+	 * @param embed The message to send.
 	 */
-	public static void sendMessage( final TextChannel channel, final MessageEmbed embed){
-		sendMessage(channel, (Consumer<Message>) null, embed);
+	public static void reply(final GenericGuildMessageEvent event, final MessageEmbed embed){
+		sendMessage(event.getChannel(), embed);
 	}
 	
 	/**
 	 * Send a message to a channel.
 	 *
 	 * @param channel The channel to send to.
-	 * @param onDone  The action to do when done.
 	 * @param embed   The message to send.
 	 */
-	public static void sendMessage( final TextChannel channel, final Consumer<Message> onDone, final MessageEmbed embed){
-		if(channel.canTalk()){
-			if(Objects.nonNull(onDone)){
-				channel.sendMessage(embed).queue(onDone);
-			}
-			else{
-				channel.sendMessage(embed).queue();
-			}
-			getLogger(channel.getGuild()).info("Sent message to {} : {}", channel.getName(), Utilities.getEmbedForLog(embed));
-		}
-		else{
-			getLogger(channel.getGuild()).error("Access denied to text channel: {}, when sending: {}", channel.getAsMention(), Utilities.getEmbedForLog(embed));
-		}
+	public static void sendMessage(final TextChannel channel, final MessageEmbed embed){
+		sendMessage(channel, (Consumer<Message>) null, embed);
 	}
 	
 	/**
@@ -413,7 +424,7 @@ public class Actions{
 	 * @param channel The channel to send to.
 	 * @param embeds  The messages to send.
 	 */
-	public static void sendMessage( final TextChannel channel,  final List<MessageEmbed> embeds){
+	public static void sendMessage(final TextChannel channel, final List<MessageEmbed> embeds){
 		embeds.forEach(e -> sendMessage(channel, e));
 	}
 	
@@ -423,7 +434,7 @@ public class Actions{
 	 * @param channel The channel to send to.
 	 * @param embeds  The messages to send.
 	 */
-	public static void sendMessage( final TextChannel channel,  final Consumer<Message> onDone,  final List<MessageEmbed> embeds){
+	public static void sendMessage(final TextChannel channel, final Consumer<Message> onDone, final List<MessageEmbed> embeds){
 		embeds.forEach(e -> sendMessage(channel, onDone, e));
 	}
 	
@@ -433,7 +444,7 @@ public class Actions{
 	 * @param members The member to set deaf.
 	 * @param state   True if deaf, false is not deaf.
 	 */
-	public static void deafen( final List<Member> members, final boolean state){
+	public static void deafen(final List<Member> members, final boolean state){
 		members.forEach(member -> deafen(member, state));
 	}
 	
@@ -443,7 +454,7 @@ public class Actions{
 	 * @param member The member to set deaf.
 	 * @param state  True if deaf, false is not deaf.
 	 */
-	private static void deafen( final Member member, final boolean state){
+	private static void deafen(final Member member, final boolean state){
 		try{
 			member.getGuild().deafen(member, state).queue();
 			getLogger(member.getGuild()).info("Member {} is now {}deaf", member.getUser(), state ? "" : "un");
@@ -463,7 +474,7 @@ public class Actions{
 	 * @param channel    The channel it'll apply to.
 	 * @param permission The permission to remove.
 	 */
-	public static void denyPermission( final List<Member> members,  final GuildChannel channel,  final Permission permission){
+	public static void denyPermission(final List<Member> members, final GuildChannel channel, final Permission permission){
 		members.forEach(member -> denyPermission(member, channel, permission));
 	}
 	
@@ -474,7 +485,7 @@ public class Actions{
 	 * @param channel    The channel it'll apply to.
 	 * @param permission The permission to remove.
 	 */
-	public static void denyPermission( final Member member,  final GuildChannel channel,  final Permission permission){
+	public static void denyPermission(final Member member, final GuildChannel channel, final Permission permission){
 		try{
 			channel.putPermissionOverride(member).setDeny(permission).queue();
 			getLogger(member.getGuild()).info("{} no longer have permission {} on {}", member.getUser(), permission.name(), channel.getName());
@@ -494,7 +505,7 @@ public class Actions{
 	 * @param channel    The channel it'll apply to.
 	 * @param permission The permission to give.
 	 */
-	public static void allowPermission( final List<Member> members,  final GuildChannel channel,  final Permission permission){
+	public static void allowPermission(final List<Member> members, final GuildChannel channel, final Permission permission){
 		members.forEach(member -> allowPermission(member, channel, permission));
 	}
 	
@@ -505,7 +516,7 @@ public class Actions{
 	 * @param channel    The channel it'll apply to.
 	 * @param permission The permission to give.
 	 */
-	public static void allowPermission( final Member member,  final GuildChannel channel,  final Permission permission){
+	public static void allowPermission(final Member member, final GuildChannel channel, final Permission permission){
 		try{
 			channel.putPermissionOverride(member).setAllow(permission).queue();
 			getLogger(member.getGuild()).info("{} now have permission {} on {}", member.getUser(), permission.getName(), channel.getName());
@@ -538,7 +549,7 @@ public class Actions{
 	 *
 	 * @return The message sent or null fi there was a problem.
 	 */
-	public static Message getMessage( final TextChannel channel, final MessageEmbed embed){
+	public static Message getMessage(final TextChannel channel, final MessageEmbed embed){
 		getLogger(channel.getGuild()).info("Sent message to {} : {}", channel.getName(), embed);
 		return channel.sendMessage(embed).complete();
 	}

@@ -1,4 +1,4 @@
-package fr.mrcraftcod.gunterdiscord.commands.luxbus.utils;
+package fr.mrcraftcod.gunterdiscord.utils.luxbus;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.mrcraftcod.utils.http.requestssenders.get.JSONGetRequestSender;

@@ -1,9 +1,10 @@
 package fr.mrcraftcod.gunterdiscord.commands.luxbus;
 
-import fr.mrcraftcod.gunterdiscord.commands.luxbus.utils.LuxBusStop;
 import fr.mrcraftcod.gunterdiscord.listeners.reply.BasicWaitingUserReply;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.luxbus.LuxBusStop;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +19,7 @@ public class LuxBusStopSelectionWaitingReply extends BasicWaitingUserReply{
 	private final List<LuxBusStop> stops;
 	
 	LuxBusStopSelectionWaitingReply(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final List<LuxBusStop> stops){
-		super(event);
+		super(event, event.getAuthor());
 		this.stops = stops;
 	}
 	
@@ -44,5 +45,15 @@ public class LuxBusStopSelectionWaitingReply extends BasicWaitingUserReply{
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean onExecute(@Nonnull GuildMessageReactionAddEvent event){
+		return false;
+	}
+	
+	@Override
+	public long getEmoteMessageId(){
+		return -1;
 	}
 }

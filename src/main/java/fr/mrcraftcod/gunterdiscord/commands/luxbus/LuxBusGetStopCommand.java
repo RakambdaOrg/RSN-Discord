@@ -2,12 +2,12 @@ package fr.mrcraftcod.gunterdiscord.commands.luxbus;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.commands.luxbus.utils.LuxBusDeparture;
-import fr.mrcraftcod.gunterdiscord.commands.luxbus.utils.LuxBusStop;
-import fr.mrcraftcod.gunterdiscord.commands.luxbus.utils.LuxBusUtils;
 import fr.mrcraftcod.gunterdiscord.listeners.reply.ReplyMessageListener;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import fr.mrcraftcod.gunterdiscord.utils.luxbus.LuxBusDeparture;
+import fr.mrcraftcod.gunterdiscord.utils.luxbus.LuxBusStop;
+import fr.mrcraftcod.gunterdiscord.utils.luxbus.LuxBusUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
