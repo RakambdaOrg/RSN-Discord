@@ -47,16 +47,19 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 				if(TempParticipationCommand.sendInfos(guild, ytd, this.jda.getSelfUser(), reportChannel)){
 					sent = true;
 					NewSettings.getConfiguration(guild).getParticipationConfiguration().removeUsers(ytd);
+					NewSettings.getConfiguration(guild).getParticipationConfiguration().removeUsersBefore(ytd);
 				}
 				getLogger(guild).debug("Processing stats for guild {}", guild);
 				if(EmotesCommand.sendInfos(guild, lastWeek, this.jda.getSelfUser(), reportChannel, 10)){
 					sent = true;
 					NewSettings.getConfiguration(guild).getParticipationConfiguration().removeEmotes(lastWeek);
+					NewSettings.getConfiguration(guild).getParticipationConfiguration().removeEmotesBefore(lastWeek);
 				}
 				if(sent){
 					final var toPin = NewSettings.getConfiguration(guild).getParticipationConfiguration().getUsersPinned().stream().map(UserConfiguration::getUser).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
-					if(!toPin.isEmpty())
-					Actions.sendMessage(reportChannel, toPin.stream().map(User::getAsMention).collect(Collectors.joining("\n")));
+					if(!toPin.isEmpty()){
+						Actions.sendMessage(reportChannel, toPin.stream().map(User::getAsMention).collect(Collectors.joining("\n")));
+					}
 				}
 			});
 		}

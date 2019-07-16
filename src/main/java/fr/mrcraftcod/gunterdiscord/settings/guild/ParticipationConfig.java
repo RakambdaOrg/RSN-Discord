@@ -82,6 +82,14 @@ public class ParticipationConfig{
 		this.emotesParticipation.add(entityParticipation);
 	}
 	
+	public void removeEmotesBefore(@Nonnull LocalDate week){
+		this.emotesParticipation.removeIf(p -> p.getDate().isBefore(week));
+	}
+	
+	public void removeUsersBefore(LocalDate date){
+		this.usersParticipation.removeIf(p -> p.getDate().isBefore(date));
+	}
+	
 	@Nonnull
 	public List<EntityParticipation> getEmotes(){
 		return this.emotesParticipation;
