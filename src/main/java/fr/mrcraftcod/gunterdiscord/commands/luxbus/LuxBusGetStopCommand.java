@@ -77,7 +77,7 @@ public class LuxBusGetStopCommand extends BasicCommand{
 			final var departures = LuxBusUtils.getDepartures(stop);
 			if(departures.stream().map(departure -> departure.getProduct().getLine()).distinct().count() < 2){
 				if(departures.stream().map(LuxBusDeparture::getDirection).distinct().count() < 2){
-					departures.stream().sorted().forEachOrdered(departure -> Actions.reply(event, departure.getAsEmbed(new EmbedBuilder()).build()));
+					departures.stream().sorted().forEachOrdered(departure -> Actions.reply(event, departure.getAsEmbed(Utilities.buildEmbed(event.getAuthor(), null, null)).build()));
 				}
 				else{
 					askDirection(event, departures);
