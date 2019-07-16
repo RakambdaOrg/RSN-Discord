@@ -14,7 +14,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true, value = {
+		"usersLock",
+		"emotesLock"
+})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ParticipationConfig{
 	private final Object usersLock = new Object();
