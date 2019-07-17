@@ -34,6 +34,7 @@ public class OverwatchGetWeekMatchesCommand extends BasicCommand{
 			final var message = m.hasEnded() ? m.getScores().stream().map(OverwatchScore::getValue).map(Object::toString).collect(Collectors.joining(" - ")) : ("On the " + m.getStartDate().format(FORMATTER));
 			builder.addField(m.getCompetitors().stream().map(OverwatchCompetitor::getName).collect(Collectors.joining(" vs ")), message, false);
 		});
+		builder.setFooter("" + week.getId());
 		Actions.reply(event, builder.build());
 	};
 	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchStage> onStage = (event, stage) -> {

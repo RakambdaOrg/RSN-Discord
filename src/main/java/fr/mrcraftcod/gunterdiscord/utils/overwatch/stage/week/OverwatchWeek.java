@@ -57,7 +57,7 @@ public class OverwatchWeek implements Comparable<OverwatchWeek>{
 		return obj instanceof OverwatchWeek && Objects.equals(this.getId(), ((OverwatchWeek) obj).getId());
 	}
 	
-	private int getId(){
+	public int getId(){
 		return this.id;
 	}
 	
