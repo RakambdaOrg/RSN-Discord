@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.settings.guild;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,8 +21,10 @@ import java.util.Optional;
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ParticipationConfig{
-	private final Object usersLock = new Object();
+	@JsonIgnore
 	private final Object emotesLock = new Object();
+	@JsonIgnore
+	private final Object usersLock = new Object();
 	@JsonProperty("emotes")
 	private List<EntityParticipation> emotesParticipation = new ArrayList<>();
 	@JsonProperty("users")

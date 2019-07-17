@@ -59,6 +59,7 @@ public class NewSettings{
 		final var guildConfPath = getConfigPath(guildId);
 		guildConfPath.getParent().toFile().mkdirs();
 		try{
+			objectWriter.writeValueAsString(value);
 			objectWriter.writeValue(guildConfPath.toFile(), value);
 			Log.getLogger(guildId).info("Wrote settings to {}", guildConfPath);
 		}

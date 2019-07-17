@@ -3,6 +3,9 @@ package fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fr.mrcraftcod.gunterdiscord.utils.json.HexColorDeserializer;
+import java.awt.Color;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -18,10 +21,12 @@ public class OverwatchCompetitor{
 	private String name;
 	@JsonProperty("homeLocation")
 	private String homeLocation;
-	@JsonProperty("primaryColor") //TODO: Deserializer
-	private String primaryColor;
-	@JsonProperty("secondaryColor") //TODO: Deserializer
-	private String secondaryColor;
+	@JsonProperty("primaryColor")
+	@JsonDeserialize(using = HexColorDeserializer.class)
+	private Color primaryColor;
+	@JsonProperty("secondaryColor")
+	@JsonDeserialize(using = HexColorDeserializer.class)
+	private Color secondaryColor;
 	@JsonProperty("game")
 	private String game;
 	@JsonProperty("abbreviatedName")
@@ -37,7 +42,23 @@ public class OverwatchCompetitor{
 	@JsonProperty("type")
 	private String type;
 	
+	public String getIcon(){
+		return icon;
+	}
+	
+	public int getId(){
+		return this.id;
+	}
+	
+	public String getLogo(){
+		return this.logo;
+	}
+	
 	public String getName(){
 		return this.name;
+	}
+	
+	public Color getPrimaryColor(){
+		return this.primaryColor;
 	}
 }

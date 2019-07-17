@@ -6,11 +6,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.mrcraftcod.gunterdiscord.utils.json.USADateStringDeserializer;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.OverwatchStage;
+import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match.OverwatchMatch;
+import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.tournament.OverwatchTournament;
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -29,6 +33,14 @@ public class OverwatchData{
 	private int seriesId;
 	@JsonProperty("stages")
 	private List<OverwatchStage> stages = new ArrayList<>();
+	
+	public Optional<OverwatchStage> getStageOfTournament(OverwatchTournament tournament){
+		return this.getStages().stream().filter(s -> s.getTournaments().stream().anyMatch(t -> Objects.equals(t, tournament))).findFirst();
+	}
+	
+	public List<OverwatchMatch> getMatchesOfTournament(OverwatchTournament tournament){
+		return this.getStages().stream().flatMap(s -> s.getMatches().stream()).filter(m -> Objects.equals(m.getTournament(), tournament)).collect(Collectors.toList());
+	}
 	
 	@Nonnull
 	public Optional<OverwatchStage> getCurrentStage(){

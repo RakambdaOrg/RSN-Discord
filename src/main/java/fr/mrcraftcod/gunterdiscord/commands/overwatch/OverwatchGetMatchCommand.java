@@ -11,6 +11,7 @@ import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.OverwatchUtils;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.OverwatchStage;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match.OverwatchCompetitor;
+import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match.OverwatchMatch;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match.OverwatchScore;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.week.OverwatchWeek;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -18,23 +19,56 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import javax.annotation.Nonnull;
 import java.awt.Color;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-public class OverwatchGetWeekMatchesCommand extends BasicCommand{
-	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm");
-	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchWeek> onWeek = (event, week) -> {
-		final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, week.getName());
-		week.getMatches().forEach(m -> {
-			final var message = m.hasEnded() ? m.getScores().stream().map(OverwatchScore::getValue).map(Object::toString).collect(Collectors.joining(" - ")) : ("On the " + m.getStartDate().format(FORMATTER));
-			builder.addField(m.getCompetitors().stream().map(OverwatchCompetitor::getName).collect(Collectors.joining(" vs ")), message, false);
+public class OverwatchGetMatchCommand extends BasicCommand{
+	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchMatch> onMatch = (event, match) -> {
+		final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, match.getCompetitors().stream().map(OverwatchCompetitor::getName).collect(Collectors.joining(" vs ")), (Objects.nonNull(match.getYoutubeId()) && !match.getYoutubeId().isBlank()) ? ("https://youtube.com/watch?v=" + match.getYoutubeId()) : null);
+		builder.setTimestamp(match.getStartDate());
+		builder.setDescription("Score: " + match.getScores().stream().map(OverwatchScore::getValue).map(Object::toString).collect(Collectors.joining(" - ")));
+		builder.addField("State", match.getState().asString(), true);
+		builder.addField("Conclusion strategy", match.getConclusionStrategy().asString(match), true);
+		match.getGames().forEach(game -> builder.addField("Game " + game.getNumber(), game.getAttributes().getMapName() + ": " + game.getPoints().stream().map(Object::toString).collect(Collectors.joining(" - ")) + game.getAttributes().getMapObject().map(o -> " (" + o.getType() + ")").orElse(""), false));
+		match.getWinningTeam().ifPresent(winner -> {
+			builder.setThumbnail(winner.getLogo());
+			builder.setImage(winner.getIcon());
+			builder.setColor(winner.getPrimaryColor());
 		});
+		builder.setFooter("" + match.getId());
 		Actions.reply(event, builder.build());
+	};
+	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchWeek> onWeek = (event, week) -> {
+		if(week.getMatches().size() > 0){
+			week.getMatches().forEach(m -> onMatch.accept(event, m));
+			if(week.getMatches().size() == 1){
+				onMatch.accept(event, week.getMatches().get(0));
+			}
+			else{
+				final var counter = new AtomicInteger('a');
+				final var options = new HashMap<BasicEmotes, OverwatchMatch>();
+				final var currentMatch = week.getCurrentMatch();
+				final var nextMatch = week.getNextMatch();
+				final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, "Available matches");
+				week.getMatches().forEach(m -> {
+					final var emote = BasicEmotes.getEmote("" + ((char) counter.getAndIncrement()));
+					options.put(emote, m);
+					builder.addField(emote.getValue() + ": " + m.getCompetitors().stream().map(OverwatchCompetitor::getName).collect(Collectors.joining(" vs ")), currentMatch.map(m::equals).orElse(false) ? "Current" : (nextMatch.map(m::equals).orElse(false) ? "Next" : ""), false);
+				});
+				Actions.reply(event, message -> {
+					options.keySet().stream().sorted().forEachOrdered(e -> message.addReaction(e.getValue()).queue());
+					ReplyMessageListener.handleReply(new EmoteWaitingUserReply<>(options, event, event.getUser(), message, OverwatchGetMatchCommand.onMatch));
+				}, builder.build());
+			}
+		}
+		else{
+			Actions.reply(event, "No matches found");
+		}
 	};
 	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchStage> onStage = (event, stage) -> {
 		if(stage.getWeeks().size() > 0){
@@ -54,19 +88,20 @@ public class OverwatchGetWeekMatchesCommand extends BasicCommand{
 				});
 				Actions.reply(event, message -> {
 					options.keySet().stream().sorted().forEachOrdered(e -> message.addReaction(e.getValue()).queue());
-					ReplyMessageListener.handleReply(new EmoteWaitingUserReply<>(options, event, event.getUser(), message, OverwatchGetWeekMatchesCommand.onWeek));
+					ReplyMessageListener.handleReply(new EmoteWaitingUserReply<>(options, event, event.getUser(), message, OverwatchGetMatchCommand.onWeek));
 				}, builder.build());
 			}
 		}
 		else{
-			Actions.reply(event, "No weeks found");
+			Actions.reply(event, "No week found");
 		}
 	};
 	
-	public OverwatchGetWeekMatchesCommand(Command parent){
+	public OverwatchGetMatchCommand(Command parent){
 		super(parent);
 	}
 	
+	@SuppressWarnings("DuplicatedCode")
 	@Nonnull
 	@Override
 	public CommandResult execute(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws Exception{
@@ -104,19 +139,19 @@ public class OverwatchGetWeekMatchesCommand extends BasicCommand{
 	@Nonnull
 	@Override
 	public String getName(){
-		return "Current week matches";
+		return "Info match";
 	}
 	
 	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("w", "week");
+		return List.of("m", "match");
 	}
 	
 	@Nonnull
 	@Override
 	public String getDescription(){
-		return "Get the matches of a week";
+		return "Get the info of a match";
 	}
 	
 	@Override

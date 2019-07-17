@@ -8,6 +8,7 @@ import java.util.List;
 public class OverwatchCommandComposite extends CommandComposite{
 	public OverwatchCommandComposite(){
 		this.addSubCommand(new OverwatchGetWeekMatchesCommand(this));
+		this.addSubCommand(new OverwatchGetMatchCommand(this));
 	}
 	
 	@Nonnull

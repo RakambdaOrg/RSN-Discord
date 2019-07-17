@@ -8,6 +8,7 @@ import fr.mrcraftcod.gunterdiscord.utils.json.OverwatchIDMatchDeserializer;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.enums.OverwatchState;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.enums.OverwatchStatus;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.enums.OverwatchStatusReason;
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -18,7 +19,7 @@ public class OverwatchGame{
 	@JsonProperty("number")
 	private int number;
 	@JsonProperty("points")
-	private List<Integer> points;
+	private List<Integer> points = new ArrayList<>();
 	@JsonProperty("attributes")
 	private OverwatchGameAttributes attributes;
 	@JsonProperty("attributesVersion")
@@ -36,4 +37,16 @@ public class OverwatchGame{
 	@JsonProperty("match")
 	@JsonDeserialize(using = OverwatchIDMatchDeserializer.class)
 	private int match;
+	
+	public OverwatchGameAttributes getAttributes(){
+		return this.attributes;
+	}
+	
+	public int getNumber(){
+		return this.number;
+	}
+	
+	public List<Integer> getPoints(){
+		return this.points;
+	}
 }

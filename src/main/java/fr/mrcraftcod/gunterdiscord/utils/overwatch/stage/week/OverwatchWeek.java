@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -30,7 +31,7 @@ public class OverwatchWeek implements Comparable<OverwatchWeek>{
 	@JsonProperty("events")
 	private List<OverwatchEvent> events;
 	
-	public boolean hasActuallyEnded(){
+	public boolean hasEnded(){
 		return this.getMatches().stream().allMatch(OverwatchMatch::hasEnded);
 	}
 	
@@ -38,7 +39,7 @@ public class OverwatchWeek implements Comparable<OverwatchWeek>{
 		return this.matches;
 	}
 	
-	public boolean hasActuallyStarted(){
+	public boolean hasStarted(){
 		return this.getMatches().stream().anyMatch(OverwatchMatch::hasStarted);
 	}
 	
@@ -62,5 +63,13 @@ public class OverwatchWeek implements Comparable<OverwatchWeek>{
 	
 	public String getName(){
 		return this.name;
+	}
+	
+	public Optional<OverwatchMatch> getCurrentMatch(){
+		return this.getMatches().stream().filter(w -> !w.hasEnded()).filter(OverwatchMatch::hasStarted).sorted().findFirst();
+	}
+	
+	public Optional<OverwatchMatch> getNextMatch(){
+		return this.getMatches().stream().filter(s -> !s.hasStarted()).sorted().findFirst();
 	}
 }

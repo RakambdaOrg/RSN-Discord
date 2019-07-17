@@ -3,9 +3,8 @@ package fr.mrcraftcod.gunterdiscord.utils.overwatch.stage;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.mrcraftcod.gunterdiscord.utils.json.OverwatchIDTournamentDeserializer;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match.OverwatchMatch;
+import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.tournament.OverwatchTournament;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.week.OverwatchWeek;
 import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
@@ -26,8 +25,7 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 	@JsonProperty("name")
 	private String name;
 	@JsonProperty("tournaments")
-	@JsonDeserialize(contentUsing = OverwatchIDTournamentDeserializer.class)
-	private List<Integer> tournaments;
+	private List<OverwatchTournament> tournaments = new ArrayList<>();
 	@JsonProperty("matches")
 	private List<OverwatchMatch> matches = new ArrayList<>();
 	@JsonProperty("weeks")
@@ -37,6 +35,18 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 	public int compareTo(@Nonnull OverwatchStage overwatchStage){
 		final var s2 = overwatchStage.getStartDate();
 		return overwatchStage.getStartDate().map(d1 -> s2.map(d1::compareTo).orElse(-1)).orElseGet(() -> s2.isPresent() ? 1 : 0);
+	}
+	
+	public Optional<OverwatchTournament> getCurrentTournament(){
+		return this.getCurrentMatch().map(OverwatchMatch::getTournament);
+	}
+	
+	public Optional<OverwatchMatch> getCurrentMatch(){
+		return this.getMatches().stream().filter(w -> !w.hasEnded()).filter(OverwatchMatch::hasStarted).sorted().findFirst();
+	}
+	
+	public Optional<OverwatchWeek> getCurrentWeek(){
+		return this.getWeeks().stream().filter(w -> !w.hasEnded()).filter(OverwatchWeek::hasStarted).sorted().findFirst();
 	}
 	
 	private Optional<LocalDateTime> getStartDate(){
@@ -64,8 +74,12 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 		return this.id;
 	}
 	
-	public Optional<OverwatchWeek> getCurrentWeek(){
-		return this.getWeeks().stream().filter(w -> !w.hasActuallyEnded()).filter(OverwatchWeek::hasActuallyStarted).sorted().findFirst();
+	public Optional<OverwatchTournament> getNextTournament(){
+		return this.getNextMatch().map(OverwatchMatch::getTournament);
+	}
+	
+	public Optional<OverwatchMatch> getNextMatch(){
+		return this.getMatches().stream().filter(s -> !s.hasStarted()).sorted().findFirst();
 	}
 	
 	public String getName(){
@@ -73,7 +87,11 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 	}
 	
 	public Optional<OverwatchWeek> getNextWeek(){
-		return this.getWeeks().stream().filter(s -> !s.hasActuallyStarted()).sorted().findFirst();
+		return this.getWeeks().stream().filter(s -> !s.hasStarted()).sorted().findFirst();
+	}
+	
+	public List<OverwatchTournament> getTournaments(){
+		return this.tournaments;
 	}
 	
 	public List<OverwatchWeek> getWeeks(){
