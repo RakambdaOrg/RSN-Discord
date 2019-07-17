@@ -45,7 +45,6 @@ public class OverwatchGetMatchCommand extends BasicCommand{
 	};
 	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchWeek> onWeek = (event, week) -> {
 		if(week.getMatches().size() > 0){
-			week.getMatches().forEach(m -> onMatch.accept(event, m));
 			if(week.getMatches().size() == 1){
 				onMatch.accept(event, week.getMatches().get(0));
 			}
