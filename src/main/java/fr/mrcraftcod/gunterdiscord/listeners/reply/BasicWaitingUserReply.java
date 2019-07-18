@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -62,6 +63,10 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 	}
 	
 	protected abstract boolean onExecute(@Nonnull final GuildMessageReactionAddEvent event);
+	
+	@Override
+	public void close() throws IOException{
+	}
 	
 	@Nonnull
 	@Override
@@ -123,5 +128,9 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 	@Override
 	public long getEmoteMessageId(){
 		return this.getInfoMessages().stream().map(Message::getIdLong).findFirst().orElse(-1L);
+	}
+	
+	protected User getWaitUser(){
+		return this.waitUser;
 	}
 }

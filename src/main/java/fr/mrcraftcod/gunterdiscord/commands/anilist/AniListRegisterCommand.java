@@ -5,12 +5,11 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListUtils;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.LinkedList;
@@ -24,8 +23,6 @@ import java.util.Optional;
  * @since 2018-10-08
  */
 public class AniListRegisterCommand extends BasicCommand{
-	public static final Logger LOGGER = LoggerFactory.getLogger(AniListRegisterCommand.class);
-	
 	/**
 	 * Constructor.
 	 *
@@ -57,7 +54,7 @@ public class AniListRegisterCommand extends BasicCommand{
 				}
 				catch(final Exception e){
 					Actions.reply(event, "Error while saving api code");
-					LOGGER.error("Error getting AniList access token", e);
+					Log.getLogger(event.getGuild()).error("Error getting AniList access token", e);
 				}
 			});
 		}

@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import javax.annotation.Nonnull;
 import java.awt.Color;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -26,14 +27,19 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 	public StopwatchWaitingUserReply(GuildMessageReceivedEvent event, Message message){
 		super(event, event.getAuthor(), event.getChannel(), 1, TimeUnit.DAYS, message);
 		this.executor = Executors.newSingleThreadScheduledExecutor();
-		executor.scheduleAtFixedRate(() -> {
-			final var builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Stopwatch");
-			builder.addField("Time", totalTime.plus(counting ? Duration.between(this.lastStart, LocalDateTime.now()) : Duration.ZERO).toString(), false);
+		executor.scheduleAtFixedRate(this::updateTimer, 5, 10, TimeUnit.SECONDS);
+	}
+	
+	private void updateTimer(){
+		final var newTotalTime = totalTime.plus(counting ? Duration.between(this.lastStart, LocalDateTime.now()) : Duration.ZERO);
+		if(!Objects.equals(newTotalTime, totalTime)){
+			final var builder = Utilities.buildEmbed(this.getWaitUser(), Color.GREEN, "Stopwatch");
+			builder.addField("Time", newTotalTime.toString(), false);
 			builder.addField(BasicEmotes.P.getValue(), "Pause", true);
 			builder.addField(BasicEmotes.R.getValue(), "Resume", true);
 			builder.addField(BasicEmotes.S.getValue(), "Stop", true);
-			message.editMessage(builder.build()).queue();
-		}, 5, 10, TimeUnit.SECONDS);
+			this.getInfoMessages().stream().findFirst().ifPresent(m -> m.editMessage(builder.build()).queue());
+		}
 	}
 	
 	@Override
@@ -44,7 +50,7 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 				if(replyEmote == BasicEmotes.S){
 					counting = false;
 					totalTime = totalTime.plus(Duration.between(lastStart, LocalDateTime.now()));
-					executor.shutdown();
+					executor.shutdownNow();
 					Actions.sendMessage(this.getWaitChannel(), "Total time: " + this.totalTime);
 					return true;
 				}
@@ -57,6 +63,7 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 							m.clearReactions().queue();
 							m.addReaction(BasicEmotes.R.getValue()).queue();
 							m.addReaction(BasicEmotes.S.getValue()).queue();
+							updateTimer();
 						});
 					}
 				}
@@ -94,5 +101,11 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 	@Override
 	public boolean handleEvent(GuildMessageReactionAddEvent event){
 		return Objects.equals(this.getWaitChannel(), event.getChannel()) && Objects.equals(this.getEmoteMessageId(), event.getMessageIdLong());
+	}
+	
+	@Override
+	public void close() throws IOException{
+		super.close();
+		this.executor.shutdownNow();
 	}
 }

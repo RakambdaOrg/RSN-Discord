@@ -5,6 +5,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.reply.ReplyMessageListener;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import fr.mrcraftcod.gunterdiscord.utils.luxbus.LuxBusDeparture;
 import fr.mrcraftcod.gunterdiscord.utils.luxbus.LuxBusStop;
 import fr.mrcraftcod.gunterdiscord.utils.luxbus.LuxBusUtils;
@@ -12,8 +13,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.util.HashMap;
@@ -23,7 +22,46 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class LuxBusGetStopCommand extends BasicCommand{
-	public static final Logger LOGGER = LoggerFactory.getLogger(LuxBusGetStopCommand.class);
+	static void askLine(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LuxBusStop stop){
+		try{
+			final var departures = LuxBusUtils.getDepartures(stop);
+			if(departures.stream().map(departure -> departure.getProduct().getLine()).distinct().count() < 2){
+				if(departures.stream().map(LuxBusDeparture::getDirection).distinct().count() < 2){
+					departures.stream().sorted().forEachOrdered(departure -> Actions.reply(event, departure.getAsEmbed(Utilities.buildEmbed(event.getAuthor(), null, null)).build()));
+				}
+				else{
+					askDirection(event, departures);
+				}
+			}
+			else{
+				Actions.reply(event, message -> ReplyMessageListener.handleReply(new LuxBusLineSelectionWaitingReply(event, departures, message)), "Choose a line:\n%s", departures.stream().map(departure -> departure.getProduct().getLine()).distinct().sorted().collect(Collectors.joining("\n")));
+			}
+		}
+		catch(final Exception e){
+			Log.getLogger(event.getGuild()).error("Failed to ask a bus line", e);
+			Actions.reply(event, e.getLocalizedMessage());
+		}
+	}
+	
+	@Override
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
+		super.addHelp(guild, builder);
+	}
+	
+	private void askStop(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final List<LuxBusStop> stops){
+		if(stops.size() < 2){
+			askLine(event, stops.get(0));
+		}
+		else if(stops.size() > 100){
+			Actions.reply(event, "More than 100 stops matching, please give a better name for the stop.");
+		}
+		else{
+			Actions.reply(event, "Choose a stop:");
+			final var replyHandler = new LuxBusStopSelectionWaitingReply(event, stops);
+			ReplyMessageListener.handleReply(replyHandler);
+			IntStream.range(0, stops.size()).boxed().collect(Collectors.groupingBy(index -> index / 25)).values().stream().map(indices -> indices.stream().map(stops::get).collect(Collectors.toList())).forEach(stopsBatch -> Actions.reply(event, replyHandler::addMessage, "%s", stopsBatch.stream().map(stop -> String.format("%d: %s", stops.indexOf(stop) + 1, stop)).collect(Collectors.joining("\n"))));
+		}
+	}
 	
 	@Nonnull
 	@Override
@@ -47,50 +85,9 @@ public class LuxBusGetStopCommand extends BasicCommand{
 			}
 		}
 		catch(final Exception e){
-			LOGGER.error("", e);
+			Log.getLogger(event.getGuild()).error("", e);
 		}
 		return CommandResult.SUCCESS;
-	}
-	
-	@Override
-	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
-		super.addHelp(guild, builder);
-	}
-	
-	private void askStop(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final List<LuxBusStop> stops){
-		if(stops.size() < 2){
-			askLine(event, stops.get(0));
-		}
-		else if(stops.size() > 100){
-			Actions.reply(event, "More than 100 stops matching, please give a better name for the stop.");
-		}
-		else{
-			Actions.reply(event, "Choose a stop:");
-			final var replyHandler = new LuxBusStopSelectionWaitingReply(event, stops);
-			ReplyMessageListener.handleReply(replyHandler);
-			IntStream.range(0, stops.size()).boxed().collect(Collectors.groupingBy(index -> index / 25)).values().stream().map(indices -> indices.stream().map(stops::get).collect(Collectors.toList())).forEach(stopsBatch -> Actions.reply(event, replyHandler::addMessage, "%s", stopsBatch.stream().map(stop -> String.format("%d: %s", stops.indexOf(stop) + 1, stop)).collect(Collectors.joining("\n"))));
-		}
-	}
-	
-	static void askLine(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LuxBusStop stop){
-		try{
-			final var departures = LuxBusUtils.getDepartures(stop);
-			if(departures.stream().map(departure -> departure.getProduct().getLine()).distinct().count() < 2){
-				if(departures.stream().map(LuxBusDeparture::getDirection).distinct().count() < 2){
-					departures.stream().sorted().forEachOrdered(departure -> Actions.reply(event, departure.getAsEmbed(Utilities.buildEmbed(event.getAuthor(), null, null)).build()));
-				}
-				else{
-					askDirection(event, departures);
-				}
-			}
-			else{
-				Actions.reply(event, message -> ReplyMessageListener.handleReply(new LuxBusLineSelectionWaitingReply(event, departures, message)), "Choose a line:\n%s", departures.stream().map(departure -> departure.getProduct().getLine()).distinct().sorted().collect(Collectors.joining("\n")));
-			}
-		}
-		catch(final Exception e){
-			LOGGER.error("Failed to ask a bus line", e);
-			Actions.reply(event, e.getLocalizedMessage());
-		}
 	}
 	
 	static void askDirection(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final List<LuxBusDeparture> filtered){

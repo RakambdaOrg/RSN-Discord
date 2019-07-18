@@ -1,8 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.runners;
 
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -14,8 +12,6 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-07-14
  */
 public class SaveConfigScheduledRunner implements ScheduledRunner{
-	private static final Logger LOGGER = LoggerFactory.getLogger(SaveConfigScheduledRunner.class);
-	
 	/**
 	 * Constructor.
 	 */

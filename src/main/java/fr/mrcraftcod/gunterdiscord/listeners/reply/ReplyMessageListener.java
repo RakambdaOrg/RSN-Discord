@@ -1,11 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.listeners.reply;
 
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
  * @since 2019-05-18
  */
 public class ReplyMessageListener extends ListenerAdapter{
-	private static final Logger LOGGER = LoggerFactory.getLogger(ReplyMessageListener.class);
 	private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	private static final List<WaitingUserReply> replies = new ArrayList<>();
 	
@@ -31,6 +30,14 @@ public class ReplyMessageListener extends ListenerAdapter{
 	
 	public static void stopAll(){
 		executor.shutdown();
+		replies.forEach(r -> {
+			try{
+				r.close();
+			}
+			catch(IOException e){
+				Log.getLogger(null).error("Failed to close reply handler", e);
+			}
+		});
 	}
 	
 	@Override
@@ -40,7 +47,7 @@ public class ReplyMessageListener extends ListenerAdapter{
 			replies.removeIf(reply -> reply.isHandled() || (reply.handleEvent(event) && reply.execute(event, Arrays.stream(event.getMessage().getContentRaw().split(" ")).collect(Collectors.toCollection(LinkedList::new)))));
 		}
 		catch(final Exception e){
-			LOGGER.error("Failed to handle user reply", e);
+			Log.getLogger(event.getGuild()).error("Failed to handle user reply", e);
 		}
 	}
 	
@@ -51,7 +58,7 @@ public class ReplyMessageListener extends ListenerAdapter{
 			replies.removeIf(reply -> reply.isHandled() || (reply.handleEvent(event) && reply.execute(event)));
 		}
 		catch(final Exception e){
-			LOGGER.error("Failed to handle user reply", e);
+			Log.getLogger(event.getGuild()).error("Failed to handle user reply", e);
 		}
 	}
 	
