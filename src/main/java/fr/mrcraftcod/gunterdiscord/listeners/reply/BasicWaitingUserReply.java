@@ -8,10 +8,7 @@ import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public abstract class BasicWaitingUserReply implements WaitingUserReply{
@@ -111,5 +108,20 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 	@Override
 	public User getUser(){
 		return this.waitUser;
+	}
+	
+	@Override
+	public boolean handleEvent(GuildMessageReceivedEvent event){
+		return Objects.equals(this.getUser(), event.getAuthor()) && Objects.equals(this.getWaitChannel(), event.getChannel());
+	}
+	
+	@Override
+	public boolean handleEvent(GuildMessageReactionAddEvent event){
+		return Objects.equals(this.getUser(), event.getUser()) && Objects.equals(this.getWaitChannel(), event.getChannel()) && Objects.equals(this.getEmoteMessageId(), event.getMessageIdLong());
+	}
+	
+	@Override
+	public long getEmoteMessageId(){
+		return this.getInfoMessages().stream().map(Message::getIdLong).findFirst().orElse(-1L);
 	}
 }

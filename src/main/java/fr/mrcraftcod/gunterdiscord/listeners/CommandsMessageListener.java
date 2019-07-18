@@ -12,6 +12,7 @@ import fr.mrcraftcod.gunterdiscord.commands.music.MusicCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.overwatch.OverwatchCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.photo.PhotoCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.quiz.QuizCommandComposite;
+import fr.mrcraftcod.gunterdiscord.commands.stopwatch.StopwatchCommand;
 import fr.mrcraftcod.gunterdiscord.commands.twitch.TwitchCommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.warn.CustomWarnCommand;
 import fr.mrcraftcod.gunterdiscord.commands.warn.DoubleWarnCommand;
@@ -62,7 +63,8 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new DogCommand(),
 			new TwitchCommandComposite(),
 			new LuxBusGetStopCommand(),
-			new OverwatchCommandComposite()
+			new OverwatchCommandComposite(),
+			new StopwatchCommand()
 	};
 	public final static String defaultPrefix = System.getProperty("RSN_DEFAULT_PREFIX", "g?");
 	

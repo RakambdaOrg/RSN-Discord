@@ -20,6 +20,10 @@ public interface WaitingUserReply{
 	
 	boolean onExpire();
 	
+	boolean handleEvent(GuildMessageReceivedEvent event);
+	
+	boolean handleEvent(GuildMessageReactionAddEvent event);
+	
 	long getEmoteMessageId();
 	
 	@Nonnull

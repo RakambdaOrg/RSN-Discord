@@ -6,7 +6,10 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
@@ -34,7 +37,7 @@ public class ReplyMessageListener extends ListenerAdapter{
 	public void onGuildMessageReceived(@Nonnull final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
-			replies.removeIf(reply -> reply.isHandled() || (Objects.equals(reply.getUser(), event.getAuthor()) && Objects.equals(reply.getWaitChannel(), event.getChannel()) && reply.execute(event, Arrays.stream(event.getMessage().getContentRaw().split(" ")).collect(Collectors.toCollection(LinkedList::new)))));
+			replies.removeIf(reply -> reply.isHandled() || (reply.handleEvent(event) && reply.execute(event, Arrays.stream(event.getMessage().getContentRaw().split(" ")).collect(Collectors.toCollection(LinkedList::new)))));
 		}
 		catch(final Exception e){
 			LOGGER.error("Failed to handle user reply", e);
@@ -45,7 +48,7 @@ public class ReplyMessageListener extends ListenerAdapter{
 	public void onGuildMessageReactionAdd(@Nonnull final GuildMessageReactionAddEvent event){
 		super.onGuildMessageReactionAdd(event);
 		try{
-			replies.removeIf(reply -> reply.isHandled() || (Objects.equals(reply.getUser(), event.getMember().getUser()) && Objects.equals(reply.getWaitChannel(), event.getChannel()) && Objects.equals(reply.getEmoteMessageId(), event.getMessageIdLong()) && reply.execute(event)));
+			replies.removeIf(reply -> reply.isHandled() || (reply.handleEvent(event) && reply.execute(event)));
 		}
 		catch(final Exception e){
 			LOGGER.error("Failed to handle user reply", e);
