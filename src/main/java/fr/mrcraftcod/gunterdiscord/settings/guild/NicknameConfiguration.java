@@ -9,6 +9,7 @@ import fr.mrcraftcod.gunterdiscord.utils.json.LocalDateTimeDeserializer;
 import fr.mrcraftcod.gunterdiscord.utils.json.LocalDateTimeSerializer;
 import net.dv8tion.jda.api.entities.User;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class NicknameConfiguration{
 		return Optional.ofNullable(this.lastChange.get(userId));
 	}
 	
-	public void setLastChange(@Nonnull User user, @Nonnull LocalDateTime date){
+	public void setLastChange(@Nonnull User user, @Nullable LocalDateTime date){
 		this.lastChange.put(user.getIdLong(), date);
 	}
 	

@@ -27,7 +27,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-04-12
  */
 public class NicknameCommand extends BasicCommand{
-	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	
 	@Override
 	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
@@ -68,7 +68,7 @@ public class NicknameCommand extends BasicCommand{
 				builder.addField("Old nickname", oldName.orElse("*NONE*"), true);
 				builder.addField("User", member.getAsMention(), true);
 				builder.addField("Reason", "You can change your nickname once every " + delay.toString().replace("PT", ""), true);
-				builder.addField("Last change", DF.format(lastChange), true);
+				builder.addField("Last change", lastChange.format(DF), true);
 				builder.setTimestamp(new Date().toInstant());
 				Actions.reply(event, builder.build());
 			}
@@ -88,7 +88,10 @@ public class NicknameCommand extends BasicCommand{
 				try{
 					member.getGuild().modifyNickname(member, newName).complete();
 					builder.setColor(Color.GREEN);
-					NewSettings.getConfiguration(event.getGuild()).getNicknameConfiguration().setLastChange(member.getUser(), LocalDateTime.now());
+					if(Objects.nonNull(newName)){
+						builder.addField("Next allowed change", LocalDateTime.now().plus(delay).format(DF), false);
+					}
+					NewSettings.getConfiguration(event.getGuild()).getNicknameConfiguration().setLastChange(member.getUser(), Objects.isNull(newName) ? null : LocalDateTime.now());
 					getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", event.getAuthor(), member.getUser(), oldName, newName);
 				}
 				catch(final HierarchyException e){
