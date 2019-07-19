@@ -57,12 +57,12 @@ public class LogListener extends ListenerAdapter{
 				final var now = LocalDate.now();
 				if(NewSettings.getConfiguration(event.getGuild()).getNoXpChannels().stream().noneMatch(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong()))){
 					final var users = NewSettings.getConfiguration(event.getGuild()).getParticipationConfiguration().getUsers(now);
-					users.increment(event.getAuthor().getIdLong());
+					users.increment(event.getAuthor().getIdLong(), event.getAuthor().getName());
 				}
 
 				final var weekKey = now.minusDays(getDaysToRemove(now.getDayOfWeek()));
 				final var emotes = NewSettings.getConfiguration(event.getGuild()).getParticipationConfiguration().getEmotes(weekKey);
-				event.getMessage().getEmotes().forEach(emote -> emotes.increment(emote.getIdLong()));
+				event.getMessage().getEmotes().forEach(emote -> emotes.increment(emote.getIdLong(), emote.getName()));
 			}
 		}
 		catch(final Exception e){

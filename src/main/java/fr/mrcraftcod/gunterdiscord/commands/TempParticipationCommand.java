@@ -42,7 +42,7 @@ public class TempParticipationCommand extends BasicCommand{
 		return NewSettings.getConfiguration(guild).getParticipationConfiguration().getUsers(localDate, false).map(stats -> {
 			final var position = new AtomicInteger(1);
 			final var builder = Utilities.buildEmbed(author, Color.MAGENTA, "Participation of the " + localDate.format(DFD) + " (UTC)");
-			stats.getScores().entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).forEachOrdered(e -> builder.addField("#" + position.getAndIncrement(), Optional.ofNullable(guild.getJDA().getUserById(e.getKey())).map(User::getAsMention).orElse("<<UNKNOWN>>") + " Messages: " + e.getValue(), false));
+			stats.getScores().stream().sorted((e1, e2) -> Long.compare(e2.getScore(), e1.getScore())).forEachOrdered(e -> builder.addField("#" + position.getAndIncrement(), Optional.ofNullable(guild.getJDA().getUserById(e.getId())).map(User::getAsMention).or(e::getName).orElse("<<UNKNOWN>>") + " Messages: " + e.getScore(), false));
 			Actions.sendMessage(channel, builder.build());
 			return true;
 		}).orElse(false);
