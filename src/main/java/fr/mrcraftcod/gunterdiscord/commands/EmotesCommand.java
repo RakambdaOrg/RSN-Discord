@@ -49,7 +49,7 @@ public class EmotesCommand extends BasicCommand{
 		return NewSettings.getConfiguration(guild).getParticipationConfiguration().getEmotes(weekKey, false).map(stats -> {
 			final var position = new AtomicInteger(1);
 			final var builder = Utilities.buildEmbed(author, Color.MAGENTA, "Participation of the week " + localDate.format(DFD) + " (UTC)");
-			stats.getScores().entrySet().stream().sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).forEachOrdered(e -> builder.addField("#" + position.getAndIncrement(), Optional.ofNullable(guild.getEmoteById(e.getKey())).map(Emote::getAsMention).orElse("<<UNKNOWN>>") + " Use count: " + e.getValue(), false));
+			stats.getScores().stream().sorted((e1, e2) -> Long.compare(e2.getScore(), e1.getScore())).forEachOrdered(e -> builder.addField("#" + position.getAndIncrement(), Optional.ofNullable(guild.getEmoteById(e.getId())).map(Emote::getAsMention).or(e::getName).orElse("<<UNKNOWN>>") + " Use count: " + e.getScore(), false));
 			Actions.sendMessage(channel, builder.build());
 			return true;
 		}).orElse(false);

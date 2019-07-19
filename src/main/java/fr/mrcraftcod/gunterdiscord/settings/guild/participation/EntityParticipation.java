@@ -10,12 +10,13 @@ import fr.mrcraftcod.gunterdiscord.utils.json.LocalDateTimeSerializer;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -25,7 +26,8 @@ public class EntityParticipation{
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime date;
 	@JsonProperty("scores")
-	private Map<Long, Long> scores = new HashMap<>();
+	@JsonDeserialize(using = EntityDeserializer.class)
+	private Set<EntityScore> scores = new HashSet<>();
 	
 	public EntityParticipation(LocalDate date){
 		this.date = LocalDateTime.of(date, LocalTime.of(0, 0, 0));
@@ -34,8 +36,8 @@ public class EntityParticipation{
 	public EntityParticipation(){
 	}
 	
-	public void increment(long id){
-		scores.compute(id, (key, val) -> Optional.ofNullable(val).orElse(0L) + 1);
+	public void increment(long id, @Nullable String name){
+		scores.stream().filter(e -> Objects.equals(e.getId(), id)).findFirst().ifPresentOrElse(EntityScore::increment, () -> scores.add(new EntityScore(id, name, 1)));
 	}
 	
 	@Nonnull
@@ -44,7 +46,7 @@ public class EntityParticipation{
 	}
 	
 	@Nonnull
-	public Map<Long, Long> getScores(){
+	public Set<EntityScore> getScores(){
 		return this.scores;
 	}
 	

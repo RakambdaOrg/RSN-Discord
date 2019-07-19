@@ -19,7 +19,7 @@ public class HexColorDeserializer extends JsonDeserializer<Color>{
 			return Color.decode("#" + jsonParser.getValueAsString());
 		}
 		catch(MalformedURLException e){
-			LOGGER.warn("Failed to color {}", jsonParser.getValueAsString());
+			LOGGER.warn("Failed to get color {}", jsonParser.getValueAsString());
 		}
 		return null;
 	}
