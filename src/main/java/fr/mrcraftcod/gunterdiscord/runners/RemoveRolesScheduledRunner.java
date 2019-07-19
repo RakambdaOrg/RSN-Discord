@@ -34,7 +34,7 @@ public class RemoveRolesScheduledRunner implements ScheduledRunner{
 		final var currentDate = LocalDateTime.now();
 		for(final var guild : this.jda.getGuilds()){
 			getLogger(guild).debug("Processing guild {}", guild);
-			NewSettings.getConfiguration(guild).getRemoveRoles().removeAll(NewSettings.getConfiguration(guild).getRemoveRoles().stream().filter(ban -> ban.getEndDate().isAfter(currentDate)).peek(ban -> ban.getRole().ifPresent(role -> ban.getUser().ifPresent(user -> {
+			NewSettings.getConfiguration(guild).getRemoveRoles().removeAll(NewSettings.getConfiguration(guild).getRemoveRoles().stream().filter(ban -> ban.getEndDate().isAfter(currentDate)).peek(ban -> ban.getRole().getRole().ifPresent(role -> ban.getUser().getUser().ifPresent(user -> {
 				getLogger(guild).debug("Removed role {} for user {}", role, user);
 				Actions.removeRole(user, role);
 			}))).collect(Collectors.toList()));

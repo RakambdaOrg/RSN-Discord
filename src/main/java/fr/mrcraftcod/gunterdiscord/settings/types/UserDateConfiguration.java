@@ -9,10 +9,11 @@ import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.utils.json.LocalDateTimeDeserializer;
 import fr.mrcraftcod.gunterdiscord.utils.json.LocalDateTimeSerializer;
 import net.dv8tion.jda.api.entities.User;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -45,11 +46,6 @@ public class UserDateConfiguration{
 	}
 	
 	@Override
-	public boolean equals(Object obj){
-		return obj instanceof UserDateConfiguration && Objects.equals(this.getUserId(), ((UserDateConfiguration) obj).getUserId()) && Objects.equals(this.getDate(), ((UserDateConfiguration) obj).getDate());
-	}
-	
-	@Override
 	public String toString(){
 		return this.getUser().map(User::getAsMention).map(s -> s + " " + this.getDate().format(DF)).orElse("");
 	}
@@ -70,5 +66,22 @@ public class UserDateConfiguration{
 	
 	public long getUserId(){
 		return this.userId;
+	}
+	
+	@Override
+	public int hashCode(){
+		return new HashCodeBuilder(17, 37).append(getUserId()).append(getDate()).toHashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		if(this == o){
+			return true;
+		}
+		if(!(o instanceof UserDateConfiguration)){
+			return false;
+		}
+		UserDateConfiguration that = (UserDateConfiguration) o;
+		return new EqualsBuilder().append(getUserId(), that.getUserId()).append(getDate(), that.getDate()).isEquals();
 	}
 }

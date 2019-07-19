@@ -3,8 +3,10 @@ package fr.mrcraftcod.gunterdiscord.listeners;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.settings.types.RemoveRoleConfiguration;
 import fr.mrcraftcod.gunterdiscord.settings.types.RoleConfiguration;
+import fr.mrcraftcod.gunterdiscord.settings.types.UserRoleConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
@@ -25,11 +27,22 @@ public class AutoRolesListener extends ListenerAdapter{
 		super.onGuildMemberJoin(event);
 		try{
 			final var now = LocalDateTime.now();
-			NewSettings.getConfiguration(event.getGuild()).getAutoRoles().stream().map(RoleConfiguration::getRole).filter(Optional::isPresent).map(Optional::get).forEach(role -> Actions.giveRole(event.getUser(), List.of(role)));
-			NewSettings.getConfiguration(event.getGuild()).getRemoveRoles().stream().filter(b -> Objects.equals(b.getUserId(), event.getUser().getIdLong())).filter(b -> b.getEndDate().isAfter(now)).map(RemoveRoleConfiguration::getRole).filter(Optional::isPresent).map(Optional::get).forEach(r -> Actions.giveRole(event.getGuild(), event.getUser(), r));
+			NewSettings.getConfiguration(event.getGuild()).getAutoRolesAndAddBackRoles(event.getMember()).stream().map(RoleConfiguration::getRole).filter(Optional::isPresent).map(Optional::get).forEach(role -> Actions.giveRole(event.getUser(), List.of(role)));
+			NewSettings.getConfiguration(event.getGuild()).getRemoveRoles().stream().filter(b -> Objects.equals(b.getUser().getUserId(), event.getUser().getIdLong())).filter(b -> b.getEndDate().isAfter(now)).map(RemoveRoleConfiguration::getRole).map(RoleConfiguration::getRole).filter(Optional::isPresent).map(Optional::get).forEach(r -> Actions.giveRole(event.getGuild(), event.getUser(), r));
 		}
 		catch(final Exception e){
 			getLogger(event.getGuild()).error("Error on user join", e);
+		}
+	}
+	
+	@Override
+	public void onGuildMemberLeave(@Nonnull GuildMemberLeaveEvent event){
+		super.onGuildMemberLeave(event);
+		try{
+			NewSettings.getConfiguration(event.getGuild()).getLeaverRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> NewSettings.getConfiguration(event.getGuild()).addAddBackRole(new UserRoleConfiguration(event.getUser(), role)));
+		}
+		catch(final Exception e){
+			getLogger(event.getGuild()).error("Error on user leave", e);
 		}
 	}
 }

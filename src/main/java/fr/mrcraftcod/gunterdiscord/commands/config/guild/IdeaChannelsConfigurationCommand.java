@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.config.guild;
 
+import fr.mrcraftcod.gunterdiscord.commands.config.helpers.SetConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
-import fr.mrcraftcod.gunterdiscord.commands.config.helpers.ListConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.settings.types.ChannelConfiguration;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -9,19 +9,16 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-public class IdeaChannelsConfigurationCommand extends ListConfigurationCommand<ChannelConfiguration>{
+public class IdeaChannelsConfigurationCommand extends SetConfigurationCommand<ChannelConfiguration>{
 	public IdeaChannelsConfigurationCommand(@Nullable Command parent){
 		super(parent);
 	}
 	
 	@Nonnull
 	@Override
-	protected Optional<List<ChannelConfiguration>> getConfig(@Nonnull Guild guild){
+	protected Optional<Set<ChannelConfiguration>> getConfig(@Nonnull Guild guild){
 		return Optional.of(NewSettings.getConfiguration(guild).getIdeaChannels());
 	}
 	
@@ -32,9 +29,9 @@ public class IdeaChannelsConfigurationCommand extends ListConfigurationCommand<C
 	
 	@Override
 	protected void createConfig(@Nonnull Guild guild, @Nonnull ChannelConfiguration value){
-		final var list = new ArrayList<ChannelConfiguration>();
-		list.add(value);
-		NewSettings.getConfiguration(guild).setIdeaChannels(list);
+		final var set = new HashSet<ChannelConfiguration>();
+		set.add(value);
+		NewSettings.getConfiguration(guild).setIdeaChannels(set);
 	}
 	
 	@Nonnull

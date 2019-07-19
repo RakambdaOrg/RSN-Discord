@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.config;
 
-import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.config.guild.*;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.api.entities.ChannelType;
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -23,6 +23,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		addSubCommand(new QuestionsConfigurationCommandComposite(this));
 		addSubCommand(new TrombinoscopeConfigurationCommandComposite(this));
 		addSubCommand(new QuizChannelConfigurationCommand(this));
+		addSubCommand(new LeaverRoleConfigurationCommand(this));
 	}
 	
 	@Nonnull

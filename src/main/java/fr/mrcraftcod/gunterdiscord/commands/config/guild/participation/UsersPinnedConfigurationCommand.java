@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.config.guild.participation;
 
+import fr.mrcraftcod.gunterdiscord.commands.config.helpers.SetConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
-import fr.mrcraftcod.gunterdiscord.commands.config.helpers.ListConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.settings.types.UserConfiguration;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -9,19 +9,16 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-public class UsersPinnedConfigurationCommand extends ListConfigurationCommand<UserConfiguration>{
+public class UsersPinnedConfigurationCommand extends SetConfigurationCommand<UserConfiguration>{
 	public UsersPinnedConfigurationCommand(@Nullable Command parent){
 		super(parent);
 	}
 	
 	@Nonnull
 	@Override
-	protected Optional<List<UserConfiguration>> getConfig(@Nonnull Guild guild){
+	protected Optional<Set<UserConfiguration>> getConfig(@Nonnull Guild guild){
 		return Optional.of(NewSettings.getConfiguration(guild).getParticipationConfiguration().getUsersPinned());
 	}
 	
@@ -32,9 +29,9 @@ public class UsersPinnedConfigurationCommand extends ListConfigurationCommand<Us
 	
 	@Override
 	protected void createConfig(@Nonnull Guild guild, @Nonnull UserConfiguration value){
-		final var list = new ArrayList<UserConfiguration>();
-		list.add(value);
-		NewSettings.getConfiguration(guild).getParticipationConfiguration().setUsersPinned(list);
+		final var set = new HashSet<UserConfiguration>();
+		set.add(value);
+		NewSettings.getConfiguration(guild).getParticipationConfiguration().setUsersPinned(set);
 	}
 	
 	@Nonnull

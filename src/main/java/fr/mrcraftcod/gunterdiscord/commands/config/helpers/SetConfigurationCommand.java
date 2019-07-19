@@ -10,11 +10,14 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.Color;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class ListConfigurationCommand<T> extends BaseConfigurationCommand{
-	public ListConfigurationCommand(@Nullable Command parent){
+public abstract class SetConfigurationCommand<T> extends BaseConfigurationCommand{
+	public SetConfigurationCommand(@Nullable Command parent){
 		super(parent);
 	}
 	
@@ -24,21 +27,16 @@ public abstract class ListConfigurationCommand<T> extends BaseConfigurationComma
 		return Set.of(ConfigurationOperation.ADD, ConfigurationOperation.REMOVE, ConfigurationOperation.SHOW);
 	}
 	
-	@Nonnull
-	protected abstract Optional<List<T>> getConfig(@Nonnull Guild guild);
-	
 	@Override
 	protected void onShow(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException{
-		final var values = getConfig(event.getGuild()).stream().flatMap(List::stream).map(Objects::toString).collect(Collectors.joining(", "));
+		final var values = getConfig(event.getGuild()).stream().flatMap(Set::stream).map(Objects::toString).collect(Collectors.joining(", "));
 		final var builder = getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
 		builder.addField("Values", values, false);
 		Actions.reply(event, builder.build());
 	}
 	
-	@Override
-	protected void onSet(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException{
-		throw new IllegalOperationException(ConfigurationOperation.SET);
-	}
+	@Nonnull
+	protected abstract Optional<Set<T>> getConfig(@Nonnull Guild guild);
 	
 	@Override
 	protected void onRemove(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException{
@@ -54,9 +52,10 @@ public abstract class ListConfigurationCommand<T> extends BaseConfigurationComma
 		}
 	}
 	
-	protected abstract void removeConfig(@Nonnull Guild guild, @Nonnull T value);
-	
-	protected abstract void createConfig(@Nonnull Guild guild, @Nonnull T value);
+	@Override
+	protected void onSet(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException{
+		throw new IllegalOperationException(ConfigurationOperation.SET);
+	}
 	
 	@Override
 	protected void onAdd(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException{
@@ -72,6 +71,10 @@ public abstract class ListConfigurationCommand<T> extends BaseConfigurationComma
 		}
 	}
 	
+	protected abstract void createConfig(@Nonnull Guild guild, @Nonnull T value);
+	
 	@Nonnull
 	protected abstract T extractValue(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalArgumentException;
+	
+	protected abstract void removeConfig(@Nonnull Guild guild, @Nonnull T value);
 }

@@ -25,13 +25,13 @@ import java.util.stream.Collectors;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AniListConfiguration{
 	@JsonProperty("accessToken")
-	private List<AnilistAccessTokenConfiguration> tokens = new ArrayList<>();
+	private Set<AnilistAccessTokenConfiguration> tokens = new HashSet<>();
 	@JsonProperty("notificationsChannel")
 	private ChannelConfiguration notificationsChannel;
 	@JsonProperty("refreshTokens")
 	private Map<Long, String> refreshTokens = new HashMap<>();
 	@JsonProperty("lastAccess")
-	private Map<String, List<UserDateConfiguration>> lastAccess = new HashMap<>();
+	private Map<String, Set<UserDateConfiguration>> lastAccess = new HashMap<>();
 	@JsonProperty("thaChannel")
 	private ChannelConfiguration thaChannel;
 	@JsonProperty("thaUser")
@@ -52,7 +52,7 @@ public class AniListConfiguration{
 	}
 	
 	public void setLastAccess(User user, String section, LocalDateTime date){
-		this.getLastAccess(section, user.getIdLong()).ifPresentOrElse(lastAccess -> lastAccess.setDate(date), () -> this.lastAccess.computeIfAbsent(section, sec -> new ArrayList<>()).add(new UserDateConfiguration(user, date)));
+		this.getLastAccess(section, user.getIdLong()).ifPresentOrElse(lastAccess -> lastAccess.setDate(date), () -> this.lastAccess.computeIfAbsent(section, sec -> new HashSet<>()).add(new UserDateConfiguration(user, date)));
 	}
 	
 	@Nonnull
@@ -61,8 +61,8 @@ public class AniListConfiguration{
 	}
 	
 	@Nonnull
-	public List<UserDateConfiguration> getLastAccess(@Nonnull final String section){
-		return Optional.ofNullable(this.lastAccess.get(section)).orElse(List.of());
+	public Set<UserDateConfiguration> getLastAccess(@Nonnull final String section){
+		return Optional.ofNullable(this.lastAccess.get(section)).orElse(Set.of());
 	}
 	
 	@Nonnull
@@ -91,7 +91,7 @@ public class AniListConfiguration{
 	}
 	
 	@Nonnull
-	public Map<String, List<UserDateConfiguration>> getLastAccess(){
+	public Map<String, Set<UserDateConfiguration>> getLastAccess(){
 		return this.lastAccess;
 	}
 	

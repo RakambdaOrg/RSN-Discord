@@ -5,8 +5,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.mrcraftcod.gunterdiscord.Main;
 import net.dv8tion.jda.api.entities.User;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import javax.annotation.Nonnull;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -33,11 +34,6 @@ public class UserConfiguration{
 	}
 	
 	@Override
-	public boolean equals(Object obj){
-		return obj instanceof UserConfiguration && Objects.equals(this.getUserId(), ((UserConfiguration) obj).getUserId());
-	}
-	
-	@Override
 	public String toString(){
 		return this.getUser().map(User::getAsMention).orElse("");
 	}
@@ -57,5 +53,22 @@ public class UserConfiguration{
 	
 	public long getUserId(){
 		return this.userId;
+	}
+	
+	@Override
+	public int hashCode(){
+		return new HashCodeBuilder(17, 37).append(getUserId()).toHashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		if(this == o){
+			return true;
+		}
+		if(!(o instanceof UserConfiguration)){
+			return false;
+		}
+		UserConfiguration that = (UserConfiguration) o;
+		return new EqualsBuilder().append(getUserId(), that.getUserId()).isEquals();
 	}
 }

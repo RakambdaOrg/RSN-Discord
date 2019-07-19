@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.Color;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class BaseConfigurationCommand extends BasicCommand{
@@ -29,7 +29,7 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 	}
 	
 	@Nonnull
-	protected abstract List<ConfigurationOperation> getAllowedOperations();
+	protected abstract Set<ConfigurationOperation> getAllowedOperations();
 	
 	@Nonnull
 	@Override

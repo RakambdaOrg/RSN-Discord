@@ -5,8 +5,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.mrcraftcod.gunterdiscord.Main;
 import net.dv8tion.jda.api.entities.Role;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import javax.annotation.Nonnull;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -33,11 +34,6 @@ public class RoleConfiguration{
 	}
 	
 	@Override
-	public boolean equals(Object obj){
-		return obj instanceof RoleConfiguration && Objects.equals(this.getRoleId(), ((RoleConfiguration) obj).getRoleId());
-	}
-	
-	@Override
 	public String toString(){
 		return this.getRole().map(Role::getAsMention).orElse("");
 	}
@@ -57,5 +53,22 @@ public class RoleConfiguration{
 	
 	public long getRoleId(){
 		return this.roleId;
+	}
+	
+	@Override
+	public int hashCode(){
+		return new HashCodeBuilder(17, 37).append(getRoleId()).toHashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		if(this == o){
+			return true;
+		}
+		if(!(o instanceof RoleConfiguration)){
+			return false;
+		}
+		RoleConfiguration that = (RoleConfiguration) o;
+		return new EqualsBuilder().append(getRoleId(), that.getRoleId()).isEquals();
 	}
 }
