@@ -38,7 +38,7 @@ public class WarnInfoCommand extends BasicCommand{
 		final var target = event.getMessage().getMentionedUsers().stream().findFirst().orElse(event.getAuthor());
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Warns info");
 		builder.addField("User", target.getAsMention(), false);
-		final var bans = NewSettings.getConfiguration(event.getGuild()).getRemoveRoles().stream().filter(t -> Objects.equals(t.getUserId(), target.getIdLong())).collect(Collectors.toList());
+		final var bans = NewSettings.getConfiguration(event.getGuild()).getRemoveRoles().stream().filter(t -> Objects.equals(t.getUser().getUserId(), target.getIdLong())).collect(Collectors.toList());
 		if(bans.isEmpty()){
 			builder.setColor(Color.GREEN);
 			builder.setDescription("The user have no warns");
@@ -46,7 +46,7 @@ public class WarnInfoCommand extends BasicCommand{
 		else{
 			final var formatter = new SimpleDateFormat("dd MMM at HH:mm:ssZ");
 			builder.setDescription("Warns will be removed with a maximum delay of 15 minutes");
-			bans.forEach(ban -> builder.addField("Role " + ban.getRole().map(Role::getAsMention).orElse("<<UNKNOWN>>"), "Ends the " + formatter.format(ban.getEndDate()), false));
+			bans.forEach(ban -> builder.addField("Role " + ban.getRole().getRole().map(Role::getAsMention).orElse("<<UNKNOWN>>"), "Ends the " + formatter.format(ban.getEndDate()), false));
 		}
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;

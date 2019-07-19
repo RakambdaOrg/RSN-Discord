@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.mrcraftcod.gunterdiscord.utils.json.LocalDateTimeDeserializer;
 import fr.mrcraftcod.gunterdiscord.utils.json.LocalDateTimeSerializer;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -44,5 +46,22 @@ public class EntityParticipation{
 	@Nonnull
 	public Map<Long, Long> getScores(){
 		return this.scores;
+	}
+	
+	@Override
+	public int hashCode(){
+		return new HashCodeBuilder(17, 37).append(getDate()).toHashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		if(this == o){
+			return true;
+		}
+		if(!(o instanceof EntityParticipation)){
+			return false;
+		}
+		EntityParticipation that = (EntityParticipation) o;
+		return new EqualsBuilder().append(getDate(), that.getDate()).isEquals();
 	}
 }

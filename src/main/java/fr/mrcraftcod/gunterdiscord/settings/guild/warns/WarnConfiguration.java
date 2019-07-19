@@ -3,8 +3,9 @@ package fr.mrcraftcod.gunterdiscord.settings.guild.warns;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.mrcraftcod.gunterdiscord.settings.types.RoleConfiguration;
 import net.dv8tion.jda.api.entities.Role;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import javax.annotation.Nonnull;
-import java.util.Objects;
 import java.util.Optional;
 
 public class WarnConfiguration{
@@ -19,11 +20,6 @@ public class WarnConfiguration{
 	public WarnConfiguration(@Nonnull Role role, long delay){
 		this.role = new RoleConfiguration(role);
 		this.delay = delay;
-	}
-	
-	@Override
-	public boolean equals(Object obj){
-		return obj instanceof WarnConfiguration && Objects.equals(this.role, ((WarnConfiguration) obj).role) && Objects.equals(this.getDelay(), ((WarnConfiguration) obj).getDelay());
 	}
 	
 	public long getDelay(){
@@ -45,5 +41,22 @@ public class WarnConfiguration{
 	
 	public void setRole(@Nonnull Role role){
 		this.role = new RoleConfiguration(role);
+	}
+	
+	@Override
+	public int hashCode(){
+		return new HashCodeBuilder(17, 37).append(getRole()).append(getDelay()).toHashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		if(this == o){
+			return true;
+		}
+		if(!(o instanceof WarnConfiguration)){
+			return false;
+		}
+		WarnConfiguration that = (WarnConfiguration) o;
+		return new EqualsBuilder().append(getDelay(), that.getDelay()).append(getRole(), that.getRole()).isEquals();
 	}
 }

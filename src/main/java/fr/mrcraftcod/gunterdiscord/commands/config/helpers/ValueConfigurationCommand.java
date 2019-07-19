@@ -1,8 +1,8 @@
 package fr.mrcraftcod.gunterdiscord.commands.config.helpers;
 
-import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.config.BaseConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.commands.config.IllegalOperationException;
+import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.settings.ConfigurationOperation;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -12,9 +12,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.Color;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 public abstract class ValueConfigurationCommand<T> extends BaseConfigurationCommand{
 	public ValueConfigurationCommand(@Nullable Command parent){
@@ -23,8 +23,8 @@ public abstract class ValueConfigurationCommand<T> extends BaseConfigurationComm
 	
 	@Nonnull
 	@Override
-	protected List<ConfigurationOperation> getAllowedOperations(){
-		return List.of(ConfigurationOperation.SET, ConfigurationOperation.REMOVE, ConfigurationOperation.SHOW);
+	protected Set<ConfigurationOperation> getAllowedOperations(){
+		return Set.of(ConfigurationOperation.SET, ConfigurationOperation.REMOVE, ConfigurationOperation.SHOW);
 	}
 	
 	@Nonnull

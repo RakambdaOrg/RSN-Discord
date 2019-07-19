@@ -9,10 +9,7 @@ import fr.mrcraftcod.gunterdiscord.settings.types.RoleConfiguration;
 import net.dv8tion.jda.api.entities.User;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -23,7 +20,7 @@ public class TrombinoscopeConfiguration{
 	@JsonProperty("participantRole")
 	private RoleConfiguration participantRole;
 	@JsonProperty("photos")
-	private List<PhotoEntryConfiguration> photos = new ArrayList<>();
+	private Set<PhotoEntryConfiguration> photos = new HashSet<>();
 	
 	public List<PhotoEntryConfiguration> getPhotos(User user){
 		return this.photos.stream().filter(p -> Objects.equals(p.getUserId(), user.getIdLong())).collect(Collectors.toList());

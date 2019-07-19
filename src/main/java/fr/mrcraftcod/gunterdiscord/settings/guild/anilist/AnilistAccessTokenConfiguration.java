@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.mrcraftcod.gunterdiscord.utils.json.LocalDateTimeDeserializer;
 import fr.mrcraftcod.gunterdiscord.utils.json.LocalDateTimeSerializer;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
 
@@ -49,5 +51,22 @@ public class AnilistAccessTokenConfiguration{
 	
 	public long getUserId(){
 		return this.userId;
+	}
+	
+	@Override
+	public int hashCode(){
+		return new HashCodeBuilder(17, 37).append(getToken()).toHashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		if(this == o){
+			return true;
+		}
+		if(!(o instanceof AnilistAccessTokenConfiguration)){
+			return false;
+		}
+		AnilistAccessTokenConfiguration that = (AnilistAccessTokenConfiguration) o;
+		return new EqualsBuilder().append(getToken(), that.getToken()).isEquals();
 	}
 }

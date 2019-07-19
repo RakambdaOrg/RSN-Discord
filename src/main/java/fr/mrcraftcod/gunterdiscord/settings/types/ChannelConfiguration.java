@@ -5,8 +5,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.mrcraftcod.gunterdiscord.Main;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import javax.annotation.Nonnull;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -33,11 +34,6 @@ public class ChannelConfiguration{
 	}
 	
 	@Override
-	public boolean equals(Object obj){
-		return obj instanceof ChannelConfiguration && Objects.equals(this.getChannelId(), ((ChannelConfiguration) obj).getChannelId());
-	}
-	
-	@Override
 	public String toString(){
 		return this.getChannel().map(TextChannel::getAsMention).orElse("");
 	}
@@ -57,5 +53,22 @@ public class ChannelConfiguration{
 	
 	public long getChannelId(){
 		return this.channelId;
+	}
+	
+	@Override
+	public int hashCode(){
+		return new HashCodeBuilder(17, 37).append(getChannelId()).toHashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		if(this == o){
+			return true;
+		}
+		if(!(o instanceof ChannelConfiguration)){
+			return false;
+		}
+		ChannelConfiguration that = (ChannelConfiguration) o;
+		return new EqualsBuilder().append(getChannelId(), that.getChannelId()).isEquals();
 	}
 }

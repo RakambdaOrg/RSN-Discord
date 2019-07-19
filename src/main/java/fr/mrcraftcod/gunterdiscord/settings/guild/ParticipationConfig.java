@@ -10,10 +10,10 @@ import fr.mrcraftcod.gunterdiscord.settings.types.UserConfiguration;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true, value = {
 		"usersLock",
@@ -26,11 +26,11 @@ public class ParticipationConfig{
 	@JsonIgnore
 	private final Object usersLock = new Object();
 	@JsonProperty("emotes")
-	private List<EntityParticipation> emotesParticipation = new ArrayList<>();
+	private Set<EntityParticipation> emotesParticipation = new HashSet<>();
 	@JsonProperty("users")
-	private List<EntityParticipation> usersParticipation = new ArrayList<>();
+	private Set<EntityParticipation> usersParticipation = new HashSet<>();
 	@JsonProperty("usersPenned")
-	private List<UserConfiguration> usersPinned = new ArrayList<>();
+	private Set<UserConfiguration> usersPinned = new HashSet<>();
 	@JsonProperty("reportChannel")
 	private ChannelConfiguration reportChannel;
 	
@@ -97,7 +97,7 @@ public class ParticipationConfig{
 	}
 	
 	@Nonnull
-	public List<EntityParticipation> getEmotes(){
+	public Set<EntityParticipation> getEmotes(){
 		return this.emotesParticipation;
 	}
 	
@@ -111,11 +111,11 @@ public class ParticipationConfig{
 	}
 	
 	@Nonnull
-	public List<UserConfiguration> getUsersPinned(){
+	public Set<UserConfiguration> getUsersPinned(){
 		return this.usersPinned;
 	}
 	
-	public void setUsersPinned(@Nonnull List<UserConfiguration> usersPinned){
+	public void setUsersPinned(@Nonnull Set<UserConfiguration> usersPinned){
 		this.usersPinned = usersPinned;
 	}
 }
