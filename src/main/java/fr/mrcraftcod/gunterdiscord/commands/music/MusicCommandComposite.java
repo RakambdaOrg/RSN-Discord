@@ -1,7 +1,8 @@
 package fr.mrcraftcod.gunterdiscord.commands.music;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.DJRoleConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.types.RoleConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Member;
@@ -9,6 +10,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
@@ -35,7 +37,7 @@ public class MusicCommandComposite extends CommandComposite{
 	
 	@Override
 	public boolean isAllowed(@Nullable final Member member){
-		return Objects.nonNull(member) && (Utilities.isTeam(member) || Utilities.hasRole(member, new DJRoleConfig(member.getGuild()).getObject(null)));
+		return Objects.nonNull(member) && (Utilities.isTeam(member) || NewSettings.getConfiguration(member.getGuild()).getDjRole().map(RoleConfiguration::getRole).filter(Optional::isPresent).map(Optional::get).map(role -> Utilities.hasRole(member, role)).orElse(false));
 	}
 	
 	@Nonnull

@@ -1,19 +1,20 @@
 package fr.mrcraftcod.gunterdiscord.runners.anilist;
 
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.types.ChannelConfiguration;
+import fr.mrcraftcod.gunterdiscord.settings.types.UserConfiguration;
 import fr.mrcraftcod.gunterdiscord.runners.ScheduledRunner;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.AnilistThaChannelConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.AnilistThaUserConfig;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListUtils;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.list.AniListMediaUserList;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListMediaUserListPagedQuery;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -53,12 +54,7 @@ public class AniListMediaUserListScheduledRunner implements AniListRunner<AniLis
 	@Override
 	public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<AniListMediaUserList>> userElements){
 		AniListRunner.super.sendMessages(channels, userElements);
-		this.getJDA().getGuilds().stream().map(g -> new AnilistThaChannelConfig(g).getObject(null)).filter(Objects::nonNull).forEach(textChannel -> {
-			final var member = new AnilistThaUserConfig(textChannel.getGuild()).getObject(null);
-			if(Objects.nonNull(member)){
-				userElements.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> ImmutablePair.of(e.getKey(), v))).filter(v -> v.getRight().getCustomLists().entrySet().stream().filter(Map.Entry::getValue).anyMatch(entry -> Objects.equals("ThaPending", entry.getKey()) || Objects.equals("ThaReading", entry.getKey()) || Objects.equals("ThaWatching", entry.getKey()))).forEach(p -> Actions.sendMessage(textChannel, "" + member.getAsMention(), buildMessage(p.getLeft(), p.getRight())));
-			}
-		});
+		this.getJDA().getGuilds().stream().map(g -> NewSettings.getConfiguration(g).getAniListConfiguration().getThaChannel().flatMap(ChannelConfiguration::getChannel)).filter(Optional::isPresent).map(Optional::get).forEach(textChannel -> NewSettings.getConfiguration(textChannel.getGuild()).getAniListConfiguration().getThaUser().flatMap(UserConfiguration::getUser).ifPresent(user -> userElements.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> ImmutablePair.of(e.getKey(), v))).filter(v -> v.getRight().getCustomLists().entrySet().stream().filter(Map.Entry::getValue).anyMatch(entry -> Objects.equals("ThaPending", entry.getKey()) || Objects.equals("ThaReading", entry.getKey()) || Objects.equals("ThaWatching", entry.getKey()))).forEach(p -> Actions.sendMessage(textChannel, "" + user.getAsMention(), buildMessage(p.getLeft(), p.getRight())))));
 	}
 	
 	@Override
@@ -80,8 +76,8 @@ public class AniListMediaUserListScheduledRunner implements AniListRunner<AniLis
 	
 	@Nonnull
 	@Override
-	public AniListMediaUserListPagedQuery initQuery(@Nonnull final Map<String, String> userInfo){
-		return new AniListMediaUserListPagedQuery(Integer.parseInt(userInfo.get("userId")));
+	public AniListMediaUserListPagedQuery initQuery(@Nonnull Member member){
+		return new AniListMediaUserListPagedQuery(AniListUtils.getUserId(member).orElseThrow());
 	}
 	
 	@Override

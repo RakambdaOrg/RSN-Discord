@@ -1,11 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.runners;
 
-import fr.mrcraftcod.gunterdiscord.newSettings.NewSettings;
-import fr.mrcraftcod.gunterdiscord.settings.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -16,8 +12,6 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-07-14
  */
 public class SaveConfigScheduledRunner implements ScheduledRunner{
-	private static final Logger LOGGER = LoggerFactory.getLogger(SaveConfigScheduledRunner.class);
-	
 	/**
 	 * Constructor.
 	 */
@@ -27,13 +21,7 @@ public class SaveConfigScheduledRunner implements ScheduledRunner{
 	
 	@Override
 	public void run(){
-		try{
-			Settings.save();
-			NewSettings.close();
-		}
-		catch(final IOException e){
-			LOGGER.error("Failed to save settings", e);
-		}
+		NewSettings.close();
 	}
 	
 	@Override

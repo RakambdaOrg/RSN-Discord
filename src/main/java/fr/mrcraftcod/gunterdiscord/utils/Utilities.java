@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.utils;
 
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.ModoRolesConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.types.RoleConfiguration;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -12,6 +13,7 @@ import javax.annotation.Nullable;
 import java.awt.Color;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
@@ -51,7 +53,7 @@ public class Utilities{
 	 * @return True if moderator, false otherwise.
 	 */
 	public static boolean isModerator(final Member member){
-		return new ModoRolesConfig(member.getGuild()).getAsList().map(list -> Utilities.hasRole(member, list)).orElse(isAdmin(member));
+		return isAdmin(member) || NewSettings.getConfiguration(member.getGuild()).getModeratorRoles().stream().map(RoleConfiguration::getRole).filter(Optional::isPresent).map(Optional::get).anyMatch(r -> Utilities.hasRole(member, r));
 	}
 	
 	/**

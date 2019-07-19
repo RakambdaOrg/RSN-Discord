@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.listeners.quiz;
 
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.QuizChannelConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.types.ChannelConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -171,7 +172,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	public void run(){
 		final var QUESTION_TIME = 20;
 		try{
-			final var quizChannelOptional = new QuizChannelConfig(this.guild).getObject();
+			final var quizChannelOptional = NewSettings.getConfiguration(getGuild()).getQuizChannel().flatMap(ChannelConfiguration::getChannel);
 			if(quizChannelOptional.isEmpty()){
 				return;
 			}

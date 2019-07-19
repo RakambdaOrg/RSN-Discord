@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.activity.list.AniListListActivity;
 import org.json.JSONObject;
 import javax.annotation.Nonnull;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,12 +20,13 @@ public class AniListListActivityPagedQuery implements AniListPagedQuery<AniListL
 	private final JSONObject variables;
 	private int nextPage = 0;
 	
-	public AniListListActivityPagedQuery(final int userId, final int date){
+	public AniListListActivityPagedQuery(final int userId, final LocalDateTime date){
 		this.variables = new JSONObject();
 		this.variables.put("userID", userId);
 		this.variables.put("page", 1);
 		this.variables.put("perPage", 50);
-		this.variables.put("date", date);
+		final var s = date.atZone(ZoneId.of("UTC")).toEpochSecond();
+		this.variables.put("date", s >= 0 ? s : 0);
 	}
 	
 	@Override

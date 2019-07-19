@@ -2,20 +2,21 @@ package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.RemoveRoleConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
@@ -37,14 +38,16 @@ public class WarnInfoCommand extends BasicCommand{
 		final var target = event.getMessage().getMentionedUsers().stream().findFirst().orElse(event.getAuthor());
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Warns info");
 		builder.addField("User", target.getAsMention(), false);
-		new RemoveRoleConfig(event.getGuild()).getValue(target.getIdLong()).filter(bans -> !bans.isEmpty()).ifPresentOrElse(bans -> {
-			final var formatter = new SimpleDateFormat("dd MMM at HH:mm:ssZ");
-			builder.setDescription("Warns will be removed with a maximum delay of 15 minutes");
-			bans.keySet().stream().map(key -> event.getGuild().getRoleById(key)).filter(Objects::nonNull).forEach(role -> builder.addField("Role " + role.getName(), "Ends the " + formatter.format(new Date(bans.get(role.getIdLong()))), false));
-		}, () -> {
+		final var bans = NewSettings.getConfiguration(event.getGuild()).getRemoveRoles().stream().filter(t -> Objects.equals(t.getUserId(), target.getIdLong())).collect(Collectors.toList());
+		if(bans.isEmpty()){
 			builder.setColor(Color.GREEN);
 			builder.setDescription("The user have no warns");
-		});
+		}
+		else{
+			final var formatter = new SimpleDateFormat("dd MMM at HH:mm:ssZ");
+			builder.setDescription("Warns will be removed with a maximum delay of 15 minutes");
+			bans.forEach(ban -> builder.addField("Role " + ban.getRole().map(Role::getAsMention).orElse("<<UNKNOWN>>"), "Ends the " + formatter.format(ban.getEndDate()), false));
+		}
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;
 	}

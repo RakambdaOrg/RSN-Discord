@@ -4,7 +4,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.CommandsMessageListener;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.PrefixConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -32,7 +32,7 @@ public class HelpCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		final var prefix = new PrefixConfig(event.getGuild()).getObject("");
+		final var prefix = NewSettings.getConfiguration(event.getGuild()).getPrefix().orElse(CommandsMessageListener.defaultPrefix);
 		if(args.isEmpty()){
 			final var builder = new EmbedBuilder();
 			builder.setColor(Color.GREEN);

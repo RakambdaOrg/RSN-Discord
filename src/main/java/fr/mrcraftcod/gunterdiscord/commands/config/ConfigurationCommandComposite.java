@@ -1,41 +1,40 @@
 package fr.mrcraftcod.gunterdiscord.commands.config;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
+import fr.mrcraftcod.gunterdiscord.commands.config.guild.*;
 import net.dv8tion.jda.api.entities.ChannelType;
 import javax.annotation.Nonnull;
 import java.util.List;
-import static fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommand.ChangeConfigType.*;
-import static fr.mrcraftcod.gunterdiscord.commands.generic.Command.AccessLevel.ADMIN;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
- *
- * @author Thomas Couchoud
- * @since 2018-04-13
- */
 public class ConfigurationCommandComposite extends CommandComposite{
-	/**
-	 * Constructor.
-	 */
 	public ConfigurationCommandComposite(){
-		super();
-		addSubCommand(new ConfigurationCommand(this, ADD, List.of("add", "a")));
-		addSubCommand(new ConfigurationCommand(this, REMOVE, List.of("remove", "r")));
-		addSubCommand(new ConfigurationCommand(this, SET, List.of("set", "s")));
-		addSubCommand(new ConfigurationCommand(this, SHOW, List.of("show", "l")));
-		addSubCommand(new ListConfigurationCommand(this));
+		addSubCommand(new AniListConfigurationCommandComposite(this));
+		addSubCommand(new AutoRolesConfigurationCommand(this));
+		addSubCommand(new DjRoleConfigurationCommand(this));
+		addSubCommand(new WarnsConfigurationCommandComposite(this));
+		addSubCommand(new ModeratorRolesConfigurationCommand(this));
+		addSubCommand(new IdeaChannelsConfigurationCommand(this));
+		addSubCommand(new NoXpChannelsConfigurationCommand(this));
+		addSubCommand(new PrefixConfigurationCommand(this));
+		addSubCommand(new ParticipationConfigurationCommandComposite(this));
+		addSubCommand(new ReportChannelConfigurationCommand(this));
+		addSubCommand(new NicknameConfigurationCommandComposite(this));
+		addSubCommand(new TwitchChannelConfigurationCommand(this));
+		addSubCommand(new QuestionsConfigurationCommandComposite(this));
+		addSubCommand(new TrombinoscopeConfigurationCommandComposite(this));
+		addSubCommand(new QuizChannelConfigurationCommand(this));
 	}
 	
 	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
-		return ADMIN;
+		return AccessLevel.MODERATOR;
 	}
 	
 	@Nonnull
 	@Override
 	public String getName(){
-		return "Config";
+		return "Configuration";
 	}
 	
 	@Nonnull
@@ -47,7 +46,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 	@Nonnull
 	@Override
 	public String getDescription(){
-		return "Interact with the bot's configuration";
+		return "Interactions with the description";
 	}
 	
 	@Override

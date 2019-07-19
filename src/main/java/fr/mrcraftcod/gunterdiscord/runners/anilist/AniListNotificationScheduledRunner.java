@@ -1,10 +1,14 @@
 package fr.mrcraftcod.gunterdiscord.runners.anilist;
 
 import fr.mrcraftcod.gunterdiscord.runners.ScheduledRunner;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.types.UserDateConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListUtils;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.airing.AniListAiringNotification;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.queries.AniListNotificationsPagedQuery;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import javax.annotation.Nonnull;
@@ -47,7 +51,7 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 			}
 		}
 		notifications.entrySet().stream().sorted(Comparator.comparing(e -> e.getKey().getDate())).forEachOrdered(e -> channels.forEach(channel -> {
-			final var mentions = e.getValue().stream().filter(u -> sendToChannel(channel, u)).map(User::getAsMention).collect(Collectors.toList());
+			final var mentions = e.getValue().stream().filter(u -> sendToChannel(channel, u)).distinct().map(User::getAsMention).collect(Collectors.toList());
 			if(!mentions.isEmpty()){
 				Actions.sendMessage(channel, String.join("\n", mentions));
 				Actions.sendMessage(channel, buildMessage(null, e.getKey()));
@@ -74,8 +78,8 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 	
 	@Nonnull
 	@Override
-	public AniListNotificationsPagedQuery initQuery(@Nonnull final Map<String, String> userInfo){
-		return new AniListNotificationsPagedQuery(Integer.parseInt(userInfo.get("userId")), Optional.ofNullable(userInfo.getOrDefault("lastFetch" + getFetcherID(), null)).map(Integer::parseInt).orElse(0));
+	public AniListNotificationsPagedQuery initQuery(@Nonnull Member member){
+		return new AniListNotificationsPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(getFetcherID()).stream().filter(c -> Objects.equals(c.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
 	}
 	
 	@Override

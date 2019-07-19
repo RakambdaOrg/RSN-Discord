@@ -2,12 +2,16 @@ package fr.mrcraftcod.gunterdiscord.runners;
 
 import fr.mrcraftcod.gunterdiscord.commands.EmotesCommand;
 import fr.mrcraftcod.gunterdiscord.commands.TempParticipationCommand;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.*;
+import fr.mrcraftcod.gunterdiscord.listeners.LogListener;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.types.ChannelConfiguration;
+import fr.mrcraftcod.gunterdiscord.settings.types.UserConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -35,20 +39,27 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 	public void run(){
 		getLogger(null).info("Starting daily stats runner");
 		final var ytd = LocalDate.now().minusDays(1);
-		final var lastWeek = LocalDate.now().minusWeeks(1);
+		final var lastWeek = LocalDate.now().minusWeeks(1).minusDays(LogListener.getDaysToRemove(LocalDate.now().getDayOfWeek()));
 		for(final var guild : this.jda.getGuilds()){
-			new MembersParticipationChannelConfig(guild).getObject().ifPresent(membersParticipationChannel -> {
+			NewSettings.getConfiguration(guild).getParticipationConfiguration().getReportChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(reportChannel -> {
 				getLogger(guild).debug("Processing stats for guild {}", guild);
-				if(TempParticipationCommand.sendInfos(guild, ytd, this.jda.getSelfUser(), membersParticipationChannel)){
-					new MembersParticipationConfig(guild).deleteKey(TempParticipationCommand.getKey(ytd));
-					new MembersParticipationPinConfig(guild).getAsList().ifPresent(usersToPin -> Actions.sendMessage(membersParticipationChannel, usersToPin.stream().map(User::getAsMention).collect(Collectors.joining("\n"))));
+				var sent = false;
+				if(TempParticipationCommand.sendInfos(guild, ytd, this.jda.getSelfUser(), reportChannel)){
+					sent = true;
+					NewSettings.getConfiguration(guild).getParticipationConfiguration().removeUsers(ytd);
+					NewSettings.getConfiguration(guild).getParticipationConfiguration().removeUsersBefore(ytd);
 				}
-			});
-			new EmotesParticipationChannelConfig(guild).getObject().ifPresent(emotesParticipationChannel -> {
 				getLogger(guild).debug("Processing stats for guild {}", guild);
-				if(EmotesCommand.sendInfos(guild, lastWeek, this.jda.getSelfUser(), emotesParticipationChannel, 10)){
-					new EmotesParticipationConfig(guild).deleteKey(EmotesCommand.getKey(lastWeek));
-					new EmotesParticipationPinConfig(guild).getAsList().ifPresent(usersToPin -> Actions.sendMessage(emotesParticipationChannel, usersToPin.stream().map(User::getAsMention).collect(Collectors.joining("\n"))));
+				if(EmotesCommand.sendInfos(guild, lastWeek, this.jda.getSelfUser(), reportChannel, 10)){
+					sent = true;
+					NewSettings.getConfiguration(guild).getParticipationConfiguration().removeEmotes(lastWeek);
+					NewSettings.getConfiguration(guild).getParticipationConfiguration().removeEmotesBefore(lastWeek);
+				}
+				if(sent){
+					final var toPin = NewSettings.getConfiguration(guild).getParticipationConfiguration().getUsersPinned().stream().map(UserConfiguration::getUser).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+					if(!toPin.isEmpty()){
+						Actions.sendMessage(reportChannel, toPin.stream().map(User::getAsMention).collect(Collectors.joining("\n")));
+					}
 				}
 			});
 		}

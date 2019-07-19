@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListDatedObject;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListObject;
+import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListUtils;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.media.AniListMedia;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.AniListNotificationType;
 import fr.mrcraftcod.gunterdiscord.utils.json.SQLTimestampDeserializer;
@@ -15,8 +16,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.Color;
 import java.net.URL;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-11.
@@ -34,7 +36,7 @@ public class AniListAiringNotification implements AniListDatedObject{
 	private int episode;
 	@JsonProperty("createdAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private Date createdAt = new Date(0);
+	private LocalDateTime createdAt = LocalDateTime.now();
 	@JsonProperty("media")
 	private AniListMedia media;
 	@JsonProperty("id")
@@ -70,7 +72,7 @@ public class AniListAiringNotification implements AniListDatedObject{
 	
 	@Override
 	public void fillEmbed(@Nonnull final EmbedBuilder builder){
-		builder.setTimestamp(getDate().toInstant());
+		builder.setTimestamp(getDate());
 		builder.setColor(Color.GREEN);
 		builder.setTitle("New release", getMedia().getUrl().toString());
 		builder.addField("Episode", "" + getEpisode(), true);
@@ -85,14 +87,14 @@ public class AniListAiringNotification implements AniListDatedObject{
 	
 	@Override
 	@Nonnull
-	public Date getDate(){
+	public LocalDateTime getDate(){
 		return this.createdAt;
 	}
 	
 	@Override
 	@Nonnull
 	public URL getUrl(){
-		return this.getMedia().getUrl();
+		return Optional.ofNullable(this.getMedia()).map(AniListMedia::getUrl).orElse(AniListUtils.FALLBACK_URL);
 	}
 	
 	@Override

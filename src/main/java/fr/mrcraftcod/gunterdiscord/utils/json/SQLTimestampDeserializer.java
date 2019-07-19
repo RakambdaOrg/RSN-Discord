@@ -5,11 +5,13 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
-public class SQLTimestampDeserializer extends JsonDeserializer<Date>{
+public class SQLTimestampDeserializer extends JsonDeserializer<LocalDateTime>{
 	@Override
-	public Date deserialize(@Nonnull final JsonParser jsonParser, @Nonnull final DeserializationContext deserializationContext) throws IOException{
-		return new Date(jsonParser.getValueAsLong() * 1000L);
+	public LocalDateTime deserialize(@Nonnull final JsonParser jsonParser, @Nonnull final DeserializationContext deserializationContext) throws IOException{
+		return LocalDateTime.ofInstant(Instant.ofEpochMilli(jsonParser.getValueAsLong() * 1000L), ZoneId.of("UTC"));
 	}
 }

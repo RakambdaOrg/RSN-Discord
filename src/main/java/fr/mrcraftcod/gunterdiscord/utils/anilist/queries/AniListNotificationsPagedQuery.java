@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.notifications.airing.AniListAiringNotification;
 import org.json.JSONObject;
 import javax.annotation.Nonnull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -17,13 +17,12 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniListAiringNotification>{
 	private static final String QUERY_NOTIFICATIONS = AniListPagedQuery.pagedQuery("", "notifications{\n" + "... on " + AniListAiringNotification.getQuery() + "}\n");
-	
 	private final JSONObject variables;
-	private final Date date;
+	private final LocalDateTime date;
 	private int nextPage = 0;
 	
-	public AniListNotificationsPagedQuery(final int userId, final int date){
-		this.date = new Date(date * 1000L);
+	public AniListNotificationsPagedQuery(final int userId, final LocalDateTime date){
+		this.date = date;
 		this.variables = new JSONObject();
 		this.variables.put("userID", userId);
 		this.variables.put("page", 1);
@@ -43,9 +42,15 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 		final var changes = new ArrayList<AniListAiringNotification>();
 		for(final var change : json.getJSONObject("data").getJSONObject("Page").getJSONArray("notifications")){
 			try{
-				final var changeObj = buildChange((JSONObject) change);
-				if(changeObj.getDate().after(this.date)){
-					changes.add(changeObj);
+				final var changeJSONObj = (JSONObject) change;
+				if(changeJSONObj.length() > 0){
+					final var changeObj = buildChange(changeJSONObj);
+					if(changeObj.getDate().isAfter(this.date)){
+						changes.add(changeObj);
+					}
+				}
+				else{
+					getLogger(null).warn("Skipped AniList object, json: {}", change);
 				}
 			}
 			catch(final Exception e){

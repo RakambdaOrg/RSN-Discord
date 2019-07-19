@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.QuestionsChannelConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.QuestionsFinalChannelConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.types.ChannelConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
@@ -30,13 +30,13 @@ public class QuestionReactionListener extends ListenerAdapter{
 	public void onGuildMessageReactionAdd(@Nonnull final GuildMessageReactionAddEvent event){
 		super.onGuildMessageReactionAdd(event);
 		try{
-			if(new QuestionsChannelConfig(event.getGuild()).isChannel(event.getChannel())){
+			if(NewSettings.getConfiguration(event.getGuild()).getQuestionsConfiguration().getInputChannel().map(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong())).orElse(false)){
 				if(!event.getUser().isBot()){
 					final var emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
 					if(Objects.equals(emote, BasicEmotes.CHECK_OK)){
 						final var message = event.getChannel().getHistory().getMessageById(event.getReaction().getMessageIdLong());
 						if(Objects.nonNull(message)){
-							new QuestionsFinalChannelConfig(event.getGuild()).getObject().ifPresentOrElse(channel -> {
+							NewSettings.getConfiguration(event.getGuild()).getQuestionsConfiguration().getOutputChannel().flatMap(ChannelConfiguration::getChannel).ifPresentOrElse(channel -> {
 								Actions.sendMessage(channel, mess -> mess.addReaction(BasicEmotes.CHECK_OK.getValue()).queue(), message.getEmbeds().stream().map(Utilities::buildEmbed).map(mess -> mess.addField("Approved by", event.getUser().getAsMention(), false).setTimestamp(message.getTimeCreated())).map(EmbedBuilder::build).collect(Collectors.toList()));
 								Actions.deleteMessage(message);
 								try{
@@ -66,7 +66,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 					}
 				}
 			}
-			else if(new QuestionsFinalChannelConfig(event.getGuild()).isChannel(event.getChannel())){
+			else if(NewSettings.getConfiguration(event.getGuild()).getQuestionsConfiguration().getOutputChannel().map(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong())).orElse(false)){
 				if(!event.getUser().isBot()){
 					final var emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
 					if(Objects.equals(emote, BasicEmotes.CHECK_OK)){

@@ -1,8 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.warn;
 
-import fr.mrcraftcod.gunterdiscord.settings.NoValueDefinedException;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.WarnRoleConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.WarnTimeConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.guild.warns.WarnConfiguration;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
@@ -20,13 +19,13 @@ import java.util.Optional;
 public class NormalWarnCommand extends WarnCommand{
 	@Nonnull
 	@Override
-	protected Optional<Role> getRole(@Nonnull final Guild guild, @Nonnull final Message message, @Nonnull final LinkedList<String> args) throws NoValueDefinedException{
-		return new WarnRoleConfig(guild).getObject();
+	protected Optional<Role> getRole(@Nonnull final Guild guild, @Nonnull final Message message, @Nonnull final LinkedList<String> args){
+		return NewSettings.getConfiguration(guild).getWarnsConfiguration().getSimpleWarn().flatMap(WarnConfiguration::getRole);
 	}
 	
 	@Override
-	protected double getTime(@Nonnull final Guild guild, @Nonnull final Message message, @Nonnull final LinkedList<String> args){
-		return new WarnTimeConfig(guild).getObject().orElse(1D);
+	protected long getTime(@Nonnull final Guild guild, @Nonnull final Message message, @Nonnull final LinkedList<String> args){
+		return NewSettings.getConfiguration(guild).getWarnsConfiguration().getSimpleWarn().map(WarnConfiguration::getDelay).orElse(24L * 3600);
 	}
 	
 	@Nonnull

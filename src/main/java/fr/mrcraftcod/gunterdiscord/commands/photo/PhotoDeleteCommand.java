@@ -3,8 +3,8 @@ package fr.mrcraftcod.gunterdiscord.commands.photo;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.PhotoConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.TrombinoscopeRoleConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.types.RoleConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -57,10 +57,11 @@ public class PhotoDeleteCommand extends BasicCommand{
 				user = event.getAuthor();
 			}
 			if(!Objects.equals(user, event.getAuthor())){
-				if(Utilities.isModerator(event.getMember()) || Utilities.isAdmin(event.getMember())){
-					new PhotoConfig(event.getGuild()).deleteKeyValue(user.getIdLong(), args.poll());
-					if(new PhotoConfig(event.getGuild()).getValue(user.getIdLong()).isEmpty()){
-						new TrombinoscopeRoleConfig(event.getGuild()).getObject().ifPresent(role -> Actions.removeRole(user, role));
+				if(Utilities.isModerator(Objects.requireNonNull(event.getMember())) || Utilities.isAdmin(event.getMember())){
+					final var toDel =  args.pop();
+					NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().removePhoto(user, toDel);
+					if(NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotos(user).isEmpty()){
+						NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Actions.removeRole(user, role));
 					}
 					Actions.replyPrivate(event.getGuild(), event.getAuthor(), "%s's pictures deleted", user.getAsMention());
 				}
@@ -69,16 +70,17 @@ public class PhotoDeleteCommand extends BasicCommand{
 				}
 			}
 			else{
-				new PhotoConfig(event.getGuild()).deleteKeyValue(user.getIdLong(), args.poll());
-				if(new PhotoConfig(event.getGuild()).getValue(user.getIdLong()).isEmpty()){
-					new TrombinoscopeRoleConfig(event.getGuild()).getObject().ifPresent(role -> Actions.removeRole(user, role));
+				final var toDel =  args.pop();
+				NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().removePhoto(event.getAuthor(), toDel);
+				if(NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotos(event.getAuthor()).isEmpty()){
+					NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Actions.removeRole(event.getAuthor(), role));
 				}
 				Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Picture deleted");
 			}
 		}
 		else{
-			new PhotoConfig(event.getGuild()).deleteKey(event.getAuthor().getIdLong());
-			new TrombinoscopeRoleConfig(event.getGuild()).getObject().ifPresent(role -> Actions.removeRole(event.getAuthor(), role));
+			NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().removePhoto(event.getAuthor());
+			NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Actions.removeRole(event.getAuthor(), role));
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Pictures deleted");
 		}
 		return CommandResult.SUCCESS;

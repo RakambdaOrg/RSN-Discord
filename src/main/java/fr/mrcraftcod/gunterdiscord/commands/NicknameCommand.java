@@ -2,8 +2,7 @@ package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.NickDelayConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.NickLastChangeConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -15,8 +14,9 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 import javax.annotation.Nonnull;
 import java.awt.Color;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -27,7 +27,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-04-12
  */
 public class NicknameCommand extends BasicCommand{
-	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	
 	@Override
 	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
@@ -59,17 +59,16 @@ public class NicknameCommand extends BasicCommand{
 		}
 		memberOptional.ifPresentOrElse(member -> {
 			final var oldName = Optional.ofNullable(member.getNickname());
-			final var lastChangeRaw = new NickLastChangeConfig(event.getGuild()).getValue(member.getUser().getIdLong());
-			final var lastChange = new Date(lastChangeRaw.orElse(0L));
-			final var delay = Duration.ofMinutes(new NickDelayConfig(event.getGuild()).getObject().orElse(6 * 60));
-			if(!Utilities.isTeam(event.getMember()) && (lastChange.getTime() + delay.getSeconds() * 1000) >= new Date().getTime()){
+			final var lastChange = NewSettings.getConfiguration(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser()).orElse(LocalDateTime.MIN);
+			final var delay = Duration.ofSeconds(NewSettings.getConfiguration(event.getGuild()).getNicknameConfiguration().getChangeDelay());
+			if(!Utilities.isTeam(event.getMember()) && lastChange.plus(delay).isAfter(LocalDateTime.now())){
 				final var builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.setColor(Color.RED);
 				builder.addField("Old nickname", oldName.orElse("*NONE*"), true);
 				builder.addField("User", member.getAsMention(), true);
 				builder.addField("Reason", "You can change your nickname once every " + delay.toString().replace("PT", ""), true);
-				builder.addField("Last change", sdf.format(lastChange), true);
+				builder.addField("Last change", lastChange.format(DF), true);
 				builder.setTimestamp(new Date().toInstant());
 				Actions.reply(event, builder.build());
 			}
@@ -89,7 +88,10 @@ public class NicknameCommand extends BasicCommand{
 				try{
 					member.getGuild().modifyNickname(member, newName).complete();
 					builder.setColor(Color.GREEN);
-					new NickLastChangeConfig(event.getGuild()).addValue(member.getUser().getIdLong(), new Date().getTime());
+					if(Objects.nonNull(newName)){
+						builder.addField("Next allowed change", LocalDateTime.now().plus(delay).format(DF), false);
+					}
+					NewSettings.getConfiguration(event.getGuild()).getNicknameConfiguration().setLastChange(member.getUser(), Objects.isNull(newName) ? null : LocalDateTime.now());
 					getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", event.getAuthor(), member.getUser(), oldName, newName);
 				}
 				catch(final HierarchyException e){

@@ -15,8 +15,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,7 +36,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AniListMediaUserList implements AniListDatedObject{
-	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 	private static final String QUERY = "mediaList(userId: $userID) {\n" + "id\n" + "private\n" + "progress\n" + "progressVolumes\n" + "priority\n" + "customLists\n" + "score(format: POINT_100)\n" + "completedAt{year month day}" + "startedAt{year month day}" + "status\n" + "updatedAt\n" + "createdAt\n" + AniListMedia.getQuery() + "}";
 	@JsonProperty("id")
 	private int id;
@@ -54,10 +54,10 @@ public class AniListMediaUserList implements AniListDatedObject{
 	private Integer progressVolumes;
 	@JsonProperty("createdAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private Date createdAt;
+	private LocalDateTime createdAt;
 	@JsonProperty("updatedAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private Date updatedAt;
+	private LocalDateTime updatedAt;
 	@JsonProperty("startedAt")
 	private FuzzyDate startedAt;
 	@JsonProperty("completedAt")
@@ -69,7 +69,7 @@ public class AniListMediaUserList implements AniListDatedObject{
 	
 	@Override
 	public void fillEmbed(@Nonnull final EmbedBuilder builder){
-		builder.setTimestamp(getDate().toInstant());
+		builder.setTimestamp(getDate());
 		builder.setColor(getStatus().getColor());
 		builder.setTitle("User list information", getMedia().getUrl().toString());
 		builder.addField("List status", this.getStatus().toString(), true);
@@ -80,10 +80,10 @@ public class AniListMediaUserList implements AniListDatedObject{
 			builder.addField("Private", "Yes", true);
 		}
 		getStartedAt().asDate().ifPresent(date -> {
-			builder.addField("Started at", SIMPLE_DATE_FORMAT.format(date), true);
+			builder.addField("Started at", date.format(DF), true);
 		});
 		getCompletedAt().asDate().ifPresent(date -> {
-			builder.addField("Completed at", SIMPLE_DATE_FORMAT.format(date), true);
+			builder.addField("Completed at", date.format(DF), true);
 			getStartedAt().durationTo(date).ifPresent(duration -> {
 				builder.addField("Time to complete", String.format("%d days", duration.get(DAYS)), true);
 			});
@@ -92,8 +92,7 @@ public class AniListMediaUserList implements AniListDatedObject{
 		if(Objects.nonNull(getProgressVolumes()) && getMedia() instanceof AniListMangaMedia){
 			builder.addField("Volumes progress", getProgressVolumes() + "/" + Optional.ofNullable(((AniListMangaMedia) getMedia()).getVolumes()).map(Object::toString).orElse("?"), true);
 		}
-		
-		final var lists = this.customLists.keySet().stream().filter(k -> customLists.get(k)).collect(Collectors.joining(", "));
+		final var lists = Optional.ofNullable(this.customLists).orElse(new HashMap<>()).entrySet().stream().filter(k -> Objects.nonNull(k.getValue()) && k.getValue()).map(k -> k.getKey()).collect(Collectors.joining(", "));
 		if(Objects.nonNull(lists) && !lists.isBlank()){
 			builder.addField("In custom lists", lists, true);
 		}
@@ -105,7 +104,7 @@ public class AniListMediaUserList implements AniListDatedObject{
 	
 	@Override
 	@Nonnull
-	public Date getDate(){
+	public LocalDateTime getDate(){
 		return this.updatedAt;
 	}
 	
@@ -178,7 +177,7 @@ public class AniListMediaUserList implements AniListDatedObject{
 	}
 	
 	@Nonnull
-	public Date getCreatedAt(){
+	public LocalDateTime getCreatedAt(){
 		return createdAt;
 	}
 	

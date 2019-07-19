@@ -3,9 +3,10 @@ package fr.mrcraftcod.gunterdiscord.commands.photo;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.PhotoChannelConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.PhotoConfig;
-import fr.mrcraftcod.gunterdiscord.settings.configs.done.TrombinoscopeRoleConfig;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.guild.trombinoscope.PhotoEntryConfiguration;
+import fr.mrcraftcod.gunterdiscord.settings.types.ChannelConfiguration;
+import fr.mrcraftcod.gunterdiscord.settings.types.RoleConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -70,15 +71,15 @@ public class PhotoAddCommand extends BasicCommand{
 					final var future = attachment.downloadToFile(savePath.toFile());
 					final var saveFile = future.get();
 					if(!future.isCompletedExceptionally() && Objects.equals(attachment.getSize(), saveFile.length()) && saveFile.length() > 512){
-						new PhotoConfig(event.getGuild()).addValue(user.getIdLong(), saveFile.getPath());
-						new TrombinoscopeRoleConfig(event.getGuild()).getObject().ifPresent(role -> Actions.giveRole(event.getGuild(), user, role));
+						NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotos(user).add(new PhotoEntryConfiguration(user, saveFile.getPath()));
+						NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(r -> Actions.giveRole(event.getGuild(), user, r));
 						final var builder = new EmbedBuilder();
 						builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 						builder.setColor(Color.GREEN);
 						builder.setTitle("New picture");
 						builder.addField("User", user.getAsMention(), true);
 						builder.addField("ID", "" + event.getMessage().getTimeCreated().toEpochSecond(), true);
-						Actions.sendMessage(new PhotoChannelConfig(event.getGuild()).getObject().orElse(event.getChannel()), builder.build());
+						Actions.sendMessage(NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotoChannel().flatMap(ChannelConfiguration::getChannel).orElse(event.getChannel()), builder.build());
 					}
 					else{
 						Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Upload failed");
