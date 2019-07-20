@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,9 @@ public class TwitchIRC{
 		final var channel = String.format("#%s", user.toLowerCase());
 		if(CLIENT.getJoinedChannels().stream().noneMatch(joinedChannel -> Objects.equals(joinedChannel, channel))){
 			final var listener = new TwitchIRCListener(guild, user, channel);
+			if(NewSettings.getConfiguration(guild).getIrcForward()){
+				guild.getJDA().addEventListener(listener);
+			}
 			CLIENT.addEventListener(listener);
 			CLIENT.joinChannel(channel);
 		}
@@ -38,7 +42,13 @@ public class TwitchIRC{
 			final var channel = String.format("#%s", user.toLowerCase());
 			CLIENT.leaveChannel(channel);
 			if(removeListener){
-				CLIENT.getListeners().removeIf(obj -> obj instanceof TwitchIRCListener && Objects.equals(obj.getUser(), user) && Objects.equals(obj.getGuild(), guild));
+				CLIENT.getListeners().removeIf(obj -> {
+					if(obj instanceof TwitchIRCListener && Objects.equals(obj.getUser(), user) && Objects.equals(obj.getGuild(), guild)){
+						guild.getJDA().removeEventListener(obj);
+						return true;
+					}
+					return false;
+				});
 			}
 			if(CLIENT.getJoinedChannels().isEmpty()){
 				close();
@@ -58,10 +68,16 @@ public class TwitchIRC{
 		}
 	}
 	
+	public static void sendMessage(@Nonnull String ircChannel, @Nonnull String message){
+		if(CLIENT.getJoinedChannels().contains(ircChannel)){
+			CLIENT.sendMessage(String.format("PRIVMSG %s :%s", ircChannel, message));
+		}
+	}
+	
 	@Nonnull
-	public static List<String> getConnectedTo(@Nonnull Guild guild){
+	public static List<String> getConnectedTo(){
 		if(Objects.nonNull(CLIENT)){
-			return CLIENT.getListeners().stream().filter(l -> Objects.equals(l.getGuild(), guild)).map(IRCListener::getUser).collect(Collectors.toList());
+			return CLIENT.getListeners().stream().map(IRCListener::getUser).distinct().collect(Collectors.toList());
 		}
 		return List.of();
 	}

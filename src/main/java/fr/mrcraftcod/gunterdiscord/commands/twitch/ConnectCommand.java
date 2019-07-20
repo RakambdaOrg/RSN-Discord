@@ -47,7 +47,7 @@ public class ConnectCommand extends BasicCommand{
 		}
 		else{
 			try{
-				final var list = TwitchIRC.getConnectedTo(event.getGuild());
+				final var list = TwitchIRC.getConnectedTo();
 				if(list.isEmpty()){
 					TwitchIRC.connect(event.getGuild(), args.pop());
 				}

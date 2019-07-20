@@ -24,6 +24,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		addSubCommand(new TrombinoscopeConfigurationCommandComposite(this));
 		addSubCommand(new QuizChannelConfigurationCommand(this));
 		addSubCommand(new LeaverRoleConfigurationCommand(this));
+		addSubCommand(new IrcForwardConfigurationCommand(this));
 	}
 	
 	@Nonnull
