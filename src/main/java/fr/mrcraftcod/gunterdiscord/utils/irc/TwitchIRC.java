@@ -5,7 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class TwitchIRC{
 	private static final Logger LOGGER = LoggerFactory.getLogger(TwitchIRC.class);
@@ -54,5 +56,13 @@ public class TwitchIRC{
 			}
 			CLIENT = null;
 		}
+	}
+	
+	@Nonnull
+	public static List<String> getConnectedTo(@Nonnull Guild guild){
+		if(Objects.nonNull(CLIENT)){
+			return CLIENT.getListeners().stream().filter(l -> Objects.equals(l.getGuild(), guild)).map(IRCListener::getUser).collect(Collectors.toList());
+		}
+		return List.of();
 	}
 }
