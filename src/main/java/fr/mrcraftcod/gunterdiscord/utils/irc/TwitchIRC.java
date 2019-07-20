@@ -1,10 +1,12 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -68,8 +70,9 @@ public class TwitchIRC{
 		}
 	}
 	
-	public static void sendMessage(@Nonnull String ircChannel, @Nonnull String message){
-		if(CLIENT.getJoinedChannels().contains(ircChannel)){
+	public static void sendMessage(@Nullable Guild guild, @Nonnull String ircChannel, @Nonnull String message){
+		if(Objects.nonNull(CLIENT) && CLIENT.getJoinedChannels().contains(ircChannel)){
+			Log.getLogger(guild).info("Sending IRC message tp {}: {}", ircChannel, message);
 			CLIENT.sendMessage(String.format("PRIVMSG %s :%s", ircChannel, message));
 		}
 	}

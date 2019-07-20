@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.utils.irc;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.irc.events.*;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.GenericEvent;
@@ -65,8 +66,13 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 	public void onEvent(@Nonnull GenericEvent event){
 		if(event instanceof GuildMessageReceivedEvent){
 			final var evt = (GuildMessageReceivedEvent) event;
-			if(!Objects.equals(((GuildMessageReceivedEvent) event).getAuthor().getIdLong(), event.getJDA().getSelfUser().getIdLong())){
-				TwitchIRC.sendMessage(this.ircChannel, ((GuildMessageReceivedEvent) event).getAuthor().getName() + " -> " + evt.getMessage().getContentRaw());
+			try{
+				if(!Objects.equals(((GuildMessageReceivedEvent) event).getAuthor().getIdLong(), event.getJDA().getSelfUser().getIdLong())){
+					TwitchIRC.sendMessage(evt.getGuild(), this.ircChannel, ((GuildMessageReceivedEvent) event).getAuthor().getName() + " -> " + evt.getMessage().getContentRaw());
+				}
+			}
+			catch(Exception e){
+				Log.getLogger(evt.getGuild()).error("Failed to transfer message", e);
 			}
 		}
 	}
