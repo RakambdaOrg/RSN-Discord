@@ -67,7 +67,7 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 		if(event instanceof GuildMessageReceivedEvent){
 			final var evt = (GuildMessageReceivedEvent) event;
 			try{
-				if(!Objects.equals(((GuildMessageReceivedEvent) event).getAuthor().getIdLong(), event.getJDA().getSelfUser().getIdLong())){
+				if(!Objects.equals(((GuildMessageReceivedEvent) event).getAuthor().getIdLong(), event.getJDA().getSelfUser().getIdLong()) && Objects.equals(evt.getChannel(), this.channel)){
 					TwitchIRC.sendMessage(evt.getGuild(), this.ircChannel, ((GuildMessageReceivedEvent) event).getAuthor().getName() + " -> " + evt.getMessage().getContentRaw());
 				}
 			}
