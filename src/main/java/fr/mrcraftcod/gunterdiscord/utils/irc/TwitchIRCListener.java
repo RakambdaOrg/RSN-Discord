@@ -5,10 +5,13 @@ import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.irc.events.*;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.EventListener;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-public class TwitchIRCListener extends AbstractIRCListener{
+public class TwitchIRCListener extends AbstractIRCListener implements EventListener{
 	private final Guild guild;
 	private final String user;
 	private final String ircChannel;
@@ -56,6 +59,16 @@ public class TwitchIRCListener extends AbstractIRCListener{
 	@Override
 	public boolean handlesChannel(@Nonnull final String channel){
 		return Objects.equals(channel, this.ircChannel);
+	}
+	
+	@Override
+	public void onEvent(@Nonnull GenericEvent event){
+		if(event instanceof GuildMessageReceivedEvent){
+			final var evt = (GuildMessageReceivedEvent) event;
+			if(!Objects.equals(((GuildMessageReceivedEvent) event).getAuthor().getIdLong(), event.getJDA().getSelfUser().getIdLong())){
+				TwitchIRC.sendMessage(this.ircChannel, ((GuildMessageReceivedEvent) event).getAuthor().getName() + " -> " + evt.getMessage().getContentRaw());
+			}
+		}
 	}
 	
 	@Nonnull

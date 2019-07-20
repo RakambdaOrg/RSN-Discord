@@ -47,7 +47,13 @@ public class ConnectCommand extends BasicCommand{
 		}
 		else{
 			try{
-				TwitchIRC.connect(event.getGuild(), args.pop());
+				final var list = TwitchIRC.getConnectedTo();
+				if(list.isEmpty()){
+					TwitchIRC.connect(event.getGuild(), args.pop());
+				}
+				else{
+					Actions.reply(event, "The bot is already connected to %s", String.join(", ", list));
+				}
 			}
 			catch(final NoSuchElementException e){
 				Actions.reply(event, "Server needs to be configured to use this feature");

@@ -64,6 +64,8 @@ public class GuildConfiguration{
 	private Set<UserRoleConfiguration> addBackRoles = new HashSet<>();
 	@JsonProperty("leaverRole")
 	private RoleConfiguration leaverRole;
+	@JsonProperty("ircForward")
+	private boolean ircForward = false;
 	
 	public GuildConfiguration(){
 	}
@@ -82,6 +84,14 @@ public class GuildConfiguration{
 	
 	public Optional<RemoveRoleConfiguration> getRemoveRole(User user, Role role){
 		return this.removeRoles.stream().filter(r -> Objects.equals(r.getUser().getUserId(), user.getIdLong()) && Objects.equals(r.getRole().getRoleId(), role.getIdLong())).findFirst();
+	}
+	
+	public boolean getIrcForward(){
+		return this.ircForward;
+	}
+	
+	public void setIrcForward(@Nonnull Boolean value){
+		this.ircForward = value;
 	}
 	
 	@Nonnull
