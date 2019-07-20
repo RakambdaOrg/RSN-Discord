@@ -45,7 +45,11 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 	protected void onIRCMessage(@Nonnull final ChannelMessageIRCEvent event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
 			this.lastMessage = System.currentTimeMillis();
-			Actions.sendMessage(this.channel, "**`%s`** %s", event.getUser().toString(), event.getMessage());
+			var message = event.getMessage().replace("@everyone", "<everyone>").replace("@here", "<here>");
+			if(message.chars().filter(Character::isUpperCase).sum() > 10){
+				message = message.toLowerCase();
+			}
+			Actions.sendMessage(this.channel, "**`%s`** %s", event.getUser().toString(), message);
 		}
 	}
 	
