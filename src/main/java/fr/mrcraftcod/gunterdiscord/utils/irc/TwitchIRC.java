@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.utils.irc.events.ChannelLeftIRCEvent;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class TwitchIRC{
 	private static final Logger LOGGER = LoggerFactory.getLogger(TwitchIRC.class);
-	private static final String NICKNAME = "raksrinana";
+	private static final String NICKNAME = "rsndiscord";
 	private static IRCClient CLIENT = null;
 	
 	public static void connect(@Nonnull final Guild guild, @Nonnull final String user) throws IOException{
@@ -43,9 +44,10 @@ public class TwitchIRC{
 		if(Objects.nonNull(CLIENT)){
 			final var channel = String.format("#%s", user.toLowerCase());
 			CLIENT.leaveChannel(channel);
+			CLIENT.getListeners().stream().filter(l -> Objects.equals(l.getUser(), user)).forEach(l -> l.onIRCEvent(new ChannelLeftIRCEvent(new IRCUser(""), "PART", channel)));
 			if(removeListener){
 				CLIENT.getListeners().removeIf(obj -> {
-					if(obj instanceof TwitchIRCListener && Objects.equals(obj.getUser(), user) && Objects.equals(obj.getGuild(), guild)){
+					if(obj instanceof TwitchIRCListener && Objects.equals(obj.getUser(), user)){
 						guild.getJDA().removeEventListener(obj);
 						return true;
 					}

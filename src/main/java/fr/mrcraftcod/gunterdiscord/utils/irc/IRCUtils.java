@@ -18,7 +18,7 @@ class IRCUtils{
 	
 	@Nonnull
 	static Optional<IRCEvent> buildEvent(@Nonnull String message){
-		if(message.equals("PING :tmi.twitch.tv")){
+		if(message.startsWith("PING :")){
 			return Optional.of(new PingIRCEvent());
 		}
 		if(!message.startsWith(":")){

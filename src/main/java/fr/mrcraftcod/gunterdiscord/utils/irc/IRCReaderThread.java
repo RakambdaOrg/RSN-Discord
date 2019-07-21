@@ -41,7 +41,7 @@ public class IRCReaderThread extends Thread implements Closeable{
 									final var iterator = this.client.getListeners().iterator();
 									while(iterator.hasNext()){
 										final var listener = iterator.next();
-										if(listener.getLastMessage() > 1.8e6){
+										if(listener.getLastMessage() > 6.048e8){
 											iterator.remove();
 											TwitchIRC.disconnect(listener.getGuild(), listener.getUser(), false);
 										}
