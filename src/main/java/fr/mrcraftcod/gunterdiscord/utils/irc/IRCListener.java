@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
-import fr.mrcraftcod.gunterdiscord.utils.irc.events.IRCEvent;
+import fr.mrcraftcod.gunterdiscord.utils.irc.messages.IRCMessage;
 import net.dv8tion.jda.api.entities.Guild;
 import javax.annotation.Nonnull;
 
@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
  * @since 2019-02-25
  */
 public interface IRCListener{
-	void onIRCEvent(@Nonnull IRCEvent event);
+	void onIRCMessage(@Nonnull IRCMessage event);
 	
 	boolean handlesChannel(@Nonnull String channel);
 	

@@ -2,7 +2,7 @@ package fr.mrcraftcod.gunterdiscord.utils.irc;
 
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.irc.events.*;
+import fr.mrcraftcod.gunterdiscord.utils.irc.messages.*;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -10,7 +10,9 @@ import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class TwitchIRCListener extends AbstractIRCListener implements EventListener{
 	private final Guild guild;
@@ -28,37 +30,62 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 	}
 	
 	@Override
-	protected void onIRCChannelJoined(@Nonnull final ChannelJoinedIRCEvent event){
+	protected void onIRCChannelJoined(@Nonnull final ChannelJoinIRCMessage event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
 			Actions.sendMessage(this.channel, "Joined %s", event.getChannel());
 		}
 	}
 	
 	@Override
-	protected void onIRCChannelLeft(@Nonnull final ChannelLeftIRCEvent event){
+	protected void onIRCChannelLeft(@Nonnull final ChannelLeftIRCMessage event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
 			Actions.sendMessage(this.channel, "Left %s", event.getChannel());
 		}
 	}
 	
 	@Override
-	protected void onIRCMessage(@Nonnull final ChannelMessageIRCEvent event){
+	protected void onIRCChannelMessage(@Nonnull final ChannelMessageIRCMessage event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
 			this.lastMessage = System.currentTimeMillis();
 			var message = event.getMessage().replace("@everyone", "<everyone>").replace("@here", "<here>");
 			if(message.chars().filter(Character::isUpperCase).sum() > 10){
 				message = message.toLowerCase();
 			}
-			Actions.sendMessage(this.channel, "**`%s`** %s", event.getUser().toString(), message);
+			final var badges = event.getTags().stream().filter(t -> Objects.equals("badges", t.getKey())).map(IRCTag::getValue).flatMap(t -> Arrays.stream(t.split(",")).filter(v -> !v.isBlank()).map(v -> {
+				final var split = v.split("/");
+				return new TwitchBadge(split[0], split[1]);
+			})).collect(Collectors.toList());
+			var displayName = event.getTags().stream().filter(t -> Objects.equals("display-name", t.getKey())).map(IRCTag::getValue).filter(Objects::nonNull).filter(t -> !t.isBlank()).findFirst().orElse(event.getUser().toString());
+			var role = "";
+			if(badges.stream().anyMatch(t -> Objects.equals("broadcaster", t.getName()))){
+				role = "(boss)";
+			}
+			else if(event.getTags().stream().filter(t -> Objects.equals("mod", t.getKey())).anyMatch(t -> Objects.equals("1", t.getValue()))){
+				role = "(mod)";
+			}
+			else if(badges.stream().anyMatch(t -> Objects.equals("subscriber", t.getName()))){
+				role = "(sub)";
+			}
+			Actions.sendMessage(this.channel, "**`%s`%s** %s", displayName, role, message);
 		}
 	}
 	
 	@Override
-	protected void onPingIRC(@Nonnull final PingIRCEvent event){
+	protected void onPingIRC(@Nonnull final PingIRCMessage event){
 	}
 	
 	@Override
-	protected void onIRCUnknownEvent(@Nonnull final IRCEvent event){
+	protected void onInfoMessage(InfoMessageIRCMessage event){
+		Log.getLogger(this.getGuild()).info("IRC Info: {}", event.getMessage());
+	}
+	
+	@Override
+	protected void onUserNotice(UserNoticeIRCMessage event){
+		Actions.sendMessage(this.channel, "__NOTICE__: %s", event.getTags().stream().filter(t -> Objects.equals("system-msg", t.getKey())).map(IRCTag::getValue).map(v -> v.replace("\\s", " ").trim()).findFirst().orElse("UNKNOWN"));
+	}
+	
+	@Override
+	protected void onIRCUnknownEvent(@Nonnull final IRCMessage event){
 	}
 	
 	@Override

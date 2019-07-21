@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
-import fr.mrcraftcod.gunterdiscord.utils.irc.events.ChannelLeftIRCEvent;
+import fr.mrcraftcod.gunterdiscord.utils.irc.messages.ChannelLeftIRCMessage;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
@@ -24,6 +24,8 @@ public class TwitchIRC{
 			CLIENT.setSecureKeyPassword(String.format("oauth:%s", System.getProperty("TWITCH_TOKEN")));
 			CLIENT.connect();
 			CLIENT.setNick(NICKNAME);
+			CLIENT.sendMessage("CAP REQ :twitch.tv/tags");
+			CLIENT.sendMessage("CAP REQ :twitch.tv/commands");
 		}
 		final var channel = String.format("#%s", user.toLowerCase());
 		if(CLIENT.getJoinedChannels().stream().noneMatch(joinedChannel -> Objects.equals(joinedChannel, channel))){
@@ -44,7 +46,7 @@ public class TwitchIRC{
 		if(Objects.nonNull(CLIENT)){
 			final var channel = String.format("#%s", user.toLowerCase());
 			CLIENT.leaveChannel(channel);
-			CLIENT.getListeners().stream().filter(l -> Objects.equals(l.getUser(), user)).forEach(l -> l.onIRCEvent(new ChannelLeftIRCEvent(new IRCUser(""), "PART", channel)));
+			CLIENT.getListeners().stream().filter(l -> Objects.equals(l.getUser(), user)).forEach(l -> l.onIRCMessage(new ChannelLeftIRCMessage(new IRCUser(""), channel)));
 			if(removeListener){
 				CLIENT.getListeners().removeIf(obj -> {
 					if(obj instanceof TwitchIRCListener && Objects.equals(obj.getUser(), user)){
