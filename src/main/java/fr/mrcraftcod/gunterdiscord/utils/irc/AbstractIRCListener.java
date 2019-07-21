@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
-import fr.mrcraftcod.gunterdiscord.utils.irc.events.*;
+import fr.mrcraftcod.gunterdiscord.utils.irc.messages.*;
 import javax.annotation.Nonnull;
 
 /**
@@ -12,31 +12,41 @@ import javax.annotation.Nonnull;
 @SuppressWarnings("EmptyMethod")
 public abstract class AbstractIRCListener implements IRCListener{
 	@Override
-	public void onIRCEvent(@Nonnull final IRCEvent event){
-		if(event instanceof ChannelJoinedIRCEvent){
-			onIRCChannelJoined((ChannelJoinedIRCEvent) event);
+	public void onIRCMessage(@Nonnull final IRCMessage event){
+		if(event instanceof ChannelJoinIRCMessage){
+			onIRCChannelJoined((ChannelJoinIRCMessage) event);
 		}
-		else if(event instanceof ChannelLeftIRCEvent){
-			onIRCChannelLeft((ChannelLeftIRCEvent) event);
+		else if(event instanceof ChannelLeftIRCMessage){
+			onIRCChannelLeft((ChannelLeftIRCMessage) event);
 		}
-		else if(event instanceof ChannelMessageIRCEvent){
-			onIRCMessage((ChannelMessageIRCEvent) event);
+		else if(event instanceof ChannelMessageIRCMessage){
+			onIRCChannelMessage((ChannelMessageIRCMessage) event);
 		}
-		else if(event instanceof PingIRCEvent){
-			onPingIRC((PingIRCEvent) event);
+		else if(event instanceof PingIRCMessage){
+			onPingIRC((PingIRCMessage) event);
+		}
+		else if(event instanceof InfoMessageIRCMessage){
+			onInfoMessage((InfoMessageIRCMessage) event);
+		}
+		else if(event instanceof UserNoticeIRCMessage){
+			onUserNotice((UserNoticeIRCMessage) event);
 		}
 		else{
 			onIRCUnknownEvent(event);
 		}
 	}
 	
-	protected abstract void onIRCChannelJoined(@Nonnull ChannelJoinedIRCEvent event);
+	protected abstract void onIRCChannelJoined(@Nonnull ChannelJoinIRCMessage event);
 	
-	protected abstract void onIRCChannelLeft(@Nonnull ChannelLeftIRCEvent event);
+	protected abstract void onIRCChannelLeft(@Nonnull ChannelLeftIRCMessage event);
 	
-	protected abstract void onIRCMessage(@Nonnull ChannelMessageIRCEvent event);
+	protected abstract void onIRCChannelMessage(@Nonnull ChannelMessageIRCMessage event);
 	
-	protected abstract void onPingIRC(@Nonnull PingIRCEvent event);
+	protected abstract void onPingIRC(@Nonnull PingIRCMessage event);
 	
-	protected abstract void onIRCUnknownEvent(@Nonnull IRCEvent event);
+	protected abstract void onInfoMessage(InfoMessageIRCMessage event);
+	
+	protected abstract void onUserNotice(UserNoticeIRCMessage event);
+	
+	protected abstract void onIRCUnknownEvent(@Nonnull IRCMessage event);
 }

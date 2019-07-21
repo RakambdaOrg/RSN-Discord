@@ -1,6 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.utils.irc;
 
-import fr.mrcraftcod.gunterdiscord.utils.irc.events.PingIRCEvent;
+import fr.mrcraftcod.gunterdiscord.utils.irc.messages.PingIRCMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
@@ -35,7 +35,7 @@ public class IRCReaderThread extends Thread implements Closeable{
 					while(Objects.nonNull(line = this.reader.readLine())){
 						try{
 							IRCUtils.buildEvent(line).ifPresent(event -> {
-								if(event instanceof PingIRCEvent){
+								if(event instanceof PingIRCMessage){
 									LOGGER.debug("Replying to IRC ping message");
 									this.client.sendMessage("PONG");
 									final var iterator = this.client.getListeners().iterator();
@@ -47,8 +47,9 @@ public class IRCReaderThread extends Thread implements Closeable{
 										}
 									}
 								}
+								LOGGER.debug("New IRC message of type {}", event.getClass().getSimpleName());
 								for(final var ircListener : this.client.getListeners()){
-									ircListener.onIRCEvent(event);
+									ircListener.onIRCMessage(event);
 								}
 							});
 						}
