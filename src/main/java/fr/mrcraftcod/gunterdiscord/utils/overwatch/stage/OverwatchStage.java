@@ -70,7 +70,7 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 		return obj instanceof OverwatchStage && Objects.equals(this.getId(), ((OverwatchStage) obj).getId());
 	}
 	
-	private int getId(){
+	public int getId(){
 		return this.id;
 	}
 	
