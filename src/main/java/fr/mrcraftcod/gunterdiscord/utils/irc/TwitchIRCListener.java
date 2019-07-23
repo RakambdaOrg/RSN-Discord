@@ -32,14 +32,14 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 	@Override
 	protected void onIRCChannelJoined(@Nonnull final ChannelJoinIRCMessage event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
-			Actions.sendMessage(this.channel, "Joined %s", event.getChannel());
+			Log.getLogger(getGuild()).info("Joined {}", event.getChannel());
 		}
 	}
 	
 	@Override
 	protected void onIRCChannelLeft(@Nonnull final ChannelLeftIRCMessage event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
-			Actions.sendMessage(this.channel, "Left %s", event.getChannel());
+			Log.getLogger(getGuild()).info("Left {}", event.getChannel());
 		}
 	}
 	
