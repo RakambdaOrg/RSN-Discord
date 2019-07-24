@@ -40,7 +40,7 @@ public class OverwatchGetMatchCommand extends BasicCommand{
 			builder.setImage(winner.getIcon());
 			builder.setColor(winner.getPrimaryColor());
 		});
-		builder.setFooter("" + match.getId());
+		builder.setFooter("ID: " + match.getId());
 		Actions.reply(event, builder.build());
 	};
 	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchWeek> onWeek = (event, week) -> {
@@ -59,6 +59,7 @@ public class OverwatchGetMatchCommand extends BasicCommand{
 					options.put(emote, m);
 					builder.addField(emote.getValue() + ": " + m.getCompetitors().stream().map(OverwatchCompetitor::getName).collect(Collectors.joining(" vs ")), currentMatch.map(m::equals).orElse(false) ? "Current" : (nextMatch.map(m::equals).orElse(false) ? "Next" : ""), false);
 				});
+				builder.setFooter("ID: " + week.getId());
 				Actions.reply(event, message -> {
 					options.keySet().stream().sorted().forEachOrdered(e -> message.addReaction(e.getValue()).queue());
 					ReplyMessageListener.handleReply(new EmoteWaitingUserReply<>(options, event, event.getUser(), message, OverwatchGetMatchCommand.onMatch));
@@ -85,6 +86,7 @@ public class OverwatchGetMatchCommand extends BasicCommand{
 					options.put(emote, w);
 					builder.addField(emote.getValue() + ": " + w.getName(), currentWeek.map(w::equals).orElse(false) ? "Current" : (nextWeek.map(w::equals).orElse(false) ? "Next" : ""), false);
 				});
+				builder.setFooter("ID: " + stage.getId());
 				Actions.reply(event, message -> {
 					options.keySet().stream().sorted().forEachOrdered(e -> message.addReaction(e.getValue()).queue());
 					ReplyMessageListener.handleReply(new EmoteWaitingUserReply<>(options, event, event.getUser(), message, OverwatchGetMatchCommand.onWeek));

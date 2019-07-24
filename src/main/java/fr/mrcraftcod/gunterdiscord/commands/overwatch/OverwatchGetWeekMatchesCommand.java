@@ -18,6 +18,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import javax.annotation.Nonnull;
 import java.awt.Color;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -31,10 +32,10 @@ public class OverwatchGetWeekMatchesCommand extends BasicCommand{
 	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchWeek> onWeek = (event, week) -> {
 		final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, week.getName());
 		week.getMatches().forEach(m -> {
-			final var message = m.hasEnded() ? m.getScores().stream().map(OverwatchScore::getValue).map(Object::toString).collect(Collectors.joining(" - ")) : ("On the " + m.getStartDate().format(FORMATTER));
+			final var message = m.hasEnded() ? m.getScores().stream().map(OverwatchScore::getValue).map(Object::toString).collect(Collectors.joining(" - ")) : ("On the " + m.getStartDate().atZone(ZoneId.of("ECT")).format(FORMATTER) + " (ECT)");
 			builder.addField(m.getCompetitors().stream().map(OverwatchCompetitor::getName).collect(Collectors.joining(" vs ")), message, false);
 		});
-		builder.setFooter("" + week.getId());
+		builder.setFooter("ID: " + week.getId());
 		Actions.reply(event, builder.build());
 	};
 	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchStage> onStage = (event, stage) -> {
@@ -53,6 +54,7 @@ public class OverwatchGetWeekMatchesCommand extends BasicCommand{
 					options.put(emote, w);
 					builder.addField(emote.getValue() + ": " + w.getName(), currentWeek.map(w::equals).orElse(false) ? "Current" : (nextWeek.map(w::equals).orElse(false) ? "Next" : ""), false);
 				});
+				builder.setFooter("ID: " + stage.getId());
 				Actions.reply(event, message -> {
 					options.keySet().stream().sorted().forEachOrdered(e -> message.addReaction(e.getValue()).queue());
 					ReplyMessageListener.handleReply(new EmoteWaitingUserReply<>(options, event, event.getUser(), message, OverwatchGetWeekMatchesCommand.onWeek));

@@ -1,10 +1,11 @@
 package fr.mrcraftcod.gunterdiscord.commands.config.guild;
 
-import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
+import fr.mrcraftcod.gunterdiscord.commands.config.guild.anilist.MediaChangeChannelConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.commands.config.guild.anilist.NotificationChannelConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.commands.config.guild.anilist.ThaChannelConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.commands.config.guild.anilist.ThaUserConfigurationCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.api.entities.ChannelType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -16,6 +17,7 @@ public class AniListConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new NotificationChannelConfigurationCommand(this));
 		this.addSubCommand(new ThaChannelConfigurationCommand(this));
 		this.addSubCommand(new ThaUserConfigurationCommand(this));
+		this.addSubCommand(new MediaChangeChannelConfigurationCommand(this));
 	}
 	
 	@Nonnull

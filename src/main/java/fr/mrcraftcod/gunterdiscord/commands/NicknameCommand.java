@@ -61,7 +61,14 @@ public class NicknameCommand extends BasicCommand{
 			final var oldName = Optional.ofNullable(member.getNickname());
 			final var lastChange = NewSettings.getConfiguration(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser()).orElse(LocalDateTime.MIN);
 			final var delay = Duration.ofSeconds(NewSettings.getConfiguration(event.getGuild()).getNicknameConfiguration().getChangeDelay());
-			if(!Utilities.isTeam(event.getMember()) && lastChange.plus(delay).isAfter(LocalDateTime.now())){
+			final String newName;
+			if(args.isEmpty()){
+				newName = null;
+			}
+			else{
+				newName = String.join(" ", args);
+			}
+			if(Objects.nonNull(newName) && !Utilities.isTeam(event.getMember()) && lastChange.plus(delay).isAfter(LocalDateTime.now())){
 				final var builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.setColor(Color.RED);
@@ -73,13 +80,6 @@ public class NicknameCommand extends BasicCommand{
 				Actions.reply(event, builder.build());
 			}
 			else{
-				final String newName;
-				if(args.isEmpty()){
-					newName = null;
-				}
-				else{
-					newName = String.join(" ", args);
-				}
 				final var builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.addField("Old nickname", oldName.orElse("*NONE*"), true);
@@ -88,10 +88,8 @@ public class NicknameCommand extends BasicCommand{
 				try{
 					member.getGuild().modifyNickname(member, newName).complete();
 					builder.setColor(Color.GREEN);
-					if(Objects.nonNull(newName)){
-						builder.addField("Next allowed change", LocalDateTime.now().plus(delay).format(DF), false);
-					}
 					NewSettings.getConfiguration(event.getGuild()).getNicknameConfiguration().setLastChange(member.getUser(), Objects.isNull(newName) ? null : LocalDateTime.now());
+					NewSettings.getConfiguration(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser()).map(d -> d.plus(delay)).filter(d -> d.isAfter(LocalDateTime.now())).ifPresent(d -> builder.addField("Next allowed change", d.format(DF), false));
 					getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", event.getAuthor(), member.getUser(), oldName, newName);
 				}
 				catch(final HierarchyException e){
