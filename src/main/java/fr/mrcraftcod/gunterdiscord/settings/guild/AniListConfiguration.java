@@ -28,6 +28,8 @@ public class AniListConfiguration{
 	private Set<AnilistAccessTokenConfiguration> tokens = new HashSet<>();
 	@JsonProperty("notificationsChannel")
 	private ChannelConfiguration notificationsChannel;
+	@JsonProperty("mediaChangeChannel")
+	private ChannelConfiguration mediaChangeChannel;
 	@JsonProperty("refreshTokens")
 	private Map<Long, String> refreshTokens = new HashMap<>();
 	@JsonProperty("lastAccess")
@@ -100,8 +102,17 @@ public class AniListConfiguration{
 		return Optional.ofNullable(this.notificationsChannel);
 	}
 	
+	@Nonnull
+	public Optional<ChannelConfiguration> getMediaChangeChannel(){
+		return Optional.ofNullable(this.mediaChangeChannel);
+	}
+	
 	public void setNotificationsChannel(@Nullable final ChannelConfiguration channel){
 		this.notificationsChannel = channel;
+	}
+	
+	public void setMediaChangeChannel(@Nullable final ChannelConfiguration channel){
+		this.mediaChangeChannel = channel;
 	}
 	
 	@Nonnull
