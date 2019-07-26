@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.io.*;
+import java.net.SocketTimeoutException;
 import java.util.Objects;
 
 /**
@@ -66,6 +67,10 @@ public class IRCReaderThread extends Thread implements Closeable{
 						LOGGER.error("Error while sleeping", e);
 					}
 				}
+			}
+			catch(SocketTimeoutException e){
+				LOGGER.error("Socket timed out");
+				this.client.timedOut();
 			}
 			catch(final IOException e){
 				LOGGER.error("Error reading stream", e);

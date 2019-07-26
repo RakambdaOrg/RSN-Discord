@@ -18,7 +18,6 @@ import java.util.*;
 @SuppressWarnings("WeakerAccess")
 public class IRCClient implements Closeable{
 	private static final Logger LOGGER = LoggerFactory.getLogger(IRCClient.class);
-	
 	private final String host;
 	private final int port;
 	private String pass;
@@ -75,6 +74,19 @@ public class IRCClient implements Closeable{
 		else{
 			throw new IllegalStateException("Not connected");
 		}
+	}
+	
+	public void timedOut(){
+		final var ls = new ArrayList<>(this.listeners);
+		ls.forEach(l -> TwitchIRC.disconnect(l.getGuild(), l.getUser()));
+		ls.forEach(l -> {
+			try{
+				TwitchIRC.connect(l.getGuild(), l.getUser());
+			}
+			catch(IOException e){
+				LOGGER.warn("Failed to reconnect {} to user {}", l.getGuild(), l.getUser());
+			}
+		});
 	}
 	
 	private boolean isConnected(){
