@@ -40,6 +40,7 @@ public class IRCClient implements Closeable{
 	
 	public void connect() throws IOException{
 		this.socket = new Socket(this.host, this.port);
+		this.socket.setSoTimeout(10 * 60 * 1000);
 		this.socketWriter = new PrintWriter(this.socket.getOutputStream(), true);
 		this.ircReader = new IRCReaderThread(this, this.socket.getInputStream());
 		this.ircReader.start();
