@@ -203,4 +203,9 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 	public List<OverwatchScore> getScores(){
 		return this.scores;
 	}
+	
+	@Override
+	public String toString(){
+		return this.getId() + " (" + this.getCompetitors().stream().map(OverwatchCompetitor::getName).collect(Collectors.joining(" vs ")) + ')';
+	}
 }

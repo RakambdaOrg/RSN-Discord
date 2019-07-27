@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.runners;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.settings.types.ChannelConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.OverwatchUtils;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match.OverwatchMatch;
 import net.dv8tion.jda.api.JDA;
@@ -35,6 +36,7 @@ public class OverwatchLeagueScheduledRunner implements ScheduledRunner{
 			NewSettings.getConfiguration(guild).getOverwatchLeagueConfiguration().getNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> {
 				final var notified = NewSettings.getConfiguration(guild).getOverwatchLeagueConfiguration().getNotifiedMatches();
 				ow.getData().getStages().stream().flatMap(s -> s.getMatches().stream()).filter(OverwatchMatch::hasEnded).filter(m -> !notified.contains(m.getId())).forEach(m -> {
+					Log.getLogger(guild).info("Notifying match {} to {}", m, channel);
 					Actions.sendMessage(channel, m.buildEmbed(jda.getSelfUser()).build());
 					NewSettings.getConfiguration(guild).getOverwatchLeagueConfiguration().setNotifiedMatch(m.getId());
 				});
