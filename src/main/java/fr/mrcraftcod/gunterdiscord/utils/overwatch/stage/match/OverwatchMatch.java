@@ -4,18 +4,23 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.json.LocalDateTimeDeserializer;
 import fr.mrcraftcod.gunterdiscord.utils.json.OverwatchIDTeamDeserializer;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.enums.*;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match.bracket.OverwatchBracket;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match.game.OverwatchGame;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.tournament.OverwatchTournament;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.User;
 import javax.annotation.Nonnull;
+import java.awt.Color;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -110,6 +115,22 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 	@Override
 	public int compareTo(@Nonnull OverwatchMatch overwatchMatch){
 		return this.getStartDate().compareTo(overwatchMatch.getStartDate());
+	}
+	
+	public EmbedBuilder buildEmbed(User user){
+		final var builder = Utilities.buildEmbed(user, Color.GREEN, this.getCompetitors().stream().map(OverwatchCompetitor::getName).collect(Collectors.joining(" vs ")), (Objects.nonNull(this.getYoutubeId()) && !this.getYoutubeId().isBlank()) ? ("https://youtube.com/watch?v=" + this.getYoutubeId()) : null);
+		builder.setTimestamp(this.getStartDate());
+		builder.setDescription("Score: " + this.getScores().stream().map(OverwatchScore::getValue).map(Object::toString).collect(Collectors.joining(" - ")));
+		builder.addField("State", this.getState().asString(), true);
+		builder.addField("Conclusion strategy", this.getConclusionStrategy().asString(this), true);
+		this.getGames().forEach(game -> builder.addField("Game " + game.getNumber(), game.getAttributes().getMapName() + ": " + game.getPoints().stream().map(Object::toString).collect(Collectors.joining(" - ")) + game.getAttributes().getMapObject().map(o -> " (" + o.getType() + ")").orElse(""), false));
+		this.getWinningTeam().ifPresent(winner -> {
+			builder.setThumbnail(winner.getLogo());
+			builder.setImage(winner.getIcon());
+			builder.setColor(winner.getPrimaryColor());
+		});
+		builder.setFooter("ID: " + this.getId());
+		return builder;
 	}
 	
 	public int getBestOf(){

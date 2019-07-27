@@ -12,7 +12,6 @@ import fr.mrcraftcod.gunterdiscord.utils.overwatch.OverwatchUtils;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.OverwatchStage;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match.OverwatchCompetitor;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match.OverwatchMatch;
-import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match.OverwatchScore;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.week.OverwatchWeek;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -22,27 +21,12 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 public class OverwatchGetMatchCommand extends BasicCommand{
-	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchMatch> onMatch = (event, match) -> {
-		final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, match.getCompetitors().stream().map(OverwatchCompetitor::getName).collect(Collectors.joining(" vs ")), (Objects.nonNull(match.getYoutubeId()) && !match.getYoutubeId().isBlank()) ? ("https://youtube.com/watch?v=" + match.getYoutubeId()) : null);
-		builder.setTimestamp(match.getStartDate());
-		builder.setDescription("Score: " + match.getScores().stream().map(OverwatchScore::getValue).map(Object::toString).collect(Collectors.joining(" - ")));
-		builder.addField("State", match.getState().asString(), true);
-		builder.addField("Conclusion strategy", match.getConclusionStrategy().asString(match), true);
-		match.getGames().forEach(game -> builder.addField("Game " + game.getNumber(), game.getAttributes().getMapName() + ": " + game.getPoints().stream().map(Object::toString).collect(Collectors.joining(" - ")) + game.getAttributes().getMapObject().map(o -> " (" + o.getType() + ")").orElse(""), false));
-		match.getWinningTeam().ifPresent(winner -> {
-			builder.setThumbnail(winner.getLogo());
-			builder.setImage(winner.getIcon());
-			builder.setColor(winner.getPrimaryColor());
-		});
-		builder.setFooter("ID: " + match.getId());
-		Actions.reply(event, builder.build());
-	};
+	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchMatch> onMatch = (event, match) -> Actions.reply(event, match.buildEmbed(event.getUser()).build());
 	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchWeek> onWeek = (event, week) -> {
 		if(week.getMatches().size() > 0){
 			if(week.getMatches().size() == 1){

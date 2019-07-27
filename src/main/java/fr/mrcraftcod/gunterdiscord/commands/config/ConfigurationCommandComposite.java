@@ -25,6 +25,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		addSubCommand(new QuizChannelConfigurationCommand(this));
 		addSubCommand(new LeaverRoleConfigurationCommand(this));
 		addSubCommand(new IrcForwardConfigurationCommand(this));
+		addSubCommand(new OverwatchConfigurationCommandComposite(this));
 	}
 	
 	@Nonnull
