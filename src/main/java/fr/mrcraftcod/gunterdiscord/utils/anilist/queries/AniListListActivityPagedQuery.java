@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-11.
@@ -44,6 +45,9 @@ public class AniListListActivityPagedQuery implements AniListPagedQuery<AniListL
 			final var obj = (JSONObject) change;
 			if(obj.length() > 0){
 				changes.add(buildChange(obj));
+			}
+			else{
+				getLogger(null).trace("Skipped AniList object, json: {}", change);
 			}
 		}
 		return changes;
