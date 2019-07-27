@@ -133,6 +133,10 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 		return builder;
 	}
 	
+	public boolean inProgress(){
+		return this.state == OverwatchState.IN_PROGRESS;
+	}
+	
 	public int getBestOf(){
 		return this.bestOf;
 	}
