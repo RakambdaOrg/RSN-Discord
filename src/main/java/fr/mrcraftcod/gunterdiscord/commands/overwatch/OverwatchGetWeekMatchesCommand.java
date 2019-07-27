@@ -32,7 +32,7 @@ public class OverwatchGetWeekMatchesCommand extends BasicCommand{
 	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchWeek> onWeek = (event, week) -> {
 		final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, week.getName());
 		week.getMatches().forEach(m -> {
-			final var message = m.hasEnded() ? m.getScores().stream().map(OverwatchScore::getValue).map(Object::toString).collect(Collectors.joining(" - ")) : ("On the " + m.getStartDate().atZone(ZoneId.of("Europe/Paris")).format(FORMATTER) + " (Europe/Paris)");
+			final var message = (m.hasEnded() || m.inProgress()) ? m.getScores().stream().map(OverwatchScore::getValue).map(Object::toString).collect(Collectors.joining(" - ")) : ("On the " + m.getStartDate().atZone(ZoneId.of("Europe/Paris")).format(FORMATTER) + " (Europe/Paris)");
 			builder.addField(m.getCompetitors().stream().map(OverwatchCompetitor::getName).collect(Collectors.joining(" vs ")), message, false);
 		});
 		builder.setFooter("ID: " + week.getId());
