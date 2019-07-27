@@ -19,7 +19,7 @@ public class URLDeserializer extends JsonDeserializer<URL>{
 			return new URL(jsonParser.getValueAsString());
 		}
 		catch(MalformedURLException e){
-			LOGGER.warn("Failed to parse URL {}", jsonParser.getValueAsString());
+			LOGGER.trace("Failed to parse URL {}", jsonParser.getValueAsString());
 		}
 		return null;
 	}

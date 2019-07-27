@@ -16,7 +16,6 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public class AniListMediaUserListPagedQuery implements AniListPagedQuery<AniListMediaUserList>{
 	private static final String QUERY_MEDIA_LIST = AniListPagedQuery.pagedQuery(", $userID: Int", AniListMediaUserList.getQuery());
-	
 	private final JSONObject variables;
 	private int nextPage = 0;
 	
@@ -40,7 +39,10 @@ public class AniListMediaUserListPagedQuery implements AniListPagedQuery<AniList
 		final var changes = new ArrayList<AniListMediaUserList>();
 		for(final var change : json.getJSONObject("data").getJSONObject("Page").getJSONArray("mediaList")){
 			try{
-				changes.add(buildChange((JSONObject) change));
+				final var obj = (JSONObject) change;
+				if(obj.length() > 0){
+					changes.add(buildChange(obj));
+				}
 			}
 			catch(final Exception e){
 				getLogger(null).error("Error building AniListAiringNotification object, json was {}", change, e);
