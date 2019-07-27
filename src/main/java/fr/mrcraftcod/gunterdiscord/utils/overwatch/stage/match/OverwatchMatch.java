@@ -109,7 +109,7 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 	private String attributesVersion;
 	
 	public boolean hasEnded(){
-		return this.getActualEndDate().orElse(this.getEndDate()).isBefore(LocalDateTime.now());
+		return this.state == OverwatchState.CONCLUDED;
 	}
 	
 	@Override
