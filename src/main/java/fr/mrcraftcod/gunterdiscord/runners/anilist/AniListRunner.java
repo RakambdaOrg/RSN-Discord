@@ -1,7 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.runners.anilist;
 
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
-import fr.mrcraftcod.gunterdiscord.settings.types.ChannelConfiguration;
 import fr.mrcraftcod.gunterdiscord.settings.types.UserDateConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.anilist.AniListDatedObject;
@@ -30,10 +29,12 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public interface AniListRunner<T extends AniListObject, U extends AniListPagedQuery<T>>{
 	default void runQueryOnEveryUserAndDefaultChannels(){
-		final var channels = getJDA().getGuilds().stream().map(g -> NewSettings.getConfiguration(g).getAniListConfiguration().getNotificationsChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
+		final var channels = getChannels();
 		final var members = channels.stream().flatMap(channel -> NewSettings.getConfiguration(channel.getGuild()).getAniListConfiguration().getRegisteredUsers().stream().map(user -> channel.getGuild().getMember(user))).collect(Collectors.toList());
 		runQuery(members, channels);
 	}
+	
+	List<TextChannel> getChannels();
 	
 	default void runQuery(@Nonnull final List<Member> members, @Nonnull final List<TextChannel> channels){
 		getLogger(null).info("Starting AniList {} runner", getRunnerName());

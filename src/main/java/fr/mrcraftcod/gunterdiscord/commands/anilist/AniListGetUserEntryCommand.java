@@ -32,17 +32,24 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 		private final int ID;
 		private final JDA jda;
 		private final AniListMediaType type;
+		private final TextChannel channel;
 		
-		AniListMediaUserListRunner(final JDA jda, final AniListMediaType type, final int ID){
+		AniListMediaUserListRunner(final JDA jda, final AniListMediaType type, final int ID, TextChannel channel){
 			this.jda = jda;
 			this.type = type;
 			this.ID = ID;
+			this.channel = channel;
 		}
 		
 		@Override
 		public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<AniListMediaUserList>> userMedias){
 			userMedias.values().forEach(medias -> medias.removeIf(aniListMediaUserList -> !aniListMediaUserList.getMedia().getType().equals(this.type) || !Objects.equals(aniListMediaUserList.getMedia().getId(), this.ID)));
 			userMedias.entrySet().stream().flatMap(userMedia -> userMedia.getValue().stream().map(media -> ImmutablePair.of(userMedia.getKey(), media))).sorted(Comparator.comparing(Map.Entry::getValue)).map(userMedia -> buildMessage(userMedia.getKey(), userMedia.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
+		}
+		
+		@Override
+		public List<TextChannel> getChannels(){
+			return List.of(this.channel);
 		}
 		
 		@Nonnull
@@ -105,7 +112,7 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 		}
 		final var type = AniListMediaType.valueOf(args.poll());
 		final var mediaId = Integer.parseInt(args.pop());
-		final var runner = new AniListMediaUserListRunner(event.getJDA(), type, mediaId);
+		final var runner = new AniListMediaUserListRunner(event.getJDA(), type, mediaId, event.getChannel());
 		runner.runQuery(event.getMessage().getMentionedMembers(), List.of(event.getChannel()));
 		return CommandResult.SUCCESS;
 	}
