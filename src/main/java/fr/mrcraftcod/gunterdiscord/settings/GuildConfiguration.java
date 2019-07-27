@@ -66,6 +66,8 @@ public class GuildConfiguration{
 	private RoleConfiguration leaverRole;
 	@JsonProperty("ircForward")
 	private boolean ircForward = false;
+	@JsonProperty("overwatchLeague")
+	private OverwatchLeagueConfiguration overwatchLeagueConfiguration = new OverwatchLeagueConfiguration();
 	
 	public GuildConfiguration(){
 	}
@@ -84,6 +86,11 @@ public class GuildConfiguration{
 	
 	public Optional<RemoveRoleConfiguration> getRemoveRole(User user, Role role){
 		return this.removeRoles.stream().filter(r -> Objects.equals(r.getUser().getUserId(), user.getIdLong()) && Objects.equals(r.getRole().getRoleId(), role.getIdLong())).findFirst();
+	}
+	
+	@Nonnull
+	public OverwatchLeagueConfiguration getOverwatchLeagueConfiguration(){
+		return this.overwatchLeagueConfiguration;
 	}
 	
 	public boolean getIrcForward(){
