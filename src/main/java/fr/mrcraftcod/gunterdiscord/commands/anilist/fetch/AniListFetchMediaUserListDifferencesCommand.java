@@ -31,10 +31,12 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 	static class AniListMediaUserListDifferencesRunner implements AniListRunner<AniListMediaUserList, AniListMediaUserListPagedQuery>{
 		private final JDA jda;
 		private final AniListMediaType type;
+		private final TextChannel channel;
 		
-		AniListMediaUserListDifferencesRunner(final JDA jda, final AniListMediaType type){
+		AniListMediaUserListDifferencesRunner(final JDA jda, final AniListMediaType type, TextChannel channel){
 			this.jda = jda;
 			this.type = type;
+			this.channel = channel;
 		}
 		
 		@Override
@@ -56,6 +58,11 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 				});
 			}
 			userMedias.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> ImmutablePair.of(es.getKey(), val))).filter(pair -> pair.getValue().getMedia().getType().equals(this.type)).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
+		}
+		
+		@Override
+		public List<TextChannel> getChannels(){
+			return List.of(this.channel);
 		}
 		
 		@Nonnull
@@ -116,7 +123,7 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 			return CommandResult.SUCCESS;
 		}
 		final var type = AniListMediaType.valueOf(args.poll());
-		final var runner = new AniListMediaUserListDifferencesRunner(event.getJDA(), type);
+		final var runner = new AniListMediaUserListDifferencesRunner(event.getJDA(), type, event.getChannel());
 		runner.runQuery(event.getMessage().getMentionedMembers(), List.of(event.getChannel()));
 		return CommandResult.SUCCESS;
 	}
