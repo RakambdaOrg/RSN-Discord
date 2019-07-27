@@ -50,7 +50,7 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 					}
 				}
 				else{
-					getLogger(null).warn("Skipped AniList object, json: {}", change);
+					getLogger(null).trace("Skipped AniList object, json: {}", change);
 				}
 			}
 			catch(final Exception e){

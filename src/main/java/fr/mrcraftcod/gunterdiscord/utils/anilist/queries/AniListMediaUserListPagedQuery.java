@@ -43,6 +43,9 @@ public class AniListMediaUserListPagedQuery implements AniListPagedQuery<AniList
 				if(obj.length() > 0){
 					changes.add(buildChange(obj));
 				}
+				else{
+					getLogger(null).trace("Skipped AniList object, json: {}", change);
+				}
 			}
 			catch(final Exception e){
 				getLogger(null).error("Error building AniListAiringNotification object, json was {}", change, e);
