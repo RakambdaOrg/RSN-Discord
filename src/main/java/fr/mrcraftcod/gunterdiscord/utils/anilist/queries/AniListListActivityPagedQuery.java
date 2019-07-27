@@ -41,7 +41,10 @@ public class AniListListActivityPagedQuery implements AniListPagedQuery<AniListL
 	public List<AniListListActivity> parseResult(@Nonnull final JSONObject json) throws Exception{
 		final var changes = new ArrayList<AniListListActivity>();
 		for(final var change : json.getJSONObject("data").getJSONObject("Page").getJSONArray("activities")){
-			changes.add(buildChange((JSONObject) change));
+			final var obj = (JSONObject) change;
+			if(obj.length() > 0){
+				changes.add(buildChange(obj));
+			}
 		}
 		return changes;
 	}
