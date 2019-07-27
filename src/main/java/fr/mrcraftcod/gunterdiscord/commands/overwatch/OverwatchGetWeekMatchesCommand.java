@@ -28,7 +28,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 public class OverwatchGetWeekMatchesCommand extends BasicCommand{
-	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm");
+	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchWeek> onWeek = (event, week) -> {
 		final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, week.getName());
 		week.getMatches().forEach(m -> {
