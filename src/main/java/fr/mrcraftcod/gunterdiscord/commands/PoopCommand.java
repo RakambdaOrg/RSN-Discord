@@ -3,6 +3,7 @@ package fr.mrcraftcod.gunterdiscord.commands;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.types.RemoveRoleConfiguration;
 import fr.mrcraftcod.gunterdiscord.settings.types.RoleConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -10,6 +11,7 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,10 +33,14 @@ public class PoopCommand extends BasicCommand{
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(!event.getMessage().getMentionedRoles().isEmpty()){
+			final var removeDate = LocalDateTime.now().plusMinutes(10);
 			final var poopRole = NewSettings.getConfiguration(event.getGuild()).getPoopRole().flatMap(RoleConfiguration::getRole);
 			event.getMessage().getMentionedRoles().stream().findFirst().ifPresent(r -> event.getGuild().getMembersWithRoles(r).forEach(m -> {
 				Actions.reply(event, "%s you poop", m.getAsMention());
-				poopRole.ifPresent(pr -> Actions.giveRole(event.getGuild(), m.getUser(), pr));
+				poopRole.ifPresent(pr -> {
+					Actions.giveRole(event.getGuild(), m.getUser(), pr);
+					NewSettings.getConfiguration(event.getGuild()).addRemoveRole(new RemoveRoleConfiguration(event.getAuthor(), pr, removeDate));
+				});
 			}));
 		}
 		else{
