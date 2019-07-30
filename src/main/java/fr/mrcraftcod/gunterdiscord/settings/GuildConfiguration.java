@@ -64,6 +64,8 @@ public class GuildConfiguration{
 	private Set<UserRoleConfiguration> addBackRoles = new HashSet<>();
 	@JsonProperty("leaverRole")
 	private RoleConfiguration leaverRole;
+	@JsonProperty("poopRole")
+	private RoleConfiguration poopRole;
 	@JsonProperty("ircForward")
 	private boolean ircForward = false;
 	@JsonProperty("overwatchLeague")
@@ -86,6 +88,15 @@ public class GuildConfiguration{
 	
 	public Optional<RemoveRoleConfiguration> getRemoveRole(User user, Role role){
 		return this.removeRoles.stream().filter(r -> Objects.equals(r.getUser().getUserId(), user.getIdLong()) && Objects.equals(r.getRole().getRoleId(), role.getIdLong())).findFirst();
+	}
+	
+	@Nonnull
+	public Optional<RoleConfiguration> getPoopRole(){
+		return Optional.ofNullable(this.poopRole);
+	}
+	
+	public void setPoopRole(@Nullable RoleConfiguration value){
+		this.poopRole = value;
 	}
 	
 	@Nonnull
