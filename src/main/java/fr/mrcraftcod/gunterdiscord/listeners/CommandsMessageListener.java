@@ -64,7 +64,8 @@ public class CommandsMessageListener extends ListenerAdapter{
 			new TwitchCommandComposite(),
 			new LuxBusGetStopCommand(),
 			new OverwatchCommandComposite(),
-			new StopwatchCommand()
+			new StopwatchCommand(),
+			new PoopCommand()
 	};
 	public final static String defaultPrefix = System.getProperty("RSN_DEFAULT_PREFIX", "g?");
 	
