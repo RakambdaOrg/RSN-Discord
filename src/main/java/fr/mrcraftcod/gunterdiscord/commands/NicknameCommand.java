@@ -44,7 +44,7 @@ public class NicknameCommand extends BasicCommand{
 		if(!event.getMessage().getMentionedUsers().isEmpty()){
 			args.pop();
 			memberOptional = Optional.ofNullable(event.getGuild().getMember(event.getMessage().getMentionedUsers().get(0)));
-			if(memberOptional.isPresent() && Objects.equals(event.getAuthor(), memberOptional.get().getUser()) && !Utilities.isTeam(event.getMember())){
+			if(memberOptional.isPresent() && !Objects.equals(event.getAuthor(), memberOptional.get().getUser()) && !Utilities.isTeam(event.getMember())){
 				final var builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.addField("User", memberOptional.get().getAsMention(), true);
