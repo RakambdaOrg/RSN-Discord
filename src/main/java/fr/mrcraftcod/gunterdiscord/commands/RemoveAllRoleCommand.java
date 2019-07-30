@@ -21,7 +21,11 @@ public class RemoveAllRoleCommand extends BasicCommand{
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(!event.getMessage().getMentionedRoles().isEmpty()){
-			event.getMessage().getMentionedRoles().stream().findFirst().ifPresent(r -> event.getGuild().getMembersWithRoles(r).forEach(m -> Actions.removeRole(m, r)));
+			event.getMessage().getMentionedRoles().stream().findFirst().ifPresent(r -> {
+				final var members = event.getGuild().getMembersWithRoles(r);
+				Actions.reply(event, "Will remove the role of %d people, this may take a while", members.size());
+				members.forEach(m -> Actions.removeRole(m, r));
+			});
 		}
 		else{
 			Actions.reply(event, "Please mention a role");
