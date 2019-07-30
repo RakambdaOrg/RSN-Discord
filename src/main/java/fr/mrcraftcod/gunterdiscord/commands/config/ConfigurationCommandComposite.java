@@ -26,6 +26,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		addSubCommand(new LeaverRoleConfigurationCommand(this));
 		addSubCommand(new IrcForwardConfigurationCommand(this));
 		addSubCommand(new OverwatchConfigurationCommandComposite(this));
+		addSubCommand(new PoopRoleConfigurationCommand(this));
 	}
 	
 	@Nonnull
