@@ -44,7 +44,7 @@ public class RemoveAllRoleCommand extends BasicCommand{
 	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("removeAllFromRole");
+		return List.of("rafr");
 	}
 	
 	@Nonnull
