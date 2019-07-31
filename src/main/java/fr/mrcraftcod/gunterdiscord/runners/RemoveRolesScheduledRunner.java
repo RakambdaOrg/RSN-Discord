@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.JDA;
 import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -34,17 +33,24 @@ public class RemoveRolesScheduledRunner implements ScheduledRunner{
 		final var currentDate = LocalDateTime.now();
 		for(final var guild : this.jda.getGuilds()){
 			getLogger(guild).debug("Processing guild {}", guild);
-			NewSettings.getConfiguration(guild).getRemoveRoles().removeAll(NewSettings.getConfiguration(guild).getRemoveRoles().stream().filter(ban -> ban.getEndDate().isAfter(currentDate)).peek(ban -> ban.getRole().getRole().ifPresent(role -> ban.getUser().getUser().ifPresent(user -> {
-				getLogger(guild).debug("Removed role {} for user {}", role, user);
-				Actions.removeRole(user, role);
-			}))).collect(Collectors.toList()));
+			final var it = NewSettings.getConfiguration(guild).getRemoveRoles().iterator();
+			while(it.hasNext()){
+				final var ban = it.next();
+				if(currentDate.isAfter(ban.getEndDate())){
+					ban.getUser().getUser().ifPresent(user -> ban.getRole().getRole().ifPresentOrElse(role -> {
+						getLogger(guild).debug("Removed role {} for user {}", role, user);
+						Actions.removeRole(user, role);
+						it.remove();
+					}, it::remove));
+				}
+			}
 		}
 		getLogger(null).info("Roles runner done");
 	}
 	
 	@Override
 	public long getPeriod(){
-		return 15;
+		return 1;
 	}
 	
 	@Nonnull
