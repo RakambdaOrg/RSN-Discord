@@ -34,15 +34,15 @@ public class TempParticipationCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		sendInfos(event.getGuild(), LocalDate.now(), event.getAuthor(), event.getChannel());
+		sendInfos(event.getGuild(), LocalDate.now(), event.getAuthor(), event.getChannel(), 25);
 		return CommandResult.SUCCESS;
 	}
 	
-	public static boolean sendInfos(@Nonnull final Guild guild, @Nonnull final LocalDate localDate, @Nonnull final User author, @Nonnull final TextChannel channel){
+	public static boolean sendInfos(@Nonnull final Guild guild, @Nonnull final LocalDate localDate, @Nonnull final User author, @Nonnull final TextChannel channel, final int limit){
 		return NewSettings.getConfiguration(guild).getParticipationConfiguration().getUsers(localDate, false).map(stats -> {
 			final var position = new AtomicInteger(1);
 			final var builder = Utilities.buildEmbed(author, Color.MAGENTA, "Participation of the " + localDate.format(DFD) + " (UTC)");
-			stats.getScores().stream().sorted((e1, e2) -> Long.compare(e2.getScore(), e1.getScore())).forEachOrdered(e -> builder.addField("#" + position.getAndIncrement(), Optional.ofNullable(guild.getJDA().getUserById(e.getId())).map(User::getAsMention).or(e::getName).orElse("<<UNKNOWN>>") + " Messages: " + e.getScore(), false));
+			stats.getScores().stream().sorted((e1, e2) -> Long.compare(e2.getScore(), e1.getScore())).limit(limit).forEachOrdered(e -> builder.addField("#" + position.getAndIncrement(), Optional.ofNullable(guild.getJDA().getUserById(e.getId())).map(User::getAsMention).or(e::getName).orElse("<<UNKNOWN>>") + " Messages: " + e.getScore(), false));
 			Actions.sendMessage(channel, builder.build());
 			return true;
 		}).orElse(false);
