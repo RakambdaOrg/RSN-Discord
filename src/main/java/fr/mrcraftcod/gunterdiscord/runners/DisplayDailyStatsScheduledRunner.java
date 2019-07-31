@@ -44,7 +44,7 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 			NewSettings.getConfiguration(guild).getParticipationConfiguration().getReportChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(reportChannel -> {
 				getLogger(guild).debug("Processing stats for guild {}", guild);
 				var sent = false;
-				if(TempParticipationCommand.sendInfos(guild, ytd, this.jda.getSelfUser(), reportChannel)){
+				if(TempParticipationCommand.sendInfos(guild, ytd, this.jda.getSelfUser(), reportChannel, 15)){
 					sent = true;
 					NewSettings.getConfiguration(guild).getParticipationConfiguration().removeUsers(ytd);
 					NewSettings.getConfiguration(guild).getParticipationConfiguration().removeUsersBefore(ytd);
