@@ -98,6 +98,7 @@ public class Main{
 		}
 		catch(final LoginException | InterruptedException e){
 			getLogger(null).error("Couldn't start bot", e);
+			System.exit(1);
 		}
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
