@@ -53,7 +53,7 @@ public class LogListener extends ListenerAdapter{
 	public void onGuildMessageReceived(@Nonnull final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
-			if(!event.getAuthor().equals(event.getJDA().getSelfUser())){
+			if(!event.getAuthor().isBot()){
 				final var now = LocalDate.now();
 				if(NewSettings.getConfiguration(event.getGuild()).getNoXpChannels().stream().noneMatch(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong()))){
 					final var users = NewSettings.getConfiguration(event.getGuild()).getParticipationConfiguration().getUsers(now);
