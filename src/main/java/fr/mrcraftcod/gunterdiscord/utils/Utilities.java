@@ -11,9 +11,11 @@ import net.dv8tion.jda.api.entities.User;
 import org.json.JSONObject;
 import javax.annotation.Nullable;
 import java.awt.Color;
+import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
@@ -22,7 +24,8 @@ import java.util.Optional;
  * @since 2018-04-13
  */
 public class Utilities{
-	private static final long RAKSRINANA_ACCOUNT = 170119951498084352L;
+	public static final long RAKSRINANA_ACCOUNT = 170119951498084352L;
+	private static final Pattern TIME_PATTERN = Pattern.compile("(\\d[HMS])(?!$)");
 	private static final long LOPINETTE_ACCOUNT = 432628353024131085L;
 	
 	/**
@@ -193,5 +196,9 @@ public class Utilities{
 			return s;
 		}
 		return s.substring(0, 1).toUpperCase() + s.substring(1);
+	}
+	
+	public static String durationToString(final Duration duration){
+		return TIME_PATTERN.matcher(duration.toString().substring(2)).replaceAll("$1 ").toLowerCase();
 	}
 }

@@ -51,7 +51,7 @@ public class IRCReaderThread extends Thread implements Closeable{
 								}
 								LOGGER.debug("New IRC message of type {}", event.getClass().getSimpleName());
 								for(final var ircListener : this.client.getListeners()){
-									ircListener.onIRCMessage(event);
+									// ircListener.onIRCMessage(event);
 								}
 							});
 						}

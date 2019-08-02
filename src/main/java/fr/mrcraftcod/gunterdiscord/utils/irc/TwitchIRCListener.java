@@ -2,6 +2,7 @@ package fr.mrcraftcod.gunterdiscord.utils.irc;
 
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.irc.messages.*;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.api.entities.Guild;
@@ -10,6 +11,7 @@ import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import javax.annotation.Nonnull;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -27,6 +29,16 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 		this.ircChannel = channel;
 		this.lastMessage = System.currentTimeMillis();
 		this.channel = NewSettings.getConfiguration(guild).getTwitchChannel().orElseThrow().getChannel().orElseThrow();
+	}
+	
+	@Override
+	protected void onClearChat(final ClearChatIRCMessage event){
+		Actions.sendMessage(this.channel, "__NOTICE__: %s banned for %s minutes", event.getUser(), event.getTags().stream().filter(t -> Objects.equals("ban-duration", t.getKey())).map(IRCTag::getValue).map(Integer::parseInt).map(Duration::ofSeconds).map(Utilities::durationToString).findFirst().orElse("UNKNOWN"));
+	}
+	
+	@Override
+	protected void onClearMessage(final ClearMessageIRCMessage event){
+		Log.getLogger(this.getGuild()).info("Message from {} deleted: {}", event.getTags().stream().filter(t -> Objects.equals("login", t.getKey())).map(IRCTag::getValue).findFirst().orElse("UNKNOWN"), event.getMessage());
 	}
 	
 	@Override
@@ -58,13 +70,21 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 			final var displayName = event.getTags().stream().filter(t -> Objects.equals("display-name", t.getKey())).map(IRCTag::getValue).filter(Objects::nonNull).filter(t -> !t.isBlank()).findFirst().orElse(event.getUser().toString());
 			var role = "";
 			if(badges.stream().anyMatch(t -> Objects.equals("broadcaster", t.getName()))){
-				role = "(boss)";
+				role += "(boss)";
 			}
-			else if(event.getTags().stream().filter(t -> Objects.equals("mod", t.getKey())).anyMatch(t -> Objects.equals("1", t.getValue()))){
-				role = "(mod)";
+			if(event.getTags().stream().anyMatch(t -> Objects.equals("moderator", t.getKey()))){
+				role += "(mod)";
 			}
-			else if(badges.stream().anyMatch(t -> Objects.equals("subscriber", t.getName()))){
-				role = "(sub)";
+			final var sub = badges.stream().filter(t -> Objects.equals("subscriber", t.getName())).findFirst();
+			if(sub.isPresent()){
+				role += "(sub/" + sub.get().getVersion() + ")";
+			}
+			final var subGifter = badges.stream().filter(t -> Objects.equals("sub-gifter", t.getName())).findFirst();
+			if(subGifter.isPresent()){
+				role += "(subgifter/" + subGifter.get().getVersion() + ")";
+			}
+			if(event.getTags().stream().anyMatch(t -> Objects.equals("partner", t.getKey()))){
+				role += "(partner)";
 			}
 			Actions.sendMessage(this.channel, "**`%s`%s** %s", displayName, role, message);
 		}

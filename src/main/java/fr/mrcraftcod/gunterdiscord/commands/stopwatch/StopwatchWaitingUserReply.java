@@ -36,7 +36,7 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 		final var newTotalTime = this.totalTime.plus(this.counting ? Duration.between(this.lastStart, LocalDateTime.now()) : Duration.ZERO);
 		if(!Objects.equals(newTotalTime, this.totalTime)){
 			final var builder = Utilities.buildEmbed(this.getWaitUser(), Color.GREEN, "Stopwatch");
-			builder.addField("Time", TIME_PATTERN.matcher(newTotalTime.toString().substring(2)).replaceAll("$1 ").toLowerCase(), false);
+			builder.addField("Time", Utilities.durationToString(newTotalTime), false);
 			builder.addField(BasicEmotes.P.getValue(), "Pause", true);
 			builder.addField(BasicEmotes.R.getValue(), "Resume", true);
 			builder.addField(BasicEmotes.S.getValue(), "Stop", true);

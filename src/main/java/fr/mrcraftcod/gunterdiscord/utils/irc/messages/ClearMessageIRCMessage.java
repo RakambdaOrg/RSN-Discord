@@ -3,11 +3,11 @@ package fr.mrcraftcod.gunterdiscord.utils.irc.messages;
 import fr.mrcraftcod.gunterdiscord.utils.irc.IRCTag;
 import java.util.List;
 
-public class UserNoticeIRCMessage implements IRCMessage{
+public class ClearMessageIRCMessage implements IRCMessage{
 	private final List<IRCTag> tags;
 	private final String message;
 	
-	public UserNoticeIRCMessage(final List<IRCTag> tags, final String message){
+	public ClearMessageIRCMessage(final List<IRCTag> tags, final String message){
 		this.tags = tags;
 		this.message = message;
 	}

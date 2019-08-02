@@ -31,10 +31,20 @@ public abstract class AbstractIRCListener implements IRCListener{
 		else if(event instanceof UserNoticeIRCMessage){
 			this.onUserNotice((UserNoticeIRCMessage) event);
 		}
+		else if(event instanceof ClearChatIRCMessage){
+			this.onClearChat((ClearChatIRCMessage) event);
+		}
+		else if(event instanceof ClearMessageIRCMessage){
+			this.onClearMessage((ClearMessageIRCMessage) event);
+		}
 		else{
 			this.onIRCUnknownEvent(event);
 		}
 	}
+	
+	protected abstract void onClearChat(ClearChatIRCMessage event);
+	
+	protected abstract void onClearMessage(ClearMessageIRCMessage event);
 	
 	protected abstract void onIRCChannelJoined(@Nonnull ChannelJoinIRCMessage event);
 	
