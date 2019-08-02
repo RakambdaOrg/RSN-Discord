@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 public class TwitchIRC{
 	private static final Logger LOGGER = LoggerFactory.getLogger(TwitchIRC.class);
-	private static final String NICKNAME = "rsndiscord";
 	private static IRCClient CLIENT = null;
 	
 	public static void connect(@Nonnull final Guild guild, @Nonnull final String user) throws IOException{
@@ -23,7 +22,7 @@ public class TwitchIRC{
 			CLIENT = new IRCClient("irc.chat.twitch.tv", 6667);
 			CLIENT.setSecureKeyPassword(String.format("oauth:%s", System.getProperty("TWITCH_TOKEN")));
 			CLIENT.connect();
-			CLIENT.setNick(NICKNAME);
+			CLIENT.setNick(System.getProperty("TWITCH_NICKNAME"));
 			CLIENT.sendMessage("CAP REQ :twitch.tv/tags");
 			CLIENT.sendMessage("CAP REQ :twitch.tv/commands");
 		}
