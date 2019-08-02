@@ -5,11 +5,17 @@ import java.util.List;
 
 public class ClearMessageIRCMessage implements IRCMessage{
 	private final List<IRCTag> tags;
+	private final String ircChannel;
 	private final String message;
 	
-	public ClearMessageIRCMessage(final List<IRCTag> tags, final String message){
+	public ClearMessageIRCMessage(final List<IRCTag> tags, final String ircChannel, final String message){
 		this.tags = tags;
+		this.ircChannel = ircChannel;
 		this.message = message;
+	}
+	
+	public String getChannel(){
+		return this.ircChannel;
 	}
 	
 	public String getMessage(){

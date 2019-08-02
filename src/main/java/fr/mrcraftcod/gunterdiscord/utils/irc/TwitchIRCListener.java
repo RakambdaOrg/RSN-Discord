@@ -33,12 +33,16 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 	
 	@Override
 	protected void onClearChat(final ClearChatIRCMessage event){
-		Actions.sendMessage(this.channel, "__NOTICE__: %s banned for %s minutes", event.getUser(), event.getTags().stream().filter(t -> Objects.equals("ban-duration", t.getKey())).map(IRCTag::getValue).map(Integer::parseInt).map(Duration::ofSeconds).map(Utilities::durationToString).findFirst().orElse("UNKNOWN"));
+		if(Objects.equals(event.getChannel(), this.ircChannel)){
+			Actions.sendMessage(this.channel, "__NOTICE__: %s banned for %s minutes", event.getUser(), event.getTags().stream().filter(t -> Objects.equals("ban-duration", t.getKey())).map(IRCTag::getValue).map(Integer::parseInt).map(Duration::ofSeconds).map(Utilities::durationToString).findFirst().orElse("UNKNOWN"));
+		}
 	}
 	
 	@Override
 	protected void onClearMessage(final ClearMessageIRCMessage event){
-		Log.getLogger(this.getGuild()).info("Message from {} deleted: {}", event.getTags().stream().filter(t -> Objects.equals("login", t.getKey())).map(IRCTag::getValue).findFirst().orElse("UNKNOWN"), event.getMessage());
+		if(Objects.equals(event.getChannel(), this.ircChannel)){
+			Log.getLogger(this.getGuild()).info("Message from {} deleted: {}", event.getTags().stream().filter(t -> Objects.equals("login", t.getKey())).map(IRCTag::getValue).findFirst().orElse("UNKNOWN"), event.getMessage());
+		}
 	}
 	
 	@Override
@@ -101,7 +105,9 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 	
 	@Override
 	protected void onUserNotice(final UserNoticeIRCMessage event){
-		Actions.sendMessage(this.channel, "__NOTICE__: %s", event.getTags().stream().filter(t -> Objects.equals("system-msg", t.getKey())).map(IRCTag::getValue).map(v -> v.replace("\\s", " ").trim()).findFirst().orElse("UNKNOWN"));
+		if(Objects.equals(event.getChannel(), this.ircChannel)){
+			Actions.sendMessage(this.channel, "__NOTICE__: %s", event.getTags().stream().filter(t -> Objects.equals("system-msg", t.getKey())).map(IRCTag::getValue).map(v -> v.replace("\\s", " ").trim()).findFirst().orElse("UNKNOWN"));
+		}
 	}
 	
 	@Override
