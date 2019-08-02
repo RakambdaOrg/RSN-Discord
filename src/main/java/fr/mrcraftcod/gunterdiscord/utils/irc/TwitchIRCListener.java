@@ -34,7 +34,7 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 	@Override
 	protected void onClearChat(final ClearChatIRCMessage event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
-			Actions.sendMessage(this.channel, "__NOTICE__: %s banned for %s minutes", event.getUser(), event.getTags().stream().filter(t -> Objects.equals("ban-duration", t.getKey())).map(IRCTag::getValue).map(Integer::parseInt).map(Duration::ofSeconds).map(Utilities::durationToString).findFirst().orElse("UNKNOWN"));
+			Actions.sendMessage(this.channel, "__NOTICE__: %s banned for %s", event.getUser(), event.getTags().stream().filter(t -> Objects.equals("ban-duration", t.getKey())).map(IRCTag::getValue).map(Integer::parseInt).map(Duration::ofSeconds).map(Utilities::durationToString).findFirst().orElse("UNKNOWN"));
 		}
 	}
 	
