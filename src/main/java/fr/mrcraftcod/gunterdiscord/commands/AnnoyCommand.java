@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
@@ -22,6 +23,7 @@ import java.util.Optional;
  * @author Thomas Couchoud
  * @since 2018-06-16
  */
+@BotCommand
 public class AnnoyCommand extends BasicCommand{
 	@Override
 	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){

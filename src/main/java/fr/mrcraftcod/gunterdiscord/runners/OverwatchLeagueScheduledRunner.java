@@ -26,7 +26,7 @@ public class OverwatchLeagueScheduledRunner implements ScheduledRunner{
 	 * @param jda
 	 */
 	public OverwatchLeagueScheduledRunner(JDA jda){
-		getLogger(null).info("Creating overwatch league runner");
+		getLogger(null).info("Creating Overwatch league runner");
 		this.jda = jda;
 	}
 	

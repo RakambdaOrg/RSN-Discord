@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -17,6 +18,7 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
+@BotCommand
 public class SayCommand extends BasicCommand{
 	@Override
 	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){

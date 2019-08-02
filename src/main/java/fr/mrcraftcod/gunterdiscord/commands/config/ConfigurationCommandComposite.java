@@ -1,11 +1,13 @@
 package fr.mrcraftcod.gunterdiscord.commands.config;
 
 import fr.mrcraftcod.gunterdiscord.commands.config.guild.*;
+import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.api.entities.ChannelType;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+@BotCommand
 public class ConfigurationCommandComposite extends CommandComposite{
 	public ConfigurationCommandComposite(){
 		addSubCommand(new AniListConfigurationCommandComposite(this));

@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands.twitch;
 
+import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.api.entities.ChannelType;
 import javax.annotation.Nonnull;
@@ -11,6 +12,7 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-08-18
  */
+@BotCommand
 public class TwitchCommandComposite extends CommandComposite{
 	/**
 	 * Constructor.

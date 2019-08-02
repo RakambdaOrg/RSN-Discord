@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands.music;
 
+import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.settings.types.RoleConfiguration;
@@ -18,6 +19,7 @@ import java.util.Optional;
  * @author Thomas Couchoud
  * @since 2018-08-18
  */
+@BotCommand
 public class MusicCommandComposite extends CommandComposite{
 	/**
 	 * Constructor.

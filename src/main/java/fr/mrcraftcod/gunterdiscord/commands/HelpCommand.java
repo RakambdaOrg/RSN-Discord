@@ -1,19 +1,24 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
-import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
+import fr.mrcraftcod.gunterdiscord.Main;
+import fr.mrcraftcod.gunterdiscord.commands.generic.*;
 import fr.mrcraftcod.gunterdiscord.listeners.CommandsMessageListener;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.reflections.Reflections;
 import javax.annotation.Nonnull;
 import java.awt.Color;
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
@@ -21,6 +26,7 @@ import java.util.*;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
+@BotCommand
 public class HelpCommand extends BasicCommand{
 	@Override
 	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
@@ -33,16 +39,25 @@ public class HelpCommand extends BasicCommand{
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final var prefix = NewSettings.getConfiguration(event.getGuild()).getPrefix().orElse(CommandsMessageListener.defaultPrefix);
+		final var commands = new Reflections(Main.class.getPackage().getName() + ".commands").getTypesAnnotatedWith(BotCommand.class).stream().map(c -> {
+			try{
+				return c.getConstructor().newInstance();
+			}
+			catch(InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e){
+				Log.getLogger(null).error("Failed to create instance of {}", c.getName());
+			}
+			return null;
+		}).filter(Objects::nonNull).filter(c -> c instanceof Command).map(c -> (Command) c);
 		if(args.isEmpty()){
 			final var builder = new EmbedBuilder();
 			builder.setColor(Color.GREEN);
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setTitle("Available commands");
-			Arrays.stream(CommandsMessageListener.commands).filter(command -> command.isAllowed(event.getMember())).map(command -> new MessageEmbed.Field(prefix + command.getCommandStrings().get(0), command.getDescription(), false)).filter(message -> Objects.nonNull(message.getName())).sorted(Comparator.comparing(MessageEmbed.Field::getName)).forEach(builder::addField);
+			commands.filter(command -> command.isAllowed(event.getMember())).map(command -> new MessageEmbed.Field(prefix + command.getCommandStrings().get(0), command.getDescription(), false)).filter(message -> Objects.nonNull(message.getName())).sorted(Comparator.comparing(MessageEmbed.Field::getName)).forEach(builder::addField);
 			Actions.reply(event, builder.build());
 		}
 		else{
-			var command = Arrays.stream(CommandsMessageListener.commands).filter(command1 -> command1.getCommandStrings().contains(args.get(0).toLowerCase())).filter(command1 -> command1.isAllowed(event.getMember())).findAny();
+			var command = commands.filter(command1 -> command1.getCommandStrings().contains(args.get(0).toLowerCase())).filter(command1 -> command1.isAllowed(event.getMember())).findAny();
 			args.poll();
 			while(!args.isEmpty() && command.isPresent() && command.get() instanceof CommandComposite){
 				final var command2 = ((CommandComposite) command.get()).getSubCommand(args.get(0).toLowerCase());

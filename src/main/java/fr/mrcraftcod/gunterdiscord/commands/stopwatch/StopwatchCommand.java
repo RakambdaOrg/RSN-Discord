@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.stopwatch;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.reply.ReplyMessageListener;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
@@ -13,6 +14,7 @@ import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 
+@BotCommand
 public class StopwatchCommand extends BasicCommand{
 	@Nonnull
 	@Override

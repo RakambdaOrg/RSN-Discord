@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands.warn;
 
+import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.settings.guild.warns.WarnConfiguration;
 import net.dv8tion.jda.api.entities.Guild;
@@ -16,6 +17,7 @@ import java.util.Optional;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
+@BotCommand
 public class DoubleWarnCommand extends WarnCommand{
 	@Nonnull
 	@Override
