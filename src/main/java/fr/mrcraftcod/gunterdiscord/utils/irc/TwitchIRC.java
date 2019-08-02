@@ -28,7 +28,7 @@ public class TwitchIRC{
 			CLIENT.sendMessage("CAP REQ :twitch.tv/commands");
 		}
 		final var channel = String.format("#%s", user.toLowerCase());
-		if(CLIENT.getJoinedChannels().stream().noneMatch(joinedChannel -> Objects.equals(joinedChannel, channel))){
+		if(CLIENT.getListeners().stream().noneMatch(l -> Objects.equals(l.getIRCChannel(), channel) && Objects.equals(guild, l.getGuild()))){
 			final var listener = new TwitchIRCListener(guild, user, channel);
 			if(NewSettings.getConfiguration(guild).getIrcForward()){
 				guild.getJDA().addEventListener(listener);
@@ -44,17 +44,19 @@ public class TwitchIRC{
 	
 	static void disconnect(@Nonnull final Guild guild, @Nonnull final String user, final boolean removeListener){
 		if(Objects.nonNull(CLIENT)){
-			final var channel = String.format("#%s", user.toLowerCase());
-			CLIENT.leaveChannel(channel);
-			CLIENT.getListeners().stream().filter(l -> Objects.equals(l.getUser(), user)).forEach(l -> l.onIRCMessage(new ChannelLeftIRCMessage(new IRCUser(""), channel)));
+			final var ircChannel = String.format("#%s", user.toLowerCase());
+			CLIENT.getListeners().stream().filter(l -> Objects.equals(l.getUser(), user) && Objects.equals(guild, l.getGuild())).forEach(l -> l.onIRCMessage(new ChannelLeftIRCMessage(new IRCUser(""), ircChannel)));
 			if(removeListener){
 				CLIENT.getListeners().removeIf(obj -> {
-					if(obj instanceof TwitchIRCListener && Objects.equals(obj.getUser(), user)){
+					if(obj instanceof TwitchIRCListener && Objects.equals(obj.getUser(), user) && Objects.equals(guild, obj.getGuild())){
 						guild.getJDA().removeEventListener(obj);
 						return true;
 					}
 					return false;
 				});
+			}
+			if(CLIENT.getListeners().stream().noneMatch(l -> Objects.equals(l.getUser(), user))){
+				CLIENT.leaveChannel(ircChannel);
 			}
 			if(CLIENT.getJoinedChannels().isEmpty()){
 				close();
