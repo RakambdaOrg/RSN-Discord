@@ -7,16 +7,16 @@ public class RoomStateIRCMessage implements IRCMessage{
 	private final List<IRCTag> tags;
 	private final String channel;
 	
-	public RoomStateIRCMessage(List<IRCTag> tags, String channel){
+	public RoomStateIRCMessage(final List<IRCTag> tags, final String channel){
 		this.tags = tags;
 		this.channel = channel;
 	}
 	
 	public String getChannel(){
-		return channel;
+		return this.channel;
 	}
 	
 	public List<IRCTag> getTags(){
-		return tags;
+		return this.tags;
 	}
 }

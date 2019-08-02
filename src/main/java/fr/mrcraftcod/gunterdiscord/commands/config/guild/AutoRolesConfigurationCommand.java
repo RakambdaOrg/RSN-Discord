@@ -12,23 +12,18 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class AutoRolesConfigurationCommand extends SetConfigurationCommand<RoleConfiguration>{
-	public AutoRolesConfigurationCommand(@Nullable Command parent){
+	public AutoRolesConfigurationCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Nonnull
 	@Override
-	protected Optional<Set<RoleConfiguration>> getConfig(@Nonnull Guild guild){
+	protected Optional<Set<RoleConfiguration>> getConfig(@Nonnull final Guild guild){
 		return Optional.of(NewSettings.getConfiguration(guild).getAutoRoles());
 	}
 	
 	@Override
-	protected void removeConfig(@Nonnull Guild guild, @Nonnull RoleConfiguration value){
-		NewSettings.getConfiguration(guild).getAutoRoles().remove(value);
-	}
-	
-	@Override
-	protected void createConfig(@Nonnull Guild guild, @Nonnull RoleConfiguration value){
+	protected void createConfig(@Nonnull final Guild guild, @Nonnull final RoleConfiguration value){
 		final var set = new HashSet<RoleConfiguration>();
 		set.add(value);
 		NewSettings.getConfiguration(guild).setAutoRoles(set);
@@ -36,12 +31,17 @@ public class AutoRolesConfigurationCommand extends SetConfigurationCommand<RoleC
 	
 	@Nonnull
 	@Override
-	protected RoleConfiguration extractValue(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalArgumentException{
+	protected RoleConfiguration extractValue(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws IllegalArgumentException{
 		if(event.getMessage().getMentionedRoles().isEmpty())
 		{
 			throw new IllegalArgumentException("Please mention a role");
 		}
 		return new RoleConfiguration(event.getMessage().getMentionedRoles().get(0));
+	}
+	
+	@Override
+	protected void removeConfig(@Nonnull final Guild guild, @Nonnull final RoleConfiguration value){
+		NewSettings.getConfiguration(guild).getAutoRoles().remove(value);
 	}
 	
 	@Nonnull
@@ -57,7 +57,7 @@ public class AutoRolesConfigurationCommand extends SetConfigurationCommand<RoleC
 	}
 	
 	@Override
-	public void addHelp(@Nonnull Guild guild, @Nonnull EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Role", "The role to add or remove", false);
 	}

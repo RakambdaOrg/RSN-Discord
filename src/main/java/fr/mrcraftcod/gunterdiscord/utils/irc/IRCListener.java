@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
  * @author Thomas Couchoud
  * @since 2019-02-25
  */
-public interface IRCListener{
+interface IRCListener{
 	void onIRCMessage(@Nonnull IRCMessage event);
 	
 	boolean handlesChannel(@Nonnull String channel);

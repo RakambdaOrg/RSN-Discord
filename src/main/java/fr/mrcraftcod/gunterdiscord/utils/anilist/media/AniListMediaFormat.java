@@ -35,5 +35,5 @@ public enum AniListMediaFormat{TV("TV"), TV_SHORT("TV Short"), MOVIE("Movie"), S
 	
 	@Override
 	public String toString(){
-		return Objects.isNull(this.display) ? name() : this.display;
+		return Objects.isNull(this.display) ? this.name() : this.display;
 	}}

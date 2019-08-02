@@ -43,7 +43,7 @@ public class OverwatchCompetitor{
 	private String type;
 	
 	public String getIcon(){
-		return icon;
+		return this.icon;
 	}
 	
 	public int getId(){

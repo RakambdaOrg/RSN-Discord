@@ -8,21 +8,21 @@ public class UserNoticeIRCMessage implements IRCMessage{
 	private final String ircChannel;
 	private final String message;
 	
-	public UserNoticeIRCMessage(List<IRCTag> tags, String ircChannel, String message){
+	public UserNoticeIRCMessage(final List<IRCTag> tags, final String ircChannel, final String message){
 		this.tags = tags;
 		this.ircChannel = ircChannel;
 		this.message = message;
 	}
 	
 	public String getIrcChannel(){
-		return ircChannel;
+		return this.ircChannel;
 	}
 	
 	public String getMessage(){
-		return message;
+		return this.message;
 	}
 	
 	public List<IRCTag> getTags(){
-		return tags;
+		return this.tags;
 	}
 }

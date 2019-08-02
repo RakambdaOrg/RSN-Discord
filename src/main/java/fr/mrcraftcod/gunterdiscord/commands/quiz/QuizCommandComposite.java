@@ -19,8 +19,8 @@ public class QuizCommandComposite extends CommandComposite{
 	 */
 	public QuizCommandComposite(){
 		super();
-		addSubCommand(new QuizStartCommand(this));
-		addSubCommand(new QuizStopCommand(this));
+		this.addSubCommand(new QuizStartCommand(this));
+		this.addSubCommand(new QuizStopCommand(this));
 	}
 	
 	@Nonnull

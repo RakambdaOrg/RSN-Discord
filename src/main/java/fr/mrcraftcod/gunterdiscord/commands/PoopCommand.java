@@ -25,7 +25,7 @@ import java.util.List;
 @BotCommand
 public class PoopCommand extends BasicCommand{
 	@Override
-	public void addHelp(@Nonnull Guild guild, @Nonnull EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Role", "The role to poop on", false);
 	}

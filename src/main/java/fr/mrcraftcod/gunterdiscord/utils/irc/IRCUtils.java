@@ -22,9 +22,9 @@ class IRCUtils{
 	private static final Logger LOGGER = LoggerFactory.getLogger(IRCUtils.class);
 	
 	@Nonnull
-	static Optional<IRCMessage> buildEvent(@Nonnull String message){
+	static Optional<IRCMessage> buildEvent(@Nonnull final String message){
 		try{
-			if(message.equals("PING :tmi.twitch.tv")){
+			if("PING :tmi.twitch.tv".equals(message)){
 				return Optional.of(new PingIRCMessage());
 			}
 			final var matcher = EVENT_PATTERN.matcher(message);
@@ -60,13 +60,13 @@ class IRCUtils{
 			LOGGER.warn("Unknown IRC message: {}", message);
 			return Optional.empty();
 		}
-		catch(Exception e){
+		catch(final Exception e){
 			LOGGER.error("Failed to handle IRC message: {}", message);
 		}
 		return Optional.empty();
 	}
 	
-	private static List<IRCTag> getTags(String tags){
+	private static List<IRCTag> getTags(final String tags){
 		return Optional.ofNullable(tags).stream().flatMap(t -> Arrays.stream(t.split(";"))).map(t -> {
 			final var eq = t.indexOf('=');
 			if(eq >= 0){

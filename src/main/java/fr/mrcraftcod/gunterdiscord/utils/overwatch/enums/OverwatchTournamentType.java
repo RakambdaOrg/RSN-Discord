@@ -15,7 +15,7 @@ public enum OverwatchTournamentType{
 		try{
 			return OverwatchTournamentType.valueOf(value);
 		}
-		catch(IllegalArgumentException e){
+		catch(final IllegalArgumentException e){
 			LOGGER.warn("Unknown tournament type {}", value);
 		}
 		return UNKNOWN;

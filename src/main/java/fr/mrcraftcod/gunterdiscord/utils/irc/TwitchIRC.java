@@ -74,7 +74,7 @@ public class TwitchIRC{
 		}
 	}
 	
-	public static void sendMessage(@Nullable Guild guild, @Nonnull String ircChannel, @Nonnull String message){
+	public static void sendMessage(@Nullable final Guild guild, @Nonnull final String ircChannel, @Nonnull final String message){
 		if(Objects.nonNull(CLIENT) && CLIENT.getJoinedChannels().contains(ircChannel)){
 			Log.getLogger(guild).info("Sending IRC message tp {}: {}", ircChannel, message);
 			CLIENT.sendMessage(String.format("PRIVMSG %s :%s", ircChannel, message));

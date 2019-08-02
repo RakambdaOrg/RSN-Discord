@@ -43,7 +43,7 @@ public class AnnoyCommand extends BasicCommand{
 					final var botChannel = audioManager.getChannel();
 					if(Objects.equals(botChannel, member.getVoiceState().getChannel())){
 						final var identifier = String.join(" ", args).trim();
-						GunterAudioManager.play(event.getAuthor(), member.getVoiceState().getChannel(), identifier.equals("") ? "https://www.youtube.com/watch?v=J4X2b-CEGNg" : identifier);
+						GunterAudioManager.play(event.getAuthor(), member.getVoiceState().getChannel(), "".equals(identifier) ? "https://www.youtube.com/watch?v=J4X2b-CEGNg" : identifier);
 					}
 					else{
 						Actions.reply(event, "Sorry, the user is in another channel");

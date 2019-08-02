@@ -18,6 +18,7 @@ import java.util.*;
 @SuppressWarnings("WeakerAccess")
 public class IRCClient implements Closeable{
 	private static final Logger LOGGER = LoggerFactory.getLogger(IRCClient.class);
+	public static final int DEFAULT_TIMEOUT = 600000;
 	private final String host;
 	private final int port;
 	private String pass;
@@ -39,12 +40,12 @@ public class IRCClient implements Closeable{
 	
 	public void connect() throws IOException{
 		this.socket = new Socket(this.host, this.port);
-		this.socket.setSoTimeout(10 * 60 * 1000);
+		this.socket.setSoTimeout(DEFAULT_TIMEOUT);
 		this.socketWriter = new PrintWriter(this.socket.getOutputStream(), true);
 		this.ircReader = new IRCReaderThread(this, this.socket.getInputStream());
 		this.ircReader.start();
 		if(Objects.nonNull(this.pass)){
-			sendMessage(String.format("PASS %s", this.pass));
+			this.sendMessage(String.format("PASS %s", this.pass));
 			LOGGER.info("Using pass to connect to {}:{}", this.host, this.port);
 		}
 		this.connected = true;
@@ -52,8 +53,8 @@ public class IRCClient implements Closeable{
 	}
 	
 	public void joinChannel(@Nonnull final String channel){
-		if(isConnected()){
-			sendMessage(String.format("JOIN %s", channel));
+		if(this.isConnected()){
+			this.sendMessage(String.format("JOIN %s", channel));
 			this.joinedChannels.add(channel);
 			LOGGER.info("Joined channel {} on {}:{}", channel, this.host, this.port);
 		}
@@ -64,8 +65,8 @@ public class IRCClient implements Closeable{
 	
 	@Override
 	public void close() throws IOException{
-		if(isConnected()){
-			sendMessage("QUIT");
+		if(this.isConnected()){
+			this.sendMessage("QUIT");
 			this.socketWriter.close();
 			this.ircReader.close();
 			this.socket.close();
@@ -83,7 +84,7 @@ public class IRCClient implements Closeable{
 			try{
 				TwitchIRC.connect(l.getGuild(), l.getUser());
 			}
-			catch(IOException e){
+			catch(final IOException e){
 				LOGGER.warn("Failed to reconnect {} to user {}", l.getGuild(), l.getUser());
 			}
 		});
@@ -102,8 +103,8 @@ public class IRCClient implements Closeable{
 	}
 	
 	public void leaveChannel(@Nonnull final String channel){
-		if(isConnected()){
-			sendMessage(String.format("PART %s", channel));
+		if(this.isConnected()){
+			this.sendMessage(String.format("PART %s", channel));
 			this.joinedChannels.remove(channel);
 			LOGGER.info("Left channel {} on {}:{}", channel, this.host, this.port);
 		}
@@ -123,8 +124,8 @@ public class IRCClient implements Closeable{
 	}
 	
 	public void setNick(@Nonnull final String nickname){
-		if(isConnected()){
-			sendMessage(String.format("NICK %s", nickname));
+		if(this.isConnected()){
+			this.sendMessage(String.format("NICK %s", nickname));
 			LOGGER.info("Set nick to {} on {}:{}", nickname, this.host, this.port);
 		}
 		else{

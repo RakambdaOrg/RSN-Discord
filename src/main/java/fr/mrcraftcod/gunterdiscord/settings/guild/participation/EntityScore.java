@@ -21,15 +21,15 @@ public class EntityScore{
 	public EntityScore(){
 	}
 	
-	public EntityScore(long id){
+	public EntityScore(final long id){
 		this(id, null);
 	}
 	
-	public EntityScore(long id, String name){
+	private EntityScore(final long id, final String name){
 		this(id, name, 0);
 	}
 	
-	public EntityScore(long id, String name, long score){
+	public EntityScore(final long id, final String name, final long score){
 		this.id = id;
 		this.name = name;
 		this.score = score;
@@ -41,19 +41,19 @@ public class EntityScore{
 	
 	@Override
 	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(getId()).toHashCode();
+		return new HashCodeBuilder(17, 37).append(this.getId()).toHashCode();
 	}
 	
 	@Override
-	public boolean equals(Object o){
+	public boolean equals(final Object o){
 		if(this == o){
 			return true;
 		}
 		if(!(o instanceof EntityScore)){
 			return false;
 		}
-		EntityScore that = (EntityScore) o;
-		return new EqualsBuilder().append(getId(), that.getId()).isEquals();
+		final var that = (EntityScore) o;
+		return new EqualsBuilder().append(this.getId(), that.getId()).isEquals();
 	}
 	
 	public long getId(){
@@ -69,7 +69,7 @@ public class EntityScore{
 		return this.score;
 	}
 	
-	public void setScore(long value){
+	public void setScore(final long value){
 		this.score = value;
 	}
 }

@@ -94,8 +94,8 @@ public class AddMusicCommand extends BasicCommand{
 						embed.setDescription(audioTrack.getInfo().title);
 						embed.addField("Requester", event.getAuthor().getAsMention(), true);
 						embed.addField("ETA", getDuration(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + before.stream().mapToLong(AudioTrack::getDuration).sum()), true);
-						embed.addField("Repeating", "" + repeat, true);
-						embed.addField("Position in queue", "" + (GunterAudioManager.currentTrack(event.getGuild()).equals(track) ? 0 : (1 + before.size())), true);
+						embed.addField("Repeating", String.valueOf(repeat), true);
+						embed.addField("Position in queue", String.valueOf(GunterAudioManager.currentTrack(event.getGuild()).equals(track) ? 0 : (1 + before.size())), true);
 						Actions.reply(event, embed.build());
 					}
 					else{

@@ -6,16 +6,16 @@ public class ChannelLeftIRCMessage implements IRCMessage{
 	private final String channel;
 	private final IRCUser user;
 	
-	public ChannelLeftIRCMessage(IRCUser user, String channel){
+	public ChannelLeftIRCMessage(final IRCUser user, final String channel){
 		this.user = user;
 		this.channel = channel;
 	}
 	
 	public String getChannel(){
-		return channel;
+		return this.channel;
 	}
 	
 	public IRCUser getUser(){
-		return user;
+		return this.user;
 	}
 }

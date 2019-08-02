@@ -40,7 +40,7 @@ public class OverwatchGameAttributes{
 		return this.mapGuid;
 	}
 	
-	public String getMap(){
+	private String getMap(){
 		return this.map;
 	}
 }

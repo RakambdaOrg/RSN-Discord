@@ -33,7 +33,7 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 		private final AniListMediaType type;
 		private final TextChannel channel;
 		
-		AniListMediaUserListDifferencesRunner(final JDA jda, final AniListMediaType type, TextChannel channel){
+		AniListMediaUserListDifferencesRunner(final JDA jda, final AniListMediaType type, final TextChannel channel){
 			this.jda = jda;
 			this.type = type;
 			this.channel = channel;
@@ -41,9 +41,9 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 		
 		@Override
 		public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<AniListMediaUserList>> userMedias){
-			for(final var user : userMedias.keySet()){
-				userMedias.keySet().parallelStream().filter(user2 -> !Objects.equals(user, user2)).forEach(userCompare -> {
-					final var user1Iterator = userMedias.get(user).iterator();
+			for(final var entry : userMedias.entrySet()){
+				userMedias.keySet().parallelStream().filter(user2 -> !Objects.equals(entry.getKey(), user2)).forEach(userCompare -> {
+					final var user1Iterator = entry.getValue().iterator();
 					while(user1Iterator.hasNext()){
 						final var media = user1Iterator.next().getMedia();
 						final var user2Iterator = userMedias.get(userCompare).iterator();
@@ -57,7 +57,7 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 					}
 				});
 			}
-			userMedias.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> ImmutablePair.of(es.getKey(), val))).filter(pair -> pair.getValue().getMedia().getType().equals(this.type)).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
+			userMedias.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> ImmutablePair.of(es.getKey(), val))).filter(pair -> pair.getValue().getMedia().getType() == this.type).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> this.buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
 		}
 		
 		@Override
@@ -79,7 +79,7 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 		
 		@Nonnull
 		@Override
-		public AniListMediaUserListPagedQuery initQuery(@Nonnull Member member){
+		public AniListMediaUserListPagedQuery initQuery(@Nonnull final Member member){
 			return new AniListMediaUserListPagedQuery(AniListUtils.getUserId(member).orElseThrow());
 		}
 		

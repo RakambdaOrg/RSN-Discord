@@ -43,7 +43,7 @@ public abstract class BasicCommand implements Command{
 		if(event.isWebhookMessage()){
 			throw new NotHandledException("This message is from a webhook");
 		}
-		if(!isAllowed(event.getMember())){
+		if(!this.isAllowed(event.getMember())){
 			throw new NotAllowedException("You're not allowed to execute this command");
 		}
 		return CommandResult.SUCCESS;
@@ -52,7 +52,7 @@ public abstract class BasicCommand implements Command{
 	@Nonnull
 	@Override
 	public String getCommandUsage(){
-		return Objects.isNull(getParent()) || getParent() instanceof CommandComposite ? "" : getParent().getCommandUsage();
+		return Objects.isNull(this.getParent()) || this.getParent() instanceof CommandComposite ? "" : this.getParent().getCommandUsage();
 	}
 	
 	@Nullable

@@ -18,7 +18,7 @@ import java.util.List;
 public class StopwatchCommand extends BasicCommand{
 	@Nonnull
 	@Override
-	public CommandResult execute(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Stopwatch");
 		builder.addField("Time", "", false);

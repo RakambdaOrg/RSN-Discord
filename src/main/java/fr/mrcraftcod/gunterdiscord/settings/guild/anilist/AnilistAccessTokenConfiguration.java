@@ -55,18 +55,18 @@ public class AnilistAccessTokenConfiguration{
 	
 	@Override
 	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(getToken()).toHashCode();
+		return new HashCodeBuilder(17, 37).append(this.getToken()).toHashCode();
 	}
 	
 	@Override
-	public boolean equals(Object o){
+	public boolean equals(final Object o){
 		if(this == o){
 			return true;
 		}
 		if(!(o instanceof AnilistAccessTokenConfiguration)){
 			return false;
 		}
-		AnilistAccessTokenConfiguration that = (AnilistAccessTokenConfiguration) o;
-		return new EqualsBuilder().append(getToken(), that.getToken()).isEquals();
+		final var that = (AnilistAccessTokenConfiguration) o;
+		return new EqualsBuilder().append(this.getToken(), that.getToken()).isEquals();
 	}
 }

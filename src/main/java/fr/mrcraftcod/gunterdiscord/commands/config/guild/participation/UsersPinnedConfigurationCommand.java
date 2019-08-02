@@ -12,23 +12,18 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class UsersPinnedConfigurationCommand extends SetConfigurationCommand<UserConfiguration>{
-	public UsersPinnedConfigurationCommand(@Nullable Command parent){
+	public UsersPinnedConfigurationCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Nonnull
 	@Override
-	protected Optional<Set<UserConfiguration>> getConfig(@Nonnull Guild guild){
+	protected Optional<Set<UserConfiguration>> getConfig(@Nonnull final Guild guild){
 		return Optional.of(NewSettings.getConfiguration(guild).getParticipationConfiguration().getUsersPinned());
 	}
 	
 	@Override
-	protected void removeConfig(@Nonnull Guild guild, @Nonnull UserConfiguration value){
-		NewSettings.getConfiguration(guild).getParticipationConfiguration().getUsersPinned().remove(value);
-	}
-	
-	@Override
-	protected void createConfig(@Nonnull Guild guild, @Nonnull UserConfiguration value){
+	protected void createConfig(@Nonnull final Guild guild, @Nonnull final UserConfiguration value){
 		final var set = new HashSet<UserConfiguration>();
 		set.add(value);
 		NewSettings.getConfiguration(guild).getParticipationConfiguration().setUsersPinned(set);
@@ -36,12 +31,17 @@ public class UsersPinnedConfigurationCommand extends SetConfigurationCommand<Use
 	
 	@Nonnull
 	@Override
-	protected UserConfiguration extractValue(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalArgumentException{
+	protected UserConfiguration extractValue(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws IllegalArgumentException{
 		if(event.getMessage().getMentionedUsers().isEmpty())
 		{
 			throw new IllegalArgumentException("Please mention a user");
 		}
 		return new UserConfiguration(event.getMessage().getMentionedUsers().get(0));
+	}
+	
+	@Override
+	protected void removeConfig(@Nonnull final Guild guild, @Nonnull final UserConfiguration value){
+		NewSettings.getConfiguration(guild).getParticipationConfiguration().getUsersPinned().remove(value);
 	}
 	
 	@Nonnull
@@ -57,7 +57,7 @@ public class UsersPinnedConfigurationCommand extends SetConfigurationCommand<Use
 	}
 	
 	@Override
-	public void addHelp(@Nonnull Guild guild, @Nonnull EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("User", "The user to add or remove", false);
 	}

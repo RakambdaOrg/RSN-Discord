@@ -15,7 +15,7 @@ public enum OverwatchBracketType{
 		try{
 			return OverwatchBracketType.valueOf(value);
 		}
-		catch(IllegalArgumentException e){
+		catch(final IllegalArgumentException e){
 			LOGGER.warn("Unknown bracket type {}", value);
 		}
 		return UNKNOWN;

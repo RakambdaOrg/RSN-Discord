@@ -41,7 +41,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 			}
 			return null;
 		}).filter(Objects::nonNull).filter(c -> c instanceof Command).map(c -> (Command) c).peek(c -> Log.getLogger(null).info("Loaded command {}", c.getClass().getName())).collect(Collectors.toSet());
-		commands.forEach(command -> command.getCommandStrings().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
+		this.commands.forEach(command -> command.getCommandStrings().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
 		final var clash = counts.keySet().stream().filter(key -> counts.get(key) > 1).collect(Collectors.joining(", "));
 		if(Objects.nonNull(clash) && !clash.isEmpty()){
 			getLogger(null).error("Command clash: {}", clash);
@@ -56,11 +56,11 @@ public class CommandsMessageListener extends ListenerAdapter{
 				Actions.deleteMessage(event.getMessage());
 				final var args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 				final var cmdText = args.pop().substring(NewSettings.getConfiguration(event.getGuild()).getPrefix().orElse(defaultPrefix).length());
-				getCommand(cmdText).ifPresentOrElse(command -> {
+				this.getCommand(cmdText).ifPresentOrElse(command -> {
 					if(Objects.equals(command.getScope(), -5) || Objects.equals(command.getScope(), event.getChannel().getType().getId())){
 						try{
 							getLogger(event.getGuild()).info("Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(), event.getAuthor(), args);
-							if(Objects.equals(command.execute(event, args), CommandResult.FAILED)){
+							if(command.execute(event, args) == CommandResult.FAILED){
 								Actions.replyPrivate(event.getGuild(), event.getAuthor(), "An error occurred");
 							}
 						}

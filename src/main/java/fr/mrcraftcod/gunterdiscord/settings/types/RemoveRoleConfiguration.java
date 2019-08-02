@@ -29,7 +29,7 @@ public class RemoveRoleConfiguration{
 	public RemoveRoleConfiguration(){
 	}
 	
-	public RemoveRoleConfiguration(@Nonnull User user, @Nonnull Role role, @Nonnull LocalDateTime date){
+	public RemoveRoleConfiguration(@Nonnull final User user, @Nonnull final Role role, @Nonnull final LocalDateTime date){
 		this.user = new UserConfiguration(user);
 		this.role = new RoleConfiguration(role);
 		this.date = date;
@@ -37,34 +37,34 @@ public class RemoveRoleConfiguration{
 	
 	@Override
 	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(getUser()).append(getRole()).toHashCode();
-	}
-	
-	public LocalDateTime getEndDate(){
-		return date;
+		return new HashCodeBuilder(17, 37).append(this.getUser()).append(this.getRole()).toHashCode();
 	}
 	
 	@Override
-	public boolean equals(Object o){
+	public boolean equals(final Object o){
 		if(this == o){
 			return true;
 		}
 		if(!(o instanceof RemoveRoleConfiguration)){
 			return false;
 		}
-		RemoveRoleConfiguration that = (RemoveRoleConfiguration) o;
-		return new EqualsBuilder().append(getUser(), that.getUser()).append(getRole(), that.getRole()).isEquals();
+		final var that = (RemoveRoleConfiguration) o;
+		return new EqualsBuilder().append(this.getUser(), that.getUser()).append(this.getRole(), that.getRole()).isEquals();
 	}
 	
 	public UserConfiguration getUser(){
-		return user;
+		return this.user;
+	}
+	
+	public LocalDateTime getEndDate(){
+		return this.date;
 	}
 	
 	public RoleConfiguration getRole(){
 		return this.role;
 	}
 	
-	public void setEndDate(@Nonnull LocalDateTime date){
+	public void setEndDate(@Nonnull final LocalDateTime date){
 		this.date = date;
 	}
 }

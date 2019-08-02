@@ -32,14 +32,14 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 	@Override
 	protected void onIRCChannelJoined(@Nonnull final ChannelJoinIRCMessage event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
-			Log.getLogger(getGuild()).info("Joined {}", event.getChannel());
+			Log.getLogger(this.getGuild()).info("Joined {}", event.getChannel());
 		}
 	}
 	
 	@Override
 	protected void onIRCChannelLeft(@Nonnull final ChannelLeftIRCMessage event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
-			Log.getLogger(getGuild()).info("Left {}", event.getChannel());
+			Log.getLogger(this.getGuild()).info("Left {}", event.getChannel());
 		}
 	}
 	
@@ -55,7 +55,7 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 				final var split = v.split("/");
 				return new TwitchBadge(split[0], split[1]);
 			})).collect(Collectors.toList());
-			var displayName = event.getTags().stream().filter(t -> Objects.equals("display-name", t.getKey())).map(IRCTag::getValue).filter(Objects::nonNull).filter(t -> !t.isBlank()).findFirst().orElse(event.getUser().toString());
+			final var displayName = event.getTags().stream().filter(t -> Objects.equals("display-name", t.getKey())).map(IRCTag::getValue).filter(Objects::nonNull).filter(t -> !t.isBlank()).findFirst().orElse(event.getUser().toString());
 			var role = "";
 			if(badges.stream().anyMatch(t -> Objects.equals("broadcaster", t.getName()))){
 				role = "(boss)";
@@ -75,12 +75,12 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 	}
 	
 	@Override
-	protected void onInfoMessage(InfoMessageIRCMessage event){
+	protected void onInfoMessage(final InfoMessageIRCMessage event){
 		Log.getLogger(this.getGuild()).info("IRC Info: {}", event.getMessage());
 	}
 	
 	@Override
-	protected void onUserNotice(UserNoticeIRCMessage event){
+	protected void onUserNotice(final UserNoticeIRCMessage event){
 		Actions.sendMessage(this.channel, "__NOTICE__: %s", event.getTags().stream().filter(t -> Objects.equals("system-msg", t.getKey())).map(IRCTag::getValue).map(v -> v.replace("\\s", " ").trim()).findFirst().orElse("UNKNOWN"));
 	}
 	
@@ -94,7 +94,7 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 	}
 	
 	@Override
-	public void onEvent(@Nonnull GenericEvent event){
+	public void onEvent(@Nonnull final GenericEvent event){
 		if(event instanceof GuildMessageReceivedEvent){
 			final var evt = (GuildMessageReceivedEvent) event;
 			try{
@@ -102,7 +102,7 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 					TwitchIRC.sendMessage(evt.getGuild(), this.ircChannel, ((GuildMessageReceivedEvent) event).getAuthor().getName() + " -> " + evt.getMessage().getContentRaw());
 				}
 			}
-			catch(Exception e){
+			catch(final Exception e){
 				Log.getLogger(evt.getGuild()).error("Failed to transfer message", e);
 			}
 		}

@@ -73,7 +73,7 @@ public class HelpCommand extends BasicCommand{
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			if(command.isPresent()){
 				builder.setColor(Color.GREEN);
-				builder.setTitle(getName());
+				builder.setTitle(this.getName());
 				builder.addField("Name", command.get().getName(), true);
 				builder.addField("Description", command.get().getDescription(), true);
 				builder.addField("Command", String.join(", ", command.get().getCommandStrings()), false);

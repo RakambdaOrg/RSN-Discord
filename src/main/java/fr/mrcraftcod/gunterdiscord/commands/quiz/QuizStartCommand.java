@@ -20,6 +20,8 @@ import java.util.List;
  * @since 2018-05-27
  */
 public class QuizStartCommand extends BasicCommand{
+	private static final int DEFAULT_START_DELAY = 60;
+	
 	/**
 	 * Constructor.
 	 *
@@ -41,7 +43,7 @@ public class QuizStartCommand extends BasicCommand{
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		var amount = Integer.MAX_VALUE;
-		var delay = 60;
+		var delay = DEFAULT_START_DELAY;
 		if(!args.isEmpty()){
 			try{
 				amount = Integer.parseInt(args.poll());

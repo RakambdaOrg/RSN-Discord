@@ -53,7 +53,7 @@ public class LuxBusLineSelectionWaitingReply extends BasicWaitingUserReply{
 	}
 	
 	@Override
-	public boolean onExecute(@Nonnull GuildMessageReactionAddEvent event){
+	public boolean onExecute(@Nonnull final GuildMessageReactionAddEvent event){
 		return false;
 	}
 	

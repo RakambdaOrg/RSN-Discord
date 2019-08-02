@@ -15,7 +15,7 @@ public class OverwatchTournament{
 	private OverwatchTournamentType type;
 	
 	@Override
-	public boolean equals(Object obj){
+	public boolean equals(final Object obj){
 		return obj instanceof OverwatchTournament && Objects.equals(this.getId(), ((OverwatchTournament) obj).getId());
 	}
 	

@@ -10,7 +10,7 @@ import java.io.IOException;
 public class OverwatchLocalizedStringDeserializer extends JsonDeserializer<String>{
 	@Override
 	public String deserialize(@Nonnull final JsonParser jsonParser, @Nonnull final DeserializationContext deserializationContext) throws IOException{
-		JsonNode weekNode = jsonParser.getCodec().readTree(jsonParser);
+		final JsonNode weekNode = jsonParser.getCodec().readTree(jsonParser);
 		return weekNode.get("en_US").textValue();
 	}
 }

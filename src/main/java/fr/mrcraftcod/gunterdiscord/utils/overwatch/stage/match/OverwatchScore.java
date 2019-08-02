@@ -12,11 +12,11 @@ public class OverwatchScore implements Comparable<OverwatchScore>{
 	private int value;
 	
 	@Override
-	public int compareTo(@Nonnull OverwatchScore overwatchScore){
+	public int compareTo(@Nonnull final OverwatchScore overwatchScore){
 		return Integer.compare(this.getValue(), overwatchScore.getValue());
 	}
 	
 	public int getValue(){
-		return value;
+		return this.value;
 	}
 }

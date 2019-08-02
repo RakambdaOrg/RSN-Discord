@@ -9,7 +9,7 @@ import java.time.ZoneId;
 
 public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime>{
 	@Override
-	public void serialize(LocalDateTime date, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException{
+	public void serialize(final LocalDateTime date, final JsonGenerator jsonGenerator, final SerializerProvider serializerProvider) throws IOException{
 		jsonGenerator.writeNumber(date.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli());
 	}
 }

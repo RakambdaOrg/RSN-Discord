@@ -51,7 +51,7 @@ public abstract class AniListMedia implements AniListObject{
 	
 	@Override
 	public boolean equals(@Nullable final Object obj){
-		return obj instanceof AniListMedia && Objects.equals(((AniListMedia) obj).getId(), getId());
+		return obj instanceof AniListMedia && Objects.equals(((AniListObject) obj).getId(), this.getId());
 	}
 	
 	@Nonnull
@@ -64,17 +64,17 @@ public abstract class AniListMedia implements AniListObject{
 	
 	@Override
 	public void fillEmbed(@Nonnull final EmbedBuilder builder){
-		builder.setDescription(getTitle().getUserPreferred());
-		if(getType().shouldDisplay()){
-			builder.addField("Type", getType().toString(), true);
+		builder.setDescription(this.getTitle().getUserPreferred());
+		if(this.getType().shouldDisplay()){
+			builder.addField("Type", this.getType().toString(), true);
 		}
-		builder.addField("Format", Optional.of(getFormat()).map(Enum::toString).orElse("UNKNOWN"), true);
-		builder.addField("Status", Optional.of(getStatus()).map(Enum::toString).orElse("UNKNOWN"), true);
-		if(isAdult()){
+		builder.addField("Format", Optional.of(this.getFormat()).map(Enum::toString).orElse("UNKNOWN"), true);
+		builder.addField("Status", Optional.of(this.getStatus()).map(Enum::toString).orElse("UNKNOWN"), true);
+		if(this.isAdult()){
 			builder.addField("Adult content", "", true);
 		}
 		//builder.addField("Link", getUrl(), false);
-		builder.setThumbnail(getCoverImage().getLarge().toString());
+		builder.setThumbnail(this.getCoverImage().getLarge().toString());
 	}
 	
 	@Nonnull
@@ -119,7 +119,7 @@ public abstract class AniListMedia implements AniListObject{
 
 	@Override
 	public int compareTo(@Nonnull final AniListObject o){
-		return Integer.compare(getId(), o.getId());
+		return Integer.compare(this.getId(), o.getId());
 	}
 	
 	@Nullable

@@ -1,16 +1,16 @@
 package fr.mrcraftcod.gunterdiscord.commands.config.guild;
 
-import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import fr.mrcraftcod.gunterdiscord.commands.config.guild.questions.InputChannelConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.commands.config.guild.questions.OutputChannelConfigurationCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
+import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.api.entities.ChannelType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
 public class QuestionsConfigurationCommandComposite extends CommandComposite{
-	public QuestionsConfigurationCommandComposite(@Nullable Command parent){
+	public QuestionsConfigurationCommandComposite(@Nullable final Command parent){
 		super(parent);
 		this.addSubCommand(new InputChannelConfigurationCommand(this));
 		this.addSubCommand(new OutputChannelConfigurationCommand(this));

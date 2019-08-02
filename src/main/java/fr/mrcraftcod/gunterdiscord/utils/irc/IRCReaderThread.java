@@ -17,6 +17,7 @@ import java.util.Objects;
 @SuppressWarnings("WeakerAccess")
 public class IRCReaderThread extends Thread implements Closeable{
 	private static final Logger LOGGER = LoggerFactory.getLogger(IRCReaderThread.class);
+	public static final double MESSAGE_TIMEOUT = 6.048e8;
 	private final BufferedReader reader;
 	private final IRCClient client;
 	private boolean stop;
@@ -42,7 +43,7 @@ public class IRCReaderThread extends Thread implements Closeable{
 									final var iterator = this.client.getListeners().iterator();
 									while(iterator.hasNext()){
 										final var listener = iterator.next();
-										if(listener.getLastMessage() > 6.048e8){
+										if(listener.getLastMessage() > MESSAGE_TIMEOUT){
 											iterator.remove();
 											TwitchIRC.disconnect(listener.getGuild(), listener.getUser(), false);
 										}
@@ -68,7 +69,7 @@ public class IRCReaderThread extends Thread implements Closeable{
 					}
 				}
 			}
-			catch(SocketTimeoutException e){
+			catch(final SocketTimeoutException e){
 				LOGGER.error("Socket timed out");
 				this.client.timedOut();
 			}

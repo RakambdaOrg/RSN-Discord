@@ -19,10 +19,10 @@ public class PhotoCommandComposite extends CommandComposite{
 	 */
 	public PhotoCommandComposite(){
 		super();
-		addSubCommand(new PhotoGetCommand(this));
-		addSubCommand(new PhotoDeleteCommand(this));
-		addSubCommand(new PhotoAddCommand(this));
-		addSubCommand(new PhotoListCommand(this));
+		this.addSubCommand(new PhotoGetCommand(this));
+		this.addSubCommand(new PhotoDeleteCommand(this));
+		this.addSubCommand(new PhotoAddCommand(this));
+		this.addSubCommand(new PhotoListCommand(this));
 	}
 	
 	

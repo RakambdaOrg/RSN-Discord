@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class AniListConfigurationCommandComposite extends CommandComposite{
-	public AniListConfigurationCommandComposite(@Nullable Command parent){
+	public AniListConfigurationCommandComposite(@Nullable final Command parent){
 		super(parent);
 		this.addSubCommand(new NotificationChannelConfigurationCommand(this));
 		this.addSubCommand(new ThaChannelConfigurationCommand(this));

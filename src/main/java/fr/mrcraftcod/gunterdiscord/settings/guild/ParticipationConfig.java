@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true, value = {
 		"usersLock",
 		"emotesLock"
@@ -37,12 +38,12 @@ public class ParticipationConfig{
 	public ParticipationConfig(){
 	}
 	
-	public EntityParticipation getUsers(@Nonnull LocalDate date){
+	public EntityParticipation getUsers(@Nonnull final LocalDate date){
 		return this.getUsers(date, true).orElseThrow();
 	}
 	
-	public Optional<EntityParticipation> getUsers(@Nonnull LocalDate date, boolean create){
-		synchronized(usersLock){
+	public Optional<EntityParticipation> getUsers(@Nonnull final LocalDate date, final boolean create){
+		synchronized(this.usersLock){
 			return this.usersParticipation.stream().filter(p -> Objects.equals(date, p.getDate())).findFirst().or(() -> {
 				if(create){
 					final var p = new EntityParticipation(date);
@@ -54,25 +55,17 @@ public class ParticipationConfig{
 		}
 	}
 	
-	private void addUserParticipation(@Nonnull EntityParticipation entityParticipation){
+	private void addUserParticipation(@Nonnull final EntityParticipation entityParticipation){
 		this.usersParticipation.add(entityParticipation);
 	}
 	
 	@Nonnull
-	public EntityParticipation getEmotes(@Nonnull LocalDate date){
+	public EntityParticipation getEmotes(@Nonnull final LocalDate date){
 		return this.getEmotes(date, true).orElseThrow();
 	}
 	
-	public void removeUsers(@Nonnull LocalDate date){
-		this.usersParticipation.removeIf(p -> Objects.equals(p.getDate(), date));
-	}
-	
-	public void removeEmotes(@Nonnull LocalDate date){
-		this.emotesParticipation.removeIf(p -> Objects.equals(p.getDate(), date));
-	}
-	
-	public Optional<EntityParticipation> getEmotes(LocalDate date, boolean create){
-		synchronized(emotesLock){
+	public Optional<EntityParticipation> getEmotes(final LocalDate date, final boolean create){
+		synchronized(this.emotesLock){
 			return this.emotesParticipation.stream().filter(p -> Objects.equals(date, p.getDate())).findFirst().or(() -> {
 				if(create){
 					final var p = new EntityParticipation(date);
@@ -84,15 +77,23 @@ public class ParticipationConfig{
 		}
 	}
 	
-	private void addEmoteParticipation(@Nonnull EntityParticipation entityParticipation){
+	private void addEmoteParticipation(@Nonnull final EntityParticipation entityParticipation){
 		this.emotesParticipation.add(entityParticipation);
 	}
 	
-	public void removeEmotesBefore(@Nonnull LocalDate week){
+	public void removeUsers(@Nonnull final LocalDate date){
+		this.usersParticipation.removeIf(p -> Objects.equals(p.getDate(), date));
+	}
+	
+	public void removeEmotes(@Nonnull final LocalDate date){
+		this.emotesParticipation.removeIf(p -> Objects.equals(p.getDate(), date));
+	}
+	
+	public void removeEmotesBefore(@Nonnull final LocalDate week){
 		this.emotesParticipation.removeIf(p -> p.getDate().isBefore(week));
 	}
 	
-	public void removeUsersBefore(LocalDate date){
+	public void removeUsersBefore(final LocalDate date){
 		this.usersParticipation.removeIf(p -> p.getDate().isBefore(date));
 	}
 	
@@ -106,7 +107,7 @@ public class ParticipationConfig{
 		return Optional.ofNullable(this.reportChannel);
 	}
 	
-	public void setReportChannel(@Nullable ChannelConfiguration value){
+	public void setReportChannel(@Nullable final ChannelConfiguration value){
 		this.reportChannel = value;
 	}
 	
@@ -115,7 +116,7 @@ public class ParticipationConfig{
 		return this.usersPinned;
 	}
 	
-	public void setUsersPinned(@Nonnull Set<UserConfiguration> usersPinned){
+	public void setUsersPinned(@Nonnull final Set<UserConfiguration> usersPinned){
 		this.usersPinned = usersPinned;
 	}
 }

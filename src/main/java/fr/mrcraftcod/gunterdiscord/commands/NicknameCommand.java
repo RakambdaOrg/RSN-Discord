@@ -18,7 +18,10 @@ import java.awt.Color;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -78,7 +81,7 @@ public class NicknameCommand extends BasicCommand{
 				builder.addField("User", member.getAsMention(), true);
 				builder.addField("Reason", "You can change your nickname once every " + delay.toString().replace("PT", ""), true);
 				builder.addField("Last change", lastChange.format(DF), true);
-				builder.setTimestamp(new Date().toInstant());
+				builder.setTimestamp(LocalDateTime.now());
 				Actions.reply(event, builder.build());
 			}
 			else{

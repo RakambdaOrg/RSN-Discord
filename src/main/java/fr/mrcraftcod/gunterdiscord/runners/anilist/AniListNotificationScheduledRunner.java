@@ -28,13 +28,13 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 	private final JDA jda;
 	
 	public AniListNotificationScheduledRunner(@Nonnull final JDA jda){
-		getLogger(null).info("Creating AniList {} runner", getRunnerName());
+		getLogger(null).info("Creating AniList {} runner", this.getRunnerName());
 		this.jda = jda;
 	}
 	
 	@Override
 	public void run(){
-		runQueryOnEveryUserAndDefaultChannels();
+		this.runQueryOnEveryUserAndDefaultChannels();
 	}
 	
 	@Override
@@ -43,21 +43,8 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 	}
 	
 	@Override
-	public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<AniListAiringNotification>> userElements){
-		final var notifications = new HashMap<AniListAiringNotification, List<User>>();
-		for(final var user : userElements.keySet()){
-			for(final var notification : userElements.get(user)){
-				notifications.putIfAbsent(notification, new LinkedList<>());
-				notifications.get(notification).add(user);
-			}
-		}
-		notifications.entrySet().stream().sorted(Comparator.comparing(e -> e.getKey().getDate())).forEachOrdered(e -> channels.forEach(channel -> {
-			final var mentions = e.getValue().stream().filter(u -> sendToChannel(channel, u)).distinct().map(User::getAsMention).collect(Collectors.toList());
-			if(!mentions.isEmpty()){
-				Actions.sendMessage(channel, String.join("\n", mentions));
-				Actions.sendMessage(channel, buildMessage(null, e.getKey()));
-			}
-		}));
+	public List<TextChannel> getChannels(){
+		return this.getJDA().getGuilds().stream().map(g -> NewSettings.getConfiguration(g).getAniListConfiguration().getNotificationsChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 	
 	@Override
@@ -66,8 +53,21 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 	}
 	
 	@Override
-	public List<TextChannel> getChannels(){
-		return getJDA().getGuilds().stream().map(g -> NewSettings.getConfiguration(g).getAniListConfiguration().getNotificationsChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
+	public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<AniListAiringNotification>> userElements){
+		final var notifications = new HashMap<AniListAiringNotification, List<User>>();
+		for(final var entry : userElements.entrySet()){
+			for(final var notification : entry.getValue()){
+				notifications.putIfAbsent(notification, new LinkedList<>());
+				notifications.get(notification).add(entry.getKey());
+			}
+		}
+		notifications.entrySet().stream().sorted(Comparator.comparing(e -> e.getKey().getDate())).forEachOrdered(e -> channels.forEach(channel -> {
+			final var mentions = e.getValue().stream().filter(u -> this.sendToChannel(channel, u)).distinct().map(User::getAsMention).collect(Collectors.toList());
+			if(!mentions.isEmpty()){
+				Actions.sendMessage(channel, String.join("\n", mentions));
+				Actions.sendMessage(channel, this.buildMessage(null, e.getKey()));
+			}
+		}));
 	}
 	
 	@Nonnull
@@ -84,8 +84,8 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 	
 	@Nonnull
 	@Override
-	public AniListNotificationsPagedQuery initQuery(@Nonnull Member member){
-		return new AniListNotificationsPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(getFetcherID()).stream().filter(c -> Objects.equals(c.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
+	public AniListNotificationsPagedQuery initQuery(@Nonnull final Member member){
+		return new AniListNotificationsPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(this.getFetcherID()).stream().filter(c -> Objects.equals(c.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
 	}
 	
 	@Override

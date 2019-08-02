@@ -17,7 +17,9 @@ import java.util.stream.Collectors;
 
 public class LuxBusUtils{
 	private static final Logger LOGGER = LoggerFactory.getLogger(LuxBusUtils.class);
-	private static Set<LuxBusStop> stops = new HashSet<>();
+	private static final int DATA_TIMEOUT = 3600000;
+	private static final int HTTP_OK = 200;
+	private static final Set<LuxBusStop> stops = new HashSet<>();
 	private static long lastCheck = 0;
 	
 	@Nonnull
@@ -33,29 +35,11 @@ public class LuxBusUtils{
 	}
 	
 	@Nonnull
-	static Set<LuxBusStop> getStopIds(){
-		if(System.currentTimeMillis() - lastCheck > 3600000){
-			lastCheck = System.currentTimeMillis();
-			LOGGER.debug("Fetching bus stop infos");
-			try{
-				final var request = new StringGetRequestSender("http://travelplanner.mobiliteit.lu/hafas/query.exe/dot?performLocating=2&tpl=stop2csv&look_maxdist=150000&look_x=6112550&look_y=49610700&stationProxy=yes").getRequestHandler();
-				if(request.getStatus() == 200){
-					Arrays.stream(request.getRequestResult().split(";")).map(s -> s.replace("id=", "").replace("\n", "").trim()).filter(s -> !s.isBlank()).map(LuxBusStop::createStop).filter(stop -> !stops.contains(stop)).forEach(stop -> stops.add(stop));
-				}
-			}
-			catch(final URISyntaxException | MalformedURLException e){
-				LOGGER.warn("Failed to get bus stops", e);
-			}
-		}
-		return stops;
-	}
-	
-	@Nonnull
 	public static List<LuxBusDeparture> getDepartures(@Nonnull final LuxBusStop stop){
 		try{
 			LOGGER.info("Getting departures for stop {}", stop);
 			final var request = new JSONGetRequestSender(String.format("http://travelplanner.mobiliteit.lu/restproxy/departureBoard?accessId=cdt&format=json&id=%s", URLEncoder.encode(stop.getId(), StandardCharsets.UTF_8))).getRequestHandler();
-			if(request.getStatus() == 200){
+			if(request.getStatus() == HTTP_OK){
 				final var response = request.getRequestResult().getObject();
 				if(response.has("Departure")){
 					final var departuresList = new ArrayList<LuxBusDeparture>();
@@ -81,5 +65,23 @@ public class LuxBusUtils{
 			LOGGER.warn("Failed to get bus stop departures (id: {})", stop, e);
 		}
 		return List.of();
+	}
+	
+	@Nonnull
+	static Set<LuxBusStop> getStopIds(){
+		if(System.currentTimeMillis() - lastCheck > DATA_TIMEOUT){
+			lastCheck = System.currentTimeMillis();
+			LOGGER.debug("Fetching bus stop infos");
+			try{
+				final var request = new StringGetRequestSender("http://travelplanner.mobiliteit.lu/hafas/query.exe/dot?performLocating=2&tpl=stop2csv&look_maxdist=150000&look_x=6112550&look_y=49610700&stationProxy=yes").getRequestHandler();
+				if(request.getStatus() == HTTP_OK){
+					Arrays.stream(request.getRequestResult().split(";")).map(s -> s.replace("id=", "").replace("\n", "").trim()).filter(s -> !s.isBlank()).map(LuxBusStop::createStop).filter(stop -> !stops.contains(stop)).forEach(stops::add);
+				}
+			}
+			catch(final URISyntaxException | MalformedURLException e){
+				LOGGER.warn("Failed to get bus stops", e);
+			}
+		}
+		return stops;
 	}
 }

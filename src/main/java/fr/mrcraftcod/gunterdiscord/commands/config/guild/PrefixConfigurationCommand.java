@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.config.guild;
 
-import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.config.helpers.ValueConfigurationCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -12,19 +12,19 @@ import java.util.List;
 import java.util.Optional;
 
 public class PrefixConfigurationCommand extends ValueConfigurationCommand<String>{
-	public PrefixConfigurationCommand(@Nullable Command parent){
+	public PrefixConfigurationCommand(@Nullable final Command parent){
 		super(parent);
-	}
-	
-	@Override
-	protected void removeConfig(@Nonnull Guild guild){
-		NewSettings.getConfiguration(guild).setPrefix(null);
 	}
 	
 	@Nonnull
 	@Override
-	protected Optional<String> getConfig(@Nonnull Guild guild){
+	protected Optional<String> getConfig(@Nonnull final Guild guild){
 		return NewSettings.getConfiguration(guild).getPrefix();
+	}
+	
+	@Override
+	protected void setConfig(@Nonnull final Guild guild, @Nonnull final String value){
+		NewSettings.getConfiguration(guild).setPrefix(value);
 	}
 	
 	@Override
@@ -33,16 +33,16 @@ public class PrefixConfigurationCommand extends ValueConfigurationCommand<String
 	}
 	
 	@Override
-	protected void setConfig(@Nonnull Guild guild, @Nonnull String value){
-		NewSettings.getConfiguration(guild).setPrefix(value);
-	}
-	
-	@Override
-	protected String extractValue(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args){
+	protected String extractValue(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
 		if(args.isEmpty()){
 			throw new IllegalArgumentException("Please provide the value");
 		}
 		return args.pop();
+	}
+	
+	@Override
+	protected void removeConfig(@Nonnull final Guild guild){
+		NewSettings.getConfiguration(guild).setPrefix(null);
 	}
 	
 	@Nonnull

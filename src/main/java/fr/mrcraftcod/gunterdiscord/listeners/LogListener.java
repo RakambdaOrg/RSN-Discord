@@ -70,11 +70,8 @@ public class LogListener extends ListenerAdapter{
 		}
 	}
 	
-	public static long getDaysToRemove(DayOfWeek dayOfWeek){
+	public static long getDaysToRemove(final DayOfWeek dayOfWeek){
 		switch(dayOfWeek){
-			default:
-			case MONDAY:
-				return 0;
 			case TUESDAY:
 				return 1;
 			case WEDNESDAY:
@@ -87,6 +84,9 @@ public class LogListener extends ListenerAdapter{
 				return 5;
 			case SUNDAY:
 				return 6;
+			case MONDAY:
+			default:
+				return 0;
 		}
 	}
 	

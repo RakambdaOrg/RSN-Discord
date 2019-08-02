@@ -22,6 +22,9 @@ import java.util.Optional;
  * @since 2018-04-13
  */
 public class Utilities{
+	private static final long RAKSRINANA_ACCOUNT = 170119951498084352L;
+	private static final long LOPINETTE_ACCOUNT = 432628353024131085L;
+	
 	/**
 	 * Check if a member have a role.
 	 *
@@ -98,7 +101,7 @@ public class Utilities{
 	 * @return True if the creator, false otherwise.
 	 */
 	public static boolean isCreator(@Nullable final Member member){
-		return Objects.nonNull(member) && (Objects.equals(member.getUser().getIdLong(), 170119951498084352L) || Objects.equals(member.getUser().getIdLong(), 432628353024131085L));
+		return Objects.nonNull(member) && (Objects.equals(member.getUser().getIdLong(), RAKSRINANA_ACCOUNT) || Objects.equals(member.getUser().getIdLong(), LOPINETTE_ACCOUNT));
 	}
 	
 	/**
@@ -182,7 +185,7 @@ public class Utilities{
 		return null;
 	}
 	
-	public static String capitalize(String s){
+	public static String capitalize(final String s){
 		if(Objects.isNull(s) || s.isBlank()){
 			return s;
 		}

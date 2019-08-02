@@ -31,7 +31,7 @@ public enum AniListActivityType{
 	
 	@Nonnull
 	public AniListListActivity getInstance() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException{
-		return getKlass().getConstructor().newInstance();
+		return this.getKlass().getConstructor().newInstance();
 	}
 	
 	@Nonnull

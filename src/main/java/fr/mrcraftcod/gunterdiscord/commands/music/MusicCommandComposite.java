@@ -25,16 +25,16 @@ public class MusicCommandComposite extends CommandComposite{
 	 * Constructor.
 	 */
 	public MusicCommandComposite(){
-		addSubCommand(new AddMusicCommand(this));
-		addSubCommand(new StopMusicCommand(this));
-		addSubCommand(new PauseMusicCommand(this));
-		addSubCommand(new ResumeMusicCommand(this));
-		addSubCommand(new NowPlayingMusicCommand(this));
-		addSubCommand(new SeekMusicCommand(this));
-		addSubCommand(new SkipMusicCommand(this));
-		addSubCommand(new QueueMusicCommand(this));
-		addSubCommand(new ShuffleMusicCommand(this));
-		addSubCommand(new MoveMusicCommand(this));
+		this.addSubCommand(new AddMusicCommand(this));
+		this.addSubCommand(new StopMusicCommand(this));
+		this.addSubCommand(new PauseMusicCommand(this));
+		this.addSubCommand(new ResumeMusicCommand(this));
+		this.addSubCommand(new NowPlayingMusicCommand(this));
+		this.addSubCommand(new SeekMusicCommand(this));
+		this.addSubCommand(new SkipMusicCommand(this));
+		this.addSubCommand(new QueueMusicCommand(this));
+		this.addSubCommand(new ShuffleMusicCommand(this));
+		this.addSubCommand(new MoveMusicCommand(this));
 	}
 	
 	@Override

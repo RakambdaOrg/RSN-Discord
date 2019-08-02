@@ -22,7 +22,7 @@ public class QuestionsConfiguration{
 		return Optional.ofNullable(this.inputChannel);
 	}
 	
-	public void setInputChannel(@Nullable ChannelConfiguration value){
+	public void setInputChannel(@Nullable final ChannelConfiguration value){
 		this.inputChannel = value;
 	}
 	
@@ -30,7 +30,7 @@ public class QuestionsConfiguration{
 		return Optional.ofNullable(this.outputChannel);
 	}
 	
-	public void setOutputChannel(@Nullable ChannelConfiguration value){
+	public void setOutputChannel(@Nullable final ChannelConfiguration value){
 		this.outputChannel = value;
 	}
 }

@@ -18,14 +18,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class BaseConfigurationCommand extends BasicCommand{
-	public BaseConfigurationCommand(@Nullable Command parent){
+	protected BaseConfigurationCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@Nonnull Guild guild, @Nonnull EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Type", getAllowedOperations().stream().map(Enum::name).collect(Collectors.joining(", ")), false);
+		builder.addField("Type", this.getAllowedOperations().stream().map(Enum::name).collect(Collectors.joining(", ")), false);
 	}
 	
 	@Nonnull
@@ -33,7 +33,7 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 	
 	@Nonnull
 	@Override
-	public CommandResult execute(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		if(args.isEmpty()){
 			Actions.reply(event, "Please provide arguments");
@@ -41,34 +41,34 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 		else{
 			final var operationStr = args.pop();
 			try{
-				ConfigurationOperation operation = ConfigurationOperation.valueOf(operationStr.toUpperCase());
+				final var operation = ConfigurationOperation.valueOf(operationStr.toUpperCase());
 				Log.getLogger(event.getGuild()).info("Executing operation {}", operation);
 				try{
 					switch(operation){
 						case ADD:
-							onAdd(event, args);
+							this.onAdd(event, args);
 							break;
 						case SET:
-							onSet(event, args);
+							this.onSet(event, args);
 							break;
 						case REMOVE:
-							onRemove(event, args);
+							this.onRemove(event, args);
 							break;
 						case SHOW:
-							onShow(event, args);
+							this.onShow(event, args);
 							break;
 					}
 					return CommandResult.SUCCESS;
 				}
-				catch(IllegalOperationException e){
+				catch(final IllegalOperationException e){
 					Log.getLogger(event.getGuild()).warn("Executing bad operation", e);
 					Actions.reply(event, "The operation isn't supported");
 				}
-				catch(Exception e){
+				catch(final Exception e){
 					Log.getLogger(event.getGuild()).error("Error modifying configuration", e);
 				}
 			}
-			catch(IllegalArgumentException e){
+			catch(final IllegalArgumentException e){
 				Log.getLogger(event.getGuild()).warn("Attempting unknown operation", e);
 				Actions.reply(event, "This operation doesn't exist");
 			}
@@ -76,9 +76,9 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 		return CommandResult.NOT_HANDLED;
 	}
 	
-	protected abstract void onShow(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException;
+	protected abstract void onRemove(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args);
 	
-	protected abstract void onRemove(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException;
+	protected abstract void onShow(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args);
 	
 	protected abstract void onSet(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException;
 	
@@ -102,11 +102,11 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 	}
 	
 	@Nonnull
-	protected EmbedBuilder getConfigEmbed(@Nonnull GuildMessageReceivedEvent event, @Nonnull String description, @Nonnull Color color){
+	protected EmbedBuilder getConfigEmbed(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final String description, @Nonnull final Color color){
 		final var builder = new EmbedBuilder();
 		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 		builder.setColor(color);
-		builder.setTitle("Value of " + getName());
+		builder.setTitle("Value of " + this.getName());
 		builder.setDescription(description);
 		return builder;
 	}
@@ -114,6 +114,6 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 	@Nonnull
 	@Override
 	public String getDescription(){
-		return "Handles the configuration of '" + getName() + "'";
+		return "Handles the configuration of '" + this.getName() + "'";
 	}
 }

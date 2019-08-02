@@ -27,7 +27,7 @@ public class MegaWarnCommand extends WarnCommand{
 	
 	@Override
 	protected long getTime(@Nonnull final Guild guild, @Nonnull final Message message, @Nonnull final LinkedList<String> args){
-		return NewSettings.getConfiguration(guild).getWarnsConfiguration().getMegaWarn().map(WarnConfiguration::getDelay).orElse(24L * 3600);
+		return NewSettings.getConfiguration(guild).getWarnsConfiguration().getMegaWarn().map(WarnConfiguration::getDelay).orElse(DEFAULT_TIME);
 	}
 	
 	@Nonnull

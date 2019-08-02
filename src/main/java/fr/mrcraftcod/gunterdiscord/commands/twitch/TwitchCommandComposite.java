@@ -18,9 +18,9 @@ public class TwitchCommandComposite extends CommandComposite{
 	 * Constructor.
 	 */
 	public TwitchCommandComposite(){
-		addSubCommand(new ConnectCommand(this));
-		addSubCommand(new DisconnectCommand(this));
-		addSubCommand(new QuitCommand(this));
+		this.addSubCommand(new ConnectCommand(this));
+		this.addSubCommand(new DisconnectCommand(this));
+		this.addSubCommand(new QuitCommand(this));
 	}
 	
 	@Nonnull

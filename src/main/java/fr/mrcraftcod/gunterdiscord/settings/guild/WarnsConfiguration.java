@@ -23,28 +23,28 @@ public class WarnsConfiguration{
 	
 	@Nonnull
 	public Optional<WarnConfiguration> getDoubleWarn(){
-		return Optional.ofNullable(doubleWarn);
+		return Optional.ofNullable(this.doubleWarn);
 	}
 	
-	public void setDoubleWarn(@Nullable WarnConfiguration doubleWarn){
+	public void setDoubleWarn(@Nullable final WarnConfiguration doubleWarn){
 		this.doubleWarn = doubleWarn;
 	}
 	
 	@Nonnull
 	public Optional<WarnConfiguration> getMegaWarn(){
-		return Optional.ofNullable(megaWarn);
+		return Optional.ofNullable(this.megaWarn);
 	}
 	
-	public void setMegaWarn(@Nullable WarnConfiguration megaWarn){
+	public void setMegaWarn(@Nullable final WarnConfiguration megaWarn){
 		this.megaWarn = megaWarn;
 	}
 	
 	@Nonnull
 	public Optional<WarnConfiguration> getSimpleWarn(){
-		return Optional.ofNullable(simpleWarn);
+		return Optional.ofNullable(this.simpleWarn);
 	}
 	
-	public void setSimpleWarn(@Nullable WarnConfiguration simpleWarn){
+	public void setSimpleWarn(@Nullable final WarnConfiguration simpleWarn){
 		this.simpleWarn = simpleWarn;
 	}
 }

@@ -25,7 +25,7 @@ public class AniListListActivityPagedQuery implements AniListPagedQuery<AniListL
 		this.variables = new JSONObject();
 		this.variables.put("userID", userId);
 		this.variables.put("page", 1);
-		this.variables.put("perPage", 50);
+		this.variables.put("perPage", PER_PAGE);
 		final var s = date.atZone(ZoneId.of("UTC")).toEpochSecond();
 		this.variables.put("date", s >= 0 ? s : 0);
 	}
@@ -43,8 +43,8 @@ public class AniListListActivityPagedQuery implements AniListPagedQuery<AniListL
 		final var changes = new ArrayList<AniListListActivity>();
 		for(final var change : json.getJSONObject("data").getJSONObject("Page").getJSONArray("activities")){
 			final var obj = (JSONObject) change;
-			if(obj.length() > 0){
-				changes.add(buildChange(obj));
+			if(!obj.isEmpty()){
+				changes.add(this.buildChange(obj));
 			}
 			else{
 				getLogger(null).trace("Skipped AniList object, json: {}", change);

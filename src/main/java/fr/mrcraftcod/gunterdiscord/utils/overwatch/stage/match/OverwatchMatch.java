@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OverwatchMatch implements Comparable<OverwatchMatch>{
@@ -113,11 +114,11 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 	}
 	
 	@Override
-	public int compareTo(@Nonnull OverwatchMatch overwatchMatch){
+	public int compareTo(@Nonnull final OverwatchMatch overwatchMatch){
 		return this.getStartDate().compareTo(overwatchMatch.getStartDate());
 	}
 	
-	public EmbedBuilder buildEmbed(User user){
+	public EmbedBuilder buildEmbed(final User user){
 		final var builder = Utilities.buildEmbed(user, Color.GREEN, this.getCompetitors().stream().map(OverwatchCompetitor::getName).collect(Collectors.joining(" vs ")), (Objects.nonNull(this.getYoutubeId()) && !this.getYoutubeId().isBlank()) ? ("https://youtube.com/watch?v=" + this.getYoutubeId()) : null);
 		builder.setTimestamp(this.getStartDate());
 		builder.setDescription("Score: " + this.getScores().stream().map(OverwatchScore::getValue).map(Object::toString).collect(Collectors.joining(" - ")));
@@ -141,41 +142,41 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 		return this.bestOf;
 	}
 	
-	public OverwatchConclusionStrategy getConclusionStrategy(){
-		return this.conclusionStrategy;
+	private String getYoutubeId(){
+		return this.youtubeId;
 	}
 	
 	public int getConclusionValue(){
 		return this.conclusionValue;
 	}
 	
-	public List<OverwatchGame> getGames(){
-		return this.games;
+	private OverwatchState getState(){
+		return this.state;
 	}
 	
 	public int getId(){
 		return this.id;
 	}
 	
-	public OverwatchState getState(){
-		return this.state;
+	private OverwatchConclusionStrategy getConclusionStrategy(){
+		return this.conclusionStrategy;
 	}
 	
 	public OverwatchTournament getTournament(){
 		return this.tournament;
 	}
 	
-	@Nonnull
-	public Optional<OverwatchCompetitor> getWinningTeam(){
-		return this.getCompetitors().stream().filter(c -> Objects.equals(c.getId(), this.getWinner())).findFirst();
+	private List<OverwatchGame> getGames(){
+		return this.games;
 	}
 	
 	private int getWinner(){
 		return this.winner;
 	}
 	
-	public String getYoutubeId(){
-		return this.youtubeId;
+	@Nonnull
+	private Optional<OverwatchCompetitor> getWinningTeam(){
+		return this.getCompetitors().stream().filter(c -> Objects.equals(c.getId(), this.getWinner())).findFirst();
 	}
 	
 	@Nonnull
@@ -188,11 +189,11 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 	}
 	
 	public boolean hasStarted(){
-		return this.getActualStartDate().orElse(getStartDate()).isBefore(LocalDateTime.now());
+		return this.getActualStartDate().orElse(this.getStartDate()).isBefore(LocalDateTime.now());
 	}
 	
 	@Nonnull
-	public Optional<LocalDateTime> getActualStartDate(){
+	private Optional<LocalDateTime> getActualStartDate(){
 		return Optional.ofNullable(this.actualStartDate);
 	}
 	

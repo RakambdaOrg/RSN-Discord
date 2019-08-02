@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public abstract class WarnConfigurationCommand extends BaseConfigurationCommand{
-	public WarnConfigurationCommand(@Nullable Command parent){
+	protected WarnConfigurationCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
@@ -33,15 +33,35 @@ public abstract class WarnConfigurationCommand extends BaseConfigurationCommand{
 	protected abstract Optional<WarnConfiguration> getConfig(Guild guild);
 	
 	@Override
-	protected void onShow(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException{
-		final var builder = getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
-		builder.addField("Role", getConfig(event.getGuild()).map(WarnConfiguration::getRole).map(Objects::toString).orElse("<<EMPTY>>"), false);
-		builder.addField("Delay", getConfig(event.getGuild()).map(WarnConfiguration::getDelay).map(Objects::toString).orElse("<<EMPTY>>"), false);
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField("Delay", "The delay before the person is unbanned", false);
+		builder.addField("Role", "The role to set", false);
+	}
+	
+	@Override
+	protected void onShow(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
+		final var builder = this.getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
+		builder.addField("Role", this.getConfig(event.getGuild()).map(WarnConfiguration::getRole).map(Objects::toString).orElse("<<EMPTY>>"), false);
+		builder.addField("Delay", this.getConfig(event.getGuild()).map(WarnConfiguration::getDelay).map(Objects::toString).orElse("<<EMPTY>>"), false);
 		Actions.reply(event, builder.build());
 	}
 	
 	@Override
-	protected void onSet(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException{
+	protected void onRemove(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
+		this.removeConfig(event.getGuild());
+		final var builder = this.getConfigEmbed(event, ConfigurationOperation.REMOVE.name(), Color.GREEN);
+		builder.addField("Role", "<<EMPTY>>", false);
+		builder.addField("Delay", "<<EMPTY>>", false);
+		Actions.reply(event, builder.build());
+	}
+	
+	protected abstract void removeConfig(@Nonnull Guild guild);
+	
+	protected abstract void createConfig(@Nonnull Guild guild, @Nonnull Role role, long delay);
+	
+	@Override
+	protected void onSet(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
 		if(args.isEmpty()){
 			Actions.reply(event, "Please mention the delay");
 			return;
@@ -53,42 +73,23 @@ public abstract class WarnConfigurationCommand extends BaseConfigurationCommand{
 				return;
 			}
 			final var role = event.getMessage().getMentionedRoles().get(0);
-			getConfig(event.getGuild()).ifPresentOrElse(config -> {
+			this.getConfig(event.getGuild()).ifPresentOrElse(config -> {
 				config.setRole(role);
 				config.setDelay(delay);
-			}, () -> createConfig(event.getGuild(), role, delay));
-			final var builder = getConfigEmbed(event, ConfigurationOperation.SET.name(), Color.GREEN);
+			}, () -> this.createConfig(event.getGuild(), role, delay));
+			final var builder = this.getConfigEmbed(event, ConfigurationOperation.SET.name(), Color.GREEN);
 			builder.addField("Role", role.getAsMention(), false);
-			builder.addField("Delay", "" + delay, false);
+			builder.addField("Delay", String.valueOf(delay), false);
 			Actions.reply(event, builder.build());
 		}
-		catch(NumberFormatException e){
+		catch(final NumberFormatException e){
 			Actions.reply(event, "Please mention the delay");
 		}
 	}
-	
+
 	@Override
-	protected void onRemove(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException{
-		removeConfig(event.getGuild());
-		final var builder = getConfigEmbed(event, ConfigurationOperation.REMOVE.name(), Color.GREEN);
-		builder.addField("Role", "<<EMPTY>>", false);
-		builder.addField("Delay", "<<EMPTY>>", false);
-		Actions.reply(event, builder.build());
-	}
-	
-	protected abstract void removeConfig(@Nonnull Guild guild);
-	
-	protected abstract void createConfig(@Nonnull Guild guild, @Nonnull Role role, long delay);
-	
-	@Override
-	protected void onAdd(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException{
+	protected void onAdd(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws IllegalOperationException{
 		throw new IllegalOperationException(ConfigurationOperation.ADD);
-	}
-	@Override
-	public void addHelp(@Nonnull Guild guild, @Nonnull EmbedBuilder builder){
-		super.addHelp(guild, builder);
-		builder.addField("Delay", "The delay before the person is unbanned", false);
-		builder.addField("Role", "The role to set", false);
 	}
 	
 	@Nonnull

@@ -37,16 +37,16 @@ public class AniListMangaMedia extends AniListMedia{
 	}
 	
 	@Override
-	@Nullable
-	public Integer getItemCount(){
-		return getChapters();
+	public void fillEmbed(@Nonnull final EmbedBuilder builder){
+		super.fillEmbed(builder);
+		Optional.ofNullable(this.getChapters()).map(Object::toString).ifPresent(val -> builder.addField("Chapters", val, true));
+		Optional.ofNullable(this.getVolumes()).map(Object::toString).ifPresent(val -> builder.addField("Volumes", val, true));
 	}
 	
 	@Override
-	public void fillEmbed(@Nonnull final EmbedBuilder builder){
-		super.fillEmbed(builder);
-		Optional.ofNullable(getChapters()).map(Object::toString).ifPresent(val -> builder.addField("Chapters", val, true));
-		Optional.ofNullable(getVolumes()).map(Object::toString).ifPresent(val -> builder.addField("Volumes", val, true));
+	@Nullable
+	public Integer getItemCount(){
+		return this.getChapters();
 	}
 	
 	@Override

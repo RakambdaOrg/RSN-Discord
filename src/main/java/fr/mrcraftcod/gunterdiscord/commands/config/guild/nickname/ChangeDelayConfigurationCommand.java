@@ -1,7 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.config.guild.nickname;
 
-import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.config.helpers.ValueConfigurationCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.Optional;
 
 public class ChangeDelayConfigurationCommand extends ValueConfigurationCommand<Long>{
-	public ChangeDelayConfigurationCommand(Command parent){
+	public ChangeDelayConfigurationCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Nonnull
 	@Override
-	protected Optional<Long> getConfig(Guild guild){
+	protected Optional<Long> getConfig(final Guild guild){
 		return Optional.of(NewSettings.getConfiguration(guild).getNicknameConfiguration().getChangeDelay());
 	}
 	
@@ -39,24 +39,24 @@ public class ChangeDelayConfigurationCommand extends ValueConfigurationCommand<L
 	}
 	
 	@Override
-	protected void setConfig(@Nonnull Guild guild, @Nonnull Long value){
+	protected void setConfig(@Nonnull final Guild guild, @Nonnull final Long value){
 		NewSettings.getConfiguration(guild).getNicknameConfiguration().setChangeDelay(value);
 	}
 	
 	@Override
-	protected Long extractValue(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args){
+	protected Long extractValue(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
 		if(args.isEmpty()){
 			throw new IllegalArgumentException("Please mention the delay");
 		}
 		try{
 			return Long.parseLong(args.pop());
 		}
-		catch(NumberFormatException e){
+		catch(final NumberFormatException e){
 			throw new IllegalArgumentException("Please mention the delay");
 		}
 	}
 	
 	@Override
-	protected void removeConfig(@Nonnull Guild guild){
+	protected void removeConfig(@Nonnull final Guild guild){
 	}
 }

@@ -14,6 +14,8 @@ import java.util.List;
  * @since 2018-10-11
  */
 public interface AniListPagedQuery<T>{
+	int PER_PAGE = 50;
+	
 	static String pagedQuery(final String additionalParams, final String query){
 		return "query($page: Int, $perPage: Int" + additionalParams + "){\n" + "  Page (page: $page, perPage: $perPage) {\n" + "    pageInfo {\n" + "      total\n" + "      currentPage\n" + "      lastPage\n" + "      hasNextPage\n" + "      perPage\n" + "    }\n" + query + "  }\n" + "}";
 	}
@@ -23,9 +25,9 @@ public interface AniListPagedQuery<T>{
 		final var elements = new ArrayList<T>();
 		var hasNext = true;
 		while(hasNext){
-			final var json = AniListUtils.getQuery(member, getQuery(), getParameters(getNextPage()));
+			final var json = AniListUtils.getQuery(member, this.getQuery(), this.getParameters(this.getNextPage()));
 			hasNext = json.getJSONObject("data").getJSONObject("Page").getJSONObject("pageInfo").getBoolean("hasNextPage");
-			elements.addAll(parseResult(json));
+			elements.addAll(this.parseResult(json));
 		}
 		return elements;
 	}

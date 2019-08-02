@@ -50,13 +50,13 @@ class TrackScheduler extends AudioEventAdapter{
 				getLogger(this.guild).info("Putting back {} into queue: repeat is enabled", track.getInfo().identifier);
 				final var clone = track.makeClone();
 				clone.setUserData(track.getUserData());
-				queue(clone);
+				this.queue(clone);
 			}
 		}
 		this.listeners.forEach(listener -> listener.onTrackEnd(track));
-		getLogger(getGuild()).info("Track ended ({}): {}", endReason.name(), track.getIdentifier());
+		getLogger(this.getGuild()).info("Track ended ({}): {}", endReason.name(), track.getIdentifier());
 		if(endReason.mayStartNext){
-			tryStartNext();
+			this.tryStartNext();
 		}
 	}
 	
@@ -86,8 +86,8 @@ class TrackScheduler extends AudioEventAdapter{
 	}
 	
 	private void tryStartNext(){
-		if(Objects.isNull(this.player.getPlayingTrack()) && !nextTrack()){
-			getLogger(getGuild()).info("Playlist ended, listeners: {}", this.listeners.size());
+		if(Objects.isNull(this.player.getPlayingTrack()) && !this.nextTrack()){
+			getLogger(this.getGuild()).info("Playlist ended, listeners: {}", this.listeners.size());
 			final var executor = Executors.newSingleThreadScheduledExecutor();
 			executor.schedule(() -> this.listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty), 5, TimeUnit.SECONDS);
 		}
@@ -99,7 +99,7 @@ class TrackScheduler extends AudioEventAdapter{
 	 * @return True if a track is available, false else.
 	 */
 	private boolean nextTrack(){
-		getLogger(getGuild()).info("Playing next track");
+		getLogger(this.getGuild()).info("Playing next track");
 		final var next = this.queue.poll();
 		if(Objects.nonNull(next)){
 			getLogger(this.guild).info("Playing track {}", next.getInfo().identifier);
@@ -109,7 +109,7 @@ class TrackScheduler extends AudioEventAdapter{
 	
 	void skip(){
 		this.player.startTrack(null, false);
-		tryStartNext();
+		this.tryStartNext();
 	}
 	
 	void shuffle(){
@@ -131,7 +131,7 @@ class TrackScheduler extends AudioEventAdapter{
 	}
 	
 	void foundNothing(){
-		getLogger(getGuild()).info("Scheduler nothing found (track: {}, queue: {})", this.player.getPlayingTrack(), this.queue.size());
+		getLogger(this.getGuild()).info("Scheduler nothing found (track: {}, queue: {})", this.player.getPlayingTrack(), this.queue.size());
 		if(Objects.isNull(this.player.getPlayingTrack()) && this.queue.isEmpty()){
 			this.listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty);
 		}

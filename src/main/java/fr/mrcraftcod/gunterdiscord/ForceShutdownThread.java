@@ -9,6 +9,8 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-10-25
  */
 public class ForceShutdownThread extends Thread{
+	private static final int TIMEOUT_SHUTDOWN = 30000;
+	
 	public ForceShutdownThread(){
 		this.setDaemon(true);
 	}
@@ -16,7 +18,7 @@ public class ForceShutdownThread extends Thread{
 	@Override
 	public void run(){
 		try{
-			Thread.sleep(30000);
+			Thread.sleep(TIMEOUT_SHUTDOWN);
 			getLogger(null).warn("Forcing shutdown");
 			System.exit(0);
 		}
