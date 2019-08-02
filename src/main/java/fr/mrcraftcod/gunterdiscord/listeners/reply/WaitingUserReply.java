@@ -14,7 +14,7 @@ import java.util.LinkedList;
  * @author Thomas Couchoud
  * @since 2019-05-18
  */
-public interface WaitingUserReply extends Closeable{
+interface WaitingUserReply extends Closeable{
 	boolean execute(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args);
 	
 	boolean execute(@Nonnull GuildMessageReactionAddEvent event);

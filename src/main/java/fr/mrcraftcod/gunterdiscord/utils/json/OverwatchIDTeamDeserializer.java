@@ -10,7 +10,7 @@ import java.io.IOException;
 public class OverwatchIDTeamDeserializer extends JsonDeserializer<Integer>{
 	@Override
 	public Integer deserialize(@Nonnull final JsonParser jsonParser, @Nonnull final DeserializationContext deserializationContext) throws IOException{
-		JsonNode weekNode = jsonParser.getCodec().readTree(jsonParser);
+		final JsonNode weekNode = jsonParser.getCodec().readTree(jsonParser);
 		return weekNode.get("id").intValue();
 	}
 }

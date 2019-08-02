@@ -14,27 +14,37 @@ public abstract class AbstractIRCListener implements IRCListener{
 	@Override
 	public void onIRCMessage(@Nonnull final IRCMessage event){
 		if(event instanceof ChannelJoinIRCMessage){
-			onIRCChannelJoined((ChannelJoinIRCMessage) event);
+			this.onIRCChannelJoined((ChannelJoinIRCMessage) event);
 		}
 		else if(event instanceof ChannelLeftIRCMessage){
-			onIRCChannelLeft((ChannelLeftIRCMessage) event);
+			this.onIRCChannelLeft((ChannelLeftIRCMessage) event);
 		}
 		else if(event instanceof ChannelMessageIRCMessage){
-			onIRCChannelMessage((ChannelMessageIRCMessage) event);
+			this.onIRCChannelMessage((ChannelMessageIRCMessage) event);
 		}
 		else if(event instanceof PingIRCMessage){
-			onPingIRC((PingIRCMessage) event);
+			this.onPingIRC((PingIRCMessage) event);
 		}
 		else if(event instanceof InfoMessageIRCMessage){
-			onInfoMessage((InfoMessageIRCMessage) event);
+			this.onInfoMessage((InfoMessageIRCMessage) event);
 		}
 		else if(event instanceof UserNoticeIRCMessage){
-			onUserNotice((UserNoticeIRCMessage) event);
+			this.onUserNotice((UserNoticeIRCMessage) event);
+		}
+		else if(event instanceof ClearChatIRCMessage){
+			this.onClearChat((ClearChatIRCMessage) event);
+		}
+		else if(event instanceof ClearMessageIRCMessage){
+			this.onClearMessage((ClearMessageIRCMessage) event);
 		}
 		else{
-			onIRCUnknownEvent(event);
+			this.onIRCUnknownEvent(event);
 		}
 	}
+	
+	protected abstract void onClearChat(ClearChatIRCMessage event);
+	
+	protected abstract void onClearMessage(ClearMessageIRCMessage event);
 	
 	protected abstract void onIRCChannelJoined(@Nonnull ChannelJoinIRCMessage event);
 	

@@ -49,7 +49,7 @@ public class PhotoDeleteCommand extends BasicCommand{
 		if(!args.isEmpty()){
 			final User user;
 			final var users = event.getMessage().getMentionedUsers();
-			if(users.size() > 0){
+			if(!users.isEmpty()){
 				user = users.get(0);
 				args.poll();
 			}

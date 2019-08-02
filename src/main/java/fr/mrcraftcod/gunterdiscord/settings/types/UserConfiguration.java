@@ -43,32 +43,32 @@ public class UserConfiguration{
 		return Optional.ofNullable(Main.getJDA().getUserById(this.getUserId()));
 	}
 	
-	public void setUser(@Nonnull User user){
-		this.setUser(user.getIdLong());
-	}
-	
-	private void setUser(long userId){
-		this.userId = userId;
-	}
-	
-	public long getUserId(){
-		return this.userId;
-	}
-	
 	@Override
 	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(getUserId()).toHashCode();
+		return new HashCodeBuilder(17, 37).append(this.getUserId()).toHashCode();
 	}
 	
 	@Override
-	public boolean equals(Object o){
+	public boolean equals(final Object o){
 		if(this == o){
 			return true;
 		}
 		if(!(o instanceof UserConfiguration)){
 			return false;
 		}
-		UserConfiguration that = (UserConfiguration) o;
-		return new EqualsBuilder().append(getUserId(), that.getUserId()).isEquals();
+		final var that = (UserConfiguration) o;
+		return new EqualsBuilder().append(this.getUserId(), that.getUserId()).isEquals();
+	}
+	
+	public long getUserId(){
+		return this.userId;
+	}
+	
+	public void setUser(@Nonnull final User user){
+		this.setUser(user.getIdLong());
+	}
+	
+	private void setUser(final long userId){
+		this.userId = userId;
 	}
 }

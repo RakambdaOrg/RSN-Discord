@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.luxbus;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.reply.ReplyMessageListener;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
@@ -21,7 +22,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@BotCommand
 public class LuxBusGetStopCommand extends BasicCommand{
+	private static final int PER_PAGE = 25;
+	
 	static void askLine(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LuxBusStop stop){
 		try{
 			final var departures = LuxBusUtils.getDepartures(stop);
@@ -43,24 +47,20 @@ public class LuxBusGetStopCommand extends BasicCommand{
 		}
 	}
 	
+	static void askDirection(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final List<LuxBusDeparture> filtered){
+		final var directionDepartures = filtered.stream().collect(Collectors.groupingBy(LuxBusDeparture::getDirection));
+		final var directionDeparturesNumbered = new HashMap<Integer, List<LuxBusDeparture>>();
+		var i = 0;
+		for(final var luxBusDepartures : directionDepartures.values()){
+			directionDeparturesNumbered.put(++i, luxBusDepartures);
+		}
+		Actions.reply(event, message -> ReplyMessageListener.handleReply(new LuxBusDirectionSelectionWaitingReply(event, directionDeparturesNumbered, message)), "Choose a direction:\n%s", directionDeparturesNumbered.keySet().stream().map(k -> String.format("%s: %s", k, directionDeparturesNumbered.get(k).stream().findFirst().map(LuxBusDeparture::getDirection).orElse("???"))).sorted().collect(Collectors.joining("\n")));
+	}
+	
 	@Override
 	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-	}
-	
-	private void askStop(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final List<LuxBusStop> stops){
-		if(stops.size() < 2){
-			askLine(event, stops.get(0));
-		}
-		else if(stops.size() > 100){
-			Actions.reply(event, "More than 100 stops matching, please give a better name for the stop.");
-		}
-		else{
-			Actions.reply(event, "Choose a stop:");
-			final var replyHandler = new LuxBusStopSelectionWaitingReply(event, stops);
-			ReplyMessageListener.handleReply(replyHandler);
-			IntStream.range(0, stops.size()).boxed().collect(Collectors.groupingBy(index -> index / 25)).values().stream().map(indices -> indices.stream().map(stops::get).collect(Collectors.toList())).forEach(stopsBatch -> Actions.reply(event, replyHandler::addMessage, "%s", stopsBatch.stream().map(stop -> String.format("%d: %s", stops.indexOf(stop) + 1, stop)).collect(Collectors.joining("\n"))));
-		}
+		builder.addField("Stop", "The name of the stop", false);
 	}
 	
 	@Nonnull
@@ -81,7 +81,7 @@ public class LuxBusGetStopCommand extends BasicCommand{
 				Actions.reply(event, embed.build());
 			}
 			else{
-				askStop(event, stops);
+				this.askStop(event, stops);
 			}
 		}
 		catch(final Exception e){
@@ -90,20 +90,25 @@ public class LuxBusGetStopCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
-	static void askDirection(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final List<LuxBusDeparture> filtered){
-		final var directionDepartures = filtered.stream().collect(Collectors.groupingBy(LuxBusDeparture::getDirection));
-		final var directionDeparturesNumbered = new HashMap<Integer, List<LuxBusDeparture>>();
-		var i = 0;
-		for(final var oldKey : directionDepartures.keySet()){
-			directionDeparturesNumbered.put(++i, directionDepartures.get(oldKey));
+	private void askStop(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final List<LuxBusStop> stops){
+		if(stops.size() < 2){
+			askLine(event, stops.get(0));
 		}
-		Actions.reply(event, message -> ReplyMessageListener.handleReply(new LuxBusDirectionSelectionWaitingReply(event, directionDeparturesNumbered, message)), "Choose a direction:\n%s", directionDeparturesNumbered.keySet().stream().map(k -> String.format("%s: %s", k, directionDeparturesNumbered.get(k).stream().findFirst().map(LuxBusDeparture::getDirection).orElse("???"))).sorted().collect(Collectors.joining("\n")));
+		else if(stops.size() > 100){
+			Actions.reply(event, "More than 100 stops matching, please give a better name for the stop.");
+		}
+		else{
+			Actions.reply(event, "Choose a stop:");
+			final var replyHandler = new LuxBusStopSelectionWaitingReply(event, stops);
+			ReplyMessageListener.handleReply(replyHandler);
+			IntStream.range(0, stops.size()).boxed().collect(Collectors.groupingBy(index -> index / PER_PAGE)).values().stream().map(indices -> indices.stream().map(stops::get).collect(Collectors.toList())).forEach(stopsBatch -> Actions.reply(event, replyHandler::addMessage, "%s", stopsBatch.stream().map(stop -> String.format("%d: %s", stops.indexOf(stop) + 1, stop)).collect(Collectors.joining("\n"))));
+		}
 	}
 	
 	@Nonnull
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage();
+		return super.getCommandUsage() + " <stop>";
 	}
 	
 	@Nonnull

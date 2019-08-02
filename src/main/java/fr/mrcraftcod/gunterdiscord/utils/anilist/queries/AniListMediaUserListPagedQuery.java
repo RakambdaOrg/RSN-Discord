@@ -23,7 +23,7 @@ public class AniListMediaUserListPagedQuery implements AniListPagedQuery<AniList
 		this.variables = new JSONObject();
 		this.variables.put("userID", userId);
 		this.variables.put("page", 1);
-		this.variables.put("perPage", 50);
+		this.variables.put("perPage", PER_PAGE);
 	}
 	
 	@Nonnull
@@ -40,8 +40,8 @@ public class AniListMediaUserListPagedQuery implements AniListPagedQuery<AniList
 		for(final var change : json.getJSONObject("data").getJSONObject("Page").getJSONArray("mediaList")){
 			try{
 				final var obj = (JSONObject) change;
-				if(obj.length() > 0){
-					changes.add(buildChange(obj));
+				if(!obj.isEmpty()){
+					changes.add(this.buildChange(obj));
 				}
 				else{
 					getLogger(null).trace("Skipped AniList object, json: {}", change);

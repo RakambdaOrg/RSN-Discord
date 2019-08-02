@@ -15,7 +15,7 @@ public enum OverwatchAdvantageComparing{
 		try{
 			return OverwatchAdvantageComparing.valueOf(value);
 		}
-		catch(IllegalArgumentException e){
+		catch(final IllegalArgumentException e){
 			LOGGER.warn("Unknown advantage comparing {}", value);
 		}
 		return UNKNOWN;

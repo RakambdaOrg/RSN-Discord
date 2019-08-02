@@ -18,7 +18,7 @@ public class URLDeserializer extends JsonDeserializer<URL>{
 		try{
 			return new URL(jsonParser.getValueAsString());
 		}
-		catch(MalformedURLException e){
+		catch(final MalformedURLException e){
 			LOGGER.trace("Failed to parse URL {}", jsonParser.getValueAsString());
 		}
 		return null;

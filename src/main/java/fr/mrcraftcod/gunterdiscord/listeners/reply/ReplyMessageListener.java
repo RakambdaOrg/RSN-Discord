@@ -34,7 +34,7 @@ public class ReplyMessageListener extends ListenerAdapter{
 			try{
 				r.close();
 			}
-			catch(IOException e){
+			catch(final IOException e){
 				Log.getLogger(null).error("Failed to close reply handler", e);
 			}
 		});

@@ -30,6 +30,8 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-04-13
  */
 public class PhotoAddCommand extends BasicCommand{
+	private static final int MIN_SIZE = 512;
+	
 	/**
 	 * Constructor.
 	 *
@@ -65,12 +67,12 @@ public class PhotoAddCommand extends BasicCommand{
 			else{
 				for(final var attachment : event.getMessage().getAttachments()){
 					final var ext = attachment.getFileName().substring(attachment.getFileName().lastIndexOf("."));
-					final var savePath = Paths.get("./pictures").resolve("" + user.getIdLong()).resolve(event.getMessage().getTimeCreated().toEpochSecond() + ext);
+					final var savePath = Paths.get("./pictures").resolve(String.valueOf(user.getIdLong())).resolve(event.getMessage().getTimeCreated().toEpochSecond() + ext);
 					//noinspection ResultOfMethodCallIgnored
 					savePath.getParent().toFile().mkdirs();
 					final var future = attachment.downloadToFile(savePath.toFile());
 					final var saveFile = future.get();
-					if(!future.isCompletedExceptionally() && Objects.equals(attachment.getSize(), saveFile.length()) && saveFile.length() > 512){
+					if(!future.isCompletedExceptionally() && Objects.equals(attachment.getSize(), saveFile.length()) && saveFile.length() > MIN_SIZE){
 						NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotos(user).add(new PhotoEntryConfiguration(user, saveFile.getPath()));
 						NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(r -> Actions.giveRole(event.getGuild(), user, r));
 						final var builder = new EmbedBuilder();
@@ -78,7 +80,7 @@ public class PhotoAddCommand extends BasicCommand{
 						builder.setColor(Color.GREEN);
 						builder.setTitle("New picture");
 						builder.addField("User", user.getAsMention(), true);
-						builder.addField("ID", "" + event.getMessage().getTimeCreated().toEpochSecond(), true);
+						builder.addField("ID", String.valueOf(event.getMessage().getTimeCreated().toEpochSecond()), true);
 						Actions.sendMessage(NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotoChannel().flatMap(ChannelConfiguration::getChannel).orElse(event.getChannel()), builder.build());
 					}
 					else{

@@ -15,7 +15,7 @@ public enum OverwatchCompetitorStatus{
 		try{
 			return OverwatchCompetitorStatus.valueOf(value);
 		}
-		catch(IllegalArgumentException e){
+		catch(final IllegalArgumentException e){
 			LOGGER.warn("Unknown competitor reason {}", value);
 		}
 		return UNKNOWN;

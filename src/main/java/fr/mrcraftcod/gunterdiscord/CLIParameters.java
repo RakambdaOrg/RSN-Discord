@@ -6,13 +6,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 
+@SuppressWarnings("FieldMayBeFinal")
 class CLIParameters{
 	@Parameter(names = {
 			"-s",
 			"--jackson "
 	}, description = "The settings file to use", converter = FileConverter.class)
 	private File settingsFile = new File("settings.json");
-	
 	@Parameter(names = {
 			"-c",
 			"--config"

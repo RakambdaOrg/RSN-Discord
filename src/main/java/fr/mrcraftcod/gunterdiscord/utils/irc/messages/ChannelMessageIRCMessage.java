@@ -10,7 +10,7 @@ public class ChannelMessageIRCMessage implements IRCMessage{
 	private final String channel;
 	private final String message;
 	
-	public ChannelMessageIRCMessage(List<IRCTag> tags, IRCUser user, String channel, String message){
+	public ChannelMessageIRCMessage(final List<IRCTag> tags, final IRCUser user, final String channel, final String message){
 		this.tags = tags;
 		this.user = user;
 		this.channel = channel;
@@ -18,18 +18,18 @@ public class ChannelMessageIRCMessage implements IRCMessage{
 	}
 	
 	public String getChannel(){
-		return channel;
+		return this.channel;
 	}
 	
 	public String getMessage(){
-		return message;
+		return this.message;
 	}
 	
 	public List<IRCTag> getTags(){
-		return tags;
+		return this.tags;
 	}
 	
 	public IRCUser getUser(){
-		return user;
+		return this.user;
 	}
 }

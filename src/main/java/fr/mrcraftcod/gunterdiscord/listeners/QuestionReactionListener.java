@@ -33,7 +33,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 			if(NewSettings.getConfiguration(event.getGuild()).getQuestionsConfiguration().getInputChannel().map(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong())).orElse(false)){
 				if(!event.getUser().isBot()){
 					final var emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
-					if(Objects.equals(emote, BasicEmotes.CHECK_OK)){
+					if(emote == BasicEmotes.CHECK_OK){
 						final var message = event.getChannel().getHistory().getMessageById(event.getReaction().getMessageIdLong());
 						if(Objects.nonNull(message)){
 							NewSettings.getConfiguration(event.getGuild()).getQuestionsConfiguration().getOutputChannel().flatMap(ChannelConfiguration::getChannel).ifPresentOrElse(channel -> {
@@ -50,7 +50,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 							}, () -> getLogger(event.getGuild()).error("Couldn't move message"));
 						}
 					}
-					else if(Objects.equals(emote, BasicEmotes.CROSS_NO)){
+					else if(emote == BasicEmotes.CROSS_NO){
 						final var message = event.getChannel().getHistory().getMessageById(event.getReaction().getMessageIdLong());
 						if(Objects.nonNull(message)){
 							Actions.deleteMessage(message);
@@ -69,7 +69,7 @@ public class QuestionReactionListener extends ListenerAdapter{
 			else if(NewSettings.getConfiguration(event.getGuild()).getQuestionsConfiguration().getOutputChannel().map(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong())).orElse(false)){
 				if(!event.getUser().isBot()){
 					final var emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
-					if(Objects.equals(emote, BasicEmotes.CHECK_OK)){
+					if(emote == BasicEmotes.CHECK_OK){
 						Actions.deleteMessage(event.getChannel().getHistory().getMessageById(event.getMessageId()));
 					}
 				}

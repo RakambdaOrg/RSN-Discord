@@ -1,10 +1,12 @@
 package fr.mrcraftcod.gunterdiscord.commands.overwatch;
 
+import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.api.entities.ChannelType;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+@BotCommand
 public class OverwatchCommandComposite extends CommandComposite{
 	public OverwatchCommandComposite(){
 		this.addSubCommand(new OverwatchGetWeekMatchesCommand(this));

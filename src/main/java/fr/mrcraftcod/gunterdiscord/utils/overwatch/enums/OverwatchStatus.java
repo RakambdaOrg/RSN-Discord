@@ -15,7 +15,7 @@ public enum OverwatchStatus{
 		try{
 			return OverwatchStatus.valueOf(value);
 		}
-		catch(IllegalArgumentException e){
+		catch(final IllegalArgumentException e){
 			LOGGER.warn("Unknown status {}", value);
 		}
 		return UNKNOWN;

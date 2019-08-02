@@ -26,6 +26,7 @@ import java.util.Optional;
  * @author Thomas Couchoud
  * @since 2018-10-11
  */
+@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AniListAiringNotification implements AniListDatedObject{
@@ -52,7 +53,7 @@ public class AniListAiringNotification implements AniListDatedObject{
 			return false;
 		}
 		final var notification = (AniListAiringNotification) obj;
-		return Objects.equals(notification.getEpisode(), getEpisode()) && Objects.equals(notification.getMedia(), getMedia());
+		return Objects.equals(notification.getEpisode(), this.getEpisode()) && Objects.equals(notification.getMedia(), this.getMedia());
 	}
 	
 	@Override
@@ -70,19 +71,19 @@ public class AniListAiringNotification implements AniListDatedObject{
 		return this.media;
 	}
 	
-	@Override
-	public void fillEmbed(@Nonnull final EmbedBuilder builder){
-		builder.setTimestamp(getDate());
-		builder.setColor(Color.GREEN);
-		builder.setTitle("New release", getMedia().getUrl().toString());
-		builder.addField("Episode", "" + getEpisode(), true);
-		builder.addBlankField(false);
-		builder.addField("Media:", "", false);
-		getMedia().fillEmbed(builder);
+	private int getEpisode(){
+		return this.episode;
 	}
 	
-	public int getEpisode(){
-		return this.episode;
+	@Override
+	public void fillEmbed(@Nonnull final EmbedBuilder builder){
+		builder.setTimestamp(this.getDate());
+		builder.setColor(Color.GREEN);
+		builder.setTitle("New release", this.getMedia().getUrl().toString());
+		builder.addField("Episode", String.valueOf(this.getEpisode()), true);
+		builder.addBlankField(false);
+		builder.addField("Media:", "", false);
+		this.getMedia().fillEmbed(builder);
 	}
 	
 	@Override
@@ -94,15 +95,15 @@ public class AniListAiringNotification implements AniListDatedObject{
 	@Override
 	@Nonnull
 	public URL getUrl(){
-		return Optional.ofNullable(this.getMedia()).map(AniListMedia::getUrl).orElse(AniListUtils.FALLBACK_URL);
+		return Optional.of(this.getMedia()).map(AniListMedia::getUrl).orElse(AniListUtils.FALLBACK_URL);
 	}
 	
 	@Override
 	public int compareTo(@Nonnull final AniListObject o){
 		if(o instanceof AniListDatedObject){
-			return getDate().compareTo(((AniListDatedObject) o).getDate());
+			return this.getDate().compareTo(((AniListDatedObject) o).getDate());
 		}
-		return Integer.compare(getId(), o.getId());
+		return Integer.compare(this.getId(), o.getId());
 	}
 	
 	@Nonnull

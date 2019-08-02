@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands.quiz;
 
+import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.api.entities.ChannelType;
 import javax.annotation.Nonnull;
@@ -11,14 +12,15 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-13
  */
+@BotCommand
 public class QuizCommandComposite extends CommandComposite{
 	/**
 	 * Constructor.
 	 */
 	public QuizCommandComposite(){
 		super();
-		addSubCommand(new QuizStartCommand(this));
-		addSubCommand(new QuizStopCommand(this));
+		this.addSubCommand(new QuizStartCommand(this));
+		this.addSubCommand(new QuizStopCommand(this));
 	}
 	
 	@Nonnull

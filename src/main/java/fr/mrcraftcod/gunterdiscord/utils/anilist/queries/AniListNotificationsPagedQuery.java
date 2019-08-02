@@ -26,7 +26,7 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 		this.variables = new JSONObject();
 		this.variables.put("userID", userId);
 		this.variables.put("page", 1);
-		this.variables.put("perPage", 50);
+		this.variables.put("perPage", PER_PAGE);
 	}
 	
 	@Nonnull
@@ -43,8 +43,8 @@ public class AniListNotificationsPagedQuery implements AniListPagedQuery<AniList
 		for(final var change : json.getJSONObject("data").getJSONObject("Page").getJSONArray("notifications")){
 			try{
 				final var changeJSONObj = (JSONObject) change;
-				if(changeJSONObj.length() > 0){
-					final var changeObj = buildChange(changeJSONObj);
+				if(!changeJSONObj.isEmpty()){
+					final var changeObj = this.buildChange(changeJSONObj);
 					if(changeObj.getDate().isAfter(this.date)){
 						changes.add(changeObj);
 					}

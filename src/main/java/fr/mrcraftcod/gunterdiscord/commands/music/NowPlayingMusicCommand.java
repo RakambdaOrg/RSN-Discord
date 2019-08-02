@@ -55,7 +55,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 			builder.setDescription(track.getInfo().title);
 			builder.addField("Requester", userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Unknown"), true);
 			builder.addField("Repeating", userData.get(new ReplayTrackUserField()).map(Object::toString).orElse("False"), true);
-			builder.addField("Position", String.format("%s %s / %s", buildBar(track.getPosition(), track.getDuration()), getDuration(track.getPosition()), getDuration(track.getDuration())), true);
+			builder.addField("Position", String.format("%s %s / %s", this.buildBar(track.getPosition(), track.getDuration()), getDuration(track.getPosition()), getDuration(track.getDuration())), true);
 		}, () -> {
 			builder.setColor(Color.RED);
 			builder.setDescription("No music are currently playing");

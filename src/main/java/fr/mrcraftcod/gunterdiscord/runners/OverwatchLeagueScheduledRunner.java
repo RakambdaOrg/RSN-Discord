@@ -23,10 +23,10 @@ public class OverwatchLeagueScheduledRunner implements ScheduledRunner{
 	/**
 	 * Constructor.
 	 *
-	 * @param jda
+	 * @param jda The JDA.
 	 */
-	public OverwatchLeagueScheduledRunner(JDA jda){
-		getLogger(null).info("Creating overwatch league runner");
+	public OverwatchLeagueScheduledRunner(final JDA jda){
+		getLogger(null).info("Creating Overwatch league runner");
 		this.jda = jda;
 	}
 	
@@ -37,7 +37,7 @@ public class OverwatchLeagueScheduledRunner implements ScheduledRunner{
 			final var notified = NewSettings.getConfiguration(guild).getOverwatchLeagueConfiguration().getNotifiedMatches();
 			ow.getData().getStages().stream().flatMap(s -> s.getMatches().stream()).filter(OverwatchMatch::hasEnded).filter(m -> !notified.contains(m.getId())).sorted().forEachOrdered(m -> {
 				Log.getLogger(guild).info("Notifying match {} to {}", m, channel);
-				Actions.sendMessage(channel, m.buildEmbed(jda.getSelfUser()).build());
+				Actions.sendMessage(channel, m.buildEmbed(this.jda.getSelfUser()).build());
 				NewSettings.getConfiguration(guild).getOverwatchLeagueConfiguration().setNotifiedMatch(m.getId());
 			});
 		})));

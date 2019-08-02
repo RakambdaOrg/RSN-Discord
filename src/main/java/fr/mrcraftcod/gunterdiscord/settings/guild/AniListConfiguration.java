@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2019-06-23
  */
+@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AniListConfiguration{
@@ -53,13 +54,13 @@ public class AniListConfiguration{
 		this.refreshTokens.put(userId, refreshToken);
 	}
 	
-	public void setLastAccess(User user, String section, LocalDateTime date){
+	public void setLastAccess(final User user, final String section, final LocalDateTime date){
 		this.getLastAccess(section, user.getIdLong()).ifPresentOrElse(lastAccess -> lastAccess.setDate(date), () -> this.lastAccess.computeIfAbsent(section, sec -> new HashSet<>()).add(new UserDateConfiguration(user, date)));
 	}
 	
 	@Nonnull
 	public Optional<UserDateConfiguration> getLastAccess(@Nonnull final String section, final long userId){
-		return getLastAccess(section).stream().filter(lastAccess -> Objects.equals(lastAccess.getUserId(), userId)).findAny();
+		return this.getLastAccess(section).stream().filter(lastAccess -> Objects.equals(lastAccess.getUserId(), userId)).findAny();
 	}
 	
 	@Nonnull
@@ -68,28 +69,28 @@ public class AniListConfiguration{
 	}
 	
 	@Nonnull
-	public Optional<AnilistAccessTokenConfiguration> getAccessToken(long userId){
+	public Optional<AnilistAccessTokenConfiguration> getAccessToken(final long userId){
 		final var now = LocalDateTime.now();
 		return this.tokens.stream().filter(t -> Objects.equals(t.getUserId(), userId)).filter(t -> t.getExpireDate().isAfter(now)).sorted(Comparator.comparing(AnilistAccessTokenConfiguration::getExpireDate).reversed()).findAny();
 	}
 	
-	public void setUserId(long userId, int aniListUserId){
+	public void setUserId(final long userId, final int aniListUserId){
 		this.userIds.put(userId, aniListUserId);
 	}
 	
-	public Optional<Integer> getUserId(long userId){
+	public Optional<Integer> getUserId(final long userId){
 		return Optional.ofNullable(this.userIds.get(userId));
 	}
 	
-	public void addAccessToken(@Nonnull AnilistAccessTokenConfiguration value){
+	public void addAccessToken(@Nonnull final AnilistAccessTokenConfiguration value){
 		this.tokens.add(value);
 	}
 	
-	public void removeUser(@Nonnull User user){
-		tokens.removeIf(t -> Objects.equals(t.getUserId(), user.getIdLong()));
-		refreshTokens.remove(user.getIdLong());
-		lastAccess.values().forEach(l -> l.removeIf(v -> Objects.equals(v.getUserId(), user.getIdLong())));
-		userIds.remove(user.getIdLong());
+	public void removeUser(@Nonnull final User user){
+		this.tokens.removeIf(t -> Objects.equals(t.getUserId(), user.getIdLong()));
+		this.refreshTokens.remove(user.getIdLong());
+		this.lastAccess.values().forEach(l -> l.removeIf(v -> Objects.equals(v.getUserId(), user.getIdLong())));
+		this.userIds.remove(user.getIdLong());
 	}
 	
 	@Nonnull

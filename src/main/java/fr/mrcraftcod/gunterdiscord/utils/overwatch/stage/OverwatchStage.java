@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OverwatchStage implements Comparable<OverwatchStage>{
@@ -32,7 +33,7 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 	private List<OverwatchWeek> weeks = new ArrayList<>();
 	
 	@Override
-	public int compareTo(@Nonnull OverwatchStage overwatchStage){
+	public int compareTo(@Nonnull final OverwatchStage overwatchStage){
 		final var s2 = overwatchStage.getStartDate();
 		return overwatchStage.getStartDate().map(d1 -> s2.map(d1::compareTo).orElse(-1)).orElseGet(() -> s2.isPresent() ? 1 : 0);
 	}
@@ -41,16 +42,17 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 		return this.getCurrentMatch().map(OverwatchMatch::getTournament);
 	}
 	
-	public Optional<OverwatchMatch> getCurrentMatch(){
-		return this.getMatches().stream().filter(w -> !w.hasEnded()).filter(OverwatchMatch::hasStarted).sorted().findFirst();
+	private Optional<LocalDateTime> getStartDate(){
+		return this.getMatches().stream().map(OverwatchMatch::getStartDate).sorted().findFirst();
 	}
 	
 	public Optional<OverwatchWeek> getCurrentWeek(){
 		return this.getWeeks().stream().filter(w -> !w.hasEnded()).filter(OverwatchWeek::hasStarted).sorted().findFirst();
 	}
 	
-	private Optional<LocalDateTime> getStartDate(){
-		return getMatches().stream().map(OverwatchMatch::getStartDate).sorted().findFirst();
+	@Override
+	public boolean equals(final Object obj){
+		return obj instanceof OverwatchStage && Objects.equals(this.getId(), ((OverwatchStage) obj).getId());
 	}
 	
 	public List<OverwatchMatch> getMatches(){
@@ -65,9 +67,8 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 		return this.getMatches().stream().allMatch(OverwatchMatch::hasEnded);
 	}
 	
-	@Override
-	public boolean equals(Object obj){
-		return obj instanceof OverwatchStage && Objects.equals(this.getId(), ((OverwatchStage) obj).getId());
+	private Optional<OverwatchMatch> getCurrentMatch(){
+		return this.getMatches().stream().filter(w -> !w.hasEnded()).filter(OverwatchMatch::hasStarted).sorted().findFirst();
 	}
 	
 	public int getId(){
@@ -78,7 +79,7 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 		return this.getNextMatch().map(OverwatchMatch::getTournament);
 	}
 	
-	public Optional<OverwatchMatch> getNextMatch(){
+	private Optional<OverwatchMatch> getNextMatch(){
 		return this.getMatches().stream().filter(s -> !s.hasStarted()).sorted().findFirst();
 	}
 	

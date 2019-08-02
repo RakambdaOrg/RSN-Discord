@@ -11,9 +11,11 @@ import net.dv8tion.jda.api.entities.User;
 import org.json.JSONObject;
 import javax.annotation.Nullable;
 import java.awt.Color;
+import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
@@ -22,6 +24,10 @@ import java.util.Optional;
  * @since 2018-04-13
  */
 public class Utilities{
+	public static final long RAKSRINANA_ACCOUNT = 170119951498084352L;
+	private static final Pattern TIME_PATTERN = Pattern.compile("(\\d[HMS])(?!$)");
+	private static final long LOPINETTE_ACCOUNT = 432628353024131085L;
+	
 	/**
 	 * Check if a member have a role.
 	 *
@@ -98,7 +104,7 @@ public class Utilities{
 	 * @return True if the creator, false otherwise.
 	 */
 	public static boolean isCreator(@Nullable final Member member){
-		return Objects.nonNull(member) && (Objects.equals(member.getUser().getIdLong(), 170119951498084352L) || Objects.equals(member.getUser().getIdLong(), 432628353024131085L));
+		return Objects.nonNull(member) && (Objects.equals(member.getUser().getIdLong(), RAKSRINANA_ACCOUNT) || Objects.equals(member.getUser().getIdLong(), LOPINETTE_ACCOUNT));
 	}
 	
 	/**
@@ -182,7 +188,7 @@ public class Utilities{
 		return null;
 	}
 	
-	public static String capitalize(String s){
+	public static String capitalize(final String s){
 		if(Objects.isNull(s) || s.isBlank()){
 			return s;
 		}
@@ -190,5 +196,9 @@ public class Utilities{
 			return s;
 		}
 		return s.substring(0, 1).toUpperCase() + s.substring(1);
+	}
+	
+	public static String durationToString(final Duration duration){
+		return TIME_PATTERN.matcher(duration.toString().substring(2)).replaceAll("$1 ").toLowerCase();
 	}
 }

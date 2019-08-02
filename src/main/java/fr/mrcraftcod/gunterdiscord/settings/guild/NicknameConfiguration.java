@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class NicknameConfiguration{
@@ -25,15 +26,15 @@ public class NicknameConfiguration{
 	@JsonProperty("lastChange")
 	private Map<Long, LocalDateTime> lastChange = new HashMap<>();
 	
-	public Optional<LocalDateTime> getLastChange(@Nonnull User user){
+	public Optional<LocalDateTime> getLastChange(@Nonnull final User user){
 		return this.getLastChange(user.getIdLong());
 	}
 	
-	private Optional<LocalDateTime> getLastChange(long userId){
+	private Optional<LocalDateTime> getLastChange(final long userId){
 		return Optional.ofNullable(this.lastChange.get(userId));
 	}
 	
-	public void setLastChange(@Nonnull User user, @Nullable LocalDateTime date){
+	public void setLastChange(@Nonnull final User user, @Nullable final LocalDateTime date){
 		this.lastChange.put(user.getIdLong(), date);
 	}
 	
@@ -41,7 +42,7 @@ public class NicknameConfiguration{
 		return this.changeDelay;
 	}
 	
-	public void setChangeDelay(long changeDelay){
+	public void setChangeDelay(final long changeDelay){
 		this.changeDelay = changeDelay;
 	}
 }

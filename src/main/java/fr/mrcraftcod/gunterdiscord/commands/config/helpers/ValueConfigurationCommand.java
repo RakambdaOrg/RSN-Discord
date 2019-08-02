@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public abstract class ValueConfigurationCommand<T> extends BaseConfigurationCommand{
-	public ValueConfigurationCommand(@Nullable Command parent){
+	protected ValueConfigurationCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
@@ -31,26 +31,18 @@ public abstract class ValueConfigurationCommand<T> extends BaseConfigurationComm
 	protected abstract Optional<T> getConfig(Guild guild);
 	
 	@Override
-	protected void onShow(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException{
-		final var builder = getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
-		builder.addField(getValueName(), getConfig(event.getGuild()).map(Objects::toString).orElse("<<EMPTY>>"), false);
-		Actions.reply(event, builder.build());
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField(this.getValueName(), "The value to set", false);
 	}
 	
 	protected abstract String getValueName();
 	
 	@Override
-	protected void onSet(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException{
-		try{
-			final var value = extractValue(event, args);
-			setConfig(event.getGuild(), value);
-			final var builder = getConfigEmbed(event, ConfigurationOperation.SET.name(), Color.GREEN);
-			builder.addField(getValueName(), value.toString(), false);
-			Actions.reply(event, builder.build());
-		}
-		catch(IllegalArgumentException e){
-			Actions.reply(event, e.getMessage());
-		}
+	protected void onShow(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
+		final var builder = this.getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
+		builder.addField(this.getValueName(), this.getConfig(event.getGuild()).map(Objects::toString).orElse("<<EMPTY>>"), false);
+		Actions.reply(event, builder.build());
 	}
 	
 	protected abstract void setConfig(@Nonnull Guild guild, @Nonnull T value);
@@ -58,29 +50,37 @@ public abstract class ValueConfigurationCommand<T> extends BaseConfigurationComm
 	protected abstract T extractValue(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args);
 	
 	@Override
-	protected void onRemove(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException{
-		removeConfig(event.getGuild());
-		final var builder = getConfigEmbed(event, ConfigurationOperation.REMOVE.name(), Color.GREEN);
-		builder.addField(getValueName(), "<<EMPTY>>", false);
+	protected void onRemove(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
+		this.removeConfig(event.getGuild());
+		final var builder = this.getConfigEmbed(event, ConfigurationOperation.REMOVE.name(), Color.GREEN);
+		builder.addField(this.getValueName(), "<<EMPTY>>", false);
 		Actions.reply(event, builder.build());
 	}
 	
 	protected abstract void removeConfig(@Nonnull Guild guild);
 	
 	@Override
-	protected void onAdd(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException{
-		throw new IllegalOperationException(ConfigurationOperation.ADD);
+	protected void onSet(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
+		try{
+			final var value = this.extractValue(event, args);
+			this.setConfig(event.getGuild(), value);
+			final var builder = this.getConfigEmbed(event, ConfigurationOperation.SET.name(), Color.GREEN);
+			builder.addField(this.getValueName(), value.toString(), false);
+			Actions.reply(event, builder.build());
+		}
+		catch(final IllegalArgumentException e){
+			Actions.reply(event, e.getMessage());
+		}
 	}
 	
 	@Override
-	public void addHelp(@Nonnull Guild guild, @Nonnull EmbedBuilder builder){
-		super.addHelp(guild, builder);
-		builder.addField(getValueName(), "The value to set", false);
+	protected void onAdd(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws IllegalOperationException{
+		throw new IllegalOperationException(ConfigurationOperation.ADD);
 	}
 	
 	@Nonnull
 	@Override
 	public String getDescription(){
-		return super.getDescription() + " [" + getValueName().toLowerCase()+ "]";
+		return super.getDescription() + " [" + this.getValueName().toLowerCase() + "]";
 	}
 }

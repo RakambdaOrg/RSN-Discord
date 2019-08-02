@@ -36,7 +36,7 @@ public class AutoRolesListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildMemberLeave(@Nonnull GuildMemberLeaveEvent event){
+	public void onGuildMemberLeave(@Nonnull final GuildMemberLeaveEvent event){
 		super.onGuildMemberLeave(event);
 		try{
 			NewSettings.getConfiguration(event.getGuild()).getLeaverRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> NewSettings.getConfiguration(event.getGuild()).addAddBackRole(new UserRoleConfiguration(event.getUser(), role)));

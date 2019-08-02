@@ -43,32 +43,32 @@ public class ChannelConfiguration{
 		return Optional.ofNullable(Main.getJDA().getTextChannelById(this.getChannelId()));
 	}
 	
-	public void setChannel(@Nonnull TextChannel channel){
-		this.setChannel(channel.getIdLong());
-	}
-	
-	private void setChannel(long channelId){
-		this.channelId = channelId;
-	}
-	
-	public long getChannelId(){
-		return this.channelId;
-	}
-	
 	@Override
 	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(getChannelId()).toHashCode();
+		return new HashCodeBuilder(17, 37).append(this.getChannelId()).toHashCode();
 	}
 	
 	@Override
-	public boolean equals(Object o){
+	public boolean equals(final Object o){
 		if(this == o){
 			return true;
 		}
 		if(!(o instanceof ChannelConfiguration)){
 			return false;
 		}
-		ChannelConfiguration that = (ChannelConfiguration) o;
-		return new EqualsBuilder().append(getChannelId(), that.getChannelId()).isEquals();
+		final var that = (ChannelConfiguration) o;
+		return new EqualsBuilder().append(this.getChannelId(), that.getChannelId()).isEquals();
+	}
+	
+	public long getChannelId(){
+		return this.channelId;
+	}
+	
+	public void setChannel(@Nonnull final TextChannel channel){
+		this.setChannel(channel.getIdLong());
+	}
+	
+	private void setChannel(final long channelId){
+		this.channelId = channelId;
 	}
 }

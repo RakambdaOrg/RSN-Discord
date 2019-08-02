@@ -43,32 +43,32 @@ public class RoleConfiguration{
 		return Optional.ofNullable(Main.getJDA().getRoleById(this.getRoleId()));
 	}
 	
-	public void setRole(@Nonnull Role role){
-		this.setRole(role.getIdLong());
-	}
-	
-	private void setRole(long roleId){
-		this.roleId = roleId;
-	}
-	
-	public long getRoleId(){
-		return this.roleId;
-	}
-	
 	@Override
 	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(getRoleId()).toHashCode();
+		return new HashCodeBuilder(17, 37).append(this.getRoleId()).toHashCode();
 	}
 	
 	@Override
-	public boolean equals(Object o){
+	public boolean equals(final Object o){
 		if(this == o){
 			return true;
 		}
 		if(!(o instanceof RoleConfiguration)){
 			return false;
 		}
-		RoleConfiguration that = (RoleConfiguration) o;
-		return new EqualsBuilder().append(getRoleId(), that.getRoleId()).isEquals();
+		final var that = (RoleConfiguration) o;
+		return new EqualsBuilder().append(this.getRoleId(), that.getRoleId()).isEquals();
+	}
+	
+	public long getRoleId(){
+		return this.roleId;
+	}
+	
+	public void setRole(@Nonnull final Role role){
+		this.setRole(role.getIdLong());
+	}
+	
+	private void setRole(final long roleId){
+		this.roleId = roleId;
 	}
 }

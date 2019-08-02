@@ -10,7 +10,7 @@ public enum OverwatchState{
 	private static final Logger LOGGER = LoggerFactory.getLogger(OverwatchState.class);
 	private final String stateName;
 	
-	OverwatchState(String stateName){
+	OverwatchState(final String stateName){
 		this.stateName = stateName;
 	}
 	
@@ -20,7 +20,7 @@ public enum OverwatchState{
 		try{
 			return OverwatchState.valueOf(value);
 		}
-		catch(IllegalArgumentException e){
+		catch(final IllegalArgumentException e){
 			LOGGER.warn("Unknown state {}", value);
 		}
 		return UNKNOWN;

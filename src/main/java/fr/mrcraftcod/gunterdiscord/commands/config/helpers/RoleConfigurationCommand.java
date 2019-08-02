@@ -8,12 +8,12 @@ import javax.annotation.Nullable;
 import java.util.LinkedList;
 
 public abstract class RoleConfigurationCommand extends ValueConfigurationCommand<RoleConfiguration>{
-	public RoleConfigurationCommand(@Nullable Command parent){
+	protected RoleConfigurationCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	protected RoleConfiguration extractValue(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args){
+	protected RoleConfiguration extractValue(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
 		if(event.getMessage().getMentionedRoles().isEmpty()){
 			throw new IllegalArgumentException("Please mention the role");
 		}

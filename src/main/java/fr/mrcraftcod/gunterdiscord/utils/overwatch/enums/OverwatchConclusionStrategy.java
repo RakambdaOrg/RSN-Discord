@@ -23,11 +23,11 @@ public enum OverwatchConclusionStrategy{
 	private final String strategyName;
 	private final BiFunction<OverwatchConclusionStrategy, OverwatchMatch, String> matchFunction;
 	
-	OverwatchConclusionStrategy(String strategyName){
+	OverwatchConclusionStrategy(final String strategyName){
 		this(strategyName, (s, match) -> "");
 	}
 	
-	OverwatchConclusionStrategy(String strategyName, BiFunction<OverwatchConclusionStrategy, OverwatchMatch, String> matchFunction){
+	OverwatchConclusionStrategy(final String strategyName, final BiFunction<OverwatchConclusionStrategy, OverwatchMatch, String> matchFunction){
 		this.strategyName = strategyName;
 		this.matchFunction = matchFunction;
 	}
@@ -36,16 +36,16 @@ public enum OverwatchConclusionStrategy{
 	@Nonnull
 	public OverwatchConclusionStrategy getFromString(@Nonnull final String value){
 		try{
-			OverwatchConclusionStrategy.valueOf(value);
+			return OverwatchConclusionStrategy.valueOf(value);
 		}
-		catch(IllegalArgumentException e){
+		catch(final IllegalArgumentException e){
 			LOGGER.warn("Unknown conclusion strategy {}", value);
 		}
 		return UNKNOWN;
 	}
 	
 	@Nonnull
-	public String asString(@Nonnull OverwatchMatch match){
-		return matchFunction.apply(this, match);
+	public String asString(@Nonnull final OverwatchMatch match){
+		return this.matchFunction.apply(this, match);
 	}
 }

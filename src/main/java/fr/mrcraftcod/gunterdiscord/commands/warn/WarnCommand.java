@@ -25,6 +25,8 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-04-12
  */
 public abstract class WarnCommand extends BasicCommand{
+	static final long DEFAULT_TIME = 86400L;
+	
 	@Override
 	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
@@ -40,8 +42,8 @@ public abstract class WarnCommand extends BasicCommand{
 		if(!event.getMessage().getMentionedUsers().isEmpty()){
 			final var user = event.getMessage().getMentionedUsers().get(0);
 			args.poll();
-			final var roleOptional = getRole(event.getGuild(), event.getMessage(), args);
-			final var duration = getTime(event.getGuild(), event.getMessage(), args);
+			final var roleOptional = this.getRole(event.getGuild(), event.getMessage(), args);
+			final var duration = this.getTime(event.getGuild(), event.getMessage(), args);
 			final var reason = String.join(" ", args);
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(user.getName(), null, user.getAvatarUrl());

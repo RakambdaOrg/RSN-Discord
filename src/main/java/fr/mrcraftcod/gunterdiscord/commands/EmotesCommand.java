@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.listeners.LogListener;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
@@ -24,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2018-06-16
  */
 @SuppressWarnings("WeakerAccess")
+@BotCommand
 public class EmotesCommand extends BasicCommand{
 	@SuppressWarnings("SpellCheckingInspection")
 	public static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyyww");

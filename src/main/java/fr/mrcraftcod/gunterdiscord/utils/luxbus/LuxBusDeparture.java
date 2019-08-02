@@ -16,11 +16,13 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	private static final DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd").optionalStart().appendPattern(" HH:mm:ss").optionalEnd().parseDefaulting(ChronoField.HOUR_OF_DAY, 0).parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0).parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
+	private static final Pattern SPACE_PATTERN = Pattern.compile(" +");
 	@JsonProperty("stopid")
 	private LuxBusStop stop;
 	@JsonProperty("trainNumber")
@@ -31,8 +33,8 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	private LuxBusProduct product;
 	@JsonProperty("direction")
 	private String direction;
-	private DateTimeFormatter dateTimeFormatterEmbedShort = new DateTimeFormatterBuilder().appendPattern("HH:mm").toFormatter();
-	private DateTimeFormatter dateTimeFormatterEmbedLong = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm").toFormatter();
+	private final DateTimeFormatter dateTimeFormatterEmbedShort = new DateTimeFormatterBuilder().appendPattern("HH:mm").toFormatter();
+	private final DateTimeFormatter dateTimeFormatterEmbedLong = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm").toFormatter();
 	
 	@JsonCreator
 	@Nonnull
@@ -71,7 +73,7 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	
 	@Nonnull
 	public EmbedBuilder getAsEmbed(@Nonnull final EmbedBuilder embedBuilder){
-		final var delayMinutes = getRealTimeDateTime().map(realDateTime -> getPlannedDateTime().until(realDateTime, ChronoUnit.MINUTES)).orElse(null);
+		final var delayMinutes = this.getRealTimeDateTime().map(realDateTime -> this.getPlannedDateTime().until(realDateTime, ChronoUnit.MINUTES)).orElse(null);
 		var pattern = "%s";
 		if(Objects.nonNull(delayMinutes)){
 			pattern = "%s +%d";
@@ -86,8 +88,8 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 			}
 		}
 		embedBuilder.setTitle(this.stop.getName());
-		embedBuilder.setDescription(String.format("%s direction %s", this.getProduct().getName().replaceAll(" +", " "), this.getDirection()));
-		embedBuilder.addField("Time", String.format(pattern, getEmbedDate(getPlannedDateTime()), delayMinutes), false);
+		embedBuilder.setDescription(String.format("%s direction %s", SPACE_PATTERN.matcher(this.getProduct().getName()).replaceAll(" "), this.getDirection()));
+		embedBuilder.addField("Time", String.format(pattern, this.getEmbedDate(this.getPlannedDateTime()), delayMinutes), false);
 		return embedBuilder;
 	}
 	

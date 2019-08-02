@@ -25,7 +25,7 @@ import java.util.Optional;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDateConfiguration{
-	public static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	@JsonProperty("userId")
 	private long userId;
 	@JsonProperty("date")
@@ -36,11 +36,11 @@ public class UserDateConfiguration{
 	public UserDateConfiguration(){
 	}
 	
-	public UserDateConfiguration(@Nonnull User user, @Nonnull LocalDateTime date){
+	public UserDateConfiguration(@Nonnull final User user, @Nonnull final LocalDateTime date){
 		this(user.getIdLong(), date);
 	}
 	
-	public UserDateConfiguration(long userId, @Nonnull LocalDateTime date){
+	private UserDateConfiguration(final long userId, @Nonnull final LocalDateTime date){
 		this.userId = userId;
 		this.date = date;
 	}
@@ -50,9 +50,9 @@ public class UserDateConfiguration{
 		return this.getUser().map(User::getAsMention).map(s -> s + " " + this.getDate().format(DF)).orElse("");
 	}
 	
-	@Nonnull
-	public Optional<User> getUser(){
-		return Optional.ofNullable(Main.getJDA().getUserById(this.getUserId()));
+	@Override
+	public int hashCode(){
+		return new HashCodeBuilder(17, 37).append(this.getUserId()).append(this.getDate()).toHashCode();
 	}
 	
 	@Nonnull
@@ -60,28 +60,28 @@ public class UserDateConfiguration{
 		return this.date;
 	}
 	
-	public void setDate(@Nonnull LocalDateTime date){
-		this.date = date;
-	}
-	
-	public long getUserId(){
-		return this.userId;
-	}
-	
 	@Override
-	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(getUserId()).append(getDate()).toHashCode();
-	}
-	
-	@Override
-	public boolean equals(Object o){
+	public boolean equals(final Object o){
 		if(this == o){
 			return true;
 		}
 		if(!(o instanceof UserDateConfiguration)){
 			return false;
 		}
-		UserDateConfiguration that = (UserDateConfiguration) o;
-		return new EqualsBuilder().append(getUserId(), that.getUserId()).append(getDate(), that.getDate()).isEquals();
+		final var that = (UserDateConfiguration) o;
+		return new EqualsBuilder().append(this.getUserId(), that.getUserId()).append(this.getDate(), that.getDate()).isEquals();
+	}
+	
+	public long getUserId(){
+		return this.userId;
+	}
+	
+	@Nonnull
+	private Optional<User> getUser(){
+		return Optional.ofNullable(Main.getJDA().getUserById(this.getUserId()));
+	}
+	
+	public void setDate(@Nonnull final LocalDateTime date){
+		this.date = date;
 	}
 }

@@ -15,6 +15,7 @@ import java.util.Objects;
  * @since 2018-06-16
  */
 class AudioPlayerSendHandler implements AudioSendHandler{
+	private static final int DEFAULT_VOLUME = 75;
 	private final AudioPlayer audioPlayer;
 	private AudioFrame lastFrame;
 	
@@ -23,7 +24,7 @@ class AudioPlayerSendHandler implements AudioSendHandler{
 	 */
 	AudioPlayerSendHandler(@Nonnull final AudioPlayer audioPlayer){
 		this.audioPlayer = audioPlayer;
-		audioPlayer.setVolume(75);
+		audioPlayer.setVolume(DEFAULT_VOLUME);
 	}
 	
 	@Override

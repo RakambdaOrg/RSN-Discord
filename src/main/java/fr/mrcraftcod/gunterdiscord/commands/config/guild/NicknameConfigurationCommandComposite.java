@@ -1,15 +1,15 @@
 package fr.mrcraftcod.gunterdiscord.commands.config.guild;
 
+import fr.mrcraftcod.gunterdiscord.commands.config.guild.nickname.ChangeDelayConfigurationCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
-import fr.mrcraftcod.gunterdiscord.commands.config.guild.nickname.ChangeDelayConfigurationCommand;
 import net.dv8tion.jda.api.entities.ChannelType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
 public class NicknameConfigurationCommandComposite extends CommandComposite{
-	public NicknameConfigurationCommandComposite(@Nullable Command parent){
+	public NicknameConfigurationCommandComposite(@Nullable final Command parent){
 		super(parent);
 		this.addSubCommand(new ChangeDelayConfigurationCommand(this));
 	}

@@ -26,4 +26,5 @@ open module fr.mrcraftcod.gunterdiscord {
 	
 	requires java.sql;
 	requires jsr305;
+	requires reflections;
 }

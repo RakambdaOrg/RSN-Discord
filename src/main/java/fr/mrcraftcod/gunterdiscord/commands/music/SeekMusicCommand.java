@@ -27,6 +27,8 @@ import java.util.regex.Pattern;
  */
 public class SeekMusicCommand extends BasicCommand{
 	private static final Pattern TIME_PATTERN = Pattern.compile("((\\d{1,2}):)?((\\d{1,2}):)?(\\d{1,2})");
+	private static final int SECOND_PER_MINUTE = 60;
+	private static final int SECOND_PER_HOUR = 3600;
 	
 	/**
 	 * Constructor.
@@ -51,7 +53,7 @@ public class SeekMusicCommand extends BasicCommand{
 			Actions.reply(event, "Please give the time to seek");
 		}
 		else{
-			final var time = parseTime(event.getGuild(), args.pop());
+			final var time = this.parseTime(event.getGuild(), args.pop());
 			if(time < 0){
 				Actions.reply(event, "Invalid format");
 			}
@@ -78,9 +80,9 @@ public class SeekMusicCommand extends BasicCommand{
 			return -1;
 		}
 		var duration = 0L;
-		duration += getAsInt(guild, matcher.group(2)) * 3600;
-		duration += getAsInt(guild, matcher.group(4)) * 60;
-		duration += getAsInt(guild, matcher.group(5));
+		duration += this.getAsInt(guild, matcher.group(2)) * SECOND_PER_HOUR;
+		duration += this.getAsInt(guild, matcher.group(4)) * SECOND_PER_MINUTE;
+		duration += this.getAsInt(guild, matcher.group(5));
 		return duration * 1000;
 	}
 	

@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TrombinoscopeConfiguration{
@@ -22,15 +23,15 @@ public class TrombinoscopeConfiguration{
 	@JsonProperty("photos")
 	private Set<PhotoEntryConfiguration> photos = new HashSet<>();
 	
-	public List<PhotoEntryConfiguration> getPhotos(User user){
+	public List<PhotoEntryConfiguration> getPhotos(final User user){
 		return this.photos.stream().filter(p -> Objects.equals(p.getUserId(), user.getIdLong())).collect(Collectors.toList());
 	}
 	
-	public void removePhoto(@Nonnull User user, @Nonnull String photo){
+	public void removePhoto(@Nonnull final User user, @Nonnull final String photo){
 		this.photos.removeIf(p -> Objects.equals(p.getUserId(), user.getIdLong()) && Objects.equals(p.getPhoto(), photo));
 	}
 	
-	public void removePhoto(@Nonnull User user){
+	public void removePhoto(@Nonnull final User user){
 		this.photos.removeIf(p -> Objects.equals(p.getUserId(), user.getIdLong()));
 	}
 	
@@ -39,7 +40,7 @@ public class TrombinoscopeConfiguration{
 		return Optional.ofNullable(this.participantRole);
 	}
 	
-	public void setParticipantRole(@Nullable RoleConfiguration value){
+	public void setParticipantRole(@Nullable final RoleConfiguration value){
 		this.participantRole = value;
 	}
 	
@@ -48,7 +49,7 @@ public class TrombinoscopeConfiguration{
 		return Optional.ofNullable(this.photoChannel);
 	}
 	
-	public void setPhotoChannel(@Nullable ChannelConfiguration value){
+	public void setPhotoChannel(@Nullable final ChannelConfiguration value){
 		this.photoChannel = value;
 	}
 }

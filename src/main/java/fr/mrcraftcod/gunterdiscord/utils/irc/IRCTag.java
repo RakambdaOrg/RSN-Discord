@@ -4,7 +4,7 @@ public class IRCTag{
 	private final String key;
 	private final String value;
 	
-	public IRCTag(String key, String value){
+	public IRCTag(final String key, final String value){
 		this.key = key;
 		this.value = value;
 	}
@@ -15,14 +15,14 @@ public class IRCTag{
 	}
 	
 	public String getKey(){
-		return key;
+		return this.key;
 	}
 	
 	public String getTrigram(){
-		return getValue().substring(0, 3).toUpperCase();
+		return this.getValue().substring(0, 3).toUpperCase();
 	}
 	
 	public String getValue(){
-		return value;
+		return this.value;
 	}
 }

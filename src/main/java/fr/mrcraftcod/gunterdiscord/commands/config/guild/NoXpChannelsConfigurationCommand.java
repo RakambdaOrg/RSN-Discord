@@ -12,23 +12,18 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class NoXpChannelsConfigurationCommand extends SetConfigurationCommand<ChannelConfiguration>{
-	public NoXpChannelsConfigurationCommand(@Nullable Command parent){
+	public NoXpChannelsConfigurationCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Nonnull
 	@Override
-	protected Optional<Set<ChannelConfiguration>> getConfig(@Nonnull Guild guild){
+	protected Optional<Set<ChannelConfiguration>> getConfig(@Nonnull final Guild guild){
 		return Optional.of(NewSettings.getConfiguration(guild).getNoXpChannels());
 	}
 	
 	@Override
-	protected void removeConfig(@Nonnull Guild guild, @Nonnull ChannelConfiguration value){
-		NewSettings.getConfiguration(guild).getNoXpChannels().remove(value);
-	}
-	
-	@Override
-	protected void createConfig(@Nonnull Guild guild, @Nonnull ChannelConfiguration value){
+	protected void createConfig(@Nonnull final Guild guild, @Nonnull final ChannelConfiguration value){
 		final var set = new HashSet<ChannelConfiguration>();
 		set.add(value);
 		NewSettings.getConfiguration(guild).setNoXpChannels(set);
@@ -36,12 +31,17 @@ public class NoXpChannelsConfigurationCommand extends SetConfigurationCommand<Ch
 	
 	@Nonnull
 	@Override
-	protected ChannelConfiguration extractValue(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalArgumentException{
+	protected ChannelConfiguration extractValue(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws IllegalArgumentException{
 		if(event.getMessage().getMentionedChannels().isEmpty())
 		{
 			throw new IllegalArgumentException("Please mention a channel");
 		}
 		return new ChannelConfiguration(event.getMessage().getMentionedChannels().get(0));
+	}
+	
+	@Override
+	protected void removeConfig(@Nonnull final Guild guild, @Nonnull final ChannelConfiguration value){
+		NewSettings.getConfiguration(guild).getNoXpChannels().remove(value);
 	}
 	
 	@Nonnull
@@ -57,7 +57,7 @@ public class NoXpChannelsConfigurationCommand extends SetConfigurationCommand<Ch
 	}
 	
 	@Override
-	public void addHelp(@Nonnull Guild guild, @Nonnull EmbedBuilder builder){
+	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Channel", "The channel to add or remove", false);
 	}

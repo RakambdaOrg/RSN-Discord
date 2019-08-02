@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class OverwatchConfigurationCommandComposite extends CommandComposite{
-	public OverwatchConfigurationCommandComposite(@Nullable Command parent){
+	public OverwatchConfigurationCommandComposite(@Nullable final Command parent){
 		super(parent);
 		this.addSubCommand(new NotificationChannelConfigurationCommand(this));
 	}

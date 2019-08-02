@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
@@ -22,6 +23,7 @@ import java.util.Optional;
  * @author Thomas Couchoud
  * @since 2018-06-16
  */
+@BotCommand
 public class AnnoyCommand extends BasicCommand{
 	@Override
 	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
@@ -41,7 +43,7 @@ public class AnnoyCommand extends BasicCommand{
 					final var botChannel = audioManager.getChannel();
 					if(Objects.equals(botChannel, member.getVoiceState().getChannel())){
 						final var identifier = String.join(" ", args).trim();
-						GunterAudioManager.play(event.getAuthor(), member.getVoiceState().getChannel(), identifier.equals("") ? "https://www.youtube.com/watch?v=J4X2b-CEGNg" : identifier);
+						GunterAudioManager.play(event.getAuthor(), member.getVoiceState().getChannel(), "".equals(identifier) ? "https://www.youtube.com/watch?v=J4X2b-CEGNg" : identifier);
 					}
 					else{
 						Actions.reply(event, "Sorry, the user is in another channel");

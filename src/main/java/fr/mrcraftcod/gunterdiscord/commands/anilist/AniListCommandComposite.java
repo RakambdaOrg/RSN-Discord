@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands.anilist;
 
 import fr.mrcraftcod.gunterdiscord.commands.anilist.fetch.AniListFetchCommandComposite;
+import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandComposite;
 import net.dv8tion.jda.api.entities.ChannelType;
 import javax.annotation.Nonnull;
@@ -12,15 +13,16 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-10-08
  */
+@BotCommand
 public class AniListCommandComposite extends CommandComposite{
 	/**
 	 * Constructor.
 	 */
 	public AniListCommandComposite(){
 		super();
-		addSubCommand(new AniListFetchCommandComposite(this));
-		addSubCommand(new AniListRegisterCommand(this));
-		addSubCommand(new AniListGetUserEntryCommand(this));
+		this.addSubCommand(new AniListFetchCommandComposite(this));
+		this.addSubCommand(new AniListRegisterCommand(this));
+		this.addSubCommand(new AniListGetUserEntryCommand(this));
 	}
 	
 	

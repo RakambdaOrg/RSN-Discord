@@ -23,6 +23,7 @@ import java.util.stream.Stream;
  * @author Thomas Couchoud
  * @since 2019-06-23
  */
+@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GuildConfiguration{
@@ -78,15 +79,15 @@ public class GuildConfiguration{
 		this.guildId = guildId;
 	}
 	
-	public void addRemoveRole(@Nonnull RemoveRoleConfiguration value){
+	public void addRemoveRole(@Nonnull final RemoveRoleConfiguration value){
 		this.removeRoles.add(value);
 	}
 	
-	public void addAddBackRole(@Nonnull UserRoleConfiguration userRoleConfiguration){
+	public void addAddBackRole(@Nonnull final UserRoleConfiguration userRoleConfiguration){
 		this.addBackRoles.add(userRoleConfiguration);
 	}
 	
-	public Optional<RemoveRoleConfiguration> getRemoveRole(User user, Role role){
+	public Optional<RemoveRoleConfiguration> getRemoveRole(final User user, final Role role){
 		return this.removeRoles.stream().filter(r -> Objects.equals(r.getUser().getUserId(), user.getIdLong()) && Objects.equals(r.getRole().getRoleId(), role.getIdLong())).findFirst();
 	}
 	
@@ -95,8 +96,9 @@ public class GuildConfiguration{
 		return Optional.ofNullable(this.poopRole);
 	}
 	
-	public void setPoopRole(@Nullable RoleConfiguration value){
-		this.poopRole = value;
+	@Nonnull
+	public List<RoleConfiguration> getAutoRolesAndAddBackRoles(@Nonnull final Member member){
+		return Stream.concat(this.getAutoRoles().stream(), this.getAddBackRoles().stream().filter(c -> Objects.equals(c.getUser().getUserId(), member.getIdLong())).map(UserRoleConfiguration::getRole)).collect(Collectors.toList());
 	}
 	
 	@Nonnull
@@ -108,18 +110,18 @@ public class GuildConfiguration{
 		return this.ircForward;
 	}
 	
-	public void setIrcForward(@Nonnull Boolean value){
-		this.ircForward = value;
-	}
-	
 	@Nonnull
 	public AniListConfiguration getAniListConfiguration(){
-		return aniListConfiguration;
+		return this.aniListConfiguration;
 	}
 	
 	@Nonnull
-	public List<RoleConfiguration> getAutoRolesAndAddBackRoles(@Nonnull Member member){
-		return Stream.concat(this.getAutoRoles().stream(), this.getAddBackRoles().stream().filter(c -> Objects.equals(c.getUser().getUserId(), member.getIdLong())).map(UserRoleConfiguration::getRole)).collect(Collectors.toList());
+	public Optional<RoleConfiguration> getDjRole(){
+		return Optional.ofNullable(this.djRole);
+	}
+	
+	public void setDjRole(@Nullable final RoleConfiguration djRole){
+		this.djRole = djRole;
 	}
 	
 	@Nonnull
@@ -132,17 +134,17 @@ public class GuildConfiguration{
 		return this.addBackRoles;
 	}
 	
-	public void setAutoRoles(@Nonnull Set<RoleConfiguration> autoRoles){
+	@Nonnull
+	public WarnsConfiguration getWarnsConfiguration(){
+		return this.warnsConfiguration;
+	}
+	
+	public void setAutoRoles(@Nonnull final Set<RoleConfiguration> autoRoles){
 		this.autoRoles = autoRoles;
 	}
 	
-	@Nonnull
-	public Optional<RoleConfiguration> getDjRole(){
-		return Optional.ofNullable(djRole);
-	}
-	
-	public void setDjRole(@Nullable RoleConfiguration djRole){
-		this.djRole = djRole;
+	public void setIdeaChannels(@Nonnull final Set<ChannelConfiguration> ideaChannels){
+		this.ideaChannels = ideaChannels;
 	}
 	
 	@Nonnull
@@ -150,8 +152,8 @@ public class GuildConfiguration{
 		return this.ideaChannels;
 	}
 	
-	public void setIdeaChannels(@Nonnull Set<ChannelConfiguration> ideaChannels){
-		this.ideaChannels = ideaChannels;
+	public void setIrcForward(@Nonnull final Boolean value){
+		this.ircForward = value;
 	}
 	
 	@Nonnull
@@ -173,7 +175,7 @@ public class GuildConfiguration{
 		return this.moderatorRoles;
 	}
 	
-	public void setModeratorRoles(@Nonnull Set<RoleConfiguration> moderatorRoles){
+	public void setModeratorRoles(@Nonnull final Set<RoleConfiguration> moderatorRoles){
 		this.moderatorRoles = moderatorRoles;
 	}
 	
@@ -187,8 +189,8 @@ public class GuildConfiguration{
 		return Optional.ofNullable(this.prefix);
 	}
 	
-	public void setPrefix(@Nullable String prefix){
-		this.prefix = prefix;
+	public void setNoXpChannels(@Nonnull final Set<ChannelConfiguration> noXpChannels){
+		this.noXpChannels = noXpChannels;
 	}
 	
 	@Nonnull
@@ -201,8 +203,8 @@ public class GuildConfiguration{
 		return Optional.ofNullable(this.quizChannel);
 	}
 	
-	public void setQuizChannel(@Nullable ChannelConfiguration channel){
-		this.quizChannel = channel;
+	public void setPoopRole(@Nullable final RoleConfiguration value){
+		this.poopRole = value;
 	}
 	
 	@Nonnull
@@ -215,8 +217,8 @@ public class GuildConfiguration{
 		return Optional.ofNullable(this.reportChannel);
 	}
 	
-	public void setReportChannel(@Nullable ChannelConfiguration channel){
-		this.reportChannel = channel;
+	public void setPrefix(@Nullable final String prefix){
+		this.prefix = prefix;
 	}
 	
 	@Nonnull
@@ -229,17 +231,16 @@ public class GuildConfiguration{
 		return Optional.ofNullable(this.twitchChannel);
 	}
 	
-	public void setTwitchChannel(@Nullable ChannelConfiguration channel){
+	public void setQuizChannel(@Nullable final ChannelConfiguration channel){
+		this.quizChannel = channel;
+	}
+	
+	public void setReportChannel(@Nullable final ChannelConfiguration channel){
+		this.reportChannel = channel;
+	}
+	
+	public void setTwitchChannel(@Nullable final ChannelConfiguration channel){
 		this.twitchChannel = channel;
-	}
-	
-	@Nonnull
-	public WarnsConfiguration getWarnsConfiguration(){
-		return warnsConfiguration;
-	}
-	
-	public void setNoXpChannels(@Nonnull Set<ChannelConfiguration> noXpChannels){
-		this.noXpChannels = noXpChannels;
 	}
 	
 	@Nonnull

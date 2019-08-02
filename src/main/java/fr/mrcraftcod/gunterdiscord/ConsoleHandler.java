@@ -16,6 +16,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 class ConsoleHandler extends Thread{
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleHandler.class);
+	private static final int WAIT_DELAY = 10000;
 	private final JDA jda;
 	private boolean stop;
 	
@@ -28,8 +29,8 @@ class ConsoleHandler extends Thread{
 		super();
 		this.jda = jda;
 		this.stop = false;
-		setDaemon(true);
-		setName("Console watcher");
+		this.setDaemon(true);
+		this.setName("Console watcher");
 		LOGGER.info("Console handler created");
 	}
 	
@@ -42,7 +43,7 @@ class ConsoleHandler extends Thread{
 				try{
 					if(!sc.hasNext()){
 						try{
-							Thread.sleep(10000);
+							Thread.sleep(WAIT_DELAY);
 						}
 						catch(final InterruptedException ignored){
 						}
@@ -60,7 +61,7 @@ class ConsoleHandler extends Thread{
 							this.jda.shutdownNow();
 						}
 					}
-					else if(arg1.equalsIgnoreCase("leave")){
+					else if("leave".equalsIgnoreCase(arg1)){
 						if(args.isEmpty()){
 							getLogger(null).warn("Please pass the guild as an argument");
 						}
@@ -70,7 +71,7 @@ class ConsoleHandler extends Thread{
 							getLogger(null).info("Guild {} left", guild);
 						}
 					}
-					else if(arg1.equalsIgnoreCase("gid")){
+					else if("gid".equalsIgnoreCase(arg1)){
 						if(args.isEmpty()){
 							getLogger(null).warn("Please pass the guild as an argument");
 						}
@@ -79,7 +80,7 @@ class ConsoleHandler extends Thread{
 							getLogger(null).info("Guilds {} matcher", guilds);
 						}
 					}
-					else if(arg1.equalsIgnoreCase("listMembers")){
+					else if("listMembers".equalsIgnoreCase(arg1)){
 						if(args.isEmpty()){
 							getLogger(null).warn("Please pass the guild as an argument");
 						}
@@ -88,7 +89,7 @@ class ConsoleHandler extends Thread{
 							getLogger(null).info("Members of {}: {}", guild, Objects.requireNonNull(guild).getMembers());
 						}
 					}
-					else if(arg1.equalsIgnoreCase("save")){
+					else if("save".equalsIgnoreCase(arg1)){
 						NewSettings.save();
 					}
 				}

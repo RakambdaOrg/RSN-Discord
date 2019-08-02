@@ -21,10 +21,10 @@ public class AniListFetchCommandComposite extends CommandComposite{
 	 */
 	public AniListFetchCommandComposite(@Nullable final Command parent){
 		super(parent);
-		addSubCommand(new AniListFetchActivityCommand(this));
-		addSubCommand(new AniListFetchNotificationCommand(this));
-		addSubCommand(new AniListFetchMediaUserListCommand(this));
-		addSubCommand(new AniListFetchMediaUserListDifferencesCommand(this));
+		this.addSubCommand(new AniListFetchActivityCommand(this));
+		this.addSubCommand(new AniListFetchNotificationCommand(this));
+		this.addSubCommand(new AniListFetchMediaUserListCommand(this));
+		this.addSubCommand(new AniListFetchMediaUserListDifferencesCommand(this));
 	}
 	
 	

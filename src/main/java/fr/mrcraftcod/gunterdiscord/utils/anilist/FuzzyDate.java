@@ -7,6 +7,7 @@ import fr.mrcraftcod.gunterdiscord.utils.GunterDuration;
 import javax.annotation.Nonnull;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -19,15 +20,13 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FuzzyDate{
 	@JsonProperty("day")
-	private int day;
+	private Integer day;
 	@JsonProperty("month")
-	private int month;
+	private Integer month;
 	@JsonProperty("year")
-	private int year;
-	private boolean isSet;
+	private Integer year;
 	
 	private FuzzyDate(){
-		this.isSet = false;
 	}
 	
 	@Nonnull
@@ -37,10 +36,6 @@ public class FuzzyDate{
 	
 	@Nonnull
 	public Optional<LocalDate> asDate(){
-		return this.isSet() ? Optional.of(LocalDate.of(this.year, this.month, this.day)) : Optional.empty();
-	}
-	
-	public boolean isSet(){
-		return this.isSet;
+		return (Objects.nonNull(this.day) && Objects.nonNull(this.month) && Objects.nonNull(this.year)) ? Optional.of(LocalDate.of(this.year, this.month, this.day)) : Optional.empty();
 	}
 }

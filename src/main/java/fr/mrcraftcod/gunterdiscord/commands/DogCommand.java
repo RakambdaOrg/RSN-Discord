@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
@@ -23,13 +24,16 @@ import java.util.Objects;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
+@BotCommand
 public class DogCommand extends BasicCommand{
+	private static final int HTTP_OK = 200;
+	
 	@Nonnull
 	@Override
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, ":dog: ** | Here's your random dog:**");
-		embed.setImage(getDogPictureURL(event.getGuild()));
+		embed.setImage(this.getDogPictureURL(event.getGuild()));
 		Actions.reply(event, embed.build());
 		return CommandResult.SUCCESS;
 	}
@@ -38,7 +42,7 @@ public class DogCommand extends BasicCommand{
 	private String getDogPictureURL(@Nullable final Guild guild) throws Exception{
 		Log.getLogger(guild).debug("Getting random dog picture");
 		final var handler = new JSONGetRequestSender(new URL("https://dog.ceo/api/breeds/image/random")).getRequestHandler();
-		if(Objects.equals(handler.getStatus(), 200)){
+		if(Objects.equals(handler.getStatus(), HTTP_OK)){
 			final var json = handler.getRequestResult().getObject();
 			if(json.has("status") && Objects.equals(json.getString("status"), "success")){
 				return json.getString("message");

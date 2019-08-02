@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.commands;
 
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
+import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.settings.types.ChannelConfiguration;
@@ -21,6 +22,7 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
+@BotCommand
 public class QuestionCommand extends BasicCommand{
 	private static int nextId = 0;
 	
@@ -37,7 +39,7 @@ public class QuestionCommand extends BasicCommand{
 		if(args.isEmpty()){
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Please ask a question");
 		}
-		else if(args.peek().equalsIgnoreCase("message") || args.peek().equalsIgnoreCase("question")){
+		else if("message".equalsIgnoreCase(args.peek()) || "question".equalsIgnoreCase(args.peek())){
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Please ask a question, and not 'message'");
 		}
 		else{
@@ -46,7 +48,7 @@ public class QuestionCommand extends BasicCommand{
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.GREEN);
 			builder.setTitle("New question");
-			builder.addField("ID", "" + ID, true);
+			builder.addField("ID", String.valueOf(ID), true);
 			builder.addField("User", event.getAuthor().getAsMention(), true);
 			builder.addField("Question", String.join(" ", args), false);
 			NewSettings.getConfiguration(event.getGuild()).getQuestionsConfiguration().getInputChannel().flatMap(ChannelConfiguration::getChannel).ifPresentOrElse(channel -> {

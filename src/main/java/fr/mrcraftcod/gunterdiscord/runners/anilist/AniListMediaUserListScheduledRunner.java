@@ -28,18 +28,17 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @author Thomas Couchoud
  * @since 2018-10-08
  */
-@SuppressWarnings("WeakerAccess")
 public class AniListMediaUserListScheduledRunner implements AniListRunner<AniListMediaUserList, AniListMediaUserListPagedQuery>, ScheduledRunner{
 	private final JDA jda;
 	private final boolean keepOnlyNew;
-	private boolean sortedByUser;
+	private final boolean sortedByUser;
 	
 	public AniListMediaUserListScheduledRunner(@Nonnull final JDA jda){
 		this(jda, true);
 	}
 	
-	public AniListMediaUserListScheduledRunner(@Nonnull final JDA jda, final boolean keepOnlyNew){
-		getLogger(null).info("Creating AniList {} runner", getRunnerName());
+	private AniListMediaUserListScheduledRunner(@Nonnull final JDA jda, final boolean keepOnlyNew){
+		getLogger(null).info("Creating AniList {} runner", this.getRunnerName());
 		this.jda = jda;
 		this.keepOnlyNew = keepOnlyNew;
 		this.sortedByUser = false;
@@ -56,9 +55,8 @@ public class AniListMediaUserListScheduledRunner implements AniListRunner<AniLis
 	}
 	
 	@Override
-	public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<AniListMediaUserList>> userElements){
-		AniListRunner.super.sendMessages(channels, userElements);
-		this.getJDA().getGuilds().stream().map(g -> NewSettings.getConfiguration(g).getAniListConfiguration().getThaChannel().flatMap(ChannelConfiguration::getChannel)).filter(Optional::isPresent).map(Optional::get).forEach(textChannel -> NewSettings.getConfiguration(textChannel.getGuild()).getAniListConfiguration().getThaUser().flatMap(UserConfiguration::getUser).ifPresent(user -> userElements.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> ImmutablePair.of(e.getKey(), v))).filter(v -> v.getRight().getCustomLists().entrySet().stream().filter(Map.Entry::getValue).anyMatch(entry -> Objects.equals("ThaPending", entry.getKey()) || Objects.equals("ThaReading", entry.getKey()) || Objects.equals("ThaWatching", entry.getKey()))).forEach(p -> Actions.sendMessage(textChannel, "" + user.getAsMention(), buildMessage(p.getLeft(), p.getRight())))));
+	public void run(){
+		this.runQueryOnEveryUserAndDefaultChannels();
 	}
 	
 	@Override
@@ -68,7 +66,7 @@ public class AniListMediaUserListScheduledRunner implements AniListRunner<AniLis
 	
 	@Override
 	public List<TextChannel> getChannels(){
-		return getJDA().getGuilds().stream().map(g -> NewSettings.getConfiguration(g).getAniListConfiguration().getMediaChangeChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
+		return this.getJDA().getGuilds().stream().map(g -> NewSettings.getConfiguration(g).getAniListConfiguration().getMediaChangeChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 	
 	@Nonnull
@@ -83,10 +81,10 @@ public class AniListMediaUserListScheduledRunner implements AniListRunner<AniLis
 		return this.jda;
 	}
 	
-	@Nonnull
 	@Override
-	public AniListMediaUserListPagedQuery initQuery(@Nonnull Member member){
-		return new AniListMediaUserListPagedQuery(AniListUtils.getUserId(member).orElseThrow());
+	public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<AniListMediaUserList>> userElements){
+		AniListRunner.super.sendMessages(channels, userElements);
+		this.getJDA().getGuilds().stream().map(g -> NewSettings.getConfiguration(g).getAniListConfiguration().getThaChannel().flatMap(ChannelConfiguration::getChannel)).filter(Optional::isPresent).map(Optional::get).forEach(textChannel -> NewSettings.getConfiguration(textChannel.getGuild()).getAniListConfiguration().getThaUser().flatMap(UserConfiguration::getUser).ifPresent(user -> userElements.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> ImmutablePair.of(e.getKey(), v))).filter(v -> v.getRight().getCustomLists().entrySet().stream().filter(Map.Entry::getValue).anyMatch(entry -> Objects.equals("ThaPending", entry.getKey()) || Objects.equals("ThaReading", entry.getKey()) || Objects.equals("ThaWatching", entry.getKey()))).forEach(p -> Actions.sendMessage(textChannel, user.getAsMention(), this.buildMessage(p.getLeft(), p.getRight())))));
 	}
 	
 	@Override
@@ -101,9 +99,10 @@ public class AniListMediaUserListScheduledRunner implements AniListRunner<AniLis
 		return "medialist";
 	}
 	
+	@Nonnull
 	@Override
-	public void run(){
-		runQueryOnEveryUserAndDefaultChannels();
+	public AniListMediaUserListPagedQuery initQuery(@Nonnull final Member member){
+		return new AniListMediaUserListPagedQuery(AniListUtils.getUserId(member).orElseThrow());
 	}
 	
 	@Nonnull

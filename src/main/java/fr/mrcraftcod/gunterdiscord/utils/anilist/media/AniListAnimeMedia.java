@@ -35,9 +35,10 @@ public class AniListAnimeMedia extends AniListMedia{
 	}
 	
 	@Override
-	@Nullable
-	public Integer getItemCount(){
-		return getEpisodes();
+	public void fillEmbed(@Nonnull final EmbedBuilder builder){
+		super.fillEmbed(builder);
+		Optional.ofNullable(this.getEpisodes()).map(Object::toString).ifPresent(val -> builder.addField("Episodes", val, true));
+		Optional.ofNullable(this.getSeason()).map(Enum::toString).ifPresent(val -> builder.addField("Season", val, true));
 	}
 	
 	@Override
@@ -46,10 +47,9 @@ public class AniListAnimeMedia extends AniListMedia{
 	}
 	
 	@Override
-	public void fillEmbed(@Nonnull final EmbedBuilder builder){
-		super.fillEmbed(builder);
-		Optional.ofNullable(getEpisodes()).map(Object::toString).ifPresent(val -> builder.addField("Episodes", val, true));
-		Optional.ofNullable(getSeason()).map(Enum::toString).ifPresent(val -> builder.addField("Season", val, true));
+	@Nullable
+	public Integer getItemCount(){
+		return this.getEpisodes();
 	}
 	
 	@Nullable

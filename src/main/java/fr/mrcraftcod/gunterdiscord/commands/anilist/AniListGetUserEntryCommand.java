@@ -34,7 +34,7 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 		private final AniListMediaType type;
 		private final TextChannel channel;
 		
-		AniListMediaUserListRunner(final JDA jda, final AniListMediaType type, final int ID, TextChannel channel){
+		AniListMediaUserListRunner(final JDA jda, final AniListMediaType type, final int ID, final TextChannel channel){
 			this.jda = jda;
 			this.type = type;
 			this.ID = ID;
@@ -43,8 +43,8 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 		
 		@Override
 		public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<AniListMediaUserList>> userMedias){
-			userMedias.values().forEach(medias -> medias.removeIf(aniListMediaUserList -> !aniListMediaUserList.getMedia().getType().equals(this.type) || !Objects.equals(aniListMediaUserList.getMedia().getId(), this.ID)));
-			userMedias.entrySet().stream().flatMap(userMedia -> userMedia.getValue().stream().map(media -> ImmutablePair.of(userMedia.getKey(), media))).sorted(Comparator.comparing(Map.Entry::getValue)).map(userMedia -> buildMessage(userMedia.getKey(), userMedia.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
+			userMedias.values().forEach(medias -> medias.removeIf(aniListMediaUserList -> aniListMediaUserList.getMedia().getType() != this.type || !Objects.equals(aniListMediaUserList.getMedia().getId(), this.ID)));
+			userMedias.entrySet().stream().flatMap(userMedia -> userMedia.getValue().stream().map(media -> ImmutablePair.of(userMedia.getKey(), media))).sorted(Comparator.comparing(Map.Entry::getValue)).map(userMedia -> this.buildMessage(userMedia.getKey(), userMedia.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
 		}
 		
 		@Override
@@ -66,7 +66,7 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 		
 		@Nonnull
 		@Override
-		public AniListMediaUserListPagedQuery initQuery(@Nonnull Member member){
+		public AniListMediaUserListPagedQuery initQuery(@Nonnull final Member member){
 			return new AniListMediaUserListPagedQuery(AniListUtils.getUserId(member).orElseThrow());
 		}
 		

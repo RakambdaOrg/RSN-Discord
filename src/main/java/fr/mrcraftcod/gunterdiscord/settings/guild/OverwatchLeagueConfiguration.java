@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OverwatchLeagueConfiguration{
@@ -21,7 +22,7 @@ public class OverwatchLeagueConfiguration{
 		return Optional.ofNullable(this.notificationChannel);
 	}
 	
-	public void setNotificationChannel(@Nullable ChannelConfiguration value){
+	public void setNotificationChannel(@Nullable final ChannelConfiguration value){
 		this.notificationChannel = value;
 	}
 	
@@ -29,7 +30,7 @@ public class OverwatchLeagueConfiguration{
 		return this.notifiedMatches;
 	}
 	
-	public void setNotifiedMatch(int id){
+	public void setNotifiedMatch(final int id){
 		this.notifiedMatches.add(id);
 	}
 }

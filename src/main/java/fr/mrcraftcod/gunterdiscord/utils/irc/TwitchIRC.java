@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 public class TwitchIRC{
 	private static final Logger LOGGER = LoggerFactory.getLogger(TwitchIRC.class);
-	private static final String NICKNAME = "rsndiscord";
 	private static IRCClient CLIENT = null;
 	
 	public static void connect(@Nonnull final Guild guild, @Nonnull final String user) throws IOException{
@@ -23,12 +22,12 @@ public class TwitchIRC{
 			CLIENT = new IRCClient("irc.chat.twitch.tv", 6667);
 			CLIENT.setSecureKeyPassword(String.format("oauth:%s", System.getProperty("TWITCH_TOKEN")));
 			CLIENT.connect();
-			CLIENT.setNick(NICKNAME);
+			CLIENT.setNick(System.getProperty("TWITCH_NICKNAME"));
 			CLIENT.sendMessage("CAP REQ :twitch.tv/tags");
 			CLIENT.sendMessage("CAP REQ :twitch.tv/commands");
 		}
 		final var channel = String.format("#%s", user.toLowerCase());
-		if(CLIENT.getJoinedChannels().stream().noneMatch(joinedChannel -> Objects.equals(joinedChannel, channel))){
+		if(CLIENT.getListeners().stream().noneMatch(l -> Objects.equals(l.getIRCChannel(), channel) && Objects.equals(guild, l.getGuild()))){
 			final var listener = new TwitchIRCListener(guild, user, channel);
 			if(NewSettings.getConfiguration(guild).getIrcForward()){
 				guild.getJDA().addEventListener(listener);
@@ -44,17 +43,19 @@ public class TwitchIRC{
 	
 	static void disconnect(@Nonnull final Guild guild, @Nonnull final String user, final boolean removeListener){
 		if(Objects.nonNull(CLIENT)){
-			final var channel = String.format("#%s", user.toLowerCase());
-			CLIENT.leaveChannel(channel);
-			CLIENT.getListeners().stream().filter(l -> Objects.equals(l.getUser(), user)).forEach(l -> l.onIRCMessage(new ChannelLeftIRCMessage(new IRCUser(""), channel)));
+			final var ircChannel = String.format("#%s", user.toLowerCase());
+			CLIENT.getListeners().stream().filter(l -> Objects.equals(l.getUser(), user) && Objects.equals(guild, l.getGuild())).forEach(l -> l.onIRCMessage(new ChannelLeftIRCMessage(new IRCUser(""), ircChannel)));
 			if(removeListener){
 				CLIENT.getListeners().removeIf(obj -> {
-					if(obj instanceof TwitchIRCListener && Objects.equals(obj.getUser(), user)){
+					if(obj instanceof TwitchIRCListener && Objects.equals(obj.getUser(), user) && Objects.equals(guild, obj.getGuild())){
 						guild.getJDA().removeEventListener(obj);
 						return true;
 					}
 					return false;
 				});
+			}
+			if(CLIENT.getListeners().stream().noneMatch(l -> Objects.equals(l.getUser(), user))){
+				CLIENT.leaveChannel(ircChannel);
 			}
 			if(CLIENT.getJoinedChannels().isEmpty()){
 				close();
@@ -74,7 +75,7 @@ public class TwitchIRC{
 		}
 	}
 	
-	public static void sendMessage(@Nullable Guild guild, @Nonnull String ircChannel, @Nonnull String message){
+	public static void sendMessage(@Nullable final Guild guild, @Nonnull final String ircChannel, @Nonnull final String message){
 		if(Objects.nonNull(CLIENT) && CLIENT.getJoinedChannels().contains(ircChannel)){
 			Log.getLogger(guild).info("Sending IRC message tp {}: {}", ircChannel, message);
 			CLIENT.sendMessage(String.format("PRIVMSG %s :%s", ircChannel, message));

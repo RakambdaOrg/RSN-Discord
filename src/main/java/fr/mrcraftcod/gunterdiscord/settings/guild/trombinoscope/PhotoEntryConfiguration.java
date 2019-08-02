@@ -20,34 +20,34 @@ public class PhotoEntryConfiguration{
 	public PhotoEntryConfiguration(){
 	}
 	
-	public PhotoEntryConfiguration(@Nonnull User user, @Nonnull String photo){
+	public PhotoEntryConfiguration(@Nonnull final User user, @Nonnull final String photo){
 		this.user = new UserConfiguration(user);
 		this.photo = photo;
 	}
 	
-	@Nonnull
-	public String getPhoto(){
-		return photo;
+	@Override
+	public int hashCode(){
+		return new HashCodeBuilder(17, 37).append(this.user).append(this.getPhoto()).toHashCode();
 	}
 	
 	public long getUserId(){
 		return this.user.getUserId();
 	}
 	
-	@Override
-	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(user).append(getPhoto()).toHashCode();
+	@Nonnull
+	public String getPhoto(){
+		return this.photo;
 	}
 	
 	@Override
-	public boolean equals(Object o){
+	public boolean equals(final Object o){
 		if(this == o){
 			return true;
 		}
 		if(!(o instanceof PhotoEntryConfiguration)){
 			return false;
 		}
-		PhotoEntryConfiguration that = (PhotoEntryConfiguration) o;
-		return new EqualsBuilder().append(user, that.user).append(getPhoto(), that.getPhoto()).isEquals();
+		final var that = (PhotoEntryConfiguration) o;
+		return new EqualsBuilder().append(this.user, that.user).append(this.getPhoto(), that.getPhoto()).isEquals();
 	}
 }

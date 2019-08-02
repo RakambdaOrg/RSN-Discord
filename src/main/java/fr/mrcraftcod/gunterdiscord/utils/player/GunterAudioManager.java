@@ -140,20 +140,10 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		return this.audioPlayerManager;
 	}
 	
-	private void close(){
-		if(!this.isSearchingTracks){
-			final var executor = Executors.newScheduledThreadPool(1);
-			executor.schedule(() -> {
-				getAudioPlayerManager().shutdown();
-				getAudioManager().setSendingHandler(null);
-				if(getAudioManager().isConnected()){
-					getAudioManager().closeAudioConnection();
-				}
-				managers.remove(this.channel.getGuild());
-				getLogger(getChannel().getGuild()).info("Audio manager shutdown");
-			}, 2, TimeUnit.SECONDS);
-			executor.shutdown();
-		}
+	@Override
+	public void onTrackSchedulerEmpty(){
+		getLogger(this.getChannel().getGuild()).info("Scheduler is empty");
+		this.close();
 	}
 	
 	@Nonnull
@@ -190,10 +180,20 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 		return NO_MUSIC;
 	}
 	
-	@Override
-	public void onTrackSchedulerEmpty(){
-		getLogger(getChannel().getGuild()).info("Scheduler is empty");
-		close();
+	private void close(){
+		if(!this.isSearchingTracks){
+			final var executor = Executors.newScheduledThreadPool(1);
+			executor.schedule(() -> {
+				this.getAudioPlayerManager().shutdown();
+				this.getAudioManager().setSendingHandler(null);
+				if(this.getAudioManager().isConnected()){
+					this.getAudioManager().closeAudioConnection();
+				}
+				managers.remove(this.channel.getGuild());
+				getLogger(this.getChannel().getGuild()).info("Audio manager shutdown");
+			}, 2, TimeUnit.SECONDS);
+			executor.shutdown();
+		}
 	}
 	
 	@Nonnull
@@ -227,7 +227,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	}
 	
 	private void skip(){
-		final var trackOptional = currentTrack(getChannel().getGuild());
+		final var trackOptional = currentTrack(this.getChannel().getGuild());
 		trackOptional.ifPresent(track -> {
 			if(track.getUserData() instanceof TrackUserFields){
 				track.getUserData(TrackUserFields.class).fill(new ReplayTrackUserField(), false);

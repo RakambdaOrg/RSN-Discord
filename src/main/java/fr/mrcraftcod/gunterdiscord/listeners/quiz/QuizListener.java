@@ -22,6 +22,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
@@ -33,6 +34,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  */
 public class QuizListener extends ListenerAdapter implements Runnable{
 	private static final ArrayList<QuizListener> quizzes = new ArrayList<>();
+	private static final Pattern ANSWERS_DELIMITER = Pattern.compile("[,;]");
 	private final Guild guild;
 	private final Duration waitTime;
 	private final LinkedList<Question> questions;
@@ -51,7 +53,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 		this.guild = guild;
 		this.stopped = false;
 		this.waitTime = Duration.ofSeconds(delay);
-		this.questions = generateQuestions(amount);
+		this.questions = this.generateQuestions(amount);
 		guild.getJDA().addEventListener(this);
 		quizzes.add(this);
 		final var executorService = Executors.newSingleThreadExecutor();
@@ -74,7 +76,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 			lines.addAll(Files.readAllLines(questionPath));
 		}
 		catch(final Exception e){
-			getLogger(getGuild()).error("Error reading questions file {}", questionPath, e);
+			getLogger(this.getGuild()).error("Error reading questions file {}", questionPath, e);
 		}
 		if(lines.isEmpty()){
 			throw new IllegalStateException("No questions found");
@@ -85,9 +87,9 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 			if(lines.isEmpty()){
 				break;
 			}
-			final var line = lines.pop().split("[,;]");
+			final var line = ANSWERS_DELIMITER.split(lines.pop());
 			final var correctAnswer = line[1];
-			final var answersList = Arrays.stream(line, 2, line.length).filter(lineStr -> Objects.nonNull(lineStr) && !lineStr.trim().equalsIgnoreCase("")).collect(Collectors.toList());
+			final var answersList = Arrays.stream(line, 2, line.length).filter(lineStr -> Objects.nonNull(lineStr) && !"".equalsIgnoreCase(lineStr.trim())).collect(Collectors.toList());
 			Collections.shuffle(answersList);
 			final var ID = ThreadLocalRandom.current().nextInt(0, answersList.size() + 1);
 			final var answers = new HashMap<Integer, String>();
@@ -172,7 +174,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	public void run(){
 		final var QUESTION_TIME = 20;
 		try{
-			final var quizChannelOptional = NewSettings.getConfiguration(getGuild()).getQuizChannel().flatMap(ChannelConfiguration::getChannel);
+			final var quizChannelOptional = NewSettings.getConfiguration(this.getGuild()).getQuizChannel().flatMap(ChannelConfiguration::getChannel);
 			if(quizChannelOptional.isEmpty()){
 				return;
 			}
@@ -182,7 +184,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 				Thread.sleep((this.waitTime.getSeconds() / 2) * 1000);
 			}
 			catch(final InterruptedException e){
-				getLogger(getGuild()).error("Error sleeping", e);
+				getLogger(this.getGuild()).error("Error sleeping", e);
 			}
 			Actions.sendMessage(quizChannel, "%s remaining!", this.waitTime.dividedBy(2).toString().replace("PT", ""));
 			try{
@@ -211,7 +213,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 					final var questionMessage = Actions.getMessage(quizChannel, builder.build());
 					this.answers = new HashMap<>();
 					this.waitingMsg = questionMessage;
-					emotes.forEach(e -> questionMessage.addReaction(BasicEmotes.getEmote("" + e).getValue()).queue());
+					emotes.forEach(e -> questionMessage.addReaction(BasicEmotes.getEmote(String.valueOf(e)).getValue()).queue());
 					try{
 						Thread.sleep(QUESTION_TIME * 1000);
 					}
@@ -219,13 +221,13 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 						getLogger(this.guild).error("Error sleeping", e);
 					}
 					Actions.sendMessage(quizChannel, "Stop!");
-					getLogger(getGuild()).info("Question over, answer was {}", question.getCorrectAnswerIndex());
+					getLogger(this.getGuild()).info("Question over, answer was {}", question.getCorrectAnswerIndex());
 					this.waitingMsg = null;
 					this.answers.forEach((user, v) -> {
 						if(Objects.equals(v, question.getCorrectAnswerIndex())){
 							final var newScore = scores.getOrDefault(user, 0) + 1;
 							scores.put(user, newScore);
-							getLogger(getGuild()).info("{} +1 pt - now: {}", user, newScore);
+							getLogger(this.getGuild()).info("{} +1 pt - now: {}", user, newScore);
 						}
 						else if(!scores.containsKey(user)){
 							scores.put(user, 0);
@@ -236,11 +238,11 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 						Thread.sleep(5 * 1000);
 					}
 					catch(final InterruptedException e){
-						getLogger(getGuild()).error("Error sleeping", e);
+						getLogger(this.getGuild()).error("Error sleeping", e);
 					}
 				}
 				catch(final Exception e){
-					getLogger(getGuild()).error("Error quiz question", e);
+					getLogger(this.getGuild()).error("Error quiz question", e);
 				}
 			}
 			final HashMap<Integer, List<User>> allPositions;
@@ -258,15 +260,15 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 			builder.setDescription("Top scores:");
 			allPositions.keySet().stream().sorted(Comparator.reverseOrder()).limit(3).map(v -> new MessageEmbed.Field("Position " + (1 + allScores.indexOf(v)) + " (" + v + " points)", allPositions.get(v).stream().map(User::getAsMention).collect(Collectors.joining(", ")), false)).forEach(builder::addField);
 			Actions.sendMessage(quizChannel, builder.build());
-			allPositions.keySet().forEach(score -> {
+			allPositions.forEach((score, users) -> {
 				final var position = 1 + allScores.indexOf(score);
-				final var format = "You finished the quiz #{0} with {1} points" + (allPositions.get(score).size() > 1 ? ", you share this position with {2} other people" : "") + ".";
-				final var message = MessageFormat.format(format, position, score, allPositions.get(score).size() - 1);
-				allPositions.get(score).forEach(user -> Actions.replyPrivate(getGuild(), user, message));
+				final var format = "You finished the quiz #{0} with {1} points" + (users.size() > 1 ? ", you share this position with {2} other people" : "") + ".";
+				final var message = MessageFormat.format(format, position, score, users.size() - 1);
+				users.forEach(user -> Actions.replyPrivate(this.getGuild(), user, message));
 			});
 		}
 		catch(final Exception e){
-			getLogger(getGuild()).error("Error quiz", e);
+			getLogger(this.getGuild()).error("Error quiz", e);
 		}
 		quizzes.remove(this);
 		this.guild.getJDA().removeEventListener(this);
@@ -276,7 +278,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	public void onGuildMessageReactionAdd(@Nonnull final GuildMessageReactionAddEvent event){
 		super.onGuildMessageReactionAdd(event);
 		try{
-			if(Objects.equals(event.getGuild(), getGuild()) && Objects.nonNull(this.waitingMsg) && Objects.equals(event.getMessageIdLong(), this.waitingMsg.getIdLong()) && !Objects.equals(event.getUser(), event.getJDA().getSelfUser())){
+			if(Objects.equals(event.getGuild(), this.getGuild()) && Objects.nonNull(this.waitingMsg) && Objects.equals(event.getMessageIdLong(), this.waitingMsg.getIdLong()) && !Objects.equals(event.getUser(), event.getJDA().getSelfUser())){
 				if(Objects.nonNull(this.answers)){
 					final var emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
 					if(Objects.isNull(emote)){
@@ -296,7 +298,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 			}
 		}
 		catch(final Exception e){
-			getLogger(getGuild()).error("", e);
+			getLogger(this.getGuild()).error("", e);
 		}
 	}
 	
@@ -304,7 +306,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	public void onGuildMessageReactionRemove(@Nonnull final GuildMessageReactionRemoveEvent event){
 		super.onGuildMessageReactionRemove(event);
 		try{
-			if(Objects.equals(event.getGuild(), getGuild()) && Objects.nonNull(this.waitingMsg) && Objects.equals(event.getMessageIdLong(), this.waitingMsg.getIdLong())){
+			if(Objects.equals(event.getGuild(), this.getGuild()) && Objects.nonNull(this.waitingMsg) && Objects.equals(event.getMessageIdLong(), this.waitingMsg.getIdLong())){
 				if(Objects.nonNull(this.answers)){
 					if(this.answers.containsKey(event.getUser())){
 						final var emote = BasicEmotes.getEmote(event.getReactionEmote().getName());

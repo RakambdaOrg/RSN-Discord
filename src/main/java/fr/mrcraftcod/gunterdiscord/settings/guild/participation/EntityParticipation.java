@@ -18,6 +18,10 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@SuppressWarnings({
+		"unused",
+		"FieldMayBeFinal"
+})
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EntityParticipation{
@@ -29,15 +33,15 @@ public class EntityParticipation{
 	@JsonDeserialize(using = EntityDeserializer.class)
 	private Set<EntityScore> scores = new HashSet<>();
 	
-	public EntityParticipation(LocalDate date){
+	public EntityParticipation(final LocalDate date){
 		this.date = LocalDateTime.of(date, LocalTime.of(0, 0, 0));
 	}
 	
 	public EntityParticipation(){
 	}
 	
-	public void increment(long id, @Nullable String name){
-		scores.stream().filter(e -> Objects.equals(e.getId(), id)).findFirst().ifPresentOrElse(EntityScore::increment, () -> scores.add(new EntityScore(id, name, 1)));
+	public void increment(final long id, @Nullable final String name){
+		this.scores.stream().filter(e -> Objects.equals(e.getId(), id)).findFirst().ifPresentOrElse(EntityScore::increment, () -> this.scores.add(new EntityScore(id, name, 1)));
 	}
 	
 	@Nonnull
@@ -52,18 +56,18 @@ public class EntityParticipation{
 	
 	@Override
 	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(getDate()).toHashCode();
+		return new HashCodeBuilder(17, 37).append(this.getDate()).toHashCode();
 	}
 	
 	@Override
-	public boolean equals(Object o){
+	public boolean equals(final Object o){
 		if(this == o){
 			return true;
 		}
 		if(!(o instanceof EntityParticipation)){
 			return false;
 		}
-		EntityParticipation that = (EntityParticipation) o;
-		return new EqualsBuilder().append(getDate(), that.getDate()).isEquals();
+		final var that = (EntityParticipation) o;
+		return new EqualsBuilder().append(this.getDate(), that.getDate()).isEquals();
 	}
 }

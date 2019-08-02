@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import java.util.LinkedList;
 
 public abstract class BooleanConfigurationCommand extends ValueConfigurationCommand<Boolean>{
-	public BooleanConfigurationCommand(@Nullable Command parent){
+	protected BooleanConfigurationCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
@@ -18,12 +18,12 @@ public abstract class BooleanConfigurationCommand extends ValueConfigurationComm
 	}
 	
 	@Override
-	protected Boolean extractValue(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args){
+	protected Boolean extractValue(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
 		if(!args.isEmpty()){
 			try{
 				return Boolean.valueOf(args.pop());
 			}
-			catch(Exception e){
+			catch(final Exception e){
 				Log.getLogger(event.getGuild()).error("Failed to parse boolean", e);
 			}
 		}

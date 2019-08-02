@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class OverwatchGetMatchCommand extends BasicCommand{
 	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchMatch> onMatch = (event, match) -> Actions.reply(event, match.buildEmbed(event.getUser()).build());
 	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchWeek> onWeek = (event, week) -> {
-		if(week.getMatches().size() > 0){
+		if(!week.getMatches().isEmpty()){
 			if(week.getMatches().size() == 1){
 				onMatch.accept(event, week.getMatches().get(0));
 			}
@@ -39,7 +39,7 @@ public class OverwatchGetMatchCommand extends BasicCommand{
 				final var nextMatch = week.getNextMatch();
 				final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, "Available matches");
 				week.getMatches().forEach(m -> {
-					final var emote = BasicEmotes.getEmote("" + ((char) counter.getAndIncrement()));
+					final var emote = BasicEmotes.getEmote(String.valueOf((char) counter.getAndIncrement()));
 					options.put(emote, m);
 					builder.addField(emote.getValue() + ": " + m.getCompetitors().stream().map(OverwatchCompetitor::getName).collect(Collectors.joining(" vs ")), currentMatch.map(m::equals).orElse(false) ? "Current" : (nextMatch.map(m::equals).orElse(false) ? "Next" : ""), false);
 				});
@@ -55,7 +55,7 @@ public class OverwatchGetMatchCommand extends BasicCommand{
 		}
 	};
 	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchStage> onStage = (event, stage) -> {
-		if(stage.getWeeks().size() > 0){
+		if(!stage.getWeeks().isEmpty()){
 			if(stage.getWeeks().size() == 1){
 				onWeek.accept(event, stage.getWeeks().get(0));
 			}
@@ -66,7 +66,7 @@ public class OverwatchGetMatchCommand extends BasicCommand{
 				final var nextWeek = stage.getNextWeek();
 				final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, "Available weeks");
 				stage.getWeeks().forEach(w -> {
-					final var emote = BasicEmotes.getEmote("" + ((char) counter.getAndIncrement()));
+					final var emote = BasicEmotes.getEmote(String.valueOf((char) counter.getAndIncrement()));
 					options.put(emote, w);
 					builder.addField(emote.getValue() + ": " + w.getName(), currentWeek.map(w::equals).orElse(false) ? "Current" : (nextWeek.map(w::equals).orElse(false) ? "Next" : ""), false);
 				});
@@ -82,24 +82,24 @@ public class OverwatchGetMatchCommand extends BasicCommand{
 		}
 	};
 	
-	public OverwatchGetMatchCommand(Command parent){
+	public OverwatchGetMatchCommand(final Command parent){
 		super(parent);
 	}
 	
 	@SuppressWarnings("DuplicatedCode")
 	@Nonnull
 	@Override
-	public CommandResult execute(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		OverwatchUtils.getLastResponse().ifPresentOrElse(overwatchResponse -> {
-			if(overwatchResponse.getData().getStages().size() > 0){
+			if(!overwatchResponse.getData().getStages().isEmpty()){
 				final var counter = new AtomicInteger('a');
 				final var options = new HashMap<BasicEmotes, OverwatchStage>();
 				final var currentStage = overwatchResponse.getData().getCurrentStage();
 				final var nextStage = overwatchResponse.getData().getNextStage();
 				final var builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Available stages");
 				overwatchResponse.getData().getStages().forEach(s -> {
-					final var emote = BasicEmotes.getEmote("" + ((char) counter.getAndIncrement()));
+					final var emote = BasicEmotes.getEmote(String.valueOf((char) counter.getAndIncrement()));
 					options.put(emote, s);
 					builder.addField(emote.getValue() + ": " + s.getName(), currentStage.map(s::equals).orElse(false) ? "Current" : (nextStage.map(s::equals).orElse(false) ? "Next" : ""), false);
 				});

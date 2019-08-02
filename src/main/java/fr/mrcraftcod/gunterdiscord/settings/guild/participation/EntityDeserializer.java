@@ -13,15 +13,15 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class EntityDeserializer extends JsonDeserializer<Set<EntityScore>>{
+class EntityDeserializer extends JsonDeserializer<Set<EntityScore>>{
 	private static final Logger LOGGER = LoggerFactory.getLogger(HexColorDeserializer.class);
 	
 	@Override
 	public Set<EntityScore> deserialize(@Nonnull final JsonParser jsonParser, @Nonnull final DeserializationContext deserializationContext) throws IOException{
 		try{
 			final var set = new HashSet<EntityScore>();
-			JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-			if(node.getNodeType().equals(JsonNodeType.ARRAY)){
+			final JsonNode node = jsonParser.getCodec().readTree(jsonParser);
+			if(node.getNodeType() == JsonNodeType.ARRAY){
 				final var it = node.elements();
 				while(it.hasNext()){
 					final var next = it.next();
@@ -39,7 +39,7 @@ public class EntityDeserializer extends JsonDeserializer<Set<EntityScore>>{
 			}
 			return set;
 		}
-		catch(IOException e){
+		catch(final IOException e){
 			LOGGER.warn("Failed get entity score type {}", jsonParser.getValueAsString());
 		}
 		return null;

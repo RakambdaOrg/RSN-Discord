@@ -44,13 +44,13 @@ public interface Command extends Comparable<Command>{
 		if(Objects.isNull(member)){
 			return false;
 		}
-		if(Objects.equals(getAccessLevel(), ALL)){
+		if(this.getAccessLevel() == ALL){
 			return true;
 		}
-		if(Objects.equals(getAccessLevel(), MODERATOR) && Utilities.isModerator(member)){
+		if(this.getAccessLevel() == MODERATOR && Utilities.isModerator(member)){
 			return true;
 		}
-		if(Objects.equals(getAccessLevel(), ADMIN) && Utilities.isAdmin(member)){
+		if(this.getAccessLevel() == ADMIN && Utilities.isAdmin(member)){
 			return true;
 		}
 		return Utilities.isCreator(member);
@@ -79,7 +79,7 @@ public interface Command extends Comparable<Command>{
 	
 	@Override
 	default int compareTo(@Nonnull final Command otherCommand){
-		return getName().compareTo(otherCommand.getName());
+		return this.getName().compareTo(otherCommand.getName());
 	}
 	
 	/**

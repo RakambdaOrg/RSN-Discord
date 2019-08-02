@@ -1,5 +1,6 @@
 package fr.mrcraftcod.gunterdiscord.commands.warn;
 
+import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.settings.guild.warns.WarnConfiguration;
 import net.dv8tion.jda.api.entities.Guild;
@@ -16,6 +17,7 @@ import java.util.Optional;
  * @author Thomas Couchoud
  * @since 2018-04-12
  */
+@BotCommand
 public class MegaWarnCommand extends WarnCommand{
 	@Nonnull
 	@Override
@@ -25,7 +27,7 @@ public class MegaWarnCommand extends WarnCommand{
 	
 	@Override
 	protected long getTime(@Nonnull final Guild guild, @Nonnull final Message message, @Nonnull final LinkedList<String> args){
-		return NewSettings.getConfiguration(guild).getWarnsConfiguration().getMegaWarn().map(WarnConfiguration::getDelay).orElse(24L * 3600);
+		return NewSettings.getConfiguration(guild).getWarnsConfiguration().getMegaWarn().map(WarnConfiguration::getDelay).orElse(DEFAULT_TIME);
 	}
 	
 	@Nonnull

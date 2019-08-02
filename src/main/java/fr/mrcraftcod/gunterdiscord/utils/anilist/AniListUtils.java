@@ -29,15 +29,10 @@ public class AniListUtils{
 	private static final String REDIRECT_URI = "https://anilist.co/api/v2/oauth/pin";
 	private static final String CODE_LINK = String.format("%s/oauth/authorize?client_id=%d&response_type=code&redirect_uri=%s", API_URL, APP_ID, REDIRECT_URI);
 	private static final String USER_INFO_QUERY = "query{Viewer {id name}}";
+	private static final int HTTP_OK = 200;
+	private static final int HTTP_ERROR = 503;
 	public static URL FALLBACK_URL;
-	static{
-		try{
-			FALLBACK_URL = new URL("https://anilist.co");
-		}
-		catch(MalformedURLException e){
-			Log.getLogger(null).error("Failed to create default URL", e);
-		}
-	}
+
 	public static void generateToken(@Nonnull final Member member, @Nonnull final String token) throws Exception{
 		getLogger(member.getGuild()).debug("Getting access token for {}", member);
 		final var accessToken = getPreviousAccessToken(member);
@@ -55,7 +50,7 @@ public class AniListUtils{
 		body.put("code", token);
 		final var sender = new JSONPostRequestSender(new URL(API_URL + "/oauth/token"), headers, new HashMap<>(), body.toString());
 		final var result = sender.getRequestHandler();
-		if(!Objects.equals(result.getStatus(), 200)){
+		if(!Objects.equals(result.getStatus(), HTTP_OK)){
 			throw new Exception("Getting token failed HTTP code " + result.getStatus());
 		}
 		final var json = result.getRequestResult().getObject();
@@ -64,6 +59,21 @@ public class AniListUtils{
 		}
 		NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().setRefreshToken(member.getUser().getIdLong(), json.getString("refresh_token"));
 		NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().addAccessToken(new AnilistAccessTokenConfiguration(member.getUser().getIdLong(), LocalDateTime.now().plusSeconds(json.getInt("expires_in")), json.getString("access_token")));
+	}
+	
+	public static Optional<Integer> getUserId(@Nonnull final Member member){
+		return NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getUserId(member.getUser().getIdLong()).map(Optional::of).orElseGet(() -> {
+			try{
+				final var userInfos = AniListUtils.getQuery(member, USER_INFO_QUERY, new JSONObject());
+				final var userId = userInfos.getJSONObject("data").getJSONObject("Viewer").getInt("id");
+				NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().setUserId(member.getUser().getIdLong(), userId);
+				return Optional.of(userId);
+			}
+			catch(final Exception e){
+				getLogger(member.getGuild()).error("Failed to get AniList user id for {}", member);
+			}
+			return Optional.empty();
+		});
 	}
 	
 	@Nonnull
@@ -83,7 +93,7 @@ public class AniListUtils{
 		getLogger(member.getGuild()).debug("Sending query to AniList for user {}", member.getUser());
 		final var token = AniListUtils.getPreviousAccessToken(member).orElseThrow(() -> {
 			NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().removeUser(member.getUser());
-			Actions.sendMessage(member.getGuild(), member.getUser().openPrivateChannel().complete(), "Your token for AniList on " + member.getGuild().getName() + " expired. Please use `" + NewSettings.getConfiguration(member.getGuild()).getPrefix().orElse(CommandsMessageListener.defaultPrefix) + "al r` to register again if you want to continue receiving informations");
+			Actions.sendMessage(member.getGuild(), member.getUser().openPrivateChannel().complete(), "Your token for AniList on " + member.getGuild().getName() + " expired. Please use `" + NewSettings.getConfiguration(member.getGuild()).getPrefix().orElse(CommandsMessageListener.defaultPrefix) + "al r` to register again if you want to continue receiving information");
 			return new IllegalStateException("No valid token found, please register again");
 		});
 		return getQuery(token, query, variables);
@@ -99,10 +109,10 @@ public class AniListUtils{
 		body.put("query", query);
 		body.put("variables", variables);
 		final var handler = new JSONPostRequestSender(new URL("https://graphql.anilist.co"), headers, new HashMap<>(), body.toString()).getRequestHandler();
-		if(Objects.equals(handler.getStatus(), 200)){
+		if(Objects.equals(handler.getStatus(), HTTP_OK)){
 			return handler.getRequestResult().getObject();
 		}
-		if(Objects.equals(handler.getStatus(), 503)){
+		if(Objects.equals(handler.getStatus(), HTTP_ERROR)){
 			try{
 				final var result = handler.getRequestResult().getObject();
 				if(result.has("errors")){
@@ -118,23 +128,18 @@ public class AniListUtils{
 		throw new Exception("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString() + " | query was " + query);
 	}
 	
-	public static Optional<Integer> getUserId(@Nonnull Member member){
-		return NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getUserId(member.getUser().getIdLong()).map(Optional::of).orElseGet(() -> {
-			try{
-				final var userInfos = AniListUtils.getQuery(member, USER_INFO_QUERY, new JSONObject());
-				final var userId = userInfos.getJSONObject("data").getJSONObject("Viewer").getInt("id");
-				NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().setUserId(member.getUser().getIdLong(), userId);
-				return Optional.of(userId);
-			}
-			catch(Exception e){
-				getLogger(member.getGuild()).error("Failed to get AniList user id for {}", member);
-			}
-			return Optional.empty();
-		});
+	public static LocalDateTime getDefaultDate(@Nonnull final Member member){
+		//noinspection MagicNumber
+		return LocalDateTime.of(2019, 7, 7, 0, 0);
 	}
 	
-	public static LocalDateTime getDefaultDate(@Nonnull Member member){
-		return LocalDateTime.of(2019, 7, 7, 0, 0);
+	static{
+		try{
+			FALLBACK_URL = new URL("https://anilist.co");
+		}
+		catch(final MalformedURLException e){
+			Log.getLogger(null).error("Failed to create default URL", e);
+		}
 	}
 	
 	@Nonnull

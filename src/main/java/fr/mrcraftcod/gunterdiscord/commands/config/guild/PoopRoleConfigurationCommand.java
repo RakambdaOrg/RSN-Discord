@@ -11,23 +11,23 @@ import java.util.List;
 import java.util.Optional;
 
 public class PoopRoleConfigurationCommand extends RoleConfigurationCommand{
-	public PoopRoleConfigurationCommand(@Nullable Command parent){
+	public PoopRoleConfigurationCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Nonnull
 	@Override
-	protected Optional<RoleConfiguration> getConfig(@Nonnull Guild guild){
+	protected Optional<RoleConfiguration> getConfig(@Nonnull final Guild guild){
 		return NewSettings.getConfiguration(guild).getPoopRole();
 	}
 	
 	@Override
-	protected void setConfig(@Nonnull Guild guild, @Nonnull RoleConfiguration value){
+	protected void setConfig(@Nonnull final Guild guild, @Nonnull final RoleConfiguration value){
 		NewSettings.getConfiguration(guild).setPoopRole(value);
 	}
 	
 	@Override
-	protected void removeConfig(@Nonnull Guild guild){
+	protected void removeConfig(@Nonnull final Guild guild){
 		NewSettings.getConfiguration(guild).setPoopRole(null);
 	}
 	

@@ -1,31 +1,18 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
-import fr.mrcraftcod.gunterdiscord.commands.*;
-import fr.mrcraftcod.gunterdiscord.commands.anilist.AniListCommandComposite;
-import fr.mrcraftcod.gunterdiscord.commands.config.ConfigurationCommandComposite;
-import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
-import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.commands.generic.NotAllowedException;
-import fr.mrcraftcod.gunterdiscord.commands.generic.NotHandledException;
-import fr.mrcraftcod.gunterdiscord.commands.luxbus.LuxBusGetStopCommand;
-import fr.mrcraftcod.gunterdiscord.commands.music.MusicCommandComposite;
-import fr.mrcraftcod.gunterdiscord.commands.overwatch.OverwatchCommandComposite;
-import fr.mrcraftcod.gunterdiscord.commands.photo.PhotoCommandComposite;
-import fr.mrcraftcod.gunterdiscord.commands.quiz.QuizCommandComposite;
-import fr.mrcraftcod.gunterdiscord.commands.stopwatch.StopwatchCommand;
-import fr.mrcraftcod.gunterdiscord.commands.twitch.TwitchCommandComposite;
-import fr.mrcraftcod.gunterdiscord.commands.warn.CustomWarnCommand;
-import fr.mrcraftcod.gunterdiscord.commands.warn.DoubleWarnCommand;
-import fr.mrcraftcod.gunterdiscord.commands.warn.MegaWarnCommand;
-import fr.mrcraftcod.gunterdiscord.commands.warn.NormalWarnCommand;
+import fr.mrcraftcod.gunterdiscord.Main;
+import fr.mrcraftcod.gunterdiscord.commands.generic.*;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.reflections.Reflections;
 import javax.annotation.Nonnull;
 import java.awt.Color;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
@@ -37,45 +24,24 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-04-09
  */
 public class CommandsMessageListener extends ListenerAdapter{
-	public static final Command[] commands = {
-			new PhotoCommandComposite(),
-			new QuizCommandComposite(),
-			new ReportCommand(),
-			new ConfigurationCommandComposite(),
-			new HelpCommand(),
-			new AvatarCommand(),
-			new NicknameCommand(),
-			new SayCommand(),
-			new QuestionCommand(),
-			new AnnoyCommand(),
-			new InfosCommand(),
-			new NormalWarnCommand(),
-			new DoubleWarnCommand(),
-			new MegaWarnCommand(),
-			new CustomWarnCommand(),
-			new MusicCommandComposite(),
-			new StopCommand(),
-			new TimeCommand(),
-			new WarnInfoCommand(),
-			new AniListCommandComposite(),
-			new EmotesCommand(),
-			new TempParticipationCommand(),
-			new DogCommand(),
-			new TwitchCommandComposite(),
-			new LuxBusGetStopCommand(),
-			new OverwatchCommandComposite(),
-			new StopwatchCommand(),
-			new PoopCommand(),
-			new RemoveAllRoleCommand()
-			};
 	public final static String defaultPrefix = System.getProperty("RSN_DEFAULT_PREFIX", "g?");
+	private final Set<Command> commands;
 	
 	/**
 	 * Constructor.
 	 */
 	public CommandsMessageListener(){
 		final var counts = new HashMap<String, Integer>();
-		Arrays.asList(commands).forEach(command -> command.getCommandStrings().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
+		this.commands = new Reflections(Main.class.getPackage().getName() + ".commands").getTypesAnnotatedWith(BotCommand.class).stream().map(c -> {
+			try{
+				return c.getConstructor().newInstance();
+			}
+			catch(InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e){
+				Log.getLogger(null).error("Failed to create instance of {}", c.getName());
+			}
+			return null;
+		}).filter(Objects::nonNull).filter(c -> c instanceof Command).map(c -> (Command) c).peek(c -> Log.getLogger(null).info("Loaded command {}", c.getClass().getName())).collect(Collectors.toSet());
+		this.commands.forEach(command -> command.getCommandStrings().forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
 		final var clash = counts.keySet().stream().filter(key -> counts.get(key) > 1).collect(Collectors.joining(", "));
 		if(Objects.nonNull(clash) && !clash.isEmpty()){
 			getLogger(null).error("Command clash: {}", clash);
@@ -90,11 +56,11 @@ public class CommandsMessageListener extends ListenerAdapter{
 				Actions.deleteMessage(event.getMessage());
 				final var args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 				final var cmdText = args.pop().substring(NewSettings.getConfiguration(event.getGuild()).getPrefix().orElse(defaultPrefix).length());
-				getCommand(cmdText).ifPresentOrElse(command -> {
+				this.getCommand(cmdText).ifPresentOrElse(command -> {
 					if(Objects.equals(command.getScope(), -5) || Objects.equals(command.getScope(), event.getChannel().getType().getId())){
 						try{
 							getLogger(event.getGuild()).info("Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(), event.getAuthor(), args);
-							if(Objects.equals(command.execute(event, args), CommandResult.FAILED)){
+							if(command.execute(event, args) == CommandResult.FAILED){
 								Actions.replyPrivate(event.getGuild(), event.getAuthor(), "An error occurred");
 							}
 						}
@@ -160,7 +126,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 	 * @return The command or null if not found.
 	 */
 	@Nonnull
-	private static Optional<Command> getCommand(@Nonnull final String commandText){
-		return Arrays.stream(commands).filter(command -> command.getCommandStrings().contains(commandText.toLowerCase())).findFirst();
+	private Optional<Command> getCommand(@Nonnull final String commandText){
+		return this.commands.stream().filter(command -> command.getCommandStrings().contains(commandText.toLowerCase())).findFirst();
 	}
 }

@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public abstract class BasicWaitingUserReply implements WaitingUserReply{
+	private static final int DEFAULT_DELAY = 30;
 	private final List<Message> infoMessages;
 	private final TextChannel waitChannel;
 	private final User waitUser;
@@ -24,8 +25,8 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 		this(event, author, event.getChannel(), infoMessages);
 	}
 	
-	protected BasicWaitingUserReply(@Nonnull final GenericGuildMessageEvent event, @Nonnull final User author, @Nonnull final TextChannel waitChannel, final Message... infoMessages){
-		this(event, author, waitChannel, 30, TimeUnit.SECONDS, infoMessages);
+	private BasicWaitingUserReply(@Nonnull final GenericGuildMessageEvent event, @Nonnull final User author, @Nonnull final TextChannel waitChannel, final Message... infoMessages){
+		this(event, author, waitChannel, DEFAULT_DELAY, TimeUnit.SECONDS, infoMessages);
 	}
 	
 	protected BasicWaitingUserReply(@Nonnull final GenericGuildMessageEvent event, @Nonnull final User author, @Nonnull final TextChannel waitChannel, final int delay, @Nonnull final TimeUnit unit, final Message... infoMessages){
@@ -38,7 +39,7 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 		this.infoMessages.addAll(Arrays.asList(infoMessages));
 		ReplyMessageListener.getExecutor().schedule(() -> {
 			synchronized(this.lock){
-				if(!isHandled()){
+				if(!this.isHandled()){
 					this.handled = this.onExpire();
 				}
 			}
@@ -98,8 +99,9 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 	
 	protected abstract boolean onExecute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args);
 	
-	protected long getOriginalMessageId(){
-		return originalMessageId;
+	@Override
+	public boolean handleEvent(final GuildMessageReceivedEvent event){
+		return Objects.equals(this.getUser(), event.getAuthor()) && Objects.equals(this.getWaitChannel(), event.getChannel());
 	}
 	
 	@Override
@@ -116,13 +118,12 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 	}
 	
 	@Override
-	public boolean handleEvent(GuildMessageReceivedEvent event){
-		return Objects.equals(this.getUser(), event.getAuthor()) && Objects.equals(this.getWaitChannel(), event.getChannel());
+	public boolean handleEvent(final GuildMessageReactionAddEvent event){
+		return Objects.equals(this.getUser(), event.getUser()) && Objects.equals(this.getWaitChannel(), event.getChannel()) && Objects.equals(this.getEmoteMessageId(), event.getMessageIdLong());
 	}
 	
-	@Override
-	public boolean handleEvent(GuildMessageReactionAddEvent event){
-		return Objects.equals(this.getUser(), event.getUser()) && Objects.equals(this.getWaitChannel(), event.getChannel()) && Objects.equals(this.getEmoteMessageId(), event.getMessageIdLong());
+	protected long getOriginalMessageId(){
+		return this.originalMessageId;
 	}
 	
 	@Override

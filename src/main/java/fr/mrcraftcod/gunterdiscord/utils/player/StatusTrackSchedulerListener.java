@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
  * @author Thomas Couchoud
  * @since 2018-06-16
  */
-public interface StatusTrackSchedulerListener{
+interface StatusTrackSchedulerListener{
 	/**
 	 * Called when the queue is completed.
 	 */

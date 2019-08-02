@@ -8,12 +8,12 @@ import javax.annotation.Nullable;
 import java.util.LinkedList;
 
 public abstract class ChannelConfigurationCommand extends ValueConfigurationCommand<ChannelConfiguration>{
-	public ChannelConfigurationCommand(@Nullable Command parent){
+	protected ChannelConfigurationCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	protected ChannelConfiguration extractValue(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args){
+	protected ChannelConfiguration extractValue(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
 		if(event.getMessage().getMentionedChannels().isEmpty()){
 			throw new IllegalArgumentException("Please mention the channel");
 		}

@@ -29,26 +29,26 @@ public class UserRoleConfiguration{
 		this(user.getIdLong(), role.getIdLong());
 	}
 	
-	public UserRoleConfiguration(final long userId, final long roleId){
+	private UserRoleConfiguration(final long userId, final long roleId){
 		this.user = new UserConfiguration(userId);
 		this.role = new RoleConfiguration(roleId);
 	}
 	
 	@Override
 	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(getUser()).append(getRole()).toHashCode();
+		return new HashCodeBuilder(17, 37).append(this.getUser()).append(this.getRole()).toHashCode();
 	}
 	
 	@Override
-	public boolean equals(Object o){
+	public boolean equals(final Object o){
 		if(this == o){
 			return true;
 		}
 		if(!(o instanceof UserRoleConfiguration)){
 			return false;
 		}
-		UserRoleConfiguration that = (UserRoleConfiguration) o;
-		return new EqualsBuilder().append(getUser(), that.getUser()).append(getRole(), that.getRole()).isEquals();
+		final var that = (UserRoleConfiguration) o;
+		return new EqualsBuilder().append(this.getUser(), that.getUser()).append(this.getRole(), that.getRole()).isEquals();
 	}
 	
 	public UserConfiguration getUser(){

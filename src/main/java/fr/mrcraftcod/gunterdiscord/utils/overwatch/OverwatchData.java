@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OverwatchData{
@@ -34,11 +35,11 @@ public class OverwatchData{
 	@JsonProperty("stages")
 	private List<OverwatchStage> stages = new ArrayList<>();
 	
-	public Optional<OverwatchStage> getStageOfTournament(OverwatchTournament tournament){
+	public Optional<OverwatchStage> getStageOfTournament(final OverwatchTournament tournament){
 		return this.getStages().stream().filter(s -> s.getTournaments().stream().anyMatch(t -> Objects.equals(t, tournament))).findFirst();
 	}
 	
-	public List<OverwatchMatch> getMatchesOfTournament(OverwatchTournament tournament){
+	public List<OverwatchMatch> getMatchesOfTournament(final OverwatchTournament tournament){
 		return this.getStages().stream().flatMap(s -> s.getMatches().stream()).filter(m -> Objects.equals(m.getTournament(), tournament)).collect(Collectors.toList());
 	}
 	

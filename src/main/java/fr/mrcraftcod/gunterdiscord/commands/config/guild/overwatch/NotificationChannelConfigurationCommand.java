@@ -11,23 +11,23 @@ import java.util.List;
 import java.util.Optional;
 
 public class NotificationChannelConfigurationCommand extends ChannelConfigurationCommand{
-	public NotificationChannelConfigurationCommand(@Nullable Command parent){
+	public NotificationChannelConfigurationCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
 	@Nonnull
 	@Override
-	protected Optional<ChannelConfiguration> getConfig(@Nonnull Guild guild){
+	protected Optional<ChannelConfiguration> getConfig(@Nonnull final Guild guild){
 		return NewSettings.getConfiguration(guild).getOverwatchLeagueConfiguration().getNotificationChannel();
 	}
 	
 	@Override
-	protected void setConfig(@Nonnull Guild guild, @Nonnull ChannelConfiguration value){
+	protected void setConfig(@Nonnull final Guild guild, @Nonnull final ChannelConfiguration value){
 		NewSettings.getConfiguration(guild).getOverwatchLeagueConfiguration().setNotificationChannel(value);
 	}
 	
 	@Override
-	protected void removeConfig(@Nonnull Guild guild){
+	protected void removeConfig(@Nonnull final Guild guild){
 		NewSettings.getConfiguration(guild).getOverwatchLeagueConfiguration().setNotificationChannel(null);
 	}
 	

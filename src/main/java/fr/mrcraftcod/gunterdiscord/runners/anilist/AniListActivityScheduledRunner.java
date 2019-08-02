@@ -49,8 +49,8 @@ public class AniListActivityScheduledRunner implements AniListRunner<AniListList
 	}
 	
 	@Override
-	public List<TextChannel> getChannels(){
-		return getJDA().getGuilds().stream().map(g -> NewSettings.getConfiguration(g).getAniListConfiguration().getMediaChangeChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
+	public void run(){
+		this.runQueryOnEveryUserAndDefaultChannels();
 	}
 	
 	@Nonnull
@@ -65,10 +65,9 @@ public class AniListActivityScheduledRunner implements AniListRunner<AniListList
 		return this.jda;
 	}
 	
-	@Nonnull
 	@Override
-	public AniListListActivityPagedQuery initQuery(@Nonnull Member member){
-		return new AniListListActivityPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(getFetcherID()).stream().filter(a -> Objects.equals(a.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
+	public List<TextChannel> getChannels(){
+		return this.getJDA().getGuilds().stream().map(g -> NewSettings.getConfiguration(g).getAniListConfiguration().getMediaChangeChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 	
 	@Override
@@ -82,8 +81,9 @@ public class AniListActivityScheduledRunner implements AniListRunner<AniListList
 		return "listActivity";
 	}
 	
+	@Nonnull
 	@Override
-	public void run(){
-		runQueryOnEveryUserAndDefaultChannels();
+	public AniListListActivityPagedQuery initQuery(@Nonnull final Member member){
+		return new AniListListActivityPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(this.getFetcherID()).stream().filter(a -> Objects.equals(a.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
 	}
 }

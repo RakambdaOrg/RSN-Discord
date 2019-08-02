@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OverwatchWeek implements Comparable<OverwatchWeek>{
@@ -44,7 +45,7 @@ public class OverwatchWeek implements Comparable<OverwatchWeek>{
 	}
 	
 	@Override
-	public int compareTo(@Nonnull OverwatchWeek overwatchWeek){
+	public int compareTo(@Nonnull final OverwatchWeek overwatchWeek){
 		return this.getStartDate().compareTo(overwatchWeek.getStartDate());
 	}
 	
@@ -53,7 +54,7 @@ public class OverwatchWeek implements Comparable<OverwatchWeek>{
 	}
 	
 	@Override
-	public boolean equals(Object obj){
+	public boolean equals(final Object obj){
 		return obj instanceof OverwatchWeek && Objects.equals(this.getId(), ((OverwatchWeek) obj).getId());
 	}
 	
