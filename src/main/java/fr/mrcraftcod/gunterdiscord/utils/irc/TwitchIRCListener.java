@@ -32,6 +32,20 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 	}
 	
 	@Override
+	protected void onNotice(final NoticeIRCMessage event){
+		if(Objects.equals(event.getChannel(), this.ircChannel)){
+			Actions.sendMessage(this.channel, "__NOTICE__: %s", event.getMessage());
+		}
+	}
+	
+	@Override
+	protected void onHostTarget(final HostTargetIRCMessage event){
+		if(Objects.equals(event.getChannel(), this.ircChannel)){
+			Log.getLogger(this.getGuild()).info("{} hosting {}", event.getChannel(), event.getInfos());
+		}
+	}
+	
+	@Override
 	protected void onClearChat(final ClearChatIRCMessage event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
 			Actions.sendMessage(this.channel, "__NOTICE__: %s banned for %s", event.getUser(), event.getTags().stream().filter(t -> Objects.equals("ban-duration", t.getKey())).map(IRCTag::getValue).map(Integer::parseInt).map(Duration::ofSeconds).map(Utilities::durationToString).findFirst().orElse("UNKNOWN"));
