@@ -61,6 +61,10 @@ class IRCUtils{
 						return Optional.of(new ClearChatIRCMessage(tags, matcher.group(5).trim(), matcher.group(7)));
 					case "CLEARMSG":
 						return Optional.of(new ClearMessageIRCMessage(tags, matcher.group(5).trim(), matcher.group(7)));
+					case "NOTICE":
+						return Optional.of(new NoticeIRCMessage(tags, matcher.group(5).trim(), matcher.group(7)));
+					case "HOSTTARGET":
+						return Optional.of(new HostTargetIRCMessage(matcher.group(5).trim(), matcher.group(7)));
 				}
 			}
 			Optional.ofNullable(Main.getJDA().getUserById(Utilities.RAKSRINANA_ACCOUNT)).ifPresent(rsn -> rsn.openPrivateChannel().queue(c -> c.sendMessage("Unknown IRC message: " + message).queue()));
