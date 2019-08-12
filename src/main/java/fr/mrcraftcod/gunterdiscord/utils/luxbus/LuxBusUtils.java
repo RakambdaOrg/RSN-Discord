@@ -1,5 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.utils.luxbus;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.mrcraftcod.utils.http.requestssenders.get.JSONGetRequestSender;
 import fr.mrcraftcod.utils.http.requestssenders.get.StringGetRequestSender;
@@ -7,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
@@ -42,18 +43,7 @@ public class LuxBusUtils{
 			if(request.getStatus() == HTTP_OK){
 				final var response = request.getRequestResult().getObject();
 				if(response.has("Departure")){
-					final var departuresList = new ArrayList<LuxBusDeparture>();
-					final var departures = response.getJSONArray("Departure");
-					for(var i = 0; i < departures.length(); i++){
-						try{
-							final var obj = (LuxBusDeparture) new ObjectMapper().readerFor(LuxBusDeparture.class).readValue(departures.getJSONObject(i).toString());
-							departuresList.add(obj);
-						}
-						catch(final IOException e){
-							LOGGER.error("Failed to parse JSON departure", e);
-						}
-					}
-					return departuresList;
+					return new ObjectMapper().readerFor(new TypeReference<List<LuxBusDeparture>>(){}).readValue(response.getJSONArray("Departure").toString());
 				}
 			}
 			else{
@@ -61,7 +51,7 @@ public class LuxBusUtils{
 				throw new IllegalStateException("Bus API didn't reply correctly");
 			}
 		}
-		catch(final URISyntaxException | MalformedURLException e){
+		catch(final URISyntaxException | MalformedURLException | JsonProcessingException e){
 			LOGGER.warn("Failed to get bus stop departures (id: {})", stop, e);
 		}
 		return List.of();
