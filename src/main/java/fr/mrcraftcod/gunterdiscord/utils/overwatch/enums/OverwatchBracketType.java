@@ -1,12 +1,13 @@
 package fr.mrcraftcod.gunterdiscord.utils.overwatch.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 
 public enum OverwatchBracketType{
-	UNKNOWN, SE, OPEN_MATCH;
+	@JsonEnumDefaultValue UNKNOWN, SE, OPEN_MATCH, DE;
 	private static final Logger LOGGER = LoggerFactory.getLogger(OverwatchBracketType.class);
 	
 	@JsonCreator

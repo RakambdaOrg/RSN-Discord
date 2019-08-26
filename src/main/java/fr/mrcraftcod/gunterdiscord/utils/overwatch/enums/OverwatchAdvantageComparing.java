@@ -1,12 +1,13 @@
 package fr.mrcraftcod.gunterdiscord.utils.overwatch.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 
 public enum OverwatchAdvantageComparing{
-	UNKNOWN, AFTER_MATCH;
+	@JsonEnumDefaultValue UNKNOWN, AFTER_MATCH;
 	private static final Logger LOGGER = LoggerFactory.getLogger(OverwatchAdvantageComparing.class);
 	
 	@JsonCreator

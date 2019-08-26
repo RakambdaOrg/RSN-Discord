@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.utils.overwatch.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match.OverwatchMatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +9,7 @@ import javax.annotation.Nonnull;
 import java.util.function.BiFunction;
 
 public enum OverwatchConclusionStrategy{
-	UNKNOWN("UNKNOWN"), MINIMUM("MINIMUM", (s, match) -> {
+	@JsonEnumDefaultValue UNKNOWN("UNKNOWN"), MINIMUM("MINIMUM", (s, match) -> {
 		if(match.getConclusionValue() > 0){
 			return match.getConclusionValue() + " map set";
 		}
