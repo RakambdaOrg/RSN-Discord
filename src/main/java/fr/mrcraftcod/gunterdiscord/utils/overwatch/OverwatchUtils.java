@@ -1,6 +1,7 @@
 package fr.mrcraftcod.gunterdiscord.utils.overwatch;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.mrcraftcod.gunterdiscord.Main;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
@@ -45,7 +46,7 @@ public class OverwatchUtils{
 	public static Optional<OverwatchMatch> getMatch(final int id){
 		try{
 			final var json = new JSONGetRequestSender(String.format("https://api.overwatchleague.com/match/%d?expand=team.content&locale=en_US", id)).getRequestHandler().getRequestResult();
-			return Optional.<OverwatchMatch> ofNullable(new ObjectMapper().readerFor(OverwatchMatch.class).readValue(json.toString())).filter(m -> m.getId() > 0);
+			return Optional.<OverwatchMatch> ofNullable(new ObjectMapper().enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE).readerFor(OverwatchMatch.class).readValue(json.toString())).filter(m -> m.getId() > 0);
 		}
 		catch(final URISyntaxException | IOException e){
 			LOGGER.error("Failed to get Overwatch match", e);
