@@ -1,9 +1,13 @@
 package fr.mrcraftcod.gunterdiscord.utils.overwatch;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.mrcraftcod.gunterdiscord.Main;
+import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match.OverwatchMatch;
 import fr.mrcraftcod.utils.http.requestssenders.get.JSONGetRequestSender;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
@@ -42,7 +46,7 @@ public class OverwatchUtils{
 	public static Optional<OverwatchMatch> getMatch(final int id){
 		try{
 			final var json = new JSONGetRequestSender(String.format("https://api.overwatchleague.com/match/%d?expand=team.content&locale=en_US", id)).getRequestHandler().getRequestResult();
-			return Optional.<OverwatchMatch> ofNullable(new ObjectMapper().readerFor(OverwatchMatch.class).readValue(json.toString())).filter(m -> m.getId() > 0);
+			return Optional.<OverwatchMatch> ofNullable(new ObjectMapper().enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE).readerFor(OverwatchMatch.class).readValue(json.toString())).filter(m -> m.getId() > 0);
 		}
 		catch(final URISyntaxException | IOException e){
 			LOGGER.error("Failed to get Overwatch match", e);
@@ -60,6 +64,7 @@ public class OverwatchUtils{
 			}
 			catch(final URISyntaxException | IOException e){
 				LOGGER.error("Failed to get Overwatch data", e);
+				Optional.ofNullable(Main.getJDA().getUserById(Utilities.RAKSRINANA_ACCOUNT)).ifPresent(user -> user.openPrivateChannel().queue(chan -> chan.sendMessage("Overwatch problem: " + e.toString() + "\n" + ExceptionUtils.getStackTrace(e)).queue()));
 			}
 		}
 		return Optional.ofNullable(lastResponse);

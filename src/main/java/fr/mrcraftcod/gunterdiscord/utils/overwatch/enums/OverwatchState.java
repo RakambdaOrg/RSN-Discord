@@ -1,12 +1,13 @@
 package fr.mrcraftcod.gunterdiscord.utils.overwatch.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 
 public enum OverwatchState{
-	UNKNOWN("UNKNOWN"), CONCLUDED("Ended"), PENDING("Pending"), IN_PROGRESS("In progress");
+	@JsonEnumDefaultValue UNKNOWN("UNKNOWN"), CONCLUDED("Ended"), PENDING("Pending"), IN_PROGRESS("In progress");
 	private static final Logger LOGGER = LoggerFactory.getLogger(OverwatchState.class);
 	private final String stateName;
 	
