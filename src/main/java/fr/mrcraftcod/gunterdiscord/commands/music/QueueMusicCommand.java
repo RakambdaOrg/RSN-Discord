@@ -61,7 +61,7 @@ public class QueueMusicCommand extends BasicCommand{
 		}).orElse(1) - 1;
 		final var position = new AtomicInteger(perPage * page);
 		final var queue = GunterAudioManager.getQueue(event.getGuild());
-		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, "Music queue (Page " + page + "/" + ((int) Math.ceil(queue.size() / (double) perPage)) + " - 10 max)");
+		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, "Music queue (Page " + (page + 1) + "/" + ((int) Math.ceil(queue.size() / (double) perPage)) + " - 10 max)");
 		builder.setDescription(String.format("%d musics queued", queue.size()));
 		final var beforeDuration = new AtomicLong(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).orElse(0L) + queue.stream().limit(perPage * page).mapToLong(AudioTrack::getDuration).sum());
 		queue.stream().skip(perPage * page).limit(perPage).forEachOrdered(track -> {
