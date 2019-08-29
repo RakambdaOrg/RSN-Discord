@@ -10,7 +10,6 @@ import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.OverwatchUtils;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.OverwatchStage;
-import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match.OverwatchCompetitor;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match.OverwatchMatch;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.week.OverwatchWeek;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -23,7 +22,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 public class OverwatchGetMatchCommand extends BasicCommand{
 	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchMatch> onMatch = (event, match) -> Actions.reply(event, match.buildEmbed(event.getUser()).build());
@@ -41,7 +39,7 @@ public class OverwatchGetMatchCommand extends BasicCommand{
 				week.getMatches().forEach(m -> {
 					final var emote = BasicEmotes.getEmote(String.valueOf((char) counter.getAndIncrement()));
 					options.put(emote, m);
-					builder.addField(emote.getValue() + ": " + m.getCompetitors().stream().map(OverwatchCompetitor::getName).collect(Collectors.joining(" vs ")), currentMatch.map(m::equals).orElse(false) ? "Current" : (nextMatch.map(m::equals).orElse(false) ? "Next" : ""), false);
+					builder.addField(emote.getValue() + ": " + m.getVsCompetitorsNames(), currentMatch.map(m::equals).orElse(false) ? "Current" : (nextMatch.map(m::equals).orElse(false) ? "Next" : ""), false);
 				});
 				builder.setFooter("ID: " + week.getId());
 				Actions.reply(event, message -> {
