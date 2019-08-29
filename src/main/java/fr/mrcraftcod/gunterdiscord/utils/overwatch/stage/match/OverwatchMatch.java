@@ -176,7 +176,7 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 	
 	@Nonnull
 	private Optional<OverwatchCompetitor> getWinningTeam(){
-		return this.getCompetitors().stream().filter(c -> Objects.equals(c.getId(), this.getWinner())).findFirst();
+		return this.getCompetitors().stream().filter(c -> Objects.nonNull(c) && Objects.equals(c.getId(), this.getWinner())).findFirst();
 	}
 	
 	@Nonnull

@@ -40,7 +40,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 public class Main{
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
 	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-	public static boolean DEVELOPMENT = false;
+	public static boolean DEVELOPMENT = Boolean.parseBoolean(System.getProperty("rsndev", "false"));
 	private static JDA jda;
 	private static ConsoleHandler consoleHandler;
 	
@@ -51,6 +51,9 @@ public class Main{
 	 */
 	public static void main(@Nonnull final String[] args){
 		getLogger(null).info("Starting bot version {}", getRSNBotVersion());
+		if(DEVELOPMENT){
+			getLogger(null).warn("Developer mode activated, shouldn't be used in production!");
+		}
 		final var parameters = new CLIParameters();
 		try{
 			JCommander.newBuilder().addObject(parameters).build().parse(args);
