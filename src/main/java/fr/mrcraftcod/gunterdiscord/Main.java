@@ -11,7 +11,10 @@ import fr.mrcraftcod.gunterdiscord.runners.RemoveRolesScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.SaveConfigScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListMediaUserListScheduledRunner;
 import fr.mrcraftcod.gunterdiscord.runners.anilist.AniListNotificationScheduledRunner;
+import fr.mrcraftcod.gunterdiscord.settings.GuildConfiguration;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
+import fr.mrcraftcod.gunterdiscord.settings.types.ChannelConfiguration;
+import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.irc.TwitchIRC;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
@@ -26,6 +29,7 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -99,6 +103,7 @@ public class Main{
 				executorService.scheduleAtFixedRate(scheduledRunner, scheduledRunner.getDelay(), scheduledRunner.getPeriod(), scheduledRunner.getPeriodUnit());
 			}
 			getLogger(null).info("Started");
+			announceStart();
 		}
 		catch(final LoginException | InterruptedException e){
 			getLogger(null).error("Couldn't start bot", e);
@@ -113,6 +118,10 @@ public class Main{
 		
 		consoleHandler = new ConsoleHandler(jda);
 		consoleHandler.start();
+	}
+	
+	private static void announceStart(){
+		Main.jda.getGuilds().stream().map(NewSettings::getConfiguration).map(GuildConfiguration::getAnnounceStartChannel).flatMap(Optional::stream).map(ChannelConfiguration::getChannel).flatMap(Optional::stream).forEach(c -> Actions.sendMessage(c, "Bot started :)"));
 	}
 	
 	/**
