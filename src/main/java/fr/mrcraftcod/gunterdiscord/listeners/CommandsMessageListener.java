@@ -24,7 +24,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
  * @since 2018-04-09
  */
 public class CommandsMessageListener extends ListenerAdapter{
-	public final static String defaultPrefix = System.getProperty("RSN_DEFAULT_PREFIX", "g?");
+	public final static String defaultPrefix = System.getProperty("RSN_DEFAULT_PREFIX", Main.DEVELOPMENT ? "g2?" : "g?");
 	private final Set<Command> commands;
 	
 	/**

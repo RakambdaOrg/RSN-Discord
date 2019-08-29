@@ -10,7 +10,6 @@ import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.OverwatchUtils;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.OverwatchStage;
-import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match.OverwatchCompetitor;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.match.OverwatchScore;
 import fr.mrcraftcod.gunterdiscord.utils.overwatch.stage.week.OverwatchWeek;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -23,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -33,7 +33,7 @@ public class OverwatchGetWeekMatchesCommand extends BasicCommand{
 		final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, week.getName());
 		week.getMatches().forEach(m -> {
 			final var message = (m.hasEnded() || m.inProgress()) ? (m.getScores().stream().map(OverwatchScore::getValue).map(Object::toString).collect(Collectors.joining(" - ")) + (m.inProgress() ? " (In progress)" : "")) : ("On the " + m.getStartDate().atZone(ZoneId.of("Europe/Paris")).format(FORMATTER) + " (Europe/Paris)");
-			builder.addField(m.getCompetitors().stream().map(OverwatchCompetitor::getName).collect(Collectors.joining(" vs ")), message, false);
+			builder.addField(m.getCompetitors().stream().map(c -> Objects.isNull(c) ? "TBD" : c.getName()).collect(Collectors.joining(" vs ")), message, false);
 		});
 		builder.setFooter("ID: " + week.getId());
 		Actions.reply(event, builder.build());
