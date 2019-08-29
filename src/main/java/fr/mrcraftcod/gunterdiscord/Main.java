@@ -40,6 +40,7 @@ import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 public class Main{
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
 	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+	public static boolean DEVELOPMENT = false;
 	private static JDA jda;
 	private static ConsoleHandler consoleHandler;
 	
