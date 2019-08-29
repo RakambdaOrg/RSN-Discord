@@ -73,9 +73,15 @@ public class NicknameCommand extends BasicCommand{
 			else{
 				newName = String.join(" ", args);
 			}
-			if(Objects.nonNull(newName) && !Utilities.isTeam(event.getMember()) && lastChange.plus(delay).isAfter(LocalDateTime.now())){
-				final var builder = new EmbedBuilder();
-				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+			final var builder = new EmbedBuilder();
+			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+			if(Objects.equals(newName, oldName)){
+				builder.setColor(Color.ORANGE);
+				builder.setTitle("No changes");
+				builder.addField("Reason", "Nickname is the same as the current one", false);
+				Actions.reply(event, builder.build());
+			}
+			else if(Objects.nonNull(newName) && !Utilities.isTeam(event.getMember()) && lastChange.plus(delay).isAfter(LocalDateTime.now())){
 				builder.setColor(Color.RED);
 				builder.addField("Old nickname", oldName.orElse("*NONE*"), true);
 				builder.addField("User", member.getAsMention(), true);
@@ -85,8 +91,6 @@ public class NicknameCommand extends BasicCommand{
 				Actions.reply(event, builder.build());
 			}
 			else{
-				final var builder = new EmbedBuilder();
-				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 				builder.addField("Old nickname", oldName.orElse("*NONE*"), true);
 				builder.addField("New nickname", Objects.isNull(newName) ? "*NONE*" : newName, true);
 				builder.addField("User", member.getAsMention(), true);
