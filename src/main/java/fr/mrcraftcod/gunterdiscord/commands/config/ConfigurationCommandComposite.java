@@ -29,6 +29,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new IrcForwardConfigurationCommand(this));
 		this.addSubCommand(new OverwatchConfigurationCommandComposite(this));
 		this.addSubCommand(new PoopRoleConfigurationCommand(this));
+		this.addSubCommand(new AnnounceStartChannelConfigurationCommand(this));
 	}
 	
 	@Nonnull

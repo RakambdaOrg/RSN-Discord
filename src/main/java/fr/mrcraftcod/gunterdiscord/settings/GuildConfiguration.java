@@ -71,6 +71,8 @@ public class GuildConfiguration{
 	private boolean ircForward = false;
 	@JsonProperty("overwatchLeague")
 	private OverwatchLeagueConfiguration overwatchLeagueConfiguration = new OverwatchLeagueConfiguration();
+	@JsonProperty("announceStartChannel")
+	private ChannelConfiguration announceStartChannel;
 	
 	public GuildConfiguration(){
 	}
@@ -203,6 +205,11 @@ public class GuildConfiguration{
 		return Optional.ofNullable(this.quizChannel);
 	}
 	
+	@Nonnull
+	public Optional<ChannelConfiguration> getAnnounceStartChannel(){
+		return Optional.ofNullable(this.announceStartChannel);
+	}
+	
 	public void setPoopRole(@Nullable final RoleConfiguration value){
 		this.poopRole = value;
 	}
@@ -233,6 +240,10 @@ public class GuildConfiguration{
 	
 	public void setQuizChannel(@Nullable final ChannelConfiguration channel){
 		this.quizChannel = channel;
+	}
+	
+	public void setAnnounceStartChannel(@Nullable final ChannelConfiguration channel){
+		this.announceStartChannel = channel;
 	}
 	
 	public void setReportChannel(@Nullable final ChannelConfiguration channel){
