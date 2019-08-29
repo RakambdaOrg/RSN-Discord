@@ -119,7 +119,7 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 	}
 	
 	public EmbedBuilder buildEmbed(final User user){
-		final var builder = Utilities.buildEmbed(user, Color.GREEN, this.getCompetitors().stream().map(OverwatchCompetitor::getName).collect(Collectors.joining(" vs ")), (Objects.nonNull(this.getYoutubeId()) && !this.getYoutubeId().isBlank()) ? ("https://youtube.com/watch?v=" + this.getYoutubeId()) : null);
+		final var builder = Utilities.buildEmbed(user, Color.GREEN, this.getVsCompetitorsNames(), (Objects.nonNull(this.getYoutubeId()) && !this.getYoutubeId().isBlank()) ? ("https://youtube.com/watch?v=" + this.getYoutubeId()) : null);
 		builder.setTimestamp(this.getStartDate());
 		builder.setDescription("Score: " + this.getScores().stream().map(OverwatchScore::getValue).map(Object::toString).collect(Collectors.joining(" - ")));
 		builder.addField("State", this.getState().asString(), true);
@@ -205,12 +205,20 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 		return this.competitors;
 	}
 	
-	public List<OverwatchScore> getScores(){
-		return this.scores;
+	public String getVsCompetitorsNames(){
+		return this.getCompetitors().stream().map(c -> Objects.isNull(c) ? "TBD" : c.getName()).collect(Collectors.joining(" vs "));
 	}
 	
 	@Override
 	public String toString(){
-		return this.getId() + " (" + this.getCompetitors().stream().map(OverwatchCompetitor::getName).collect(Collectors.joining(" vs ")) + ')';
+		return this.getId() + " (" + this.getVsCompetitorsNames() + ')';
+	}
+	
+	public List<OverwatchScore> getScores(){
+		return this.scores;
+	}
+	
+	public List<String> getCompetitorsNames(){
+		return this.getCompetitors().stream().map(c -> Objects.isNull(c) ? "TBD" : c.getName()).collect(Collectors.toList());
 	}
 }

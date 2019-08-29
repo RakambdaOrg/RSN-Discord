@@ -22,7 +22,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -33,7 +32,7 @@ public class OverwatchGetWeekMatchesCommand extends BasicCommand{
 		final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, week.getName());
 		week.getMatches().forEach(m -> {
 			final var message = (m.hasEnded() || m.inProgress()) ? (m.getScores().stream().map(OverwatchScore::getValue).map(Object::toString).collect(Collectors.joining(" - ")) + (m.inProgress() ? " (In progress)" : "")) : ("On the " + m.getStartDate().atZone(ZoneId.of("Europe/Paris")).format(FORMATTER) + " (Europe/Paris)");
-			builder.addField(m.getCompetitors().stream().map(c -> Objects.isNull(c) ? "TBD" : c.getName()).collect(Collectors.joining(" vs ")), message, false);
+			builder.addField(m.getVsCompetitorsNames(), message, false);
 		});
 		builder.setFooter("ID: " + week.getId());
 		Actions.reply(event, builder.build());
