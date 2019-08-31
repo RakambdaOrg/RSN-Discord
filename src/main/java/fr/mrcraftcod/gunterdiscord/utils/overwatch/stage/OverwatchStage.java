@@ -102,4 +102,9 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 	public boolean isEnabled(){
 		return this.enabled;
 	}
+	
+	@Override
+	public String toString(){
+		return this.getName();
+	}
 }

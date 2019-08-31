@@ -19,7 +19,12 @@ public enum OverwatchConclusionStrategy{
 			return s.strategyName + " " + match.getBestOf();
 		}
 		return s.name();
-	}), FIRST_TO("First to");
+	}), FIRST_TO("First to", (s, match) -> {
+		if(match.getConclusionValue() > 0){
+			return "First to " + match.getConclusionValue();
+		}
+		return s.name();
+	});
 	private static final Logger LOGGER = LoggerFactory.getLogger(OverwatchConclusionStrategy.class);
 	private final String strategyName;
 	private final BiFunction<OverwatchConclusionStrategy, OverwatchMatch, String> matchFunction;
