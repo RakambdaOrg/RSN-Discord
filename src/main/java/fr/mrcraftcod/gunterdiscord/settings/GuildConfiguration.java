@@ -73,6 +73,8 @@ public class GuildConfiguration{
 	private OverwatchLeagueConfiguration overwatchLeagueConfiguration = new OverwatchLeagueConfiguration();
 	@JsonProperty("announceStartChannel")
 	private ChannelConfiguration announceStartChannel;
+	@JsonProperty("musicVolume")
+	private int musicVolume = 100;
 	
 	public GuildConfiguration(){
 	}
@@ -91,6 +93,10 @@ public class GuildConfiguration{
 	
 	public Optional<RemoveRoleConfiguration> getRemoveRole(final User user, final Role role){
 		return this.removeRoles.stream().filter(r -> Objects.equals(r.getUser().getUserId(), user.getIdLong()) && Objects.equals(r.getRole().getRoleId(), role.getIdLong())).findFirst();
+	}
+	
+	public int getMusicVolume(){
+		return musicVolume;
 	}
 	
 	@Nonnull
@@ -189,6 +195,10 @@ public class GuildConfiguration{
 	@Nonnull
 	public Optional<String> getPrefix(){
 		return Optional.ofNullable(this.prefix);
+	}
+	
+	public void setMusicVolume(int musicVolume){
+		this.musicVolume = musicVolume;
 	}
 	
 	public void setNoXpChannels(@Nonnull final Set<ChannelConfiguration> noXpChannels){

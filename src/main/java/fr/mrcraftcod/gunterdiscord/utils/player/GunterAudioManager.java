@@ -8,6 +8,7 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.RequesterTrackUserField;
@@ -119,6 +120,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			final var audioPlayer = audioPlayerManager.createPlayer();
 			audioManager.setSendingHandler(new AudioPlayerSendHandler(audioPlayer));
 			final var trackScheduler = new TrackScheduler(channel.getGuild(), audioPlayer);
+			audioPlayer.setVolume(Math.min(100, Math.max(0, NewSettings.getConfiguration(channel.getGuild()).getMusicVolume())));
 			audioPlayer.addListener(trackScheduler);
 			final var gunterAudioManager = new GunterAudioManager(channel, audioManager, audioPlayerManager, audioPlayer, trackScheduler);
 			trackScheduler.addStatusTrackSchedulerListener(gunterAudioManager);
@@ -293,5 +295,13 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	@Nonnull
 	public VoiceChannel getChannel(){
 		return this.channel;
+	}
+	
+	public int getVolume(){
+		return getAudioPlayer().getVolume();
+	}
+	
+	public void setVolume(int volume){
+		getAudioPlayer().setVolume(Math.min(100, Math.max(0, volume)));
 	}
 }
