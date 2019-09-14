@@ -35,6 +35,7 @@ public class MusicCommandComposite extends CommandComposite{
 		this.addSubCommand(new QueueMusicCommand(this));
 		this.addSubCommand(new ShuffleMusicCommand(this));
 		this.addSubCommand(new MoveMusicCommand(this));
+		this.addSubCommand(new VolumeMusicCommand(this));
 	}
 	
 	@Override
