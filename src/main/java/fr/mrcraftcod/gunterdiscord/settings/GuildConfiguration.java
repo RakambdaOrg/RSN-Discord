@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.mrcraftcod.gunterdiscord.settings.guild.*;
-import fr.mrcraftcod.gunterdiscord.settings.types.ChannelConfiguration;
-import fr.mrcraftcod.gunterdiscord.settings.types.RemoveRoleConfiguration;
-import fr.mrcraftcod.gunterdiscord.settings.types.RoleConfiguration;
-import fr.mrcraftcod.gunterdiscord.settings.types.UserRoleConfiguration;
+import fr.mrcraftcod.gunterdiscord.settings.types.*;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
@@ -75,12 +72,22 @@ public class GuildConfiguration{
 	private ChannelConfiguration announceStartChannel;
 	@JsonProperty("musicVolume")
 	private int musicVolume = 100;
+	@JsonProperty("todoMessages")
+	private Set<MessageConfiguration> todoMessages = new HashSet<>();
 	
 	public GuildConfiguration(){
 	}
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
+	}
+	
+	public void removeTodoMessage(MessageConfiguration messageConfiguration){
+		this.todoMessages.remove(messageConfiguration);
+	}
+	
+	public void addTodoMessage(@Nonnull MessageConfiguration messageConfiguration){
+		this.todoMessages.add(messageConfiguration);
 	}
 	
 	public void addRemoveRole(@Nonnull final RemoveRoleConfiguration value){
@@ -93,6 +100,11 @@ public class GuildConfiguration{
 	
 	public Optional<RemoveRoleConfiguration> getRemoveRole(final User user, final Role role){
 		return this.removeRoles.stream().filter(r -> Objects.equals(r.getUser().getUserId(), user.getIdLong()) && Objects.equals(r.getRole().getRoleId(), role.getIdLong())).findFirst();
+	}
+	
+	@Nonnull
+	public Set<MessageConfiguration> getTodoMessages(){
+		return this.todoMessages;
 	}
 	
 	public int getMusicVolume(){

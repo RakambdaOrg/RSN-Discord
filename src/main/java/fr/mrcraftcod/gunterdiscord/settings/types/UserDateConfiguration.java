@@ -47,7 +47,7 @@ public class UserDateConfiguration{
 	
 	@Override
 	public String toString(){
-		return this.getUser().map(User::getAsMention).map(s -> s + " " + this.getDate().format(DF)).orElse("");
+		return this.getUser().map(User::getAsMention).map(s -> s + " " + this.getDate().format(DF)).orElse("<Unknown date>");
 	}
 	
 	@Override

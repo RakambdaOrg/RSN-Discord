@@ -35,7 +35,7 @@ public class UserConfiguration{
 	
 	@Override
 	public String toString(){
-		return this.getUser().map(User::getAsMention).orElse("");
+		return this.getUser().map(User::getAsMention).orElse("<Unknown user>");
 	}
 	
 	@Nonnull

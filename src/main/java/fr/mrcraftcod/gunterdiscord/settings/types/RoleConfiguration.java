@@ -35,7 +35,7 @@ public class RoleConfiguration{
 	
 	@Override
 	public String toString(){
-		return this.getRole().map(Role::getAsMention).orElse("");
+		return this.getRole().map(Role::getAsMention).orElse("<Unknown role>");
 	}
 	
 	@Nonnull
