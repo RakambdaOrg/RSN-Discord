@@ -29,13 +29,13 @@ public class ChannelConfiguration{
 		this(channel.getIdLong());
 	}
 	
-	private ChannelConfiguration(final long channelId){
+	ChannelConfiguration(final long channelId){
 		this.channelId = channelId;
 	}
 	
 	@Override
 	public String toString(){
-		return this.getChannel().map(TextChannel::getAsMention).orElse("");
+		return this.getChannel().map(TextChannel::getAsMention).orElse("<Unknown channel>");
 	}
 	
 	@Nonnull
@@ -68,7 +68,7 @@ public class ChannelConfiguration{
 		this.setChannel(channel.getIdLong());
 	}
 	
-	private void setChannel(final long channelId){
+	void setChannel(final long channelId){
 		this.channelId = channelId;
 	}
 }

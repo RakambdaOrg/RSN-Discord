@@ -1,11 +1,8 @@
 package fr.mrcraftcod.gunterdiscord.listeners;
 
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildMuteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.events.self.SelfUpdateNameEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -13,7 +10,6 @@ import javax.annotation.Nonnull;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Objects;
-import java.util.Optional;
 import static fr.mrcraftcod.gunterdiscord.utils.log.Log.getLogger;
 
 /**
@@ -87,32 +83,6 @@ public class LogListener extends ListenerAdapter{
 			case MONDAY:
 			default:
 				return 0;
-		}
-	}
-	
-	@Override
-	public void onGuildMessageReactionAdd(@Nonnull final GuildMessageReactionAddEvent event){
-		super.onGuildMessageReactionAdd(event);
-		try{
-			Optional.ofNullable(event.getReaction().getTextChannel()).map(TextChannel::getHistory).map(history -> history.getMessageById(event.getMessageIdLong())).ifPresent(message -> getLogger(event.getGuild()).debug("New reaction {} from `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), event.getUser(), event.getReaction().getTextChannel().getName(), message.getContentRaw().replace("\n", "{n}"), message.getAuthor()));
-		}
-		catch(final NullPointerException ignored){
-		}
-		catch(final Exception e){
-			getLogger(event.getGuild()).error("", e);
-		}
-	}
-	
-	@Override
-	public void onGuildMessageReactionRemove(@Nonnull final GuildMessageReactionRemoveEvent event){
-		super.onGuildMessageReactionRemove(event);
-		try{
-			Optional.ofNullable(event.getReaction().getTextChannel()).map(TextChannel::getHistory).map(history -> history.getMessageById(event.getMessageIdLong())).ifPresent(message -> getLogger(event.getGuild()).debug("Reaction {} removed by `{}` in {} on `{}` whose author is {}", event.getReaction().getReactionEmote().getName(), event.getUser(), event.getReaction().getTextChannel().getName(), message.getContentRaw().replace("\n", "{n}"), message.getAuthor()));
-		}
-		catch(final NullPointerException ignored){
-		}
-		catch(final Exception e){
-			getLogger(event.getGuild()).error("", e);
 		}
 	}
 	
