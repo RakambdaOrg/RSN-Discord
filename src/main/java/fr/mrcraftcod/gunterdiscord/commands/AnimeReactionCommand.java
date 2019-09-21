@@ -4,6 +4,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
+import fr.mrcraftcod.gunterdiscord.utils.log.Log;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
@@ -24,44 +25,57 @@ public class AnimeReactionCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		final var lines = new LinkedList<>(Arrays.asList(String.join(" ", args).split("\n")));
-		if(!lines.isEmpty()){
-			var newText = "__**EP " + lines.pop() + "**__";
+		try{
+			final var lines = new LinkedList<>(Arrays.asList(String.join(" ", args).split("\n")));
 			if(!lines.isEmpty()){
-				newText += "\n" + lines.stream().map(s -> {
-					if(s.isBlank()){
-						return s;
-					}
-					final var parts = new LinkedList<>(Arrays.asList(s.split(" ", 2)));
-					if(parts.size() < 2){
-						return s;
-					}
-					return convertTime(parts) + "||" + String.join(" ", parts) + "||";
-				}).collect(Collectors.joining("\n"));
+				var newText = "__**EP " + lines.pop() + "**__";
+				if(!lines.isEmpty()){
+					newText += "\n" + lines.stream().map(s -> {
+						if(s.isBlank()){
+							return "";
+						}
+						final var parts = new LinkedList<>(Arrays.asList(s.split(" ", 2)));
+						if(parts.size() < 2){
+							return s;
+						}
+						return convertTime(parts) + "||" + String.join(" ", parts) + "||";
+					}).collect(Collectors.joining("\n"));
+				}
+				Actions.reply(event, newText);
 			}
-			Actions.reply(event, newText);
+			return CommandResult.SUCCESS;
 		}
-		return CommandResult.SUCCESS;
+		catch(Exception e){
+			Log.getLogger(event.getGuild()).error("Failed to parse anime reaction", e);
+			Actions.reply(event, "Failed to parse text");
+		}
+		return CommandResult.FAILED;
 	}
 	
-	private static String convertTime(LinkedList<String> stringList){
+	private static String convertTime(LinkedList<String> stringList) throws IllegalArgumentException{
 		if(stringList.size() < 1){
 			return "";
 		}
-		final var str = stringList.peek();
-		if(str.isBlank() || !Character.isDigit(str.charAt(0))){
+		final var originalStr = stringList.peek();
+		if(originalStr.isBlank() || !Character.isDigit(originalStr.charAt(0))){
 			return "N/A ";
 		}
 		stringList.pop();
-		if(str.length() <= 2){
-			return String.format("00:%02d ", Integer.parseInt(str));
+		try{
+			final var str = originalStr.replace(":", "");
+			if(str.length() <= 2){
+				return String.format("00:%02d ", Integer.parseInt(str));
+			}
+			if(str.length() <= 4){
+				final var cut = str.length() - 2;
+				return String.format("%02d:%02d ", Integer.parseInt(str.substring(0, cut)), Integer.parseInt(str.substring(cut)));
+			}
+			final var cut = str.length() - 4;
+			return String.format("%02d:%02d:%02d ", Integer.parseInt(str.substring(0, cut)), Integer.parseInt(str.substring(str.length() - 2, cut)), Integer.parseInt(str.substring(str.length() - 2)));
 		}
-		if(str.length() <= 4){
-			final var cut = str.length() - 2;
-			return String.format("%02d:%02d ", Integer.parseInt(str.substring(0, cut)), Integer.parseInt(str.substring(cut)));
+		catch(Exception e){
+			throw new IllegalArgumentException("Failed to parse " + originalStr, e);
 		}
-		final var cut = str.length() - 4;
-		return String.format("%02d:%02d:%02d ", Integer.parseInt(str.substring(0, cut)), Integer.parseInt(str.substring(str.length() - 2, cut)), Integer.parseInt(str.substring(str.length() - 2)));
 	}
 	
 	@Nonnull
