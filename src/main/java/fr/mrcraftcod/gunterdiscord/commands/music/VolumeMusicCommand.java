@@ -5,7 +5,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.RSNAudioManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
@@ -48,7 +48,7 @@ public class VolumeMusicCommand extends BasicCommand{
 			try{
 				final var volume = Math.min(100, Math.max(0, Integer.parseInt(args.pop())));
 				NewSettings.getConfiguration(event.getGuild()).setMusicVolume(volume);
-				GunterAudioManager.getFor(event.getGuild()).ifPresent(g -> g.setVolume(volume));
+				RSNAudioManager.getFor(event.getGuild()).ifPresent(g -> g.setVolume(volume));
 				Actions.reply(event, "Volume set to %d%%", volume);
 			}
 			catch(NumberFormatException e){

@@ -4,7 +4,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.RSNAudioManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
@@ -39,7 +39,7 @@ public class StopMusicCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		switch(GunterAudioManager.leave(event.getGuild())){
+		switch(RSNAudioManager.leave(event.getGuild())){
 			case NO_MUSIC:
 				Actions.reply(event, "%s, no music currently playing", event.getAuthor().getAsMention());
 				break;

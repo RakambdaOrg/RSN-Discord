@@ -5,7 +5,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
-import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.RSNAudioManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
@@ -42,7 +42,7 @@ public class SkipMusicCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		switch(GunterAudioManager.skip(event.getGuild())){
+		switch(RSNAudioManager.skip(event.getGuild())){
 			case NO_MUSIC:
 				Actions.reply(event, "%s, no music currently playing", event.getAuthor().getAsMention());
 				break;
@@ -55,7 +55,7 @@ public class SkipMusicCommand extends BasicCommand{
 	
 	@Override
 	public boolean isAllowed(@Nullable final Member member){
-		return Objects.nonNull(member) && (Utilities.isTeam(member) || GunterAudioManager.isRequester(member.getGuild(), member.getUser()));
+		return Objects.nonNull(member) && (Utilities.isTeam(member) || RSNAudioManager.isRequester(member.getGuild(), member.getUser()));
 	}
 	
 	@Nonnull

@@ -32,11 +32,11 @@ public class AnimeReactionCommand extends BasicCommand{
 					if(s.isBlank()){
 						return s;
 					}
-					final var parts = s.split(" ", 2);
-					if(parts.length < 2){
+					final var parts = new LinkedList<>(Arrays.asList(s.split(" ", 2)));
+					if(parts.size() < 2){
 						return s;
 					}
-					return convertTime(parts[0]) + " ||" + parts[1] + "||";
+					return convertTime(parts) + "||" + String.join(" ", parts) + "||";
 				}).collect(Collectors.joining("\n"));
 			}
 			Actions.reply(event, newText);
@@ -44,16 +44,24 @@ public class AnimeReactionCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
-	private static String convertTime(String str){
+	private static String convertTime(LinkedList<String> stringList){
+		if(stringList.size() < 1){
+			return "";
+		}
+		final var str = stringList.peek();
+		if(str.isBlank() || !Character.isDigit(str.charAt(0))){
+			return "N/A ";
+		}
+		stringList.pop();
 		if(str.length() <= 2){
-			return String.format("00:%02d", Integer.parseInt(str));
+			return String.format("00:%02d ", Integer.parseInt(str));
 		}
 		if(str.length() <= 4){
 			final var cut = str.length() - 2;
-			return String.format("%02d:%02d", Integer.parseInt(str.substring(0, cut)), Integer.parseInt(str.substring(cut)));
+			return String.format("%02d:%02d ", Integer.parseInt(str.substring(0, cut)), Integer.parseInt(str.substring(cut)));
 		}
 		final var cut = str.length() - 4;
-		return String.format("%02d:%02d:%02d", Integer.parseInt(str.substring(0, cut)), Integer.parseInt(str.substring(str.length() - 2, cut)), Integer.parseInt(str.substring(str.length() - 2)));
+		return String.format("%02d:%02d:%02d ", Integer.parseInt(str.substring(0, cut)), Integer.parseInt(str.substring(str.length() - 2, cut)), Integer.parseInt(str.substring(str.length() - 2)));
 	}
 	
 	@Nonnull

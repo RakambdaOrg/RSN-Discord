@@ -4,7 +4,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.RSNAudioManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
@@ -39,11 +39,11 @@ public class AnnoyCommand extends BasicCommand{
 		event.getMessage().getMentionedUsers().stream().findAny().ifPresentOrElse(u -> {
 			final var member = event.getGuild().getMember(u);
 			if(Optional.ofNullable(member).map(Member::getVoiceState).map(GuildVoiceState::inVoiceChannel).orElse(false)){
-				GunterAudioManager.getFor(event.getGuild()).ifPresent(audioManager -> {
+				RSNAudioManager.getFor(event.getGuild()).ifPresent(audioManager -> {
 					final var botChannel = audioManager.getChannel();
 					if(Objects.equals(botChannel, member.getVoiceState().getChannel())){
 						final var identifier = String.join(" ", args).trim();
-						GunterAudioManager.play(event.getAuthor(), member.getVoiceState().getChannel(), "".equals(identifier) ? "https://www.youtube.com/watch?v=J4X2b-CEGNg" : identifier);
+						RSNAudioManager.play(event.getAuthor(), member.getVoiceState().getChannel(), "".equals(identifier) ? "https://www.youtube.com/watch?v=J4X2b-CEGNg" : identifier);
 					}
 					else{
 						Actions.reply(event, "Sorry, the user is in another channel");

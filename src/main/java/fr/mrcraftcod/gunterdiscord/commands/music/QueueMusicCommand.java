@@ -6,7 +6,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
-import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.RSNAudioManager;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.RequesterTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
@@ -60,10 +60,10 @@ public class QueueMusicCommand extends BasicCommand{
 			return null;
 		}).orElse(1) - 1;
 		final var position = new AtomicInteger(perPage * page);
-		final var queue = GunterAudioManager.getQueue(event.getGuild());
+		final var queue = RSNAudioManager.getQueue(event.getGuild());
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, "Music queue (Page " + (page + 1) + "/" + ((int) Math.ceil(queue.size() / (double) perPage)) + " - 10 max)");
 		builder.setDescription(String.format("%d musics queued", queue.size()));
-		final var beforeDuration = new AtomicLong(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).orElse(0L) + queue.stream().limit(perPage * page).mapToLong(AudioTrack::getDuration).sum());
+		final var beforeDuration = new AtomicLong(RSNAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).orElse(0L) + queue.stream().limit(perPage * page).mapToLong(AudioTrack::getDuration).sum());
 		queue.stream().skip(perPage * page).limit(perPage).forEachOrdered(track -> {
 			final var userData = track.getUserData(TrackUserFields.class);
 			builder.addField("Position " + position.addAndGet(1), track.getInfo().title + "\nRequester: " + userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Unknown") + "\nRepeating: " + userData.get(new ReplayTrackUserField()).map(Object::toString).orElse("False") + "\nLength: " + getDuration(track.getDuration()) + "\nETA: " + getDuration(beforeDuration.get()), false);

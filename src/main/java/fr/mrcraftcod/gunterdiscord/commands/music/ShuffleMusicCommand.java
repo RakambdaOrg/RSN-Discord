@@ -4,7 +4,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.RSNAudioManager;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
@@ -33,7 +33,7 @@ public class ShuffleMusicCommand extends BasicCommand{
 	@Override
 	public CommandResult execute( @Nonnull final GuildMessageReceivedEvent event,  @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		GunterAudioManager.shuffle(event.getGuild());
+		RSNAudioManager.shuffle(event.getGuild());
 		Actions.reply(event, event.getAuthor().getAsMention() + " shuffled the queue");
 		return CommandResult.SUCCESS;
 	}
