@@ -37,8 +37,8 @@ import static fr.mrcraftcod.gunterdiscord.utils.player.MusicActionResponse.*;
  * @since 2018-06-16
  */
 @SuppressWarnings("WeakerAccess")
-public class GunterAudioManager implements StatusTrackSchedulerListener{
-	private static final HashMap<Guild, GunterAudioManager> managers = new HashMap<>();
+public class RSNAudioManager implements StatusTrackSchedulerListener{
+	private static final HashMap<Guild, RSNAudioManager> managers = new HashMap<>();
 	private final AudioManager audioManager;
 	private final AudioPlayerManager audioPlayerManager;
 	private final AudioPlayer audioPlayer;
@@ -46,7 +46,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	private final VoiceChannel channel;
 	private boolean isSearchingTracks;
 	
-	private GunterAudioManager(@Nonnull final VoiceChannel channel, @Nonnull final AudioManager audioManager, @Nonnull final AudioPlayerManager audioPlayerManager, @Nonnull final AudioPlayer audioPlayer, @Nonnull final TrackScheduler trackScheduler){
+	private RSNAudioManager(@Nonnull final VoiceChannel channel, @Nonnull final AudioManager audioManager, @Nonnull final AudioPlayerManager audioPlayerManager, @Nonnull final AudioPlayer audioPlayer, @Nonnull final TrackScheduler trackScheduler){
 		this.channel = channel;
 		this.audioManager = audioManager;
 		this.audioPlayerManager = audioPlayerManager;
@@ -130,7 +130,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	}
 	
 	@Nonnull
-	private static GunterAudioManager getGunterPlayerManager(@Nonnull final VoiceChannel channel, @Nullable final StatusTrackSchedulerListener listener){
+	private static RSNAudioManager getGunterPlayerManager(@Nonnull final VoiceChannel channel, @Nullable final StatusTrackSchedulerListener listener){
 		return managers.computeIfAbsent(channel.getGuild(), g -> {
 			final var audioManager = channel.getGuild().getAudioManager();
 			audioManager.openAudioConnection(channel);
@@ -141,7 +141,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 			final var trackScheduler = new TrackScheduler(channel.getGuild(), audioPlayer);
 			audioPlayer.setVolume(Math.min(100, Math.max(0, NewSettings.getConfiguration(channel.getGuild()).getMusicVolume())));
 			audioPlayer.addListener(trackScheduler);
-			final var gunterAudioManager = new GunterAudioManager(channel, audioManager, audioPlayerManager, audioPlayer, trackScheduler);
+			final var gunterAudioManager = new RSNAudioManager(channel, audioManager, audioPlayerManager, audioPlayer, trackScheduler);
 			trackScheduler.addStatusTrackSchedulerListener(gunterAudioManager);
 			if(Objects.nonNull(listener)){
 				trackScheduler.addStatusTrackSchedulerListener(listener);
@@ -152,7 +152,7 @@ public class GunterAudioManager implements StatusTrackSchedulerListener{
 	}
 	
 	@Nonnull
-	public static Optional<GunterAudioManager> getFor(@Nonnull final Guild guild){
+	public static Optional<RSNAudioManager> getFor(@Nonnull final Guild guild){
 		return Optional.ofNullable(managers.get(guild));
 	}
 	

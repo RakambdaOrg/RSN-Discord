@@ -6,7 +6,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
-import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.RSNAudioManager;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -88,14 +88,14 @@ public class AddMusicCommand extends BasicCommand{
 								audioTrack.getUserData(TrackUserFields.class).fill(new ReplayTrackUserField(), true);
 							}
 						}
-						final var queue = GunterAudioManager.getQueue(event.getGuild());
+						final var queue = RSNAudioManager.getQueue(event.getGuild());
 						final var before = queue.stream().takeWhile(t -> !Objects.equals(audioTrack, t)).collect(Collectors.toList());
 						final var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Music added", audioTrack.getInfo().uri);
 						embed.setDescription(audioTrack.getInfo().title);
 						embed.addField("Requester", event.getAuthor().getAsMention(), true);
-						embed.addField("ETA", getDuration(GunterAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + before.stream().mapToLong(AudioTrack::getDuration).sum()), true);
+						embed.addField("ETA", getDuration(RSNAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + before.stream().mapToLong(AudioTrack::getDuration).sum()), true);
 						embed.addField("Repeating", String.valueOf(repeat), true);
-						embed.addField("Position in queue", String.valueOf(GunterAudioManager.currentTrack(event.getGuild()).equals(audioTrack) ? 0 : (1 + before.size())), true);
+						embed.addField("Position in queue", String.valueOf(RSNAudioManager.currentTrack(event.getGuild()).equals(audioTrack) ? 0 : (1 + before.size())), true);
 						Actions.reply(event, embed.build());
 					}
 				};
@@ -107,7 +107,7 @@ public class AddMusicCommand extends BasicCommand{
 						Actions.reply(event, "Added %d songs from a playlist", playlist.size());
 					}
 				};
-				GunterAudioManager.play(event.getAuthor(), voiceChannel, null, onTrackAdded, onPlaylistAdded, error -> Actions.reply(event, error), skipCount, maxTracks, identifier);
+				RSNAudioManager.play(event.getAuthor(), voiceChannel, null, onTrackAdded, onPlaylistAdded, error -> Actions.reply(event, error), skipCount, maxTracks, identifier);
 			});
 		}
 		else{

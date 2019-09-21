@@ -6,7 +6,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
-import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.RSNAudioManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
@@ -58,7 +58,7 @@ public class SeekMusicCommand extends BasicCommand{
 				Actions.reply(event, "Invalid format");
 			}
 			else{
-				switch(GunterAudioManager.seek(event.getGuild(), time)){
+				switch(RSNAudioManager.seek(event.getGuild(), time)){
 					case NO_MUSIC:
 						Actions.reply(event, "%s, No music currently playing", event.getAuthor().getAsMention());
 						break;
@@ -107,7 +107,7 @@ public class SeekMusicCommand extends BasicCommand{
 	
 	@Override
 	public boolean isAllowed(@Nullable final Member member){
-		return Objects.nonNull(member) && (Utilities.isTeam(member) || GunterAudioManager.isRequester(member.getGuild(), member.getUser()));
+		return Objects.nonNull(member) && (Utilities.isTeam(member) || RSNAudioManager.isRequester(member.getGuild(), member.getUser()));
 	}
 	
 	@Nonnull

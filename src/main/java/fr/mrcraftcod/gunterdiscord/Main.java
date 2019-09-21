@@ -17,7 +17,7 @@ import fr.mrcraftcod.gunterdiscord.settings.types.ChannelConfiguration;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.irc.TwitchIRC;
 import fr.mrcraftcod.gunterdiscord.utils.log.Log;
-import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.RSNAudioManager;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -130,9 +130,8 @@ public class Main{
 	public static void close(){
 		QuizListener.stopAll();
 		ReplyMessageListener.stopAll();
-		GunterAudioManager.stopAll();
+		RSNAudioManager.stopAll();
 		TwitchIRC.close();
-		
 		executorService.shutdownNow();
 		consoleHandler.close();
 		NewSettings.close();

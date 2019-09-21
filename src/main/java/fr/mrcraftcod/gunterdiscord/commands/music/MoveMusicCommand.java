@@ -5,7 +5,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
-import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.RSNAudioManager;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.RequesterTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
@@ -54,7 +54,7 @@ public class MoveMusicCommand extends BasicCommand{
 			Actions.reply(event, "Please give a music position from the queue");
 		}
 		else if(Optional.ofNullable(event.getMember()).map(Member::getVoiceState).map(GuildVoiceState::inVoiceChannel).orElse(false)){
-			final var queue = GunterAudioManager.getQueue(event.getGuild());
+			final var queue = RSNAudioManager.getQueue(event.getGuild());
 			final var moveFromPosition = Optional.ofNullable(args.poll()).map(value -> {
 				try{
 					return Integer.parseInt(value);

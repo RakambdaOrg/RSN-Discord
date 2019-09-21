@@ -5,7 +5,7 @@ import fr.mrcraftcod.gunterdiscord.commands.generic.Command;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
 import fr.mrcraftcod.gunterdiscord.utils.Actions;
 import fr.mrcraftcod.gunterdiscord.utils.Utilities;
-import fr.mrcraftcod.gunterdiscord.utils.player.GunterAudioManager;
+import fr.mrcraftcod.gunterdiscord.utils.player.RSNAudioManager;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.ReplayTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.RequesterTrackUserField;
 import fr.mrcraftcod.gunterdiscord.utils.player.trackfields.TrackUserFields;
@@ -49,7 +49,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, "Currently playing");
-		GunterAudioManager.currentTrack(event.getGuild()).ifPresentOrElse(track -> {
+		RSNAudioManager.currentTrack(event.getGuild()).ifPresentOrElse(track -> {
 			builder.setTitle("Currently playing", track.getInfo().uri);
 			final var userData = track.getUserData(TrackUserFields.class);
 			builder.setDescription(track.getInfo().title);
