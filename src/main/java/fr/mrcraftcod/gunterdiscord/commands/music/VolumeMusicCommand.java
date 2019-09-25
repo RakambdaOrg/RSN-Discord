@@ -49,7 +49,7 @@ public class VolumeMusicCommand extends BasicCommand{
 				final var volume = Math.min(100, Math.max(0, Integer.parseInt(args.pop())));
 				NewSettings.getConfiguration(event.getGuild()).setMusicVolume(volume);
 				RSNAudioManager.getFor(event.getGuild()).ifPresent(g -> g.setVolume(volume));
-				Actions.reply(event, "Volume set to %d%%", volume);
+				Actions.replyFormatted(event, "Volume set to %d%%", volume);
 			}
 			catch(NumberFormatException e){
 				Actions.reply(event, "Please give the volume as an integer");

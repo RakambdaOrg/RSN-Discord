@@ -37,8 +37,19 @@ public class Actions{
 	 * @param format The message format.
 	 * @param args   The message parameters.
 	 */
-	public static void reply(final GenericGuildMessageEvent event, final String format, final Object... args){
-		sendMessage(event.getChannel(), String.format(format, args));
+	public static void replyFormatted(final GenericGuildMessageEvent event, final String format, final Object... args){
+		reply(event, String.format(format, args));
+	}
+	
+	/**
+	 * Reply to a message.
+	 *
+	 * @param event  The message event.
+	 * @param format The message format.
+	 * @param args   The message parameters.
+	 */
+	public static void reply(final GenericGuildMessageEvent event, final String message){
+		sendMessage(event.getChannel(), message);
 	}
 	
 	/**

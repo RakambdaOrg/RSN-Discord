@@ -80,7 +80,7 @@ public class AddMusicCommand extends BasicCommand{
 				final var repeat = Optional.ofNullable(args.poll()).map(Boolean::valueOf).orElse(false);
 				final Consumer<AudioTrack> onTrackAdded = audioTrack -> {
 					if(Objects.isNull(audioTrack)){
-						Actions.reply(event, "%s, unknown music", event.getAuthor().getAsMention());
+						Actions.replyFormatted(event, "%s, unknown music", event.getAuthor().getAsMention());
 					}
 					else{
 						if(repeat){
@@ -104,7 +104,7 @@ public class AddMusicCommand extends BasicCommand{
 						playlist.forEach(onTrackAdded);
 					}
 					else{
-						Actions.reply(event, "Added %d songs from a playlist", playlist.size());
+						Actions.replyFormatted(event, "Added %d songs from a playlist", playlist.size());
 					}
 				};
 				RSNAudioManager.play(event.getAuthor(), voiceChannel, null, onTrackAdded, onPlaylistAdded, error -> Actions.reply(event, error), skipCount, maxTracks, identifier);

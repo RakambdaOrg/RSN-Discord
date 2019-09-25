@@ -44,10 +44,10 @@ public class SkipMusicCommand extends BasicCommand{
 		super.execute(event, args);
 		switch(RSNAudioManager.skip(event.getGuild())){
 			case NO_MUSIC:
-				Actions.reply(event, "%s, no music currently playing", event.getAuthor().getAsMention());
+				Actions.replyFormatted(event, "%s, no music currently playing", event.getAuthor().getAsMention());
 				break;
 			case OK:
-				Actions.reply(event, "%s skipped the music", event.getAuthor().getAsMention());
+				Actions.replyFormatted(event, "%s skipped the music", event.getAuthor().getAsMention());
 				break;
 		}
 		return CommandResult.SUCCESS;

@@ -38,7 +38,7 @@ public class PoopCommand extends BasicCommand{
 			final var removeDate = LocalDateTime.now().plusMinutes(10);
 			final var poopRole = NewSettings.getConfiguration(event.getGuild()).getPoopRole().flatMap(RoleConfiguration::getRole);
 			event.getMessage().getMentionedRoles().stream().findFirst().ifPresent(r -> event.getGuild().getMembersWithRoles(r).forEach(m -> {
-				Actions.reply(event, "%s you poop", m.getAsMention());
+				Actions.replyFormatted(event, "%s you poop", m.getAsMention());
 				poopRole.ifPresent(pr -> {
 					Actions.giveRole(event.getGuild(), m.getUser(), pr);
 					NewSettings.getConfiguration(event.getGuild()).addRemoveRole(new RemoveRoleConfiguration(event.getAuthor(), pr, removeDate));

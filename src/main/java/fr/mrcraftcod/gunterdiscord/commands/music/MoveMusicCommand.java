@@ -79,7 +79,7 @@ public class MoveMusicCommand extends BasicCommand{
 			builder.setDescription(track.getInfo().title);
 			builder.addField("Requester", userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Unknown"), true);
 			builder.addField("Repeating", userData.get(new ReplayTrackUserField()).map(Object::toString).orElse("False"), true);
-			Actions.reply(event, "Moved {} to position {}", track.getInfo().title, moveToPosition + 1);
+			Actions.replyFormatted(event, "Moved %s to position %d", track.getInfo().title, moveToPosition + 1);
 		}
 		else{
 			Actions.reply(event, "You must be in a voice channel");
