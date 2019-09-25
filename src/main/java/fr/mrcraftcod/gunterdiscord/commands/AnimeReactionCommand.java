@@ -26,7 +26,7 @@ public class AnimeReactionCommand extends BasicCommand{
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		try{
-			final var lines = new LinkedList<>(Arrays.asList(String.join(" ", args).split("\n")));
+			final var lines = new LinkedList<>(Arrays.asList(String.join(" ", args).strip().split("\n")));
 			if(!lines.isEmpty()){
 				var newText = "__**EP " + lines.pop() + "**__";
 				if(!lines.isEmpty()){
@@ -35,7 +35,7 @@ public class AnimeReactionCommand extends BasicCommand{
 							return "";
 						}
 						final var parts = new LinkedList<>(Arrays.asList(s.split(" ", 2)));
-						if(parts.size() < 2){
+						if(parts.isEmpty()){
 							return s;
 						}
 						return convertTime(parts) + "||" + String.join(" ", parts) + "||";
