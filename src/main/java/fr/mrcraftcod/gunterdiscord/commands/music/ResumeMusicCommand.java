@@ -40,10 +40,10 @@ public class ResumeMusicCommand extends BasicCommand{
 		super.execute(event, args);
 		switch(RSNAudioManager.resume(event.getGuild())){
 			case NO_MUSIC:
-				Actions.reply(event, "%s, no music are currently playing", event.getAuthor().getAsMention());
+				Actions.replyFormatted(event, "%s, no music are currently playing", event.getAuthor().getAsMention());
 				break;
 			case OK:
-				Actions.reply(event, "%s resumed the music", event.getAuthor().getAsMention());
+				Actions.replyFormatted(event, "%s resumed the music", event.getAuthor().getAsMention());
 				break;
 		}
 		return CommandResult.SUCCESS;

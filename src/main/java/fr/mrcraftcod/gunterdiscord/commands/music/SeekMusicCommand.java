@@ -60,13 +60,13 @@ public class SeekMusicCommand extends BasicCommand{
 			else{
 				switch(RSNAudioManager.seek(event.getGuild(), time)){
 					case NO_MUSIC:
-						Actions.reply(event, "%s, No music currently playing", event.getAuthor().getAsMention());
+						Actions.replyFormatted(event, "%s, No music currently playing", event.getAuthor().getAsMention());
 						break;
 					case OK:
-						Actions.reply(event, "%s seeked the music to %s", event.getAuthor().getAsMention(), NowPlayingMusicCommand.getDuration(time));
+						Actions.replyFormatted(event, "%s seeked the music to %s", event.getAuthor().getAsMention(), NowPlayingMusicCommand.getDuration(time));
 						break;
 					case IMPOSSIBLE:
-						Actions.reply(event, "%s, the time of this music cannot be changed", event.getAuthor().getAsMention());
+						Actions.replyFormatted(event, "%s, the time of this music cannot be changed", event.getAuthor().getAsMention());
 						break;
 				}
 			}

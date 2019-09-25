@@ -52,7 +52,7 @@ public class ConnectCommand extends BasicCommand{
 					TwitchIRC.connect(event.getGuild(), args.pop());
 				}
 				else{
-					Actions.reply(event, "The bot is already connected to %s", String.join(", ", list));
+					Actions.replyFormatted(event, "The bot is already connected to %s", String.join(", ", list));
 				}
 			}
 			catch(final NoSuchElementException e){

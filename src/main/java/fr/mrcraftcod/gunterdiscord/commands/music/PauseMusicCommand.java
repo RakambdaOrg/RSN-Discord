@@ -40,10 +40,10 @@ public class PauseMusicCommand extends BasicCommand{
 		super.execute(event, args);
 		switch(RSNAudioManager.pause(event.getGuild())){
 			case NO_MUSIC:
-				Actions.reply(event, "%s, no music are being played", event.getAuthor().getAsMention());
+				Actions.replyFormatted(event, "%s, no music are being played", event.getAuthor().getAsMention());
 				break;
 			case OK:
-				Actions.reply(event, "%s paused the music", event.getAuthor().getAsMention());
+				Actions.replyFormatted(event, "%s paused the music", event.getAuthor().getAsMention());
 				break;
 		}
 		return CommandResult.SUCCESS;
