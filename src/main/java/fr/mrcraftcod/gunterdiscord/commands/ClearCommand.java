@@ -38,7 +38,7 @@ public class ClearCommand extends BasicCommand{
 			}
 			return null;
 		}).orElse(100);
-		event.getChannel().getHistory().retrievePast(messageCount).queue(messages -> messages.forEach(message -> message.delete().queue()));
+		event.getChannel().getIterableHistory().stream().limit(messageCount).forEach(message -> message.delete().queue());
 		return CommandResult.SUCCESS;
 	}
 	
