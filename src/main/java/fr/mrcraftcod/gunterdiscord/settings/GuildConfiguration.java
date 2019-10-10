@@ -73,7 +73,7 @@ public class GuildConfiguration{
 	@JsonProperty("musicVolume")
 	private int musicVolume = 100;
 	@JsonProperty("todoMessages")
-	private Set<MessageConfiguration> todoMessages = new HashSet<>();
+	private Set<TodoConfiguration> todos = new HashSet<>();
 	
 	public GuildConfiguration(){
 	}
@@ -82,12 +82,12 @@ public class GuildConfiguration{
 		this.guildId = guildId;
 	}
 	
-	public void removeTodoMessage(MessageConfiguration messageConfiguration){
-		this.todoMessages.remove(messageConfiguration);
+	public void removeTodo(TodoConfiguration todoConfiguration){
+		this.todos.remove(todoConfiguration);
 	}
 	
-	public void addTodoMessage(@Nonnull MessageConfiguration messageConfiguration){
-		this.todoMessages.add(messageConfiguration);
+	public void addTodoMessage(@Nonnull TodoConfiguration todoConfiguration){
+		this.todos.add(todoConfiguration);
 	}
 	
 	public void addRemoveRole(@Nonnull final RemoveRoleConfiguration value){
@@ -103,8 +103,8 @@ public class GuildConfiguration{
 	}
 	
 	@Nonnull
-	public Set<MessageConfiguration> getTodoMessages(){
-		return this.todoMessages;
+	public Set<TodoConfiguration> getTodos(){
+		return this.todos;
 	}
 	
 	public int getMusicVolume(){

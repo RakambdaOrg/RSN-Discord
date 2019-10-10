@@ -75,12 +75,17 @@ public class ReactionListener extends ListenerAdapter{
 					}
 				}
 				else{
-					NewSettings.getConfiguration(event.getGuild()).getTodoMessages().stream().filter(todo -> Objects.equals(todo.getChannel().getChannelId(), event.getChannel().getIdLong())).filter(todo -> Objects.equals(todo.getMessageId(), event.getMessageIdLong())).findFirst().ifPresent(todo -> {
+					NewSettings.getConfiguration(event.getGuild()).getTodos().stream().filter(todo -> Objects.equals(todo.getMessage().getChannel().getChannelId(), event.getChannel().getIdLong())).filter(todo -> Objects.equals(todo.getMessage().getMessageId(), event.getMessageIdLong())).findFirst().ifPresent(todo -> {
 						if(emote == BasicEmotes.CHECK_OK){
-							todo.getMessage().ifPresent(message -> {
-								message.editMessage(BasicEmotes.OK_HAND.getValue() + " __**DONE**__:  " + message.getContentRaw()).queue();
-								message.clearReactions().queue();
-								NewSettings.getConfiguration(event.getGuild()).removeTodoMessage(todo);
+							todo.getMessage().getMessage().ifPresent(message -> {
+								if(todo.isDeleteOnDone()){
+									message.delete().queue();
+								}
+								else{
+									message.editMessage(BasicEmotes.OK_HAND.getValue() + " __**DONE**__:  " + message.getContentRaw()).queue();
+									message.clearReactions().queue();
+								}
+								NewSettings.getConfiguration(event.getGuild()).removeTodo(todo);
 							});
 						}
 					});

@@ -3,10 +3,6 @@ package fr.mrcraftcod.gunterdiscord.commands;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BasicCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.BotCommand;
 import fr.mrcraftcod.gunterdiscord.commands.generic.CommandResult;
-import fr.mrcraftcod.gunterdiscord.settings.NewSettings;
-import fr.mrcraftcod.gunterdiscord.settings.types.TodoConfiguration;
-import fr.mrcraftcod.gunterdiscord.utils.Actions;
-import fr.mrcraftcod.gunterdiscord.utils.BasicEmotes;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
@@ -14,6 +10,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
@@ -22,57 +19,57 @@ import java.util.List;
  * @since 2018-04-12
  */
 @BotCommand
-public class TodoCommand extends BasicCommand{
+public class ClearCommand extends BasicCommand{
 	@Override
 	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Message", "The message of the todo", false);
+		builder.addField("count", "The number of messages to delete (default: 100)", false);
 	}
 	
 	@Nonnull
 	@Override
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		if(args.isEmpty()){
-			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Please give a todo");
-		}
-		else{
-			Actions.reply(event, message -> {
-				message.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
-				NewSettings.getConfiguration(event.getGuild()).addTodoMessage(new TodoConfiguration(message));
-			}, String.join(" ", args));
-		}
+		final var messageCount = Optional.ofNullable(args.poll()).map(arg -> {
+			try{
+				return Integer.parseInt(arg);
+			}
+			catch(NumberFormatException ignored){
+			}
+			return null;
+		}).orElse(100);
+		event.getChannel().getHistory().retrievePast(messageCount).queue(messages -> messages.forEach(message -> message.delete().queue()));
 		return CommandResult.SUCCESS;
 	}
 	
 	@Nonnull
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " <message...>";
+		return super.getCommandUsage() + " [count]";
 	}
 	
 	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
-		return AccessLevel.ALL;
+		return AccessLevel.ADMIN;
 	}
 	
 	@Nonnull
 	@Override
 	public String getName(){
-		return "TODO";
+		return "Clear";
 	}
 	
 	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("todo");
+		return List.of("clear");
 	}
 	
 	@Nonnull
 	@Override
 	public String getDescription(){
-		return "Put a todo in the chat";
+		return "Clear messages in a channel";
 	}
 	
 	@Override
