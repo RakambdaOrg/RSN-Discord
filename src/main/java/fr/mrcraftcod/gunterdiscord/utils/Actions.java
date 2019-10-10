@@ -137,8 +137,20 @@ public class Actions{
 	 * @param embed   The embed to attach.
 	 */
 	public static void sendMessage(final TextChannel channel, final String text, final MessageEmbed embed){
+		sendMessage(channel, text, embed, null);
+	}
+	
+	/**
+	 * Send a message to a channel with an embed.
+	 *
+	 * @param channel The channel to send to.
+	 * @param text    The message to send.
+	 * @param embed   The embed to attach.
+	 * @param onSend  A callback to execute when the message is sent.
+	 */
+	public static void sendMessage(final TextChannel channel, final String text, final MessageEmbed embed, Consumer<Message> onSend){
 		if(channel.canTalk()){
-			channel.sendMessage(text).embed(embed).queue();
+			channel.sendMessage(text).embed(embed).queue(onSend);
 			getLogger(channel.getGuild()).info("Sent message to {} : {}", channel.getName(), text);
 		}
 		else{
