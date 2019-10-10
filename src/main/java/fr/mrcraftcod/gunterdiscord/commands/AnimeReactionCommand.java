@@ -62,7 +62,7 @@ public class AnimeReactionCommand extends BasicCommand{
 			return "";
 		}
 		final var originalStr = stringList.peek();
-		if(originalStr.isBlank() || !Character.isDigit(originalStr.charAt(0))){
+		if(originalStr.isBlank() || originalStr.chars().anyMatch(c -> !Character.isDigit(c))){
 			return "N/A ";
 		}
 		stringList.pop();
