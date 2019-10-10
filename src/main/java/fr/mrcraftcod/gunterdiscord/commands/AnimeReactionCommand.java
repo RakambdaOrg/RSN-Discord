@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
  */
 @BotCommand
 public class AnimeReactionCommand extends BasicCommand{
+	private static final String COMMENT_STR = "--";
+	
 	@Nonnull
 	@Override
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
@@ -33,6 +35,9 @@ public class AnimeReactionCommand extends BasicCommand{
 					newText += "\n" + lines.stream().map(s -> {
 						if(s.isBlank()){
 							return "";
+						}
+						if(s.startsWith(COMMENT_STR)){
+							return s.substring(COMMENT_STR.length()).trim();
 						}
 						final var parts = new LinkedList<>(Arrays.asList(s.split(" ", 2)));
 						if(parts.isEmpty()){
