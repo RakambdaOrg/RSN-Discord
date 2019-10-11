@@ -33,17 +33,19 @@ public class AnimeReactionCommand extends BasicCommand{
 				var newText = "__**EP " + lines.pop() + "**__";
 				if(!lines.isEmpty()){
 					newText += "\n" + lines.stream().map(s -> {
+						var decorator = "||";
 						if(s.isBlank()){
 							return "";
 						}
 						if(s.startsWith(COMMENT_STR)){
-							return s.substring(COMMENT_STR.length()).trim();
+							s = s.substring(COMMENT_STR.length()).trim();
+							decorator = "";
 						}
 						final var parts = new LinkedList<>(Arrays.asList(s.split(" ", 2)));
 						if(parts.isEmpty()){
 							return s;
 						}
-						return convertTime(parts) + "||" + String.join(" ", parts) + "||";
+						return convertTime(parts) + decorator + String.join(" ", parts) + decorator;
 					}).collect(Collectors.joining("\n"));
 				}
 				Actions.reply(event, newText);
