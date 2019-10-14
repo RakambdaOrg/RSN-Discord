@@ -78,7 +78,7 @@ public class AnimeReactionCommand extends BasicCommand{
 				return String.format("%02d:%02d ", Integer.parseInt(str.substring(0, cut)), Integer.parseInt(str.substring(cut)));
 			}
 			final var cut = str.length() - 4;
-			return String.format("%02d:%02d:%02d ", Integer.parseInt(str.substring(0, cut)), Integer.parseInt(str.substring(str.length() - 2, cut)), Integer.parseInt(str.substring(str.length() - 2)));
+			return String.format("%02d:%02d:%02d ", Integer.parseInt(str.substring(0, cut)), Integer.parseInt(str.substring(cut, str.length() - 2)), Integer.parseInt(str.substring(str.length() - 2)));
 		}
 		catch(Exception e){
 			throw new IllegalArgumentException("Failed to parse " + originalStr, e);
