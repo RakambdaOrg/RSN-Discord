@@ -74,7 +74,17 @@ public class ReactionListener extends ListenerAdapter{
 					}
 				}
 				else{
-					NewSettings.getConfiguration(event.getGuild()).getTodos().stream().filter(todo -> Objects.equals(todo.getMessage().getChannel().getChannelId(), event.getChannel().getIdLong())).filter(todo -> Objects.equals(todo.getMessage().getMessageId(), event.getMessageIdLong())).findFirst().ifPresent(todo -> {
+					NewSettings.getConfiguration(event.getGuild())
+							.getTodos()
+							.stream()
+							.filter(todo -> Objects.equals(
+									todo.getMessage().getChannel().getChannelId(),
+									event.getChannel().getIdLong()))
+							.filter(todo -> Objects.equals(
+									todo.getMessage().getMessageId(),
+									event.getMessageIdLong()))
+							.findFirst()
+							.ifPresent(todo -> {
 						if(emote == BasicEmotes.CHECK_OK){
 							todo.getMessage().getMessage().ifPresent(message -> {
 								if(todo.isDeleteOnDone()){
