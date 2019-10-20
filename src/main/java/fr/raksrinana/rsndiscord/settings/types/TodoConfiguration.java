@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord.settings.types;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -35,11 +34,6 @@ public class TodoConfiguration{
 	private TodoConfiguration(final long channelId, final long messageId, final boolean deleteOnDone){
 		this.message = new MessageConfiguration(channelId, messageId);
 		this.deleteOnDone = deleteOnDone;
-	}
-	
-	@JsonCreator
-	public void creator(@JsonProperty("channel") ChannelConfiguration channel, @JsonProperty("messageId") long messageId){
-		this.message = new MessageConfiguration(channel.getChannelId(), messageId);
 	}
 	
 	@Nonnull
