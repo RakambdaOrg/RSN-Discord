@@ -78,10 +78,15 @@ public class ReactionListener extends ListenerAdapter{
 							.getTodos()
 							.stream()
 							.filter(todo -> Objects.equals(
-									todo.getMessage().getChannel().getChannelId(),
+									todo
+											.getMessage()
+											.getChannel()
+											.getChannelId(),
 									event.getChannel().getIdLong()))
 							.filter(todo -> Objects.equals(
-									todo.getMessage().getMessageId(),
+									todo
+											.getMessage()
+											.getMessageId(),
 									event.getMessageIdLong()))
 							.findFirst()
 							.ifPresent(todo -> {
