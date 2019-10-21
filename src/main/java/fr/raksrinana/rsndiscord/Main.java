@@ -46,6 +46,7 @@ public class Main{
 	public static boolean DEVELOPMENT = Boolean.parseBoolean(System.getProperty("rsndev", "false"));
 	private static JDA jda;
 	private static ConsoleHandler consoleHandler;
+	public static CLIParameters parameters;
 	
 	/**
 	 * Main entry point.
@@ -57,7 +58,7 @@ public class Main{
 		if(DEVELOPMENT){
 			Log.getLogger(null).warn("Developer mode activated, shouldn't be used in production!");
 		}
-		final var parameters = new CLIParameters();
+		parameters = new CLIParameters();
 		try{
 			JCommander.newBuilder().addObject(parameters).build().parse(args);
 		}
@@ -66,7 +67,6 @@ public class Main{
 			e.usage();
 			return;
 		}
-		
 		if(Objects.nonNull(parameters.getConfigurationFile())){
 			final var prop = new Properties();
 			try(final var is = new FileInputStream(parameters.getConfigurationFile())){
