@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
-import org.json.JSONObject;
 import javax.annotation.Nullable;
 import java.awt.Color;
 import java.time.Duration;
@@ -176,26 +175,6 @@ public class Utilities{
 			builder.append("\n\t").append("Value: ").append(field.getValue());
 		});
 		return builder.toString();
-	}
-	
-	public static <T> T getJSONMaybe(final JSONObject json, final Class<? extends T> klass, final String key){
-		if(json.has(key)){
-			final var value = json.get(key);
-			if(!Objects.equals(value, JSONObject.NULL)){
-				return klass.cast(json.get(key));
-			}
-		}
-		return null;
-	}
-	
-	public static String capitalize(final String s){
-		if(Objects.isNull(s) || s.isBlank()){
-			return s;
-		}
-		if(s.length() == 1){
-			return s;
-		}
-		return s.substring(0, 1).toUpperCase() + s.substring(1);
 	}
 	
 	public static String durationToString(final Duration duration){

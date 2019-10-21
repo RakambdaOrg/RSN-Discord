@@ -1,8 +1,8 @@
 package fr.raksrinana.rsndiscord.utils.anilist.queries;
 
 import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
+import kong.unirest.json.JSONObject;
 import net.dv8tion.jda.api.entities.Member;
-import org.json.JSONObject;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;

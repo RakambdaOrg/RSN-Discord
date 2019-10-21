@@ -23,7 +23,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:${project.logback_version}")
     implementation("fr.mrcraftcod:utils.http:${project.raksrinana_utils_version}")
 
-    implementation("org.json:json:${project.json_version}")
+    implementation("com.konghq:unirest-java:${project.unirest_version}")
     implementation("com.beust:jcommander:${project.jcommander_version}")
     implementation("com.fasterxml.jackson.core:jackson-core:${project.jackson_version}")
     implementation("com.fasterxml.jackson.core:jackson-annotations:${project.jackson_version}")
@@ -42,15 +42,14 @@ processResources {
 
 
 repositories {
-    mavenLocal()
     maven {
-        url = 'https://maven.mrcraftcod.fr/'
+        url = 'http://repo.maven.apache.org/maven2'
     }
     maven {
         url = 'https://jcenter.bintray.com'
     }
     maven {
-        url = 'http://repo.maven.apache.org/maven2'
+        url = 'https://maven.mrcraftcod.fr'
     }
 }
 

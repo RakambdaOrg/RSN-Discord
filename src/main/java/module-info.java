@@ -6,7 +6,7 @@
  */
 open module fr.raksrinana.rsndiscord {
 	requires java.desktop;
-	requires org.json;
+	requires unirest.java;
 	requires org.apache.commons.lang3;
 	requires org.apache.commons.io;
 	requires fr.mrcraftcod.utils.http;
@@ -14,7 +14,6 @@ open module fr.raksrinana.rsndiscord {
 	// requires lombok;
 	requires org.slf4j;
 	requires ch.qos.logback.classic;
-	
 	requires net.dv8tion.jda;
 	requires lavaplayer;
 	
