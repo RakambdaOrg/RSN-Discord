@@ -9,6 +9,11 @@ import javax.annotation.Nonnull;
  * @since 2018-08-19
  */
 public class ReplayTrackUserField implements AudioTrackUserFields<Boolean>{
+	@Nonnull
+	public Boolean parseObject(@Nonnull final Object value) throws IllegalArgumentException{
+		return (Boolean) value;
+	}
+	
 	@Override
 	@Nonnull
 	public String getName(){

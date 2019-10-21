@@ -1,6 +1,7 @@
 package fr.raksrinana.rsndiscord.utils.player.trackfields;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 19/08/2018.
@@ -9,14 +10,11 @@ import javax.annotation.Nonnull;
  * @since 2018-08-19
  */
 interface AudioTrackUserFields<T>{
-	@Nonnull
-	default T parseObject(@Nonnull final Object value) throws IllegalArgumentException{
-		//noinspection unchecked
-		return (T) value;
-	}
+	@Nullable
+	T parseObject(@Nonnull final Object value);
 	
 	@Nonnull
-	default T valueForField(@Nonnull final T value){
+	default Object valueForField(@Nonnull final T value){
 		return value;
 	}
 	
