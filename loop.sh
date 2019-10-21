@@ -2,7 +2,8 @@
 while :
 do
 	git pull
+	./gradlew shadowJar
 	mkdir -p config/settings
-	./gradlew run --args='-c config/config.properties -s config/settings'
+	java -jar build/libs/rsn-discord-shaded.jar -c config/config.properties -s config/settings
 done
 

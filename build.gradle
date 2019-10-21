@@ -34,7 +34,7 @@ dependencies {
 
 repositories {
     maven {
-        url = 'http://repo.maven.apache.org/maven2'
+        url = 'https://repo.maven.apache.org/maven2'
     }
     maven {
         url = 'https://jcenter.bintray.com'
@@ -69,9 +69,8 @@ jar {
 
 shadowJar {
     baseName = project.name
-    classifier = null
+    classifier = 'shaded'
     version = null
-    minimize()
 }
 
 tasks.withType(JavaCompile) {
