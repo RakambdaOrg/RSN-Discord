@@ -7,7 +7,7 @@ plugins {
 group = 'fr.raksrinana'
 version = project.bot_version
 description = 'RSNDiscord'
-sourceCompatibility = targetCompatibility = '12'
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_12
 
 ext.moduleName = 'fr.raksrinana.rsndiscord'
 mainClassName = project.mainClass
