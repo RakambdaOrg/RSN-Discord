@@ -4,19 +4,16 @@
  * @author Thomas Couchoud
  * @since 2018-05-03
  */
-open module fr.mrcraftcod.gunterdiscord {
+open module fr.raksrinana.rsndiscord {
 	requires java.desktop;
-	
-	requires org.json;
+	requires unirest.java;
 	requires org.apache.commons.lang3;
 	requires org.apache.commons.io;
 	requires fr.mrcraftcod.utils.http;
 	requires jcommander;
 	// requires lombok;
-	
 	requires org.slf4j;
 	requires ch.qos.logback.classic;
-	
 	requires net.dv8tion.jda;
 	requires lavaplayer;
 	

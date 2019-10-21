@@ -2,17 +2,20 @@ package fr.raksrinana.rsndiscord;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.FileConverter;
+import com.beust.jcommander.converters.PathConverter;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @SuppressWarnings("FieldMayBeFinal")
-class CLIParameters{
+public class CLIParameters{
 	@Parameter(names = {
 			"-s",
-			"--jackson "
-	}, description = "The settings file to use", converter = FileConverter.class)
-	private File settingsFile = new File("settings.json");
+			"--settings "
+	}, description = "The guild settings folder to use", converter = PathConverter.class)
+	private Path settingsFolder = Paths.get("settings");
 	@Parameter(names = {
 			"-c",
 			"--config"
@@ -28,7 +31,7 @@ class CLIParameters{
 	}
 	
 	@Nonnull
-	File getSettingsFile(){
-		return this.settingsFile.getAbsoluteFile();
+	public Path getSettingsFolder(){
+		return this.settingsFolder;
 	}
 }

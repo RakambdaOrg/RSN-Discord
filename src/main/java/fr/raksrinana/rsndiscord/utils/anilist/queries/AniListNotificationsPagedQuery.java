@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.utils.anilist.queries;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.raksrinana.rsndiscord.utils.anilist.notifications.airing.AniListAiringNotification;
 import fr.raksrinana.rsndiscord.utils.log.Log;
-import org.json.JSONObject;
+import kong.unirest.json.JSONObject;
 import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

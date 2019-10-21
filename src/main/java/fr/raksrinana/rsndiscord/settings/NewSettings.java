@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import net.dv8tion.jda.api.entities.Guild;
 import javax.annotation.Nonnull;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,7 +48,7 @@ public class NewSettings{
 	
 	@Nonnull
 	private static Path getConfigPath(final long guildId){
-		return Paths.get("settings", guildId + ".json");
+		return Main.parameters.getSettingsFolder().resolve(guildId + ".json");
 	}
 	
 	public static void close(){

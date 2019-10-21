@@ -5,9 +5,9 @@
         </encoder>
     </appender>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/${project.name}.log</file>
+        <file>logs/rsn-discord.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/${project.name}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/rsn-discord.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>10</maxHistory>
         </rollingPolicy>
         <encoder>
