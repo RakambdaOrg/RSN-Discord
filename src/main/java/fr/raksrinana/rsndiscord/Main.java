@@ -140,7 +140,7 @@ public class Main{
 	public static String getRSNBotVersion(){
 		final var properties = new Properties();
 		try{
-			properties.load(Main.class.getResource("/version.properties").openStream());
+			properties.load(Main.class.getResource("/filteredResources/version.properties").openStream());
 		}
 		catch(final IOException e){
 			Log.getLogger(null).warn("Error reading version jsonConfigFile", e);

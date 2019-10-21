@@ -32,9 +32,11 @@ dependencies {
     implementation("org.reflections:reflections:${project.reflections_version}")
 }
 
+import org.apache.tools.ant.filters.ReplaceTokens
 processResources {
-    from ('src/main/java/resources') {
-        include '*.properties'
+    with copySpec {
+        from 'src/main/filteredResources'
+        filter(ReplaceTokens, tokens: [bot_version: project.version, bot_name: project.name])
     }
 }
 
