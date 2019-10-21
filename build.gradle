@@ -32,15 +32,6 @@ dependencies {
     implementation("org.reflections:reflections:${project.reflections_version}")
 }
 
-import org.apache.tools.ant.filters.ReplaceTokens
-processResources {
-    with copySpec {
-        from 'src/main/filteredResources'
-        filter(ReplaceTokens, tokens: [bot_version: project.version, bot_name: project.name])
-    }
-}
-
-
 repositories {
     maven {
         url = 'http://repo.maven.apache.org/maven2'
@@ -51,6 +42,13 @@ repositories {
     maven {
         url = 'https://maven.mrcraftcod.fr'
     }
+}
+
+import org.apache.tools.ant.filters.ReplaceTokens
+
+processResources {
+    from 'src/main/filteredResources'
+    filter(ReplaceTokens, tokens: [bot_version: project.version, bot_name: project.name])
 }
 
 compileJava {
