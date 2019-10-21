@@ -50,7 +50,6 @@ class ConsoleHandler extends Thread{
 						continue;
 					}
 					final var line = sc.nextLine();
-					System.out.println(line);
 					final var args = new LinkedList<>(Arrays.asList(line.split(" ")));
 					if(args.isEmpty()){
 						continue;
