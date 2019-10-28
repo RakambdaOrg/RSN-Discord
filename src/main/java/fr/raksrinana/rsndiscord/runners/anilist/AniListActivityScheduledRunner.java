@@ -5,8 +5,8 @@ import fr.raksrinana.rsndiscord.settings.NewSettings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
-import fr.raksrinana.rsndiscord.utils.anilist.activity.list.AniListListActivity;
-import fr.raksrinana.rsndiscord.utils.anilist.queries.AniListListActivityPagedQuery;
+import fr.raksrinana.rsndiscord.utils.anilist.activity.list.ListActivity;
+import fr.raksrinana.rsndiscord.utils.anilist.queries.ActivityPagedQuery;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-10-08
  */
-public class AniListActivityScheduledRunner implements AniListRunner<AniListListActivity, AniListListActivityPagedQuery>, ScheduledRunner{
+public class AniListActivityScheduledRunner implements AniListRunner<ListActivity, ActivityPagedQuery>, ScheduledRunner{
 	private final JDA jda;
 	
 	public AniListActivityScheduledRunner(@Nonnull final JDA jda){
@@ -83,7 +83,7 @@ public class AniListActivityScheduledRunner implements AniListRunner<AniListList
 	
 	@Nonnull
 	@Override
-	public AniListListActivityPagedQuery initQuery(@Nonnull final Member member){
-		return new AniListListActivityPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(this.getFetcherID()).stream().filter(a -> Objects.equals(a.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
+	public ActivityPagedQuery initQuery(@Nonnull final Member member){
+		return new ActivityPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(this.getFetcherID()).stream().filter(a -> Objects.equals(a.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
 	}
 }

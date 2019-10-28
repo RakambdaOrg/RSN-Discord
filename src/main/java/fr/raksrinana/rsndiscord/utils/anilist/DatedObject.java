@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
  * @author Thomas Couchoud
  * @since 2018-10-11
  */
-public interface AniListDatedObject extends AniListObject{
+public interface DatedObject extends AniListObject{
 	@Nonnull
 	LocalDateTime getDate();
 }

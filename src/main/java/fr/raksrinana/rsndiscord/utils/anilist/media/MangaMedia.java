@@ -20,14 +20,14 @@ import java.util.Optional;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonTypeName("MANGA")
-public class AniListMangaMedia extends AniListMedia{
+public class MangaMedia extends Media{
 	@JsonProperty("chapters")
 	private Integer chapters;
 	@JsonProperty("volumes")
 	private Integer volumes;
 	
-	public AniListMangaMedia(){
-		super(AniListMediaType.MANGA);
+	public MangaMedia(){
+		super(MediaType.MANGA);
 	}
 	
 	@Override

@@ -20,12 +20,12 @@ import java.util.Optional;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonTypeName("ANIME")
-public class AniListAnimeMedia extends AniListMedia{
+public class AnimeMedia extends Media{
 	@JsonProperty("episodes")
 	private Integer episodes;
 	
-	public AniListAnimeMedia(){
-		super(AniListMediaType.ANIME);
+	public AnimeMedia(){
+		super(MediaType.ANIME);
 	}
 	
 	@Override

@@ -6,8 +6,8 @@ import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
-import fr.raksrinana.rsndiscord.utils.anilist.notifications.airing.AniListAiringNotification;
-import fr.raksrinana.rsndiscord.utils.anilist.queries.AniListNotificationsPagedQuery;
+import fr.raksrinana.rsndiscord.utils.anilist.notifications.Notification;
+import fr.raksrinana.rsndiscord.utils.anilist.queries.NotificationsPagedQuery;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-10-08
  */
-public class AniListNotificationScheduledRunner implements AniListRunner<AniListAiringNotification, AniListNotificationsPagedQuery>, ScheduledRunner{
+public class AniListNotificationScheduledRunner implements AniListRunner<Notification, NotificationsPagedQuery>, ScheduledRunner{
 	private final JDA jda;
 	
 	public AniListNotificationScheduledRunner(@Nonnull final JDA jda){
@@ -53,8 +53,8 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 	}
 	
 	@Override
-	public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<AniListAiringNotification>> userElements){
-		final var notifications = new HashMap<AniListAiringNotification, List<User>>();
+	public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<Notification>> userElements){
+		final var notifications = new HashMap<Notification, List<User>>();
 		for(final var entry : userElements.entrySet()){
 			for(final var notification : entry.getValue()){
 				notifications.putIfAbsent(notification, new LinkedList<>());
@@ -84,8 +84,8 @@ public class AniListNotificationScheduledRunner implements AniListRunner<AniList
 	
 	@Nonnull
 	@Override
-	public AniListNotificationsPagedQuery initQuery(@Nonnull final Member member){
-		return new AniListNotificationsPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(this.getFetcherID()).stream().filter(c -> Objects.equals(c.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
+	public NotificationsPagedQuery initQuery(@Nonnull final Member member){
+		return new NotificationsPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(this.getFetcherID()).stream().filter(c -> Objects.equals(c.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
 	}
 	
 	@Override

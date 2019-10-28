@@ -7,9 +7,9 @@ import fr.raksrinana.rsndiscord.runners.anilist.AniListRunner;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
-import fr.raksrinana.rsndiscord.utils.anilist.list.AniListMediaUserList;
-import fr.raksrinana.rsndiscord.utils.anilist.media.AniListMediaType;
-import fr.raksrinana.rsndiscord.utils.anilist.queries.AniListMediaUserListPagedQuery;
+import fr.raksrinana.rsndiscord.utils.anilist.list.MediaList;
+import fr.raksrinana.rsndiscord.utils.anilist.media.MediaType;
+import fr.raksrinana.rsndiscord.utils.anilist.queries.MediaListPagedQuery;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
@@ -28,19 +28,19 @@ import java.util.function.Consumer;
  * @since 2018-10-08
  */
 public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
-	static class AniListMediaUserListDifferencesRunner implements AniListRunner<AniListMediaUserList, AniListMediaUserListPagedQuery>{
+	static class AniListMediaUserListDifferencesRunner implements AniListRunner<MediaList, MediaListPagedQuery>{
 		private final JDA jda;
-		private final AniListMediaType type;
+		private final MediaType type;
 		private final TextChannel channel;
 		
-		AniListMediaUserListDifferencesRunner(final JDA jda, final AniListMediaType type, final TextChannel channel){
+		AniListMediaUserListDifferencesRunner(final JDA jda, final MediaType type, final TextChannel channel){
 			this.jda = jda;
 			this.type = type;
 			this.channel = channel;
 		}
 		
 		@Override
-		public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<AniListMediaUserList>> userMedias){
+		public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<MediaList>> userMedias){
 			for(final var entry : userMedias.entrySet()){
 				userMedias.keySet().parallelStream().filter(user2 -> !Objects.equals(entry.getKey(), user2)).forEach(userCompare -> {
 					final var user1Iterator = entry.getValue().iterator();
@@ -79,8 +79,8 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 		
 		@Nonnull
 		@Override
-		public AniListMediaUserListPagedQuery initQuery(@Nonnull final Member member){
-			return new AniListMediaUserListPagedQuery(AniListUtils.getUserId(member).orElseThrow());
+		public MediaListPagedQuery initQuery(@Nonnull final Member member){
+			return new MediaListPagedQuery(AniListUtils.getUserId(member).orElseThrow());
 		}
 		
 		@Override
@@ -122,7 +122,7 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 			Actions.reply(event, embedBuilder.build());
 			return CommandResult.SUCCESS;
 		}
-		final var type = AniListMediaType.valueOf(args.poll());
+		final var type = MediaType.valueOf(args.poll());
 		final var runner = new AniListMediaUserListDifferencesRunner(event.getJDA(), type, event.getChannel());
 		runner.runQuery(event.getMessage().getMentionedMembers(), List.of(event.getChannel()));
 		return CommandResult.SUCCESS;

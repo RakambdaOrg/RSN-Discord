@@ -15,16 +15,16 @@ import java.awt.Color;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonTypeName("ANIME_LIST")
-public class AniListAnimeListActivity extends AniListListActivity{
-	public AniListAnimeListActivity(){
+@JsonTypeName("MANGA_LIST")
+public class MangaListActivity extends ListActivity{
+	public MangaListActivity(){
 		super();
 	}
 	
 	@Nonnull
 	@Override
 	protected Color getColor(){
-		return Color.CYAN;
+		return Color.PINK;
 	}
 	
 	@Override

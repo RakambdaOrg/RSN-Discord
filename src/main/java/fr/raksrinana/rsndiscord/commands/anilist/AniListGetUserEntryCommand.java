@@ -7,9 +7,9 @@ import fr.raksrinana.rsndiscord.runners.anilist.AniListRunner;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
-import fr.raksrinana.rsndiscord.utils.anilist.list.AniListMediaUserList;
-import fr.raksrinana.rsndiscord.utils.anilist.media.AniListMediaType;
-import fr.raksrinana.rsndiscord.utils.anilist.queries.AniListMediaUserListPagedQuery;
+import fr.raksrinana.rsndiscord.utils.anilist.list.MediaList;
+import fr.raksrinana.rsndiscord.utils.anilist.media.MediaType;
+import fr.raksrinana.rsndiscord.utils.anilist.queries.MediaListPagedQuery;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
@@ -28,13 +28,13 @@ import java.util.function.Consumer;
  * @since 2018-10-08
  */
 public class AniListGetUserEntryCommand extends BasicCommand{
-	static class AniListMediaUserListRunner implements AniListRunner<AniListMediaUserList, AniListMediaUserListPagedQuery>{
+	static class AniListMediaUserListRunner implements AniListRunner<MediaList, MediaListPagedQuery>{
 		private final int ID;
 		private final JDA jda;
-		private final AniListMediaType type;
+		private final MediaType type;
 		private final TextChannel channel;
 		
-		AniListMediaUserListRunner(final JDA jda, final AniListMediaType type, final int ID, final TextChannel channel){
+		AniListMediaUserListRunner(final JDA jda, final MediaType type, final int ID, final TextChannel channel){
 			this.jda = jda;
 			this.type = type;
 			this.ID = ID;
@@ -42,7 +42,7 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 		}
 		
 		@Override
-		public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<AniListMediaUserList>> userMedias){
+		public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<MediaList>> userMedias){
 			userMedias.values().forEach(medias -> medias.removeIf(aniListMediaUserList -> aniListMediaUserList.getMedia().getType() != this.type || !Objects.equals(aniListMediaUserList.getMedia().getId(), this.ID)));
 			userMedias.entrySet().stream().flatMap(userMedia -> userMedia.getValue().stream().map(media -> ImmutablePair.of(userMedia.getKey(), media))).sorted(Comparator.comparing(Map.Entry::getValue)).map(userMedia -> this.buildMessage(userMedia.getKey(), userMedia.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
 		}
@@ -66,8 +66,8 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 		
 		@Nonnull
 		@Override
-		public AniListMediaUserListPagedQuery initQuery(@Nonnull final Member member){
-			return new AniListMediaUserListPagedQuery(AniListUtils.getUserId(member).orElseThrow());
+		public MediaListPagedQuery initQuery(@Nonnull final Member member){
+			return new MediaListPagedQuery(AniListUtils.getUserId(member).orElseThrow());
 		}
 		
 		@Override
@@ -110,7 +110,7 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 			Actions.reply(event, embedBuilder.build());
 			return CommandResult.SUCCESS;
 		}
-		final var type = AniListMediaType.valueOf(args.poll());
+		final var type = MediaType.valueOf(args.poll());
 		final var mediaId = Integer.parseInt(args.pop());
 		final var runner = new AniListMediaUserListRunner(event.getJDA(), type, mediaId, event.getChannel());
 		runner.runQuery(event.getMessage().getMentionedMembers(), List.of(event.getChannel()));

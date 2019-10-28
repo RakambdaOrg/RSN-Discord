@@ -78,7 +78,6 @@ public class Main{
 			prop.forEach((key, value) -> System.setProperty(key.toString(), value.toString()));
 			Log.getLogger(null).debug("Loaded {} properties from file", prop.keySet().size());
 		}
-		
 		try{
 			Log.getLogger(null).info("Building JDA");
 			final var jdaBuilder = new JDABuilder(AccountType.BOT).setToken(System.getProperty("RSN_TOKEN"));
@@ -108,13 +107,11 @@ public class Main{
 			Log.getLogger(null).error("Couldn't start bot", e);
 			System.exit(1);
 		}
-		
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			Log.getLogger(null).info("Shutdown hook triggered");
 			NewSettings.close();
 		}));
 		Log.getLogger(null).info("Shutdown hook registered");
-		
 		consoleHandler = new ConsoleHandler(jda);
 		consoleHandler.start();
 	}

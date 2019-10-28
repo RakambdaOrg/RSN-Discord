@@ -2,11 +2,11 @@ package fr.raksrinana.rsndiscord.utils.anilist.activity.list;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.utils.anilist.AniListDatedObject;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListObject;
-import fr.raksrinana.rsndiscord.utils.anilist.media.AniListAnimeMedia;
-import fr.raksrinana.rsndiscord.utils.anilist.media.AniListMangaMedia;
-import fr.raksrinana.rsndiscord.utils.anilist.media.AniListMedia;
+import fr.raksrinana.rsndiscord.utils.anilist.DatedObject;
+import fr.raksrinana.rsndiscord.utils.anilist.media.AnimeMedia;
+import fr.raksrinana.rsndiscord.utils.anilist.media.MangaMedia;
+import fr.raksrinana.rsndiscord.utils.anilist.media.Media;
 import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -29,12 +29,11 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes(value = {
-		@JsonSubTypes.Type(value = AniListAnimeMedia.class, name = "ANIME_LIST"),
-		@JsonSubTypes.Type(value = AniListMangaMedia.class, name = "MANGA_LIST")
+		@JsonSubTypes.Type(value = AnimeMedia.class, name = "ANIME_LIST"),
+		@JsonSubTypes.Type(value = MangaMedia.class, name = "MANGA_LIST")
 })
-public abstract class AniListListActivity implements AniListDatedObject{
-	private static final String QUERY = "ListActivity{\n" + "id\n" + "userId\n" + "type\n" + "createdAt\n" + "progress\n" + "siteUrl\n" + AniListMedia.getQuery() + "}";
-	
+public abstract class ListActivity implements DatedObject{
+	private static final String QUERY = "ListActivity{\n" + "id\n" + "userId\n" + "type\n" + "createdAt\n" + "progress\n" + "siteUrl\n" + Media.getQuery() + "\n}";
 	@JsonProperty("createdAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
 	private LocalDateTime createdAt;
@@ -43,13 +42,13 @@ public abstract class AniListListActivity implements AniListDatedObject{
 	@JsonProperty("progress")
 	private String progress;
 	@JsonProperty("media")
-	private AniListMedia media;
+	private Media media;
 	@JsonProperty("id")
 	private int id;
 	
 	@Override
 	public boolean equals(@Nullable final Object obj){
-		return obj instanceof AniListListActivity && Objects.equals(((AniListListActivity) obj).getId(), getId());
+		return obj instanceof ListActivity && Objects.equals(((ListActivity) obj).getId(), getId());
 	}
 	
 	@Override
@@ -92,9 +91,12 @@ public abstract class AniListListActivity implements AniListDatedObject{
 		return progress;
 	}
 	
-	@Nonnull
-	public AniListMedia getMedia(){
-		return media;
+	@Override
+	public int compareTo(@Nonnull final AniListObject o){
+		if(o instanceof DatedObject){
+			return getDate().compareTo(((DatedObject) o).getDate());
+		}
+		return Integer.compare(getId(), o.getId());
 	}
 	
 	@Override
@@ -103,12 +105,9 @@ public abstract class AniListListActivity implements AniListDatedObject{
 		return url;
 	}
 	
-	@Override
-	public int compareTo(@Nonnull final AniListObject o){
-		if(o instanceof AniListDatedObject){
-			return getDate().compareTo(((AniListDatedObject) o).getDate());
-		}
-		return Integer.compare(getId(), o.getId());
+	@Nonnull
+	public Media getMedia(){
+		return media;
 	}
 	
 	@Override

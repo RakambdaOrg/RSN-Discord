@@ -3,9 +3,9 @@ package fr.raksrinana.rsndiscord.runners.anilist;
 import fr.raksrinana.rsndiscord.settings.NewSettings;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.anilist.AniListDatedObject;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListObject;
-import fr.raksrinana.rsndiscord.utils.anilist.queries.AniListPagedQuery;
+import fr.raksrinana.rsndiscord.utils.anilist.DatedObject;
+import fr.raksrinana.rsndiscord.utils.anilist.queries.PagedQuery;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-10-11
  */
-public interface AniListRunner<T extends AniListObject, U extends AniListPagedQuery<T>>{
+public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>{
 	default void runQueryOnEveryUserAndDefaultChannels(){
 		final var channels = this.getChannels();
 		final var members = channels.stream().flatMap(channel -> NewSettings.getConfiguration(channel.getGuild()).getAniListConfiguration().getRegisteredUsers().stream().map(user -> channel.getGuild().getMember(user))).collect(Collectors.toList());
@@ -68,9 +68,9 @@ public interface AniListRunner<T extends AniListObject, U extends AniListPagedQu
 		var elementList = this.initQuery(member).getResult(member);
 		if(this.keepOnlyNew()){
 			final var baseDate = NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(this.getRunnerName(), member.getUser().getIdLong()).map(UserDateConfiguration::getDate).orElse(LocalDateTime.of(2019, 7, 7, 0, 0));
-			elementList = elementList.stream().filter(e -> e instanceof AniListDatedObject).filter(e -> ((AniListDatedObject) e).getDate().isAfter(baseDate)).collect(Collectors.toList());
+			elementList = elementList.stream().filter(e -> e instanceof DatedObject).filter(e -> ((DatedObject) e).getDate().isAfter(baseDate)).collect(Collectors.toList());
 		}
-		elementList.stream().filter(e -> e instanceof AniListDatedObject).map(e -> (AniListDatedObject) e).map(AniListDatedObject::getDate).max(LocalDateTime::compareTo).ifPresent(val -> {
+		elementList.stream().filter(e -> e instanceof DatedObject).map(e -> (DatedObject) e).map(DatedObject::getDate).max(LocalDateTime::compareTo).ifPresent(val -> {
 			Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {}", member, this.getRunnerName(), val);
 			NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().setLastAccess(member.getUser(), this.getRunnerName(), val);
 		});

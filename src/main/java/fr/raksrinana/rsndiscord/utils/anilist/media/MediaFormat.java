@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 /**
  * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-10.
@@ -14,21 +15,25 @@ import javax.annotation.Nullable;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public enum AniListMediaStatus{FINISHED("Finished"), RELEASING("Releasing"), NOT_YET_RELEASED("Not yet released"), CANCELLED("Cancelled");
-	
+public enum MediaFormat{
+	TV("TV"), TV_SHORT("TV Short"), MOVIE("Movie"), SPECIAL("Special"), OVA, ONA, MUSIC("Music"), MANGA("Manga"), NOVEL("Novel"), ONE_SHOT("One shot");
 	private final String display;
 	
-	AniListMediaStatus(@Nullable final String display){
+	MediaFormat(){
+		this(null);
+	}
+	
+	MediaFormat(@Nullable final String display){
 		this.display = display;
 	}
 	
 	@JsonCreator
 	@Nonnull
-	public static AniListMediaStatus getFromString(@Nonnull final String value){
-		return AniListMediaStatus.valueOf(value);
+	public static MediaFormat getFromString(@Nonnull final String value){
+		return MediaFormat.valueOf(value);
 	}
 	
 	@Override
 	public String toString(){
-		return this.display;
+		return Objects.isNull(this.display) ? this.name() : this.display;
 	}}

@@ -8,8 +8,8 @@ import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
-import fr.raksrinana.rsndiscord.utils.anilist.list.AniListMediaUserList;
-import fr.raksrinana.rsndiscord.utils.anilist.queries.AniListMediaUserListPagedQuery;
+import fr.raksrinana.rsndiscord.utils.anilist.list.MediaList;
+import fr.raksrinana.rsndiscord.utils.anilist.queries.MediaListPagedQuery;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-10-08
  */
-public class AniListMediaUserListScheduledRunner implements AniListRunner<AniListMediaUserList, AniListMediaUserListPagedQuery>, ScheduledRunner{
+public class AniListMediaUserListScheduledRunner implements AniListRunner<MediaList, MediaListPagedQuery>, ScheduledRunner{
 	private final JDA jda;
 	private final boolean keepOnlyNew;
 	private final boolean sortedByUser;
@@ -84,7 +84,7 @@ public class AniListMediaUserListScheduledRunner implements AniListRunner<AniLis
 	}
 	
 	@Override
-	public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<AniListMediaUserList>> userElements){
+	public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<MediaList>> userElements){
 		AniListRunner.super.sendMessages(channels, userElements);
 		this.getJDA().getGuilds().stream().map(g -> NewSettings.getConfiguration(g).getAniListConfiguration().getThaChannel().flatMap(ChannelConfiguration::getChannel)).filter(Optional::isPresent).map(Optional::get).forEach(textChannel -> NewSettings.getConfiguration(textChannel.getGuild()).getAniListConfiguration().getThaUser().flatMap(UserConfiguration::getUser).ifPresent(user -> userElements.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> ImmutablePair.of(e.getKey(), v))).filter(v -> v.getRight().getCustomLists().entrySet().stream().filter(Map.Entry::getValue).anyMatch(entry -> Objects.equals("ThaPending", entry.getKey()) || Objects.equals("ThaReading", entry.getKey()) || Objects.equals("ThaWatching", entry.getKey()))).forEach(p -> Actions.sendMessage(textChannel, user.getAsMention(), this.buildMessage(p.getLeft(), p.getRight()), sentMessage -> {
 			sentMessage.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
@@ -106,8 +106,8 @@ public class AniListMediaUserListScheduledRunner implements AniListRunner<AniLis
 	
 	@Nonnull
 	@Override
-	public AniListMediaUserListPagedQuery initQuery(@Nonnull final Member member){
-		return new AniListMediaUserListPagedQuery(AniListUtils.getUserId(member).orElseThrow());
+	public MediaListPagedQuery initQuery(@Nonnull final Member member){
+		return new MediaListPagedQuery(AniListUtils.getUserId(member).orElseThrow());
 	}
 	
 	@Nonnull

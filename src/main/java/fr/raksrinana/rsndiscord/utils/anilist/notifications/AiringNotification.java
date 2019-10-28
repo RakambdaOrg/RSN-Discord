@@ -1,22 +1,17 @@
-package fr.raksrinana.rsndiscord.utils.anilist.notifications.airing;
+package fr.raksrinana.rsndiscord.utils.anilist.notifications;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.utils.anilist.AniListDatedObject;
-import fr.raksrinana.rsndiscord.utils.anilist.AniListObject;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
-import fr.raksrinana.rsndiscord.utils.anilist.media.AniListMedia;
-import fr.raksrinana.rsndiscord.utils.anilist.notifications.AniListNotificationType;
-import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
+import fr.raksrinana.rsndiscord.utils.anilist.media.Media;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.Color;
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -29,30 +24,24 @@ import java.util.Optional;
 @SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AniListAiringNotification implements AniListDatedObject{
-	private static final String QUERY = "AiringNotification {\n" + "id\n" + "type\n" + "episode\n" + "createdAt\n" + AniListMedia.getQuery() + "}\n";
-	@JsonProperty("type")
-	private final AniListNotificationType type;
+@JsonTypeName("AIRING")
+public class AiringNotification extends Notification{
+	private static final String QUERY = "AiringNotification {\n" + "id\n" + "type\n" + "episode\n" + "createdAt\n" + Media.getQuery() + "\n}";
 	@JsonProperty("episode")
 	private int episode;
-	@JsonProperty("createdAt")
-	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private LocalDateTime createdAt = LocalDateTime.now();
 	@JsonProperty("media")
-	private AniListMedia media;
-	@JsonProperty("id")
-	private int id;
+	private Media media;
 	
-	public AniListAiringNotification(){
-		this.type = AniListNotificationType.AIRING;
+	public AiringNotification(){
+		super(NotificationType.AIRING);
 	}
 	
 	@Override
 	public boolean equals(@Nullable final Object obj){
-		if(!(obj instanceof AniListAiringNotification)){
+		if(!(obj instanceof AiringNotification)){
 			return false;
 		}
-		final var notification = (AniListAiringNotification) obj;
+		final var notification = (AiringNotification) obj;
 		return Objects.equals(notification.getEpisode(), this.getEpisode()) && Objects.equals(notification.getMedia(), this.getMedia());
 	}
 	
@@ -61,13 +50,8 @@ public class AniListAiringNotification implements AniListDatedObject{
 		return ToStringBuilder.reflectionToString(this);
 	}
 	
-	@Override
-	public int getId(){
-		return this.id;
-	}
-	
 	@Nonnull
-	private AniListMedia getMedia(){
+	private Media getMedia(){
 		return this.media;
 	}
 	
@@ -88,22 +72,8 @@ public class AniListAiringNotification implements AniListDatedObject{
 	
 	@Override
 	@Nonnull
-	public LocalDateTime getDate(){
-		return this.createdAt;
-	}
-	
-	@Override
-	@Nonnull
 	public URL getUrl(){
-		return Optional.of(this.getMedia()).map(AniListMedia::getUrl).orElse(AniListUtils.FALLBACK_URL);
-	}
-	
-	@Override
-	public int compareTo(@Nonnull final AniListObject o){
-		if(o instanceof AniListDatedObject){
-			return this.getDate().compareTo(((AniListDatedObject) o).getDate());
-		}
-		return Integer.compare(this.getId(), o.getId());
+		return Optional.of(this.getMedia()).map(Media::getUrl).orElse(AniListUtils.FALLBACK_URL);
 	}
 	
 	@Nonnull
@@ -114,10 +84,5 @@ public class AniListAiringNotification implements AniListDatedObject{
 	@Override
 	public int hashCode(){
 		return this.getEpisode();
-	}
-	
-	@Nonnull
-	public AniListNotificationType getType(){
-		return this.type;
 	}
 }

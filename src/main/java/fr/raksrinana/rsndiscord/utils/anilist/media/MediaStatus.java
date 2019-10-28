@@ -14,22 +14,21 @@ import javax.annotation.Nullable;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public enum AniListMediaSeason{
-	WINTER("Winter"), SPRING("Spring"), SUMMER("Summer"), FALL("Fall");
+public enum MediaStatus{
+	FINISHED("Finished"), RELEASING("Releasing"), NOT_YET_RELEASED("Not yet released"), CANCELLED("Cancelled");
 	private final String display;
 	
-	AniListMediaSeason(@Nullable final String display){
+	MediaStatus(@Nullable final String display){
 		this.display = display;
 	}
 	
 	@JsonCreator
 	@Nonnull
-	public static AniListMediaSeason getFromString(@Nonnull final String value){
-		return AniListMediaSeason.valueOf(value);
+	public static MediaStatus getFromString(@Nonnull final String value){
+		return MediaStatus.valueOf(value);
 	}
 	
 	@Override
 	public String toString(){
 		return this.display;
-	}
-}
+	}}

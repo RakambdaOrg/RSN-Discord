@@ -14,20 +14,20 @@ import java.awt.Color;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public enum AniListMediaListUserStatus{
+public enum MediaListStatus{
 	CURRENT(Color.GREEN, "Current"), PLANNING(Color.WHITE, "Planning"), COMPLETED(Color.BLACK, "Completed"), DROPPED(Color.RED, "Dropped"), PAUSED(Color.ORANGE, "Paused"), REPEATING(Color.YELLOW, "Repeating"), UNKNOWN(Color.MAGENTA, "Unknown");
 	private final Color color;
 	private final String display;
 	
-	AniListMediaListUserStatus(@Nonnull final Color color, @Nonnull final String display){
+	MediaListStatus(@Nonnull final Color color, @Nonnull final String display){
 		this.color = color;
 		this.display = display;
 	}
 	
 	@JsonCreator
 	@Nonnull
-	public static AniListMediaListUserStatus getFromString(@Nonnull final String value){
-		return AniListMediaListUserStatus.valueOf(value);
+	public static MediaListStatus getFromString(@Nonnull final String value){
+		return MediaListStatus.valueOf(value);
 	}
 	
 	@Override

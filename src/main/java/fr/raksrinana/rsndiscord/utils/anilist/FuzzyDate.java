@@ -19,6 +19,7 @@ import java.util.Optional;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FuzzyDate{
+	private static final String QUERY = "{year month day}";
 	@JsonProperty("day")
 	private Integer day;
 	@JsonProperty("month")
@@ -27,6 +28,10 @@ public class FuzzyDate{
 	private Integer year;
 	
 	private FuzzyDate(){
+	}
+	
+	public static String getQuery(String fieldName){
+		return fieldName + QUERY;
 	}
 	
 	@Nonnull

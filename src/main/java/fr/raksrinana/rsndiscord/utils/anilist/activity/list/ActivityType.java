@@ -14,28 +14,27 @@ import java.lang.reflect.InvocationTargetException;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public enum AniListActivityType{
-	ANIME_LIST(AniListAnimeListActivity.class), MANGA_LIST(AniListMangaListActivity.class);
+public enum ActivityType{
+	ANIME_LIST(AnimeListActivity.class), MANGA_LIST(MangaListActivity.class);
+	private final Class<? extends ListActivity> klass;
 	
-	private final Class<? extends AniListListActivity> klass;
-	
-	AniListActivityType(@Nonnull final Class<? extends AniListListActivity> klass){
+	ActivityType(@Nonnull final Class<? extends ListActivity> klass){
 		this.klass = klass;
 	}
 	
 	@JsonCreator
 	@Nonnull
-	public static AniListActivityType getFromString(@Nonnull final String value){
-		return AniListActivityType.valueOf(value);
+	public static ActivityType getFromString(@Nonnull final String value){
+		return ActivityType.valueOf(value);
 	}
 	
 	@Nonnull
-	public AniListListActivity getInstance() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException{
+	public ListActivity getInstance() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException{
 		return this.getKlass().getConstructor().newInstance();
 	}
 	
 	@Nonnull
-	private Class<? extends AniListListActivity> getKlass(){
+	private Class<? extends ListActivity> getKlass(){
 		return this.klass;
 	}
 }

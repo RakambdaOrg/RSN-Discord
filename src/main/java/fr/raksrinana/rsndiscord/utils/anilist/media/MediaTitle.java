@@ -7,9 +7,14 @@ import javax.annotation.Nonnull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class AniListMediaTitle{
+public class MediaTitle{
+	private static final String QUERY = "title {\n" + "userPreferred\n" + "}";
 	@JsonProperty("userPreferred")
 	private String userPreferred;
+	
+	public static String getQuery(){
+		return QUERY;
+	}
 	
 	@Nonnull
 	String getUserPreferred(){

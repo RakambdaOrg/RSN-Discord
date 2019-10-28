@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.utils.anilist.AniListDatedObject;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListObject;
+import fr.raksrinana.rsndiscord.utils.anilist.DatedObject;
 import fr.raksrinana.rsndiscord.utils.anilist.FuzzyDate;
-import fr.raksrinana.rsndiscord.utils.anilist.media.AniListMangaMedia;
-import fr.raksrinana.rsndiscord.utils.anilist.media.AniListMedia;
+import fr.raksrinana.rsndiscord.utils.anilist.media.MangaMedia;
+import fr.raksrinana.rsndiscord.utils.anilist.media.Media;
 import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -35,15 +35,15 @@ import static java.time.temporal.ChronoUnit.DAYS;
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AniListMediaUserList implements AniListDatedObject{
+public class MediaList implements DatedObject{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-	private static final String QUERY = "mediaList(userId: $userID) {\n" + "id\n" + "private\n" + "progress\n" + "progressVolumes\n" + "priority\n" + "customLists\n" + "score(format: POINT_100)\n" + "completedAt{year month day}" + "startedAt{year month day}" + "status\n" + "updatedAt\n" + "createdAt\n" + AniListMedia.getQuery() + "}";
+	private static final String QUERY = "mediaList(userId: $userID) {\n" + "id\n" + "private\n" + "progress\n" + "progressVolumes\n" + "priority\n" + "customLists\n" + "score(format: POINT_100)\n" + FuzzyDate.getQuery("completedAt") + "\n" + FuzzyDate.getQuery("startedAt") + "\n" + "status\n" + "updatedAt\n" + "createdAt\n" + Media.getQuery() + "\n}";
 	@JsonProperty("id")
 	private int id;
 	@JsonProperty("status")
-	private AniListMediaListUserStatus status = AniListMediaListUserStatus.UNKNOWN;
+	private MediaListStatus status = MediaListStatus.UNKNOWN;
 	@JsonProperty("media")
-	private AniListMedia media;
+	private Media media;
 	@JsonProperty("private")
 	private boolean privateItem = false;
 	@JsonProperty("priority")
@@ -89,14 +89,13 @@ public class AniListMediaUserList implements AniListDatedObject{
 			});
 		});
 		builder.addField("Progress", getProgress() + "/" + Optional.ofNullable(getMedia().getItemCount()).map(Object::toString).orElse("?"), true);
-		if(Objects.nonNull(getProgressVolumes()) && getMedia() instanceof AniListMangaMedia){
-			builder.addField("Volumes progress", getProgressVolumes() + "/" + Optional.ofNullable(((AniListMangaMedia) getMedia()).getVolumes()).map(Object::toString).orElse("?"), true);
+		if(Objects.nonNull(getProgressVolumes()) && getMedia() instanceof MangaMedia){
+			builder.addField("Volumes progress", getProgressVolumes() + "/" + Optional.ofNullable(((MangaMedia) getMedia()).getVolumes()).map(Object::toString).orElse("?"), true);
 		}
 		final var lists = Optional.ofNullable(this.customLists).orElse(new HashMap<>()).entrySet().stream().filter(k -> Objects.nonNull(k.getValue()) && k.getValue()).map(k -> k.getKey()).collect(Collectors.joining(", "));
 		if(Objects.nonNull(lists) && !lists.isBlank()){
 			builder.addField("In custom lists", lists, true);
 		}
-		
 		builder.addBlankField(false);
 		builder.addField("Media:", "", false);
 		getMedia().fillEmbed(builder);
@@ -109,12 +108,12 @@ public class AniListMediaUserList implements AniListDatedObject{
 	}
 	
 	@Nonnull
-	public AniListMediaListUserStatus getStatus(){
+	public MediaListStatus getStatus(){
 		return status;
 	}
 	
 	@Nonnull
-	public AniListMedia getMedia(){
+	public Media getMedia(){
 		return media;
 	}
 	
@@ -160,7 +159,7 @@ public class AniListMediaUserList implements AniListDatedObject{
 	
 	@Override
 	public boolean equals(@Nullable final Object obj){
-		return obj instanceof AniListMediaUserList && Objects.equals(((AniListMediaUserList) obj).getId(), getId());
+		return obj instanceof MediaList && Objects.equals(((MediaList) obj).getId(), getId());
 	}
 	
 	@Override
@@ -170,8 +169,8 @@ public class AniListMediaUserList implements AniListDatedObject{
 	
 	@Override
 	public int compareTo(@Nonnull final AniListObject o){
-		if(o instanceof AniListDatedObject){
-			return getDate().compareTo(((AniListDatedObject) o).getDate());
+		if(o instanceof DatedObject){
+			return getDate().compareTo(((DatedObject) o).getDate());
 		}
 		return Integer.compare(getId(), o.getId());
 	}

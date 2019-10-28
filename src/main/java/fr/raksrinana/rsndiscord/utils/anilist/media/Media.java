@@ -21,37 +21,36 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes(value = {
-		@JsonSubTypes.Type(value = AniListAnimeMedia.class, name = "ANIME"),
-		@JsonSubTypes.Type(value = AniListMangaMedia.class, name = "MANGA")
+		@JsonSubTypes.Type(value = AnimeMedia.class, name = "ANIME"),
+		@JsonSubTypes.Type(value = MangaMedia.class, name = "MANGA")
 })
-public abstract class AniListMedia implements AniListObject{
-	private static final String QUERY = "media {\n" + "id\n" + "title {\n" + "userPreferred\n" + "}\n" + "season\n" + "type\n" + "format\n" + "status\n" + "episodes\n" + "chapters\n" + "volumes\n" + "isAdult\n" + "coverImage{\n" + "large\n" + "}\n" + "siteUrl" + "}";
-	
-	private final AniListMediaType type;
+public abstract class Media implements AniListObject{
+	private static final String QUERY = "media {\n" + "id\n" + MediaTitle.getQuery() + "\n" + "season\n" + "type\n" + "format\n" + "status\n" + "episodes\n" + "chapters\n" + "volumes\n" + "isAdult\n" + MediaCoverImage.getQuery() + "\n" + "siteUrl" + "}";
+	private final MediaType type;
 	@JsonProperty("title")
-	private AniListMediaTitle title;
+	private MediaTitle title;
 	@JsonProperty("season")
-	private AniListMediaSeason season;
+	private MediaSeason season;
 	@JsonProperty("format")
-	private AniListMediaFormat format;
+	private MediaFormat format;
 	@JsonProperty("status")
-	private AniListMediaStatus status;
+	private MediaStatus status;
 	@JsonProperty("siteUrl")
 	private URL url;
 	@JsonProperty("coverImage")
-	private AniListCoverImage coverImage;
+	private MediaCoverImage coverImage;
 	@JsonProperty("isAdult")
 	private boolean isAdult;
 	@JsonProperty("id")
 	private int id;
 	
-	protected AniListMedia(@Nonnull final AniListMediaType type){
+	protected Media(@Nonnull final MediaType type){
 		this.type = type;
 	}
 	
 	@Override
 	public boolean equals(@Nullable final Object obj){
-		return obj instanceof AniListMedia && Objects.equals(((AniListObject) obj).getId(), this.getId());
+		return obj instanceof Media && Objects.equals(((Media) obj).getId(), this.getId());
 	}
 	
 	@Nonnull
@@ -78,8 +77,8 @@ public abstract class AniListMedia implements AniListObject{
 	}
 	
 	@Nonnull
-	public AniListMediaTitle getTitle(){
-		return this.title;
+	public MediaCoverImage getCoverImage(){
+		return this.coverImage;
 	}
 	
 	@Override
@@ -88,23 +87,23 @@ public abstract class AniListMedia implements AniListObject{
 	}
 	
 	@Nonnull
-	public AniListMediaType getType(){
-		return this.type;
-	}
-
-	@Nonnull
-	public AniListMediaFormat getFormat(){
+	public MediaFormat getFormat(){
 		return this.format;
 	}
-
+	
+	@Nullable
+	public MediaSeason getSeason(){
+		return this.season;
+	}
+	
 	@Nonnull
-	public AniListMediaStatus getStatus(){
+	public MediaStatus getStatus(){
 		return this.status;
 	}
-
+	
 	@Nonnull
-	public AniListCoverImage getCoverImage(){
-		return this.coverImage;
+	public MediaTitle getTitle(){
+		return this.title;
 	}
 
 	@Override
@@ -124,7 +123,7 @@ public abstract class AniListMedia implements AniListObject{
 	
 	@Nullable
 	public abstract Integer getItemCount();
-
+	
 	@Nonnull
 	public static String getQuery(){
 		return QUERY;
@@ -135,8 +134,8 @@ public abstract class AniListMedia implements AniListObject{
 		return this.getId();
 	}
 	
-	@Nullable
-	public AniListMediaSeason getSeason(){
-		return this.season;
+	@Nonnull
+	public MediaType getType(){
+		return this.type;
 	}
 }
