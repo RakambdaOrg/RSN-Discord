@@ -40,6 +40,7 @@ public class TodoCommand extends BasicCommand{
 			Actions.reply(event, message -> {
 				message.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
 				NewSettings.getConfiguration(event.getGuild()).addTodoMessage(new TodoConfiguration(message));
+				message.pin().queue();
 			}, String.join(" ", args));
 		}
 		return CommandResult.SUCCESS;

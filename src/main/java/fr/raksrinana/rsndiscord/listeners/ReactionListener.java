@@ -83,6 +83,9 @@ public class ReactionListener extends ListenerAdapter{
 								else{
 									message.editMessage(BasicEmotes.OK_HAND.getValue() + " __**DONE**__:  " + message.getContentRaw()).queue();
 									message.clearReactions().queue();
+									if(message.isPinned()){
+										message.unpin().queue();
+									}
 								}
 								NewSettings.getConfiguration(event.getGuild()).removeTodo(todo);
 							});
