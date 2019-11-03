@@ -6,11 +6,10 @@ plugins {
 }
 
 group = 'fr.raksrinana'
-version = project.bot_version
 description = 'RSNDiscord'
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_12
 
-ext.moduleName = 'fr.raksrinana.rsndiscord'
+ext.moduleName = project.moduleName
 mainClassName = project.mainClass
 
 dependencies {
@@ -48,8 +47,8 @@ repositories {
 import org.apache.tools.ant.filters.ReplaceTokens
 
 processResources {
-    from 'src/main/filteredResources'
-    filter(ReplaceTokens, tokens: [bot_version: project.version, bot_name: project.name])
+    from 'src/main/resources'
+    filter(ReplaceTokens, tokens: [project_version: project.version, project_name: project.name])
 }
 
 compileJava {

@@ -2,7 +2,9 @@ package fr.raksrinana.rsndiscord.listeners;
 
 import fr.raksrinana.rsndiscord.settings.NewSettings;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildMuteEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.self.SelfUpdateNameEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
@@ -55,7 +57,6 @@ public class LogListener extends ListenerAdapter{
 					final var users = NewSettings.getConfiguration(event.getGuild()).getParticipationConfiguration().getUsers(now);
 					users.increment(event.getAuthor().getIdLong(), event.getAuthor().getName());
 				}
-
 				final var weekKey = now.minusDays(getDaysToRemove(now.getDayOfWeek()));
 				final var emotes = NewSettings.getConfiguration(event.getGuild()).getParticipationConfiguration().getEmotes(weekKey);
 				event.getMessage().getEmotes().forEach(emote -> emotes.increment(emote.getIdLong(), emote.getName()));
@@ -93,6 +94,22 @@ public class LogListener extends ListenerAdapter{
 			Log.getLogger(event.getGuild()).info("Unmuting bot");
 			event.getGuild().mute(event.getMember(), false).queue();
 			event.getGuild().deafen(event.getMember(), false).queue();
+		}
+	}
+	
+	@Override
+	public void onGuildVoiceLeave(@Nonnull GuildVoiceLeaveEvent event){
+		super.onGuildVoiceLeave(event);
+		try{
+			if(event.getGuild().getAudioManager().isConnected() && event.getChannelLeft().equals(event.getGuild().getAudioManager().getConnectedChannel())){
+				if(event.getChannelLeft().getMembers().size() < 1){
+					Log.getLogger(event.getGuild()).info("The last person left {}, disconnecting", event.getChannelLeft());
+					RSNAudioManager.leave(event.getGuild());
+				}
+			}
+		}
+		catch(final Exception e){
+			Log.getLogger(event.getGuild()).error("", e);
 		}
 	}
 }
