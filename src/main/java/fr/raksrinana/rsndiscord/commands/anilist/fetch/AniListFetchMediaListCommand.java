@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.commands.anilist.fetch;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.runners.anilist.AniListMediaUserListScheduledRunner;
+import fr.raksrinana.rsndiscord.runners.anilist.AniListMediaListScheduledRunner;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
@@ -17,13 +17,13 @@ import java.util.List;
  * @author Thomas Couchoud
  * @since 2018-10-08
  */
-public class AniListFetchMediaUserListCommand extends BasicCommand{
+public class AniListFetchMediaListCommand extends BasicCommand{
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	AniListFetchMediaUserListCommand(@Nullable final Command parent){
+	AniListFetchMediaListCommand(@Nullable final Command parent){
 		super(parent);
 	}
 	
@@ -32,7 +32,7 @@ public class AniListFetchMediaUserListCommand extends BasicCommand{
 	@Override
 	public CommandResult execute( @Nonnull final GuildMessageReceivedEvent event,  @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		new AniListMediaUserListScheduledRunner(event.getJDA()).run();
+		new AniListMediaListScheduledRunner(event.getJDA()).run();
 		return CommandResult.SUCCESS;
 	}
 	

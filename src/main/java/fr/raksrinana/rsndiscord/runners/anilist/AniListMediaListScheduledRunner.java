@@ -30,16 +30,16 @@ import java.util.stream.Collectors;
  * @author Thomas Couchoud
  * @since 2018-10-08
  */
-public class AniListMediaUserListScheduledRunner implements AniListRunner<MediaList, MediaListPagedQuery>, ScheduledRunner{
+public class AniListMediaListScheduledRunner implements AniListRunner<MediaList, MediaListPagedQuery>, ScheduledRunner{
 	private final JDA jda;
 	private final boolean keepOnlyNew;
 	private final boolean sortedByUser;
 	
-	public AniListMediaUserListScheduledRunner(@Nonnull final JDA jda){
+	public AniListMediaListScheduledRunner(@Nonnull final JDA jda){
 		this(jda, true);
 	}
 	
-	private AniListMediaUserListScheduledRunner(@Nonnull final JDA jda, final boolean keepOnlyNew){
+	private AniListMediaListScheduledRunner(@Nonnull final JDA jda, final boolean keepOnlyNew){
 		Log.getLogger(null).info("Creating AniList {} runner", this.getRunnerName());
 		this.jda = jda;
 		this.keepOnlyNew = keepOnlyNew;

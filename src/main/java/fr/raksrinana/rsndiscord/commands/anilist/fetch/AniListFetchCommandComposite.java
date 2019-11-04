@@ -23,7 +23,7 @@ public class AniListFetchCommandComposite extends CommandComposite{
 		super(parent);
 		this.addSubCommand(new AniListFetchActivityCommand(this));
 		this.addSubCommand(new AniListFetchNotificationCommand(this));
-		this.addSubCommand(new AniListFetchMediaUserListCommand(this));
+		this.addSubCommand(new AniListFetchMediaListCommand(this));
 		this.addSubCommand(new AniListFetchMediaUserListDifferencesCommand(this));
 	}
 	

@@ -57,6 +57,9 @@ public interface PagedQuery<T>{
 								changes.add(changeObj);
 							}
 						}
+						else{
+							changes.add(changeObj);
+						}
 					});
 				}
 				else{
