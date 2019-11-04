@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListObject;
 import fr.raksrinana.rsndiscord.utils.anilist.DatedObject;
-import fr.raksrinana.rsndiscord.utils.anilist.media.AnimeMedia;
-import fr.raksrinana.rsndiscord.utils.anilist.media.MangaMedia;
 import fr.raksrinana.rsndiscord.utils.anilist.media.Media;
 import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -29,8 +27,8 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes(value = {
-		@JsonSubTypes.Type(value = AnimeMedia.class, name = "ANIME_LIST"),
-		@JsonSubTypes.Type(value = MangaMedia.class, name = "MANGA_LIST")
+		@JsonSubTypes.Type(value = AnimeListActivity.class, name = "ANIME_LIST"),
+		@JsonSubTypes.Type(value = MangaListActivity.class, name = "MANGA_LIST")
 })
 public abstract class ListActivity implements DatedObject{
 	private static final String QUERY = "ListActivity{\n" + "id\n" + "userId\n" + "type\n" + "createdAt\n" + "progress\n" + "siteUrl\n" + Media.getQuery() + "\n}";
