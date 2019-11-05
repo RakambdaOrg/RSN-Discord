@@ -50,7 +50,7 @@ public class RemoveRolesScheduledRunner implements ScheduledRunner{
 	
 	@Override
 	public long getPeriod(){
-		return 1;
+		return 15;
 	}
 	
 	@Nonnull

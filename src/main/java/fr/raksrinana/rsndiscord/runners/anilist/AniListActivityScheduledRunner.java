@@ -45,7 +45,7 @@ public class AniListActivityScheduledRunner implements AniListRunner<ListActivit
 	
 	@Override
 	public long getDelay(){
-		return 0;
+		return 6;
 	}
 	
 	@Override

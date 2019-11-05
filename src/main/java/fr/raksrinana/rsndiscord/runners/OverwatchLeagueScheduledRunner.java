@@ -56,6 +56,6 @@ public class OverwatchLeagueScheduledRunner implements ScheduledRunner{
 	
 	@Override
 	public long getDelay(){
-		return 1;
+		return 3;
 	}
 }
