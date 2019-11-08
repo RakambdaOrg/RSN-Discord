@@ -102,6 +102,7 @@ public class Main{
 			}
 			Log.getLogger(null).info("Started");
 			announceStart();
+			restartTwitchIRCConnections();
 		}
 		catch(final LoginException | InterruptedException e){
 			Log.getLogger(null).error("Couldn't start bot", e);
@@ -114,6 +115,10 @@ public class Main{
 		Log.getLogger(null).info("Shutdown hook registered");
 		consoleHandler = new ConsoleHandler(jda);
 		consoleHandler.start();
+	}
+	
+	private static void restartTwitchIRCConnections(){
+		getJDA().getGuilds().forEach(guild -> NewSettings.getConfiguration(guild).getTwitchAutoConnectUsers().forEach(user -> TwitchIRC.connect(guild, user)));
 	}
 	
 	private static void announceStart(){

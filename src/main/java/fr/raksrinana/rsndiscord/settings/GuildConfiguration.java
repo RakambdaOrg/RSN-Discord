@@ -74,6 +74,8 @@ public class GuildConfiguration{
 	private int musicVolume = 100;
 	@JsonProperty("todoMessages")
 	private Set<TodoConfiguration> todos = new HashSet<>();
+	@JsonProperty("twitchAutoConnectUsers")
+	private Set<String> twitchAutoConnectUsers = new HashSet<>();
 	
 	public GuildConfiguration(){
 	}
@@ -100,6 +102,14 @@ public class GuildConfiguration{
 	
 	public Optional<RemoveRoleConfiguration> getRemoveRole(final User user, final Role role){
 		return this.removeRoles.stream().filter(r -> Objects.equals(r.getUser().getUserId(), user.getIdLong()) && Objects.equals(r.getRole().getRoleId(), role.getIdLong())).findFirst();
+	}
+	
+	public Set<String> getTwitchAutoConnectUsers(){
+		return this.twitchAutoConnectUsers;
+	}
+	
+	public void setTwitchAutoConnectUsers(@Nonnull Set<String> users){
+		this.twitchAutoConnectUsers = users;
 	}
 	
 	@Nonnull

@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.commands.config.guild;
+package fr.raksrinana.rsndiscord.commands.config.guild.twitch;
 
 import fr.raksrinana.rsndiscord.commands.config.helpers.ChannelConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
@@ -40,6 +40,6 @@ public class TwitchChannelConfigurationCommand extends ChannelConfigurationComma
 	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("twitchChannel");
+		return List.of("channel");
 	}
 }

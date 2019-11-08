@@ -21,7 +21,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new ParticipationConfigurationCommandComposite(this));
 		this.addSubCommand(new ReportChannelConfigurationCommand(this));
 		this.addSubCommand(new NicknameConfigurationCommandComposite(this));
-		this.addSubCommand(new TwitchChannelConfigurationCommand(this));
+		this.addSubCommand(new TwitchConfigurationCommandComposite(this));
 		this.addSubCommand(new QuestionsConfigurationCommandComposite(this));
 		this.addSubCommand(new TrombinoscopeConfigurationCommandComposite(this));
 		this.addSubCommand(new QuizChannelConfigurationCommand(this));
