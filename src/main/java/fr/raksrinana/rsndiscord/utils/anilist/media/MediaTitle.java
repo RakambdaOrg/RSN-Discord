@@ -17,7 +17,7 @@ public class MediaTitle{
 	}
 	
 	@Nonnull
-	String getUserPreferred(){
+	public String getUserPreferred(){
 		return this.userPreferred;
 	}
 }

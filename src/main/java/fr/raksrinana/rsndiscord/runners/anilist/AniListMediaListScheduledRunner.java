@@ -67,6 +67,19 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 		AniListRunner.super.sendMessages(channels, userElements);
 		this.getJDA().getGuilds().stream().map(g -> NewSettings.getConfiguration(g).getAniListConfiguration().getThaChannel().flatMap(ChannelConfiguration::getChannel)).filter(Optional::isPresent).map(Optional::get).forEach(textChannel -> NewSettings.getConfiguration(textChannel.getGuild()).getAniListConfiguration().getThaUser().flatMap(UserConfiguration::getUser).ifPresent(user -> userElements.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> ImmutablePair.of(e.getKey(), v))).filter(v -> v.getRight().getCustomLists().entrySet().stream().filter(Map.Entry::getValue).anyMatch(entry -> Objects.equals("ThaPending", entry.getKey()) || Objects.equals("ThaReading", entry.getKey()) || Objects.equals("ThaWatching", entry.getKey()))).forEach(p -> Actions.sendMessage(textChannel, user.getAsMention(), this.buildMessage(p.getLeft(), p.getRight()), sentMessage -> {
 			sentMessage.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
+			NewSettings.getConfiguration(textChannel.getGuild()).getTodos().removeIf(todo -> {
+				if(Objects.equals(todo.getMessage().getChannel().getChannelId(), sentMessage.getChannel().getIdLong())){
+					return todo.getMessage().getMessage().map(message -> {
+						final var isSameMedia = message.getEmbeds().stream().anyMatch(embed -> Objects.equals(embed.getDescription(), p.getRight().getMedia().getTitle().getUserPreferred()));
+						if(isSameMedia && todo.isDeleteOnDone()){
+							Actions.deleteMessage(message);
+							return true;
+						}
+						return false;
+					}).orElse(false);
+				}
+				return false;
+			});
 			NewSettings.getConfiguration(textChannel.getGuild()).addTodoMessage(new TodoConfiguration(sentMessage, true));
 		}))));
 	}
