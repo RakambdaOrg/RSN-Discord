@@ -39,23 +39,14 @@ public class AnilistAccessTokenConfiguration{
 		this.token = token;
 	}
 	
-	@Nonnull
-	public LocalDateTime getExpireDate(){
-		return this.expireDate;
-	}
-	
-	@Nonnull
-	public String getToken(){
-		return this.token;
-	}
-	
-	public long getUserId(){
-		return this.userId;
-	}
-	
 	@Override
 	public int hashCode(){
 		return new HashCodeBuilder(17, 37).append(this.getToken()).toHashCode();
+	}
+	
+	@Nonnull
+	public LocalDateTime getExpireDate(){
+		return this.expireDate;
 	}
 	
 	@Override
@@ -68,5 +59,14 @@ public class AnilistAccessTokenConfiguration{
 		}
 		final var that = (AnilistAccessTokenConfiguration) o;
 		return new EqualsBuilder().append(this.getToken(), that.getToken()).isEquals();
+	}
+	
+	@Nonnull
+	public String getToken(){
+		return this.token;
+	}
+	
+	public long getUserId(){
+		return this.userId;
 	}
 }

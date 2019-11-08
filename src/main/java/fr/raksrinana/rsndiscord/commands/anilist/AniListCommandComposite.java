@@ -25,13 +25,11 @@ public class AniListCommandComposite extends CommandComposite{
 		this.addSubCommand(new AniListGetUserEntryCommand(this));
 	}
 	
-	
 	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
-	
 	
 	@Nonnull
 	@Override
@@ -40,14 +38,12 @@ public class AniListCommandComposite extends CommandComposite{
 	}
 	
 	@Nonnull
-	
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("anilist", "al");
 	}
 	
 	@Nonnull
-	
 	@Override
 	public String getDescription(){
 		return "AniList related commands";

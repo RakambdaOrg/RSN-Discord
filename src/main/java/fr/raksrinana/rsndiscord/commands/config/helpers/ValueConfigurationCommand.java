@@ -21,31 +21,11 @@ public abstract class ValueConfigurationCommand<T> extends BaseConfigurationComm
 		super(parent);
 	}
 	
-	@Nonnull
-	@Override
-	protected Set<ConfigurationOperation> getAllowedOperations(){
-		return Set.of(ConfigurationOperation.SET, ConfigurationOperation.REMOVE, ConfigurationOperation.SHOW);
-	}
-	
-	@Nonnull
-	protected abstract Optional<T> getConfig(Guild guild);
-	
 	@Override
 	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField(this.getValueName(), "The value to set", false);
 	}
-	
-	protected abstract String getValueName();
-	
-	@Override
-	protected void onShow(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
-		final var builder = this.getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
-		builder.addField(this.getValueName(), this.getConfig(event.getGuild()).map(Objects::toString).orElse("<<EMPTY>>"), false);
-		Actions.reply(event, builder.build());
-	}
-	
-	protected abstract void setConfig(@Nonnull Guild guild, @Nonnull T value);
 	
 	protected abstract T extractValue(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args);
 	
@@ -56,6 +36,8 @@ public abstract class ValueConfigurationCommand<T> extends BaseConfigurationComm
 		builder.addField(this.getValueName(), "<<EMPTY>>", false);
 		Actions.reply(event, builder.build());
 	}
+	
+	protected abstract void setConfig(@Nonnull Guild guild, @Nonnull T value);
 	
 	protected abstract void removeConfig(@Nonnull Guild guild);
 	
@@ -73,6 +55,19 @@ public abstract class ValueConfigurationCommand<T> extends BaseConfigurationComm
 		}
 	}
 	
+	@Nonnull
+	@Override
+	protected Set<ConfigurationOperation> getAllowedOperations(){
+		return Set.of(ConfigurationOperation.SET, ConfigurationOperation.REMOVE, ConfigurationOperation.SHOW);
+	}
+	
+	@Override
+	protected void onShow(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
+		final var builder = this.getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
+		builder.addField(this.getValueName(), this.getConfig(event.getGuild()).map(Objects::toString).orElse("<<EMPTY>>"), false);
+		Actions.reply(event, builder.build());
+	}
+	
 	@Override
 	protected void onAdd(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws IllegalOperationException{
 		throw new IllegalOperationException(ConfigurationOperation.ADD);
@@ -83,4 +78,9 @@ public abstract class ValueConfigurationCommand<T> extends BaseConfigurationComm
 	public String getDescription(){
 		return super.getDescription() + " [" + this.getValueName().toLowerCase() + "]";
 	}
+	
+	protected abstract String getValueName();
+	
+	@Nonnull
+	protected abstract Optional<T> getConfig(Guild guild);
 }

@@ -17,16 +17,16 @@ import java.util.*;
  */
 @SuppressWarnings("WeakerAccess")
 public class IRCClient implements Closeable{
-	private static final Logger LOGGER = LoggerFactory.getLogger(IRCClient.class);
 	public static final int DEFAULT_TIMEOUT = 600000;
+	private static final Logger LOGGER = LoggerFactory.getLogger(IRCClient.class);
 	private final String host;
 	private final int port;
+	private final Set<String> joinedChannels;
+	private final List<IRCListener> listeners;
 	private String pass;
 	private Socket socket;
 	private PrintWriter socketWriter;
 	private boolean connected;
-	private final Set<String> joinedChannels;
-	private final List<IRCListener> listeners;
 	private IRCReaderThread ircReader;
 	
 	public IRCClient(@Nonnull final String host, final int port){
@@ -52,6 +52,10 @@ public class IRCClient implements Closeable{
 		LOGGER.info("IRC connection initialized with {}:{}", this.host, this.port);
 	}
 	
+	public void sendMessage(@Nonnull final String message){
+		this.socketWriter.println(message);
+	}
+	
 	public void joinChannel(@Nonnull final String channel){
 		if(this.isConnected()){
 			this.sendMessage(String.format("JOIN %s", channel));
@@ -61,6 +65,10 @@ public class IRCClient implements Closeable{
 		else{
 			throw new IllegalStateException("Not connected");
 		}
+	}
+	
+	private boolean isConnected(){
+		return this.connected;
 	}
 	
 	@Override
@@ -88,14 +96,6 @@ public class IRCClient implements Closeable{
 				LOGGER.warn("Failed to reconnect {} to user {}", l.getGuild(), l.getUser());
 			}
 		});
-	}
-	
-	private boolean isConnected(){
-		return this.connected;
-	}
-	
-	public void sendMessage(@Nonnull final String message){
-		this.socketWriter.println(message);
 	}
 	
 	public void addEventListener(@Nonnull final IRCListener ircListener){

@@ -133,21 +133,6 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 		return Objects.equals(channel, this.ircChannel);
 	}
 	
-	@Override
-	public void onEvent(@Nonnull final GenericEvent event){
-		if(event instanceof GuildMessageReceivedEvent){
-			final var evt = (GuildMessageReceivedEvent) event;
-			try{
-				if(!Objects.equals(((GuildMessageReceivedEvent) event).getAuthor().getIdLong(), event.getJDA().getSelfUser().getIdLong()) && Objects.equals(evt.getChannel(), this.channel)){
-					TwitchIRC.sendMessage(evt.getGuild(), this.ircChannel, ((GuildMessageReceivedEvent) event).getAuthor().getName() + " -> " + evt.getMessage().getContentRaw());
-				}
-			}
-			catch(final Exception e){
-				Log.getLogger(evt.getGuild()).error("Failed to transfer message", e);
-			}
-		}
-	}
-	
 	@Nonnull
 	@Override
 	public Guild getGuild(){
@@ -169,5 +154,20 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 	@Override
 	public String getUser(){
 		return this.user;
+	}
+	
+	@Override
+	public void onEvent(@Nonnull final GenericEvent event){
+		if(event instanceof GuildMessageReceivedEvent){
+			final var evt = (GuildMessageReceivedEvent) event;
+			try{
+				if(!Objects.equals(((GuildMessageReceivedEvent) event).getAuthor().getIdLong(), event.getJDA().getSelfUser().getIdLong()) && Objects.equals(evt.getChannel(), this.channel)){
+					TwitchIRC.sendMessage(evt.getGuild(), this.ircChannel, ((GuildMessageReceivedEvent) event).getAuthor().getName() + " -> " + evt.getMessage().getContentRaw());
+				}
+			}
+			catch(final Exception e){
+				Log.getLogger(evt.getGuild()).error("Failed to transfer message", e);
+			}
+		}
 	}
 }

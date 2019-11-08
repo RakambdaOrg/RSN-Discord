@@ -18,11 +18,11 @@ public class IRCTag{
 		return this.key;
 	}
 	
-	public String getTrigram(){
-		return this.getValue().substring(0, 3).toUpperCase();
-	}
-	
 	public String getValue(){
 		return this.value;
+	}
+	
+	public String getTrigram(){
+		return this.getValue().substring(0, 3).toUpperCase();
 	}
 }

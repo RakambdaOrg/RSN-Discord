@@ -23,6 +23,8 @@ import java.util.regex.Pattern;
 public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	private static final DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd").optionalStart().appendPattern(" HH:mm:ss").optionalEnd().parseDefaulting(ChronoField.HOUR_OF_DAY, 0).parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0).parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 	private static final Pattern SPACE_PATTERN = Pattern.compile(" +");
+	private final DateTimeFormatter dateTimeFormatterEmbedShort = new DateTimeFormatterBuilder().appendPattern("HH:mm").toFormatter();
+	private final DateTimeFormatter dateTimeFormatterEmbedLong = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm").toFormatter();
 	@JsonProperty("stopid")
 	private LuxBusStop stop;
 	@JsonProperty("trainNumber")
@@ -33,12 +35,10 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	private LuxBusProduct product;
 	@JsonProperty("direction")
 	private String direction;
-	private final DateTimeFormatter dateTimeFormatterEmbedShort = new DateTimeFormatterBuilder().appendPattern("HH:mm").toFormatter();
-	private final DateTimeFormatter dateTimeFormatterEmbedLong = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm").toFormatter();
 	
 	@JsonCreator
 	@Nonnull
-	public static LuxBusDeparture createDeparture(@Nonnull @JsonProperty("date") final String date, @Nonnull @JsonProperty("time") final String time, @Nullable  @JsonProperty("rtDate") final String realTimeDate, @Nullable @JsonProperty("rtTime") final String realTimeTime){
+	public static LuxBusDeparture createDeparture(@Nonnull @JsonProperty("date") final String date, @Nonnull @JsonProperty("time") final String time, @Nullable @JsonProperty("rtDate") final String realTimeDate, @Nullable @JsonProperty("rtTime") final String realTimeTime){
 		final var departure = new LuxBusDeparture();
 		departure.plannedDateTime = LocalDateTime.parse(String.format("%s %s", date, time), dateTimeFormatter);
 		departure.realTimeDateTime = Objects.nonNull(realTimeDate) && Objects.nonNull(realTimeTime) ? LocalDateTime.parse(String.format("%s %s", realTimeDate, realTimeTime), dateTimeFormatter) : null;

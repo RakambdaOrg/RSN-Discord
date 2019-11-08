@@ -34,16 +34,6 @@ public class RoleConfiguration{
 	}
 	
 	@Override
-	public String toString(){
-		return this.getRole().map(Role::getAsMention).orElse("<Unknown role>");
-	}
-	
-	@Nonnull
-	public Optional<Role> getRole(){
-		return Optional.ofNullable(Main.getJDA().getRoleById(this.getRoleId()));
-	}
-	
-	@Override
 	public int hashCode(){
 		return new HashCodeBuilder(17, 37).append(this.getRoleId()).toHashCode();
 	}
@@ -58,6 +48,16 @@ public class RoleConfiguration{
 		}
 		final var that = (RoleConfiguration) o;
 		return new EqualsBuilder().append(this.getRoleId(), that.getRoleId()).isEquals();
+	}
+	
+	@Override
+	public String toString(){
+		return this.getRole().map(Role::getAsMention).orElse("<Unknown role>");
+	}
+	
+	@Nonnull
+	public Optional<Role> getRole(){
+		return Optional.ofNullable(Main.getJDA().getRoleById(this.getRoleId()));
 	}
 	
 	public long getRoleId(){

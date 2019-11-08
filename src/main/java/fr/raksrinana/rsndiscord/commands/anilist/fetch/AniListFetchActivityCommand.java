@@ -41,7 +41,6 @@ public class AniListFetchActivityCommand extends BasicCommand{
 		return AccessLevel.MODERATOR;
 	}
 	
-	
 	@Nonnull
 	@Override
 	public String getName(){

@@ -27,13 +27,11 @@ public class AniListFetchCommandComposite extends CommandComposite{
 		this.addSubCommand(new AniListFetchMediaUserListDifferencesCommand(this));
 	}
 	
-	
 	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.MODERATOR;
 	}
-	
 	
 	@Nonnull
 	@Override
@@ -42,14 +40,12 @@ public class AniListFetchCommandComposite extends CommandComposite{
 	}
 	
 	@Nonnull
-	
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("fetch", "f");
 	}
 	
 	@Nonnull
-	
 	@Override
 	public String getDescription(){
 		return "Fetch data from AniList";

@@ -36,4 +36,5 @@ public enum MediaFormat{
 	@Override
 	public String toString(){
 		return Objects.isNull(this.display) ? this.name() : this.display;
-	}}
+	}
+}

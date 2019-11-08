@@ -33,13 +33,13 @@ public class IRCUser{
 	}
 	
 	@Nonnull
-	public String getHost(){
-		return this.host;
+	public String getNick(){
+		return this.nick;
 	}
 	
 	@Nonnull
-	public String getNick(){
-		return this.nick;
+	public String getHost(){
+		return this.host;
 	}
 	
 	@Nonnull

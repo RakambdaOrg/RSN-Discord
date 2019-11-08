@@ -39,6 +39,11 @@ public class OverwatchData{
 		return this.getStages().stream().filter(s -> s.getTournaments().stream().anyMatch(t -> Objects.equals(t, tournament))).findFirst();
 	}
 	
+	@Nonnull
+	public List<OverwatchStage> getStages(){
+		return this.stages;
+	}
+	
 	public List<OverwatchMatch> getMatchesOfTournament(final OverwatchTournament tournament){
 		return this.getStages().stream().flatMap(s -> s.getMatches().stream()).filter(m -> Objects.equals(m.getTournament(), tournament)).collect(Collectors.toList());
 	}
@@ -50,10 +55,5 @@ public class OverwatchData{
 	
 	public Optional<OverwatchStage> getNextStage(){
 		return this.getStages().stream().filter(OverwatchStage::isEnabled).filter(s -> !s.hasStarted()).sorted().findFirst();
-	}
-	
-	@Nonnull
-	public List<OverwatchStage> getStages(){
-		return this.stages;
 	}
 }

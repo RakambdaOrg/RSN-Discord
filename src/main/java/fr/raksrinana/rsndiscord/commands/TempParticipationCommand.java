@@ -33,6 +33,11 @@ public class TempParticipationCommand extends BasicCommand{
 	public static final DateTimeFormatter DFD = DateTimeFormatter.ofPattern("dd/MM/yyy");
 	
 	@Nonnull
+	public static String getKey(@Nonnull final LocalDate localDate){
+		return localDate.format(DF);
+	}
+	
+	@Nonnull
 	@Override
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
@@ -48,11 +53,6 @@ public class TempParticipationCommand extends BasicCommand{
 			Actions.sendMessage(channel, builder.build());
 			return true;
 		}).orElse(false);
-	}
-	
-	@Nonnull
-	public static String getKey(@Nonnull final LocalDate localDate){
-		return localDate.format(DF);
 	}
 	
 	@Nonnull

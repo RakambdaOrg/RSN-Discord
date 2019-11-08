@@ -77,10 +77,6 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 		return elementList;
 	}
 	
-	default boolean sortedByUser(){
-		return false;
-	}
-	
 	default void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<T>> userElements){
 		if(this.sortedByUser()){
 			for(final var entry : userElements.entrySet()){
@@ -97,8 +93,11 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 	@Nonnull
 	U initQuery(@Nonnull Member member);
 	
-	@Nonnull
-	String getFetcherID();
+	boolean keepOnlyNew();
+	
+	default boolean sortedByUser(){
+		return false;
+	}
 	
 	@Nonnull
 	default MessageEmbed buildMessage(@Nullable final User user, @Nonnull final T change){
@@ -124,8 +123,9 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 		return NewSettings.getConfiguration(channel.getGuild()).getAniListConfiguration().getAccessToken(user.getIdLong()).isPresent();
 	}
 	
-	boolean keepOnlyNew();
-	
 	@Nonnull
 	JDA getJDA();
+	
+	@Nonnull
+	String getFetcherID();
 }

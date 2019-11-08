@@ -38,12 +38,12 @@ public class EmoteWaitingUserReply<T> extends BasicWaitingUserReply{
 	}
 	
 	@Override
-	protected boolean onExecute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
-		return false;
+	public long getEmoteMessageId(){
+		return this.getInfoMessages().stream().map(Message::getIdLong).findAny().orElse(-1L);
 	}
 	
 	@Override
-	public long getEmoteMessageId(){
-		return this.getInfoMessages().stream().map(Message::getIdLong).findAny().orElse(-1L);
+	protected boolean onExecute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
+		return false;
 	}
 }

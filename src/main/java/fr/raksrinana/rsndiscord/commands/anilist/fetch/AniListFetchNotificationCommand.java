@@ -27,22 +27,19 @@ public class AniListFetchNotificationCommand extends BasicCommand{
 		super(parent);
 	}
 	
-	
 	@Nonnull
 	@Override
-	public CommandResult execute( @Nonnull final GuildMessageReceivedEvent event,  @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		new AniListNotificationScheduledRunner(event.getJDA()).run();
 		return CommandResult.SUCCESS;
 	}
-	
 	
 	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.MODERATOR;
 	}
-	
 	
 	@Nonnull
 	@Override
@@ -51,14 +48,12 @@ public class AniListFetchNotificationCommand extends BasicCommand{
 	}
 	
 	@Nonnull
-	
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("notification", "n");
 	}
 	
 	@Nonnull
-	
 	@Override
 	public String getDescription(){
 		return "Fetch notifications from AniList";

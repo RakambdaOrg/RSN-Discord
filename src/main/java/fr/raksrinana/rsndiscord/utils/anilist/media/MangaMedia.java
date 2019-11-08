@@ -44,14 +44,14 @@ public class MangaMedia extends Media{
 	}
 	
 	@Override
-	@Nullable
-	public Integer getItemCount(){
-		return this.getChapters();
+	public String toString(){
+		return ToStringBuilder.reflectionToString(this);
 	}
 	
 	@Override
-	public String toString(){
-		return ToStringBuilder.reflectionToString(this);
+	@Nullable
+	public Integer getItemCount(){
+		return this.getChapters();
 	}
 	
 	/**

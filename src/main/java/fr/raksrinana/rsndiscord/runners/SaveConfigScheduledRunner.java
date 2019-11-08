@@ -25,6 +25,11 @@ public class SaveConfigScheduledRunner implements ScheduledRunner{
 	}
 	
 	@Override
+	public long getDelay(){
+		return 2;
+	}
+	
+	@Override
 	public long getPeriod(){
 		return 5;
 	}
@@ -33,10 +38,5 @@ public class SaveConfigScheduledRunner implements ScheduledRunner{
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.MINUTES;
-	}
-	
-	@Override
-	public long getDelay(){
-		return 2;
 	}
 }

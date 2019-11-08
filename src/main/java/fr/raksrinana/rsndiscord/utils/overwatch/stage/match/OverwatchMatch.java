@@ -118,6 +118,10 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 		return this.getStartDate().compareTo(overwatchMatch.getStartDate());
 	}
 	
+	public boolean inProgress(){
+		return this.state == OverwatchState.IN_PROGRESS;
+	}
+	
 	public EmbedBuilder buildEmbed(final User user){
 		final var builder = Utilities.buildEmbed(user, Color.GREEN, this.getVsCompetitorsNames(), (Objects.nonNull(this.getYoutubeId()) && !this.getYoutubeId().isBlank()) ? ("https://youtube.com/watch?v=" + this.getYoutubeId()) : null);
 		builder.setTimestamp(this.getStartDate());
@@ -134,44 +138,29 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 		return builder;
 	}
 	
-	public boolean inProgress(){
-		return this.state == OverwatchState.IN_PROGRESS;
-	}
-	
-	public int getBestOf(){
-		return this.bestOf;
+	@Nonnull
+	public Optional<LocalDateTime> getActualEndDate(){
+		return Optional.ofNullable(this.actualEndDate);
 	}
 	
 	private String getYoutubeId(){
 		return this.youtubeId;
 	}
 	
-	public int getConclusionValue(){
-		return this.conclusionValue;
+	public int getBestOf(){
+		return this.bestOf;
 	}
 	
 	private OverwatchState getState(){
 		return this.state;
 	}
 	
-	public int getId(){
-		return this.id;
-	}
-	
 	private OverwatchConclusionStrategy getConclusionStrategy(){
 		return this.conclusionStrategy;
 	}
 	
-	public OverwatchTournament getTournament(){
-		return this.tournament;
-	}
-	
 	private List<OverwatchGame> getGames(){
 		return this.games;
-	}
-	
-	private int getWinner(){
-		return this.winner;
 	}
 	
 	@Nonnull
@@ -179,13 +168,20 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 		return this.getCompetitors().stream().filter(c -> Objects.nonNull(c) && Objects.equals(c.getId(), this.getWinner())).findFirst();
 	}
 	
-	@Nonnull
-	public Optional<LocalDateTime> getActualEndDate(){
-		return Optional.ofNullable(this.actualEndDate);
+	public int getConclusionValue(){
+		return this.conclusionValue;
 	}
 	
 	private LocalDateTime getEndDate(){
 		return this.endDateTS;
+	}
+	
+	public int getId(){
+		return this.id;
+	}
+	
+	public List<OverwatchScore> getScores(){
+		return this.scores;
 	}
 	
 	public boolean hasStarted(){
@@ -197,28 +193,32 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 		return Optional.ofNullable(this.actualStartDate);
 	}
 	
+	@Override
+	public String toString(){
+		return this.getId() + " (" + this.getVsCompetitorsNames() + ')';
+	}
+	
 	public LocalDateTime getStartDate(){
 		return this.startDateTS;
 	}
 	
-	public List<OverwatchCompetitor> getCompetitors(){
-		return this.competitors;
+	public OverwatchTournament getTournament(){
+		return this.tournament;
+	}
+	
+	public List<String> getCompetitorsNames(){
+		return this.getCompetitors().stream().map(c -> Objects.isNull(c) ? "TBD" : c.getName()).collect(Collectors.toList());
 	}
 	
 	public String getVsCompetitorsNames(){
 		return this.getCompetitors().stream().map(c -> Objects.isNull(c) ? "TBD" : c.getName()).collect(Collectors.joining(" vs "));
 	}
 	
-	@Override
-	public String toString(){
-		return this.getId() + " (" + this.getVsCompetitorsNames() + ')';
+	public List<OverwatchCompetitor> getCompetitors(){
+		return this.competitors;
 	}
 	
-	public List<OverwatchScore> getScores(){
-		return this.scores;
-	}
-	
-	public List<String> getCompetitorsNames(){
-		return this.getCompetitors().stream().map(c -> Objects.isNull(c) ? "TBD" : c.getName()).collect(Collectors.toList());
+	private int getWinner(){
+		return this.winner;
 	}
 }

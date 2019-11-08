@@ -16,8 +16,8 @@ import java.util.Objects;
  */
 @SuppressWarnings("WeakerAccess")
 public class IRCReaderThread extends Thread implements Closeable{
-	private static final Logger LOGGER = LoggerFactory.getLogger(IRCReaderThread.class);
 	public static final double MESSAGE_TIMEOUT = 6.048e8;
+	private static final Logger LOGGER = LoggerFactory.getLogger(IRCReaderThread.class);
 	private final BufferedReader reader;
 	private final IRCClient client;
 	private boolean stop;

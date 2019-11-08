@@ -32,8 +32,7 @@ public class UsersPinnedConfigurationCommand extends SetConfigurationCommand<Use
 	@Nonnull
 	@Override
 	protected UserConfiguration extractValue(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws IllegalArgumentException{
-		if(event.getMessage().getMentionedUsers().isEmpty())
-		{
+		if(event.getMessage().getMentionedUsers().isEmpty()){
 			throw new IllegalArgumentException("Please mention a user");
 		}
 		return new UserConfiguration(event.getMessage().getMentionedUsers().get(0));
@@ -42,18 +41,6 @@ public class UsersPinnedConfigurationCommand extends SetConfigurationCommand<Use
 	@Override
 	protected void removeConfig(@Nonnull final Guild guild, @Nonnull final UserConfiguration value){
 		NewSettings.getConfiguration(guild).getParticipationConfiguration().getUsersPinned().remove(value);
-	}
-	
-	@Nonnull
-	@Override
-	public String getName(){
-		return "Pinned users";
-	}
-	
-	@Nonnull
-	@Override
-	public List<String> getCommandStrings(){
-		return List.of("usersPinned");
 	}
 	
 	@Override
@@ -66,5 +53,17 @@ public class UsersPinnedConfigurationCommand extends SetConfigurationCommand<Use
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [user]";
+	}
+	
+	@Nonnull
+	@Override
+	public String getName(){
+		return "Pinned users";
+	}
+	
+	@Nonnull
+	@Override
+	public List<String> getCommandStrings(){
+		return List.of("usersPinned");
 	}
 }

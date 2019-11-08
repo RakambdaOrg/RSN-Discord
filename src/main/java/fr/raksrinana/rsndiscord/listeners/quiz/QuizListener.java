@@ -124,6 +124,13 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	}
 	
 	/**
+	 * Stop the quiz.
+	 */
+	public void stop(){
+		this.stopped = true;
+	}
+	
+	/**
 	 * Get the current instance of the game.
 	 *
 	 * @param guild  The guild.
@@ -161,13 +168,6 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 			}
 			return Optional.empty();
 		});
-	}
-	
-	/**
-	 * Stop the quiz.
-	 */
-	public void stop(){
-		this.stopped = true;
 	}
 	
 	@Override

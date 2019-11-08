@@ -42,12 +42,6 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 		}
 		
 		@Override
-		public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<MediaList>> userMedias){
-			userMedias.values().forEach(medias -> medias.removeIf(aniListMediaUserList -> aniListMediaUserList.getMedia().getType() != this.type || !Objects.equals(aniListMediaUserList.getMedia().getId(), this.ID)));
-			userMedias.entrySet().stream().flatMap(userMedia -> userMedia.getValue().stream().map(media -> ImmutablePair.of(userMedia.getKey(), media))).sorted(Comparator.comparing(Map.Entry::getValue)).map(userMedia -> this.buildMessage(userMedia.getKey(), userMedia.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
-		}
-		
-		@Override
 		public List<TextChannel> getChannels(){
 			return List.of(this.channel);
 		}
@@ -58,10 +52,10 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 			return "get media";
 		}
 		
-		@Nonnull
 		@Override
-		public JDA getJDA(){
-			return this.jda;
+		public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<MediaList>> userMedias){
+			userMedias.values().forEach(medias -> medias.removeIf(aniListMediaUserList -> aniListMediaUserList.getMedia().getType() != this.type || !Objects.equals(aniListMediaUserList.getMedia().getId(), this.ID)));
+			userMedias.entrySet().stream().flatMap(userMedia -> userMedia.getValue().stream().map(media -> ImmutablePair.of(userMedia.getKey(), media))).sorted(Comparator.comparing(Map.Entry::getValue)).map(userMedia -> this.buildMessage(userMedia.getKey(), userMedia.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
 		}
 		
 		@Nonnull
@@ -73,6 +67,12 @@ public class AniListGetUserEntryCommand extends BasicCommand{
 		@Override
 		public boolean keepOnlyNew(){
 			return false;
+		}
+		
+		@Nonnull
+		@Override
+		public JDA getJDA(){
+			return this.jda;
 		}
 		
 		@Nonnull

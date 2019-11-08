@@ -23,15 +23,6 @@ public abstract class WarnConfigurationCommand extends BaseConfigurationCommand{
 		super(parent);
 	}
 	
-	@Nonnull
-	@Override
-	protected Set<ConfigurationOperation> getAllowedOperations(){
-		return Set.of(ConfigurationOperation.SET, ConfigurationOperation.REMOVE, ConfigurationOperation.SHOW);
-	}
-	
-	@Nonnull
-	protected abstract Optional<WarnConfiguration> getConfig(Guild guild);
-	
 	@Override
 	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
@@ -39,13 +30,7 @@ public abstract class WarnConfigurationCommand extends BaseConfigurationCommand{
 		builder.addField("Role", "The role to set", false);
 	}
 	
-	@Override
-	protected void onShow(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
-		final var builder = this.getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
-		builder.addField("Role", this.getConfig(event.getGuild()).map(WarnConfiguration::getRole).map(Objects::toString).orElse("<<EMPTY>>"), false);
-		builder.addField("Delay", this.getConfig(event.getGuild()).map(WarnConfiguration::getDelay).map(Objects::toString).orElse("<<EMPTY>>"), false);
-		Actions.reply(event, builder.build());
-	}
+	protected abstract void createConfig(@Nonnull Guild guild, @Nonnull Role role, long delay);
 	
 	@Override
 	protected void onRemove(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
@@ -58,7 +43,11 @@ public abstract class WarnConfigurationCommand extends BaseConfigurationCommand{
 	
 	protected abstract void removeConfig(@Nonnull Guild guild);
 	
-	protected abstract void createConfig(@Nonnull Guild guild, @Nonnull Role role, long delay);
+	@Nonnull
+	@Override
+	protected Set<ConfigurationOperation> getAllowedOperations(){
+		return Set.of(ConfigurationOperation.SET, ConfigurationOperation.REMOVE, ConfigurationOperation.SHOW);
+	}
 	
 	@Override
 	protected void onSet(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
@@ -86,7 +75,15 @@ public abstract class WarnConfigurationCommand extends BaseConfigurationCommand{
 			Actions.reply(event, "Please mention the delay");
 		}
 	}
-
+	
+	@Override
+	protected void onShow(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
+		final var builder = this.getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
+		builder.addField("Role", this.getConfig(event.getGuild()).map(WarnConfiguration::getRole).map(Objects::toString).orElse("<<EMPTY>>"), false);
+		builder.addField("Delay", this.getConfig(event.getGuild()).map(WarnConfiguration::getDelay).map(Objects::toString).orElse("<<EMPTY>>"), false);
+		Actions.reply(event, builder.build());
+	}
+	
 	@Override
 	protected void onAdd(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws IllegalOperationException{
 		throw new IllegalOperationException(ConfigurationOperation.ADD);
@@ -97,4 +94,7 @@ public abstract class WarnConfigurationCommand extends BaseConfigurationCommand{
 	public String getDescription(){
 		return super.getDescription() + " [delay] [role]";
 	}
+	
+	@Nonnull
+	protected abstract Optional<WarnConfiguration> getConfig(Guild guild);
 }

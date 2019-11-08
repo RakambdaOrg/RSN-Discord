@@ -28,10 +28,10 @@ interface WaitingUserReply extends Closeable{
 	long getEmoteMessageId();
 	
 	@Nonnull
-	TextChannel getWaitChannel();
+	User getUser();
 	
 	@Nonnull
-	User getUser();
+	TextChannel getWaitChannel();
 	
 	boolean isHandled();
 }

@@ -31,4 +31,5 @@ public enum MediaStatus{
 	@Override
 	public String toString(){
 		return this.display;
-	}}
+	}
+}

@@ -13,12 +13,12 @@ class MediaCoverImage{
 	@JsonProperty("large")
 	private URL large;
 	
-	public static String getQuery(){
-		return QUERY;
-	}
-	
 	@Nonnull
 	URL getLarge(){
 		return this.large;
+	}
+	
+	public static String getQuery(){
+		return QUERY;
 	}
 }

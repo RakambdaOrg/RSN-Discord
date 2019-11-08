@@ -55,6 +55,10 @@ public class NewSettings{
 		save();
 	}
 	
+	public static void save(){
+		configurations.forEach(NewSettings::saveConfiguration);
+	}
+	
 	private static void saveConfiguration(final long guildId, @Nonnull final GuildConfiguration value){
 		final var guildConfPath = getConfigPath(guildId);
 		guildConfPath.getParent().toFile().mkdirs();
@@ -67,11 +71,6 @@ public class NewSettings{
 			Log.getLogger(guildId).error("Failed to write settings to {}", guildConfPath, e);
 		}
 	}
-	
-	public static void save(){
-		configurations.forEach(NewSettings::saveConfiguration);
-	}
-	
 	static{
 		final var mapper = new ObjectMapper();
 		mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker().withFieldVisibility(JsonAutoDetect.Visibility.ANY).withGetterVisibility(JsonAutoDetect.Visibility.NONE).withSetterVisibility(JsonAutoDetect.Visibility.NONE).withCreatorVisibility(JsonAutoDetect.Visibility.NONE));

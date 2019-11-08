@@ -30,15 +30,20 @@ public class ActivityPagedQuery implements PagedQuery<ListActivity>{
 	
 	@Override
 	@Nonnull
+	public String getQuery(){
+		return QUERY_FEED;
+	}
+	
+	@Override
+	@Nonnull
 	public JSONObject getParameters(final int page){
 		this.variables.put("page", page);
 		return this.variables;
 	}
 	
-	@Nullable
 	@Override
-	public LocalDateTime getBaseDate(){
-		return null;
+	public int getNextPage(){
+		return ++this.nextPage;
 	}
 	
 	@Nonnull
@@ -47,19 +52,14 @@ public class ActivityPagedQuery implements PagedQuery<ListActivity>{
 		return "activities";
 	}
 	
-	@Override
-	public int getNextPage(){
-		return ++this.nextPage;
-	}
-	
-	@Override
-	@Nonnull
-	public String getQuery(){
-		return QUERY_FEED;
-	}
-	
 	@Nonnull
 	public ListActivity buildChange(@Nonnull final JSONObject change) throws Exception{
 		return new ObjectMapper().readerFor(ListActivity.class).readValue(change.toString());
+	}
+	
+	@Nullable
+	@Override
+	public LocalDateTime getBaseDate(){
+		return null;
 	}
 }

@@ -31,15 +31,20 @@ public class NotificationsPagedQuery implements PagedQuery<Notification>{
 	
 	@Nonnull
 	@Override
+	public String getQuery(){
+		return QUERY_NOTIFICATIONS;
+	}
+	
+	@Nonnull
+	@Override
 	public JSONObject getParameters(final int page){
 		this.variables.put("page", page);
 		return this.variables;
 	}
 	
-	@Nullable
 	@Override
-	public LocalDateTime getBaseDate(){
-		return this.date;
+	public int getNextPage(){
+		return ++this.nextPage;
 	}
 	
 	@Nonnull
@@ -49,18 +54,13 @@ public class NotificationsPagedQuery implements PagedQuery<Notification>{
 	}
 	
 	@Nonnull
-	@Override
-	public String getQuery(){
-		return QUERY_NOTIFICATIONS;
-	}
-	
-	@Override
-	public int getNextPage(){
-		return ++this.nextPage;
-	}
-	
-	@Nonnull
 	public Notification buildChange(@Nonnull final JSONObject change) throws Exception{
 		return new ObjectMapper().readerFor(Notification.class).readValue(change.toString());
+	}
+	
+	@Nullable
+	@Override
+	public LocalDateTime getBaseDate(){
+		return this.date;
 	}
 }

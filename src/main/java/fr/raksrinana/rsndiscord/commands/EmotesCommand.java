@@ -31,6 +31,10 @@ public class EmotesCommand extends BasicCommand{
 	public static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyyww");
 	public static final DateTimeFormatter DFD = DateTimeFormatter.ofPattern("ww");
 	
+	public static String getKey(@Nonnull final LocalDate localDate){
+		return localDate.format(DF);
+	}
+	
 	@Nonnull
 	@Override
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
@@ -55,10 +59,6 @@ public class EmotesCommand extends BasicCommand{
 			Actions.sendMessage(channel, builder.build());
 			return true;
 		}).orElse(false);
-	}
-	
-	public static String getKey(@Nonnull final LocalDate localDate){
-		return localDate.format(DF);
 	}
 	
 	@Nonnull

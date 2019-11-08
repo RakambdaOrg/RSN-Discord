@@ -58,7 +58,7 @@ public class PhotoDeleteCommand extends BasicCommand{
 			}
 			if(!Objects.equals(user, event.getAuthor())){
 				if(Utilities.isModerator(Objects.requireNonNull(event.getMember())) || Utilities.isAdmin(event.getMember())){
-					final var toDel =  args.pop();
+					final var toDel = args.pop();
 					NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().removePhoto(user, toDel);
 					if(NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotos(user).isEmpty()){
 						NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Actions.removeRole(user, role));
@@ -70,7 +70,7 @@ public class PhotoDeleteCommand extends BasicCommand{
 				}
 			}
 			else{
-				final var toDel =  args.pop();
+				final var toDel = args.pop();
 				NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().removePhoto(event.getAuthor(), toDel);
 				if(NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotos(event.getAuthor()).isEmpty()){
 					NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Actions.removeRole(event.getAuthor(), role));

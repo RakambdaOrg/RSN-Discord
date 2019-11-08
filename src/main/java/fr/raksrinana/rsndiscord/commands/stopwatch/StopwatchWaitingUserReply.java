@@ -87,6 +87,12 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 	}
 	
 	@Override
+	public void close() throws IOException{
+		super.close();
+		this.executor.shutdownNow();
+	}
+	
+	@Override
 	protected boolean onExecute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
 		return false;
 	}
@@ -103,11 +109,5 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 	@Override
 	public boolean handleEvent(final GuildMessageReactionAddEvent event){
 		return Objects.equals(this.getWaitChannel(), event.getChannel()) && Objects.equals(this.getEmoteMessageId(), event.getMessageIdLong());
-	}
-	
-	@Override
-	public void close() throws IOException{
-		super.close();
-		this.executor.shutdownNow();
 	}
 }

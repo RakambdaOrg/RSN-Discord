@@ -44,9 +44,9 @@ public class Main{
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
 	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 	public static boolean DEVELOPMENT = Boolean.parseBoolean(System.getProperty("rsndev", "false"));
+	public static CLIParameters parameters;
 	private static JDA jda;
 	private static ConsoleHandler consoleHandler;
-	public static CLIParameters parameters;
 	
 	/**
 	 * Main entry point.
@@ -117,6 +117,20 @@ public class Main{
 		consoleHandler.start();
 	}
 	
+	private static void announceStart(){
+		Main.jda.getGuilds().stream().map(NewSettings::getConfiguration).map(GuildConfiguration::getAnnounceStartChannel).flatMap(Optional::stream).map(ChannelConfiguration::getChannel).flatMap(Optional::stream).forEach(c -> Actions.sendMessage(c, "Bot started :)"));
+	}
+	
+	/**
+	 * Get the running JDA.
+	 *
+	 * @return The JDA.
+	 */
+	@Nonnull
+	public static JDA getJDA(){
+		return jda;
+	}
+	
 	private static void restartTwitchIRCConnections(){
 		getJDA().getGuilds().forEach(guild -> NewSettings.getConfiguration(guild).getTwitchAutoConnectUsers().forEach(user -> {
 			try{
@@ -126,23 +140,6 @@ public class Main{
 				Log.getLogger(guild).error("Failed to automatically connect to twitch user {}", user, e);
 			}
 		}));
-	}
-	
-	private static void announceStart(){
-		Main.jda.getGuilds().stream().map(NewSettings::getConfiguration).map(GuildConfiguration::getAnnounceStartChannel).flatMap(Optional::stream).map(ChannelConfiguration::getChannel).flatMap(Optional::stream).forEach(c -> Actions.sendMessage(c, "Bot started :)"));
-	}
-	
-	/**
-	 * Close executors.
-	 */
-	public static void close(){
-		QuizListener.stopAll();
-		ReplyMessageListener.stopAll();
-		RSNAudioManager.stopAll();
-		TwitchIRC.close();
-		executorService.shutdownNow();
-		consoleHandler.close();
-		NewSettings.close();
 	}
 	
 	@Nonnull
@@ -158,13 +155,16 @@ public class Main{
 	}
 	
 	/**
-	 * Get the running JDA.
-	 *
-	 * @return The JDA.
+	 * Close executors.
 	 */
-	@Nonnull
-	public static JDA getJDA(){
-		return jda;
+	public static void close(){
+		QuizListener.stopAll();
+		ReplyMessageListener.stopAll();
+		RSNAudioManager.stopAll();
+		TwitchIRC.close();
+		executorService.shutdownNow();
+		consoleHandler.close();
+		NewSettings.close();
 	}
 	//https://api.overwatchleague.com/schedule
 }

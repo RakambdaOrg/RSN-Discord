@@ -46,18 +46,8 @@ public class UserDateConfiguration{
 	}
 	
 	@Override
-	public String toString(){
-		return this.getUser().map(User::getAsMention).map(s -> s + " " + this.getDate().format(DF)).orElse("<Unknown date>");
-	}
-	
-	@Override
 	public int hashCode(){
 		return new HashCodeBuilder(17, 37).append(this.getUserId()).append(this.getDate()).toHashCode();
-	}
-	
-	@Nonnull
-	public LocalDateTime getDate(){
-		return this.date;
 	}
 	
 	@Override
@@ -72,13 +62,23 @@ public class UserDateConfiguration{
 		return new EqualsBuilder().append(this.getUserId(), that.getUserId()).append(this.getDate(), that.getDate()).isEquals();
 	}
 	
-	public long getUserId(){
-		return this.userId;
+	@Override
+	public String toString(){
+		return this.getUser().map(User::getAsMention).map(s -> s + " " + this.getDate().format(DF)).orElse("<Unknown date>");
 	}
 	
 	@Nonnull
 	private Optional<User> getUser(){
 		return Optional.ofNullable(Main.getJDA().getUserById(this.getUserId()));
+	}
+	
+	@Nonnull
+	public LocalDateTime getDate(){
+		return this.date;
+	}
+	
+	public long getUserId(){
+		return this.userId;
 	}
 	
 	public void setDate(@Nonnull final LocalDateTime date){

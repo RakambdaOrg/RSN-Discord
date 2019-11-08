@@ -27,6 +27,11 @@ public class LuxBusDirectionSelectionWaitingReply extends BasicWaitingUserReply{
 	}
 	
 	@Override
+	public boolean onExecute(@Nonnull final GuildMessageReactionAddEvent event){
+		return false;
+	}
+	
+	@Override
 	protected boolean onExecute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
 		if(args.isEmpty()){
 			Actions.reply(event, "Invalid selection");
@@ -48,11 +53,6 @@ public class LuxBusDirectionSelectionWaitingReply extends BasicWaitingUserReply{
 			}
 		}
 		return this.isHandled();
-	}
-	
-	@Override
-	public boolean onExecute(@Nonnull final GuildMessageReactionAddEvent event){
-		return false;
 	}
 	
 	@Override

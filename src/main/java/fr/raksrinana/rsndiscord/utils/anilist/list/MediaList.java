@@ -158,13 +158,18 @@ public class MediaList implements DatedObject{
 	}
 	
 	@Override
+	public int hashCode(){
+		return this.getId();
+	}
+	
+	@Override
 	public boolean equals(@Nullable final Object obj){
 		return obj instanceof MediaList && Objects.equals(((MediaList) obj).getId(), getId());
 	}
 	
 	@Override
-	public int hashCode(){
-		return this.getId();
+	public String toString(){
+		return ToStringBuilder.reflectionToString(this);
 	}
 	
 	@Override
@@ -188,11 +193,6 @@ public class MediaList implements DatedObject{
 	@Nullable
 	public Integer getPriority(){
 		return priority;
-	}
-	
-	@Override
-	public String toString(){
-		return ToStringBuilder.reflectionToString(this);
 	}
 	
 	@Nonnull

@@ -56,12 +56,12 @@ public class RemoveRoleConfiguration{
 		return this.user;
 	}
 	
-	public LocalDateTime getEndDate(){
-		return this.date;
-	}
-	
 	public RoleConfiguration getRole(){
 		return this.role;
+	}
+	
+	public LocalDateTime getEndDate(){
+		return this.date;
 	}
 	
 	public void setEndDate(@Nonnull final LocalDateTime date){

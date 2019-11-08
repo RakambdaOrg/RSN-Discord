@@ -21,9 +21,9 @@ import static fr.raksrinana.rsndiscord.utils.log.Log.getLogger;
  */
 class TrackScheduler extends AudioEventAdapter{
 	private final AudioPlayer player;
-	private LinkedList<AudioTrack> queue;
 	private final Guild guild;
 	private final Set<StatusTrackSchedulerListener> listeners;
+	private LinkedList<AudioTrack> queue;
 	
 	/**
 	 * @param guild  The guild the scheduler is for.

@@ -27,22 +27,19 @@ public class AniListFetchMediaListCommand extends BasicCommand{
 		super(parent);
 	}
 	
-	
 	@Nonnull
 	@Override
-	public CommandResult execute( @Nonnull final GuildMessageReceivedEvent event,  @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
 		new AniListMediaListScheduledRunner(event.getJDA()).run();
 		return CommandResult.SUCCESS;
 	}
-	
 	
 	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.MODERATOR;
 	}
-	
 	
 	@Nonnull
 	@Override
@@ -51,7 +48,6 @@ public class AniListFetchMediaListCommand extends BasicCommand{
 	}
 	
 	@Nonnull
-	
 	@Override
 	public List<String> getCommandStrings(){
 		//noinspection SpellCheckingInspection
@@ -59,7 +55,6 @@ public class AniListFetchMediaListCommand extends BasicCommand{
 	}
 	
 	@Nonnull
-	
 	@Override
 	public String getDescription(){
 		return "Fetch media user list changes from AniList";

@@ -37,29 +37,6 @@ public class AiringNotification extends Notification{
 	}
 	
 	@Override
-	public boolean equals(@Nullable final Object obj){
-		if(!(obj instanceof AiringNotification)){
-			return false;
-		}
-		final var notification = (AiringNotification) obj;
-		return Objects.equals(notification.getEpisode(), this.getEpisode()) && Objects.equals(notification.getMedia(), this.getMedia());
-	}
-	
-	@Override
-	public String toString(){
-		return ToStringBuilder.reflectionToString(this);
-	}
-	
-	@Nonnull
-	private Media getMedia(){
-		return this.media;
-	}
-	
-	private int getEpisode(){
-		return this.episode;
-	}
-	
-	@Override
 	public void fillEmbed(@Nonnull final EmbedBuilder builder){
 		builder.setTimestamp(this.getDate());
 		builder.setColor(Color.GREEN);
@@ -76,13 +53,36 @@ public class AiringNotification extends Notification{
 		return Optional.of(this.getMedia()).map(Media::getUrl).orElse(AniListUtils.FALLBACK_URL);
 	}
 	
-	@Nonnull
-	public static String getQuery(){
-		return QUERY;
-	}
-	
 	@Override
 	public int hashCode(){
 		return this.getEpisode();
+	}
+	
+	@Override
+	public boolean equals(@Nullable final Object obj){
+		if(!(obj instanceof AiringNotification)){
+			return false;
+		}
+		final var notification = (AiringNotification) obj;
+		return Objects.equals(notification.getEpisode(), this.getEpisode()) && Objects.equals(notification.getMedia(), this.getMedia());
+	}
+	
+	@Override
+	public String toString(){
+		return ToStringBuilder.reflectionToString(this);
+	}
+	
+	private int getEpisode(){
+		return this.episode;
+	}
+	
+	@Nonnull
+	private Media getMedia(){
+		return this.media;
+	}
+	
+	@Nonnull
+	public static String getQuery(){
+		return QUERY;
 	}
 }

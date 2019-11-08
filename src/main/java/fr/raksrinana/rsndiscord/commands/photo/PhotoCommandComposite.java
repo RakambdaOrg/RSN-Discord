@@ -25,13 +25,11 @@ public class PhotoCommandComposite extends CommandComposite{
 		this.addSubCommand(new PhotoListCommand(this));
 	}
 	
-	
 	@Nonnull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ALL;
 	}
-	
 	
 	@Nonnull
 	@Override
@@ -40,14 +38,12 @@ public class PhotoCommandComposite extends CommandComposite{
 	}
 	
 	@Nonnull
-	
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("photo");
 	}
 	
 	@Nonnull
-	
 	@Override
 	public String getDescription(){
 		return "Functions of the trombinoscope";

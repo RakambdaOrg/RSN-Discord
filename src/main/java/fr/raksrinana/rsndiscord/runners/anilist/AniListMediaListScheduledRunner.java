@@ -47,23 +47,8 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 	}
 	
 	@Override
-	public boolean sortedByUser(){
-		return this.sortedByUser;
-	}
-	
-	@Override
-	public long getPeriod(){
-		return 1;
-	}
-	
-	@Override
 	public void run(){
 		this.runQueryOnEveryUserAndDefaultChannels();
-	}
-	
-	@Override
-	public long getDelay(){
-		return 0;
 	}
 	
 	@Override
@@ -77,12 +62,6 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 		return "media list";
 	}
 	
-	@Nonnull
-	@Override
-	public JDA getJDA(){
-		return this.jda;
-	}
-	
 	@Override
 	public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<MediaList>> userElements){
 		AniListRunner.super.sendMessages(channels, userElements);
@@ -92,9 +71,26 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 		}))));
 	}
 	
+	@Nonnull
+	@Override
+	public MediaListPagedQuery initQuery(@Nonnull final Member member){
+		return new MediaListPagedQuery(AniListUtils.getUserId(member).orElseThrow());
+	}
+	
 	@Override
 	public boolean keepOnlyNew(){
 		return this.keepOnlyNew;
+	}
+	
+	@Override
+	public boolean sortedByUser(){
+		return this.sortedByUser;
+	}
+	
+	@Nonnull
+	@Override
+	public JDA getJDA(){
+		return this.jda;
 	}
 	
 	@Nonnull
@@ -104,15 +100,19 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 		return "medialist";
 	}
 	
-	@Nonnull
 	@Override
-	public MediaListPagedQuery initQuery(@Nonnull final Member member){
-		return new MediaListPagedQuery(AniListUtils.getUserId(member).orElseThrow());
+	public long getDelay(){
+		return 0;
 	}
 	
 	@Nonnull
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.HOURS;
+	}
+	
+	@Override
+	public long getPeriod(){
+		return 1;
 	}
 }

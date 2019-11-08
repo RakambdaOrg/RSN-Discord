@@ -61,13 +61,13 @@ public class LuxBusStop{
 		return this.getName();
 	}
 	
+	private int getL(){
+		return this.l;
+	}
+	
 	@Nonnull
 	public String getName(){
 		return this.name;
-	}
-	
-	private int getL(){
-		return this.l;
 	}
 	
 	public int getA(){

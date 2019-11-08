@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
  */
 public class Utilities{
 	public static final long RAKSRINANA_ACCOUNT = 170119951498084352L;
-	private static final Pattern TIME_PATTERN = Pattern.compile("(\\d[HMS])(?!$)");
 	private static final long LOPINETTE_ACCOUNT = 432628353024131085L;
+	private static final Pattern TIME_PATTERN = Pattern.compile("(\\d[HMS])(?!$)");
 	
 	/**
 	 * Check if a member have a role.
@@ -37,6 +37,18 @@ public class Utilities{
 	 */
 	public static boolean hasRole(final Member member, final List<Role> roles){
 		return roles.stream().anyMatch(r -> hasRole(member, r));
+	}
+	
+	/**
+	 * Check if a member have a role.
+	 *
+	 * @param member The member to test.
+	 * @param role   The role to search for.
+	 *
+	 * @return True if the member have the role, false otherwise.
+	 */
+	public static boolean hasRole(final Member member, final Role role){
+		return member.getRoles().contains(role);
 	}
 	
 	/**
@@ -70,18 +82,6 @@ public class Utilities{
 	 */
 	public static boolean isAdmin(@Nullable final Member member){
 		return Objects.nonNull(member) && member.getRoles().stream().anyMatch(role -> role.hasPermission(Permission.ADMINISTRATOR)) || isCreator(member);
-	}
-	
-	/**
-	 * Check if a member have a role.
-	 *
-	 * @param member The member to test.
-	 * @param role   The role to search for.
-	 *
-	 * @return True if the member have the role, false otherwise.
-	 */
-	public static boolean hasRole(final Member member, final Role role){
-		return member.getRoles().contains(role);
 	}
 	
 	/**

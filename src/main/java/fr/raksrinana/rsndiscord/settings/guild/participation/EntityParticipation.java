@@ -44,19 +44,14 @@ public class EntityParticipation{
 		this.scores.stream().filter(e -> Objects.equals(e.getId(), id)).findFirst().ifPresentOrElse(EntityScore::increment, () -> this.scores.add(new EntityScore(id, name, 1)));
 	}
 	
-	@Nonnull
-	public LocalDate getDate(){
-		return this.date.toLocalDate();
-	}
-	
-	@Nonnull
-	public Set<EntityScore> getScores(){
-		return this.scores;
-	}
-	
 	@Override
 	public int hashCode(){
 		return new HashCodeBuilder(17, 37).append(this.getDate()).toHashCode();
+	}
+	
+	@Nonnull
+	public LocalDate getDate(){
+		return this.date.toLocalDate();
 	}
 	
 	@Override
@@ -69,5 +64,10 @@ public class EntityParticipation{
 		}
 		final var that = (EntityParticipation) o;
 		return new EqualsBuilder().append(this.getDate(), that.getDate()).isEquals();
+	}
+	
+	@Nonnull
+	public Set<EntityScore> getScores(){
+		return this.scores;
 	}
 }

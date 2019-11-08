@@ -40,6 +40,17 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 		}
 		
 		@Override
+		public List<TextChannel> getChannels(){
+			return List.of(this.channel);
+		}
+		
+		@Nonnull
+		@Override
+		public String getRunnerName(){
+			return "differences";
+		}
+		
+		@Override
 		public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<MediaList>> userMedias){
 			for(final var entry : userMedias.entrySet()){
 				userMedias.keySet().parallelStream().filter(user2 -> !Objects.equals(entry.getKey(), user2)).forEach(userCompare -> {
@@ -60,23 +71,6 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 			userMedias.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> ImmutablePair.of(es.getKey(), val))).filter(pair -> pair.getValue().getMedia().getType() == this.type).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> this.buildMessage(change.getKey(), change.getValue())).<Consumer<? super TextChannel>> map(message -> channel -> Actions.sendMessage(channel, message)).forEach(channels::forEach);
 		}
 		
-		@Override
-		public List<TextChannel> getChannels(){
-			return List.of(this.channel);
-		}
-		
-		@Nonnull
-		@Override
-		public String getRunnerName(){
-			return "differences";
-		}
-		
-		@Nonnull
-		@Override
-		public JDA getJDA(){
-			return this.jda;
-		}
-		
 		@Nonnull
 		@Override
 		public MediaListPagedQuery initQuery(@Nonnull final Member member){
@@ -86,6 +80,12 @@ public class AniListFetchMediaUserListDifferencesCommand extends BasicCommand{
 		@Override
 		public boolean keepOnlyNew(){
 			return false;
+		}
+		
+		@Nonnull
+		@Override
+		public JDA getJDA(){
+			return this.jda;
 		}
 		
 		@Nonnull

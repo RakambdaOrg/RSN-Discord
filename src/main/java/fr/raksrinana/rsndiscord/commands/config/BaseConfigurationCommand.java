@@ -76,29 +76,18 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 		return CommandResult.NOT_HANDLED;
 	}
 	
-	protected abstract void onRemove(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args);
-	
-	protected abstract void onShow(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args);
+	protected abstract void onAdd(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException;
 	
 	protected abstract void onSet(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException;
 	
-	protected abstract void onAdd(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalOperationException;
+	protected abstract void onRemove(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args);
+	
+	protected abstract void onShow(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args);
 	
 	@Nonnull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <type>";
-	}
-	
-	@Nonnull
-	@Override
-	public AccessLevel getAccessLevel(){
-		return AccessLevel.ADMIN;
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
 	}
 	
 	@Nonnull
@@ -113,7 +102,18 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 	
 	@Nonnull
 	@Override
+	public AccessLevel getAccessLevel(){
+		return AccessLevel.ADMIN;
+	}
+	
+	@Nonnull
+	@Override
 	public String getDescription(){
 		return "Handles the configuration of '" + this.getName() + "'";
+	}
+	
+	@Override
+	public int getScope(){
+		return ChannelType.TEXT.getId();
 	}
 }

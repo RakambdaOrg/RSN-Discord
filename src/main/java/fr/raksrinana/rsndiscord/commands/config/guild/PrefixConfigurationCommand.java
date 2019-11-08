@@ -23,13 +23,13 @@ public class PrefixConfigurationCommand extends ValueConfigurationCommand<String
 	}
 	
 	@Override
-	protected void setConfig(@Nonnull final Guild guild, @Nonnull final String value){
-		NewSettings.getConfiguration(guild).setPrefix(value);
+	protected String getValueName(){
+		return "Prefix";
 	}
 	
 	@Override
-	protected String getValueName(){
-		return "Prefix";
+	protected void setConfig(@Nonnull final Guild guild, @Nonnull final String value){
+		NewSettings.getConfiguration(guild).setPrefix(value);
 	}
 	
 	@Override

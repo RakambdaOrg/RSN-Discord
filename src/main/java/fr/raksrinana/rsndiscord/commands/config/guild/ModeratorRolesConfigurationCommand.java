@@ -32,8 +32,7 @@ public class ModeratorRolesConfigurationCommand extends SetConfigurationCommand<
 	@Nonnull
 	@Override
 	protected RoleConfiguration extractValue(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws IllegalArgumentException{
-		if(event.getMessage().getMentionedRoles().isEmpty())
-		{
+		if(event.getMessage().getMentionedRoles().isEmpty()){
 			throw new IllegalArgumentException("Please mention a role");
 		}
 		return new RoleConfiguration(event.getMessage().getMentionedRoles().get(0));
@@ -42,18 +41,6 @@ public class ModeratorRolesConfigurationCommand extends SetConfigurationCommand<
 	@Override
 	protected void removeConfig(@Nonnull final Guild guild, @Nonnull final RoleConfiguration value){
 		NewSettings.getConfiguration(guild).getModeratorRoles().remove(value);
-	}
-	
-	@Nonnull
-	@Override
-	public String getName(){
-		return "Moderator roles";
-	}
-	
-	@Nonnull
-	@Override
-	public List<String> getCommandStrings(){
-		return List.of("moderatorRoles");
 	}
 	
 	@Override
@@ -66,5 +53,17 @@ public class ModeratorRolesConfigurationCommand extends SetConfigurationCommand<
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [role]";
+	}
+	
+	@Nonnull
+	@Override
+	public String getName(){
+		return "Moderator roles";
+	}
+	
+	@Nonnull
+	@Override
+	public List<String> getCommandStrings(){
+		return List.of("moderatorRoles");
 	}
 }

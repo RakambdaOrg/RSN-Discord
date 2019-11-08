@@ -38,11 +38,6 @@ public class AniListNotificationScheduledRunner implements AniListRunner<Notific
 	}
 	
 	@Override
-	public long getPeriod(){
-		return 15;
-	}
-	
-	@Override
 	public List<TextChannel> getChannels(){
 		return this.getJDA().getGuilds().stream().map(g -> NewSettings.getConfiguration(g).getAniListConfiguration().getNotificationsChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
 	}
@@ -72,18 +67,6 @@ public class AniListNotificationScheduledRunner implements AniListRunner<Notific
 	
 	@Nonnull
 	@Override
-	public String getRunnerName(){
-		return "notification";
-	}
-	
-	@Nonnull
-	@Override
-	public JDA getJDA(){
-		return this.jda;
-	}
-	
-	@Nonnull
-	@Override
 	public NotificationsPagedQuery initQuery(@Nonnull final Member member){
 		return new NotificationsPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(this.getFetcherID()).stream().filter(c -> Objects.equals(c.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
 	}
@@ -91,6 +74,11 @@ public class AniListNotificationScheduledRunner implements AniListRunner<Notific
 	@Override
 	public boolean keepOnlyNew(){
 		return true;
+	}
+	
+	@Override
+	public long getPeriod(){
+		return 15;
 	}
 	
 	@Nonnull
@@ -101,7 +89,19 @@ public class AniListNotificationScheduledRunner implements AniListRunner<Notific
 	
 	@Nonnull
 	@Override
+	public String getRunnerName(){
+		return "notification";
+	}
+	
+	@Nonnull
+	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.MINUTES;
+	}
+	
+	@Nonnull
+	@Override
+	public JDA getJDA(){
+		return this.jda;
 	}
 }

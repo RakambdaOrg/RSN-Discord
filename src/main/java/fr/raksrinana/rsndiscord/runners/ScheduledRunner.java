@@ -10,10 +10,10 @@ import java.util.concurrent.TimeUnit;
  * @since 2018-10-24
  */
 public interface ScheduledRunner extends Runnable{
+	long getDelay();
+	
 	long getPeriod();
 	
 	@Nonnull
 	TimeUnit getPeriodUnit();
-	
-	long getDelay();
 }

@@ -24,6 +24,11 @@ public class LuxBusStopSelectionWaitingReply extends BasicWaitingUserReply{
 	}
 	
 	@Override
+	public boolean onExecute(@Nonnull final GuildMessageReactionAddEvent event){
+		return false;
+	}
+	
+	@Override
 	protected boolean onExecute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
 		if(args.isEmpty()){
 			Actions.reply(event, "Invalid selection");
@@ -44,11 +49,6 @@ public class LuxBusStopSelectionWaitingReply extends BasicWaitingUserReply{
 				Actions.reply(event, "Please enter the corresponding number");
 			}
 		}
-		return false;
-	}
-	
-	@Override
-	public boolean onExecute(@Nonnull final GuildMessageReactionAddEvent event){
 		return false;
 	}
 	

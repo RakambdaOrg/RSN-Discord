@@ -18,8 +18,8 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 	private final TextChannel waitChannel;
 	private final User waitUser;
 	private final long originalMessageId;
-	private boolean handled;
 	private final Object lock;
+	private boolean handled;
 	
 	protected BasicWaitingUserReply(@Nonnull final GenericGuildMessageEvent event, @Nonnull final User author, final Message... infoMessages){
 		this(event, author, event.getChannel(), infoMessages);
@@ -51,33 +51,7 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 	}
 	
 	@Override
-	public boolean execute(@Nonnull final GuildMessageReactionAddEvent event){
-		synchronized(this.lock){
-			if(!this.isHandled()){
-				this.handled = this.onExecute(event);
-				if(this.isHandled()){
-					this.infoMessages.forEach(Actions::deleteMessage);
-				}
-			}
-		}
-		return this.isHandled();
-	}
-	
-	protected abstract boolean onExecute(@Nonnull final GuildMessageReactionAddEvent event);
-	
-	@Override
 	public void close() throws IOException{
-	}
-	
-	@Nonnull
-	@Override
-	public TextChannel getWaitChannel(){
-		return this.waitChannel;
-	}
-	
-	@Override
-	public boolean isHandled(){
-		return this.handled;
 	}
 	
 	@Override
@@ -93,11 +67,27 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 		return this.isHandled();
 	}
 	
-	protected List<Message> getInfoMessages(){
-		return this.infoMessages;
+	@Override
+	public boolean execute(@Nonnull final GuildMessageReactionAddEvent event){
+		synchronized(this.lock){
+			if(!this.isHandled()){
+				this.handled = this.onExecute(event);
+				if(this.isHandled()){
+					this.infoMessages.forEach(Actions::deleteMessage);
+				}
+			}
+		}
+		return this.isHandled();
 	}
 	
-	protected abstract boolean onExecute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args);
+	protected abstract boolean onExecute(@Nonnull final GuildMessageReactionAddEvent event);
+	
+	@Override
+	public boolean onExpire(){
+		Actions.sendMessage(this.getWaitChannel(), "%s you didn't reply in time", this.getUser().getAsMention());
+		this.infoMessages.forEach(Actions::deleteMessage);
+		return true;
+	}
 	
 	@Override
 	public boolean handleEvent(final GuildMessageReceivedEvent event){
@@ -105,10 +95,8 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 	}
 	
 	@Override
-	public boolean onExpire(){
-		Actions.sendMessage(this.getWaitChannel(), "%s you didn't reply in time", this.getUser().getAsMention());
-		this.infoMessages.forEach(Actions::deleteMessage);
-		return true;
+	public boolean handleEvent(final GuildMessageReactionAddEvent event){
+		return Objects.equals(this.getUser(), event.getUser()) && Objects.equals(this.getWaitChannel(), event.getChannel()) && Objects.equals(this.getEmoteMessageId(), event.getMessageIdLong());
 	}
 	
 	@Nonnull
@@ -118,17 +106,29 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 	}
 	
 	@Override
-	public boolean handleEvent(final GuildMessageReactionAddEvent event){
-		return Objects.equals(this.getUser(), event.getUser()) && Objects.equals(this.getWaitChannel(), event.getChannel()) && Objects.equals(this.getEmoteMessageId(), event.getMessageIdLong());
+	public long getEmoteMessageId(){
+		return this.getInfoMessages().stream().map(Message::getIdLong).findFirst().orElse(-1L);
+	}
+	
+	@Nonnull
+	@Override
+	public TextChannel getWaitChannel(){
+		return this.waitChannel;
+	}
+	
+	@Override
+	public boolean isHandled(){
+		return this.handled;
+	}
+	
+	protected abstract boolean onExecute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args);
+	
+	protected List<Message> getInfoMessages(){
+		return this.infoMessages;
 	}
 	
 	protected long getOriginalMessageId(){
 		return this.originalMessageId;
-	}
-	
-	@Override
-	public long getEmoteMessageId(){
-		return this.getInfoMessages().stream().map(Message::getIdLong).findFirst().orElse(-1L);
 	}
 	
 	protected User getWaitUser(){

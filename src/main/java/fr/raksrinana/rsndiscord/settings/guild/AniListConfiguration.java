@@ -99,21 +99,21 @@ public class AniListConfiguration{
 	}
 	
 	@Nonnull
-	public Optional<ChannelConfiguration> getNotificationsChannel(){
-		return Optional.ofNullable(this.notificationsChannel);
-	}
-	
-	@Nonnull
 	public Optional<ChannelConfiguration> getMediaChangeChannel(){
 		return Optional.ofNullable(this.mediaChangeChannel);
 	}
 	
-	public void setNotificationsChannel(@Nullable final ChannelConfiguration channel){
-		this.notificationsChannel = channel;
-	}
-	
 	public void setMediaChangeChannel(@Nullable final ChannelConfiguration channel){
 		this.mediaChangeChannel = channel;
+	}
+	
+	@Nonnull
+	public Optional<ChannelConfiguration> getNotificationsChannel(){
+		return Optional.ofNullable(this.notificationsChannel);
+	}
+	
+	public void setNotificationsChannel(@Nullable final ChannelConfiguration channel){
+		this.notificationsChannel = channel;
 	}
 	
 	@Nonnull

@@ -32,8 +32,7 @@ public class IdeaChannelsConfigurationCommand extends SetConfigurationCommand<Ch
 	@Nonnull
 	@Override
 	protected ChannelConfiguration extractValue(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws IllegalArgumentException{
-		if(event.getMessage().getMentionedChannels().isEmpty())
-		{
+		if(event.getMessage().getMentionedChannels().isEmpty()){
 			throw new IllegalArgumentException("Please mention a channel");
 		}
 		return new ChannelConfiguration(event.getMessage().getMentionedChannels().get(0));
@@ -42,18 +41,6 @@ public class IdeaChannelsConfigurationCommand extends SetConfigurationCommand<Ch
 	@Override
 	protected void removeConfig(@Nonnull final Guild guild, @Nonnull final ChannelConfiguration value){
 		NewSettings.getConfiguration(guild).getIdeaChannels().remove(value);
-	}
-	
-	@Nonnull
-	@Override
-	public String getName(){
-		return "Idea channels";
-	}
-	
-	@Nonnull
-	@Override
-	public List<String> getCommandStrings(){
-		return List.of("ideaChannels");
 	}
 	
 	@Override
@@ -66,5 +53,17 @@ public class IdeaChannelsConfigurationCommand extends SetConfigurationCommand<Ch
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [channel]";
+	}
+	
+	@Nonnull
+	@Override
+	public String getName(){
+		return "Idea channels";
+	}
+	
+	@Nonnull
+	@Override
+	public List<String> getCommandStrings(){
+		return List.of("ideaChannels");
 	}
 }

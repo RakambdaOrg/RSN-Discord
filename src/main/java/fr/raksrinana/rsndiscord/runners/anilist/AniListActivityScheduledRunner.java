@@ -33,24 +33,13 @@ public class AniListActivityScheduledRunner implements AniListRunner<ListActivit
 	}
 	
 	@Override
-	public long getPeriod(){
-		return 1;
-	}
-	
-	@Nonnull
-	@Override
-	public TimeUnit getPeriodUnit(){
-		return TimeUnit.HOURS;
-	}
-	
-	@Override
-	public long getDelay(){
-		return 6;
-	}
-	
-	@Override
 	public void run(){
 		this.runQueryOnEveryUserAndDefaultChannels();
+	}
+	
+	@Override
+	public List<TextChannel> getChannels(){
+		return this.getJDA().getGuilds().stream().map(g -> NewSettings.getConfiguration(g).getAniListConfiguration().getMediaChangeChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 	
 	@Nonnull
@@ -61,13 +50,8 @@ public class AniListActivityScheduledRunner implements AniListRunner<ListActivit
 	
 	@Nonnull
 	@Override
-	public JDA getJDA(){
-		return this.jda;
-	}
-	
-	@Override
-	public List<TextChannel> getChannels(){
-		return this.getJDA().getGuilds().stream().map(g -> NewSettings.getConfiguration(g).getAniListConfiguration().getMediaChangeChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
+	public ActivityPagedQuery initQuery(@Nonnull final Member member){
+		return new ActivityPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(this.getFetcherID()).stream().filter(a -> Objects.equals(a.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
 	}
 	
 	@Override
@@ -77,13 +61,29 @@ public class AniListActivityScheduledRunner implements AniListRunner<ListActivit
 	
 	@Nonnull
 	@Override
-	public String getFetcherID(){
-		return "listActivity";
+	public JDA getJDA(){
+		return this.jda;
 	}
 	
 	@Nonnull
 	@Override
-	public ActivityPagedQuery initQuery(@Nonnull final Member member){
-		return new ActivityPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(this.getFetcherID()).stream().filter(a -> Objects.equals(a.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
+	public String getFetcherID(){
+		return "listActivity";
+	}
+	
+	@Override
+	public long getDelay(){
+		return 6;
+	}
+	
+	@Override
+	public long getPeriod(){
+		return 1;
+	}
+	
+	@Nonnull
+	@Override
+	public TimeUnit getPeriodUnit(){
+		return TimeUnit.HOURS;
 	}
 }

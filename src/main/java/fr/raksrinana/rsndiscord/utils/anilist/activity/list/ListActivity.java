@@ -45,27 +45,15 @@ public abstract class ListActivity implements DatedObject{
 	private int id;
 	
 	@Override
-	public boolean equals(@Nullable final Object obj){
-		return obj instanceof ListActivity && Objects.equals(((ListActivity) obj).getId(), getId());
-	}
-	
-	@Override
-	public String toString(){
-		return ToStringBuilder.reflectionToString(this);
-	}
-	
-	@Override
 	public void fillEmbed(@Nonnull final EmbedBuilder builder){
 		builder.setColor(getColor());
 		builder.setTimestamp(getDate());
-		
 		if(Objects.isNull(getProgress())){
 			builder.setDescription("Added to list");
 		}
 		else{
 			builder.setDescription(StringUtils.capitalize(getMedia().getProgressType(getProgress().contains("-"))) + " " + getProgress());
 		}
-		
 		builder.addBlankField(false);
 		builder.addField("Media:", "", false);
 		getMedia().fillEmbed(builder);
@@ -74,6 +62,11 @@ public abstract class ListActivity implements DatedObject{
 	@Override
 	public int getId(){
 		return this.id;
+	}
+	
+	@Override
+	public boolean equals(@Nullable final Object obj){
+		return obj instanceof ListActivity && Objects.equals(((ListActivity) obj).getId(), getId());
 	}
 	
 	@Nonnull
@@ -90,6 +83,11 @@ public abstract class ListActivity implements DatedObject{
 	}
 	
 	@Override
+	public String toString(){
+		return ToStringBuilder.reflectionToString(this);
+	}
+	
+	@Override
 	public int compareTo(@Nonnull final AniListObject o){
 		if(o instanceof DatedObject){
 			return getDate().compareTo(((DatedObject) o).getDate());
@@ -98,9 +96,8 @@ public abstract class ListActivity implements DatedObject{
 	}
 	
 	@Override
-	@Nonnull
-	public URL getUrl(){
-		return url;
+	public int hashCode(){
+		return this.getId();
 	}
 	
 	@Nonnull
@@ -109,8 +106,9 @@ public abstract class ListActivity implements DatedObject{
 	}
 	
 	@Override
-	public int hashCode(){
-		return this.getId();
+	@Nonnull
+	public URL getUrl(){
+		return url;
 	}
 	
 	@Nonnull

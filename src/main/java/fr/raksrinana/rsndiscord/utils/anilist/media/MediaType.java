@@ -24,6 +24,12 @@ public enum MediaType{
 		this.display = display;
 	}
 	
+	@JsonCreator
+	@Nonnull
+	public static MediaType getFromString(@Nonnull final String value){
+		return MediaType.valueOf(value);
+	}
+	
 	public boolean shouldDisplay(){
 		return this.shouldDisplay;
 	}
@@ -31,11 +37,5 @@ public enum MediaType{
 	@Override
 	public String toString(){
 		return this.display;
-	}
-	
-	@JsonCreator
-	@Nonnull
-	public static MediaType getFromString(@Nonnull final String value){
-		return MediaType.valueOf(value);
 	}
 }

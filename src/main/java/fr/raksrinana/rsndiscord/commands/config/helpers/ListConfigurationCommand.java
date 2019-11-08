@@ -24,18 +24,6 @@ public abstract class ListConfigurationCommand<T> extends BaseConfigurationComma
 		return Set.of(ConfigurationOperation.ADD, ConfigurationOperation.REMOVE, ConfigurationOperation.SHOW);
 	}
 	
-	@Nonnull
-	protected abstract Optional<List<T>> getConfig(@Nonnull Guild guild);
-	
-	@SuppressWarnings("DuplicatedCode")
-	@Override
-	protected void onShow(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
-		final var values = this.getConfig(event.getGuild()).stream().flatMap(List::stream).map(Objects::toString).collect(Collectors.joining(", "));
-		final var builder = this.getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
-		builder.addField("Values", values, false);
-		Actions.reply(event, builder.build());
-	}
-	
 	@SuppressWarnings("DuplicatedCode")
 	@Override
 	protected void onRemove(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
@@ -51,14 +39,22 @@ public abstract class ListConfigurationCommand<T> extends BaseConfigurationComma
 		}
 	}
 	
+	@SuppressWarnings("DuplicatedCode")
+	@Override
+	protected void onShow(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
+		final var values = this.getConfig(event.getGuild()).stream().flatMap(List::stream).map(Objects::toString).collect(Collectors.joining(", "));
+		final var builder = this.getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
+		builder.addField("Values", values, false);
+		Actions.reply(event, builder.build());
+	}
+	
+	@Nonnull
+	protected abstract Optional<List<T>> getConfig(@Nonnull Guild guild);
+	
 	@Override
 	protected void onSet(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws IllegalOperationException{
 		throw new IllegalOperationException(ConfigurationOperation.SET);
 	}
-	
-	protected abstract void removeConfig(@Nonnull Guild guild, @Nonnull T value);
-	
-	protected abstract void createConfig(@Nonnull Guild guild, @Nonnull T value);
 	
 	@SuppressWarnings("DuplicatedCode")
 	@Override
@@ -75,6 +71,10 @@ public abstract class ListConfigurationCommand<T> extends BaseConfigurationComma
 		}
 	}
 	
+	protected abstract void createConfig(@Nonnull Guild guild, @Nonnull T value);
+	
 	@Nonnull
 	protected abstract T extractValue(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws IllegalArgumentException;
+	
+	protected abstract void removeConfig(@Nonnull Guild guild, @Nonnull T value);
 }

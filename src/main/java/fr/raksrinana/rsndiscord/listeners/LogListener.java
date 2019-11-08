@@ -88,16 +88,6 @@ public class LogListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildVoiceGuildMute(@Nonnull final GuildVoiceGuildMuteEvent event){
-		super.onGuildVoiceGuildMute(event);
-		if(Objects.equals(event.getMember().getUser(), event.getJDA().getSelfUser())){
-			Log.getLogger(event.getGuild()).info("Unmuting bot");
-			event.getGuild().mute(event.getMember(), false).queue();
-			event.getGuild().deafen(event.getMember(), false).queue();
-		}
-	}
-	
-	@Override
 	public void onGuildVoiceLeave(@Nonnull GuildVoiceLeaveEvent event){
 		super.onGuildVoiceLeave(event);
 		try{
@@ -110,6 +100,16 @@ public class LogListener extends ListenerAdapter{
 		}
 		catch(final Exception e){
 			Log.getLogger(event.getGuild()).error("", e);
+		}
+	}
+	
+	@Override
+	public void onGuildVoiceGuildMute(@Nonnull final GuildVoiceGuildMuteEvent event){
+		super.onGuildVoiceGuildMute(event);
+		if(Objects.equals(event.getMember().getUser(), event.getJDA().getSelfUser())){
+			Log.getLogger(event.getGuild()).info("Unmuting bot");
+			event.getGuild().mute(event.getMember(), false).queue();
+			event.getGuild().deafen(event.getMember(), false).queue();
 		}
 	}
 }

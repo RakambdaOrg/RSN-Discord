@@ -13,11 +13,6 @@ public abstract class BooleanConfigurationCommand extends ValueConfigurationComm
 	}
 	
 	@Override
-	protected String getValueName(){
-		return "Boolean";
-	}
-	
-	@Override
 	protected Boolean extractValue(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
 		if(!args.isEmpty()){
 			try{
@@ -28,5 +23,10 @@ public abstract class BooleanConfigurationCommand extends ValueConfigurationComm
 			}
 		}
 		throw new IllegalArgumentException("Please give a boolean value");
+	}
+	
+	@Override
+	protected String getValueName(){
+		return "Boolean";
 	}
 }

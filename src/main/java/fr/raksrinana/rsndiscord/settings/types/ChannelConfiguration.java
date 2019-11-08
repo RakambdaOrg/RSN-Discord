@@ -34,16 +34,6 @@ public class ChannelConfiguration{
 	}
 	
 	@Override
-	public String toString(){
-		return this.getChannel().map(TextChannel::getAsMention).orElse("<Unknown channel>");
-	}
-	
-	@Nonnull
-	public Optional<TextChannel> getChannel(){
-		return Optional.ofNullable(Main.getJDA().getTextChannelById(this.getChannelId()));
-	}
-	
-	@Override
 	public int hashCode(){
 		return new HashCodeBuilder(17, 37).append(this.getChannelId()).toHashCode();
 	}
@@ -58,6 +48,16 @@ public class ChannelConfiguration{
 		}
 		final var that = (ChannelConfiguration) o;
 		return new EqualsBuilder().append(this.getChannelId(), that.getChannelId()).isEquals();
+	}
+	
+	@Override
+	public String toString(){
+		return this.getChannel().map(TextChannel::getAsMention).orElse("<Unknown channel>");
+	}
+	
+	@Nonnull
+	public Optional<TextChannel> getChannel(){
+		return Optional.ofNullable(Main.getJDA().getTextChannelById(this.getChannelId()));
 	}
 	
 	public long getChannelId(){

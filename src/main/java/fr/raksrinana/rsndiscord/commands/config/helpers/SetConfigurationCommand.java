@@ -29,18 +29,6 @@ public abstract class SetConfigurationCommand<T> extends BaseConfigurationComman
 	
 	@SuppressWarnings("DuplicatedCode")
 	@Override
-	protected void onShow(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
-		final var values = this.getConfig(event.getGuild()).stream().flatMap(Set::stream).map(Objects::toString).collect(Collectors.joining(", "));
-		final var builder = this.getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
-		builder.addField("Values", values, false);
-		Actions.reply(event, builder.build());
-	}
-	
-	@Nonnull
-	protected abstract Optional<Set<T>> getConfig(@Nonnull Guild guild);
-	
-	@SuppressWarnings("DuplicatedCode")
-	@Override
 	protected void onRemove(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
 		try{
 			final var value = this.extractValue(event, args);
@@ -53,6 +41,18 @@ public abstract class SetConfigurationCommand<T> extends BaseConfigurationComman
 			Actions.reply(event, e.getMessage());
 		}
 	}
+	
+	@SuppressWarnings("DuplicatedCode")
+	@Override
+	protected void onShow(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
+		final var values = this.getConfig(event.getGuild()).stream().flatMap(Set::stream).map(Objects::toString).collect(Collectors.joining(", "));
+		final var builder = this.getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
+		builder.addField("Values", values, false);
+		Actions.reply(event, builder.build());
+	}
+	
+	@Nonnull
+	protected abstract Optional<Set<T>> getConfig(@Nonnull Guild guild);
 	
 	@Override
 	protected void onSet(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws IllegalOperationException{

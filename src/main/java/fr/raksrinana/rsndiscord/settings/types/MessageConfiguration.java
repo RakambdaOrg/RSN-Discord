@@ -62,19 +62,6 @@ public class MessageConfiguration{
 		return this.getChannel().getChannel().map(c -> c.getHistoryAround(this.getMessageId(), 1).complete().getMessageById(this.getMessageId()));
 	}
 	
-	@Nonnull
-	public ChannelConfiguration getChannel(){
-		return this.channel;
-	}
-	
-	public long getMessageId(){
-		return this.messageId;
-	}
-	
-	private void setChannel(final long channelId){
-		this.channel.setChannel(channelId);
-	}
-	
 	public void setMessage(@Nonnull final Message message){
 		this.setMessage(message.getIdLong());
 		this.setChannel(message.getChannel().getIdLong());
@@ -82,5 +69,18 @@ public class MessageConfiguration{
 	
 	private void setMessage(final long messageId){
 		this.messageId = messageId;
+	}
+	
+	@Nonnull
+	public ChannelConfiguration getChannel(){
+		return this.channel;
+	}
+	
+	private void setChannel(final long channelId){
+		this.channel.setChannel(channelId);
+	}
+	
+	public long getMessageId(){
+		return this.messageId;
 	}
 }

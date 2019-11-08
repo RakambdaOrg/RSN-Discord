@@ -38,16 +38,13 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 		return overwatchStage.getStartDate().map(d1 -> s2.map(d1::compareTo).orElse(-1)).orElseGet(() -> s2.isPresent() ? 1 : 0);
 	}
 	
-	public Optional<OverwatchTournament> getCurrentTournament(){
-		return this.getCurrentMatch().map(OverwatchMatch::getTournament);
-	}
-	
 	private Optional<LocalDateTime> getStartDate(){
 		return this.getMatches().stream().map(OverwatchMatch::getStartDate).sorted().findFirst();
 	}
 	
-	public Optional<OverwatchWeek> getCurrentWeek(){
-		return this.getWeeks().stream().filter(w -> !w.hasEnded()).filter(OverwatchWeek::hasStarted).sorted().findFirst();
+	@Override
+	public String toString(){
+		return this.getName();
 	}
 	
 	@Override
@@ -55,8 +52,16 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 		return obj instanceof OverwatchStage && Objects.equals(this.getId(), ((OverwatchStage) obj).getId());
 	}
 	
-	public List<OverwatchMatch> getMatches(){
-		return this.matches;
+	public String getName(){
+		return this.name;
+	}
+	
+	public Optional<OverwatchTournament> getCurrentTournament(){
+		return this.getCurrentMatch().map(OverwatchMatch::getTournament);
+	}
+	
+	public Optional<OverwatchWeek> getCurrentWeek(){
+		return this.getWeeks().stream().filter(w -> !w.hasEnded()).filter(OverwatchWeek::hasStarted).sorted().findFirst();
 	}
 	
 	public boolean hasStarted(){
@@ -67,12 +72,20 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 		return this.getMatches().stream().allMatch(OverwatchMatch::hasEnded);
 	}
 	
+	public List<OverwatchWeek> getWeeks(){
+		return this.weeks;
+	}
+	
 	private Optional<OverwatchMatch> getCurrentMatch(){
 		return this.getMatches().stream().filter(w -> !w.hasEnded()).filter(OverwatchMatch::hasStarted).sorted().findFirst();
 	}
 	
 	public int getId(){
 		return this.id;
+	}
+	
+	public List<OverwatchMatch> getMatches(){
+		return this.matches;
 	}
 	
 	public Optional<OverwatchTournament> getNextTournament(){
@@ -83,10 +96,6 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 		return this.getMatches().stream().filter(s -> !s.hasStarted()).sorted().findFirst();
 	}
 	
-	public String getName(){
-		return this.name;
-	}
-	
 	public Optional<OverwatchWeek> getNextWeek(){
 		return this.getWeeks().stream().filter(s -> !s.hasStarted()).sorted().findFirst();
 	}
@@ -95,16 +104,7 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 		return this.tournaments;
 	}
 	
-	public List<OverwatchWeek> getWeeks(){
-		return this.weeks;
-	}
-	
 	public boolean isEnabled(){
 		return this.enabled;
-	}
-	
-	@Override
-	public String toString(){
-		return this.getName();
 	}
 }

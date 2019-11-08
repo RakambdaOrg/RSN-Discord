@@ -48,14 +48,6 @@ public abstract class AbstractIRCListener implements IRCListener{
 		}
 	}
 	
-	protected abstract void onNotice(NoticeIRCMessage event);
-	
-	protected abstract void onHostTarget(HostTargetIRCMessage event);
-	
-	protected abstract void onClearChat(ClearChatIRCMessage event);
-	
-	protected abstract void onClearMessage(ClearMessageIRCMessage event);
-	
 	protected abstract void onIRCChannelJoined(@Nonnull ChannelJoinIRCMessage event);
 	
 	protected abstract void onIRCChannelLeft(@Nonnull ChannelLeftIRCMessage event);
@@ -67,6 +59,14 @@ public abstract class AbstractIRCListener implements IRCListener{
 	protected abstract void onInfoMessage(InfoMessageIRCMessage event);
 	
 	protected abstract void onUserNotice(UserNoticeIRCMessage event);
+	
+	protected abstract void onClearChat(ClearChatIRCMessage event);
+	
+	protected abstract void onClearMessage(ClearMessageIRCMessage event);
+	
+	protected abstract void onNotice(NoticeIRCMessage event);
+	
+	protected abstract void onHostTarget(HostTargetIRCMessage event);
 	
 	protected abstract void onIRCUnknownEvent(@Nonnull IRCMessage event);
 }

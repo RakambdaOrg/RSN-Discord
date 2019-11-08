@@ -26,37 +26,6 @@ import java.util.stream.IntStream;
 public class LuxBusGetStopCommand extends BasicCommand{
 	private static final int PER_PAGE = 25;
 	
-	static void askLine(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LuxBusStop stop){
-		try{
-			final var departures = LuxBusUtils.getDepartures(stop);
-			if(departures.stream().map(departure -> departure.getProduct().getLine()).distinct().count() < 2){
-				if(departures.stream().map(LuxBusDeparture::getDirection).distinct().count() < 2){
-					departures.stream().sorted().forEachOrdered(departure -> Actions.reply(event, departure.getAsEmbed(Utilities.buildEmbed(event.getAuthor(), null, null)).build()));
-				}
-				else{
-					askDirection(event, departures);
-				}
-			}
-			else{
-				Actions.reply(event, message -> ReplyMessageListener.handleReply(new LuxBusLineSelectionWaitingReply(event, departures, message)), "Choose a line:\n%s", departures.stream().map(departure -> departure.getProduct().getLine()).distinct().sorted().collect(Collectors.joining("\n")));
-			}
-		}
-		catch(final Exception e){
-			Log.getLogger(event.getGuild()).error("Failed to ask a bus line", e);
-			Actions.reply(event, e.getLocalizedMessage());
-		}
-	}
-	
-	static void askDirection(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final List<LuxBusDeparture> filtered){
-		final var directionDepartures = filtered.stream().collect(Collectors.groupingBy(LuxBusDeparture::getDirection));
-		final var directionDeparturesNumbered = new HashMap<Integer, List<LuxBusDeparture>>();
-		var i = 0;
-		for(final var luxBusDepartures : directionDepartures.values()){
-			directionDeparturesNumbered.put(++i, luxBusDepartures);
-		}
-		Actions.reply(event, message -> ReplyMessageListener.handleReply(new LuxBusDirectionSelectionWaitingReply(event, directionDeparturesNumbered, message)), "Choose a direction:\n%s", directionDeparturesNumbered.keySet().stream().map(k -> String.format("%s: %s", k, directionDeparturesNumbered.get(k).stream().findFirst().map(LuxBusDeparture::getDirection).orElse("???"))).sorted().collect(Collectors.joining("\n")));
-	}
-	
 	@Override
 	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
@@ -103,6 +72,37 @@ public class LuxBusGetStopCommand extends BasicCommand{
 			ReplyMessageListener.handleReply(replyHandler);
 			IntStream.range(0, stops.size()).boxed().collect(Collectors.groupingBy(index -> index / PER_PAGE)).values().stream().map(indices -> indices.stream().map(stops::get).collect(Collectors.toList())).forEach(stopsBatch -> Actions.reply(event, replyHandler::addMessage, "%s", stopsBatch.stream().map(stop -> String.format("%d: %s", stops.indexOf(stop) + 1, stop)).collect(Collectors.joining("\n"))));
 		}
+	}
+	
+	static void askLine(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LuxBusStop stop){
+		try{
+			final var departures = LuxBusUtils.getDepartures(stop);
+			if(departures.stream().map(departure -> departure.getProduct().getLine()).distinct().count() < 2){
+				if(departures.stream().map(LuxBusDeparture::getDirection).distinct().count() < 2){
+					departures.stream().sorted().forEachOrdered(departure -> Actions.reply(event, departure.getAsEmbed(Utilities.buildEmbed(event.getAuthor(), null, null)).build()));
+				}
+				else{
+					askDirection(event, departures);
+				}
+			}
+			else{
+				Actions.reply(event, message -> ReplyMessageListener.handleReply(new LuxBusLineSelectionWaitingReply(event, departures, message)), "Choose a line:\n%s", departures.stream().map(departure -> departure.getProduct().getLine()).distinct().sorted().collect(Collectors.joining("\n")));
+			}
+		}
+		catch(final Exception e){
+			Log.getLogger(event.getGuild()).error("Failed to ask a bus line", e);
+			Actions.reply(event, e.getLocalizedMessage());
+		}
+	}
+	
+	static void askDirection(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final List<LuxBusDeparture> filtered){
+		final var directionDepartures = filtered.stream().collect(Collectors.groupingBy(LuxBusDeparture::getDirection));
+		final var directionDeparturesNumbered = new HashMap<Integer, List<LuxBusDeparture>>();
+		var i = 0;
+		for(final var luxBusDepartures : directionDepartures.values()){
+			directionDeparturesNumbered.put(++i, luxBusDepartures);
+		}
+		Actions.reply(event, message -> ReplyMessageListener.handleReply(new LuxBusDirectionSelectionWaitingReply(event, directionDeparturesNumbered, message)), "Choose a direction:\n%s", directionDeparturesNumbered.keySet().stream().map(k -> String.format("%s: %s", k, directionDeparturesNumbered.get(k).stream().findFirst().map(LuxBusDeparture::getDirection).orElse("???"))).sorted().collect(Collectors.joining("\n")));
 	}
 	
 	@Nonnull

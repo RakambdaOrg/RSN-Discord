@@ -34,16 +34,6 @@ public class UserConfiguration{
 	}
 	
 	@Override
-	public String toString(){
-		return this.getUser().map(User::getAsMention).orElse("<Unknown user>");
-	}
-	
-	@Nonnull
-	public Optional<User> getUser(){
-		return Optional.ofNullable(Main.getJDA().getUserById(this.getUserId()));
-	}
-	
-	@Override
 	public int hashCode(){
 		return new HashCodeBuilder(17, 37).append(this.getUserId()).toHashCode();
 	}
@@ -58,6 +48,16 @@ public class UserConfiguration{
 		}
 		final var that = (UserConfiguration) o;
 		return new EqualsBuilder().append(this.getUserId(), that.getUserId()).isEquals();
+	}
+	
+	@Override
+	public String toString(){
+		return this.getUser().map(User::getAsMention).orElse("<Unknown user>");
+	}
+	
+	@Nonnull
+	public Optional<User> getUser(){
+		return Optional.ofNullable(Main.getJDA().getUserById(this.getUserId()));
 	}
 	
 	public long getUserId(){

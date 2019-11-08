@@ -48,18 +48,8 @@ public abstract class Media implements AniListObject{
 		this.type = type;
 	}
 	
-	@Override
-	public boolean equals(@Nullable final Object obj){
-		return obj instanceof Media && Objects.equals(((Media) obj).getId(), this.getId());
-	}
-	
 	@Nonnull
 	public abstract String getProgressType(final boolean contains);
-	
-	@Override
-	public String toString(){
-		return ToStringBuilder.reflectionToString(this);
-	}
 	
 	@Override
 	public void fillEmbed(@Nonnull final EmbedBuilder builder){
@@ -76,19 +66,48 @@ public abstract class Media implements AniListObject{
 		builder.setThumbnail(this.getCoverImage().getLarge().toString());
 	}
 	
+	@Override
+	public int getId(){
+		return this.id;
+	}
+	
+	@Override
+	public int hashCode(){
+		return this.getId();
+	}
+	
+	@Override
+	public boolean equals(@Nullable final Object obj){
+		return obj instanceof Media && Objects.equals(((Media) obj).getId(), this.getId());
+	}
+	
+	@Override
+	public String toString(){
+		return ToStringBuilder.reflectionToString(this);
+	}
+	
+	@Nonnull
+	public MediaFormat getFormat(){
+		return this.format;
+	}
+	
+	@Nonnull
+	public MediaStatus getStatus(){
+		return this.status;
+	}
+	
+	public boolean isAdult(){
+		return this.isAdult;
+	}
+	
 	@Nonnull
 	public MediaCoverImage getCoverImage(){
 		return this.coverImage;
 	}
 	
 	@Override
-	public int getId(){
-		return this.id;
-	}
-	
-	@Nonnull
-	public MediaFormat getFormat(){
-		return this.format;
+	public int compareTo(@Nonnull final AniListObject o){
+		return Integer.compare(this.getId(), o.getId());
 	}
 	
 	@Nullable
@@ -97,28 +116,13 @@ public abstract class Media implements AniListObject{
 	}
 	
 	@Nonnull
-	public MediaStatus getStatus(){
-		return this.status;
-	}
-	
-	@Nonnull
 	public MediaTitle getTitle(){
 		return this.title;
 	}
-
-	@Override
-	@Nonnull
-	public URL getUrl(){
-		return this.url;
-	}
 	
-	public boolean isAdult(){
-		return this.isAdult;
-	}
-
-	@Override
-	public int compareTo(@Nonnull final AniListObject o){
-		return Integer.compare(this.getId(), o.getId());
+	@Nonnull
+	public MediaType getType(){
+		return this.type;
 	}
 	
 	@Nullable
@@ -130,12 +134,8 @@ public abstract class Media implements AniListObject{
 	}
 	
 	@Override
-	public int hashCode(){
-		return this.getId();
-	}
-	
 	@Nonnull
-	public MediaType getType(){
-		return this.type;
+	public URL getUrl(){
+		return this.url;
 	}
 }

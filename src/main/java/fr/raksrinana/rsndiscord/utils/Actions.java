@@ -224,6 +224,16 @@ public class Actions{
 	/**
 	 * Remove a role from a user.
 	 *
+	 * @param user The user to remove the role from.
+	 * @param role The role to remove.
+	 */
+	public static void removeRole(final User user, final Role role){
+		Optional.ofNullable(role.getGuild().getMember(user)).ifPresentOrElse(member -> removeRole(member, role), () -> Log.getLogger(role.getGuild()).info("Couldn't find {} in guild {}", user, role.getGuild()));
+	}
+	
+	/**
+	 * Remove a role from a user.
+	 *
 	 * @param member The user to remove the role from.
 	 * @param role   The role to remove.
 	 */
@@ -237,16 +247,6 @@ public class Actions{
 				Log.getLogger(member.getGuild()).warn("User/Role not found", e);
 			}
 		}
-	}
-	
-	/**
-	 * Remove a role from a user.
-	 *
-	 * @param user The user to remove the role from.
-	 * @param role The role to remove.
-	 */
-	public static void removeRole(final User user, final Role role){
-		Optional.ofNullable(role.getGuild().getMember(user)).ifPresentOrElse(member -> removeRole(member, role), () -> Log.getLogger(role.getGuild()).info("Couldn't find {} in guild {}", user, role.getGuild()));
 	}
 	
 	/**

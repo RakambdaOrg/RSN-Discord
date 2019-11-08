@@ -67,6 +67,11 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 	}
 	
 	@Override
+	public long getDelay(){
+		return 0;
+	}
+	
+	@Override
 	public long getPeriod(){
 		return 2;
 	}
@@ -75,10 +80,5 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.HOURS;
-	}
-	
-	@Override
-	public long getDelay(){
-		return 0;
 	}
 }

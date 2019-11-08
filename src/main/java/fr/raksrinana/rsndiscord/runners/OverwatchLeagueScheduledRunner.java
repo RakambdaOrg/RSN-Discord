@@ -44,6 +44,11 @@ public class OverwatchLeagueScheduledRunner implements ScheduledRunner{
 	}
 	
 	@Override
+	public long getDelay(){
+		return 3;
+	}
+	
+	@Override
 	public long getPeriod(){
 		return 10;
 	}
@@ -52,10 +57,5 @@ public class OverwatchLeagueScheduledRunner implements ScheduledRunner{
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.MINUTES;
-	}
-	
-	@Override
-	public long getDelay(){
-		return 3;
 	}
 }

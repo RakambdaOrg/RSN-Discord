@@ -27,15 +27,20 @@ public class MediaListPagedQuery implements PagedQuery<MediaList>{
 	
 	@Nonnull
 	@Override
+	public String getQuery(){
+		return QUERY_MEDIA_LIST;
+	}
+	
+	@Nonnull
+	@Override
 	public JSONObject getParameters(final int page){
 		this.variables.put("page", page);
 		return this.variables;
 	}
 	
-	@Nullable
 	@Override
-	public LocalDateTime getBaseDate(){
-		return null;
+	public int getNextPage(){
+		return ++this.nextPage;
 	}
 	
 	@Nonnull
@@ -45,18 +50,13 @@ public class MediaListPagedQuery implements PagedQuery<MediaList>{
 	}
 	
 	@Nonnull
-	@Override
-	public String getQuery(){
-		return QUERY_MEDIA_LIST;
-	}
-	
-	@Override
-	public int getNextPage(){
-		return ++this.nextPage;
-	}
-	
-	@Nonnull
 	public MediaList buildChange(@Nonnull final JSONObject change) throws Exception{
 		return new ObjectMapper().readerFor(MediaList.class).readValue(change.toString());
+	}
+	
+	@Nullable
+	@Override
+	public LocalDateTime getBaseDate(){
+		return null;
 	}
 }

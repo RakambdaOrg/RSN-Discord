@@ -44,6 +44,8 @@ public interface PagedQuery<T>{
 	@Nonnull
 	JSONObject getParameters(int page);
 	
+	int getNextPage();
+	
 	@Nonnull
 	default List<T> parseResult(@Nonnull final JSONObject json){
 		final var changes = new ArrayList<T>();
@@ -78,8 +80,6 @@ public interface PagedQuery<T>{
 	
 	@Nullable
 	T buildChange(@Nonnull final JSONObject change) throws Exception;
-	
-	int getNextPage();
 	
 	@Nullable
 	LocalDateTime getBaseDate();

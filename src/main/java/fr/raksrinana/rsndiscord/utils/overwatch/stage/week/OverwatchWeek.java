@@ -62,12 +62,12 @@ public class OverwatchWeek implements Comparable<OverwatchWeek>{
 		return this.id;
 	}
 	
-	public String getName(){
-		return this.name;
-	}
-	
 	public Optional<OverwatchMatch> getCurrentMatch(){
 		return this.getMatches().stream().filter(w -> !w.hasEnded()).filter(OverwatchMatch::hasStarted).sorted().findFirst();
+	}
+	
+	public String getName(){
+		return this.name;
 	}
 	
 	public Optional<OverwatchMatch> getNextMatch(){

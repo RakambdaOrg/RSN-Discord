@@ -21,18 +21,6 @@ public class ChangeDelayConfigurationCommand extends ValueConfigurationCommand<L
 		return Optional.of(NewSettings.getConfiguration(guild).getNicknameConfiguration().getChangeDelay());
 	}
 	
-	@Nonnull
-	@Override
-	public String getName(){
-		return "Nickname change delay";
-	}
-	
-	@Nonnull
-	@Override
-	public List<String> getCommandStrings(){
-		return List.of("changeDelay");
-	}
-	
 	@Override
 	protected String getValueName(){
 		return "Change delay";
@@ -58,5 +46,17 @@ public class ChangeDelayConfigurationCommand extends ValueConfigurationCommand<L
 	
 	@Override
 	protected void removeConfig(@Nonnull final Guild guild){
+	}
+	
+	@Nonnull
+	@Override
+	public String getName(){
+		return "Nickname change delay";
+	}
+	
+	@Nonnull
+	@Override
+	public List<String> getCommandStrings(){
+		return List.of("changeDelay");
 	}
 }

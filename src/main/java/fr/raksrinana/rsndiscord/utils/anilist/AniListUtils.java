@@ -31,7 +31,7 @@ public class AniListUtils{
 	private static final int HTTP_OK = 200;
 	private static final int HTTP_ERROR = 503;
 	public static URL FALLBACK_URL;
-
+	
 	public static void generateToken(@Nonnull final Member member, @Nonnull final String token) throws Exception{
 		Log.getLogger(member.getGuild()).debug("Getting access token for {}", member);
 		final var accessToken = getPreviousAccessToken(member);
@@ -60,6 +60,18 @@ public class AniListUtils{
 		NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().addAccessToken(new AnilistAccessTokenConfiguration(member.getUser().getIdLong(), LocalDateTime.now().plusSeconds(json.getInt("expires_in")), json.getString("access_token")));
 	}
 	
+	@Nonnull
+	private static Optional<AnilistAccessTokenConfiguration> getPreviousAccessToken(@Nonnull final Member member){
+		Log.getLogger(member.getGuild()).debug("Getting previous access token for {}", member);
+		final var accessToken = NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getAccessToken(member.getUser().getIdLong());
+		if(accessToken.isPresent()){
+			Log.getLogger(member.getGuild()).debug("Found previous access token for {}", member);
+			return accessToken;
+		}
+		Log.getLogger(member.getGuild()).debug("No access token found for {}", member);
+		return Optional.empty();
+	}
+	
 	public static Optional<Integer> getUserId(@Nonnull final Member member){
 		return NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getUserId(member.getUser().getIdLong()).map(Optional::of).orElseGet(() -> {
 			try{
@@ -73,18 +85,6 @@ public class AniListUtils{
 			}
 			return Optional.empty();
 		});
-	}
-	
-	@Nonnull
-	private static Optional<AnilistAccessTokenConfiguration> getPreviousAccessToken(@Nonnull final Member member){
-		Log.getLogger(member.getGuild()).debug("Getting previous access token for {}", member);
-		final var accessToken = NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getAccessToken(member.getUser().getIdLong());
-		if(accessToken.isPresent()){
-			Log.getLogger(member.getGuild()).debug("Found previous access token for {}", member);
-			return accessToken;
-		}
-		Log.getLogger(member.getGuild()).debug("No access token found for {}", member);
-		return Optional.empty();
 	}
 	
 	@Nonnull
@@ -132,6 +132,11 @@ public class AniListUtils{
 		return LocalDateTime.of(2019, 7, 7, 0, 0);
 	}
 	
+	@Nonnull
+	public static String getCodeLink(){
+		return CODE_LINK;
+	}
+	
 	static{
 		try{
 			FALLBACK_URL = new URL("https://anilist.co");
@@ -139,10 +144,5 @@ public class AniListUtils{
 		catch(final MalformedURLException e){
 			Log.getLogger(null).error("Failed to create default URL", e);
 		}
-	}
-	
-	@Nonnull
-	public static String getCodeLink(){
-		return CODE_LINK;
 	}
 }

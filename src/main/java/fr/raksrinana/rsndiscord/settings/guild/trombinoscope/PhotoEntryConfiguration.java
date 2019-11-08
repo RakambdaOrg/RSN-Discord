@@ -30,10 +30,6 @@ public class PhotoEntryConfiguration{
 		return new HashCodeBuilder(17, 37).append(this.user).append(this.getPhoto()).toHashCode();
 	}
 	
-	public long getUserId(){
-		return this.user.getUserId();
-	}
-	
 	@Nonnull
 	public String getPhoto(){
 		return this.photo;
@@ -49,5 +45,9 @@ public class PhotoEntryConfiguration{
 		}
 		final var that = (PhotoEntryConfiguration) o;
 		return new EqualsBuilder().append(this.user, that.user).append(this.getPhoto(), that.getPhoto()).isEquals();
+	}
+	
+	public long getUserId(){
+		return this.user.getUserId();
 	}
 }
