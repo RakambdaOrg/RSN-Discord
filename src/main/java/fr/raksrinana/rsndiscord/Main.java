@@ -118,7 +118,14 @@ public class Main{
 	}
 	
 	private static void restartTwitchIRCConnections(){
-		getJDA().getGuilds().forEach(guild -> NewSettings.getConfiguration(guild).getTwitchAutoConnectUsers().forEach(user -> TwitchIRC.connect(guild, user)));
+		getJDA().getGuilds().forEach(guild -> NewSettings.getConfiguration(guild).getTwitchAutoConnectUsers().forEach(user -> {
+			try{
+				TwitchIRC.connect(guild, user);
+			}
+			catch(IOException e){
+				Log.getLogger(guild).error("Failed to automatically connect to twitch user {}", user, e);
+			}
+		}));
 	}
 	
 	private static void announceStart(){
