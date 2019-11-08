@@ -28,7 +28,7 @@ public class AniListActivityScheduledRunner implements AniListRunner<ListActivit
 	private final JDA jda;
 	
 	public AniListActivityScheduledRunner(@Nonnull final JDA jda){
-		Log.getLogger(null).info("Creating AniList list change runner");
+		Log.getLogger(null).info("Creating AniList {} runner", this.getRunnerName());
 		this.jda = jda;
 	}
 	
