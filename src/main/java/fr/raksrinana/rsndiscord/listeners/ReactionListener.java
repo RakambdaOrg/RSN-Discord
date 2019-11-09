@@ -8,10 +8,12 @@ import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import javax.annotation.Nonnull;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -77,6 +79,9 @@ public class ReactionListener extends ListenerAdapter{
 					NewSettings.getConfiguration(event.getGuild()).getTodos().stream().filter(todo -> Objects.equals(todo.getMessage().getChannel().getChannelId(), event.getChannel().getIdLong())).filter(todo -> Objects.equals(todo.getMessage().getMessageId(), event.getMessageIdLong())).findFirst().ifPresent(todo -> {
 						if(emote == BasicEmotes.CHECK_OK){
 							todo.getMessage().getMessage().ifPresent(message -> {
+								if(NewSettings.getConfiguration(event.getGuild()).getTodos().stream().map(t -> t.getMessage().getChannel().getChannelId()).anyMatch(cId -> Objects.equals(cId, event.getChannel().getIdLong()))){
+									Optional.ofNullable(event.getJDA().getUserById(Utilities.RAKSRINANA_ACCOUNT)).map(User::openPrivateChannel).ifPresent(user -> user.queue(privateChannel -> message.getEmbeds().forEach(embed -> Actions.sendPrivateMessage(event.getGuild(), privateChannel, event.getMember().getUser().getAsMention() + " completed", embed))));
+								}
 								if(todo.isDeleteOnDone()){
 									message.delete().queue();
 								}

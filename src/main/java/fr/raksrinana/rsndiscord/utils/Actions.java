@@ -44,9 +44,8 @@ public class Actions{
 	/**
 	 * Reply to a message.
 	 *
-	 * @param event  The message event.
-	 * @param format The message format.
-	 * @param args   The message parameters.
+	 * @param event   The message event.
+	 * @param message The message.
 	 */
 	public static void reply(final GenericGuildMessageEvent event, final String message){
 		sendMessage(event.getChannel(), message);
@@ -151,7 +150,7 @@ public class Actions{
 	public static void sendMessage(final TextChannel channel, final String text, final MessageEmbed embed, Consumer<Message> onSend){
 		if(channel.canTalk()){
 			channel.sendMessage(text).embed(embed).queue(onSend);
-			Log.getLogger(channel.getGuild()).info("Sent message to {} : {}", channel.getName(), text);
+			Log.getLogger(channel.getGuild()).info("Sent message to {} : {} {}", channel.getName(), text, Utilities.getEmbedForLog(embed));
 		}
 		else{
 			Log.getLogger(channel.getGuild()).error("Access denied to text channel: {}", channel.getAsMention());
@@ -418,6 +417,24 @@ public class Actions{
 		}
 		else{
 			Log.getLogger(guild).warn("Cannot send private message to null channel : {}", Utilities.getEmbedForLog(embed));
+		}
+	}
+	
+	/**
+	 * Send a message to a channel.
+	 *
+	 * @param guild   The guild the event is from.
+	 * @param channel The channel to send to.
+	 * @param message The message's text.
+	 * @param embed   The message to send.
+	 */
+	public static void sendPrivateMessage(final Guild guild, final PrivateChannel channel, final String message, final MessageEmbed embed){
+		if(Objects.nonNull(channel)){
+			channel.sendMessage(message).embed(embed).queue();
+			Log.getLogger(guild).info("Sent private message to {} : {} {}", channel.getUser(), message, Utilities.getEmbedForLog(embed));
+		}
+		else{
+			Log.getLogger(guild).warn("Cannot send private message to null channel : {} {}", message, Utilities.getEmbedForLog(embed));
 		}
 	}
 	
