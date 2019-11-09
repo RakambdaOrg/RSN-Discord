@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.commands.config.guild;
 
 import fr.raksrinana.rsndiscord.commands.config.helpers.BooleanConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import net.dv8tion.jda.api.entities.Guild;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,17 +17,17 @@ public class IrcForwardConfigurationCommand extends BooleanConfigurationCommand{
 	@Nonnull
 	@Override
 	protected Optional<Boolean> getConfig(final Guild guild){
-		return Optional.of(NewSettings.getConfiguration(guild).getIrcForward());
+		return Optional.of(Settings.getConfiguration(guild).getIrcForward());
 	}
 	
 	@Override
 	protected void setConfig(@Nonnull final Guild guild, @Nonnull final Boolean value){
-		NewSettings.getConfiguration(guild).setIrcForward(value);
+		Settings.getConfiguration(guild).setIrcForward(value);
 	}
 	
 	@Override
 	protected void removeConfig(@Nonnull final Guild guild){
-		NewSettings.getConfiguration(guild).setIrcForward(false);
+		Settings.getConfiguration(guild).setIrcForward(false);
 	}
 	
 	@Nonnull

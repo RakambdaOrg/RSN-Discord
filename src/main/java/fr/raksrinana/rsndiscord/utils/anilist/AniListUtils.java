@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.utils.anilist;
 
 import fr.mrcraftcod.utils.http.requestssenders.post.JSONPostRequestSender;
 import fr.raksrinana.rsndiscord.listeners.CommandsMessageListener;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.anilist.AnilistAccessTokenConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
@@ -56,14 +56,14 @@ public class AniListUtils{
 		if(json.has("error") || !json.has("access_token") || !json.has("refresh_token")){
 			throw new Exception("Getting token failed with error: " + json.getString("error"));
 		}
-		NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().setRefreshToken(member.getUser().getIdLong(), json.getString("refresh_token"));
-		NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().addAccessToken(new AnilistAccessTokenConfiguration(member.getUser().getIdLong(), LocalDateTime.now().plusSeconds(json.getInt("expires_in")), json.getString("access_token")));
+		Settings.getConfiguration(member.getGuild()).getAniListConfiguration().setRefreshToken(member.getUser().getIdLong(), json.getString("refresh_token"));
+		Settings.getConfiguration(member.getGuild()).getAniListConfiguration().addAccessToken(new AnilistAccessTokenConfiguration(member.getUser().getIdLong(), LocalDateTime.now().plusSeconds(json.getInt("expires_in")), json.getString("access_token")));
 	}
 	
 	@Nonnull
 	private static Optional<AnilistAccessTokenConfiguration> getPreviousAccessToken(@Nonnull final Member member){
 		Log.getLogger(member.getGuild()).debug("Getting previous access token for {}", member);
-		final var accessToken = NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getAccessToken(member.getUser().getIdLong());
+		final var accessToken = Settings.getConfiguration(member.getGuild()).getAniListConfiguration().getAccessToken(member.getUser().getIdLong());
 		if(accessToken.isPresent()){
 			Log.getLogger(member.getGuild()).debug("Found previous access token for {}", member);
 			return accessToken;
@@ -73,11 +73,11 @@ public class AniListUtils{
 	}
 	
 	public static Optional<Integer> getUserId(@Nonnull final Member member){
-		return NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getUserId(member.getUser().getIdLong()).map(Optional::of).orElseGet(() -> {
+		return Settings.getConfiguration(member.getGuild()).getAniListConfiguration().getUserId(member.getUser().getIdLong()).map(Optional::of).orElseGet(() -> {
 			try{
 				final var userInfos = AniListUtils.getQuery(member, USER_INFO_QUERY, new JSONObject());
 				final var userId = userInfos.getJSONObject("data").getJSONObject("Viewer").getInt("id");
-				NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().setUserId(member.getUser().getIdLong(), userId);
+				Settings.getConfiguration(member.getGuild()).getAniListConfiguration().setUserId(member.getUser().getIdLong(), userId);
 				return Optional.of(userId);
 			}
 			catch(final Exception e){
@@ -91,8 +91,8 @@ public class AniListUtils{
 	public static JSONObject getQuery(@Nonnull final Member member, @Nonnull final String query, @Nonnull final JSONObject variables) throws Exception{
 		Log.getLogger(member.getGuild()).debug("Sending query to AniList for user {}", member.getUser());
 		final var token = AniListUtils.getPreviousAccessToken(member).orElseThrow(() -> {
-			NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().removeUser(member.getUser());
-			Actions.sendMessage(member.getGuild(), member.getUser().openPrivateChannel().complete(), "Your token for AniList on " + member.getGuild().getName() + " expired. Please use `" + NewSettings.getConfiguration(member.getGuild()).getPrefix().orElse(CommandsMessageListener.defaultPrefix) + "al r` to register again if you want to continue receiving information");
+			Settings.getConfiguration(member.getGuild()).getAniListConfiguration().removeUser(member.getUser());
+			Actions.sendMessage(member.getGuild(), member.getUser().openPrivateChannel().complete(), "Your token for AniList on " + member.getGuild().getName() + " expired. Please use `" + Settings.getConfiguration(member.getGuild()).getPrefix().orElse(CommandsMessageListener.defaultPrefix) + "al r` to register again if you want to continue receiving information");
 			return new IllegalStateException("No valid token found, please register again");
 		});
 		return getQuery(token, query, variables);

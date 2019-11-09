@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.commands.config.guild.trombinoscope;
 
 import fr.raksrinana.rsndiscord.commands.config.helpers.ChannelConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import net.dv8tion.jda.api.entities.Guild;
 import javax.annotation.Nonnull;
@@ -18,17 +18,17 @@ public class TrombinoscopeChannelConfigurationCommand extends ChannelConfigurati
 	@Nonnull
 	@Override
 	protected Optional<ChannelConfiguration> getConfig(@Nonnull final Guild guild){
-		return NewSettings.getConfiguration(guild).getTrombinoscopeConfiguration().getPhotoChannel();
+		return Settings.getConfiguration(guild).getTrombinoscopeConfiguration().getPhotoChannel();
 	}
 	
 	@Override
 	protected void setConfig(@Nonnull final Guild guild, @Nonnull final ChannelConfiguration value){
-		NewSettings.getConfiguration(guild).getTrombinoscopeConfiguration().setPhotoChannel(value);
+		Settings.getConfiguration(guild).getTrombinoscopeConfiguration().setPhotoChannel(value);
 	}
 	
 	@Override
 	protected void removeConfig(@Nonnull final Guild guild){
-		NewSettings.getConfiguration(guild).getTrombinoscopeConfiguration().setPhotoChannel(null);
+		Settings.getConfiguration(guild).getTrombinoscopeConfiguration().setPhotoChannel(null);
 	}
 	
 	@Nonnull

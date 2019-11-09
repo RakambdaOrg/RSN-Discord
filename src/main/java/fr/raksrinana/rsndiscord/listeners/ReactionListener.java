@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.listeners;
 
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
@@ -33,12 +33,12 @@ public class ReactionListener extends ListenerAdapter{
 		try{
 			if(!event.getUser().isBot()){
 				final var emote = BasicEmotes.getEmote(event.getReactionEmote().getName());
-				if(NewSettings.getConfiguration(event.getGuild()).getQuestionsConfiguration().getInputChannel().map(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong())).orElse(false)){
+				if(Settings.getConfiguration(event.getGuild()).getQuestionsConfiguration().getInputChannel().map(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong())).orElse(false)){
 					if(emote == BasicEmotes.CHECK_OK){
 						event.getChannel().getHistoryAround(event.getMessageIdLong(), 1).queue(hist -> {
 							final var message = hist.getMessageById(event.getReaction().getMessageIdLong());
 							if(Objects.nonNull(message)){
-								NewSettings.getConfiguration(event.getGuild()).getQuestionsConfiguration().getOutputChannel().flatMap(ChannelConfiguration::getChannel).ifPresentOrElse(channel -> {
+								Settings.getConfiguration(event.getGuild()).getQuestionsConfiguration().getOutputChannel().flatMap(ChannelConfiguration::getChannel).ifPresentOrElse(channel -> {
 									Actions.sendMessage(channel, mess -> mess.addReaction(BasicEmotes.CHECK_OK.getValue()).queue(), message.getEmbeds().stream().map(Utilities::buildEmbed).map(mess -> mess.addField("Approved by", event.getUser().getAsMention(), false).setTimestamp(message.getTimeCreated())).map(EmbedBuilder::build).collect(Collectors.toList()));
 									Actions.deleteMessage(message);
 									try{
@@ -70,16 +70,16 @@ public class ReactionListener extends ListenerAdapter{
 						});
 					}
 				}
-				else if(NewSettings.getConfiguration(event.getGuild()).getQuestionsConfiguration().getOutputChannel().map(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong())).orElse(false)){
+				else if(Settings.getConfiguration(event.getGuild()).getQuestionsConfiguration().getOutputChannel().map(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong())).orElse(false)){
 					if(emote == BasicEmotes.CHECK_OK){
 						event.getChannel().getHistoryAround(event.getMessageIdLong(), 1).queue(hist -> Actions.deleteMessage(hist.getMessageById(event.getMessageIdLong())));
 					}
 				}
 				else{
-					NewSettings.getConfiguration(event.getGuild()).getTodos().stream().filter(todo -> Objects.equals(todo.getMessage().getChannel().getChannelId(), event.getChannel().getIdLong())).filter(todo -> Objects.equals(todo.getMessage().getMessageId(), event.getMessageIdLong())).findFirst().ifPresent(todo -> {
+					Settings.getConfiguration(event.getGuild()).getTodos().stream().filter(todo -> Objects.equals(todo.getMessage().getChannel().getChannelId(), event.getChannel().getIdLong())).filter(todo -> Objects.equals(todo.getMessage().getMessageId(), event.getMessageIdLong())).findFirst().ifPresent(todo -> {
 						if(emote == BasicEmotes.CHECK_OK){
 							todo.getMessage().getMessage().ifPresent(message -> {
-								if(NewSettings.getConfiguration(event.getGuild()).getTodos().stream().map(t -> t.getMessage().getChannel().getChannelId()).anyMatch(cId -> Objects.equals(cId, event.getChannel().getIdLong()))){
+								if(Settings.getConfiguration(event.getGuild()).getTodos().stream().map(t -> t.getMessage().getChannel().getChannelId()).anyMatch(cId -> Objects.equals(cId, event.getChannel().getIdLong()))){
 									Optional.ofNullable(event.getJDA().getUserById(Utilities.RAKSRINANA_ACCOUNT)).map(User::openPrivateChannel).ifPresent(user -> user.queue(privateChannel -> message.getEmbeds().forEach(embed -> Actions.sendPrivateMessage(event.getGuild(), privateChannel, event.getMember().getUser().getAsMention() + " completed", embed))));
 								}
 								if(todo.isDeleteOnDone()){
@@ -92,7 +92,7 @@ public class ReactionListener extends ListenerAdapter{
 										message.unpin().queue();
 									}
 								}
-								NewSettings.getConfiguration(event.getGuild()).removeTodo(todo);
+								Settings.getConfiguration(event.getGuild()).removeTodo(todo);
 							});
 						}
 					});

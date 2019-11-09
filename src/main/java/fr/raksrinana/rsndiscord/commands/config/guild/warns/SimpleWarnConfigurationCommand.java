@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.commands.config.guild.warns;
 
 import fr.raksrinana.rsndiscord.commands.config.helpers.WarnConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.warns.WarnConfiguration;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
@@ -18,17 +18,17 @@ public class SimpleWarnConfigurationCommand extends WarnConfigurationCommand{
 	@Nonnull
 	@Override
 	protected Optional<WarnConfiguration> getConfig(final Guild guild){
-		return NewSettings.getConfiguration(guild).getWarnsConfiguration().getSimpleWarn();
+		return Settings.getConfiguration(guild).getWarnsConfiguration().getSimpleWarn();
 	}
 	
 	@Override
 	protected void removeConfig(@Nonnull final Guild guild){
-		NewSettings.getConfiguration(guild).getWarnsConfiguration().setSimpleWarn(null);
+		Settings.getConfiguration(guild).getWarnsConfiguration().setSimpleWarn(null);
 	}
 	
 	@Override
 	protected void createConfig(@Nonnull final Guild guild, @Nonnull final Role role, final long delay){
-		NewSettings.getConfiguration(guild).getWarnsConfiguration().setSimpleWarn(new WarnConfiguration(role, delay));
+		Settings.getConfiguration(guild).getWarnsConfiguration().setSimpleWarn(new WarnConfiguration(role, delay));
 	}
 	
 	@Nonnull

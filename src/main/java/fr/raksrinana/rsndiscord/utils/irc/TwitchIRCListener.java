@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.utils.irc;
 
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.irc.messages.*;
@@ -28,7 +28,7 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 		this.user = user;
 		this.ircChannel = channel;
 		this.lastMessage = System.currentTimeMillis();
-		this.channel = NewSettings.getConfiguration(guild).getTwitchChannel().orElseThrow().getChannel().orElseThrow();
+		this.channel = Settings.getConfiguration(guild).getTwitchChannel().orElseThrow().getChannel().orElseThrow();
 	}
 	
 	@Override

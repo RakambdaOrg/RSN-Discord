@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.commands.config.guild.participation;
 
 import fr.raksrinana.rsndiscord.commands.config.helpers.ChannelConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import net.dv8tion.jda.api.entities.Guild;
 import javax.annotation.Nonnull;
@@ -18,17 +18,17 @@ public class ReportChannelConfigurationCommand extends ChannelConfigurationComma
 	@Nonnull
 	@Override
 	protected Optional<ChannelConfiguration> getConfig(@Nonnull final Guild guild){
-		return NewSettings.getConfiguration(guild).getParticipationConfiguration().getReportChannel();
+		return Settings.getConfiguration(guild).getParticipationConfiguration().getReportChannel();
 	}
 	
 	@Override
 	protected void setConfig(@Nonnull final Guild guild, @Nonnull final ChannelConfiguration value){
-		NewSettings.getConfiguration(guild).getParticipationConfiguration().setReportChannel(value);
+		Settings.getConfiguration(guild).getParticipationConfiguration().setReportChannel(value);
 	}
 	
 	@Override
 	protected void removeConfig(@Nonnull final Guild guild){
-		NewSettings.getConfiguration(guild).getParticipationConfiguration().setReportChannel(null);
+		Settings.getConfiguration(guild).getParticipationConfiguration().setReportChannel(null);
 	}
 	
 	@Nonnull

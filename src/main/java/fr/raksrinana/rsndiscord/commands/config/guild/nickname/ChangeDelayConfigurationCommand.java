@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.commands.config.guild.nickname;
 
 import fr.raksrinana.rsndiscord.commands.config.helpers.ValueConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
@@ -18,7 +18,7 @@ public class ChangeDelayConfigurationCommand extends ValueConfigurationCommand<L
 	@Nonnull
 	@Override
 	protected Optional<Long> getConfig(final Guild guild){
-		return Optional.of(NewSettings.getConfiguration(guild).getNicknameConfiguration().getChangeDelay());
+		return Optional.of(Settings.getConfiguration(guild).getNicknameConfiguration().getChangeDelay());
 	}
 	
 	@Override
@@ -28,7 +28,7 @@ public class ChangeDelayConfigurationCommand extends ValueConfigurationCommand<L
 	
 	@Override
 	protected void setConfig(@Nonnull final Guild guild, @Nonnull final Long value){
-		NewSettings.getConfiguration(guild).getNicknameConfiguration().setChangeDelay(value);
+		Settings.getConfiguration(guild).getNicknameConfiguration().setChangeDelay(value);
 	}
 	
 	@Override

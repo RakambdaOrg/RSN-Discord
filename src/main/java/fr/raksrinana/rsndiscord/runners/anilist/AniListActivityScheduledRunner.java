@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.runners.anilist;
 
 import fr.raksrinana.rsndiscord.runners.ScheduledRunner;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
@@ -39,7 +39,7 @@ public class AniListActivityScheduledRunner implements AniListRunner<ListActivit
 	
 	@Override
 	public List<TextChannel> getChannels(){
-		return this.getJDA().getGuilds().stream().map(g -> NewSettings.getConfiguration(g).getAniListConfiguration().getMediaChangeChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
+		return this.getJDA().getGuilds().stream().map(g -> Settings.getConfiguration(g).getAniListConfiguration().getMediaChangeChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 	
 	@Nonnull
@@ -51,7 +51,7 @@ public class AniListActivityScheduledRunner implements AniListRunner<ListActivit
 	@Nonnull
 	@Override
 	public ActivityPagedQuery initQuery(@Nonnull final Member member){
-		return new ActivityPagedQuery(AniListUtils.getUserId(member).orElseThrow(), NewSettings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(this.getFetcherID()).stream().filter(a -> Objects.equals(a.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
+		return new ActivityPagedQuery(AniListUtils.getUserId(member).orElseThrow(), Settings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(this.getFetcherID()).stream().filter(a -> Objects.equals(a.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
 	}
 	
 	@Override

@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Thomas Couchoud
  * @since 2019-06-23
  */
-public class NewSettings{
+public class Settings{
 	private static final ObjectReader objectReader;
 	private static final ObjectWriter objectWriter;
 	private static final Map<Long, GuildConfiguration> configurations = new ConcurrentHashMap<>();
@@ -56,7 +56,7 @@ public class NewSettings{
 	}
 	
 	public static void save(){
-		configurations.forEach(NewSettings::saveConfiguration);
+		configurations.forEach(Settings::saveConfiguration);
 	}
 	
 	private static void saveConfiguration(final long guildId, @Nonnull final GuildConfiguration value){

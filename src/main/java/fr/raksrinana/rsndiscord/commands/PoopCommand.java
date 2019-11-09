@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.commands;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RemoveRoleConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
@@ -36,12 +36,12 @@ public class PoopCommand extends BasicCommand{
 		super.execute(event, args);
 		if(!event.getMessage().getMentionedRoles().isEmpty()){
 			final var removeDate = LocalDateTime.now().plusMinutes(10);
-			final var poopRole = NewSettings.getConfiguration(event.getGuild()).getPoopRole().flatMap(RoleConfiguration::getRole);
+			final var poopRole = Settings.getConfiguration(event.getGuild()).getPoopRole().flatMap(RoleConfiguration::getRole);
 			event.getMessage().getMentionedRoles().stream().findFirst().ifPresent(r -> event.getGuild().getMembersWithRoles(r).forEach(m -> {
 				Actions.replyFormatted(event, "%s you poop", m.getAsMention());
 				poopRole.ifPresent(pr -> {
 					Actions.giveRole(event.getGuild(), m.getUser(), pr);
-					NewSettings.getConfiguration(event.getGuild()).addRemoveRole(new RemoveRoleConfiguration(event.getAuthor(), pr, removeDate));
+					Settings.getConfiguration(event.getGuild()).addRemoveRole(new RemoveRoleConfiguration(event.getAuthor(), pr, removeDate));
 				});
 			}));
 		}

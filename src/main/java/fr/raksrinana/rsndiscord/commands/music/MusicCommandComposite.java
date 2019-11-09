@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.commands.music;
 
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -40,7 +40,7 @@ public class MusicCommandComposite extends CommandComposite{
 	
 	@Override
 	public boolean isAllowed(@Nullable final Member member){
-		return Objects.nonNull(member) && (Utilities.isTeam(member) || NewSettings.getConfiguration(member.getGuild()).getDjRole().map(RoleConfiguration::getRole).filter(Optional::isPresent).map(Optional::get).map(role -> Utilities.hasRole(member, role)).orElse(false));
+		return Objects.nonNull(member) && (Utilities.isTeam(member) || Settings.getConfiguration(member.getGuild()).getDjRole().map(RoleConfiguration::getRole).filter(Optional::isPresent).map(Optional::get).map(role -> Utilities.hasRole(member, role)).orElse(false));
 	}
 	
 	@Nonnull

@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.commands.photo;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
@@ -60,15 +60,15 @@ public class PhotoGetCommand extends BasicCommand{
 			user = event.getAuthor();
 		}
 		final var member = event.getGuild().getMember(user);
-		if(Objects.isNull(member) || NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).map(r -> Utilities.hasRole(member, r)).map(b -> !b).orElse(true)){
+		if(Objects.isNull(member) || Settings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).map(r -> Utilities.hasRole(member, r)).map(b -> !b).orElse(true)){
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.RED);
 			builder.setTitle("The user isn't part of the trombinoscope");
 			Actions.reply(event, builder.build());
 		}
-		else if(NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotoChannel().map(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong())).orElse(false)){
-			final var paths = NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotos(user);
+		else if(Settings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotoChannel().map(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong())).orElse(false)){
+			final var paths = Settings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotos(user);
 			if(!paths.isEmpty()){
 				var randomGen = true;
 				var rnd = ThreadLocalRandom.current().nextInt(paths.size());

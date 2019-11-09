@@ -12,7 +12,7 @@ import fr.raksrinana.rsndiscord.runners.SaveConfigScheduledRunner;
 import fr.raksrinana.rsndiscord.runners.anilist.AniListMediaListScheduledRunner;
 import fr.raksrinana.rsndiscord.runners.anilist.AniListNotificationScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.irc.TwitchIRC;
@@ -94,7 +94,7 @@ public class Main{
 			Log.setJDA(jda);
 			jda.awaitReady();
 			jda.getPresence().setActivity(Activity.playing("g?help for the help"));
-			Log.getLogger(null).info("Loaded {} guild settings", jda.getGuilds().stream().map(NewSettings::getConfiguration).count());
+			Log.getLogger(null).info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::getConfiguration).count());
 			Log.getLogger(null).info("Creating runners");
 			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda), new OverwatchLeagueScheduledRunner(jda));
 			for(final var scheduledRunner : scheduledRunners){
@@ -110,7 +110,7 @@ public class Main{
 		}
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			Log.getLogger(null).info("Shutdown hook triggered");
-			NewSettings.close();
+			Settings.close();
 		}));
 		Log.getLogger(null).info("Shutdown hook registered");
 		consoleHandler = new ConsoleHandler(jda);
@@ -118,7 +118,7 @@ public class Main{
 	}
 	
 	private static void announceStart(){
-		Main.jda.getGuilds().stream().map(NewSettings::getConfiguration).map(GuildConfiguration::getAnnounceStartChannel).flatMap(Optional::stream).map(ChannelConfiguration::getChannel).flatMap(Optional::stream).forEach(c -> Actions.sendMessage(c, "Bot started :)"));
+		Main.jda.getGuilds().stream().map(Settings::getConfiguration).map(GuildConfiguration::getAnnounceStartChannel).flatMap(Optional::stream).map(ChannelConfiguration::getChannel).flatMap(Optional::stream).forEach(c -> Actions.sendMessage(c, "Bot started :)"));
 	}
 	
 	/**
@@ -132,7 +132,7 @@ public class Main{
 	}
 	
 	private static void restartTwitchIRCConnections(){
-		getJDA().getGuilds().forEach(guild -> NewSettings.getConfiguration(guild).getTwitchAutoConnectUsers().forEach(user -> {
+		getJDA().getGuilds().forEach(guild -> Settings.getConfiguration(guild).getTwitchAutoConnectUsers().forEach(user -> {
 			try{
 				TwitchIRC.connect(guild, user);
 			}
@@ -164,7 +164,7 @@ public class Main{
 		TwitchIRC.close();
 		executorService.shutdownNow();
 		consoleHandler.close();
-		NewSettings.close();
+		Settings.close();
 	}
 	//https://api.overwatchleague.com/schedule
 }

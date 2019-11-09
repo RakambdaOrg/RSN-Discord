@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.commands;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -40,7 +40,7 @@ public class WarnInfoCommand extends BasicCommand{
 		final var target = event.getMessage().getMentionedUsers().stream().findFirst().orElse(event.getAuthor());
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Warns info");
 		builder.addField("User", target.getAsMention(), false);
-		final var bans = NewSettings.getConfiguration(event.getGuild()).getRemoveRoles().stream().filter(t -> Objects.equals(t.getUser().getUserId(), target.getIdLong())).collect(Collectors.toList());
+		final var bans = Settings.getConfiguration(event.getGuild()).getRemoveRoles().stream().filter(t -> Objects.equals(t.getUser().getUserId(), target.getIdLong())).collect(Collectors.toList());
 		if(bans.isEmpty()){
 			builder.setColor(Color.GREEN);
 			builder.setDescription("The user have no warns");

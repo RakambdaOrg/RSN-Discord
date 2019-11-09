@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.utils;
 
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -70,7 +70,7 @@ public class Utilities{
 	 * @return True if moderator, false otherwise.
 	 */
 	public static boolean isModerator(final Member member){
-		return isAdmin(member) || NewSettings.getConfiguration(member.getGuild()).getModeratorRoles().stream().map(RoleConfiguration::getRole).filter(Optional::isPresent).map(Optional::get).anyMatch(r -> Utilities.hasRole(member, r));
+		return isAdmin(member) || Settings.getConfiguration(member.getGuild()).getModeratorRoles().stream().map(RoleConfiguration::getRole).filter(Optional::isPresent).map(Optional::get).anyMatch(r -> Utilities.hasRole(member, r));
 	}
 	
 	/**

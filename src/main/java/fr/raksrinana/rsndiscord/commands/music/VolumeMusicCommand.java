@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.commands.music;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -47,7 +47,7 @@ public class VolumeMusicCommand extends BasicCommand{
 		else{
 			try{
 				final var volume = Math.min(100, Math.max(0, Integer.parseInt(args.pop())));
-				NewSettings.getConfiguration(event.getGuild()).setMusicVolume(volume);
+				Settings.getConfiguration(event.getGuild()).setMusicVolume(volume);
 				RSNAudioManager.getFor(event.getGuild()).ifPresent(g -> g.setVolume(volume));
 				Actions.replyFormatted(event, "Volume set to %d%%", volume);
 			}

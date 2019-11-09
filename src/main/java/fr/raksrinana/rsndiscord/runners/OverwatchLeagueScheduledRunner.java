@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.runners;
 
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
@@ -32,12 +32,12 @@ public class OverwatchLeagueScheduledRunner implements ScheduledRunner{
 	@Override
 	public void run(){
 		Log.getLogger(null).info("Starting Overwatch league runner");
-		OverwatchUtils.getLastResponse().ifPresent(ow -> this.jda.getGuilds().forEach(guild -> NewSettings.getConfiguration(guild).getOverwatchLeagueConfiguration().getNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> {
-			final var notified = NewSettings.getConfiguration(guild).getOverwatchLeagueConfiguration().getNotifiedMatches();
+		OverwatchUtils.getLastResponse().ifPresent(ow -> this.jda.getGuilds().forEach(guild -> Settings.getConfiguration(guild).getOverwatchLeagueConfiguration().getNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> {
+			final var notified = Settings.getConfiguration(guild).getOverwatchLeagueConfiguration().getNotifiedMatches();
 			ow.getData().getStages().stream().flatMap(s -> s.getMatches().stream()).filter(OverwatchMatch::hasEnded).filter(m -> !notified.contains(m.getId())).sorted().forEachOrdered(m -> {
 				Log.getLogger(guild).info("Notifying match {} to {}", m, channel);
 				Actions.sendMessage(channel, m.buildEmbed(this.jda.getSelfUser()).build());
-				NewSettings.getConfiguration(guild).getOverwatchLeagueConfiguration().setNotifiedMatch(m.getId());
+				Settings.getConfiguration(guild).getOverwatchLeagueConfiguration().setNotifiedMatch(m.getId());
 			});
 		})));
 		Log.getLogger(null).info("Overwatch league runner done");

@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.commands.config.guild;
 
 import fr.raksrinana.rsndiscord.commands.config.helpers.SetConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -19,14 +19,14 @@ public class IdeaChannelsConfigurationCommand extends SetConfigurationCommand<Ch
 	@Nonnull
 	@Override
 	protected Optional<Set<ChannelConfiguration>> getConfig(@Nonnull final Guild guild){
-		return Optional.of(NewSettings.getConfiguration(guild).getIdeaChannels());
+		return Optional.of(Settings.getConfiguration(guild).getIdeaChannels());
 	}
 	
 	@Override
 	protected void createConfig(@Nonnull final Guild guild, @Nonnull final ChannelConfiguration value){
 		final var set = new HashSet<ChannelConfiguration>();
 		set.add(value);
-		NewSettings.getConfiguration(guild).setIdeaChannels(set);
+		Settings.getConfiguration(guild).setIdeaChannels(set);
 	}
 	
 	@Nonnull
@@ -40,7 +40,7 @@ public class IdeaChannelsConfigurationCommand extends SetConfigurationCommand<Ch
 	
 	@Override
 	protected void removeConfig(@Nonnull final Guild guild, @Nonnull final ChannelConfiguration value){
-		NewSettings.getConfiguration(guild).getIdeaChannels().remove(value);
+		Settings.getConfiguration(guild).getIdeaChannels().remove(value);
 	}
 	
 	@Override

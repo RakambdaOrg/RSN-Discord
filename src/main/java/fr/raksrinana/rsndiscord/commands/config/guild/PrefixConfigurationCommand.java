@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.commands.config.guild;
 
 import fr.raksrinana.rsndiscord.commands.config.helpers.ValueConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import javax.annotation.Nonnull;
@@ -19,7 +19,7 @@ public class PrefixConfigurationCommand extends ValueConfigurationCommand<String
 	@Nonnull
 	@Override
 	protected Optional<String> getConfig(@Nonnull final Guild guild){
-		return NewSettings.getConfiguration(guild).getPrefix();
+		return Settings.getConfiguration(guild).getPrefix();
 	}
 	
 	@Override
@@ -29,7 +29,7 @@ public class PrefixConfigurationCommand extends ValueConfigurationCommand<String
 	
 	@Override
 	protected void setConfig(@Nonnull final Guild guild, @Nonnull final String value){
-		NewSettings.getConfiguration(guild).setPrefix(value);
+		Settings.getConfiguration(guild).setPrefix(value);
 	}
 	
 	@Override
@@ -42,7 +42,7 @@ public class PrefixConfigurationCommand extends ValueConfigurationCommand<String
 	
 	@Override
 	protected void removeConfig(@Nonnull final Guild guild){
-		NewSettings.getConfiguration(guild).setPrefix(null);
+		Settings.getConfiguration(guild).setPrefix(null);
 	}
 	
 	@Nonnull

@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.commands.warn;
 
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.warns.WarnConfiguration;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
@@ -22,12 +22,12 @@ public class MegaWarnCommand extends WarnCommand{
 	@Nonnull
 	@Override
 	protected Optional<Role> getRole(@Nonnull final Guild guild, @Nonnull final Message message, @Nonnull final LinkedList<String> args){
-		return NewSettings.getConfiguration(guild).getWarnsConfiguration().getMegaWarn().flatMap(WarnConfiguration::getRole);
+		return Settings.getConfiguration(guild).getWarnsConfiguration().getMegaWarn().flatMap(WarnConfiguration::getRole);
 	}
 	
 	@Override
 	protected long getTime(@Nonnull final Guild guild, @Nonnull final Message message, @Nonnull final LinkedList<String> args){
-		return NewSettings.getConfiguration(guild).getWarnsConfiguration().getMegaWarn().map(WarnConfiguration::getDelay).orElse(DEFAULT_TIME);
+		return Settings.getConfiguration(guild).getWarnsConfiguration().getMegaWarn().map(WarnConfiguration::getDelay).orElse(DEFAULT_TIME);
 	}
 	
 	@Nonnull

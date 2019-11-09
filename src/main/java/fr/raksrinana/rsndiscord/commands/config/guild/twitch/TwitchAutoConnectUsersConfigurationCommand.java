@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.commands.config.guild.twitch;
 
 import fr.raksrinana.rsndiscord.commands.config.helpers.SetConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -18,14 +18,14 @@ public class TwitchAutoConnectUsersConfigurationCommand extends SetConfiguration
 	@Nonnull
 	@Override
 	protected Optional<Set<String>> getConfig(@Nonnull final Guild guild){
-		return Optional.of(NewSettings.getConfiguration(guild).getTwitchAutoConnectUsers());
+		return Optional.of(Settings.getConfiguration(guild).getTwitchAutoConnectUsers());
 	}
 	
 	@Override
 	protected void createConfig(@Nonnull final Guild guild, @Nonnull final String value){
 		final var set = new HashSet<String>();
 		set.add(value);
-		NewSettings.getConfiguration(guild).setTwitchAutoConnectUsers(set);
+		Settings.getConfiguration(guild).setTwitchAutoConnectUsers(set);
 	}
 	
 	@Nonnull
@@ -39,7 +39,7 @@ public class TwitchAutoConnectUsersConfigurationCommand extends SetConfiguration
 	
 	@Override
 	protected void removeConfig(@Nonnull final Guild guild, @Nonnull final String value){
-		NewSettings.getConfiguration(guild).getTwitchAutoConnectUsers().remove(value);
+		Settings.getConfiguration(guild).getTwitchAutoConnectUsers().remove(value);
 	}
 	
 	@Override

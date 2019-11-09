@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.runners;
 
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +21,7 @@ public class SaveConfigScheduledRunner implements ScheduledRunner{
 	
 	@Override
 	public void run(){
-		NewSettings.close();
+		Settings.close();
 	}
 	
 	@Override

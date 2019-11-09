@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.commands.config.guild.trombinoscope;
 
 import fr.raksrinana.rsndiscord.commands.config.helpers.RoleConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import net.dv8tion.jda.api.entities.Guild;
 import javax.annotation.Nonnull;
@@ -18,17 +18,17 @@ public class TrombinoscopeRoleConfigurationCommand extends RoleConfigurationComm
 	@Nonnull
 	@Override
 	protected Optional<RoleConfiguration> getConfig(@Nonnull final Guild guild){
-		return NewSettings.getConfiguration(guild).getTrombinoscopeConfiguration().getParticipantRole();
+		return Settings.getConfiguration(guild).getTrombinoscopeConfiguration().getParticipantRole();
 	}
 	
 	@Override
 	protected void setConfig(@Nonnull final Guild guild, @Nonnull final RoleConfiguration value){
-		NewSettings.getConfiguration(guild).getTrombinoscopeConfiguration().setParticipantRole(value);
+		Settings.getConfiguration(guild).getTrombinoscopeConfiguration().setParticipantRole(value);
 	}
 	
 	@Override
 	protected void removeConfig(@Nonnull final Guild guild){
-		NewSettings.getConfiguration(guild).getTrombinoscopeConfiguration().setParticipantRole(null);
+		Settings.getConfiguration(guild).getTrombinoscopeConfiguration().setParticipantRole(null);
 	}
 	
 	@Nonnull

@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.commands;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -33,7 +33,7 @@ public class ReportCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		return NewSettings.getConfiguration(event.getGuild()).getReportChannel().map(ChannelConfiguration::getChannel).map(channelOptional -> channelOptional.map(channel -> {
+		return Settings.getConfiguration(event.getGuild()).getReportChannel().map(ChannelConfiguration::getChannel).map(channelOptional -> channelOptional.map(channel -> {
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setColor(Color.ORANGE);

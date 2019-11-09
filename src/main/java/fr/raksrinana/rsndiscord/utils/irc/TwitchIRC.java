@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.utils.irc;
 
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.irc.messages.ChannelLeftIRCMessage;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import net.dv8tion.jda.api.entities.Guild;
@@ -29,7 +29,7 @@ public class TwitchIRC{
 		final var channel = String.format("#%s", user.toLowerCase());
 		if(CLIENT.getListeners().stream().noneMatch(l -> Objects.equals(l.getIRCChannel(), channel) && Objects.equals(guild, l.getGuild()))){
 			final var listener = new TwitchIRCListener(guild, user, channel);
-			if(NewSettings.getConfiguration(guild).getIrcForward()){
+			if(Settings.getConfiguration(guild).getIrcForward()){
 				guild.getJDA().addEventListener(listener);
 			}
 			CLIENT.addEventListener(listener);

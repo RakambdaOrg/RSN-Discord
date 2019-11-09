@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.commands;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.TodoConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
@@ -39,7 +39,7 @@ public class TodoCommand extends BasicCommand{
 		else{
 			Actions.reply(event, message -> {
 				message.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
-				NewSettings.getConfiguration(event.getGuild()).addTodoMessage(new TodoConfiguration(message));
+				Settings.getConfiguration(event.getGuild()).addTodoMessage(new TodoConfiguration(message));
 				message.pin().queue();
 			}, String.join(" ", args));
 		}

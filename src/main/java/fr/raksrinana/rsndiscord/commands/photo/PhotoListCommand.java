@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.commands.photo;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
@@ -40,7 +40,7 @@ public class PhotoListCommand extends BasicCommand{
 		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 		builder.setColor(Color.GREEN);
 		builder.setTitle("Users of the trombinoscope");
-		NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Utilities.getMembersWithRole(role).stream().map(u -> u.getUser().getName()).forEach(u -> builder.addField("", u, false)));
+		Settings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Utilities.getMembersWithRole(role).stream().map(u -> u.getUser().getName()).forEach(u -> builder.addField("", u, false)));
 		Actions.reply(event, builder.build());
 		return CommandResult.SUCCESS;
 	}

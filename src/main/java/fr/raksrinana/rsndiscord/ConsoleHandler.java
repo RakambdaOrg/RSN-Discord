@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord;
 
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import net.dv8tion.jda.api.JDA;
 import org.slf4j.Logger;
@@ -90,7 +90,7 @@ class ConsoleHandler extends Thread{
 						}
 					}
 					else if("save".equalsIgnoreCase(arg1)){
-						NewSettings.save();
+						Settings.save();
 					}
 				}
 				catch(final Exception e){

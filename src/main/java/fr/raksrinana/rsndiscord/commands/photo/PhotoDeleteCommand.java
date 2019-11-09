@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.commands.photo;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
@@ -59,9 +59,9 @@ public class PhotoDeleteCommand extends BasicCommand{
 			if(!Objects.equals(user, event.getAuthor())){
 				if(Utilities.isModerator(Objects.requireNonNull(event.getMember())) || Utilities.isAdmin(event.getMember())){
 					final var toDel = args.pop();
-					NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().removePhoto(user, toDel);
-					if(NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotos(user).isEmpty()){
-						NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Actions.removeRole(user, role));
+					Settings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().removePhoto(user, toDel);
+					if(Settings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotos(user).isEmpty()){
+						Settings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Actions.removeRole(user, role));
 					}
 					Actions.replyPrivate(event.getGuild(), event.getAuthor(), "%s's pictures deleted", user.getAsMention());
 				}
@@ -71,16 +71,16 @@ public class PhotoDeleteCommand extends BasicCommand{
 			}
 			else{
 				final var toDel = args.pop();
-				NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().removePhoto(event.getAuthor(), toDel);
-				if(NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotos(event.getAuthor()).isEmpty()){
-					NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Actions.removeRole(event.getAuthor(), role));
+				Settings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().removePhoto(event.getAuthor(), toDel);
+				if(Settings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotos(event.getAuthor()).isEmpty()){
+					Settings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Actions.removeRole(event.getAuthor(), role));
 				}
 				Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Picture deleted");
 			}
 		}
 		else{
-			NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().removePhoto(event.getAuthor());
-			NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Actions.removeRole(event.getAuthor(), role));
+			Settings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().removePhoto(event.getAuthor());
+			Settings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Actions.removeRole(event.getAuthor(), role));
 			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Pictures deleted");
 		}
 		return CommandResult.SUCCESS;

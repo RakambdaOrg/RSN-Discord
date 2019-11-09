@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.commands.warn;
 
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RemoveRoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
@@ -50,11 +50,11 @@ public abstract class WarnCommand extends BasicCommand{
 			roleOptional.ifPresentOrElse(role -> {
 				Actions.giveRole(event.getGuild(), user, role);
 				final var date = LocalDateTime.now();
-				NewSettings.getConfiguration(event.getGuild()).getRemoveRole(user, role).ifPresentOrElse(c -> {
+				Settings.getConfiguration(event.getGuild()).getRemoveRole(user, role).ifPresentOrElse(c -> {
 					if(date.isAfter(c.getEndDate())){
 						c.setEndDate(date);
 					}
-				}, () -> NewSettings.getConfiguration(event.getGuild()).addRemoveRole(new RemoveRoleConfiguration(user, role, date)));
+				}, () -> Settings.getConfiguration(event.getGuild()).addRemoveRole(new RemoveRoleConfiguration(user, role, date)));
 				builder.setColor(Color.GREEN);
 				builder.addField("Congratulations", user.getAsMention() + " joined the role " + role.getAsMention() + " for " + duration + " seconds(s)", false);
 				builder.addField("", "To know how your warn is doing, user the magic command: g?warninfo " + user.getAsMention(), false);

@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.listeners;
 
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -19,7 +19,7 @@ public class IdeaChannelMessageListener extends ListenerAdapter{
 	public void onGuildMessageReceived(@Nonnull final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
-			if(NewSettings.getConfiguration(event.getGuild()).getIdeaChannels().stream().anyMatch(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong()))){
+			if(Settings.getConfiguration(event.getGuild()).getIdeaChannels().stream().anyMatch(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong()))){
 				event.getMessage().addReaction(BasicEmotes.THUMB_UP.getValue()).complete();
 				event.getMessage().addReaction(BasicEmotes.THUMB_DOWN.getValue()).complete();
 			}

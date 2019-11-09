@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.listeners;
 
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildMuteEvent;
@@ -53,12 +53,12 @@ public class LogListener extends ListenerAdapter{
 		try{
 			if(!event.getAuthor().isBot()){
 				final var now = LocalDate.now();
-				if(NewSettings.getConfiguration(event.getGuild()).getNoXpChannels().stream().noneMatch(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong()))){
-					final var users = NewSettings.getConfiguration(event.getGuild()).getParticipationConfiguration().getUsers(now);
+				if(Settings.getConfiguration(event.getGuild()).getNoXpChannels().stream().noneMatch(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong()))){
+					final var users = Settings.getConfiguration(event.getGuild()).getParticipationConfiguration().getUsers(now);
 					users.increment(event.getAuthor().getIdLong(), event.getAuthor().getName());
 				}
 				final var weekKey = now.minusDays(getDaysToRemove(now.getDayOfWeek()));
-				final var emotes = NewSettings.getConfiguration(event.getGuild()).getParticipationConfiguration().getEmotes(weekKey);
+				final var emotes = Settings.getConfiguration(event.getGuild()).getParticipationConfiguration().getEmotes(weekKey);
 				event.getMessage().getEmotes().forEach(emote -> emotes.increment(emote.getIdLong(), emote.getName()));
 			}
 		}

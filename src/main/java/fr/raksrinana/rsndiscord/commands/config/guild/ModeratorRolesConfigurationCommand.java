@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.commands.config.guild;
 
 import fr.raksrinana.rsndiscord.commands.config.helpers.SetConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -19,14 +19,14 @@ public class ModeratorRolesConfigurationCommand extends SetConfigurationCommand<
 	@Nonnull
 	@Override
 	protected Optional<Set<RoleConfiguration>> getConfig(@Nonnull final Guild guild){
-		return Optional.of(NewSettings.getConfiguration(guild).getModeratorRoles());
+		return Optional.of(Settings.getConfiguration(guild).getModeratorRoles());
 	}
 	
 	@Override
 	protected void createConfig(@Nonnull final Guild guild, @Nonnull final RoleConfiguration value){
 		final var set = new HashSet<RoleConfiguration>();
 		set.add(value);
-		NewSettings.getConfiguration(guild).setModeratorRoles(set);
+		Settings.getConfiguration(guild).setModeratorRoles(set);
 	}
 	
 	@Nonnull
@@ -40,7 +40,7 @@ public class ModeratorRolesConfigurationCommand extends SetConfigurationCommand<
 	
 	@Override
 	protected void removeConfig(@Nonnull final Guild guild, @Nonnull final RoleConfiguration value){
-		NewSettings.getConfiguration(guild).getModeratorRoles().remove(value);
+		Settings.getConfiguration(guild).getModeratorRoles().remove(value);
 	}
 	
 	@Override

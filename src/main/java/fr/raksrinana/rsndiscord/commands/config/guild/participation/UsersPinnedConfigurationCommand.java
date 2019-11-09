@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.commands.config.guild.participation;
 
 import fr.raksrinana.rsndiscord.commands.config.helpers.SetConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -19,14 +19,14 @@ public class UsersPinnedConfigurationCommand extends SetConfigurationCommand<Use
 	@Nonnull
 	@Override
 	protected Optional<Set<UserConfiguration>> getConfig(@Nonnull final Guild guild){
-		return Optional.of(NewSettings.getConfiguration(guild).getParticipationConfiguration().getUsersPinned());
+		return Optional.of(Settings.getConfiguration(guild).getParticipationConfiguration().getUsersPinned());
 	}
 	
 	@Override
 	protected void createConfig(@Nonnull final Guild guild, @Nonnull final UserConfiguration value){
 		final var set = new HashSet<UserConfiguration>();
 		set.add(value);
-		NewSettings.getConfiguration(guild).getParticipationConfiguration().setUsersPinned(set);
+		Settings.getConfiguration(guild).getParticipationConfiguration().setUsersPinned(set);
 	}
 	
 	@Nonnull
@@ -40,7 +40,7 @@ public class UsersPinnedConfigurationCommand extends SetConfigurationCommand<Use
 	
 	@Override
 	protected void removeConfig(@Nonnull final Guild guild, @Nonnull final UserConfiguration value){
-		NewSettings.getConfiguration(guild).getParticipationConfiguration().getUsersPinned().remove(value);
+		Settings.getConfiguration(guild).getParticipationConfiguration().getUsersPinned().remove(value);
 	}
 	
 	@Override

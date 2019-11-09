@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.commands;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
@@ -51,7 +51,7 @@ public class QuestionCommand extends BasicCommand{
 			builder.addField("ID", String.valueOf(ID), true);
 			builder.addField("User", event.getAuthor().getAsMention(), true);
 			builder.addField("Question", String.join(" ", args), false);
-			NewSettings.getConfiguration(event.getGuild()).getQuestionsConfiguration().getInputChannel().flatMap(ChannelConfiguration::getChannel).ifPresentOrElse(channel -> {
+			Settings.getConfiguration(event.getGuild()).getQuestionsConfiguration().getInputChannel().flatMap(ChannelConfiguration::getChannel).ifPresentOrElse(channel -> {
 				final var message = Actions.getMessage(channel, builder.build());
 				message.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
 				message.addReaction(BasicEmotes.CROSS_NO.getValue()).queue();

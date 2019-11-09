@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.runners;
 
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import net.dv8tion.jda.api.JDA;
@@ -33,7 +33,7 @@ public class RemoveRolesScheduledRunner implements ScheduledRunner{
 		final var currentDate = LocalDateTime.now();
 		for(final var guild : this.jda.getGuilds()){
 			Log.getLogger(guild).debug("Processing guild {}", guild);
-			final var it = NewSettings.getConfiguration(guild).getRemoveRoles().iterator();
+			final var it = Settings.getConfiguration(guild).getRemoveRoles().iterator();
 			while(it.hasNext()){
 				final var ban = it.next();
 				if(currentDate.isAfter(ban.getEndDate())){

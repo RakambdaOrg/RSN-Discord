@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.commands;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.commands.generic.*;
 import fr.raksrinana.rsndiscord.listeners.CommandsMessageListener;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -38,7 +38,7 @@ public class HelpCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
 		super.execute(event, args);
-		final var prefix = NewSettings.getConfiguration(event.getGuild()).getPrefix().orElse(CommandsMessageListener.defaultPrefix);
+		final var prefix = Settings.getConfiguration(event.getGuild()).getPrefix().orElse(CommandsMessageListener.defaultPrefix);
 		final var commands = new Reflections(Main.class.getPackage().getName() + ".commands").getTypesAnnotatedWith(BotCommand.class).stream().map(c -> {
 			try{
 				return c.getConstructor().newInstance();

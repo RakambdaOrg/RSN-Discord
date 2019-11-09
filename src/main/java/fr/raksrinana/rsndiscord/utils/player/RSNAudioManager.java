@@ -8,7 +8,7 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.player.trackfields.ReplayTrackUserField;
 import fr.raksrinana.rsndiscord.utils.player.trackfields.RequesterTrackUserField;
@@ -131,7 +131,7 @@ public class RSNAudioManager implements StatusTrackSchedulerListener{
 			final var audioPlayer = audioPlayerManager.createPlayer();
 			audioManager.setSendingHandler(new AudioPlayerSendHandler(audioPlayer));
 			final var trackScheduler = new TrackScheduler(channel.getGuild(), audioPlayer);
-			audioPlayer.setVolume(Math.min(100, Math.max(0, NewSettings.getConfiguration(channel.getGuild()).getMusicVolume())));
+			audioPlayer.setVolume(Math.min(100, Math.max(0, Settings.getConfiguration(channel.getGuild()).getMusicVolume())));
 			audioPlayer.addListener(trackScheduler);
 			final var gunterAudioManager = new RSNAudioManager(channel, audioManager, audioPlayerManager, audioPlayer, trackScheduler);
 			trackScheduler.addStatusTrackSchedulerListener(gunterAudioManager);

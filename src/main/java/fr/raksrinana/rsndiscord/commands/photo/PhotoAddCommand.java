@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.commands.photo;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.trombinoscope.PhotoEntryConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
@@ -73,15 +73,15 @@ public class PhotoAddCommand extends BasicCommand{
 					final var future = attachment.downloadToFile(savePath.toFile());
 					final var saveFile = future.get();
 					if(!future.isCompletedExceptionally() && Objects.equals(attachment.getSize(), saveFile.length()) && saveFile.length() > MIN_SIZE){
-						NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotos(user).add(new PhotoEntryConfiguration(user, saveFile.getPath()));
-						NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(r -> Actions.giveRole(event.getGuild(), user, r));
+						Settings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotos(user).add(new PhotoEntryConfiguration(user, saveFile.getPath()));
+						Settings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getParticipantRole().flatMap(RoleConfiguration::getRole).ifPresent(r -> Actions.giveRole(event.getGuild(), user, r));
 						final var builder = new EmbedBuilder();
 						builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 						builder.setColor(Color.GREEN);
 						builder.setTitle("New picture");
 						builder.addField("User", user.getAsMention(), true);
 						builder.addField("ID", String.valueOf(event.getMessage().getTimeCreated().toEpochSecond()), true);
-						Actions.sendMessage(NewSettings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotoChannel().flatMap(ChannelConfiguration::getChannel).orElse(event.getChannel()), builder.build());
+						Actions.sendMessage(Settings.getConfiguration(event.getGuild()).getTrombinoscopeConfiguration().getPhotoChannel().flatMap(ChannelConfiguration::getChannel).orElse(event.getChannel()), builder.build());
 					}
 					else{
 						Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Upload failed");

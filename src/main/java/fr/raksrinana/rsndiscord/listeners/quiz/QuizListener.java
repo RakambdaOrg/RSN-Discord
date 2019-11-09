@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.listeners.quiz;
 
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
@@ -174,7 +174,7 @@ public class QuizListener extends ListenerAdapter implements Runnable{
 	public void run(){
 		final var QUESTION_TIME = 20;
 		try{
-			final var quizChannelOptional = NewSettings.getConfiguration(this.getGuild()).getQuizChannel().flatMap(ChannelConfiguration::getChannel);
+			final var quizChannelOptional = Settings.getConfiguration(this.getGuild()).getQuizChannel().flatMap(ChannelConfiguration::getChannel);
 			if(quizChannelOptional.isEmpty()){
 				return;
 			}

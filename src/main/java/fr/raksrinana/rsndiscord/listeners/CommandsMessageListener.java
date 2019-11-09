@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.listeners;
 
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.commands.generic.*;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -54,7 +54,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 			if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
 				Actions.deleteMessage(event.getMessage());
 				final var args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
-				final var cmdText = args.pop().substring(NewSettings.getConfiguration(event.getGuild()).getPrefix().orElse(defaultPrefix).length());
+				final var cmdText = args.pop().substring(Settings.getConfiguration(event.getGuild()).getPrefix().orElse(defaultPrefix).length());
 				this.getCommand(cmdText).ifPresentOrElse(command -> {
 					if(Objects.equals(command.getScope(), -5) || Objects.equals(command.getScope(), event.getChannel().getType().getId())){
 						try{
@@ -114,7 +114,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 	 * @return True if a command, false otherwise.
 	 */
 	private static boolean isCommand(@Nonnull final Guild guild, @Nonnull final String text){
-		return text.startsWith(NewSettings.getConfiguration(guild).getPrefix().orElse(defaultPrefix));
+		return text.startsWith(Settings.getConfiguration(guild).getPrefix().orElse(defaultPrefix));
 	}
 	
 	/**

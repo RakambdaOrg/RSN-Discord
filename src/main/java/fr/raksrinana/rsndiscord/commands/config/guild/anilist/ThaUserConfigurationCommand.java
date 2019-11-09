@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.commands.config.guild.anilist;
 
 import fr.raksrinana.rsndiscord.commands.config.helpers.UserConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import net.dv8tion.jda.api.entities.Guild;
 import javax.annotation.Nonnull;
@@ -18,17 +18,17 @@ public class ThaUserConfigurationCommand extends UserConfigurationCommand{
 	@Nonnull
 	@Override
 	protected Optional<UserConfiguration> getConfig(@Nonnull final Guild guild){
-		return NewSettings.getConfiguration(guild).getAniListConfiguration().getThaUser();
+		return Settings.getConfiguration(guild).getAniListConfiguration().getThaUser();
 	}
 	
 	@Override
 	protected void setConfig(@Nonnull final Guild guild, @Nonnull final UserConfiguration value){
-		NewSettings.getConfiguration(guild).getAniListConfiguration().setThaUser(value);
+		Settings.getConfiguration(guild).getAniListConfiguration().setThaUser(value);
 	}
 	
 	@Override
 	protected void removeConfig(@Nonnull final Guild guild){
-		NewSettings.getConfiguration(guild).getAniListConfiguration().setThaUser(null);
+		Settings.getConfiguration(guild).getAniListConfiguration().setThaUser(null);
 	}
 	
 	@Nonnull

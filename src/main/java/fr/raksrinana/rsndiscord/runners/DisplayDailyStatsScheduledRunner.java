@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.runners;
 import fr.raksrinana.rsndiscord.commands.EmotesCommand;
 import fr.raksrinana.rsndiscord.commands.TempParticipationCommand;
 import fr.raksrinana.rsndiscord.listeners.LogListener;
-import fr.raksrinana.rsndiscord.settings.NewSettings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
@@ -41,22 +41,22 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 		final var ytd = LocalDate.now().minusDays(1);
 		final var lastWeek = LocalDate.now().minusWeeks(1).minusDays(LogListener.getDaysToRemove(LocalDate.now().getDayOfWeek()));
 		for(final var guild : this.jda.getGuilds()){
-			NewSettings.getConfiguration(guild).getParticipationConfiguration().getReportChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(reportChannel -> {
+			Settings.getConfiguration(guild).getParticipationConfiguration().getReportChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(reportChannel -> {
 				Log.getLogger(guild).debug("Processing stats for guild {}", guild);
 				var sent = false;
 				if(TempParticipationCommand.sendInfos(guild, ytd, this.jda.getSelfUser(), reportChannel, 15)){
 					sent = true;
-					NewSettings.getConfiguration(guild).getParticipationConfiguration().removeUsers(ytd);
-					NewSettings.getConfiguration(guild).getParticipationConfiguration().removeUsersBefore(ytd);
+					Settings.getConfiguration(guild).getParticipationConfiguration().removeUsers(ytd);
+					Settings.getConfiguration(guild).getParticipationConfiguration().removeUsersBefore(ytd);
 				}
 				Log.getLogger(guild).debug("Processing stats for guild {}", guild);
 				if(EmotesCommand.sendInfos(guild, lastWeek, this.jda.getSelfUser(), reportChannel, 10)){
 					sent = true;
-					NewSettings.getConfiguration(guild).getParticipationConfiguration().removeEmotes(lastWeek);
-					NewSettings.getConfiguration(guild).getParticipationConfiguration().removeEmotesBefore(lastWeek);
+					Settings.getConfiguration(guild).getParticipationConfiguration().removeEmotes(lastWeek);
+					Settings.getConfiguration(guild).getParticipationConfiguration().removeEmotesBefore(lastWeek);
 				}
 				if(sent){
-					final var toPin = NewSettings.getConfiguration(guild).getParticipationConfiguration().getUsersPinned().stream().map(UserConfiguration::getUser).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+					final var toPin = Settings.getConfiguration(guild).getParticipationConfiguration().getUsersPinned().stream().map(UserConfiguration::getUser).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
 					if(!toPin.isEmpty()){
 						Actions.sendMessage(reportChannel, toPin.stream().map(User::getAsMention).collect(Collectors.joining("\n")));
 					}
