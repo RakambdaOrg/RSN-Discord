@@ -54,7 +54,7 @@ public class MessageConfiguration{
 	
 	@Override
 	public String toString(){
-		return this.getMessage().map(Message::getContentRaw).orElse("<Unknown message>") + " (" + (this.getChannel()) + ")";
+		return "" + this.getMessageId() + '(' + this.getChannel() + ')';
 	}
 	
 	@Nonnull

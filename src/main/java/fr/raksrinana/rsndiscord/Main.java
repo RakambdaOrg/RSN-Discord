@@ -24,8 +24,8 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -69,7 +69,7 @@ public class Main{
 		}
 		if(Objects.nonNull(parameters.getConfigurationFile())){
 			final var prop = new Properties();
-			try(final var is = new FileInputStream(parameters.getConfigurationFile())){
+			try(final var is = Files.newInputStream(parameters.getConfigurationFile())){
 				prop.load(is);
 			}
 			catch(final IOException e){
@@ -165,6 +165,7 @@ public class Main{
 		executorService.shutdownNow();
 		consoleHandler.close();
 		Settings.close();
+		Main.getJDA().shutdown();
 	}
 	//https://api.overwatchleague.com/schedule
 }

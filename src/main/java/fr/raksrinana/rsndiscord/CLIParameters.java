@@ -1,11 +1,9 @@
 package fr.raksrinana.rsndiscord;
 
 import com.beust.jcommander.Parameter;
-import com.beust.jcommander.converters.FileConverter;
 import com.beust.jcommander.converters.PathConverter;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -15,18 +13,18 @@ public class CLIParameters{
 			"-s",
 			"--settings "
 	}, description = "The guild settings folder to use", converter = PathConverter.class)
-	private Path settingsFolder = Paths.get("settings");
+	private Path settingsFolder = Paths.get("config/settings");
 	@Parameter(names = {
 			"-c",
 			"--config"
-	}, description = "The configuration file", converter = FileConverter.class, required = true)
-	private File configurationFile = null;
+	}, description = "The configuration file", converter = PathConverter.class)
+	private Path configurationFile = Paths.get("config/config.properties");
 	
 	CLIParameters(){
 	}
 	
 	@Nullable
-	File getConfigurationFile(){
+	Path getConfigurationFile(){
 		return this.configurationFile;
 	}
 	

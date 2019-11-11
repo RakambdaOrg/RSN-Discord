@@ -27,7 +27,6 @@ public class StopCommand extends BasicCommand{
 		super.execute(event, args);
 		if(Utilities.isCreator(event.getMember())){
 			Main.close();
-			event.getJDA().shutdown();
 			Log.getLogger(event.getGuild()).info("BOT STOPPING");
 		}
 		else{

@@ -40,6 +40,6 @@ public class ThaUserConfigurationCommand extends UserConfigurationCommand{
 	@Nonnull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("thaChannel");
+		return List.of("thaUser");
 	}
 }

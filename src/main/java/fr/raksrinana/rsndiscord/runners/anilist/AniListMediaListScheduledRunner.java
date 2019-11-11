@@ -65,23 +65,23 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 	@Override
 	public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<MediaList>> userElements){
 		AniListRunner.super.sendMessages(channels, userElements);
-		this.getJDA().getGuilds().stream().map(g -> Settings.getConfiguration(g).getAniListConfiguration().getThaChannel().flatMap(ChannelConfiguration::getChannel)).filter(Optional::isPresent).map(Optional::get).forEach(textChannel -> Settings.getConfiguration(textChannel.getGuild()).getAniListConfiguration().getThaUser().flatMap(UserConfiguration::getUser).ifPresent(user -> userElements.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> ImmutablePair.of(e.getKey(), v))).filter(v -> v.getRight().getCustomLists().entrySet().stream().filter(Map.Entry::getValue).anyMatch(entry -> Objects.equals("ThaPending", entry.getKey()) || Objects.equals("ThaReading", entry.getKey()) || Objects.equals("ThaWatching", entry.getKey()))).forEach(p -> Actions.sendMessage(textChannel, user.getAsMention(), this.buildMessage(p.getLeft(), p.getRight()), sentMessage -> {
-			sentMessage.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
-			Settings.getConfiguration(textChannel.getGuild()).getTodos().removeIf(todo -> {
-				if(Objects.equals(todo.getMessage().getChannel().getChannelId(), sentMessage.getChannel().getIdLong())){
+		this.getJDA().getGuilds().stream().map(g -> Settings.getConfiguration(g).getAniListConfiguration().getThaChannel().flatMap(ChannelConfiguration::getChannel)).filter(Optional::isPresent).map(Optional::get).forEach(textChannel -> Settings.getConfiguration(textChannel.getGuild()).getAniListConfiguration().getThaUser().flatMap(UserConfiguration::getUser).ifPresent(user -> userElements.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> ImmutablePair.of(e.getKey(), v))).filter(v -> v.getRight().getCustomLists().entrySet().stream().filter(Map.Entry::getValue).anyMatch(entry -> Objects.equals("ThaPending", entry.getKey()) || Objects.equals("ThaReading", entry.getKey()) || Objects.equals("Test", entry.getKey()) || Objects.equals("ThaWatching", entry.getKey()))).forEach(p -> {
+			final var similarTodos = Settings.getConfiguration(textChannel.getGuild()).getTodos().stream().filter(todo -> {
+				if(Objects.equals(todo.getMessage().getChannel().getChannelId(), textChannel.getIdLong())){
 					return todo.getMessage().getMessage().map(message -> {
 						final var isSameMedia = message.getEmbeds().stream().anyMatch(embed -> Objects.equals(embed.getDescription(), p.getRight().getMedia().getTitle().getUserPreferred()));
-						if(isSameMedia && todo.isDeleteOnDone()){
-							Actions.deleteMessage(message);
-							return true;
-						}
-						return false;
+						return isSameMedia && todo.isDeleteOnDone();
 					}).orElse(false);
 				}
 				return false;
+			}).collect(Collectors.toList());
+			Actions.sendMessage(textChannel, user.getAsMention(), this.buildMessage(p.getLeft(), p.getRight()), sentMessage -> {
+				sentMessage.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
+				similarTodos.forEach(todo -> textChannel.getHistoryAround(todo.getMessage().getMessageId(), 1).queue(history -> Optional.ofNullable(history.getMessageById(todo.getMessage().getMessageId())).ifPresent(todoMessage -> todoMessage.delete().queue())));
+				Settings.getConfiguration(textChannel.getGuild()).getTodos().removeAll(similarTodos);
+				Settings.getConfiguration(textChannel.getGuild()).addTodoMessage(new TodoConfiguration(sentMessage, true));
 			});
-			Settings.getConfiguration(textChannel.getGuild()).addTodoMessage(new TodoConfiguration(sentMessage, true));
-		}))));
+		})));
 	}
 	
 	@Nonnull

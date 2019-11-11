@@ -17,7 +17,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.Color;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -81,12 +84,11 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 		if(this.sortedByUser()){
 			for(final var entry : userElements.entrySet()){
 				final var user = entry.getKey();
-				final var element = entry.getValue();
-				element.stream().sorted().map(change -> this.buildMessage(user, change)).forEach(message -> channels.stream().filter(channel -> this.sendToChannel(channel, user)).forEach(channel -> Actions.sendMessage(channel, message)));
+				entry.getValue().stream().sorted().map(change -> this.buildMessage(user, change)).forEach(message -> channels.stream().filter(channel -> this.sendToChannel(channel, user)).forEach(channel -> Actions.sendMessage(channel, message)));
 			}
 		}
 		else{
-			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Comparator.comparing(Map.Entry::getValue)).map(change -> Map.entry(change.getKey(), this.buildMessage(change.getKey(), change.getValue()))).forEach(infos -> channels.stream().filter(chan -> this.sendToChannel(chan, infos.getKey())).forEach(chan -> Actions.sendMessage(chan, infos.getValue())));
+			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Map.Entry.comparingByValue()).map(change -> Map.entry(change.getKey(), this.buildMessage(change.getKey(), change.getValue()))).forEach(infos -> channels.stream().filter(chan -> this.sendToChannel(chan, infos.getKey())).forEach(chan -> Actions.sendMessage(chan, infos.getValue())));
 		}
 	}
 	

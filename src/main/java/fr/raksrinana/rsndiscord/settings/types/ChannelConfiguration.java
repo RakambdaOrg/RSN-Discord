@@ -52,7 +52,7 @@ public class ChannelConfiguration{
 	
 	@Override
 	public String toString(){
-		return this.getChannel().map(TextChannel::getAsMention).orElse("<Unknown channel>");
+		return "" + this.getChannelId();
 	}
 	
 	@Nonnull

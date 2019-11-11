@@ -57,9 +57,6 @@ class ConsoleHandler extends Thread{
 					final var arg1 = args.poll();
 					if(quitList.contains(arg1)){
 						Main.close();
-						if(Objects.nonNull(this.jda)){
-							this.jda.shutdownNow();
-						}
 					}
 					else if("leave".equalsIgnoreCase(arg1)){
 						if(args.isEmpty()){
