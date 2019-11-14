@@ -71,9 +71,6 @@ public class IRCClient implements Closeable{
 			this.socket.close();
 			Log.getLogger(null).info("Connection IRC closed with {}:{}", this.host, this.port);
 		}
-		else{
-			throw new IllegalStateException("Not connected");
-		}
 	}
 	
 	public void timedOut(){
