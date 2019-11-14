@@ -30,7 +30,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 				return c.getConstructor().newInstance();
 			}
 			catch(InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e){
-				Log.getLogger(null).error("Failed to create instance of {}", c.getName());
+				Log.getLogger(null).error("Failed to create instance of {}", c.getName(), e);
 			}
 			return null;
 		}).filter(Objects::nonNull).filter(c -> c instanceof Command).map(c -> (Command) c).peek(c -> Log.getLogger(null).info("Loaded command {}", c.getClass().getName())).collect(Collectors.toSet());

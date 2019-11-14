@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -40,13 +39,7 @@ public class ConnectCommand extends BasicCommand{
 			return CommandResult.BAD_ARGUMENTS;
 		}
 		try{
-			final var list = TwitchIRC.getConnectedTo();
-			if(list.isEmpty()){
-				TwitchIRC.connect(event.getGuild(), args.pop());
-			}
-			else{
-				Actions.reply(event, MessageFormat.format("The bot is already connected to {0}", String.join(", ", list)), null);
-			}
+			TwitchIRC.connect(event.getGuild(), args.pop());
 		}
 		catch(final NoSuchElementException | IOException e){
 			Actions.reply(event, "Server needs to be configured to use this feature", null);

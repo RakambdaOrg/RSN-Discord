@@ -47,12 +47,12 @@ public class PrefixConfigurationCommand extends ValueConfigurationCommand<String
 	@NonNull
 	@Override
 	public String getName(){
-		return "DJ Role";
+		return "Prefix";
 	}
 	
 	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("djRole");
+		return List.of("prefix");
 	}
 }

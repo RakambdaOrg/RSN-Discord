@@ -1,9 +1,3 @@
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
- *
- * @author Thomas Couchoud
- * @since 2018-05-03
- */
 open module fr.raksrinana.rsndiscord {
 	requires java.desktop;
 	requires unirest.java;
@@ -11,7 +5,7 @@ open module fr.raksrinana.rsndiscord {
 	requires org.apache.commons.io;
 	requires fr.mrcraftcod.utils.http;
 	requires jcommander;
-	requires lombok;
+	requires static lombok;
 	requires org.slf4j;
 	requires ch.qos.logback.classic;
 	requires net.dv8tion.jda;

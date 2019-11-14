@@ -64,7 +64,9 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 					this.onShow(event, args);
 					break;
 			}
-			return CommandResult.SUCCESS;
+		}
+		catch(final IllegalArgumentException e){
+			Actions.reply(event, "Unknown operation", null);
 		}
 		catch(final RuntimeException e){
 			Log.getLogger(event.getGuild()).warn("Failed to update configuration", e);
@@ -72,6 +74,7 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 			Utilities.reportException(e);
 			return CommandResult.FAILED;
 		}
+		return CommandResult.SUCCESS;
 	}
 	
 	protected void onAdd(@NonNull GuildMessageReceivedEvent event, @NonNull LinkedList<String> args){}
