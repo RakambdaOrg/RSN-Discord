@@ -3,19 +3,12 @@ package fr.raksrinana.rsndiscord.utils.anilist.queries;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.raksrinana.rsndiscord.utils.anilist.activity.list.ListActivity;
 import kong.unirest.json.JSONObject;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import lombok.NonNull;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-11.
- *
- * @author Thomas Couchoud
- * @since 2018-10-11
- */
 public class ActivityPagedQuery implements PagedQuery<ListActivity>{
-	private static final String QUERY_FEED = PagedQuery.pagedQuery(", $userID: Int, $date: Int", "activities(userId: $userID, createdAt_greater: $date){\n" + "... on " + ListActivity.getQuery() + "\n}");
+	private static final String QUERY_FEED = PagedQuery.pagedQuery(", $userID: Int, $date: Int", "activities(userId: $userID, createdAt_greater: $date){\n" + "... on " + ListActivity.getQUERY() + "\n}");
 	private final JSONObject variables;
 	private int nextPage = 0;
 	
@@ -29,13 +22,13 @@ public class ActivityPagedQuery implements PagedQuery<ListActivity>{
 	}
 	
 	@Override
-	@Nonnull
+	@NonNull
 	public String getQuery(){
 		return QUERY_FEED;
 	}
 	
 	@Override
-	@Nonnull
+	@NonNull
 	public JSONObject getParameters(final int page){
 		this.variables.put("page", page);
 		return this.variables;
@@ -46,18 +39,17 @@ public class ActivityPagedQuery implements PagedQuery<ListActivity>{
 		return ++this.nextPage;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getPageElementName(){
 		return "activities";
 	}
 	
-	@Nonnull
-	public ListActivity buildChange(@Nonnull final JSONObject change) throws Exception{
+	@NonNull
+	public ListActivity buildChange(@NonNull final JSONObject change) throws Exception{
 		return new ObjectMapper().readerFor(ListActivity.class).readValue(change.toString());
 	}
 	
-	@Nullable
 	@Override
 	public LocalDateTime getBaseDate(){
 		return null;

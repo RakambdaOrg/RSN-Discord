@@ -5,45 +5,38 @@ import fr.raksrinana.rsndiscord.commands.config.guild.warns.MegaWarnConfiguratio
 import fr.raksrinana.rsndiscord.commands.config.guild.warns.SimpleWarnConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
-import net.dv8tion.jda.api.entities.ChannelType;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import lombok.NonNull;
 import java.util.List;
 
 public class WarnsConfigurationCommandComposite extends CommandComposite{
-	public WarnsConfigurationCommandComposite(@Nullable final Command parent){
+	public WarnsConfigurationCommandComposite(final Command parent){
 		super(parent);
 		this.addSubCommand(new SimpleWarnConfigurationCommand(this));
 		this.addSubCommand(new DoubleWarnConfigurationCommand(this));
 		this.addSubCommand(new MegaWarnConfigurationCommand(this));
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ADMIN;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Warns";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("warns");
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getDescription(){
 		return "Warns configurations";
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
 	}
 }

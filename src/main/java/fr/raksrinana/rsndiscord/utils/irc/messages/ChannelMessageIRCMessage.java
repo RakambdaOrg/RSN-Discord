@@ -2,8 +2,10 @@ package fr.raksrinana.rsndiscord.utils.irc.messages;
 
 import fr.raksrinana.rsndiscord.utils.irc.IRCTag;
 import fr.raksrinana.rsndiscord.utils.irc.IRCUser;
+import lombok.Getter;
 import java.util.List;
 
+@Getter
 public class ChannelMessageIRCMessage implements IRCMessage{
 	private final List<IRCTag> tags;
 	private final IRCUser user;
@@ -15,21 +17,5 @@ public class ChannelMessageIRCMessage implements IRCMessage{
 		this.user = user;
 		this.channel = channel;
 		this.message = message;
-	}
-	
-	public String getChannel(){
-		return this.channel;
-	}
-	
-	public String getMessage(){
-		return this.message;
-	}
-	
-	public List<IRCTag> getTags(){
-		return this.tags;
-	}
-	
-	public IRCUser getUser(){
-		return this.user;
 	}
 }

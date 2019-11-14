@@ -7,10 +7,13 @@ import fr.raksrinana.rsndiscord.utils.overwatch.enums.OverwatchAdvantageComparin
 import fr.raksrinana.rsndiscord.utils.overwatch.enums.OverwatchBracketType;
 import fr.raksrinana.rsndiscord.utils.overwatch.enums.OverwatchConclusionStrategy;
 import fr.raksrinana.rsndiscord.utils.overwatch.stage.match.bracket.stage.OverwatchBracketStage;
+import lombok.Getter;
 import java.util.List;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 public class OverwatchBracket{
 	@JsonProperty("id")
 	private int id;
@@ -36,4 +39,21 @@ public class OverwatchBracket{
 	private boolean thirdPlaceMatch;
 	@JsonProperty("allowDraw")
 	private boolean allowDraw;
+	
+	@Override
+	public int hashCode(){
+		return Objects.hash(id);
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		if(this == o){
+			return true;
+		}
+		if(o == null || getClass() != o.getClass()){
+			return false;
+		}
+		OverwatchBracket that = (OverwatchBracket) o;
+		return id == that.id;
+	}
 }

@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.Color;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	private static final DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd").optionalStart().appendPattern(" HH:mm:ss").optionalEnd().parseDefaulting(ChronoField.HOUR_OF_DAY, 0).parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0).parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0).toFormatter();
 	private static final Pattern SPACE_PATTERN = Pattern.compile(" +");
@@ -37,8 +38,8 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	private String direction;
 	
 	@JsonCreator
-	@Nonnull
-	public static LuxBusDeparture createDeparture(@Nonnull @JsonProperty("date") final String date, @Nonnull @JsonProperty("time") final String time, @Nullable @JsonProperty("rtDate") final String realTimeDate, @Nullable @JsonProperty("rtTime") final String realTimeTime){
+	@NonNull
+	public static LuxBusDeparture createDeparture(@NonNull @JsonProperty("date") final String date, @NonNull @JsonProperty("time") final String time, @JsonProperty("rtDate") final String realTimeDate, @JsonProperty("rtTime") final String realTimeTime){
 		final var departure = new LuxBusDeparture();
 		departure.plannedDateTime = LocalDateTime.parse(String.format("%s %s", date, time), dateTimeFormatter);
 		departure.realTimeDateTime = Objects.nonNull(realTimeDate) && Objects.nonNull(realTimeTime) ? LocalDateTime.parse(String.format("%s %s", realTimeDate, realTimeTime), dateTimeFormatter) : null;
@@ -46,7 +47,7 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	}
 	
 	@Override
-	public int compareTo(@Nonnull final LuxBusDeparture departure){
+	public int compareTo(@NonNull final LuxBusDeparture departure){
 		if(!Objects.equals(this.getProduct().getName(), departure.getProduct().getName())){
 			return this.getProduct().getName().compareTo(departure.getProduct().getName());
 		}
@@ -56,23 +57,8 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 		return this.getPlannedDateTime().compareTo(departure.getPlannedDateTime());
 	}
 	
-	@Nonnull
-	public LuxBusProduct getProduct(){
-		return this.product;
-	}
-	
-	@Nonnull
-	public String getDirection(){
-		return this.direction;
-	}
-	
-	@Nonnull
-	private LocalDateTime getPlannedDateTime(){
-		return this.plannedDateTime;
-	}
-	
-	@Nonnull
-	public EmbedBuilder getAsEmbed(@Nonnull final EmbedBuilder embedBuilder){
+	@NonNull
+	public EmbedBuilder getAsEmbed(@NonNull final EmbedBuilder embedBuilder){
 		final var delayMinutes = this.getRealTimeDateTime().map(realDateTime -> this.getPlannedDateTime().until(realDateTime, ChronoUnit.MINUTES)).orElse(null);
 		var pattern = "%s";
 		if(Objects.nonNull(delayMinutes)){
@@ -93,26 +79,33 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 		return embedBuilder;
 	}
 	
-	@Nonnull
+	@NonNull
 	private Optional<LocalDateTime> getRealTimeDateTime(){
 		return Optional.ofNullable(this.realTimeDateTime);
 	}
 	
-	@Nonnull
-	private String getEmbedDate(@Nonnull final LocalDateTime dateTime){
+	@NonNull
+	private String getEmbedDate(@NonNull final LocalDateTime dateTime){
 		if(LocalDate.now().equals(dateTime.toLocalDate())){
 			return dateTime.format(this.dateTimeFormatterEmbedShort);
 		}
 		return dateTime.format(this.dateTimeFormatterEmbedLong);
 	}
 	
-	@Nonnull
-	public String getEntityNumber(){
-		return this.entityNumber;
+	@Override
+	public int hashCode(){
+		return Objects.hash(stop, entityNumber, plannedDateTime, direction);
 	}
 	
-	@Nonnull
-	public LuxBusStop getStop(){
-		return this.stop;
+	@Override
+	public boolean equals(Object o){
+		if(this == o){
+			return true;
+		}
+		if(o == null || getClass() != o.getClass()){
+			return false;
+		}
+		LuxBusDeparture that = (LuxBusDeparture) o;
+		return Objects.equals(stop, that.stop) && Objects.equals(entityNumber, that.entityNumber) && Objects.equals(plannedDateTime, that.plannedDateTime) && Objects.equals(direction, that.direction);
 	}
 }

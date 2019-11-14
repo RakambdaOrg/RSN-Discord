@@ -8,17 +8,18 @@ import fr.raksrinana.rsndiscord.utils.json.USADateStringDeserializer;
 import fr.raksrinana.rsndiscord.utils.overwatch.stage.OverwatchStage;
 import fr.raksrinana.rsndiscord.utils.overwatch.stage.match.OverwatchMatch;
 import fr.raksrinana.rsndiscord.utils.overwatch.stage.tournament.OverwatchTournament;
-import javax.annotation.Nonnull;
+import lombok.Getter;
+import lombok.NonNull;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 public class OverwatchData{
 	@JsonProperty("id")
 	private String id;
@@ -33,27 +34,37 @@ public class OverwatchData{
 	@JsonProperty("seriesId")
 	private int seriesId;
 	@JsonProperty("stages")
-	private List<OverwatchStage> stages = new ArrayList<>();
+	private Set<OverwatchStage> stages = new HashSet<>();
 	
 	public Optional<OverwatchStage> getStageOfTournament(final OverwatchTournament tournament){
 		return this.getStages().stream().filter(s -> s.getTournaments().stream().anyMatch(t -> Objects.equals(t, tournament))).findFirst();
 	}
 	
-	@Nonnull
-	public List<OverwatchStage> getStages(){
+	public Set<OverwatchMatch> getMatchesOfTournament(final OverwatchTournament tournament){
+		return this.getStages().stream().flatMap(s -> s.getMatches().stream()).filter(m -> Objects.equals(m.getTournament(), tournament)).collect(Collectors.toSet());
+	}
+	
+	@NonNull
+	public Set<OverwatchStage> getStages(){
 		return this.stages;
 	}
 	
-	public List<OverwatchMatch> getMatchesOfTournament(final OverwatchTournament tournament){
-		return this.getStages().stream().flatMap(s -> s.getMatches().stream()).filter(m -> Objects.equals(m.getTournament(), tournament)).collect(Collectors.toList());
-	}
-	
-	@Nonnull
-	public Optional<OverwatchStage> getCurrentStage(){
-		return this.getStages().stream().filter(OverwatchStage::isEnabled).filter(s -> !s.hasEnded()).filter(OverwatchStage::hasStarted).sorted().findFirst();
+	@Override
+	public int hashCode(){
+		return Objects.hash(id);
 	}
 	
 	public Optional<OverwatchStage> getNextStage(){
 		return this.getStages().stream().filter(OverwatchStage::isEnabled).filter(s -> !s.hasStarted()).sorted().findFirst();
+	}
+	
+	@Override
+	public boolean equals(Object obj){
+		return obj instanceof OverwatchData && Objects.equals(this.getId(), ((OverwatchData) obj).getId());
+	}
+	
+	@NonNull
+	public Optional<OverwatchStage> getCurrentStage(){
+		return this.getStages().stream().filter(OverwatchStage::isEnabled).filter(s -> !s.hasEnded()).filter(OverwatchStage::hasStarted).sorted().findFirst();
 	}
 }

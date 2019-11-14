@@ -6,38 +6,29 @@ import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.overwatch.OverwatchUtils;
 import fr.raksrinana.rsndiscord.utils.overwatch.stage.match.OverwatchMatch;
+import lombok.Getter;
+import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
-import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 14/07/2018.
- *
- * @author Thomas Couchoud
- * @since 2018-07-14
- */
 public class OverwatchLeagueScheduledRunner implements ScheduledRunner{
+	@Getter
 	private final JDA jda;
 	
-	/**
-	 * Constructor.
-	 *
-	 * @param jda The JDA.
-	 */
-	public OverwatchLeagueScheduledRunner(final JDA jda){
-		Log.getLogger(null).info("Creating Overwatch league runner");
+	public OverwatchLeagueScheduledRunner(JDA jda){
 		this.jda = jda;
+		Log.getLogger(null).info("Creating Overwatch league runner");
 	}
 	
 	@Override
 	public void run(){
 		Log.getLogger(null).info("Starting Overwatch league runner");
-		OverwatchUtils.getLastResponse().ifPresent(ow -> this.jda.getGuilds().forEach(guild -> Settings.getConfiguration(guild).getOverwatchLeagueConfiguration().getNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> {
-			final var notified = Settings.getConfiguration(guild).getOverwatchLeagueConfiguration().getNotifiedMatches();
+		OverwatchUtils.getData().ifPresent(ow -> this.getJda().getGuilds().forEach(guild -> Settings.get(guild).getOverwatchLeagueConfiguration().getNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> {
+			final var notified = Settings.get(guild).getOverwatchLeagueConfiguration().getNotifiedMatches();
 			ow.getData().getStages().stream().flatMap(s -> s.getMatches().stream()).filter(OverwatchMatch::hasEnded).filter(m -> !notified.contains(m.getId())).sorted().forEachOrdered(m -> {
 				Log.getLogger(guild).info("Notifying match {} to {}", m, channel);
-				Actions.sendMessage(channel, m.buildEmbed(this.jda.getSelfUser()).build());
-				Settings.getConfiguration(guild).getOverwatchLeagueConfiguration().setNotifiedMatch(m.getId());
+				Actions.sendMessage(channel, "", m.buildEmbed(this.getJda().getSelfUser()).build());
+				Settings.get(guild).getOverwatchLeagueConfiguration().setNotifiedMatch(m.getId());
 			});
 		})));
 		Log.getLogger(null).info("Overwatch league runner done");
@@ -53,7 +44,7 @@ public class OverwatchLeagueScheduledRunner implements ScheduledRunner{
 		return 10;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.MINUTES;

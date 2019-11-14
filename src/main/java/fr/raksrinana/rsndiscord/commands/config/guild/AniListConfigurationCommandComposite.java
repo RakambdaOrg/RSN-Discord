@@ -6,13 +6,11 @@ import fr.raksrinana.rsndiscord.commands.config.guild.anilist.ThaChannelConfigur
 import fr.raksrinana.rsndiscord.commands.config.guild.anilist.ThaUserConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
-import net.dv8tion.jda.api.entities.ChannelType;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import lombok.NonNull;
 import java.util.List;
 
 public class AniListConfigurationCommandComposite extends CommandComposite{
-	public AniListConfigurationCommandComposite(@Nullable final Command parent){
+	public AniListConfigurationCommandComposite(final Command parent){
 		super(parent);
 		this.addSubCommand(new NotificationChannelConfigurationCommand(this));
 		this.addSubCommand(new ThaChannelConfigurationCommand(this));
@@ -20,32 +18,27 @@ public class AniListConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new MediaChangeChannelConfigurationCommand(this));
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ADMIN;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "AniList";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("al", "anilist");
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getDescription(){
 		return "AniList configurations";
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
 	}
 }

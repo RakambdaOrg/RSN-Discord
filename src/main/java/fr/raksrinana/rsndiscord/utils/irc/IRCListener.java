@@ -1,28 +1,19 @@
 package fr.raksrinana.rsndiscord.utils.irc;
 
 import fr.raksrinana.rsndiscord.utils.irc.messages.IRCMessage;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
-import javax.annotation.Nonnull;
 
-/**
- * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-02-25.
- *
- * @author Thomas Couchoud
- * @since 2019-02-25
- */
 interface IRCListener{
-	void onIRCMessage(@Nonnull IRCMessage event);
+	void onIRCMessage(@NonNull IRCMessage event);
 	
-	boolean handlesChannel(@Nonnull String channel);
+	boolean handlesChannel(@NonNull String channel);
 	
-	@Nonnull
-	Guild getGuild();
+	@NonNull Guild getGuild();
 	
-	@Nonnull
-	String getIRCChannel();
+	@NonNull String getIrcChannel();
 	
 	long getLastMessage();
 	
-	@Nonnull
-	String getUser();
+	@NonNull String getUser();
 }

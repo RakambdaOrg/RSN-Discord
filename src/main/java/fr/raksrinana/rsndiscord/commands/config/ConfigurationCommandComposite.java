@@ -3,8 +3,7 @@ package fr.raksrinana.rsndiscord.commands.config;
 import fr.raksrinana.rsndiscord.commands.config.guild.*;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
-import net.dv8tion.jda.api.entities.ChannelType;
-import javax.annotation.Nonnull;
+import lombok.NonNull;
 import java.util.List;
 
 @BotCommand
@@ -32,32 +31,27 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new AnnounceStartChannelConfigurationCommand(this));
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.MODERATOR;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Configuration";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("config");
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getDescription(){
 		return "Interactions with the description";
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
 	}
 }

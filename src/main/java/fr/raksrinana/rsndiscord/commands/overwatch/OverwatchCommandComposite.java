@@ -2,8 +2,7 @@ package fr.raksrinana.rsndiscord.commands.overwatch;
 
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
-import net.dv8tion.jda.api.entities.ChannelType;
-import javax.annotation.Nonnull;
+import lombok.NonNull;
 import java.util.List;
 
 @BotCommand
@@ -13,32 +12,21 @@ public class OverwatchCommandComposite extends CommandComposite{
 		this.addSubCommand(new OverwatchGetMatchCommand(this));
 	}
 	
-	@Nonnull
-	@Override
-	public AccessLevel getAccessLevel(){
-		return AccessLevel.ALL;
-	}
-	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Overwatch";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("overwatch", "ow");
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getDescription(){
 		return "Overwatch related commands";
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
 	}
 }

@@ -6,90 +6,78 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
- *
- * @author Thomas Couchoud
- * @since 2018-06-16
- */
 public class VolumeMusicCommand extends BasicCommand{
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	VolumeMusicCommand(@Nullable final Command parent){
+	VolumeMusicCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
+	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Volume", "The volume to set, between 0 and 100", false);
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
-	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
-			Actions.reply(event, "Please give the volume to set");
+			return CommandResult.BAD_ARGUMENTS;
 		}
 		else{
 			try{
 				final var volume = Math.min(100, Math.max(0, Integer.parseInt(args.pop())));
-				Settings.getConfiguration(event.getGuild()).setMusicVolume(volume);
+				Settings.get(event.getGuild()).setMusicVolume(volume);
 				RSNAudioManager.getFor(event.getGuild()).ifPresent(g -> g.setVolume(volume));
-				Actions.replyFormatted(event, "Volume set to %d%%", volume);
+				Actions.reply(event, MessageFormat.format("Volume set to {0}%", volume), null);
 			}
 			catch(NumberFormatException e){
-				Actions.reply(event, "Please give the volume as an integer");
+				Actions.reply(event, "Please give the volume as an integer", null);
 			}
 		}
 		return CommandResult.SUCCESS;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <volume>";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.MODERATOR;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Volume";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("volume");
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getDescription(){
 		return "Sets the bot's volume";
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
 	}
 }

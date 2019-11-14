@@ -3,30 +3,28 @@ package fr.raksrinana.rsndiscord.settings.types;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.log.Log;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Message;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import javax.annotation.Nonnull;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
-/**
- * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-06-23.
- *
- * @author Thomas Couchoud
- * @since 2019-06-23
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
+@NoArgsConstructor
 public class MessageConfiguration{
 	@JsonProperty("channel")
 	private ChannelConfiguration channel;
 	@JsonProperty("messageId")
 	private long messageId;
 	
-	public MessageConfiguration(){
-	}
-	
-	public MessageConfiguration(@Nonnull final Message message){
+	public MessageConfiguration(@NonNull final Message message){
 		this(message.getChannel().getIdLong(), message.getIdLong());
 	}
 	
@@ -57,12 +55,20 @@ public class MessageConfiguration{
 		return "" + this.getMessageId() + '(' + this.getChannel() + ')';
 	}
 	
-	@Nonnull
+	@NonNull
 	public Optional<Message> getMessage(){
-		return this.getChannel().getChannel().map(c -> c.getHistoryAround(this.getMessageId(), 1).complete().getMessageById(this.getMessageId()));
+		return this.getChannel().getChannel().map(channel -> Utilities.getMessageById(channel, this.getMessageId())).flatMap(future -> {
+			try{
+				return future.get();
+			}
+			catch(InterruptedException | ExecutionException e){
+				Log.getLogger(null).error("Failed to get message from configuration", e);
+			}
+			return Optional.empty();
+		});
 	}
 	
-	public void setMessage(@Nonnull final Message message){
+	public void setMessage(@NonNull final Message message){
 		this.setMessage(message.getIdLong());
 		this.setChannel(message.getChannel().getIdLong());
 	}
@@ -71,16 +77,7 @@ public class MessageConfiguration{
 		this.messageId = messageId;
 	}
 	
-	@Nonnull
-	public ChannelConfiguration getChannel(){
-		return this.channel;
-	}
-	
 	private void setChannel(final long channelId){
 		this.channel.setChannel(channelId);
-	}
-	
-	public long getMessageId(){
-		return this.messageId;
 	}
 }

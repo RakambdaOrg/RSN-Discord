@@ -4,10 +4,10 @@ import fr.raksrinana.rsndiscord.listeners.reply.BasicWaitingUserReply;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.Utilities;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
-import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.io.IOException;
 import java.time.Duration;
@@ -32,20 +32,8 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 		this.executor.scheduleAtFixedRate(this::updateTimer, 5, 10, TimeUnit.SECONDS);
 	}
 	
-	private void updateTimer(){
-		final var newTotalTime = this.totalTime.plus(this.counting ? Duration.between(this.lastStart, LocalDateTime.now()) : Duration.ZERO);
-		if(!Objects.equals(newTotalTime, this.totalTime)){
-			final var builder = Utilities.buildEmbed(this.getWaitUser(), Color.GREEN, "Stopwatch");
-			builder.addField("Time", Utilities.durationToString(newTotalTime), false);
-			builder.addField(BasicEmotes.P.getValue(), "Pause", true);
-			builder.addField(BasicEmotes.R.getValue(), "Resume", true);
-			builder.addField(BasicEmotes.S.getValue(), "Stop", true);
-			this.getInfoMessages().stream().findFirst().ifPresent(m -> m.editMessage(builder.build()).queue());
-		}
-	}
-	
 	@Override
-	protected boolean onExecute(@Nonnull final GuildMessageReactionAddEvent event){
+	protected boolean onExecute(@NonNull final GuildMessageReactionAddEvent event){
 		if(!Objects.equals(event.getUser(), event.getJDA().getSelfUser())){
 			final var replyEmote = BasicEmotes.getEmote(event.getReactionEmote().getName());
 			if(Objects.nonNull(replyEmote)){
@@ -53,7 +41,7 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 					this.counting = false;
 					this.totalTime = this.totalTime.plus(Duration.between(this.lastStart, LocalDateTime.now()));
 					this.executor.shutdownNow();
-					Actions.sendMessage(this.getWaitChannel(), "Total time: " + this.totalTime);
+					Actions.sendMessage(this.getWaitChannel(), "Total time: " + this.totalTime, null);
 					return true;
 				}
 				if(this.counting){
@@ -86,6 +74,18 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 		return false;
 	}
 	
+	private void updateTimer(){
+		final var newTotalTime = this.totalTime.plus(this.counting ? Duration.between(this.lastStart, LocalDateTime.now()) : Duration.ZERO);
+		if(!Objects.equals(newTotalTime, this.totalTime)){
+			final var builder = Utilities.buildEmbed(this.getWaitUser(), Color.GREEN, "Stopwatch", null);
+			builder.addField("Time", Utilities.durationToString(newTotalTime), false);
+			builder.addField(BasicEmotes.P.getValue(), "Pause", true);
+			builder.addField(BasicEmotes.R.getValue(), "Resume", true);
+			builder.addField(BasicEmotes.S.getValue(), "Stop", true);
+			this.getInfoMessages().stream().findFirst().ifPresent(m -> m.editMessage(builder.build()).queue());
+		}
+	}
+	
 	@Override
 	public void close() throws IOException{
 		super.close();
@@ -93,17 +93,17 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 	}
 	
 	@Override
-	protected boolean onExecute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
-		return false;
-	}
-	
-	@Override
 	public boolean onExpire(){
 		this.counting = false;
 		this.totalTime = this.totalTime.plus(Duration.between(this.lastStart, LocalDateTime.now()));
 		this.executor.shutdown();
-		Actions.sendMessage(this.getWaitChannel(), "Total time: " + this.totalTime);
+		Actions.sendMessage(this.getWaitChannel(), "Total time: " + this.totalTime, null);
 		return true;
+	}
+	
+	@Override
+	protected boolean onExecute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+		return false;
 	}
 	
 	@Override

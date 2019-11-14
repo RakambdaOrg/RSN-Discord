@@ -6,19 +6,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.settings.guild.trombinoscope.PhotoEntryConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import net.dv8tion.jda.api.entities.User;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
 public class TrombinoscopeConfiguration{
 	@JsonProperty("photoChannel")
+	@Setter
 	private ChannelConfiguration photoChannel;
 	@JsonProperty("participantRole")
+	@Setter
 	private RoleConfiguration participantRole;
 	@JsonProperty("photos")
 	private Set<PhotoEntryConfiguration> photos = new HashSet<>();
@@ -27,29 +30,21 @@ public class TrombinoscopeConfiguration{
 		return this.photos.stream().filter(p -> Objects.equals(p.getUserId(), user.getIdLong())).collect(Collectors.toList());
 	}
 	
-	public void removePhoto(@Nonnull final User user, @Nonnull final String photo){
+	public void removePhoto(@NonNull final User user, @NonNull final String photo){
 		this.photos.removeIf(p -> Objects.equals(p.getUserId(), user.getIdLong()) && Objects.equals(p.getPhoto(), photo));
 	}
 	
-	public void removePhoto(@Nonnull final User user){
+	public void removePhoto(@NonNull final User user){
 		this.photos.removeIf(p -> Objects.equals(p.getUserId(), user.getIdLong()));
 	}
 	
-	@Nonnull
+	@NonNull
 	public Optional<RoleConfiguration> getParticipantRole(){
 		return Optional.ofNullable(this.participantRole);
 	}
 	
-	public void setParticipantRole(@Nullable final RoleConfiguration value){
-		this.participantRole = value;
-	}
-	
-	@Nonnull
+	@NonNull
 	public Optional<ChannelConfiguration> getPhotoChannel(){
 		return Optional.ofNullable(this.photoChannel);
-	}
-	
-	public void setPhotoChannel(@Nullable final ChannelConfiguration value){
-		this.photoChannel = value;
 	}
 }

@@ -3,31 +3,26 @@ package fr.raksrinana.rsndiscord.settings.types;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Message;
-import javax.annotation.Nonnull;
 
-/**
- * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-10-10.
- *
- * @author Thomas Couchoud
- * @since 2019-10-10
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
+@NoArgsConstructor
 public class TodoConfiguration{
 	@JsonProperty("message")
 	private MessageConfiguration message;
 	@JsonProperty("deleteOnDone")
 	private boolean deleteOnDone = false;
 	
-	public TodoConfiguration(){
-	}
-	
-	public TodoConfiguration(@Nonnull final Message message){
+	public TodoConfiguration(@NonNull final Message message){
 		this(message, false);
 	}
 	
-	public TodoConfiguration(@Nonnull final Message message, final boolean deleteOnDone){
+	public TodoConfiguration(@NonNull final Message message, final boolean deleteOnDone){
 		this(message.getChannel().getIdLong(), message.getIdLong(), deleteOnDone);
 	}
 	
@@ -36,17 +31,8 @@ public class TodoConfiguration{
 		this.deleteOnDone = deleteOnDone;
 	}
 	
-	@Nonnull
-	public MessageConfiguration getMessage(){
-		return this.message;
-	}
-	
-	public void setMessage(@Nonnull final Message message){
+	public void setMessage(@NonNull final Message message){
 		this.message.setMessage(message);
-	}
-	
-	public boolean isDeleteOnDone(){
-		return deleteOnDone;
 	}
 	
 	public void setDeleteOnDone(boolean deleteOnDone){

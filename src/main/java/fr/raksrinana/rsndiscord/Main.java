@@ -18,33 +18,29 @@ import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.irc.TwitchIRC;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
+import lombok.Getter;
+import lombok.NonNull;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
-import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 09/04/2018.
- *
- * @author Thomas Couchoud
- * @since 2018-04-09
- */
 public class Main{
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
 	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 	public static boolean DEVELOPMENT = Boolean.parseBoolean(System.getProperty("rsndev", "false"));
-	public static CLIParameters parameters;
+	@Getter
+	private static CLIParameters parameters;
+	@Getter
 	private static JDA jda;
 	private static ConsoleHandler consoleHandler;
 	
@@ -53,7 +49,7 @@ public class Main{
 	 *
 	 * @param args Not used.
 	 */
-	public static void main(@Nonnull final String[] args){
+	public static void main(@NonNull final String[] args){
 		Log.getLogger(null).info("Starting bot version {}", getRSNBotVersion());
 		if(DEVELOPMENT){
 			Log.getLogger(null).warn("Developer mode activated, shouldn't be used in production!");
@@ -67,22 +63,19 @@ public class Main{
 			e.usage();
 			return;
 		}
-		if(Objects.nonNull(parameters.getConfigurationFile())){
-			final var prop = new Properties();
-			try(final var is = Files.newInputStream(parameters.getConfigurationFile())){
-				prop.load(is);
-			}
-			catch(final IOException e){
-				Log.getLogger(null).warn("Failed to read file {}", parameters.getConfigurationFile());
-			}
-			prop.forEach((key, value) -> System.setProperty(key.toString(), value.toString()));
-			Log.getLogger(null).debug("Loaded {} properties from file", prop.keySet().size());
+		final var prop = new Properties();
+		try(final var is = Files.newInputStream(parameters.getConfigurationFile())){
+			prop.load(is);
 		}
+		catch(final IOException e){
+			Log.getLogger(null).warn("Failed to read file {}", parameters.getConfigurationFile());
+		}
+		prop.forEach((key, value) -> System.setProperty(key.toString(), value.toString()));
+		Log.getLogger(null).debug("Loaded {} properties from file", prop.keySet().size());
 		try{
 			Log.getLogger(null).info("Building JDA");
 			final var jdaBuilder = new JDABuilder(AccountType.BOT).setToken(System.getProperty("RSN_TOKEN"));
 			jdaBuilder.addEventListeners(new CommandsMessageListener());
-			// jdaBuilder.addEventListeners(new OnlyImagesMessageListener());
 			jdaBuilder.addEventListeners(new ShutdownListener());
 			jdaBuilder.addEventListeners(new LogListener());
 			jdaBuilder.addEventListeners(new AutoRolesListener());
@@ -91,10 +84,9 @@ public class Main{
 			jdaBuilder.addEventListeners(new ReplyMessageListener());
 			jdaBuilder.setAutoReconnect(true);
 			jda = jdaBuilder.build();
-			Log.setJDA(jda);
 			jda.awaitReady();
 			jda.getPresence().setActivity(Activity.playing("g?help for the help"));
-			Log.getLogger(null).info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::getConfiguration).count());
+			Log.getLogger(null).info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
 			Log.getLogger(null).info("Creating runners");
 			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda), new OverwatchLeagueScheduledRunner(jda));
 			for(final var scheduledRunner : scheduledRunners){
@@ -113,36 +105,16 @@ public class Main{
 			Settings.close();
 		}));
 		Log.getLogger(null).info("Shutdown hook registered");
-		consoleHandler = new ConsoleHandler(jda);
+		consoleHandler = new ConsoleHandler();
 		consoleHandler.start();
 	}
 	
-	private static void announceStart(){
-		Main.jda.getGuilds().stream().map(Settings::getConfiguration).map(GuildConfiguration::getAnnounceStartChannel).flatMap(Optional::stream).map(ChannelConfiguration::getChannel).flatMap(Optional::stream).forEach(c -> Actions.sendMessage(c, "Bot started :)"));
-	}
-	
 	/**
-	 * Get the running JDA.
+	 * Get the version of the bot.
 	 *
-	 * @return The JDA.
+	 * @return The version, or {@code "Unknown"} if unknown.
 	 */
-	@Nonnull
-	public static JDA getJDA(){
-		return jda;
-	}
-	
-	private static void restartTwitchIRCConnections(){
-		getJDA().getGuilds().forEach(guild -> Settings.getConfiguration(guild).getTwitchAutoConnectUsers().forEach(user -> {
-			try{
-				TwitchIRC.connect(guild, user);
-			}
-			catch(IOException e){
-				Log.getLogger(guild).error("Failed to automatically connect to twitch user {}", user, e);
-			}
-		}));
-	}
-	
-	@Nonnull
+	@NonNull
 	public static String getRSNBotVersion(){
 		final var properties = new Properties();
 		try{
@@ -155,7 +127,32 @@ public class Main{
 	}
 	
 	/**
-	 * Close executors.
+	 * Announce the bot started in channels defined in the configuration.
+	 *
+	 * @see GuildConfiguration#getAnnounceStartChannel()
+	 */
+	private static void announceStart(){
+		Main.jda.getGuilds().stream().map(Settings::get).map(GuildConfiguration::getAnnounceStartChannel).flatMap(Optional::stream).map(ChannelConfiguration::getChannel).flatMap(Optional::stream).forEach(channel -> Actions.sendMessage(channel, "Bot started :)", null));
+	}
+	
+	/**
+	 * Connects to IRC channels defined in the configuration.
+	 *
+	 * @see GuildConfiguration#getTwitchAutoConnectUsers()
+	 */
+	private static void restartTwitchIRCConnections(){
+		Main.getJda().getGuilds().forEach(guild -> Settings.get(guild).getTwitchAutoConnectUsers().forEach(user -> {
+			try{
+				TwitchIRC.connect(guild, user);
+			}
+			catch(IOException e){
+				Log.getLogger(guild).error("Failed to automatically connect to twitch user {}", user, e);
+			}
+		}));
+	}
+	
+	/**
+	 * Close the bot.
 	 */
 	public static void close(){
 		QuizListener.stopAll();
@@ -165,7 +162,6 @@ public class Main{
 		executorService.shutdownNow();
 		consoleHandler.close();
 		Settings.close();
-		Main.getJDA().shutdown();
+		Main.getJda().shutdown();
 	}
-	//https://api.overwatchleague.com/schedule
 }

@@ -7,41 +7,38 @@ import fr.raksrinana.rsndiscord.utils.anilist.AniListObject;
 import fr.raksrinana.rsndiscord.utils.anilist.DatedObject;
 import fr.raksrinana.rsndiscord.utils.anilist.queries.PagedQuery;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.Color;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-11.
- *
- * @author Thomas Couchoud
- * @since 2018-10-11
- */
 public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>{
-	default void runQueryOnEveryUserAndDefaultChannels(){
+	default void runQueryOnDefaultUsersChannels(){
 		final var channels = this.getChannels();
-		final var members = channels.stream().flatMap(channel -> Settings.getConfiguration(channel.getGuild()).getAniListConfiguration().getRegisteredUsers().stream().map(user -> channel.getGuild().getMember(user))).collect(Collectors.toList());
+		final var members = this.getMembers();
 		this.runQuery(members, channels);
 	}
 	
-	List<TextChannel> getChannels();
+	Set<TextChannel> getChannels();
 	
-	default void runQuery(@Nonnull final List<Member> members, @Nonnull final List<TextChannel> channels){
+	default Set<Member> getMembers(){
+		return this.getChannels().stream().flatMap(channel -> Settings.get(channel.getGuild()).getAniListConfiguration().getRegisteredUsers().stream().map(user -> channel.getGuild().getMember(user))).collect(Collectors.toSet());
+	}
+	
+	default void runQuery(@NonNull final Set<Member> members, @NonNull final Set<TextChannel> channels){
 		Log.getLogger(null).info("Starting AniList {} runner", this.getRunnerName());
 		try{
-			final var userElements = new HashMap<User, List<T>>();
+			final var userElements = new HashMap<User, Set<T>>();
 			for(final var member : members){
 				userElements.computeIfAbsent(member.getUser(), user -> {
 					try{
@@ -62,51 +59,49 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 		}
 	}
 	
-	@Nonnull
-	String getRunnerName();
+	@NonNull String getRunnerName();
 	
-	@Nonnull
-	default List<T> getElements(@Nonnull final Member member) throws Exception{
+	@NonNull
+	default Set<T> getElements(@NonNull final Member member) throws Exception{
 		Log.getLogger(member.getGuild()).debug("Fetching user {}", member);
 		var elementList = this.initQuery(member).getResult(member);
-		if(this.keepOnlyNew()){
-			final var baseDate = Settings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(this.getRunnerName(), member.getUser().getIdLong()).map(UserDateConfiguration::getDate).orElse(LocalDateTime.of(2019, 7, 7, 0, 0));
-			elementList = elementList.stream().filter(e -> e instanceof DatedObject).filter(e -> ((DatedObject) e).getDate().isAfter(baseDate)).collect(Collectors.toList());
+		if(this.isKeepOnlyNew()){
+			final var baseDate = Settings.get(member.getGuild()).getAniListConfiguration().getLastAccess(this.getRunnerName(), member.getUser().getIdLong()).map(UserDateConfiguration::getDate).orElse(LocalDateTime.of(2019, 7, 7, 0, 0));
+			elementList = elementList.stream().filter(e -> e instanceof DatedObject).filter(e -> ((DatedObject) e).getDate().isAfter(baseDate)).collect(Collectors.toSet());
 		}
 		elementList.stream().filter(e -> e instanceof DatedObject).map(e -> (DatedObject) e).map(DatedObject::getDate).max(LocalDateTime::compareTo).ifPresent(val -> {
 			Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {}", member, this.getRunnerName(), val);
-			Settings.getConfiguration(member.getGuild()).getAniListConfiguration().setLastAccess(member.getUser(), this.getRunnerName(), val);
+			Settings.get(member.getGuild()).getAniListConfiguration().setLastAccess(member.getUser(), this.getRunnerName(), val);
 		});
 		return elementList;
 	}
 	
-	default void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<T>> userElements){
-		if(this.sortedByUser()){
+	default void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<T>> userElements){
+		if(this.isSortedByUser()){
 			for(final var entry : userElements.entrySet()){
 				final var user = entry.getKey();
-				entry.getValue().stream().sorted().map(change -> this.buildMessage(user, change)).forEach(message -> channels.stream().filter(channel -> this.sendToChannel(channel, user)).forEach(channel -> Actions.sendMessage(channel, message)));
+				entry.getValue().stream().sorted().map(change -> this.buildMessage(user, change)).forEach(embed -> channels.stream().filter(channel -> this.sendToChannel(channel, user)).forEach(channel -> Actions.sendMessage(channel, "", embed)));
 			}
 		}
 		else{
-			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Map.Entry.comparingByValue()).map(change -> Map.entry(change.getKey(), this.buildMessage(change.getKey(), change.getValue()))).forEach(infos -> channels.stream().filter(chan -> this.sendToChannel(chan, infos.getKey())).forEach(chan -> Actions.sendMessage(chan, infos.getValue())));
+			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Map.Entry.comparingByValue()).map(change -> Map.entry(change.getKey(), this.buildMessage(change.getKey(), change.getValue()))).forEach(infos -> channels.stream().filter(chan -> this.sendToChannel(chan, infos.getKey())).forEach(chan -> Actions.sendMessage(chan, "", infos.getValue())));
 		}
 	}
 	
-	@Nonnull
-	U initQuery(@Nonnull Member member);
+	@NonNull U initQuery(@NonNull Member member);
 	
-	boolean keepOnlyNew();
+	boolean isKeepOnlyNew();
 	
-	default boolean sortedByUser(){
+	default boolean isSortedByUser(){
 		return false;
 	}
 	
-	@Nonnull
-	default MessageEmbed buildMessage(@Nullable final User user, @Nonnull final T change){
+	@NonNull
+	default MessageEmbed buildMessage(final User user, @NonNull final T change){
 		final var builder = new EmbedBuilder();
 		try{
 			if(Objects.isNull(user)){
-				builder.setAuthor(this.getJDA().getSelfUser().getName(), change.getUrl().toString(), this.getJDA().getSelfUser().getAvatarUrl());
+				builder.setAuthor(this.getJda().getSelfUser().getName(), change.getUrl().toString(), this.getJda().getSelfUser().getAvatarUrl());
 			}
 			else{
 				builder.setAuthor(user.getName(), change.getUrl().toString(), user.getAvatarUrl());
@@ -122,12 +117,10 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 	}
 	
 	default boolean sendToChannel(final TextChannel channel, final User user){
-		return Settings.getConfiguration(channel.getGuild()).getAniListConfiguration().getAccessToken(user.getIdLong()).isPresent();
+		return Settings.get(channel.getGuild()).getAniListConfiguration().getAccessToken(user.getIdLong()).isPresent();
 	}
 	
-	@Nonnull
-	JDA getJDA();
+	@NonNull JDA getJda();
 	
-	@Nonnull
-	String getFetcherID();
+	@NonNull String getFetcherID();
 }

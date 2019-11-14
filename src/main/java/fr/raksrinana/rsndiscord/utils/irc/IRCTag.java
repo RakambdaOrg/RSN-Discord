@@ -1,5 +1,8 @@
 package fr.raksrinana.rsndiscord.utils.irc;
 
+import lombok.Getter;
+
+@Getter
 public class IRCTag{
 	private final String key;
 	private final String value;
@@ -12,14 +15,6 @@ public class IRCTag{
 	@Override
 	public String toString(){
 		return this.getKey() + "=" + this.getValue();
-	}
-	
-	public String getKey(){
-		return this.key;
-	}
-	
-	public String getValue(){
-		return this.value;
 	}
 	
 	public String getTrigram(){

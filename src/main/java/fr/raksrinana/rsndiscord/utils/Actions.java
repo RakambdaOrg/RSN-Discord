@@ -1,233 +1,88 @@
 package fr.raksrinana.rsndiscord.utils;
 
-import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.utils.log.Log;
-import net.dv8tion.jda.api.Permission;
+import lombok.NonNull;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
-import net.dv8tion.jda.api.exceptions.HierarchyException;
-import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import net.dv8tion.jda.api.requests.RestAction;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.MessageFormat;
+import java.util.concurrent.CompletableFuture;
 
 /**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
- *
- * @author Thomas Couchoud
- * @since 2018-04-15
+ * Actions to do with JDA, logging them.
  */
-@SuppressWarnings({
-		"WeakerAccess",
-		"unused"
-})
 public class Actions{
-	public static final Consumer<Message> PIN_MESSAGE = message -> message.pin().queue();
-	
 	/**
-	 * Reply to a message.
+	 * Reply to a message event.
 	 *
-	 * @param event  The message event.
-	 * @param format The message format.
-	 * @param args   The message parameters.
-	 */
-	public static void replyFormatted(final GenericGuildMessageEvent event, final String format, final Object... args){
-		reply(event, String.format(format, args));
-	}
-	
-	/**
-	 * Reply to a message.
+	 * @param event   The message event to reply to.
+	 * @param message The message to send.
+	 * @param embed   The embed to attach along the message (see {{@link #sendMessage(TextChannel, CharSequence, MessageEmbed)}}).
 	 *
-	 * @param event   The message event.
-	 * @param message The message.
+	 * @return A completable future of a message.
+	 *
+	 * @see #sendMessage(TextChannel, CharSequence, MessageEmbed)
 	 */
-	public static void reply(final GenericGuildMessageEvent event, final String message){
-		sendMessage(event.getChannel(), message);
+	@NonNull
+	public static CompletableFuture<Message> reply(@NonNull final GenericGuildMessageEvent event, @NonNull final CharSequence message, MessageEmbed embed){
+		return sendMessage(event.getChannel(), message, embed);
 	}
 	
 	/**
 	 * Send a message to a channel.
 	 *
-	 * @param channel The channel to send to.
-	 * @param text    The message to send.
-	 */
-	public static void sendMessage(final TextChannel channel, final String text){
-		sendMessage(channel, null, text);
-	}
-	
-	/**
-	 * Send a message to a channel.
+	 * @param channel The channel to send the message to.
+	 * @param message The message to send.
+	 * @param embed   The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
 	 *
-	 * @param channel The channel to send to.
-	 * @param onDone  The action to do when done.
-	 * @param text    The message to send.
+	 * @return A completable future of a message (see {@link RestAction#submit()}).
 	 */
-	public static void sendMessage(final TextChannel channel, final Consumer<Message> onDone, final String text){
-		if(channel.canTalk()){
-			if(Objects.nonNull(onDone)){
-				channel.sendMessage(text).queue(onDone);
-			}
-			else{
-				channel.sendMessage(text).queue();
-			}
-			Log.getLogger(channel.getGuild()).info("Sent message to {} : {}", channel.getName(), text);
-		}
-		else{
-			Log.getLogger(channel.getGuild()).error("Access denied to text channel: {}", channel.getAsMention());
-		}
-	}
-	
-	/**
-	 * Reply to a message.
-	 *
-	 * @param event  The message event.
-	 * @param onDone The action to do when done.
-	 * @param format The message format.
-	 * @param args   The message parameters.
-	 */
-	public static void reply(final GenericGuildMessageEvent event, final Consumer<Message> onDone, final String format, final Object... args){
-		sendMessage(event.getChannel(), onDone, String.format(format, args));
-	}
-	
-	/**
-	 * Reply to a message.
-	 *
-	 * @param event   The message event.
-	 * @param onDone  The action to do when done.
-	 * @param message The embed to send.
-	 */
-	public static void reply(final GenericGuildMessageEvent event, final Consumer<Message> onDone, final MessageEmbed message){
-		sendMessage(event.getChannel(), onDone, message);
-	}
-	
-	/**
-	 * Send a message to a channel.
-	 *
-	 * @param channel The channel to send to.
-	 * @param onDone  The action to do when done.
-	 * @param embed   The message to send.
-	 */
-	public static void sendMessage(final TextChannel channel, final Consumer<Message> onDone, final MessageEmbed embed){
-		if(channel.canTalk()){
-			if(Objects.nonNull(onDone)){
-				channel.sendMessage(embed).queue(onDone);
-			}
-			else{
-				channel.sendMessage(embed).queue();
-			}
-			Log.getLogger(channel.getGuild()).info("Sent message to {} : {}", channel.getName(), Utilities.getEmbedForLog(embed));
-		}
-		else{
-			Log.getLogger(channel.getGuild()).error("Access denied to text channel: {}, when sending: {}", channel.getAsMention(), Utilities.getEmbedForLog(embed));
-		}
-	}
-	
-	/**
-	 * Send a message to a channel with an embed.
-	 *
-	 * @param channel The channel to send to.
-	 * @param text    The message to send.
-	 * @param embed   The embed to attach.
-	 */
-	public static void sendMessage(final TextChannel channel, final String text, final MessageEmbed embed){
-		sendMessage(channel, text, embed, null);
-	}
-	
-	/**
-	 * Send a message to a channel with an embed.
-	 *
-	 * @param channel The channel to send to.
-	 * @param text    The message to send.
-	 * @param embed   The embed to attach.
-	 * @param onSend  A callback to execute when the message is sent.
-	 */
-	public static void sendMessage(final TextChannel channel, final String text, final MessageEmbed embed, Consumer<Message> onSend){
-		if(channel.canTalk()){
-			channel.sendMessage(text).embed(embed).queue(onSend);
-			Log.getLogger(channel.getGuild()).info("Sent message to {} : {} {}", channel.getName(), text, Utilities.getEmbedForLog(embed));
-		}
-		else{
-			Log.getLogger(channel.getGuild()).error("Access denied to text channel: {}", channel.getAsMention());
-		}
-	}
-	
-	/**
-	 * Send a message to a channel.
-	 *
-	 * @param channel The channel to send to.
-	 * @param format  The format fo the message.
-	 * @param args    The message parameters.
-	 */
-	public static void sendMessage(final TextChannel channel, final String format, final Object... args){
-		sendMessage(channel, String.format(format, args));
-	}
-	
-	/**
-	 * Send a message to a channel.
-	 *
-	 * @param channel The channel to send to.
-	 * @param onDone  The action to do when done.
-	 * @param format  The format fo the message.
-	 * @param args    The message parameters.
-	 */
-	public static void sendMessage(final TextChannel channel, final Consumer<Message> onDone, final String format, final Object... args){
-		sendMessage(channel, onDone, String.format(format, args));
+	@NonNull
+	public static CompletableFuture<Message> sendMessage(@NonNull final TextChannel channel, @NonNull final CharSequence message, MessageEmbed embed){
+		Log.getLogger(channel.getGuild()).info("Sending message to {} : {}", channel, message);
+		return new MessageBuilder().sendTo(channel).append(message).embed(embed).submit();
 	}
 	
 	/**
 	 * Send a message to a user.
 	 *
-	 * @param guild  The guild that initiated the event.
-	 * @param user   The user to send to.
-	 * @param format The format fo the message.
-	 * @param args   The message parameters.
-	 */
-	public static void replyPrivate(final Guild guild, final User user, final String format, final Object... args){
-		replyPrivate(guild, user, String.format(format, args));
-	}
-	
-	/**
-	 * Send a message to a user.
+	 * @param guild   The guild that initiated the event.
+	 * @param user    The user to send to.
+	 * @param message The message to send.
 	 *
-	 * @param guild The guild that initiated the event.
-	 * @param user  The user to send to.
-	 * @param text  The message to send.
+	 * @return A completable future of a message.
+	 *
+	 * @see #sendPrivateMessage(Guild, PrivateChannel, CharSequence, MessageEmbed)
 	 */
-	public static void replyPrivate(final Guild guild, final User user, final String text){
-		user.openPrivateChannel().queue(channel -> sendMessage(guild, channel, text));
+	@NonNull
+	public static CompletableFuture<Message> replyPrivate(final Guild guild, @NonNull final User user, @NonNull final CharSequence message, MessageEmbed embed){
+		return user.openPrivateChannel().submit().thenCompose(channel -> sendPrivateMessage(guild, channel, message, embed));
 	}
 	
 	/**
-	 * Send a message to a channel.
+	 * Send a message to a private channel.
 	 *
 	 * @param guild   The guild that initiated the event.
 	 * @param channel The channel to send to.
-	 * @param text    The message to send.
-	 */
-	public static void sendMessage(final Guild guild, final PrivateChannel channel, final String text){
-		if(channel.getUser().isBot()){
-			Log.getLogger(guild).info("Cannot send private message to bot {} : {}", channel.getUser(), text);
-		}
-		else{
-			channel.sendMessage(text).queue();
-			Log.getLogger(guild).info("Sent private message to {} : {}", channel.getUser(), text);
-		}
-	}
-	
-	/**
-	 * Remove a role from a user.
+	 * @param message The message to send.
+	 * @param embed   The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
 	 *
-	 * @param user The user to remove the role from.
-	 * @param role The role to remove.
+	 * @return A completable future of a message (see {@link RestAction#submit()}).
+	 *
+	 * @throws IllegalArgumentException If trying to send a message to another bot.
 	 */
-	public static void removeRole(final User user, final Role role){
-		Optional.ofNullable(role.getGuild().getMember(user)).ifPresentOrElse(member -> removeRole(member, role), () -> Log.getLogger(role.getGuild()).info("Couldn't find {} in guild {}", user, role.getGuild()));
+	@NonNull
+	public static CompletableFuture<Message> sendPrivateMessage(final Guild guild, @NonNull final PrivateChannel channel, @NonNull final CharSequence message, MessageEmbed embed) throws IllegalArgumentException{
+		if(channel.getUser().isBot()){
+			throw new IllegalArgumentException(MessageFormat.format("Cannot send private message to other bot {0} : {1}", channel, message));
+		}
+		Log.getLogger(guild).info("Sending private message to {} : {}", channel, message);
+		return new MessageBuilder().sendTo(channel).append(message).embed(embed).submit();
 	}
 	
 	/**
@@ -235,366 +90,187 @@ public class Actions{
 	 *
 	 * @param member The user to remove the role from.
 	 * @param role   The role to remove.
+	 *
+	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
-	public static void removeRole(final Member member, final Role role){
-		if(Objects.nonNull(member)){
-			try{
-				member.getGuild().removeRoleFromMember(member, role).queue();
-				Log.getLogger(member.getGuild()).info("Removed role {} from {}", role, member.getUser());
-			}
-			catch(final IllegalArgumentException e){
-				Log.getLogger(member.getGuild()).warn("User/Role not found", e);
-			}
-		}
+	@NonNull
+	public static CompletableFuture<Void> removeRole(@NonNull final Member member, @NonNull final Role role){
+		Log.getLogger(member.getGuild()).info("Removing role {} from {}", role, member);
+		return member.getGuild().removeRoleFromMember(member, role).submit();
 	}
 	
 	/**
 	 * Delete a message.
 	 *
 	 * @param message The message to delete.
-	 */
-	public static void deleteMessage(final Message message){
-		if(Objects.nonNull(message)){
-			message.delete().queue();
-			Log.getLogger(message.getGuild()).info("Deleted message from {} : {}", message.getAuthor(), message.getContentRaw());
-		}
-	}
-	
-	/**
-	 * Gets the representation of a message for logs.
 	 *
-	 * @param message The message to log.
-	 *
-	 * @return Its representation.
+	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
-	public static String getMessageForLog(final Message message){
-		return message.getContentRaw() + " => " + message.getEmbeds().stream().map(Utilities::getEmbedForLog).collect(Collectors.joining(" | "));
-	}
-	
-	/**
-	 * Remove roles from a user.
-	 *
-	 * @param member The user to remove the roles from.
-	 * @param roles  The roles to remove.
-	 */
-	public static void removeRole(final Member member, final List<Role> roles){
-		roles.forEach(role -> removeRole(member, role));
-	}
-	
-	/**
-	 * Send a file to a channel.
-	 *
-	 * @param channel  The channel to send to.
-	 * @param resource The resource to send.
-	 * @param name     The name of the file.
-	 */
-	public static void sendFile(final TextChannel channel, final String resource, final String name){
-		sendFile(channel, Main.class.getResourceAsStream(resource), name);
+	@NonNull
+	public static CompletableFuture<Void> deleteMessage(@NonNull final Message message){
+		Log.getLogger(message.getGuild()).info("Deleting message {}", message);
+		return message.delete().submit();
 	}
 	
 	/**
 	 * Send a file to a channel.
 	 *
 	 * @param channel The channel to send to.
-	 * @param stream  The data to send.
-	 * @param name    The name of the file.
+	 * @param path    The file to send.
+	 *
+	 * @return A completable future of a message.
+	 *
+	 * @see #sendFile(TextChannel, InputStream, String)
 	 */
-	public static void sendFile(final TextChannel channel, final InputStream stream, final String name){
-		channel.sendFile(stream, name).queue();
-		Log.getLogger(channel.getGuild()).info("Sent file {} to {}", name, channel.getName());
-	}
-	
-	/**
-	 * Send a message and gets it.
-	 *
-	 * @param channel the channel to send to.
-	 * @param format  The message format.
-	 * @param args    The parameters of the message.
-	 *
-	 * @return The message sent or null fi there was a problem.
-	 */
-	public static Message getMessage(final TextChannel channel, final String format, final Object... args){
-		return getMessage(channel, String.format(format, args));
-	}
-	
-	/**
-	 * Send a message and gets it.
-	 *
-	 * @param channel the channel to send to.
-	 * @param text    The message to send.
-	 *
-	 * @return The message sent or null fi there was a problem.
-	 */
-	public static Message getMessage(final TextChannel channel, final String text){
-		Log.getLogger(channel.getGuild()).info("Sent message to {} : {}", channel.getName(), text);
-		return channel.sendMessage(text).complete();
+	@NonNull
+	public static CompletableFuture<Message> sendFile(final TextChannel channel, final Path path) throws IOException{
+		Log.getLogger(channel.getGuild()).debug("Sending file {} to {}", path, channel);
+		return sendFile(channel, Files.newInputStream(path), path.getFileName().toString());
 	}
 	
 	/**
 	 * Send a file to a channel.
+	 * Closes the stream when done.
 	 *
-	 * @param channel The channel to send to.
-	 * @param file    The file to send.
+	 * @param channel     The channel to send to.
+	 * @param inputStream The file data to send.
+	 * @param name        The name of the file.
+	 *
+	 * @return A completable future of a message (see {@link RestAction#submit()}).
 	 */
-	public static void sendFile(final TextChannel channel, final File file){
-		try{
-			sendFile(channel, new FileInputStream(file), file.getName());
-		}
-		catch(final FileNotFoundException e){
-			Log.getLogger(channel.getGuild()).error("Error sending file {}", file.getAbsolutePath(), e);
+	@NonNull
+	public static CompletableFuture<Message> sendFile(final TextChannel channel, final InputStream inputStream, final String name) throws IOException{
+		Log.getLogger(channel.getGuild()).info("Sending file {} to {}", name, channel);
+		try(final var is = inputStream){
+			return new MessageBuilder().sendTo(channel).addFile(is, name).submit();
 		}
 	}
 	
 	/**
 	 * Give roles to the user.
 	 *
-	 * @param member The member.
-	 * @param roles  The roles IDs.
+	 * @param member The member to add the role to.
+	 * @param role   The role to add.
+	 *
+	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
-	public static void giveRole(final Member member, final List<Long> roles){
-		giveRole(member.getUser(), roles.stream().map(r -> getRoleByID(member.getGuild(), r)).collect(Collectors.toList()));
+	@NonNull
+	public static CompletableFuture<Void> giveRole(@NonNull final Member member, @NonNull final Role role){
+		Log.getLogger(member.getGuild()).info("Adding role {} to {}", role, member);
+		return member.getGuild().addRoleToMember(member, role).submit();
 	}
 	
 	/**
-	 * Give roles to a user.
+	 * Set the deaf status of a member.
 	 *
-	 * @param user  The user to set the role to.
-	 * @param roles The roles to set.
+	 * @param member The member to set the deaf status.
+	 * @param status True if deaf, false is not deaf.
+	 *
+	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
-	public static void giveRole(final User user, final List<Role> roles){
-		roles.forEach(role -> giveRole(role.getGuild(), user, role));
+	@NonNull
+	public static CompletableFuture<Void> deafen(@NonNull final Member member, final boolean status){
+		Log.getLogger(member.getGuild()).info("Setting deaf status to {} for {}", status, member);
+		return member.getGuild().deafen(member, status).submit();
 	}
 	
 	/**
-	 * Get a role by its ID.
+	 * Set the mute status of a member.
 	 *
-	 * @param guild The guild the role is in.
-	 * @param role  The ID of the role.
+	 * @param member The member to set the mute status.
+	 * @param status True if muted, false is not muted.
 	 *
-	 * @return The role or null if not found.
+	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
-	public static Role getRoleByID(final Guild guild, final Long role){
-		return guild.getRoleById(role);
+	public static CompletableFuture<Void> mute(@NonNull Member member, boolean status){
+		Log.getLogger(member.getGuild()).info("Setting muted status to {} for {}", status, member);
+		return member.getGuild().mute(member, status).submit();
 	}
 	
 	/**
-	 * Give a role to a user.
+	 * Add a reaction to a message.
 	 *
-	 * @param guild The guild the role is in.
-	 * @param user  The user to set the role to.
-	 * @param role  The role to set.
+	 * @param message The message to add the reaction to.
+	 * @param emote   The reaction emote to add.
+	 *
+	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
-	public static void giveRole(final Guild guild, final User user, final Role role){
-		try{
-			final var member = guild.getMember(user);
-			if(Objects.requireNonNull(member).getRoles().contains(role)){
-				Log.getLogger(guild).info("{} already have role {}", user, role);
-			}
-			else{
-				guild.addRoleToMember(member, role).queue();
-				Log.getLogger(guild).info("Added role {} to {}", role, user);
-			}
-		}
-		catch(final IllegalArgumentException e){
-			Log.getLogger(guild).warn("User/Role not found {}", role, e);
-		}
-		catch(final Exception e){
-			Log.getLogger(guild).error("Error giving role {} to {}", role, user, e);
-		}
+	public static CompletableFuture<Void> addReaction(@NonNull Message message, @NonNull String emote){
+		Log.getLogger(message.getGuild()).info("Adding reaction {} to {}", emote, message);
+		return message.addReaction(emote).submit();
 	}
 	
 	/**
-	 * Send a message to a channel.
+	 * Modifies the content of a message.
 	 *
-	 * @param guild   The guild the event is from.
-	 * @param channel The channel to send to.
-	 * @param embed   The message to send.
+	 * @param message    The message to edit.
+	 * @param newMessage The nex content for the message.
+	 *
+	 * @return A completable future of a message (see {@link RestAction#submit()}).
 	 */
-	public static void sendPrivateMessage(final Guild guild, final PrivateChannel channel, final MessageEmbed embed){
-		if(Objects.nonNull(channel)){
-			channel.sendMessage(embed).queue();
-			Log.getLogger(guild).info("Sent private message to {} : {}", channel.getUser(), Utilities.getEmbedForLog(embed));
-		}
-		else{
-			Log.getLogger(guild).warn("Cannot send private message to null channel : {}", Utilities.getEmbedForLog(embed));
-		}
+	public static CompletableFuture<Message> editMessage(@NonNull Message message, @NonNull String newMessage){
+		Log.getLogger(message.getGuild()).info("Editing message {} with {}", message, newMessage);
+		return message.editMessage(message).submit();
 	}
 	
 	/**
-	 * Send a message to a channel.
+	 * Remove all reactions from a message.
 	 *
-	 * @param guild   The guild the event is from.
-	 * @param channel The channel to send to.
-	 * @param message The message's text.
-	 * @param embed   The message to send.
+	 * @param message The message to clear the reactions from.
+	 *
+	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
-	public static void sendPrivateMessage(final Guild guild, final PrivateChannel channel, final String message, final MessageEmbed embed){
-		if(Objects.nonNull(channel)){
-			channel.sendMessage(message).embed(embed).queue();
-			Log.getLogger(guild).info("Sent private message to {} : {} {}", channel.getUser(), message, Utilities.getEmbedForLog(embed));
-		}
-		else{
-			Log.getLogger(guild).warn("Cannot send private message to null channel : {} {}", message, Utilities.getEmbedForLog(embed));
-		}
+	public static CompletableFuture<Void> clearReactions(@NonNull Message message){
+		Log.getLogger(message.getGuild()).info("Clearing reactions on {}", message);
+		return message.clearReactions().submit();
 	}
 	
 	/**
-	 * Reply to an event?
+	 * Unpin a message.
 	 *
-	 * @param event The event.
-	 * @param embed The message to send.
+	 * @param message The message to unpin.
+	 *
+	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
-	public static void reply(final GenericGuildMessageEvent event, final MessageEmbed embed){
-		sendMessage(event.getChannel(), embed);
+	public static CompletableFuture<Void> unpin(@NonNull Message message){
+		Log.getLogger(message.getGuild()).info("Unpinning {}", message);
+		return message.unpin().submit();
 	}
 	
 	/**
-	 * Send a message to a channel.
+	 * Remove a reaction from a message.
 	 *
-	 * @param channel The channel to send to.
-	 * @param embed   The message to send.
+	 * @param reaction The reaction to delete.
+	 * @param user     The user that put this reaction.
+	 *
+	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
-	public static void sendMessage(final TextChannel channel, final MessageEmbed embed){
-		sendMessage(channel, (Consumer<Message>) null, embed);
+	public static CompletableFuture<Void> removeReaction(@NonNull MessageReaction reaction, @NonNull User user){
+		Log.getLogger(reaction.getGuild()).info("Removing reaction {} from {}", reaction.getReactionEmote().getName(), user);
+		return reaction.removeReaction(user).submit();
 	}
 	
 	/**
-	 * Send a message to a channel.
+	 * Pin a message.
 	 *
-	 * @param channel The channel to send to.
-	 * @param embeds  The messages to send.
+	 * @param message The message to pin.
+	 *
+	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
-	public static void sendMessage(final TextChannel channel, final List<MessageEmbed> embeds){
-		embeds.forEach(e -> sendMessage(channel, e));
+	public static CompletableFuture<Void> pin(Message message){
+		Log.getLogger(message.getGuild()).info("Pinning {}", message);
+		return message.pin().submit();
 	}
 	
 	/**
-	 * Send a message to a channel.
+	 * Change the username of a member.
 	 *
-	 * @param channel The channel to send to.
-	 * @param embeds  The messages to send.
+	 * @param member   The member to change the nickname.
+	 * @param nickname The name to set (null to reset).
+	 *
+	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
-	public static void sendMessage(final TextChannel channel, final Consumer<Message> onDone, final List<MessageEmbed> embeds){
-		embeds.forEach(e -> sendMessage(channel, onDone, e));
-	}
-	
-	/**
-	 * Deafen members.
-	 *
-	 * @param members The member to set deaf.
-	 * @param state   True if deaf, false is not deaf.
-	 */
-	public static void deafen(final List<Member> members, final boolean state){
-		members.forEach(member -> deafen(member, state));
-	}
-	
-	/**
-	 * Deafen a member.
-	 *
-	 * @param member The member to set deaf.
-	 * @param state  True if deaf, false is not deaf.
-	 */
-	private static void deafen(final Member member, final boolean state){
-		try{
-			member.getGuild().deafen(member, state).queue();
-			Log.getLogger(member.getGuild()).info("Member {} is now {}deaf", member.getUser(), state ? "" : "un");
-		}
-		catch(final HierarchyException | InsufficientPermissionException e){
-			Log.getLogger(member.getGuild()).warn("Cannot {}deaf member {}", state ? "" : "un", member.getUser());
-		}
-		catch(final Exception e){
-			Log.getLogger(member.getGuild()).error("Error trying to {}deafen member {}", state ? "" : "un", member.getUser(), e);
-		}
-	}
-	
-	/**
-	 * Deny a person for members.
-	 *
-	 * @param members    The members concerned.
-	 * @param channel    The channel it'll apply to.
-	 * @param permission The permission to remove.
-	 */
-	public static void denyPermission(final List<Member> members, final GuildChannel channel, final Permission permission){
-		members.forEach(member -> denyPermission(member, channel, permission));
-	}
-	
-	/**
-	 * Deny a person for a member.
-	 *
-	 * @param member     The member concerned.
-	 * @param channel    The channel it'll apply to.
-	 * @param permission The permission to remove.
-	 */
-	public static void denyPermission(final Member member, final GuildChannel channel, final Permission permission){
-		try{
-			channel.putPermissionOverride(member).setDeny(permission).queue();
-			Log.getLogger(member.getGuild()).info("{} no longer have permission {} on {}", member.getUser(), permission.name(), channel.getName());
-		}
-		catch(final HierarchyException | InsufficientPermissionException e){
-			Log.getLogger(member.getGuild()).warn("Cannot remove permission from {} in {}", member.getUser(), channel.getName());
-		}
-		catch(final Exception e){
-			Log.getLogger(member.getGuild()).warn("Error removing permission from {} in {}", member.getUser(), channel.getName(), e);
-		}
-	}
-	
-	/**
-	 * Allow a person for members.
-	 *
-	 * @param members    The members concerned.
-	 * @param channel    The channel it'll apply to.
-	 * @param permission The permission to give.
-	 */
-	public static void allowPermission(final List<Member> members, final GuildChannel channel, final Permission permission){
-		members.forEach(member -> allowPermission(member, channel, permission));
-	}
-	
-	/**
-	 * Allow a person for a member.
-	 *
-	 * @param member     The member concerned.
-	 * @param channel    The channel it'll apply to.
-	 * @param permission The permission to give.
-	 */
-	public static void allowPermission(final Member member, final GuildChannel channel, final Permission permission){
-		try{
-			channel.putPermissionOverride(member).setAllow(permission).queue();
-			Log.getLogger(member.getGuild()).info("{} now have permission {} on {}", member.getUser(), permission.getName(), channel.getName());
-		}
-		catch(final HierarchyException | InsufficientPermissionException e){
-			Log.getLogger(member.getGuild()).warn("Cannot give permission to {} in {}", member.getUser(), channel.getName());
-		}
-		catch(final Exception e){
-			Log.getLogger(member.getGuild()).warn("Error giving permission to {} in {}", member.getUser(), channel.getName(), e);
-		}
-	}
-	
-	/**
-	 * Sends embeds to a channel.
-	 *
-	 * @param channel The channel to send to.
-	 * @param embeds  The embeds to send.
-	 *
-	 * @return The messages sent.
-	 */
-	public static List<Message> getMessage(final TextChannel channel, final List<MessageEmbed> embeds){
-		return embeds.stream().map(embed -> getMessage(channel, embed)).collect(Collectors.toList());
-	}
-	
-	/**
-	 * Send a message and gets it.
-	 *
-	 * @param channel the channel to send to.
-	 * @param embed   The message to send.
-	 *
-	 * @return The message sent or null fi there was a problem.
-	 */
-	public static Message getMessage(final TextChannel channel, final MessageEmbed embed){
-		Log.getLogger(channel.getGuild()).info("Sent message to {} : {}", channel.getName(), embed);
-		return channel.sendMessage(embed).complete();
-	}
-	
-	public static void deleteMessageById(final long channelId, final long messageId){
-		Optional.ofNullable(Main.getJDA().getTextChannelById(channelId)).ifPresent(channel -> channel.deleteMessageById(messageId).queue());
+	public static CompletableFuture<Void> changeNickname(@NonNull Member member, String nickname){
+		return member.getGuild().modifyNickname(member, nickname).submit();
 	}
 }

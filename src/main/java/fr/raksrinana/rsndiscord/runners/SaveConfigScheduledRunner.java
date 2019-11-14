@@ -2,19 +2,10 @@ package fr.raksrinana.rsndiscord.runners;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.log.Log;
-import javax.annotation.Nonnull;
+import lombok.NonNull;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 14/07/2018.
- *
- * @author Thomas Couchoud
- * @since 2018-07-14
- */
 public class SaveConfigScheduledRunner implements ScheduledRunner{
-	/**
-	 * Constructor.
-	 */
 	public SaveConfigScheduledRunner(){
 		Log.getLogger(null).info("Creating saver runner");
 	}
@@ -34,7 +25,7 @@ public class SaveConfigScheduledRunner implements ScheduledRunner{
 		return 5;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.MINUTES;

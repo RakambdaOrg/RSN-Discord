@@ -7,40 +7,33 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
- *
- * @author Thomas Couchoud
- * @since 2018-04-12
- */
 @BotCommand
 public class QuestionCommand extends BasicCommand{
 	private static int nextId = 0;
 	
 	@Override
-	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
+	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Message", "The question you want to ask", false);
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
-	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
-			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Please ask a question");
+			return CommandResult.BAD_ARGUMENTS;
 		}
 		else if("message".equalsIgnoreCase(args.peek()) || "question".equalsIgnoreCase(args.peek())){
-			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Please ask a question, and not 'message'");
+			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Please ask a question, and not 'message'", null);
 		}
 		else{
 			final var ID = ++nextId;
@@ -51,48 +44,36 @@ public class QuestionCommand extends BasicCommand{
 			builder.addField("ID", String.valueOf(ID), true);
 			builder.addField("User", event.getAuthor().getAsMention(), true);
 			builder.addField("Question", String.join(" ", args), false);
-			Settings.getConfiguration(event.getGuild()).getQuestionsConfiguration().getInputChannel().flatMap(ChannelConfiguration::getChannel).ifPresentOrElse(channel -> {
-				final var message = Actions.getMessage(channel, builder.build());
-				message.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
-				message.addReaction(BasicEmotes.CROSS_NO.getValue()).queue();
-				Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Ok, you question have been added to the queue (ID: " + ID + "): " + String.join(" ", args));
-			}, () -> Actions.replyPrivate(event.getGuild(), event.getAuthor(), "This feature isn't configured yet"));
+			Settings.get(event.getGuild()).getQuestionsConfiguration().getInputChannel().flatMap(ChannelConfiguration::getChannel).ifPresentOrElse(channel -> Actions.reply(event, "", builder.build()).thenAccept(message -> {
+				Actions.addReaction(message, BasicEmotes.CHECK_OK.getValue());
+				Actions.addReaction(message, BasicEmotes.CROSS_NO.getValue());
+				Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Ok, you question have been added to the queue (ID: " + ID + "): " + String.join(" ", args), null);
+			}), () -> Actions.replyPrivate(event.getGuild(), event.getAuthor(), "This feature isn't configured yet", null));
 		}
 		return CommandResult.SUCCESS;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <message...>";
 	}
 	
-	@Nonnull
-	@Override
-	public AccessLevel getAccessLevel(){
-		return AccessLevel.ALL;
-	}
-	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "FAQ";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("question", "q");
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getDescription(){
 		return "Ask a question for the FAQ";
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
 	}
 }

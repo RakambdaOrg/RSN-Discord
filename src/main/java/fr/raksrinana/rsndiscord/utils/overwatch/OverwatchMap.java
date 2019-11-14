@@ -7,11 +7,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.json.OverwatchLocalizedStringDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
 import fr.raksrinana.rsndiscord.utils.overwatch.map.OverwatchGameMode;
+import lombok.Getter;
 import java.net.URL;
-import java.util.List;
+import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 public class OverwatchMap{
 	@JsonProperty("guid")
 	private String guid;
@@ -19,7 +21,7 @@ public class OverwatchMap{
 	@JsonDeserialize(using = OverwatchLocalizedStringDeserializer.class)
 	private String name;
 	@JsonProperty("gameModes")
-	private List<OverwatchGameMode> gameModes;
+	private Set<OverwatchGameMode> gameModes;
 	@JsonProperty("id")
 	private String id;
 	@JsonProperty("icon")
@@ -34,17 +36,5 @@ public class OverwatchMap{
 	@Override
 	public String toString(){
 		return this.getName();
-	}
-	
-	private String getName(){
-		return this.name;
-	}
-	
-	public String getGuid(){
-		return this.guid;
-	}
-	
-	public String getType(){
-		return this.type;
 	}
 }

@@ -3,23 +3,27 @@ package fr.raksrinana.rsndiscord.settings.guild.participation;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import javax.annotation.Nonnull;
 import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
 public class EntityScore{
 	@JsonProperty("id")
+	@Getter
 	private long id;
 	@JsonProperty("name")
 	private String name;
 	@JsonProperty("score")
+	@Getter
+	@Setter
 	private long score;
-	
-	public EntityScore(){
-	}
 	
 	public EntityScore(final long id){
 		this(id, null);
@@ -56,20 +60,8 @@ public class EntityScore{
 		return new EqualsBuilder().append(this.getId(), that.getId()).isEquals();
 	}
 	
-	public long getId(){
-		return this.id;
-	}
-	
-	@Nonnull
+	@NonNull
 	public Optional<String> getName(){
 		return Optional.ofNullable(this.name);
-	}
-	
-	public long getScore(){
-		return this.score;
-	}
-	
-	public void setScore(final long value){
-		this.score = value;
 	}
 }

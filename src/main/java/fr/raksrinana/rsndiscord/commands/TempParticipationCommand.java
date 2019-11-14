@@ -6,12 +6,11 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import net.dv8tion.jda.api.entities.ChannelType;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -20,68 +19,55 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
- *
- * @author Thomas Couchoud
- * @since 2018-04-12
- */
 @BotCommand
-@SuppressWarnings("WeakerAccess")
 public class TempParticipationCommand extends BasicCommand{
 	public static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyyMMdd");
 	public static final DateTimeFormatter DFD = DateTimeFormatter.ofPattern("dd/MM/yyy");
 	
-	@Nonnull
-	public static String getKey(@Nonnull final LocalDate localDate){
+	@NonNull
+	public static String getKey(@NonNull final LocalDate localDate){
 		return localDate.format(DF);
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
-	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		sendInfos(event.getGuild(), LocalDate.now(), event.getAuthor(), event.getChannel(), 25);
 		return CommandResult.SUCCESS;
 	}
 	
-	public static boolean sendInfos(@Nonnull final Guild guild, @Nonnull final LocalDate localDate, @Nonnull final User author, @Nonnull final TextChannel channel, final int limit){
-		return Settings.getConfiguration(guild).getParticipationConfiguration().getUsers(localDate, false).map(stats -> {
+	public static boolean sendInfos(@NonNull final Guild guild, @NonNull final LocalDate localDate, @NonNull final User author, @NonNull final TextChannel channel, final int limit){
+		return Settings.get(guild).getParticipationConfiguration().getUsers(localDate, false).map(stats -> {
 			final var position = new AtomicInteger(1);
-			final var builder = Utilities.buildEmbed(author, Color.MAGENTA, "Participation of the " + localDate.format(DFD) + " (UTC)");
+			final var builder = Utilities.buildEmbed(author, Color.MAGENTA, "Participation of the " + localDate.format(DFD) + " (UTC)", null);
 			stats.getScores().stream().sorted((e1, e2) -> Long.compare(e2.getScore(), e1.getScore())).limit(limit).forEachOrdered(e -> builder.addField("#" + position.getAndIncrement(), Optional.ofNullable(guild.getJDA().getUserById(e.getId())).map(User::getAsMention).or(e::getName).orElse("<<UNKNOWN>>") + " Messages: " + e.getScore(), false));
-			Actions.sendMessage(channel, builder.build());
+			Actions.sendMessage(channel, "", builder.build());
 			return true;
 		}).orElse(false);
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ADMIN;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Temporary participation";
 	}
 	
-	@Nonnull
-	@SuppressWarnings("SpellCheckingInspection")
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("tempparticipation", "tp");
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getDescription(){
 		return "Display the temporary ranking for the day";
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
 	}
 }

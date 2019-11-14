@@ -4,40 +4,39 @@ import fr.raksrinana.rsndiscord.commands.config.helpers.ChannelConfigurationComm
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
 public class NotificationChannelConfigurationCommand extends ChannelConfigurationCommand{
-	public NotificationChannelConfigurationCommand(@Nullable final Command parent){
+	public NotificationChannelConfigurationCommand(final Command parent){
 		super(parent);
 	}
 	
-	@Nonnull
 	@Override
-	protected Optional<ChannelConfiguration> getConfig(@Nonnull final Guild guild){
-		return Settings.getConfiguration(guild).getOverwatchLeagueConfiguration().getNotificationChannel();
+	protected void setConfig(@NonNull final Guild guild, @NonNull final ChannelConfiguration value){
+		Settings.get(guild).getOverwatchLeagueConfiguration().setNotificationChannel(value);
 	}
 	
 	@Override
-	protected void setConfig(@Nonnull final Guild guild, @Nonnull final ChannelConfiguration value){
-		Settings.getConfiguration(guild).getOverwatchLeagueConfiguration().setNotificationChannel(value);
+	protected void removeConfig(@NonNull final Guild guild){
+		Settings.get(guild).getOverwatchLeagueConfiguration().setNotificationChannel(null);
 	}
 	
+	@NonNull
 	@Override
-	protected void removeConfig(@Nonnull final Guild guild){
-		Settings.getConfiguration(guild).getOverwatchLeagueConfiguration().setNotificationChannel(null);
+	protected Optional<ChannelConfiguration> getConfig(@NonNull final Guild guild){
+		return Settings.get(guild).getOverwatchLeagueConfiguration().getNotificationChannel();
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Notification channel";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("notificationChannel");

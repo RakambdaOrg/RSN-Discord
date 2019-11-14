@@ -1,43 +1,36 @@
 package fr.raksrinana.rsndiscord.commands.warn;
 
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
-import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
- *
- * @author Thomas Couchoud
- * @since 2018-04-12
- */
 @BotCommand
 public class CustomWarnCommand extends WarnCommand{
-	@Nonnull
+	@NonNull
 	@Override
-	protected Optional<Role> getRole(@Nonnull final Guild guild, @Nonnull final Message message, @Nonnull final LinkedList<String> args){
+	protected Optional<Role> getRole(@NonNull final Guild guild, @NonNull final Message message, @NonNull final LinkedList<String> args){
 		args.pop();
 		return Optional.of(message.getMentionedRoles().get(0));
 	}
 	
 	@Override
-	protected long getTime(@Nonnull final Guild guild, @Nonnull final Message message, @Nonnull final LinkedList<String> args){
+	protected long getTime(@NonNull final Guild guild, @NonNull final Message message, @NonNull final LinkedList<String> args){
 		return Long.parseLong(Objects.requireNonNull(args.poll()));
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Custom warn";
 	}
 	
-	@Nonnull
-	@SuppressWarnings("SpellCheckingInspection")
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("cwarn");

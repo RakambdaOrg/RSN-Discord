@@ -1,10 +1,11 @@
 package fr.raksrinana.rsndiscord.listeners.reply;
 
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import lombok.Getter;
+import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,17 +15,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
-/**
- * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-05-18.
- *
- * @author Thomas Couchoud
- * @since 2019-05-18
- */
 public class ReplyMessageListener extends ListenerAdapter{
+	@Getter
 	private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	private static final List<WaitingUserReply> replies = new ArrayList<>();
 	
-	public static void handleReply(final WaitingUserReply reply){
+	public static void handleReply(@NonNull final WaitingUserReply reply){
 		replies.add(reply);
 	}
 	
@@ -41,7 +37,7 @@ public class ReplyMessageListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildMessageReceived(@Nonnull final GuildMessageReceivedEvent event){
+	public void onGuildMessageReceived(@NonNull final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
 			replies.removeIf(reply -> reply.isHandled() || (reply.handleEvent(event) && reply.execute(event, Arrays.stream(event.getMessage().getContentRaw().split(" ")).collect(Collectors.toCollection(LinkedList::new)))));
@@ -52,7 +48,7 @@ public class ReplyMessageListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildMessageReactionAdd(@Nonnull final GuildMessageReactionAddEvent event){
+	public void onGuildMessageReactionAdd(@NonNull final GuildMessageReactionAddEvent event){
 		super.onGuildMessageReactionAdd(event);
 		try{
 			replies.removeIf(reply -> reply.isHandled() || (reply.handleEvent(event) && reply.execute(event)));
@@ -60,10 +56,5 @@ public class ReplyMessageListener extends ListenerAdapter{
 		catch(final Exception e){
 			Log.getLogger(event.getGuild()).error("Failed to handle user reply", e);
 		}
-	}
-	
-	@Nonnull
-	static ScheduledExecutorService getExecutor(){
-		return executor;
 	}
 }

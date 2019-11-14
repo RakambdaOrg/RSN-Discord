@@ -5,16 +5,19 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.json.HexColorDeserializer;
+import lombok.Getter;
 import java.awt.Color;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 public class OverwatchCompetitor{
 	@JsonProperty("id")
 	private int id;
 	@JsonProperty("availableLanguages")
-	private List<String> availableLanguages;
+	private Set<String> availableLanguages;
 	@JsonProperty("handle")
 	private String handler;
 	@JsonProperty("name")
@@ -42,23 +45,20 @@ public class OverwatchCompetitor{
 	@JsonProperty("type")
 	private String type;
 	
-	public String getIcon(){
-		return this.icon;
+	@Override
+	public int hashCode(){
+		return Objects.hash(id);
 	}
 	
-	public int getId(){
-		return this.id;
-	}
-	
-	public String getLogo(){
-		return this.logo;
-	}
-	
-	public String getName(){
-		return this.name;
-	}
-	
-	public Color getPrimaryColor(){
-		return this.primaryColor;
+	@Override
+	public boolean equals(Object o){
+		if(this == o){
+			return true;
+		}
+		if(o == null || getClass() != o.getClass()){
+			return false;
+		}
+		OverwatchCompetitor that = (OverwatchCompetitor) o;
+		return id == that.id;
 	}
 }

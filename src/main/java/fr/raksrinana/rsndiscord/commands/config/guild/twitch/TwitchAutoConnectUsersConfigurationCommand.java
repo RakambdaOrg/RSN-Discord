@@ -3,34 +3,33 @@ package fr.raksrinana.rsndiscord.commands.config.guild.twitch;
 import fr.raksrinana.rsndiscord.commands.config.helpers.SetConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class TwitchAutoConnectUsersConfigurationCommand extends SetConfigurationCommand<String>{
-	public TwitchAutoConnectUsersConfigurationCommand(@Nullable final Command parent){
+	public TwitchAutoConnectUsersConfigurationCommand(final Command parent){
 		super(parent);
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
-	protected Optional<Set<String>> getConfig(@Nonnull final Guild guild){
-		return Optional.of(Settings.getConfiguration(guild).getTwitchAutoConnectUsers());
+	protected Optional<Set<String>> getConfig(@NonNull final Guild guild){
+		return Optional.of(Settings.get(guild).getTwitchAutoConnectUsers());
 	}
 	
 	@Override
-	protected void createConfig(@Nonnull final Guild guild, @Nonnull final String value){
+	protected void createConfig(@NonNull final Guild guild, @NonNull final String value){
 		final var set = new HashSet<String>();
 		set.add(value);
-		Settings.getConfiguration(guild).setTwitchAutoConnectUsers(set);
+		Settings.get(guild).setTwitchAutoConnectUsers(set);
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
-	protected String extractValue(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws IllegalArgumentException{
+	protected String extractValue(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args) throws IllegalArgumentException{
 		if(args.isEmpty()){
 			throw new IllegalArgumentException("Please mention a user");
 		}
@@ -38,29 +37,29 @@ public class TwitchAutoConnectUsersConfigurationCommand extends SetConfiguration
 	}
 	
 	@Override
-	protected void removeConfig(@Nonnull final Guild guild, @Nonnull final String value){
-		Settings.getConfiguration(guild).getTwitchAutoConnectUsers().remove(value);
+	protected void removeConfig(@NonNull final Guild guild, @NonNull final String value){
+		Settings.get(guild).getTwitchAutoConnectUsers().remove(value);
 	}
 	
 	@Override
-	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
+	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("User", "The user to add or remove", false);
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [user]";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Users auto reconnect";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("autoReconnect");

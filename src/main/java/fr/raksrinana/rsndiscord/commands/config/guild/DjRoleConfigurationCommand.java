@@ -4,40 +4,39 @@ import fr.raksrinana.rsndiscord.commands.config.helpers.RoleConfigurationCommand
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
 public class DjRoleConfigurationCommand extends RoleConfigurationCommand{
-	public DjRoleConfigurationCommand(@Nullable final Command parent){
+	public DjRoleConfigurationCommand(final Command parent){
 		super(parent);
 	}
 	
-	@Nonnull
 	@Override
-	protected Optional<RoleConfiguration> getConfig(@Nonnull final Guild guild){
-		return Settings.getConfiguration(guild).getDjRole();
+	protected void setConfig(@NonNull final Guild guild, @NonNull final RoleConfiguration value){
+		Settings.get(guild).setDjRole(value);
 	}
 	
 	@Override
-	protected void setConfig(@Nonnull final Guild guild, @Nonnull final RoleConfiguration value){
-		Settings.getConfiguration(guild).setDjRole(value);
+	protected void removeConfig(@NonNull final Guild guild){
+		Settings.get(guild).setDjRole(null);
 	}
 	
+	@NonNull
 	@Override
-	protected void removeConfig(@Nonnull final Guild guild){
-		Settings.getConfiguration(guild).setDjRole(null);
+	protected Optional<RoleConfiguration> getConfig(@NonNull final Guild guild){
+		return Settings.get(guild).getDjRole();
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "DJ Role";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("djRole");

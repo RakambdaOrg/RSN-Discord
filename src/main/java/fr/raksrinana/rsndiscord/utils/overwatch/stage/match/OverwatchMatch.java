@@ -11,25 +11,23 @@ import fr.raksrinana.rsndiscord.utils.overwatch.enums.*;
 import fr.raksrinana.rsndiscord.utils.overwatch.stage.match.bracket.OverwatchBracket;
 import fr.raksrinana.rsndiscord.utils.overwatch.stage.match.game.OverwatchGame;
 import fr.raksrinana.rsndiscord.utils.overwatch.stage.tournament.OverwatchTournament;
+import lombok.Getter;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
-import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 public class OverwatchMatch implements Comparable<OverwatchMatch>{
 	@JsonProperty("id")
 	private int id;
 	@JsonProperty("competitors")
-	private List<OverwatchCompetitor> competitors = new ArrayList<>();
+	private Set<OverwatchCompetitor> competitors = new HashSet<>();
 	@JsonProperty("scores")
 	private List<OverwatchScore> scores = new ArrayList<>();
 	@JsonProperty("conclusionValue")
@@ -49,8 +47,10 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 	private OverwatchStatusReason statusReason;
 	@JsonProperty("attributes")
 	private OverwatchMatchAttributes attributes;
+	@JsonProperty("attributesVersion")
+	private String attributesVersion;
 	@JsonProperty("games")
-	private List<OverwatchGame> games = new ArrayList<>();
+	private Set<OverwatchGame> games = new HashSet<>();
 	@JsonProperty("clientHints")
 	private List<String> clientHints; //TODO
 	@JsonProperty("bracket")
@@ -73,19 +73,19 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private LocalDateTime actualEndDate;
 	@JsonProperty("startDate")
-	private String startDate;
+	private String startDateString;
 	@JsonProperty("endDate")
-	private String endDate;
+	private String endDateString;
 	@JsonProperty("showStartTime")
 	private boolean showStartTime;
 	@JsonProperty("showEndTime")
 	private boolean showEndTime;
 	@JsonProperty("startDateTS")
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	private LocalDateTime startDateTS;
+	private LocalDateTime startDate;
 	@JsonProperty("endDateTS")
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	private LocalDateTime endDateTS;
+	private LocalDateTime endDate;
 	@JsonProperty("youtubeId")
 	private String youtubeId;
 	@JsonProperty("wins")
@@ -95,27 +95,25 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 	@JsonProperty("losses")
 	private List<Integer> losses;
 	@JsonProperty("videos")
-	private List<OverwatchVideo> videos;
+	private Set<OverwatchVideo> videos;
 	@JsonProperty("tournament")
 	private OverwatchTournament tournament;
 	@JsonProperty("broadcastChannels")
-	private List<OverwatchBroadcastChannel> broadcastChannels;
+	private Set<OverwatchBroadcastChannel> broadcastChannels;
 	@JsonProperty("round")
 	private int round;
 	@JsonProperty("ordinal")
 	private int ordinal;
 	@JsonProperty("bestOf")
 	private int bestOf = -1;
-	@JsonProperty("attributesVersion")
-	private String attributesVersion;
 	
 	public boolean hasEnded(){
 		return this.state == OverwatchState.CONCLUDED;
 	}
 	
 	@Override
-	public int compareTo(@Nonnull final OverwatchMatch overwatchMatch){
-		return this.getStartDate().compareTo(overwatchMatch.getStartDate());
+	public int compareTo(@NonNull final OverwatchMatch overwatchMatch){
+		return this.getStartDateString().compareTo(overwatchMatch.getStartDateString());
 	}
 	
 	public boolean inProgress(){
@@ -128,7 +126,7 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 		builder.setDescription("Score: " + this.getScores().stream().map(OverwatchScore::getValue).map(Object::toString).collect(Collectors.joining(" - ")));
 		builder.addField("State", this.getState().asString(), true);
 		builder.addField("Conclusion strategy", this.getConclusionStrategy().asString(this), true);
-		this.getGames().forEach(game -> builder.addField("Game " + game.getNumber(), game.getAttributes().getMapName() + ": " + game.getPoints().stream().map(Object::toString).collect(Collectors.joining(" - ")) + game.getAttributes().getMapObject().map(o -> " (" + o.getType() + ")").orElse(""), false));
+		this.getGames().forEach(game -> builder.addField("Game " + game.getNumber(), game.getAttributes().getMapName().orElse(null) + ": " + game.getPoints().stream().map(Object::toString).collect(Collectors.joining(" - ")) + game.getAttributes().getMapObject().map(o -> " (" + o.getType() + ")").orElse(""), false));
 		this.getWinningTeam().ifPresent(winner -> {
 			builder.setThumbnail(winner.getLogo());
 			builder.setImage(winner.getIcon());
@@ -138,72 +136,35 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 		return builder;
 	}
 	
-	@Nonnull
-	public Optional<LocalDateTime> getActualEndDate(){
-		return Optional.ofNullable(this.actualEndDate);
-	}
-	
-	private String getYoutubeId(){
-		return this.youtubeId;
-	}
-	
-	public int getBestOf(){
-		return this.bestOf;
-	}
-	
-	private OverwatchState getState(){
-		return this.state;
-	}
-	
-	private OverwatchConclusionStrategy getConclusionStrategy(){
-		return this.conclusionStrategy;
-	}
-	
-	private List<OverwatchGame> getGames(){
-		return this.games;
-	}
-	
-	@Nonnull
+	@NonNull
 	private Optional<OverwatchCompetitor> getWinningTeam(){
 		return this.getCompetitors().stream().filter(c -> Objects.nonNull(c) && Objects.equals(c.getId(), this.getWinner())).findFirst();
 	}
 	
-	public int getConclusionValue(){
-		return this.conclusionValue;
-	}
-	
-	private LocalDateTime getEndDate(){
-		return this.endDateTS;
-	}
-	
-	public int getId(){
-		return this.id;
-	}
-	
-	public List<OverwatchScore> getScores(){
-		return this.scores;
+	@Override
+	public int hashCode(){
+		return Objects.hash(id);
 	}
 	
 	public boolean hasStarted(){
 		return this.getActualStartDate().orElse(this.getStartDate()).isBefore(LocalDateTime.now());
 	}
 	
-	@Nonnull
-	private Optional<LocalDateTime> getActualStartDate(){
-		return Optional.ofNullable(this.actualStartDate);
+	@Override
+	public boolean equals(Object o){
+		if(this == o){
+			return true;
+		}
+		if(o == null || getClass() != o.getClass()){
+			return false;
+		}
+		OverwatchMatch that = (OverwatchMatch) o;
+		return id == that.id;
 	}
 	
 	@Override
 	public String toString(){
 		return this.getId() + " (" + this.getVsCompetitorsNames() + ')';
-	}
-	
-	public LocalDateTime getStartDate(){
-		return this.startDateTS;
-	}
-	
-	public OverwatchTournament getTournament(){
-		return this.tournament;
 	}
 	
 	public List<String> getCompetitorsNames(){
@@ -214,11 +175,13 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 		return this.getCompetitors().stream().map(c -> Objects.isNull(c) ? "TBD" : c.getName()).collect(Collectors.joining(" vs "));
 	}
 	
-	public List<OverwatchCompetitor> getCompetitors(){
-		return this.competitors;
+	@NonNull
+	public Optional<LocalDateTime> getActualEndDate(){
+		return Optional.ofNullable(this.actualEndDate);
 	}
 	
-	private int getWinner(){
-		return this.winner;
+	@NonNull
+	private Optional<LocalDateTime> getActualStartDate(){
+		return Optional.ofNullable(this.actualStartDate);
 	}
 }

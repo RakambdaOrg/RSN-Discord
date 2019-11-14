@@ -4,22 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import lombok.Getter;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Optional;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-11.
- *
- * @author Thomas Couchoud
- * @since 2018-10-11
- */
-@SuppressWarnings("WeakerAccess")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonTypeName("MANGA")
+@Getter
 public class MangaMedia extends Media{
 	@JsonProperty("chapters")
 	private Integer chapters;
@@ -31,13 +25,13 @@ public class MangaMedia extends Media{
 	}
 	
 	@Override
-	@Nonnull
+	@NonNull
 	public String getProgressType(final boolean contains){
 		return "read chapter";
 	}
 	
 	@Override
-	public void fillEmbed(@Nonnull final EmbedBuilder builder){
+	public void fillEmbed(@NonNull final EmbedBuilder builder){
 		super.fillEmbed(builder);
 		Optional.ofNullable(this.getChapters()).map(Object::toString).ifPresent(val -> builder.addField("Chapters", val, true));
 		Optional.ofNullable(this.getVolumes()).map(Object::toString).ifPresent(val -> builder.addField("Volumes", val, true));
@@ -49,28 +43,7 @@ public class MangaMedia extends Media{
 	}
 	
 	@Override
-	@Nullable
 	public Integer getItemCount(){
 		return this.getChapters();
-	}
-	
-	/**
-	 * Get the number of chapters for this manga.
-	 *
-	 * @return The number of chapters.
-	 */
-	@Nullable
-	public Integer getChapters(){
-		return this.chapters;
-	}
-	
-	/**
-	 * Get the number of volumes for this manga.
-	 *
-	 * @return The number of volumes.
-	 */
-	@Nullable
-	public Integer getVolumes(){
-		return this.volumes;
 	}
 }

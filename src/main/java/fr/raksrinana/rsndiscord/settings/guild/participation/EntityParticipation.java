@@ -7,10 +7,11 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeSerializer;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -18,12 +19,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@SuppressWarnings({
-		"unused",
-		"FieldMayBeFinal"
-})
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
 public class EntityParticipation{
 	@JsonProperty("date")
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -31,16 +29,14 @@ public class EntityParticipation{
 	private LocalDateTime date;
 	@JsonProperty("scores")
 	@JsonDeserialize(using = EntityDeserializer.class)
+	@Getter
 	private Set<EntityScore> scores = new HashSet<>();
 	
 	public EntityParticipation(final LocalDate date){
 		this.date = LocalDateTime.of(date, LocalTime.of(0, 0, 0));
 	}
 	
-	public EntityParticipation(){
-	}
-	
-	public void increment(final long id, @Nullable final String name){
+	public void increment(final long id, final String name){
 		this.scores.stream().filter(e -> Objects.equals(e.getId(), id)).findFirst().ifPresentOrElse(EntityScore::increment, () -> this.scores.add(new EntityScore(id, name, 1)));
 	}
 	
@@ -49,7 +45,7 @@ public class EntityParticipation{
 		return new HashCodeBuilder(17, 37).append(this.getDate()).toHashCode();
 	}
 	
-	@Nonnull
+	@NonNull
 	public LocalDate getDate(){
 		return this.date.toLocalDate();
 	}
@@ -64,10 +60,5 @@ public class EntityParticipation{
 		}
 		final var that = (EntityParticipation) o;
 		return new EqualsBuilder().append(this.getDate(), that.getDate()).isEquals();
-	}
-	
-	@Nonnull
-	public Set<EntityScore> getScores(){
-		return this.scores;
 	}
 }

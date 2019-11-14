@@ -7,15 +7,19 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeSerializer;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
+@NoArgsConstructor
 public class RemoveRoleConfiguration{
 	@JsonProperty("user")
 	private UserConfiguration user;
@@ -26,10 +30,7 @@ public class RemoveRoleConfiguration{
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime date;
 	
-	public RemoveRoleConfiguration(){
-	}
-	
-	public RemoveRoleConfiguration(@Nonnull final User user, @Nonnull final Role role, @Nonnull final LocalDateTime date){
+	public RemoveRoleConfiguration(@NonNull final User user, @NonNull final Role role, @NonNull final LocalDateTime date){
 		this.user = new UserConfiguration(user);
 		this.role = new RoleConfiguration(role);
 		this.date = date;
@@ -52,19 +53,7 @@ public class RemoveRoleConfiguration{
 		return new EqualsBuilder().append(this.getUser(), that.getUser()).append(this.getRole(), that.getRole()).isEquals();
 	}
 	
-	public UserConfiguration getUser(){
-		return this.user;
-	}
-	
-	public RoleConfiguration getRole(){
-		return this.role;
-	}
-	
-	public LocalDateTime getEndDate(){
-		return this.date;
-	}
-	
-	public void setEndDate(@Nonnull final LocalDateTime date){
+	public void setEndDate(@NonNull final LocalDateTime date){
 		this.date = date;
 	}
 }

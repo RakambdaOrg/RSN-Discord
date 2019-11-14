@@ -4,40 +4,39 @@ import fr.raksrinana.rsndiscord.commands.config.helpers.ChannelConfigurationComm
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
 public class ThaChannelConfigurationCommand extends ChannelConfigurationCommand{
-	public ThaChannelConfigurationCommand(@Nullable final Command parent){
+	public ThaChannelConfigurationCommand(final Command parent){
 		super(parent);
 	}
 	
-	@Nonnull
 	@Override
-	protected Optional<ChannelConfiguration> getConfig(@Nonnull final Guild guild){
-		return Settings.getConfiguration(guild).getAniListConfiguration().getThaChannel();
+	protected void setConfig(@NonNull final Guild guild, @NonNull final ChannelConfiguration value){
+		Settings.get(guild).getAniListConfiguration().setThaChannel(value);
 	}
 	
 	@Override
-	protected void setConfig(@Nonnull final Guild guild, @Nonnull final ChannelConfiguration value){
-		Settings.getConfiguration(guild).getAniListConfiguration().setThaChannel(value);
+	protected void removeConfig(@NonNull final Guild guild){
+		Settings.get(guild).getAniListConfiguration().setThaChannel(null);
 	}
 	
+	@NonNull
 	@Override
-	protected void removeConfig(@Nonnull final Guild guild){
-		Settings.getConfiguration(guild).getAniListConfiguration().setThaChannel(null);
+	protected Optional<ChannelConfiguration> getConfig(@NonNull final Guild guild){
+		return Settings.get(guild).getAniListConfiguration().getThaChannel();
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "AniList Tha notification channel";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("thaChannel");

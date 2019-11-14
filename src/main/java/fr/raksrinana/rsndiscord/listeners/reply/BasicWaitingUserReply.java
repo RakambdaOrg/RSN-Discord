@@ -1,35 +1,42 @@
 package fr.raksrinana.rsndiscord.listeners.reply;
 
 import fr.raksrinana.rsndiscord.utils.Actions;
+import lombok.Getter;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
-import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public abstract class BasicWaitingUserReply implements WaitingUserReply{
 	private static final int DEFAULT_DELAY = 30;
+	@Getter
 	private final List<Message> infoMessages;
+	@Getter
 	private final TextChannel waitChannel;
+	@Getter
 	private final User waitUser;
+	@Getter
 	private final long originalMessageId;
 	private final Object lock;
+	@Getter
 	private boolean handled;
 	
-	protected BasicWaitingUserReply(@Nonnull final GenericGuildMessageEvent event, @Nonnull final User author, final Message... infoMessages){
+	protected BasicWaitingUserReply(@NonNull final GenericGuildMessageEvent event, @NonNull final User author, final Message... infoMessages){
 		this(event, author, event.getChannel(), infoMessages);
 	}
 	
-	private BasicWaitingUserReply(@Nonnull final GenericGuildMessageEvent event, @Nonnull final User author, @Nonnull final TextChannel waitChannel, final Message... infoMessages){
+	private BasicWaitingUserReply(@NonNull final GenericGuildMessageEvent event, @NonNull final User author, @NonNull final TextChannel waitChannel, final Message... infoMessages){
 		this(event, author, waitChannel, DEFAULT_DELAY, TimeUnit.SECONDS, infoMessages);
 	}
 	
-	protected BasicWaitingUserReply(@Nonnull final GenericGuildMessageEvent event, @Nonnull final User author, @Nonnull final TextChannel waitChannel, final int delay, @Nonnull final TimeUnit unit, final Message... infoMessages){
+	protected BasicWaitingUserReply(@NonNull final GenericGuildMessageEvent event, @NonNull final User author, @NonNull final TextChannel waitChannel, final int delay, @NonNull final TimeUnit unit, final Message... infoMessages){
 		this.lock = new Object();
 		this.waitChannel = waitChannel;
 		this.waitUser = author;
@@ -46,7 +53,7 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 		}, delay, unit);
 	}
 	
-	public void addMessage(@Nonnull final Message message){
+	public void addMessage(@NonNull final Message message){
 		this.infoMessages.add(message);
 	}
 	
@@ -55,7 +62,7 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 	}
 	
 	@Override
-	public boolean execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
+	public boolean execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		synchronized(this.lock){
 			if(!this.isHandled()){
 				this.handled = this.onExecute(event, args);
@@ -68,7 +75,7 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 	}
 	
 	@Override
-	public boolean execute(@Nonnull final GuildMessageReactionAddEvent event){
+	public boolean execute(@NonNull final GuildMessageReactionAddEvent event){
 		synchronized(this.lock){
 			if(!this.isHandled()){
 				this.handled = this.onExecute(event);
@@ -80,11 +87,11 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 		return this.isHandled();
 	}
 	
-	protected abstract boolean onExecute(@Nonnull final GuildMessageReactionAddEvent event);
+	protected abstract boolean onExecute(@NonNull final GuildMessageReactionAddEvent event);
 	
 	@Override
 	public boolean onExpire(){
-		Actions.sendMessage(this.getWaitChannel(), "%s you didn't reply in time", this.getUser().getAsMention());
+		Actions.sendMessage(this.getWaitChannel(), MessageFormat.format("{0} you didn't reply in time", this.getUser().getAsMention()), null);
 		this.infoMessages.forEach(Actions::deleteMessage);
 		return true;
 	}
@@ -99,7 +106,7 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 		return Objects.equals(this.getUser(), event.getUser()) && Objects.equals(this.getWaitChannel(), event.getChannel()) && Objects.equals(this.getEmoteMessageId(), event.getMessageIdLong());
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public User getUser(){
 		return this.waitUser;
@@ -110,28 +117,5 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 		return this.getInfoMessages().stream().map(Message::getIdLong).findFirst().orElse(-1L);
 	}
 	
-	@Nonnull
-	@Override
-	public TextChannel getWaitChannel(){
-		return this.waitChannel;
-	}
-	
-	@Override
-	public boolean isHandled(){
-		return this.handled;
-	}
-	
-	protected abstract boolean onExecute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args);
-	
-	protected List<Message> getInfoMessages(){
-		return this.infoMessages;
-	}
-	
-	protected long getOriginalMessageId(){
-		return this.originalMessageId;
-	}
-	
-	protected User getWaitUser(){
-		return this.waitUser;
-	}
+	protected abstract boolean onExecute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args);
 }

@@ -7,58 +7,52 @@ import fr.raksrinana.rsndiscord.listeners.reply.ReplyMessageListener;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import net.dv8tion.jda.api.entities.ChannelType;
+import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 
 @BotCommand
 public class StopwatchCommand extends BasicCommand{
-	@Nonnull
+	@NonNull
 	@Override
-	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Stopwatch");
+		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Stopwatch", null);
 		builder.addField("Time", "", false);
 		builder.addField(BasicEmotes.P.getValue(), "Pause", true);
 		builder.addField(BasicEmotes.R.getValue(), "Resume", true);
 		builder.addField(BasicEmotes.S.getValue(), "Stop", true);
-		Actions.sendMessage(event.getChannel(), message -> {
-			message.addReaction(BasicEmotes.P.getValue()).queue();
-			message.addReaction(BasicEmotes.S.getValue()).queue();
+		Actions.sendMessage(event.getChannel(), "", builder.build()).thenAccept(message -> {
+			Actions.addReaction(message, BasicEmotes.P.getValue());
+			Actions.addReaction(message, BasicEmotes.S.getValue());
 			ReplyMessageListener.handleReply(new StopwatchWaitingUserReply(event, message));
-		}, builder.build());
+		});
 		return CommandResult.SUCCESS;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.MODERATOR;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Stopwatch";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("stopwatch");
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getDescription(){
 		return "A stopwatch";
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
 	}
 }

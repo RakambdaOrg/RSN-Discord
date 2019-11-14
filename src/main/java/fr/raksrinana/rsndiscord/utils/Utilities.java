@@ -1,55 +1,26 @@
 package fr.raksrinana.rsndiscord.utils;
 
+import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
-import javax.annotation.Nullable;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.requests.RestAction;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import java.awt.Color;
+import java.text.MessageFormat;
 import java.time.Duration;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
- *
- * @author Thomas Couchoud
- * @since 2018-04-13
- */
 public class Utilities{
 	public static final long RAKSRINANA_ACCOUNT = 170119951498084352L;
 	private static final long LOPINETTE_ACCOUNT = 432628353024131085L;
 	private static final Pattern TIME_PATTERN = Pattern.compile("(\\d[HMS])(?!$)");
-	
-	/**
-	 * Check if a member have a role.
-	 *
-	 * @param member The member to test.
-	 * @param roles  The roles to search for.
-	 *
-	 * @return True if the member have the role, false otherwise.
-	 */
-	public static boolean hasRole(final Member member, final List<Role> roles){
-		return roles.stream().anyMatch(r -> hasRole(member, r));
-	}
-	
-	/**
-	 * Check if a member have a role.
-	 *
-	 * @param member The member to test.
-	 * @param role   The role to search for.
-	 *
-	 * @return True if the member have the role, false otherwise.
-	 */
-	public static boolean hasRole(final Member member, final Role role){
-		return member.getRoles().contains(role);
-	}
 	
 	/**
 	 * Tell if a member is part of the team (admin or moderator).
@@ -58,7 +29,7 @@ public class Utilities{
 	 *
 	 * @return True if part of the team, false otherwise.
 	 */
-	public static boolean isTeam(final Member member){
+	public static boolean isTeam(@NonNull final Member member){
 		return isModerator(member) || isAdmin(member);
 	}
 	
@@ -69,8 +40,8 @@ public class Utilities{
 	 *
 	 * @return True if moderator, false otherwise.
 	 */
-	public static boolean isModerator(final Member member){
-		return isAdmin(member) || Settings.getConfiguration(member.getGuild()).getModeratorRoles().stream().map(RoleConfiguration::getRole).filter(Optional::isPresent).map(Optional::get).anyMatch(r -> Utilities.hasRole(member, r));
+	public static boolean isModerator(@NonNull final Member member){
+		return isAdmin(member) || Settings.get(member.getGuild()).getModeratorRoles().stream().map(RoleConfiguration::getRole).flatMap(Optional::stream).anyMatch(role -> member.getRoles().contains(role));
 	}
 	
 	/**
@@ -80,104 +51,92 @@ public class Utilities{
 	 *
 	 * @return True if admin, false otherwise.
 	 */
-	public static boolean isAdmin(@Nullable final Member member){
-		return Objects.nonNull(member) && member.getRoles().stream().anyMatch(role -> role.hasPermission(Permission.ADMINISTRATOR)) || isCreator(member);
-	}
-	
-	/**
-	 * Get all the members that have a role.
-	 *
-	 * @param role The role to search for.
-	 *
-	 * @return The members that have this role.
-	 */
-	public static List<Member> getMembersWithRole(final Role role){
-		return role.getGuild().getMembersWithRoles(role);
+	public static boolean isAdmin(@NonNull final Member member){
+		return member.getRoles().stream().anyMatch(role -> role.hasPermission(Permission.ADMINISTRATOR)) || isCreator(member.getUser());
 	}
 	
 	/**
 	 * Tell if a user is this bot created.
 	 *
-	 * @param member The member to test.
+	 * @param user The member to test.
 	 *
 	 * @return True if the creator, false otherwise.
 	 */
-	public static boolean isCreator(@Nullable final Member member){
-		return Objects.nonNull(member) && (Objects.equals(member.getUser().getIdLong(), RAKSRINANA_ACCOUNT) || Objects.equals(member.getUser().getIdLong(), LOPINETTE_ACCOUNT));
+	public static boolean isCreator(@NonNull final User user){
+		return Objects.equals(user.getIdLong(), RAKSRINANA_ACCOUNT) || Objects.equals(user.getIdLong(), LOPINETTE_ACCOUNT);
 	}
 	
 	/**
-	 * Builds a embed builder from a message embed.
+	 * Copy an embed message.
 	 *
-	 * @param messageEmbed The message embed to build from.
+	 * @param embed The embed message to copy.
 	 *
-	 * @return An embed builder.
+	 * @return An embed builder based on the given embed.
 	 */
-	public static EmbedBuilder buildEmbed(final MessageEmbed messageEmbed){
-		final var builder = buildEmbed(null, messageEmbed.getColor(), messageEmbed.getTitle());
-		if(Objects.nonNull(messageEmbed.getAuthor())){
-			builder.setAuthor(messageEmbed.getAuthor().getName(), messageEmbed.getAuthor().getUrl(), messageEmbed.getAuthor().getIconUrl());
+	@NonNull
+	public static EmbedBuilder copyEmbed(final MessageEmbed embed){
+		final var builder = buildEmbed(null, embed.getColor(), embed.getTitle(), null);
+		if(Objects.nonNull(embed.getAuthor())){
+			builder.setAuthor(embed.getAuthor().getName(), embed.getAuthor().getUrl(), embed.getAuthor().getIconUrl());
 		}
-		builder.setDescription(messageEmbed.getDescription());
-		messageEmbed.getFields().forEach(builder::addField);
+		builder.setDescription(embed.getDescription());
+		embed.getFields().forEach(builder::addField);
 		return builder;
 	}
 	
 	/**
-	 * Build an embed.
+	 * Build a basic embed with an author, title and color.
 	 *
-	 * @param author The author.
-	 * @param color  The color.
-	 * @param title  The title.
-	 *
-	 * @return The builder.
-	 */
-	public static EmbedBuilder buildEmbed(final User author, final Color color, final String title){
-		return buildEmbed(author, color, title, null);
-	}
-	
-	/**
-	 * Build an embed.
-	 *
-	 * @param author   The author.
-	 * @param color    The color.
+	 * @param author   The author (if none, set to {@code null}).
+	 * @param color    The color (if use default, set to {@code null}).
 	 * @param title    The title.
-	 * @param titleURL The url of the title.
+	 * @param titleURL The url of the title (if none, set to {@code null}).
 	 *
-	 * @return The builder.
+	 * @return An embed builder based on the parameters.
+	 *
+	 * @see EmbedBuilder
 	 */
+	@NonNull
 	public static EmbedBuilder buildEmbed(final User author, final Color color, final String title, final String titleURL){
 		final var builder = new EmbedBuilder();
 		if(Objects.nonNull(author)){
 			builder.setAuthor(author.getName(), null, author.getAvatarUrl());
 		}
+		if(Objects.nonNull(title) && !title.isBlank()){
+			builder.setTitle(title, titleURL);
+		}
 		builder.setColor(color);
-		builder.setTitle(title, titleURL);
 		return builder;
 	}
 	
-	/**
-	 * Transform an embed into text.
-	 *
-	 * @param embed The embed.
-	 *
-	 * @return The text.
-	 */
-	static String getEmbedForLog(final MessageEmbed embed){
-		final var builder = new StringBuilder("Embed " + embed.hashCode());
-		builder.append("\n").append("Author: ").append(Objects.isNull(embed.getAuthor()) ? "<NONE>" : embed.getAuthor());
-		builder.append("\n").append("Title: ").append(embed.getTitle());
-		builder.append("\n").append("Description: ").append(embed.getDescription());
-		builder.append("\n").append("Color: ").append(embed.getColor());
-		embed.getFields().forEach(field -> {
-			builder.append("\n").append("FIELD:");
-			builder.append("\n\t").append("Name: ").append(field.getName());
-			builder.append("\n\t").append("Value: ").append(field.getValue());
-		});
-		return builder.toString();
-	}
-	
+	@NonNull
 	public static String durationToString(final Duration duration){
 		return TIME_PATTERN.matcher(duration.toString().substring(2)).replaceAll("$1 ").toLowerCase();
+	}
+	
+	/**
+	 * Report an exception by sending a private message to the creator.
+	 *
+	 * @param throwable The exception to send.
+	 *
+	 * @return An optional of a completable future of a message (see {@link RestAction#submit()}).
+	 *
+	 * @see Actions#sendPrivateMessage(Guild, PrivateChannel, CharSequence, MessageEmbed)
+	 */
+	@NonNull
+	public static Optional<CompletableFuture<Message>> reportException(@NonNull Throwable throwable){
+		return Optional.ofNullable(Main.getJda().getUserById(RAKSRINANA_ACCOUNT)).map(User::openPrivateChannel).map(RestAction::submit).map(channelFuture -> channelFuture.thenCompose(channel -> Actions.sendPrivateMessage(null, channel, MessageFormat.format("RSN got an exception: {0}\n{1}", ExceptionUtils.getMessage(throwable), ExceptionUtils.getStackTrace(throwable)), null)));
+	}
+	
+	/**
+	 * Get a message by its id.
+	 *
+	 * @param channel   The channel to search the message in.
+	 * @param messageId The id of the message.
+	 *
+	 * @return An completable future of an optional message (see {@link RestAction#submit()}).
+	 */
+	public static CompletableFuture<Optional<Message>> getMessageById(@NonNull TextChannel channel, long messageId){
+		return channel.getHistoryAround(messageId, 1).submit().thenApply(hist -> Optional.ofNullable(hist.getMessageById(messageId)));
 	}
 }
