@@ -7,24 +7,17 @@ import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
- *
- * @author Thomas Couchoud
- * @since 2018-06-16
- */
 public class SeekMusicCommand extends BasicCommand{
 	private static final Pattern TIME_PATTERN = Pattern.compile("((\\d{1,2}):)?((\\d{1,2}):)?(\\d{1,2})");
 	private static final int SECOND_PER_MINUTE = 60;
@@ -35,38 +28,38 @@ public class SeekMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	SeekMusicCommand(@Nonnull final Command parent){
+	SeekMusicCommand(@NonNull final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
+	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Time", "The time to seek, must be in the format hh:mm:ss ou mm:ss or ss", false);
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
-	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
-			Actions.reply(event, "Please give the time to seek");
+			return CommandResult.BAD_ARGUMENTS;
 		}
 		else{
 			final var time = this.parseTime(event.getGuild(), args.pop());
 			if(time < 0){
-				Actions.reply(event, "Invalid format");
+				Actions.reply(event, "Invalid format", null);
 			}
 			else{
 				switch(RSNAudioManager.seek(event.getGuild(), time)){
 					case NO_MUSIC:
-						Actions.replyFormatted(event, "%s, No music currently playing", event.getAuthor().getAsMention());
+						Actions.reply(event, MessageFormat.format("{0}, No music currently playing", event.getAuthor().getAsMention()), null);
 						break;
 					case OK:
-						Actions.replyFormatted(event, "%s seeked the music to %s", event.getAuthor().getAsMention(), NowPlayingMusicCommand.getDuration(time));
+						Actions.reply(event, MessageFormat.format("{0} seeked the music to {1}", event.getAuthor().getAsMention(), NowPlayingMusicCommand.getDuration(time)), null);
 						break;
 					case IMPOSSIBLE:
-						Actions.replyFormatted(event, "%s, the time of this music cannot be changed", event.getAuthor().getAsMention());
+						Actions.reply(event, MessageFormat.format("{0}, the time of this music cannot be changed", event.getAuthor().getAsMention()), null);
 						break;
 				}
 			}
@@ -74,7 +67,7 @@ public class SeekMusicCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
-	private long parseTime(@Nonnull final Guild guild, @Nonnull final String time){
+	private long parseTime(@NonNull final Guild guild, @NonNull final String time){
 		final var matcher = TIME_PATTERN.matcher(time);
 		if(!matcher.matches()){
 			return -1;
@@ -99,43 +92,32 @@ public class SeekMusicCommand extends BasicCommand{
 		return 0;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + "<time>";
 	}
 	
 	@Override
-	public boolean isAllowed(@Nullable final Member member){
+	public boolean isAllowed(final Member member){
 		return Objects.nonNull(member) && (Utilities.isTeam(member) || RSNAudioManager.isRequester(member.getGuild(), member.getUser()));
 	}
 	
-	@Nonnull
-	@Override
-	public AccessLevel getAccessLevel(){
-		return AccessLevel.ALL;
-	}
-	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Seek";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("seek");
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getDescription(){
 		return "Seek a time into the music";
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
 	}
 }

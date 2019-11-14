@@ -6,38 +6,31 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RemoveRoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 import java.awt.Color;
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Optional;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
- *
- * @author Thomas Couchoud
- * @since 2018-04-12
- */
 public abstract class WarnCommand extends BasicCommand{
 	static final long DEFAULT_TIME = 86400L;
 	
 	@Override
-	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
+	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("User", "L'The user to warn", false);
 		builder.addField("Reason", "Reason of the warn", false);
 	}
 	
-	@Nonnull
-	@SuppressWarnings("SpellCheckingInspection")
+	@NonNull
 	@Override
-	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		if(!event.getMessage().getMentionedUsers().isEmpty()){
 			final var user = event.getMessage().getMentionedUsers().get(0);
@@ -48,32 +41,28 @@ public abstract class WarnCommand extends BasicCommand{
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 			roleOptional.ifPresentOrElse(role -> {
-				Actions.giveRole(event.getGuild(), user, role);
+				Actions.giveRole(event.getMember(), role);
 				final var date = LocalDateTime.now();
-				Settings.getConfiguration(event.getGuild()).getRemoveRole(user, role).ifPresentOrElse(c -> {
-					if(date.isAfter(c.getEndDate())){
+				Settings.get(event.getGuild()).getRemoveRole(user, role).ifPresentOrElse(c -> {
+					if(date.isAfter(c.getDate())){
 						c.setEndDate(date);
 					}
-				}, () -> Settings.getConfiguration(event.getGuild()).addRemoveRole(new RemoveRoleConfiguration(user, role, date)));
+				}, () -> Settings.get(event.getGuild()).addRemoveRole(new RemoveRoleConfiguration(user, role, date)));
 				builder.setColor(Color.GREEN);
 				builder.addField("Congratulations", user.getAsMention() + " joined the role " + role.getAsMention() + " for " + duration + " seconds(s)", false);
 				builder.addField("", "To know how your warn is doing, user the magic command: g?warninfo " + user.getAsMention(), false);
 				Log.getLogger(event.getGuild()).info("{} warned {} for {} days with role {}", event.getAuthor(), user, duration, role);
 				if(!reason.isEmpty()){
-					Actions.replyPrivate(event.getGuild(), user, "Warn reason: %s", reason);
+					Actions.replyPrivate(event.getGuild(), user, MessageFormat.format("Warn reason: {0}", reason), null);
 				}
 			}, () -> {
 				builder.setColor(Color.RED);
 				builder.addField("Error", "Please configure a role to give", true);
 			});
-			Actions.reply(event, builder.build());
+			Actions.reply(event, "", builder.build());
 		}
 		else{
-			final var builder = new EmbedBuilder();
-			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-			builder.setColor(Color.RED);
-			builder.addField("Error", "Please give a user to warn", true);
-			Actions.reply(event, builder.build());
+			return CommandResult.BAD_ARGUMENTS;
 		}
 		return CommandResult.SUCCESS;
 	}
@@ -87,8 +76,8 @@ public abstract class WarnCommand extends BasicCommand{
 	 *
 	 * @return The config.
 	 */
-	@Nonnull
-	protected abstract Optional<Role> getRole(@Nonnull Guild guild, @Nonnull Message message, @Nonnull LinkedList<String> args);
+	@NonNull
+	protected abstract Optional<Role> getRole(@NonNull Guild guild, @NonNull Message message, @NonNull LinkedList<String> args);
 	
 	/**
 	 * Get the configuration of the length for the role to be applied.
@@ -99,28 +88,23 @@ public abstract class WarnCommand extends BasicCommand{
 	 *
 	 * @return The config.
 	 */
-	protected abstract long getTime(@Nonnull Guild guild, @Nonnull Message message, @Nonnull LinkedList<String> args);
+	protected abstract long getTime(@NonNull Guild guild, @NonNull Message message, @NonNull LinkedList<String> args);
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <@user> [reason]";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.MODERATOR;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getDescription(){
 		return "Warn a user (by giving a role) for a defined period of time";
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
 	}
 }

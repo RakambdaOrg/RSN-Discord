@@ -5,10 +5,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.mrcraftcod.utils.http.requestssenders.get.JSONGetRequestSender;
 import fr.mrcraftcod.utils.http.requestssenders.get.StringGetRequestSender;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import fr.raksrinana.rsndiscord.utils.log.Log;
+import lombok.NonNull;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
@@ -17,14 +15,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class LuxBusUtils{
-	private static final Logger LOGGER = LoggerFactory.getLogger(LuxBusUtils.class);
 	private static final int DATA_TIMEOUT = 3600000;
 	private static final int HTTP_OK = 200;
 	private static final Set<LuxBusStop> stops = new HashSet<>();
 	private static long lastCheck = 0;
 	
-	@Nonnull
-	public static List<LuxBusStop> searchStopByName(@Nullable final String stopName){
+	@NonNull
+	public static List<LuxBusStop> searchStopByName(final String stopName){
 		if(Objects.isNull(stopName) || stopName.isBlank()){
 			throw new IllegalArgumentException("Stop must not be blank");
 		}
@@ -35,11 +32,11 @@ public class LuxBusUtils{
 		}).collect(Collectors.toList()));
 	}
 	
-	@Nonnull
+	@NonNull
 	static Set<LuxBusStop> getStopIds(){
 		if(System.currentTimeMillis() - lastCheck > DATA_TIMEOUT){
 			lastCheck = System.currentTimeMillis();
-			LOGGER.debug("Fetching bus stop infos");
+			Log.getLogger(null).debug("Fetching bus stop infos");
 			try{
 				final var request = new StringGetRequestSender("http://travelplanner.mobiliteit.lu/hafas/query.exe/dot?performLocating=2&tpl=stop2csv&look_maxdist=150000&look_x=6112550&look_y=49610700&stationProxy=yes").getRequestHandler();
 				if(request.getStatus() == HTTP_OK){
@@ -47,16 +44,16 @@ public class LuxBusUtils{
 				}
 			}
 			catch(final URISyntaxException | MalformedURLException e){
-				LOGGER.warn("Failed to get bus stops", e);
+				Log.getLogger(null).warn("Failed to get bus stops", e);
 			}
 		}
 		return stops;
 	}
 	
-	@Nonnull
-	public static List<LuxBusDeparture> getDepartures(@Nonnull final LuxBusStop stop){
+	@NonNull
+	public static Set<LuxBusDeparture> getDepartures(@NonNull final LuxBusStop stop){
 		try{
-			LOGGER.info("Getting departures for stop {}", stop);
+			Log.getLogger(null).info("Getting departures for stop {}", stop);
 			final var request = new JSONGetRequestSender(String.format("http://travelplanner.mobiliteit.lu/restproxy/departureBoard?accessId=cdt&format=json&id=%s", URLEncoder.encode(stop.getId(), StandardCharsets.UTF_8))).getRequestHandler();
 			if(request.getStatus() == HTTP_OK){
 				final var response = request.getRequestResult().getObject();
@@ -65,13 +62,13 @@ public class LuxBusUtils{
 				}
 			}
 			else{
-				LOGGER.warn("Bus API replied with code {}", request.getStatus());
+				Log.getLogger(null).warn("Bus API replied with code {}", request.getStatus());
 				throw new IllegalStateException("Bus API didn't reply correctly");
 			}
 		}
 		catch(final URISyntaxException | MalformedURLException | JsonProcessingException e){
-			LOGGER.warn("Failed to get bus stop departures (id: {})", stop, e);
+			Log.getLogger(null).warn("Failed to get bus stop departures (id: {})", stop, e);
 		}
-		return List.of();
+		return Set.of();
 	}
 }

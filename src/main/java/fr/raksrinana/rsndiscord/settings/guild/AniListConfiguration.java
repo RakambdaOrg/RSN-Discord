@@ -8,49 +8,47 @@ import fr.raksrinana.rsndiscord.settings.guild.anilist.AnilistAccessTokenConfigu
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import net.dv8tion.jda.api.entities.User;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-06-23.
- *
- * @author Thomas Couchoud
- * @since 2019-06-23
- */
-@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
 public class AniListConfiguration{
 	@JsonProperty("accessToken")
 	private Set<AnilistAccessTokenConfiguration> tokens = new HashSet<>();
 	@JsonProperty("notificationsChannel")
+	@Setter
 	private ChannelConfiguration notificationsChannel;
 	@JsonProperty("mediaChangeChannel")
+	@Setter
 	private ChannelConfiguration mediaChangeChannel;
 	@JsonProperty("refreshTokens")
 	private Map<Long, String> refreshTokens = new HashMap<>();
 	@JsonProperty("lastAccess")
+	@Getter
 	private Map<String, Set<UserDateConfiguration>> lastAccess = new HashMap<>();
 	@JsonProperty("thaChannel")
+	@Setter
 	private ChannelConfiguration thaChannel;
 	@JsonProperty("thaUser")
+	@Setter
 	private UserConfiguration thaUser;
 	@JsonProperty("userIds")
 	private Map<Long, Integer> userIds = new HashMap<>();
 	
-	public AniListConfiguration(){
-	}
-	
-	@Nonnull
+	@NonNull
 	public Optional<String> getRefreshToken(final long userId){
 		return Optional.ofNullable(this.refreshTokens.getOrDefault(userId, null));
 	}
 	
-	public void setRefreshToken(final long userId, @Nonnull final String refreshToken){
+	public void setRefreshToken(final long userId, @NonNull final String refreshToken){
 		this.refreshTokens.put(userId, refreshToken);
 	}
 	
@@ -58,17 +56,17 @@ public class AniListConfiguration{
 		this.getLastAccess(section, user.getIdLong()).ifPresentOrElse(lastAccess -> lastAccess.setDate(date), () -> this.lastAccess.computeIfAbsent(section, sec -> new HashSet<>()).add(new UserDateConfiguration(user, date)));
 	}
 	
-	@Nonnull
-	public Optional<UserDateConfiguration> getLastAccess(@Nonnull final String section, final long userId){
+	@NonNull
+	public Optional<UserDateConfiguration> getLastAccess(@NonNull final String section, final long userId){
 		return this.getLastAccess(section).stream().filter(lastAccess -> Objects.equals(lastAccess.getUserId(), userId)).findAny();
 	}
 	
-	@Nonnull
-	public Set<UserDateConfiguration> getLastAccess(@Nonnull final String section){
+	@NonNull
+	public Set<UserDateConfiguration> getLastAccess(@NonNull final String section){
 		return Optional.ofNullable(this.lastAccess.get(section)).orElse(Set.of());
 	}
 	
-	@Nonnull
+	@NonNull
 	public Optional<AnilistAccessTokenConfiguration> getAccessToken(final long userId){
 		final var now = LocalDateTime.now();
 		return this.tokens.stream().filter(t -> Objects.equals(t.getUserId(), userId)).filter(t -> t.getExpireDate().isAfter(now)).sorted(Comparator.comparing(AnilistAccessTokenConfiguration::getExpireDate).reversed()).findAny();
@@ -82,60 +80,39 @@ public class AniListConfiguration{
 		return Optional.ofNullable(this.userIds.get(userId));
 	}
 	
-	public void addAccessToken(@Nonnull final AnilistAccessTokenConfiguration value){
+	public void addAccessToken(@NonNull final AnilistAccessTokenConfiguration value){
 		this.tokens.add(value);
 	}
 	
-	public void removeUser(@Nonnull final User user){
+	public void removeUser(@NonNull final User user){
 		this.tokens.removeIf(t -> Objects.equals(t.getUserId(), user.getIdLong()));
 		this.refreshTokens.remove(user.getIdLong());
 		this.lastAccess.values().forEach(l -> l.removeIf(v -> Objects.equals(v.getUserId(), user.getIdLong())));
 		this.userIds.remove(user.getIdLong());
 	}
 	
-	@Nonnull
-	public Map<String, Set<UserDateConfiguration>> getLastAccess(){
-		return this.lastAccess;
-	}
-	
-	@Nonnull
+	@NonNull
 	public Optional<ChannelConfiguration> getMediaChangeChannel(){
 		return Optional.ofNullable(this.mediaChangeChannel);
 	}
 	
-	public void setMediaChangeChannel(@Nullable final ChannelConfiguration channel){
-		this.mediaChangeChannel = channel;
-	}
-	
-	@Nonnull
+	@NonNull
 	public Optional<ChannelConfiguration> getNotificationsChannel(){
 		return Optional.ofNullable(this.notificationsChannel);
 	}
 	
-	public void setNotificationsChannel(@Nullable final ChannelConfiguration channel){
-		this.notificationsChannel = channel;
-	}
-	
-	@Nonnull
+	@NonNull
 	public List<User> getRegisteredUsers(){
-		return this.refreshTokens.keySet().stream().map(userId -> Main.getJDA().getUserById(userId)).collect(Collectors.toList());
+		return this.refreshTokens.keySet().stream().map(userId -> Main.getJda().getUserById(userId)).collect(Collectors.toList());
 	}
 	
-	@Nonnull
+	@NonNull
 	public Optional<ChannelConfiguration> getThaChannel(){
 		return Optional.ofNullable(this.thaChannel);
 	}
 	
-	public void setThaChannel(final ChannelConfiguration channel){
-		this.thaChannel = channel;
-	}
-	
-	@Nonnull
+	@NonNull
 	public Optional<UserConfiguration> getThaUser(){
 		return Optional.ofNullable(this.thaUser);
-	}
-	
-	public void setThaUser(final UserConfiguration user){
-		this.thaUser = user;
 	}
 }

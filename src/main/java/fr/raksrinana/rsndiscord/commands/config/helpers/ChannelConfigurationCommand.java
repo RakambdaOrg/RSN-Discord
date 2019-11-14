@@ -2,18 +2,17 @@ package fr.raksrinana.rsndiscord.commands.config.helpers;
 
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.LinkedList;
 
 public abstract class ChannelConfigurationCommand extends ValueConfigurationCommand<ChannelConfiguration>{
-	protected ChannelConfigurationCommand(@Nullable final Command parent){
+	protected ChannelConfigurationCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	protected ChannelConfiguration extractValue(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
+	protected ChannelConfiguration extractValue(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		if(event.getMessage().getMentionedChannels().isEmpty()){
 			throw new IllegalArgumentException("Please mention the channel");
 		}

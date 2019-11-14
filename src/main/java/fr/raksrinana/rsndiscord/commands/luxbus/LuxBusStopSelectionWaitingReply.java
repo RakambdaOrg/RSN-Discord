@@ -3,35 +3,29 @@ package fr.raksrinana.rsndiscord.commands.luxbus;
 import fr.raksrinana.rsndiscord.listeners.reply.BasicWaitingUserReply;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.luxbus.LuxBusStop;
+import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
-import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-05-18.
- *
- * @author Thomas Couchoud
- * @since 2019-05-18
- */
 public class LuxBusStopSelectionWaitingReply extends BasicWaitingUserReply{
 	private final List<LuxBusStop> stops;
 	
-	LuxBusStopSelectionWaitingReply(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final List<LuxBusStop> stops){
+	LuxBusStopSelectionWaitingReply(@NonNull final GuildMessageReceivedEvent event, @NonNull final List<LuxBusStop> stops){
 		super(event, event.getAuthor());
 		this.stops = stops;
 	}
 	
 	@Override
-	public boolean onExecute(@Nonnull final GuildMessageReactionAddEvent event){
+	public boolean onExecute(@NonNull final GuildMessageReactionAddEvent event){
 		return false;
 	}
 	
 	@Override
-	protected boolean onExecute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
+	protected boolean onExecute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		if(args.isEmpty()){
-			Actions.reply(event, "Invalid selection");
+			Actions.reply(event, "Invalid selection", null);
 		}
 		else{
 			try{
@@ -42,11 +36,11 @@ public class LuxBusStopSelectionWaitingReply extends BasicWaitingUserReply{
 					return true;
 				}
 				else{
-					Actions.reply(event, "Invalid selection");
+					Actions.reply(event, "Invalid selection", null);
 				}
 			}
 			catch(final NumberFormatException e){
-				Actions.reply(event, "Please enter the corresponding number");
+				Actions.reply(event, "Please enter the corresponding number", null);
 			}
 		}
 		return false;

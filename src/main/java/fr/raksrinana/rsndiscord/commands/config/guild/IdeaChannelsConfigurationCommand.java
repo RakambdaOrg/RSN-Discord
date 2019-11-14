@@ -4,34 +4,33 @@ import fr.raksrinana.rsndiscord.commands.config.helpers.SetConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class IdeaChannelsConfigurationCommand extends SetConfigurationCommand<ChannelConfiguration>{
-	public IdeaChannelsConfigurationCommand(@Nullable final Command parent){
+	public IdeaChannelsConfigurationCommand(final Command parent){
 		super(parent);
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
-	protected Optional<Set<ChannelConfiguration>> getConfig(@Nonnull final Guild guild){
-		return Optional.of(Settings.getConfiguration(guild).getIdeaChannels());
+	protected Optional<Set<ChannelConfiguration>> getConfig(@NonNull final Guild guild){
+		return Optional.of(Settings.get(guild).getIdeaChannels());
 	}
 	
 	@Override
-	protected void createConfig(@Nonnull final Guild guild, @Nonnull final ChannelConfiguration value){
+	protected void createConfig(@NonNull final Guild guild, @NonNull final ChannelConfiguration value){
 		final var set = new HashSet<ChannelConfiguration>();
 		set.add(value);
-		Settings.getConfiguration(guild).setIdeaChannels(set);
+		Settings.get(guild).setIdeaChannels(set);
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
-	protected ChannelConfiguration extractValue(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws IllegalArgumentException{
+	protected ChannelConfiguration extractValue(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args) throws IllegalArgumentException{
 		if(event.getMessage().getMentionedChannels().isEmpty()){
 			throw new IllegalArgumentException("Please mention a channel");
 		}
@@ -39,29 +38,29 @@ public class IdeaChannelsConfigurationCommand extends SetConfigurationCommand<Ch
 	}
 	
 	@Override
-	protected void removeConfig(@Nonnull final Guild guild, @Nonnull final ChannelConfiguration value){
-		Settings.getConfiguration(guild).getIdeaChannels().remove(value);
+	protected void removeConfig(@NonNull final Guild guild, @NonNull final ChannelConfiguration value){
+		Settings.get(guild).getIdeaChannels().remove(value);
 	}
 	
 	@Override
-	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
+	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Channel", "The channel to add or remove", false);
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [channel]";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Idea channels";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("ideaChannels");

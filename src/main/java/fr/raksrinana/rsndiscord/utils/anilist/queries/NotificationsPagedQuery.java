@@ -4,17 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.raksrinana.rsndiscord.utils.anilist.notifications.Notification;
 import fr.raksrinana.rsndiscord.utils.anilist.notifications.NotificationType;
 import kong.unirest.json.JSONObject;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import lombok.NonNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-11.
- *
- * @author Thomas Couchoud
- * @since 2018-10-11
- */
 public class NotificationsPagedQuery implements PagedQuery<Notification>{
 	private static final String QUERY_NOTIFICATIONS = PagedQuery.pagedQuery("$type_in: [NotificationType]", Notification.getQuery());
 	private final JSONObject variables;
@@ -29,13 +22,13 @@ public class NotificationsPagedQuery implements PagedQuery<Notification>{
 		this.variables.put("type_in", List.of(NotificationType.AIRING.name(), NotificationType.RELATED_MEDIA_ADDITION.name()));
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getQuery(){
 		return QUERY_NOTIFICATIONS;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public JSONObject getParameters(final int page){
 		this.variables.put("page", page);
@@ -47,18 +40,17 @@ public class NotificationsPagedQuery implements PagedQuery<Notification>{
 		return ++this.nextPage;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getPageElementName(){
 		return "notifications";
 	}
 	
-	@Nonnull
-	public Notification buildChange(@Nonnull final JSONObject change) throws Exception{
+	@NonNull
+	public Notification buildChange(@NonNull final JSONObject change) throws Exception{
 		return new ObjectMapper().readerFor(Notification.class).readValue(change.toString());
 	}
 	
-	@Nullable
 	@Override
 	public LocalDateTime getBaseDate(){
 		return this.date;

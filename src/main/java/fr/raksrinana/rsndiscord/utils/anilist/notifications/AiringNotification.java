@@ -6,27 +6,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
 import fr.raksrinana.rsndiscord.utils.anilist.media.Media;
+import lombok.Getter;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.Color;
 import java.net.URL;
 import java.util.Objects;
 import java.util.Optional;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-11.
- *
- * @author Thomas Couchoud
- * @since 2018-10-11
- */
-@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonTypeName("AIRING")
+@Getter
 public class AiringNotification extends Notification{
-	private static final String QUERY = "AiringNotification {\n" + "id\n" + "type\n" + "episode\n" + "createdAt\n" + Media.getQuery() + "\n}";
+	private static final String QUERY = "AiringNotification {\n" + "id\n" + "type\n" + "episode\n" + "createdAt\n" + Media.getQUERY() + "\n}";
 	@JsonProperty("episode")
 	private int episode;
 	@JsonProperty("media")
@@ -37,7 +31,7 @@ public class AiringNotification extends Notification{
 	}
 	
 	@Override
-	public void fillEmbed(@Nonnull final EmbedBuilder builder){
+	public void fillEmbed(@NonNull final EmbedBuilder builder){
 		builder.setTimestamp(this.getDate());
 		builder.setColor(Color.GREEN);
 		builder.setTitle("New release", this.getMedia().getUrl().toString());
@@ -48,7 +42,7 @@ public class AiringNotification extends Notification{
 	}
 	
 	@Override
-	@Nonnull
+	@NonNull
 	public URL getUrl(){
 		return Optional.of(this.getMedia()).map(Media::getUrl).orElse(AniListUtils.FALLBACK_URL);
 	}
@@ -59,7 +53,7 @@ public class AiringNotification extends Notification{
 	}
 	
 	@Override
-	public boolean equals(@Nullable final Object obj){
+	public boolean equals(final Object obj){
 		if(!(obj instanceof AiringNotification)){
 			return false;
 		}
@@ -70,19 +64,5 @@ public class AiringNotification extends Notification{
 	@Override
 	public String toString(){
 		return ToStringBuilder.reflectionToString(this);
-	}
-	
-	private int getEpisode(){
-		return this.episode;
-	}
-	
-	@Nonnull
-	private Media getMedia(){
-		return this.media;
-	}
-	
-	@Nonnull
-	public static String getQuery(){
-		return QUERY;
 	}
 }

@@ -6,38 +6,35 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
-import fr.raksrinana.rsndiscord.utils.player.trackfields.ReplayTrackUserField;
-import fr.raksrinana.rsndiscord.utils.player.trackfields.RequesterTrackUserField;
+import fr.raksrinana.rsndiscord.utils.player.trackfields.ReplayTrackDataField;
+import fr.raksrinana.rsndiscord.utils.player.trackfields.RequesterTrackDataField;
 import fr.raksrinana.rsndiscord.utils.player.trackfields.TrackUserFields;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.GuildVoiceState;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.Color;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
- *
- * @author Thomas Couchoud
- * @since 2018-06-16
- */
 public class MoveMusicCommand extends BasicCommand{
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	MoveMusicCommand(@Nullable final Command parent){
+	MoveMusicCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
+	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("link", "Music link", false);
 		builder.addField("skip", "The number of tracks to skip before adding them", false);
@@ -46,12 +43,12 @@ public class MoveMusicCommand extends BasicCommand{
 	}
 	
 	@SuppressWarnings("DuplicatedCode")
-	@Nonnull
+	@NonNull
 	@Override
-	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
-			Actions.reply(event, "Please give a music position from the queue");
+			return CommandResult.BAD_ARGUMENTS;
 		}
 		else if(Optional.ofNullable(event.getMember()).map(Member::getVoiceState).map(GuildVoiceState::inVoiceChannel).orElse(false)){
 			final var queue = RSNAudioManager.getQueue(event.getGuild());
@@ -73,52 +70,47 @@ public class MoveMusicCommand extends BasicCommand{
 			}).filter(value -> value > 0).orElse(1), queue.size()) - 1;
 			final var track = queue.get(moveFromPosition);
 			Collections.rotate(queue.subList(moveFromPosition, moveToPosition + 1), -1);
-			final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, "Moved music");
+			final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, "Moved music", null);
 			builder.setTitle("Moved music", track.getInfo().uri);
 			final var userData = track.getUserData(TrackUserFields.class);
 			builder.setDescription(track.getInfo().title);
-			builder.addField("Requester", userData.get(new RequesterTrackUserField()).map(User::getAsMention).orElse("Unknown"), true);
-			builder.addField("Repeating", userData.get(new ReplayTrackUserField()).map(Object::toString).orElse("False"), true);
-			Actions.replyFormatted(event, "Moved %s to position %d", track.getInfo().title, moveToPosition + 1);
+			builder.addField("Requester", userData.get(new RequesterTrackDataField()).map(User::getAsMention).orElse("Unknown"), true);
+			builder.addField("Repeating", userData.get(new ReplayTrackDataField()).map(Object::toString).orElse("False"), true);
+			Actions.reply(event, MessageFormat.format("Moved {0} to position {0}", track.getInfo().title, moveToPosition + 1), null);
 		}
 		else{
-			Actions.reply(event, "You must be in a voice channel");
+			Actions.reply(event, "You must be in a voice channel", null);
 		}
 		return CommandResult.SUCCESS;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <current position in queue> [new position in queue]";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.MODERATOR;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Move";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("move");
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getDescription(){
 		return "Move a music in the queue";
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
 	}
 }

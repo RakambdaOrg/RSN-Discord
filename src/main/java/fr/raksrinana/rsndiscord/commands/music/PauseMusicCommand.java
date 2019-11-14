@@ -5,76 +5,65 @@ import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
- *
- * @author Thomas Couchoud
- * @since 2018-06-16
- */
 public class PauseMusicCommand extends BasicCommand{
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	PauseMusicCommand(@Nonnull final Command parent){
+	PauseMusicCommand(@NonNull final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
+	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
-	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		switch(RSNAudioManager.pause(event.getGuild())){
 			case NO_MUSIC:
-				Actions.replyFormatted(event, "%s, no music are being played", event.getAuthor().getAsMention());
+				Actions.reply(event, MessageFormat.format("{0}, no music is being played", event.getAuthor().getAsMention()), null);
 				break;
 			case OK:
-				Actions.replyFormatted(event, "%s paused the music", event.getAuthor().getAsMention());
+				Actions.reply(event, MessageFormat.format("{0} paused the music", event.getAuthor().getAsMention()), null);
 				break;
 		}
 		return CommandResult.SUCCESS;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.MODERATOR;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Pause";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("pause", "p");
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getDescription(){
 		return "Pauses the music";
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
 	}
 }

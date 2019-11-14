@@ -12,10 +12,9 @@ import fr.raksrinana.rsndiscord.utils.overwatch.OverwatchUtils;
 import fr.raksrinana.rsndiscord.utils.overwatch.stage.OverwatchStage;
 import fr.raksrinana.rsndiscord.utils.overwatch.stage.match.OverwatchScore;
 import fr.raksrinana.rsndiscord.utils.overwatch.stage.week.OverwatchWeek;
-import net.dv8tion.jda.api.entities.ChannelType;
+import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
-import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -29,13 +28,13 @@ import java.util.stream.Collectors;
 public class OverwatchGetWeekMatchesCommand extends BasicCommand{
 	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchWeek> onWeek = (event, week) -> {
-		final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, week.getName());
+		final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, week.getName(), null);
 		week.getMatches().forEach(m -> {
 			final var message = (m.hasEnded() || m.inProgress()) ? (m.getScores().stream().map(OverwatchScore::getValue).map(Object::toString).collect(Collectors.joining(" - ")) + (m.inProgress() ? " (In progress)" : "")) : ("On the " + m.getStartDate().atZone(ZoneId.of("Europe/Paris")).format(FORMATTER) + " (Europe/Paris)");
 			builder.addField(m.getVsCompetitorsNames(), message, false);
 		});
 		builder.setFooter("ID: " + week.getId());
-		Actions.reply(event, builder.build());
+		Actions.reply(event, "", builder.build());
 	};
 	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchStage> onStage = (event, stage) -> {
 		if(!stage.getWeeks().isEmpty()){
@@ -47,21 +46,21 @@ public class OverwatchGetWeekMatchesCommand extends BasicCommand{
 				final var options = new HashMap<BasicEmotes, OverwatchWeek>();
 				final var currentWeek = stage.getCurrentWeek();
 				final var nextWeek = stage.getNextWeek();
-				final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, "Available weeks");
+				final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, "Available weeks", null);
 				stage.getWeeks().forEach(w -> {
 					final var emote = BasicEmotes.getEmote(String.valueOf((char) counter.getAndIncrement()));
 					options.put(emote, w);
 					builder.addField(emote.getValue() + ": " + w.getName(), currentWeek.map(w::equals).orElse(false) ? "Current" : (nextWeek.map(w::equals).orElse(false) ? "Next" : ""), false);
 				});
 				builder.setFooter("ID: " + stage.getId());
-				Actions.reply(event, message -> {
-					options.keySet().stream().sorted().forEachOrdered(e -> message.addReaction(e.getValue()).queue());
+				Actions.reply(event, "", builder.build()).thenAccept(message -> {
+					options.keySet().stream().sorted().forEachOrdered(e -> Actions.addReaction(message, e.getValue()));
 					ReplyMessageListener.handleReply(new EmoteWaitingUserReply<>(options, event, event.getUser(), message, OverwatchGetWeekMatchesCommand.onWeek));
-				}, builder.build());
+				});
 			}
 		}
 		else{
-			Actions.reply(event, "No weeks found");
+			Actions.reply(event, "No weeks found", null);
 		}
 	};
 	
@@ -69,61 +68,49 @@ public class OverwatchGetWeekMatchesCommand extends BasicCommand{
 		super(parent);
 	}
 	
-	@SuppressWarnings("DuplicatedCode")
-	@Nonnull
+	@NonNull
 	@Override
-	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		OverwatchUtils.getLastResponse().ifPresentOrElse(overwatchResponse -> {
+		OverwatchUtils.getData().ifPresentOrElse(overwatchResponse -> {
 			if(!overwatchResponse.getData().getStages().isEmpty()){
 				final var counter = new AtomicInteger('a');
 				final var options = new HashMap<BasicEmotes, OverwatchStage>();
 				final var currentStage = overwatchResponse.getData().getCurrentStage();
 				final var nextStage = overwatchResponse.getData().getNextStage();
-				final var builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Available stages");
+				final var builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Available stages", null);
 				overwatchResponse.getData().getStages().forEach(s -> {
 					final var emote = BasicEmotes.getEmote(String.valueOf((char) counter.getAndIncrement()));
 					options.put(emote, s);
 					builder.addField(emote.getValue() + ": " + s.getName(), currentStage.map(s::equals).orElse(false) ? "Current" : (nextStage.map(s::equals).orElse(false) ? "Next" : ""), false);
 				});
-				Actions.reply(event, message -> {
-					options.keySet().stream().sorted().forEachOrdered(e -> message.addReaction(e.getValue()).queue());
+				Actions.reply(event, "", builder.build()).thenAccept(message -> {
+					options.keySet().stream().sorted().forEachOrdered(e -> Actions.addReaction(message, e.getValue()));
 					ReplyMessageListener.handleReply(new EmoteWaitingUserReply<>(options, event, event.getAuthor(), message, onStage));
-				}, builder.build());
+				});
 			}
 			else{
-				Actions.reply(event, "No stages found");
+				Actions.reply(event, "No stages found", null);
 			}
-		}, () -> Actions.reply(event, "Error while getting data from Overwatch"));
+		}, () -> Actions.reply(event, "Error while getting data from Overwatch", null));
 		return CommandResult.SUCCESS;
 	}
 	
-	@Nonnull
-	@Override
-	public AccessLevel getAccessLevel(){
-		return AccessLevel.ALL;
-	}
-	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Current week matches";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("w", "week");
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getDescription(){
 		return "Get the matches of a week";
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
 	}
 }

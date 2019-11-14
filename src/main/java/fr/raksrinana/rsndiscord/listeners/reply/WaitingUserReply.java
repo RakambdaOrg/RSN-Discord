@@ -1,23 +1,17 @@
 package fr.raksrinana.rsndiscord.listeners.reply;
 
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
-import javax.annotation.Nonnull;
 import java.io.Closeable;
 import java.util.LinkedList;
 
-/**
- * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-05-18.
- *
- * @author Thomas Couchoud
- * @since 2019-05-18
- */
 interface WaitingUserReply extends Closeable{
-	boolean execute(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args);
+	boolean execute(@NonNull GuildMessageReceivedEvent event, @NonNull LinkedList<String> args);
 	
-	boolean execute(@Nonnull GuildMessageReactionAddEvent event);
+	boolean execute(@NonNull GuildMessageReactionAddEvent event);
 	
 	boolean onExpire();
 	
@@ -27,11 +21,9 @@ interface WaitingUserReply extends Closeable{
 	
 	long getEmoteMessageId();
 	
-	@Nonnull
-	User getUser();
+	@NonNull User getUser();
 	
-	@Nonnull
-	TextChannel getWaitChannel();
+	@NonNull TextChannel getWaitChannel();
 	
 	boolean isHandled();
 }

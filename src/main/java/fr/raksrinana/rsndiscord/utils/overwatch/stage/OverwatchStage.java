@@ -6,16 +6,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.utils.overwatch.stage.match.OverwatchMatch;
 import fr.raksrinana.rsndiscord.utils.overwatch.stage.tournament.OverwatchTournament;
 import fr.raksrinana.rsndiscord.utils.overwatch.stage.week.OverwatchWeek;
-import javax.annotation.Nonnull;
+import lombok.Getter;
+import lombok.NonNull;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
-@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 public class OverwatchStage implements Comparable<OverwatchStage>{
 	@JsonProperty("id")
 	private int id;
@@ -26,14 +24,14 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 	@JsonProperty("name")
 	private String name;
 	@JsonProperty("tournaments")
-	private List<OverwatchTournament> tournaments = new ArrayList<>();
+	private Set<OverwatchTournament> tournaments = new HashSet<>();
 	@JsonProperty("matches")
-	private List<OverwatchMatch> matches = new ArrayList<>();
+	private Set<OverwatchMatch> matches = new HashSet<>();
 	@JsonProperty("weeks")
-	private List<OverwatchWeek> weeks = new ArrayList<>();
+	private List<OverwatchWeek> weeks = new LinkedList<>();
 	
 	@Override
-	public int compareTo(@Nonnull final OverwatchStage overwatchStage){
+	public int compareTo(@NonNull final OverwatchStage overwatchStage){
 		final var s2 = overwatchStage.getStartDate();
 		return overwatchStage.getStartDate().map(d1 -> s2.map(d1::compareTo).orElse(-1)).orElseGet(() -> s2.isPresent() ? 1 : 0);
 	}
@@ -52,10 +50,6 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 		return obj instanceof OverwatchStage && Objects.equals(this.getId(), ((OverwatchStage) obj).getId());
 	}
 	
-	public String getName(){
-		return this.name;
-	}
-	
 	public Optional<OverwatchTournament> getCurrentTournament(){
 		return this.getCurrentMatch().map(OverwatchMatch::getTournament);
 	}
@@ -72,20 +66,8 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 		return this.getMatches().stream().allMatch(OverwatchMatch::hasEnded);
 	}
 	
-	public List<OverwatchWeek> getWeeks(){
-		return this.weeks;
-	}
-	
 	private Optional<OverwatchMatch> getCurrentMatch(){
 		return this.getMatches().stream().filter(w -> !w.hasEnded()).filter(OverwatchMatch::hasStarted).sorted().findFirst();
-	}
-	
-	public int getId(){
-		return this.id;
-	}
-	
-	public List<OverwatchMatch> getMatches(){
-		return this.matches;
 	}
 	
 	public Optional<OverwatchTournament> getNextTournament(){
@@ -100,11 +82,8 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 		return this.getWeeks().stream().filter(s -> !s.hasStarted()).sorted().findFirst();
 	}
 	
-	public List<OverwatchTournament> getTournaments(){
-		return this.tournaments;
-	}
-	
-	public boolean isEnabled(){
-		return this.enabled;
+	@Override
+	public int hashCode(){
+		return Objects.hash(id);
 	}
 }

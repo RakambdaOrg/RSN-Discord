@@ -3,8 +3,8 @@ package fr.raksrinana.rsndiscord.utils.luxbus;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import lombok.Getter;
+import lombok.NonNull;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
@@ -12,14 +12,14 @@ import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 public class LuxBusStop{
 	private final String id;
 	private final String name;
-	@SuppressWarnings("StandardVariableNames")
 	private final int l;
 	private final int a;
 	
-	private LuxBusStop(@Nonnull final String id){
+	private LuxBusStop(@NonNull final String id){
 		final var symbols = new DecimalFormatSymbols();
 		symbols.setDecimalSeparator(',');
 		final var format = new DecimalFormat("0.#");
@@ -31,7 +31,7 @@ public class LuxBusStop{
 	}
 	
 	@JsonCreator
-	public static LuxBusStop createStop(@Nullable final String id){
+	public static LuxBusStop createStop(final String id){
 		if(Objects.isNull(id) || id.isBlank()){
 			throw new IllegalArgumentException("Stop id must not be blank");
 		}
@@ -45,7 +45,7 @@ public class LuxBusStop{
 	}
 	
 	@Override
-	public boolean equals(@Nullable final Object other){
+	public boolean equals(final Object other){
 		if(this == other){
 			return true;
 		}
@@ -59,23 +59,5 @@ public class LuxBusStop{
 	@Override
 	public String toString(){
 		return this.getName();
-	}
-	
-	private int getL(){
-		return this.l;
-	}
-	
-	@Nonnull
-	public String getName(){
-		return this.name;
-	}
-	
-	public int getA(){
-		return this.a;
-	}
-	
-	@Nonnull
-	public String getId(){
-		return this.id;
 	}
 }

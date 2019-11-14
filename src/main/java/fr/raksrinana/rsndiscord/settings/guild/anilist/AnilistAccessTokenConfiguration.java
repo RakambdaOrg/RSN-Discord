@@ -7,19 +7,17 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeSerializer;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
 
-/**
- * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-06-23.
- *
- * @author Thomas Couchoud
- * @since 2019-06-23
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
+@Getter
 public class AnilistAccessTokenConfiguration{
 	@JsonProperty("userId")
 	private long userId;
@@ -30,10 +28,7 @@ public class AnilistAccessTokenConfiguration{
 	@JsonProperty("token")
 	private String token;
 	
-	public AnilistAccessTokenConfiguration(){
-	}
-	
-	public AnilistAccessTokenConfiguration(final long userId, @Nonnull final LocalDateTime expireDate, @Nonnull final String token){
+	public AnilistAccessTokenConfiguration(final long userId, @NonNull final LocalDateTime expireDate, @NonNull final String token){
 		this.userId = userId;
 		this.expireDate = expireDate;
 		this.token = token;
@@ -42,11 +37,6 @@ public class AnilistAccessTokenConfiguration{
 	@Override
 	public int hashCode(){
 		return new HashCodeBuilder(17, 37).append(this.getToken()).toHashCode();
-	}
-	
-	@Nonnull
-	public LocalDateTime getExpireDate(){
-		return this.expireDate;
 	}
 	
 	@Override
@@ -59,14 +49,5 @@ public class AnilistAccessTokenConfiguration{
 		}
 		final var that = (AnilistAccessTokenConfiguration) o;
 		return new EqualsBuilder().append(this.getToken(), that.getToken()).isEquals();
-	}
-	
-	@Nonnull
-	public String getToken(){
-		return this.token;
-	}
-	
-	public long getUserId(){
-		return this.userId;
 	}
 }

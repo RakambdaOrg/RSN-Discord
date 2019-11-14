@@ -2,41 +2,26 @@ package fr.raksrinana.rsndiscord;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.log.Log;
-import net.dv8tion.jda.api.JDA;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import javax.annotation.Nonnull;
 import java.util.*;
 
 /**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 29/05/2018.
- *
- * @author Thomas Couchoud
- * @since 2018-05-29
+ * Handles commands sent in the standard input.
  */
 class ConsoleHandler extends Thread{
-	private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleHandler.class);
 	private static final int WAIT_DELAY = 10000;
-	private final JDA jda;
 	private boolean stop;
 	
-	/**
-	 * Constructor.
-	 *
-	 * @param jda The JDA object.
-	 */
-	ConsoleHandler(@Nonnull final JDA jda){
+	ConsoleHandler(){
 		super();
-		this.jda = jda;
 		this.stop = false;
 		this.setDaemon(true);
 		this.setName("Console watcher");
-		LOGGER.info("Console handler created");
+		Log.getLogger(null).info("Console handler created");
 	}
 	
 	@Override
 	public void run(){
-		LOGGER.info("Console handler started");
+		Log.getLogger(null).info("Console handler started");
 		final var quitList = List.of("stop", "quit", "exit");
 		try(final var sc = new Scanner(System.in)){
 			while(!this.stop){
@@ -54,39 +39,41 @@ class ConsoleHandler extends Thread{
 					if(args.isEmpty()){
 						continue;
 					}
-					final var arg1 = args.poll();
-					if(quitList.contains(arg1)){
+					final var command = args.poll();
+					if(quitList.contains(command)){
 						Main.close();
 					}
-					else if("leave".equalsIgnoreCase(arg1)){
+					else if("leave".equalsIgnoreCase(command)){
 						if(args.isEmpty()){
 							Log.getLogger(null).warn("Please pass the guild as an argument");
 						}
 						else{
-							final var guild = this.jda.getGuildById(args.poll());
-							Objects.requireNonNull(guild).leave().queue();
-							Log.getLogger(null).info("Guild {} left", guild);
+							final var guildId = args.poll();
+							Optional.ofNullable(Main.getJda().getGuildById(guildId)).ifPresentOrElse(guild -> {
+								guild.leave().queue();
+								Log.getLogger(guild).info("Guild {} left", guild);
+							}, () -> Log.getLogger(null).warn("Guild with id {} not found", guildId));
 						}
 					}
-					else if("gid".equalsIgnoreCase(arg1)){
+					else if("gid".equalsIgnoreCase(command)){
 						if(args.isEmpty()){
-							Log.getLogger(null).warn("Please pass the guild as an argument");
+							Log.getLogger(null).warn("Please pass the guild name as an argument");
 						}
 						else{
-							final var guilds = this.jda.getGuildsByName(args.poll(), true);
-							Log.getLogger(null).info("Guilds {} matcher", guilds);
+							final var guilds = Main.getJda().getGuildsByName(args.pop(), true);
+							Log.getLogger(null).info("Guilds matched : {}", guilds);
 						}
 					}
-					else if("listMembers".equalsIgnoreCase(arg1)){
+					else if("listMembers".equalsIgnoreCase(command)){
 						if(args.isEmpty()){
-							Log.getLogger(null).warn("Please pass the guild as an argument");
+							Log.getLogger(null).warn("Please pass the guild id as an argument");
 						}
 						else{
-							final var guild = this.jda.getGuildById(args.poll());
-							Log.getLogger(null).info("Members of {}: {}", guild, Objects.requireNonNull(guild).getMembers());
+							final var guildId = args.poll();
+							Optional.ofNullable(Main.getJda().getGuildById(guildId)).ifPresentOrElse(guild -> Log.getLogger(guild).info("Members of {}: {}", guild, guild.getMembers()), () -> Log.getLogger(null).warn("Guild with id {} not found", guildId));
 						}
 					}
-					else if("save".equalsIgnoreCase(arg1)){
+					else if("save".equalsIgnoreCase(command)){
 						Settings.save();
 					}
 				}

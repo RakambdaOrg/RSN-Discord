@@ -6,25 +6,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
 import fr.raksrinana.rsndiscord.utils.anilist.media.Media;
+import lombok.Getter;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.net.URL;
 import java.util.Optional;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-11.
- *
- * @author Thomas Couchoud
- * @since 2018-10-11
- */
-@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonTypeName("RELATED_MEDIA_ADDITION")
+@Getter
 public class RelatedMediaNotification extends Notification{
-	private static final String QUERY = "RelatedMediaAdditionNotification {\n" + "id\n" + "type\n" + "createdAt\n" + Media.getQuery() + "\n}";
+	private static final String QUERY = "RelatedMediaAdditionNotification {\n" + "id\n" + "type\n" + "createdAt\n" + Media.getQUERY() + "\n}";
 	@JsonProperty("media")
 	private Media media;
 	
@@ -33,7 +28,7 @@ public class RelatedMediaNotification extends Notification{
 	}
 	
 	@Override
-	public void fillEmbed(@Nonnull final EmbedBuilder builder){
+	public void fillEmbed(@NonNull final EmbedBuilder builder){
 		builder.setTimestamp(this.getDate());
 		builder.setColor(Color.PINK);
 		builder.setTitle("New related media", this.getMedia().getUrl().toString());
@@ -42,13 +37,8 @@ public class RelatedMediaNotification extends Notification{
 		this.getMedia().fillEmbed(builder);
 	}
 	
-	@Nonnull
-	private Media getMedia(){
-		return this.media;
-	}
-	
 	@Override
-	@Nonnull
+	@NonNull
 	public URL getUrl(){
 		return Optional.of(this.getMedia()).map(Media::getUrl).orElse(AniListUtils.FALLBACK_URL);
 	}
@@ -61,10 +51,5 @@ public class RelatedMediaNotification extends Notification{
 	@Override
 	public String toString(){
 		return ToStringBuilder.reflectionToString(this);
-	}
-	
-	@Nonnull
-	public static String getQuery(){
-		return QUERY;
 	}
 }

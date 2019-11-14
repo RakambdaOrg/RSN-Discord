@@ -2,17 +2,17 @@ package fr.raksrinana.rsndiscord.utils.overwatch.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
+import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.annotation.Nonnull;
 
 public enum OverwatchStatusReason{
 	@JsonEnumDefaultValue UNKNOWN, NORMAL;
 	private static final Logger LOGGER = LoggerFactory.getLogger(OverwatchStatusReason.class);
 	
 	@JsonCreator
-	@Nonnull
-	public OverwatchStatusReason getFromString(@Nonnull final String value){
+	@NonNull
+	public OverwatchStatusReason getFromString(@NonNull final String value){
 		try{
 			return OverwatchStatusReason.valueOf(value);
 		}

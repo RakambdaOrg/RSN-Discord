@@ -5,27 +5,20 @@ import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
-import net.dv8tion.jda.api.entities.ChannelType;
+import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
- *
- * @author Thomas Couchoud
- * @since 2018-04-12
- */
 @BotCommand
 public class AnimeReactionCommand extends BasicCommand{
 	private static final String COMMENT_STR = "--";
 	
-	@Nonnull
+	@NonNull
 	@Override
-	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		try{
 			final var lines = new LinkedList<>(Arrays.asList(String.join(" ", args).strip().split("\n")));
@@ -48,13 +41,13 @@ public class AnimeReactionCommand extends BasicCommand{
 						return convertTime(parts) + decorator + String.join(" ", parts) + decorator;
 					}).collect(Collectors.joining("\n"));
 				}
-				Actions.reply(event, newText);
+				Actions.reply(event, newText, null);
 			}
 			return CommandResult.SUCCESS;
 		}
 		catch(Exception e){
 			Log.getLogger(event.getGuild()).error("Failed to parse anime reaction", e);
-			Actions.reply(event, "Failed to parse text");
+			Actions.reply(event, "Failed to parse text", null);
 		}
 		return CommandResult.FAILED;
 	}
@@ -85,32 +78,27 @@ public class AnimeReactionCommand extends BasicCommand{
 		}
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public AccessLevel getAccessLevel(){
 		return AccessLevel.ADMIN;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Anime reaction";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("animereaction", "ar");
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getDescription(){
 		return "Formats anime reactions";
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
 	}
 }

@@ -4,63 +4,44 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.runners.anilist.AniListActivityScheduledRunner;
-import net.dv8tion.jda.api.entities.ChannelType;
+import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-08.
- *
- * @author Thomas Couchoud
- * @since 2018-10-08
- */
-public class AniListFetchActivityCommand extends BasicCommand{
+public class ActivityCommand extends BasicCommand{
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	AniListFetchActivityCommand(@Nullable final Command parent){
+	ActivityCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	@Nonnull
-	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
+	@NonNull
+	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		new AniListActivityScheduledRunner(event.getJDA()).run();
+		new AniListActivityScheduledRunner(event.getJDA()).runQueryOnDefaultUsersChannels();
 		return CommandResult.SUCCESS;
 	}
 	
-	@Override
-	@Nonnull
-	public AccessLevel getAccessLevel(){
-		return AccessLevel.MODERATOR;
-	}
-	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "AniList fetch activity";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("activity", "a");
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getDescription(){
-		return "Fetch user's activity from AniList";
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
+		return "Fetch user's activity";
 	}
 }

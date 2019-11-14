@@ -3,16 +3,9 @@ package fr.raksrinana.rsndiscord.utils.anilist.media;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import lombok.NonNull;
 import java.util.Objects;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-10.
- *
- * @author Thomas Couchoud
- * @since 2018-10-10
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public enum MediaFormat{
@@ -23,13 +16,13 @@ public enum MediaFormat{
 		this(null);
 	}
 	
-	MediaFormat(@Nullable final String display){
+	MediaFormat(final String display){
 		this.display = display;
 	}
 	
 	@JsonCreator
-	@Nonnull
-	public static MediaFormat getFromString(@Nonnull final String value){
+	@NonNull
+	public static MediaFormat getFromString(@NonNull final String value){
 		return MediaFormat.valueOf(value);
 	}
 	

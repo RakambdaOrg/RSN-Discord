@@ -6,84 +6,66 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
- *
- * @author Thomas Couchoud
- * @since 2018-06-16
- */
 public class SkipMusicCommand extends BasicCommand{
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	SkipMusicCommand(@Nullable final Command parent){
+	SkipMusicCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
+	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
-	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		switch(RSNAudioManager.skip(event.getGuild())){
 			case NO_MUSIC:
-				Actions.replyFormatted(event, "%s, no music currently playing", event.getAuthor().getAsMention());
+				Actions.reply(event, MessageFormat.format("{0}, no music currently playing", event.getAuthor().getAsMention()), null);
 				break;
 			case OK:
-				Actions.replyFormatted(event, "%s skipped the music", event.getAuthor().getAsMention());
+				Actions.reply(event, MessageFormat.format("{0} skipped the music", event.getAuthor().getAsMention()), null);
 				break;
 		}
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
-	public boolean isAllowed(@Nullable final Member member){
+	public boolean isAllowed(final Member member){
 		return Objects.nonNull(member) && (Utilities.isTeam(member) || RSNAudioManager.isRequester(member.getGuild(), member.getUser()));
 	}
 	
-	@Nonnull
-	@Override
-	public AccessLevel getAccessLevel(){
-		return AccessLevel.ALL;
-	}
-	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Skip";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("skip");
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getDescription(){
 		return "Skips the current music";
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
 	}
 }

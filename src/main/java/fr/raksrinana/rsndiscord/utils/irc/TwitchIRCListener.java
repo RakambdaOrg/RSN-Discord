@@ -5,76 +5,53 @@ import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.irc.messages.*;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import lombok.Getter;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
-import javax.annotation.Nonnull;
+import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class TwitchIRCListener extends AbstractIRCListener implements EventListener{
+	@Getter
 	private final Guild guild;
+	@Getter
 	private final String user;
+	@Getter
 	private final String ircChannel;
 	private final TextChannel channel;
 	private long lastMessage;
 	
-	TwitchIRCListener(@Nonnull final Guild guild, @Nonnull final String user, @Nonnull final String channel){
+	TwitchIRCListener(@NonNull final Guild guild, @NonNull final String user, @NonNull final String channel){
 		this.guild = guild;
 		this.user = user;
 		this.ircChannel = channel;
 		this.lastMessage = System.currentTimeMillis();
-		this.channel = Settings.getConfiguration(guild).getTwitchChannel().orElseThrow().getChannel().orElseThrow();
+		this.channel = Settings.get(guild).getTwitchChannel().orElseThrow().getChannel().orElseThrow();
 	}
 	
 	@Override
-	protected void onNotice(final NoticeIRCMessage event){
-		if(Objects.equals(event.getChannel(), this.ircChannel)){
-			Actions.sendMessage(this.channel, "__NOTICE__: %s", event.getMessage());
-		}
-	}
-	
-	@Override
-	protected void onHostTarget(final HostTargetIRCMessage event){
-		if(Objects.equals(event.getChannel(), this.ircChannel)){
-			Log.getLogger(this.getGuild()).info("{} hosting {}", event.getChannel(), event.getInfos());
-		}
-	}
-	
-	@Override
-	protected void onClearChat(final ClearChatIRCMessage event){
-		if(Objects.equals(event.getChannel(), this.ircChannel)){
-			Actions.sendMessage(this.channel, "__NOTICE__: %s banned for %s", event.getUser(), event.getTags().stream().filter(t -> Objects.equals("ban-duration", t.getKey())).map(IRCTag::getValue).map(Integer::parseInt).map(Duration::ofSeconds).map(Utilities::durationToString).findFirst().orElse("UNKNOWN"));
-		}
-	}
-	
-	@Override
-	protected void onClearMessage(final ClearMessageIRCMessage event){
-		if(Objects.equals(event.getChannel(), this.ircChannel)){
-			Log.getLogger(this.getGuild()).info("Message from {} deleted: {}", event.getTags().stream().filter(t -> Objects.equals("login", t.getKey())).map(IRCTag::getValue).findFirst().orElse("UNKNOWN"), event.getMessage());
-		}
-	}
-	
-	@Override
-	protected void onIRCChannelJoined(@Nonnull final ChannelJoinIRCMessage event){
+	protected void onIRCChannelJoined(@NonNull final ChannelJoinIRCMessage event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
 			Log.getLogger(this.getGuild()).info("Joined {}", event.getChannel());
 		}
 	}
 	
 	@Override
-	protected void onIRCChannelLeft(@Nonnull final ChannelLeftIRCMessage event){
+	protected void onIRCChannelLeft(@NonNull final ChannelLeftIRCMessage event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
 			Log.getLogger(this.getGuild()).info("Left {}", event.getChannel());
 		}
 	}
 	
 	@Override
-	protected void onIRCChannelMessage(@Nonnull final ChannelMessageIRCMessage event){
+	protected void onIRCChannelMessage(@NonNull final ChannelMessageIRCMessage event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
 			this.lastMessage = System.currentTimeMillis();
 			var message = event.getMessage().replace("@everyone", "<everyone>").replace("@here", "<here>");
@@ -104,12 +81,40 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 			if(event.getTags().stream().anyMatch(t -> Objects.equals("partner", t.getKey()))){
 				role += "(partner)";
 			}
-			Actions.sendMessage(this.channel, "**`%s`%s** %s", displayName, role, message);
+			Actions.sendMessage(this.channel, MessageFormat.format("**`{0}`{1}** {2}", displayName, role, message), null);
 		}
 	}
 	
 	@Override
-	protected void onPingIRC(@Nonnull final PingIRCMessage event){
+	protected void onPingIRC(@NonNull final PingIRCMessage event){
+	}
+	
+	@Override
+	protected void onUserNotice(final UserNoticeIRCMessage event){
+		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
+			Actions.sendMessage(this.channel, MessageFormat.format("__NOTICE__: {0}", event.getTags().stream().filter(t -> Objects.equals("system-msg", t.getKey())).map(IRCTag::getValue).map(v -> v.replace("\\s", " ").trim()).findFirst().orElse("UNKNOWN")), null);
+		}
+	}
+	
+	@Override
+	protected void onClearChat(final ClearChatIRCMessage event){
+		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
+			Actions.sendMessage(this.channel, MessageFormat.format("__NOTICE__: {0} banned for {1}", event.getUser(), event.getTags().stream().filter(t -> Objects.equals("ban-duration", t.getKey())).map(IRCTag::getValue).map(Integer::parseInt).map(Duration::ofSeconds).map(Utilities::durationToString).findFirst().orElse("UNKNOWN")), null);
+		}
+	}
+	
+	@Override
+	protected void onClearMessage(final ClearMessageIRCMessage event){
+		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
+			Log.getLogger(this.getGuild()).info("Message from {} deleted: {}", event.getTags().stream().filter(t -> Objects.equals("login", t.getKey())).map(IRCTag::getValue).findFirst().orElse("UNKNOWN"), event.getMessage());
+		}
+	}
+	
+	@Override
+	protected void onNotice(final NoticeIRCMessage event){
+		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
+			Actions.sendMessage(this.channel, MessageFormat.format("__NOTICE__: {0}", event.getMessage()), null);
+		}
 	}
 	
 	@Override
@@ -118,31 +123,19 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 	}
 	
 	@Override
-	protected void onUserNotice(final UserNoticeIRCMessage event){
-		if(Objects.equals(event.getChannel(), this.ircChannel)){
-			Actions.sendMessage(this.channel, "__NOTICE__: %s", event.getTags().stream().filter(t -> Objects.equals("system-msg", t.getKey())).map(IRCTag::getValue).map(v -> v.replace("\\s", " ").trim()).findFirst().orElse("UNKNOWN"));
+	protected void onHostTarget(final HostTargetIRCMessage event){
+		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
+			Log.getLogger(this.getGuild()).info("{} hosting {}", event.getIrcChannel(), event.getInfos());
 		}
 	}
 	
 	@Override
-	protected void onIRCUnknownEvent(@Nonnull final IRCMessage event){
+	protected void onIRCUnknownEvent(@NonNull final IRCMessage event){
 	}
 	
 	@Override
-	public boolean handlesChannel(@Nonnull final String channel){
+	public boolean handlesChannel(@NonNull final String channel){
 		return Objects.equals(channel, this.ircChannel);
-	}
-	
-	@Nonnull
-	@Override
-	public Guild getGuild(){
-		return this.guild;
-	}
-	
-	@Nonnull
-	@Override
-	public String getIRCChannel(){
-		return this.ircChannel;
 	}
 	
 	@Override
@@ -150,14 +143,8 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 		return System.currentTimeMillis() - this.lastMessage;
 	}
 	
-	@Nonnull
 	@Override
-	public String getUser(){
-		return this.user;
-	}
-	
-	@Override
-	public void onEvent(@Nonnull final GenericEvent event){
+	public void onEvent(@NonNull final GenericEvent event){
 		if(event instanceof GuildMessageReceivedEvent){
 			final var evt = (GuildMessageReceivedEvent) event;
 			try{

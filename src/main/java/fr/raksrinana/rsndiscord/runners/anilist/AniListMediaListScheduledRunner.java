@@ -7,39 +7,38 @@ import fr.raksrinana.rsndiscord.settings.types.TodoConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
+import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
 import fr.raksrinana.rsndiscord.utils.anilist.list.MediaList;
 import fr.raksrinana.rsndiscord.utils.anilist.queries.MediaListPagedQuery;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import lombok.Getter;
+import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-08.
- *
- * @author Thomas Couchoud
- * @since 2018-10-08
- */
 public class AniListMediaListScheduledRunner implements AniListRunner<MediaList, MediaListPagedQuery>, ScheduledRunner{
+	@Getter
 	private final JDA jda;
+	@Getter
 	private final boolean keepOnlyNew;
+	@Getter
 	private final boolean sortedByUser;
 	
-	public AniListMediaListScheduledRunner(@Nonnull final JDA jda){
+	public AniListMediaListScheduledRunner(@NonNull final JDA jda){
 		this(jda, true);
 	}
 	
-	private AniListMediaListScheduledRunner(@Nonnull final JDA jda, final boolean keepOnlyNew){
+	private AniListMediaListScheduledRunner(@NonNull final JDA jda, final boolean keepOnlyNew){
 		Log.getLogger(null).info("Creating AniList {} runner", this.getRunnerName());
 		this.jda = jda;
 		this.keepOnlyNew = keepOnlyNew;
@@ -48,25 +47,25 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 	
 	@Override
 	public void run(){
-		this.runQueryOnEveryUserAndDefaultChannels();
+		this.runQueryOnDefaultUsersChannels();
 	}
 	
 	@Override
-	public List<TextChannel> getChannels(){
-		return this.getJDA().getGuilds().stream().map(g -> Settings.getConfiguration(g).getAniListConfiguration().getMediaChangeChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
+	public Set<TextChannel> getChannels(){
+		return this.getJda().getGuilds().stream().map(g -> Settings.get(g).getAniListConfiguration().getMediaChangeChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toSet());
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getRunnerName(){
 		return "media list";
 	}
 	
 	@Override
-	public void sendMessages(@Nonnull final List<TextChannel> channels, @Nonnull final Map<User, List<MediaList>> userElements){
+	public void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<MediaList>> userElements){
 		AniListRunner.super.sendMessages(channels, userElements);
-		this.getJDA().getGuilds().stream().map(g -> Settings.getConfiguration(g).getAniListConfiguration().getThaChannel().flatMap(ChannelConfiguration::getChannel)).filter(Optional::isPresent).map(Optional::get).forEach(textChannel -> Settings.getConfiguration(textChannel.getGuild()).getAniListConfiguration().getThaUser().flatMap(UserConfiguration::getUser).ifPresent(user -> userElements.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> ImmutablePair.of(e.getKey(), v))).filter(v -> v.getRight().getCustomLists().entrySet().stream().filter(Map.Entry::getValue).anyMatch(entry -> Objects.equals("ThaPending", entry.getKey()) || Objects.equals("ThaReading", entry.getKey()) || Objects.equals("Test", entry.getKey()) || Objects.equals("ThaWatching", entry.getKey()))).forEach(p -> {
-			final var similarTodos = Settings.getConfiguration(textChannel.getGuild()).getTodos().stream().filter(todo -> {
+		this.getJda().getGuilds().stream().map(g -> Settings.get(g).getAniListConfiguration().getThaChannel().flatMap(ChannelConfiguration::getChannel)).filter(Optional::isPresent).map(Optional::get).forEach(textChannel -> Settings.get(textChannel.getGuild()).getAniListConfiguration().getThaUser().flatMap(UserConfiguration::getUser).ifPresent(user -> userElements.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> ImmutablePair.of(e.getKey(), v))).filter(v -> v.getRight().getCustomLists().entrySet().stream().filter(Map.Entry::getValue).anyMatch(entry -> Objects.equals("ThaPending", entry.getKey()) || Objects.equals("ThaReading", entry.getKey()) || Objects.equals("Test", entry.getKey()) || Objects.equals("ThaWatching", entry.getKey()))).forEach(p -> {
+			final var similarTodos = Settings.get(textChannel.getGuild()).getTodos().stream().filter(todo -> {
 				if(Objects.equals(todo.getMessage().getChannel().getChannelId(), textChannel.getIdLong())){
 					return todo.getMessage().getMessage().map(message -> {
 						final var isSameMedia = message.getEmbeds().stream().anyMatch(embed -> Objects.equals(embed.getDescription(), p.getRight().getMedia().getTitle().getUserPreferred()));
@@ -75,39 +74,22 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 				}
 				return false;
 			}).collect(Collectors.toList());
-			Actions.sendMessage(textChannel, user.getAsMention(), this.buildMessage(p.getLeft(), p.getRight()), sentMessage -> {
-				sentMessage.addReaction(BasicEmotes.CHECK_OK.getValue()).queue();
-				similarTodos.forEach(todo -> textChannel.getHistoryAround(todo.getMessage().getMessageId(), 1).queue(history -> Optional.ofNullable(history.getMessageById(todo.getMessage().getMessageId())).ifPresent(todoMessage -> todoMessage.delete().queue())));
-				Settings.getConfiguration(textChannel.getGuild()).getTodos().removeAll(similarTodos);
-				Settings.getConfiguration(textChannel.getGuild()).addTodoMessage(new TodoConfiguration(sentMessage, true));
+			Actions.sendMessage(textChannel, user.getAsMention(), this.buildMessage(p.getLeft(), p.getRight())).thenAccept(sentMessage -> {
+				Actions.addReaction(sentMessage, BasicEmotes.CHECK_OK.getValue());
+				similarTodos.forEach(todo -> Utilities.getMessageById(textChannel, todo.getMessage().getMessageId()).thenAccept(messageOptional -> messageOptional.ifPresent(Actions::deleteMessage)));
+				Settings.get(textChannel.getGuild()).getTodos().removeAll(similarTodos);
+				Settings.get(textChannel.getGuild()).addTodoMessage(new TodoConfiguration(sentMessage, true));
 			});
 		})));
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
-	public MediaListPagedQuery initQuery(@Nonnull final Member member){
+	public MediaListPagedQuery initQuery(@NonNull final Member member){
 		return new MediaListPagedQuery(AniListUtils.getUserId(member).orElseThrow());
 	}
 	
-	@Override
-	public boolean keepOnlyNew(){
-		return this.keepOnlyNew;
-	}
-	
-	@Override
-	public boolean sortedByUser(){
-		return this.sortedByUser;
-	}
-	
-	@Nonnull
-	@Override
-	public JDA getJDA(){
-		return this.jda;
-	}
-	
-	@Nonnull
-	@SuppressWarnings("SpellCheckingInspection")
+	@NonNull
 	@Override
 	public String getFetcherID(){
 		return "medialist";
@@ -118,7 +100,7 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 		return 0;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.HOURS;

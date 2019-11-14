@@ -3,9 +3,8 @@ package fr.raksrinana.rsndiscord.utils.irc;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.irc.messages.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import javax.annotation.Nonnull;
+import fr.raksrinana.rsndiscord.utils.log.Log;
+import lombok.NonNull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -13,18 +12,11 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-/**
- * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-02-25.
- *
- * @author Thomas Couchoud
- * @since 2019-02-25
- */
 class IRCUtils{
 	private static final Pattern EVENT_PATTERN = Pattern.compile("^(@([^\\s]+)\\s)?:([^\\s]+)\\s([^\\s]+)\\s([^:]+)\\s?(:(.*))?$");
-	private static final Logger LOGGER = LoggerFactory.getLogger(IRCUtils.class);
 	
-	@Nonnull
-	static Optional<IRCMessage> buildEvent(@Nonnull final String message){
+	@NonNull
+	static Optional<IRCMessage> buildEvent(@NonNull final String message){
 		try{
 			if("PING :tmi.twitch.tv".equals(message)){
 				return Optional.of(new PingIRCMessage());
@@ -67,12 +59,12 @@ class IRCUtils{
 						return Optional.of(new HostTargetIRCMessage(matcher.group(5).trim(), matcher.group(7)));
 				}
 			}
-			Optional.ofNullable(Main.getJDA().getUserById(Utilities.RAKSRINANA_ACCOUNT)).ifPresent(rsn -> rsn.openPrivateChannel().queue(c -> c.sendMessage("Unknown IRC message: " + message).queue()));
-			LOGGER.warn("Unknown IRC message: {}", message);
+			Optional.ofNullable(Main.getJda().getUserById(Utilities.RAKSRINANA_ACCOUNT)).ifPresent(rsn -> rsn.openPrivateChannel().queue(c -> c.sendMessage("Unknown IRC message: " + message).queue()));
+			Log.getLogger(null).warn("Unknown IRC message: {}", message);
 			return Optional.empty();
 		}
 		catch(final Exception e){
-			LOGGER.error("Failed to handle IRC message: {}", message);
+			Log.getLogger(null).error("Failed to handle IRC message: {}", message);
 		}
 		return Optional.empty();
 	}

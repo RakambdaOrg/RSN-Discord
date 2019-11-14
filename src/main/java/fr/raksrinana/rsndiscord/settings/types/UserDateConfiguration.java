@@ -8,22 +8,20 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeSerializer;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.User;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-/**
- * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-06-23.
- *
- * @author Thomas Couchoud
- * @since 2019-06-23
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
+@NoArgsConstructor
 public class UserDateConfiguration{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	@JsonProperty("userId")
@@ -33,14 +31,11 @@ public class UserDateConfiguration{
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	private LocalDateTime date;
 	
-	public UserDateConfiguration(){
-	}
-	
-	public UserDateConfiguration(@Nonnull final User user, @Nonnull final LocalDateTime date){
+	public UserDateConfiguration(@NonNull final User user, @NonNull final LocalDateTime date){
 		this(user.getIdLong(), date);
 	}
 	
-	private UserDateConfiguration(final long userId, @Nonnull final LocalDateTime date){
+	private UserDateConfiguration(final long userId, @NonNull final LocalDateTime date){
 		this.userId = userId;
 		this.date = date;
 	}
@@ -67,21 +62,12 @@ public class UserDateConfiguration{
 		return this.getUser().map(User::getAsMention).map(s -> s + " " + this.getDate().format(DF)).orElse("<Unknown date>");
 	}
 	
-	@Nonnull
+	@NonNull
 	private Optional<User> getUser(){
-		return Optional.ofNullable(Main.getJDA().getUserById(this.getUserId()));
+		return Optional.ofNullable(Main.getJda().getUserById(this.getUserId()));
 	}
 	
-	@Nonnull
-	public LocalDateTime getDate(){
-		return this.date;
-	}
-	
-	public long getUserId(){
-		return this.userId;
-	}
-	
-	public void setDate(@Nonnull final LocalDateTime date){
+	public void setDate(@NonNull final LocalDateTime date){
 		this.date = date;
 	}
 }

@@ -2,9 +2,9 @@ package fr.raksrinana.rsndiscord.utils.overwatch.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
+import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.annotation.Nonnull;
 
 public enum OverwatchState{
 	@JsonEnumDefaultValue UNKNOWN("UNKNOWN"), CONCLUDED("Ended"), PENDING("Pending"), IN_PROGRESS("In progress");
@@ -16,8 +16,8 @@ public enum OverwatchState{
 	}
 	
 	@JsonCreator
-	@Nonnull
-	public OverwatchState getFromString(@Nonnull final String value){
+	@NonNull
+	public OverwatchState getFromString(@NonNull final String value){
 		try{
 			return OverwatchState.valueOf(value);
 		}

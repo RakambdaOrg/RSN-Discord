@@ -4,32 +4,29 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import fr.raksrinana.rsndiscord.utils.player.trackfields.ReplayTrackUserField;
+import fr.raksrinana.rsndiscord.utils.player.trackfields.ReplayTrackDataField;
 import fr.raksrinana.rsndiscord.utils.player.trackfields.TrackUserFields;
+import lombok.Getter;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
-import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import static fr.raksrinana.rsndiscord.utils.log.Log.getLogger;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
- *
- * @author Thomas Couchoud
- * @since 2018-06-16
- */
 class TrackScheduler extends AudioEventAdapter{
 	private final AudioPlayer player;
+	@Getter
 	private final Guild guild;
 	private final Set<StatusTrackSchedulerListener> listeners;
+	@Getter
 	private LinkedList<AudioTrack> queue;
 	
 	/**
 	 * @param guild  The guild the scheduler is for.
-	 * @param player The audio player this scheduler uses
+	 * @param player The audio player this scheduler uses.
 	 */
-	TrackScheduler(@Nonnull final Guild guild, @Nonnull final AudioPlayer player){
+	TrackScheduler(@NonNull final Guild guild, @NonNull final AudioPlayer player){
 		this.guild = guild;
 		this.player = player;
 		this.queue = new LinkedList<>();
@@ -37,20 +34,18 @@ class TrackScheduler extends AudioEventAdapter{
 	}
 	
 	@Override
-	public void onTrackStart(@Nonnull final AudioPlayer player, @Nonnull final AudioTrack track){
+	public void onTrackStart(@NonNull final AudioPlayer player, @NonNull final AudioTrack track){
 		super.onTrackStart(player, track);
 		this.listeners.forEach(listener -> listener.onTrackStart(track));
 	}
 	
 	@Override
-	public void onTrackEnd(@Nonnull final AudioPlayer player, @Nonnull final AudioTrack track, @Nonnull final AudioTrackEndReason endReason){
+	public void onTrackEnd(@NonNull final AudioPlayer player, @NonNull final AudioTrack track, @NonNull final AudioTrackEndReason endReason){
 		super.onTrackEnd(player, track, endReason);
 		if(track.getUserData() instanceof TrackUserFields){
-			if(track.getUserData(TrackUserFields.class).get(new ReplayTrackUserField()).orElse(false)){
+			if(track.getUserData(TrackUserFields.class).get(new ReplayTrackDataField()).orElse(false)){
 				getLogger(this.guild).info("Putting back {} into queue: repeat is enabled", track.getInfo().identifier);
-				final var clone = track.makeClone();
-				clone.setUserData(track.getUserData());
-				this.queue(clone);
+				this.queue(track.makeClone());
 			}
 		}
 		this.listeners.forEach(listener -> listener.onTrackEnd(track));
@@ -65,7 +60,7 @@ class TrackScheduler extends AudioEventAdapter{
 	 *
 	 * @param track The track to play or add to queue.
 	 */
-	public void queue(@Nonnull final AudioTrack track){
+	public void queue(@NonNull final AudioTrack track){
 		if(this.queue.stream().noneMatch(track2 -> Objects.equals(track2.getInfo().identifier, track.getInfo().identifier))){
 			this.queue.offer(track);
 		}
@@ -73,16 +68,6 @@ class TrackScheduler extends AudioEventAdapter{
 			this.queue.poll();
 			getLogger(this.guild).info("Playing track {}", track.getInfo().identifier);
 		}
-	}
-	
-	/**
-	 * Get the guild the scheduler is associated to.
-	 *
-	 * @return The guild.
-	 */
-	@Nonnull
-	private Guild getGuild(){
-		return this.guild;
 	}
 	
 	private void tryStartNext(){
@@ -103,8 +88,9 @@ class TrackScheduler extends AudioEventAdapter{
 		final var next = this.queue.poll();
 		if(Objects.nonNull(next)){
 			getLogger(this.guild).info("Playing track {}", next.getInfo().identifier);
+			return this.player.startTrack(next, false);
 		}
-		return this.player.startTrack(next, false);
+		return false;
 	}
 	
 	void skip(){
@@ -113,7 +99,7 @@ class TrackScheduler extends AudioEventAdapter{
 	}
 	
 	void shuffle(){
-		if(!this.queue.isEmpty()){
+		if(this.queue.size() > 1){
 			final var oldList = new ArrayList<>(this.queue);
 			this.queue = new LinkedList<>();
 			Collections.shuffle(oldList);
@@ -126,7 +112,7 @@ class TrackScheduler extends AudioEventAdapter{
 	 *
 	 * @param statusTrackSchedulerListener The listener to add.
 	 */
-	void addStatusTrackSchedulerListener(@Nonnull final StatusTrackSchedulerListener statusTrackSchedulerListener){
+	void addStatusTrackSchedulerListener(@NonNull final StatusTrackSchedulerListener statusTrackSchedulerListener){
 		this.listeners.add(statusTrackSchedulerListener);
 	}
 	
@@ -135,10 +121,5 @@ class TrackScheduler extends AudioEventAdapter{
 		if(Objects.isNull(this.player.getPlayingTrack()) && this.queue.isEmpty()){
 			this.listeners.forEach(StatusTrackSchedulerListener::onTrackSchedulerEmpty);
 		}
-	}
-	
-	@Nonnull
-	public List<AudioTrack> getQueue(){
-		return this.queue;
 	}
 }

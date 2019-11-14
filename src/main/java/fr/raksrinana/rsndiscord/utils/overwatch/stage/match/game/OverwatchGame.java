@@ -8,12 +8,15 @@ import fr.raksrinana.rsndiscord.utils.json.OverwatchIDMatchDeserializer;
 import fr.raksrinana.rsndiscord.utils.overwatch.enums.OverwatchState;
 import fr.raksrinana.rsndiscord.utils.overwatch.enums.OverwatchStatus;
 import fr.raksrinana.rsndiscord.utils.overwatch.enums.OverwatchStatusReason;
+import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 public class OverwatchGame{
 	@JsonProperty("id")
 	private int id;
@@ -39,15 +42,20 @@ public class OverwatchGame{
 	@JsonDeserialize(using = OverwatchIDMatchDeserializer.class)
 	private int match;
 	
-	public OverwatchGameAttributes getAttributes(){
-		return this.attributes;
+	@Override
+	public int hashCode(){
+		return Objects.hash(id);
 	}
 	
-	public int getNumber(){
-		return this.number;
-	}
-	
-	public List<Integer> getPoints(){
-		return this.points;
+	@Override
+	public boolean equals(Object o){
+		if(this == o){
+			return true;
+		}
+		if(o == null || getClass() != o.getClass()){
+			return false;
+		}
+		OverwatchGame that = (OverwatchGame) o;
+		return id == that.id;
 	}
 }

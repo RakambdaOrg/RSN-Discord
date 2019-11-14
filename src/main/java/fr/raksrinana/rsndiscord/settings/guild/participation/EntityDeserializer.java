@@ -5,19 +5,15 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
-import fr.raksrinana.rsndiscord.utils.json.HexColorDeserializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import javax.annotation.Nonnull;
+import fr.raksrinana.rsndiscord.utils.log.Log;
+import lombok.NonNull;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 class EntityDeserializer extends JsonDeserializer<Set<EntityScore>>{
-	private static final Logger LOGGER = LoggerFactory.getLogger(HexColorDeserializer.class);
-	
 	@Override
-	public Set<EntityScore> deserialize(@Nonnull final JsonParser jsonParser, @Nonnull final DeserializationContext deserializationContext) throws IOException{
+	public Set<EntityScore> deserialize(@NonNull final JsonParser jsonParser, @NonNull final DeserializationContext deserializationContext) throws IOException{
 		try{
 			final var set = new HashSet<EntityScore>();
 			final JsonNode node = jsonParser.getCodec().readTree(jsonParser);
@@ -40,7 +36,7 @@ class EntityDeserializer extends JsonDeserializer<Set<EntityScore>>{
 			return set;
 		}
 		catch(final IOException e){
-			LOGGER.warn("Failed get entity score type {}", jsonParser.getValueAsString());
+			Log.getLogger(null).warn("Failed get entity score type {}", jsonParser.getValueAsString());
 		}
 		return null;
 	}

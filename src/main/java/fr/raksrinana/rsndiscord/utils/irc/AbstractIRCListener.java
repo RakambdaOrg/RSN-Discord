@@ -1,18 +1,11 @@
 package fr.raksrinana.rsndiscord.utils.irc;
 
 import fr.raksrinana.rsndiscord.utils.irc.messages.*;
-import javax.annotation.Nonnull;
+import lombok.NonNull;
 
-/**
- * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-02-25.
- *
- * @author Thomas Couchoud
- * @since 2019-02-25
- */
-@SuppressWarnings("EmptyMethod")
 public abstract class AbstractIRCListener implements IRCListener{
 	@Override
-	public void onIRCMessage(@Nonnull final IRCMessage event){
+	public void onIRCMessage(@NonNull final IRCMessage event){
 		if(event instanceof ChannelJoinIRCMessage){
 			this.onIRCChannelJoined((ChannelJoinIRCMessage) event);
 		}
@@ -48,13 +41,13 @@ public abstract class AbstractIRCListener implements IRCListener{
 		}
 	}
 	
-	protected abstract void onIRCChannelJoined(@Nonnull ChannelJoinIRCMessage event);
+	protected abstract void onIRCChannelJoined(@NonNull ChannelJoinIRCMessage event);
 	
-	protected abstract void onIRCChannelLeft(@Nonnull ChannelLeftIRCMessage event);
+	protected abstract void onIRCChannelLeft(@NonNull ChannelLeftIRCMessage event);
 	
-	protected abstract void onIRCChannelMessage(@Nonnull ChannelMessageIRCMessage event);
+	protected abstract void onIRCChannelMessage(@NonNull ChannelMessageIRCMessage event);
 	
-	protected abstract void onPingIRC(@Nonnull PingIRCMessage event);
+	protected abstract void onPingIRC(@NonNull PingIRCMessage event);
 	
 	protected abstract void onInfoMessage(InfoMessageIRCMessage event);
 	
@@ -68,5 +61,5 @@ public abstract class AbstractIRCListener implements IRCListener{
 	
 	protected abstract void onHostTarget(HostTargetIRCMessage event);
 	
-	protected abstract void onIRCUnknownEvent(@Nonnull IRCMessage event);
+	protected abstract void onIRCUnknownEvent(@NonNull IRCMessage event);
 }

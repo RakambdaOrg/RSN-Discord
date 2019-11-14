@@ -7,26 +7,30 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeSerializer;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import net.dv8tion.jda.api.entities.User;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
 public class NicknameConfiguration{
 	@JsonProperty("changeDelay")
+	@Getter
+	@Setter
 	private long changeDelay = 3600;
 	@JsonSerialize(contentUsing = LocalDateTimeSerializer.class)
 	@JsonDeserialize(contentUsing = LocalDateTimeDeserializer.class)
 	@JsonProperty("lastChange")
 	private Map<Long, LocalDateTime> lastChange = new HashMap<>();
 	
-	public Optional<LocalDateTime> getLastChange(@Nonnull final User user){
+	public Optional<LocalDateTime> getLastChange(@NonNull final User user){
 		return this.getLastChange(user.getIdLong());
 	}
 	
@@ -34,15 +38,7 @@ public class NicknameConfiguration{
 		return Optional.ofNullable(this.lastChange.get(userId));
 	}
 	
-	public void setLastChange(@Nonnull final User user, @Nullable final LocalDateTime date){
+	public void setLastChange(@NonNull final User user, final LocalDateTime date){
 		this.lastChange.put(user.getIdLong(), date);
-	}
-	
-	public long getChangeDelay(){
-		return this.changeDelay;
-	}
-	
-	public void setChangeDelay(final long changeDelay){
-		this.changeDelay = changeDelay;
 	}
 }

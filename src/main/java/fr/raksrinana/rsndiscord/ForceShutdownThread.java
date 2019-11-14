@@ -3,16 +3,14 @@ package fr.raksrinana.rsndiscord;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 
 /**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-25.
- *
- * @author Thomas Couchoud
- * @since 2018-10-25
+ * Thread used to force the shutdown of the application after a delay.
  */
 public class ForceShutdownThread extends Thread{
 	private static final int TIMEOUT_SHUTDOWN = 30000;
 	
 	public ForceShutdownThread(){
 		this.setDaemon(true);
+		this.setName("Force shutdown");
 	}
 	
 	@Override
@@ -23,7 +21,7 @@ public class ForceShutdownThread extends Thread{
 			System.exit(0);
 		}
 		catch(final InterruptedException e){
-			Log.getLogger(null).warn("", e);
+			Log.getLogger(null).warn("Failed to wait for forced shutdown", e);
 		}
 	}
 }

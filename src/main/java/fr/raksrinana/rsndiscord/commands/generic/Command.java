@@ -1,24 +1,16 @@
 package fr.raksrinana.rsndiscord.commands.generic;
 
 import fr.raksrinana.rsndiscord.utils.Utilities;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import static fr.raksrinana.rsndiscord.commands.generic.Command.AccessLevel.*;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
- *
- * @author Thomas Couchoud
- * @since 2018-04-12
- */
 public interface Command extends Comparable<Command>{
 	/**
 	 * The level required to access a command.
@@ -31,7 +23,7 @@ public interface Command extends Comparable<Command>{
 	 * @param guild   The guild.
 	 * @param builder The help menu.
 	 */
-	void addHelp(@Nonnull Guild guild, @Nonnull EmbedBuilder builder);
+	void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder);
 	
 	/**
 	 * Tell if a member is allowed to run the command.
@@ -40,7 +32,7 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return True if allowed, false otherwise.
 	 */
-	default boolean isAllowed(@Nullable final Member member){
+	default boolean isAllowed(final Member member){
 		if(Objects.isNull(member)){
 			return false;
 		}
@@ -53,7 +45,7 @@ public interface Command extends Comparable<Command>{
 		if(this.getAccessLevel() == ADMIN && Utilities.isAdmin(member)){
 			return true;
 		}
-		return Utilities.isCreator(member);
+		return Utilities.isCreator(member.getUser());
 	}
 	
 	/**
@@ -61,8 +53,10 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return The access level.
 	 */
-	@Nonnull
-	AccessLevel getAccessLevel();
+	@NonNull
+	default AccessLevel getAccessLevel(){
+		return ALL;
+	}
 	
 	/**
 	 * Handle the command.
@@ -72,13 +66,12 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return The result of this execution.
 	 *
-	 * @throws Exception If something bad happened.
+	 * @throws RuntimeException If something bad happened.
 	 */
-	@Nonnull
-	CommandResult execute(@Nonnull GuildMessageReceivedEvent event, @Nonnull LinkedList<String> args) throws Exception;
+	@NonNull CommandResult execute(@NonNull GuildMessageReceivedEvent event, @NonNull LinkedList<String> args) throws RuntimeException;
 	
 	@Override
-	default int compareTo(@Nonnull final Command otherCommand){
+	default int compareTo(@NonNull final Command otherCommand){
 		return this.getName().compareTo(otherCommand.getName());
 	}
 	
@@ -87,47 +80,33 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return The name.
 	 */
-	@Nonnull
-	String getName();
+	@NonNull String getName();
 	
 	/**
 	 * Get the command (what's after the prefix).
 	 *
 	 * @return The command.
 	 */
-	@Nonnull
-	List<String> getCommandStrings();
+	@NonNull List<String> getCommandStrings();
 	
 	/**
 	 * Get a description of the usage of command.
 	 *
 	 * @return The description.
 	 */
-	@Nonnull
-	String getCommandUsage();
+	@NonNull String getCommandUsage();
 	
 	/**
 	 * Get the description of the command.
 	 *
 	 * @return The description.
 	 */
-	@Nonnull
-	String getDescription();
+	@NonNull String getDescription();
 	
 	/**
 	 * Get the parent command.
 	 *
 	 * @return The parent command.
 	 */
-	@Nullable
 	Command getParent();
-	
-	/**
-	 * Get where this command can be executed.
-	 *
-	 * @return The scope or -5 to be accessible everywhere.
-	 *
-	 * @see ChannelType#getId()
-	 */
-	int getScope();
 }

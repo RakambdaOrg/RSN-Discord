@@ -4,9 +4,9 @@ import fr.raksrinana.rsndiscord.commands.config.helpers.WarnConfigurationCommand
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.warns.WarnConfiguration;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,29 +15,29 @@ public class DoubleWarnConfigurationCommand extends WarnConfigurationCommand{
 		super(parent);
 	}
 	
-	@Nonnull
+	@Override
+	protected void createConfig(@NonNull final Guild guild, @NonNull final Role role, final long delay){
+		Settings.get(guild).getWarnsConfiguration().setDoubleWarn(new WarnConfiguration(role, delay));
+	}
+	
+	@Override
+	protected void removeConfig(@NonNull final Guild guild){
+		Settings.get(guild).getWarnsConfiguration().setDoubleWarn(null);
+	}
+	
+	@NonNull
 	@Override
 	protected Optional<WarnConfiguration> getConfig(final Guild guild){
-		return Settings.getConfiguration(guild).getWarnsConfiguration().getDoubleWarn();
+		return Settings.get(guild).getWarnsConfiguration().getDoubleWarn();
 	}
 	
-	@Override
-	protected void removeConfig(@Nonnull final Guild guild){
-		Settings.getConfiguration(guild).getWarnsConfiguration().setDoubleWarn(null);
-	}
-	
-	@Override
-	protected void createConfig(@Nonnull final Guild guild, @Nonnull final Role role, final long delay){
-		Settings.getConfiguration(guild).getWarnsConfiguration().setDoubleWarn(new WarnConfiguration(role, delay));
-	}
-	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Double warn";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("doubleWarn");

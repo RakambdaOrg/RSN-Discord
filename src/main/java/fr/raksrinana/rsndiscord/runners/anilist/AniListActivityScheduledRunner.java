@@ -8,64 +8,54 @@ import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
 import fr.raksrinana.rsndiscord.utils.anilist.activity.list.ListActivity;
 import fr.raksrinana.rsndiscord.utils.anilist.queries.ActivityPagedQuery;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import lombok.Getter;
+import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
-import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-08.
- *
- * @author Thomas Couchoud
- * @since 2018-10-08
- */
 public class AniListActivityScheduledRunner implements AniListRunner<ListActivity, ActivityPagedQuery>, ScheduledRunner{
+	@Getter
 	private final JDA jda;
 	
-	public AniListActivityScheduledRunner(@Nonnull final JDA jda){
+	public AniListActivityScheduledRunner(@NonNull final JDA jda){
 		Log.getLogger(null).info("Creating AniList {} runner", this.getRunnerName());
 		this.jda = jda;
 	}
 	
 	@Override
 	public void run(){
-		this.runQueryOnEveryUserAndDefaultChannels();
+		this.runQueryOnDefaultUsersChannels();
 	}
 	
 	@Override
-	public List<TextChannel> getChannels(){
-		return this.getJDA().getGuilds().stream().map(g -> Settings.getConfiguration(g).getAniListConfiguration().getMediaChangeChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toList());
+	public Set<TextChannel> getChannels(){
+		return this.getJda().getGuilds().stream().map(g -> Settings.get(g).getAniListConfiguration().getMediaChangeChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toSet());
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getRunnerName(){
 		return "list activity";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
-	public ActivityPagedQuery initQuery(@Nonnull final Member member){
-		return new ActivityPagedQuery(AniListUtils.getUserId(member).orElseThrow(), Settings.getConfiguration(member.getGuild()).getAniListConfiguration().getLastAccess(this.getFetcherID()).stream().filter(a -> Objects.equals(a.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate(member)));
+	public ActivityPagedQuery initQuery(@NonNull final Member member){
+		return new ActivityPagedQuery(AniListUtils.getUserId(member).orElseThrow(), Settings.get(member.getGuild()).getAniListConfiguration().getLastAccess(this.getFetcherID()).stream().filter(a -> Objects.equals(a.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate()));
 	}
 	
 	@Override
-	public boolean keepOnlyNew(){
+	public boolean isKeepOnlyNew(){
 		return true;
 	}
 	
-	@Nonnull
-	@Override
-	public JDA getJDA(){
-		return this.jda;
-	}
-	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getFetcherID(){
 		return "listActivity";
@@ -81,7 +71,7 @@ public class AniListActivityScheduledRunner implements AniListRunner<ListActivit
 		return 1;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.HOURS;

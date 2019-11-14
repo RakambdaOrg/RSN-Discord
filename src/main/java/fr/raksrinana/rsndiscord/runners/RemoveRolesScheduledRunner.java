@@ -3,43 +3,34 @@ package fr.raksrinana.rsndiscord.runners;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import lombok.Getter;
+import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
-import javax.annotation.Nonnull;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 14/07/2018.
- *
- * @author Thomas Couchoud
- * @since 2018-07-14
- */
 public class RemoveRolesScheduledRunner implements ScheduledRunner{
+	@Getter
 	private final JDA jda;
 	
-	/**
-	 * Constructor.
-	 *
-	 * @param jda The JDA object.
-	 */
-	public RemoveRolesScheduledRunner(@Nonnull final JDA jda){
-		Log.getLogger(null).info("Creating roles runner");
+	public RemoveRolesScheduledRunner(JDA jda){
 		this.jda = jda;
+		Log.getLogger(null).info("Creating roles runner");
 	}
 	
 	@Override
 	public void run(){
 		Log.getLogger(null).info("Starting roles runner");
 		final var currentDate = LocalDateTime.now();
-		for(final var guild : this.jda.getGuilds()){
+		for(final var guild : this.getJda().getGuilds()){
 			Log.getLogger(guild).debug("Processing guild {}", guild);
-			final var it = Settings.getConfiguration(guild).getRemoveRoles().iterator();
+			final var it = Settings.get(guild).getRemoveRoles().iterator();
 			while(it.hasNext()){
 				final var ban = it.next();
-				if(currentDate.isAfter(ban.getEndDate())){
+				if(currentDate.isAfter(ban.getDate())){
 					ban.getUser().getUser().ifPresent(user -> ban.getRole().getRole().ifPresentOrElse(role -> {
-						Log.getLogger(guild).debug("Removed role {} for user {}", role, user);
-						Actions.removeRole(user, role);
+						Optional.ofNullable(guild.getMember(user)).ifPresent(member -> Actions.removeRole(member, role));
 						it.remove();
 					}, it::remove));
 				}
@@ -58,7 +49,7 @@ public class RemoveRolesScheduledRunner implements ScheduledRunner{
 		return 15;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.MINUTES;

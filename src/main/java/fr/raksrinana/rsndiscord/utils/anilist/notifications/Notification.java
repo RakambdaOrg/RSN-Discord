@@ -5,7 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListObject;
 import fr.raksrinana.rsndiscord.utils.anilist.DatedObject;
 import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
-import javax.annotation.Nonnull;
+import lombok.Getter;
+import lombok.NonNull;
 import java.time.LocalDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 		@JsonSubTypes.Type(value = AiringNotification.class, name = "AIRING"),
 		@JsonSubTypes.Type(value = RelatedMediaNotification.class, name = "RELATED_MEDIA_ADDITION")
 })
+@Getter
 public abstract class Notification implements DatedObject{
 	private final NotificationType type;
 	@JsonProperty("id")
@@ -26,22 +28,17 @@ public abstract class Notification implements DatedObject{
 	public Notification(NotificationType type){this.type = type;}
 	
 	@Override
-	public int compareTo(@Nonnull AniListObject o){
+	public int compareTo(@NonNull AniListObject o){
 		if(o instanceof DatedObject){
 			return this.getDate().compareTo(((DatedObject) o).getDate());
 		}
 		return Integer.compare(this.getId(), o.getId());
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public LocalDateTime getDate(){
-		return this.createdAt;
-	}
-	
-	@Override
-	public int getId(){
-		return this.id;
+		return this.getCreatedAt();
 	}
 	
 	public static String getQuery(){

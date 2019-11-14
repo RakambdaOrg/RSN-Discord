@@ -4,9 +4,9 @@ import fr.raksrinana.rsndiscord.commands.config.helpers.WarnConfigurationCommand
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.warns.WarnConfiguration;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,29 +15,29 @@ public class SimpleWarnConfigurationCommand extends WarnConfigurationCommand{
 		super(parent);
 	}
 	
-	@Nonnull
+	@Override
+	protected void createConfig(@NonNull final Guild guild, @NonNull final Role role, final long delay){
+		Settings.get(guild).getWarnsConfiguration().setSimpleWarn(new WarnConfiguration(role, delay));
+	}
+	
+	@Override
+	protected void removeConfig(@NonNull final Guild guild){
+		Settings.get(guild).getWarnsConfiguration().setSimpleWarn(null);
+	}
+	
+	@NonNull
 	@Override
 	protected Optional<WarnConfiguration> getConfig(final Guild guild){
-		return Settings.getConfiguration(guild).getWarnsConfiguration().getSimpleWarn();
+		return Settings.get(guild).getWarnsConfiguration().getSimpleWarn();
 	}
 	
-	@Override
-	protected void removeConfig(@Nonnull final Guild guild){
-		Settings.getConfiguration(guild).getWarnsConfiguration().setSimpleWarn(null);
-	}
-	
-	@Override
-	protected void createConfig(@Nonnull final Guild guild, @Nonnull final Role role, final long delay){
-		Settings.getConfiguration(guild).getWarnsConfiguration().setSimpleWarn(new WarnConfiguration(role, delay));
-	}
-	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Simple warn";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("simpleWarn");

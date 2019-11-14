@@ -3,18 +3,11 @@ package fr.raksrinana.rsndiscord.utils.anilist.queries;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.raksrinana.rsndiscord.utils.anilist.list.MediaList;
 import kong.unirest.json.JSONObject;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import lombok.NonNull;
 import java.time.LocalDateTime;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 2018-10-11.
- *
- * @author Thomas Couchoud
- * @since 2018-10-11
- */
 public class MediaListPagedQuery implements PagedQuery<MediaList>{
-	private static final String QUERY_MEDIA_LIST = PagedQuery.pagedQuery(", $userID: Int", MediaList.getQuery());
+	private static final String QUERY_MEDIA_LIST = PagedQuery.pagedQuery(", $userID: Int", MediaList.getQUERY());
 	private final JSONObject variables;
 	private int nextPage = 0;
 	
@@ -25,13 +18,13 @@ public class MediaListPagedQuery implements PagedQuery<MediaList>{
 		this.variables.put("perPage", PER_PAGE);
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getQuery(){
 		return QUERY_MEDIA_LIST;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public JSONObject getParameters(final int page){
 		this.variables.put("page", page);
@@ -43,18 +36,17 @@ public class MediaListPagedQuery implements PagedQuery<MediaList>{
 		return ++this.nextPage;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getPageElementName(){
 		return "mediaList";
 	}
 	
-	@Nonnull
-	public MediaList buildChange(@Nonnull final JSONObject change) throws Exception{
+	@NonNull
+	public MediaList buildChange(@NonNull final JSONObject change) throws Exception{
 		return new ObjectMapper().readerFor(MediaList.class).readValue(change.toString());
 	}
 	
-	@Nullable
 	@Override
 	public LocalDateTime getBaseDate(){
 		return null;

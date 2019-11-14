@@ -6,16 +6,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.overwatch.stage.match.OverwatchMatch;
-import javax.annotation.Nonnull;
+import fr.raksrinana.rsndiscord.utils.overwatch.stage.week.event.OverwatchEvent;
+import lombok.Getter;
+import lombok.NonNull;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 public class OverwatchWeek implements Comparable<OverwatchWeek>{
 	@JsonProperty("id")
 	private int id;
@@ -28,7 +30,7 @@ public class OverwatchWeek implements Comparable<OverwatchWeek>{
 	@JsonProperty("name")
 	private String name;
 	@JsonProperty("matches")
-	private List<OverwatchMatch> matches = new ArrayList<>();
+	private List<OverwatchMatch> matches = new LinkedList<>();
 	@JsonProperty("events")
 	private List<OverwatchEvent> events;
 	
@@ -36,21 +38,13 @@ public class OverwatchWeek implements Comparable<OverwatchWeek>{
 		return this.getMatches().stream().allMatch(OverwatchMatch::hasEnded);
 	}
 	
-	public List<OverwatchMatch> getMatches(){
-		return this.matches;
-	}
-	
 	public boolean hasStarted(){
 		return this.getMatches().stream().anyMatch(OverwatchMatch::hasStarted);
 	}
 	
 	@Override
-	public int compareTo(@Nonnull final OverwatchWeek overwatchWeek){
+	public int compareTo(@NonNull final OverwatchWeek overwatchWeek){
 		return this.getStartDate().compareTo(overwatchWeek.getStartDate());
-	}
-	
-	private LocalDateTime getStartDate(){
-		return this.startDate;
 	}
 	
 	@Override
@@ -58,19 +52,21 @@ public class OverwatchWeek implements Comparable<OverwatchWeek>{
 		return obj instanceof OverwatchWeek && Objects.equals(this.getId(), ((OverwatchWeek) obj).getId());
 	}
 	
-	public int getId(){
-		return this.id;
-	}
-	
 	public Optional<OverwatchMatch> getCurrentMatch(){
 		return this.getMatches().stream().filter(w -> !w.hasEnded()).filter(OverwatchMatch::hasStarted).sorted().findFirst();
 	}
 	
-	public String getName(){
-		return this.name;
-	}
-	
 	public Optional<OverwatchMatch> getNextMatch(){
 		return this.getMatches().stream().filter(s -> !s.hasStarted()).sorted().findFirst();
+	}
+	
+	@Override
+	public int hashCode(){
+		return Objects.hash(id);
+	}
+	
+	@Override
+	public String toString(){
+		return this.getName();
 	}
 }

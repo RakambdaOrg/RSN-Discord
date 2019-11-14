@@ -5,22 +5,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.settings.guild.*;
 import fr.raksrinana.rsndiscord.settings.types.*;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-06-23.
- *
- * @author Thomas Couchoud
- * @since 2019-06-23
- */
-@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GuildConfiguration{
@@ -88,15 +80,15 @@ public class GuildConfiguration{
 		this.todos.remove(todoConfiguration);
 	}
 	
-	public void addTodoMessage(@Nonnull TodoConfiguration todoConfiguration){
+	public void addTodoMessage(@NonNull TodoConfiguration todoConfiguration){
 		this.todos.add(todoConfiguration);
 	}
 	
-	public void addRemoveRole(@Nonnull final RemoveRoleConfiguration value){
+	public void addRemoveRole(@NonNull final RemoveRoleConfiguration value){
 		this.removeRoles.add(value);
 	}
 	
-	public void addAddBackRole(@Nonnull final UserRoleConfiguration userRoleConfiguration){
+	public void addAddBackRole(@NonNull final UserRoleConfiguration userRoleConfiguration){
 		this.addBackRoles.add(userRoleConfiguration);
 	}
 	
@@ -104,54 +96,54 @@ public class GuildConfiguration{
 		return this.removeRoles.stream().filter(r -> Objects.equals(r.getUser().getUserId(), user.getIdLong()) && Objects.equals(r.getRole().getRoleId(), role.getIdLong())).findFirst();
 	}
 	
-	@Nonnull
-	public List<RoleConfiguration> getAutoRolesAndAddBackRoles(@Nonnull final Member member){
+	@NonNull
+	public List<RoleConfiguration> getAutoRolesAndAddBackRoles(@NonNull final Member member){
 		return Stream.concat(this.getAutoRoles().stream(), this.getAddBackRoles().stream().filter(c -> Objects.equals(c.getUser().getUserId(), member.getIdLong())).map(UserRoleConfiguration::getRole)).collect(Collectors.toList());
 	}
 	
-	@Nonnull
-	private Set<UserRoleConfiguration> getAddBackRoles(){
-		return this.addBackRoles;
-	}
-	
-	@Nonnull
-	public Optional<ChannelConfiguration> getAnnounceStartChannel(){
-		return Optional.ofNullable(this.announceStartChannel);
-	}
-	
-	public void setAnnounceStartChannel(@Nullable final ChannelConfiguration channel){
-		this.announceStartChannel = channel;
-	}
-	
-	@Nonnull
-	public AniListConfiguration getAniListConfiguration(){
-		return this.aniListConfiguration;
-	}
-	
-	@Nonnull
+	@NonNull
 	public Set<RoleConfiguration> getAutoRoles(){
 		return this.autoRoles;
 	}
 	
-	public void setAutoRoles(@Nonnull final Set<RoleConfiguration> autoRoles){
+	@NonNull
+	private Set<UserRoleConfiguration> getAddBackRoles(){
+		return this.addBackRoles;
+	}
+	
+	public void setAutoRoles(@NonNull final Set<RoleConfiguration> autoRoles){
 		this.autoRoles = autoRoles;
 	}
 	
-	@Nonnull
+	@NonNull
+	public AniListConfiguration getAniListConfiguration(){
+		return this.aniListConfiguration;
+	}
+	
+	@NonNull
+	public Optional<ChannelConfiguration> getAnnounceStartChannel(){
+		return Optional.ofNullable(this.announceStartChannel);
+	}
+	
+	public void setAnnounceStartChannel(final ChannelConfiguration channel){
+		this.announceStartChannel = channel;
+	}
+	
+	@NonNull
 	public Optional<RoleConfiguration> getDjRole(){
 		return Optional.ofNullable(this.djRole);
 	}
 	
-	public void setDjRole(@Nullable final RoleConfiguration djRole){
+	public void setDjRole(final RoleConfiguration djRole){
 		this.djRole = djRole;
 	}
 	
-	@Nonnull
+	@NonNull
 	public Set<ChannelConfiguration> getIdeaChannels(){
 		return this.ideaChannels;
 	}
 	
-	public void setIdeaChannels(@Nonnull final Set<ChannelConfiguration> ideaChannels){
+	public void setIdeaChannels(@NonNull final Set<ChannelConfiguration> ideaChannels){
 		this.ideaChannels = ideaChannels;
 	}
 	
@@ -159,26 +151,27 @@ public class GuildConfiguration{
 		return this.ircForward;
 	}
 	
-	public void setIrcForward(@Nonnull final Boolean value){
-		this.ircForward = value;
-	}
-	
-	@Nonnull
+	@NonNull
 	public Optional<RoleConfiguration> getLeaverRole(){
 		return Optional.ofNullable(this.leaverRole);
 	}
 	
-	public void setLeaverRole(@Nullable final RoleConfiguration role){
+	public void setLeaverRole(final RoleConfiguration role){
 		this.leaverRole = role;
 	}
 	
-	@Nonnull
+	@NonNull
 	public Set<RoleConfiguration> getModeratorRoles(){
 		return this.moderatorRoles;
 	}
 	
-	public void setModeratorRoles(@Nonnull final Set<RoleConfiguration> moderatorRoles){
+	public void setModeratorRoles(@NonNull final Set<RoleConfiguration> moderatorRoles){
 		this.moderatorRoles = moderatorRoles;
+	}
+	
+	@NonNull
+	public NicknameConfiguration getNicknameConfiguration(){
+		return this.nicknameConfiguration;
 	}
 	
 	public int getMusicVolume(){
@@ -189,105 +182,104 @@ public class GuildConfiguration{
 		this.musicVolume = musicVolume;
 	}
 	
-	@Nonnull
-	public NicknameConfiguration getNicknameConfiguration(){
-		return this.nicknameConfiguration;
-	}
-	
-	@Nonnull
+	@NonNull
 	public Set<ChannelConfiguration> getNoXpChannels(){
 		return this.noXpChannels;
 	}
 	
-	public void setNoXpChannels(@Nonnull final Set<ChannelConfiguration> noXpChannels){
+	public void setNoXpChannels(@NonNull final Set<ChannelConfiguration> noXpChannels){
 		this.noXpChannels = noXpChannels;
 	}
 	
-	@Nonnull
+	@NonNull
 	public OverwatchLeagueConfiguration getOverwatchLeagueConfiguration(){
 		return this.overwatchLeagueConfiguration;
 	}
 	
-	@Nonnull
+	@NonNull
 	public ParticipationConfig getParticipationConfiguration(){
 		return this.participationConfig;
 	}
 	
-	@Nonnull
+	@NonNull
 	public Optional<RoleConfiguration> getPoopRole(){
 		return Optional.ofNullable(this.poopRole);
 	}
 	
-	public void setPoopRole(@Nullable final RoleConfiguration value){
+	public void setPoopRole(final RoleConfiguration value){
 		this.poopRole = value;
 	}
 	
-	@Nonnull
+	@NonNull
 	public Optional<String> getPrefix(){
 		return Optional.ofNullable(this.prefix);
 	}
 	
-	@Nonnull
-	public Set<RemoveRoleConfiguration> getRemoveRoles(){
-		return this.removeRoles;
+	public void setPrefix(final String prefix){
+		this.prefix = prefix;
 	}
 	
-	@Nonnull
+	@NonNull
 	public QuestionsConfiguration getQuestionsConfiguration(){
 		return this.questionsConfiguration;
 	}
 	
-	@Nonnull
+	@NonNull
 	public Optional<ChannelConfiguration> getQuizChannel(){
 		return Optional.ofNullable(this.quizChannel);
 	}
 	
-	@Nonnull
-	public Set<TodoConfiguration> getTodos(){
-		return this.todos;
+	public void setQuizChannel(final ChannelConfiguration channel){
+		this.quizChannel = channel;
+	}
+	
+	@NonNull
+	public Set<RemoveRoleConfiguration> getRemoveRoles(){
+		return this.removeRoles;
 	}
 	
 	public Set<String> getTwitchAutoConnectUsers(){
 		return this.twitchAutoConnectUsers;
 	}
 	
-	@Nonnull
+	@NonNull
 	public Optional<ChannelConfiguration> getReportChannel(){
 		return Optional.ofNullable(this.reportChannel);
 	}
 	
-	public void setTwitchAutoConnectUsers(@Nonnull Set<String> users){
-		this.twitchAutoConnectUsers = users;
+	public void setReportChannel(final ChannelConfiguration channel){
+		this.reportChannel = channel;
 	}
 	
-	@Nonnull
-	public WarnsConfiguration getWarnsConfiguration(){
-		return this.warnsConfiguration;
+	@NonNull
+	public Set<TodoConfiguration> getTodos(){
+		return this.todos;
 	}
 	
-	@Nonnull
+	@NonNull
 	public TrombinoscopeConfiguration getTrombinoscopeConfiguration(){
 		return this.trombinoscopeConfiguration;
 	}
 	
-	public void setPrefix(@Nullable final String prefix){
-		this.prefix = prefix;
-	}
-	
-	public void setQuizChannel(@Nullable final ChannelConfiguration channel){
-		this.quizChannel = channel;
-	}
-	
-	@Nonnull
+	@NonNull
 	public Optional<ChannelConfiguration> getTwitchChannel(){
 		return Optional.ofNullable(this.twitchChannel);
 	}
 	
-	public void setTwitchChannel(@Nullable final ChannelConfiguration channel){
+	public void setTwitchChannel(final ChannelConfiguration channel){
 		this.twitchChannel = channel;
 	}
 	
-	public void setReportChannel(@Nullable final ChannelConfiguration channel){
-		this.reportChannel = channel;
+	@NonNull
+	public WarnsConfiguration getWarnsConfiguration(){
+		return this.warnsConfiguration;
+	}
+	
+	public void setIrcForward(@NonNull final Boolean value){
+		this.ircForward = value;
+	}
+	
+	public void setTwitchAutoConnectUsers(@NonNull Set<String> users){
+		this.twitchAutoConnectUsers = users;
 	}
 }

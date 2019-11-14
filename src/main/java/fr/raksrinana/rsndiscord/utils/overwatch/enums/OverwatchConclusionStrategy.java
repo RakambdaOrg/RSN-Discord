@@ -3,9 +3,9 @@ package fr.raksrinana.rsndiscord.utils.overwatch.enums;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import fr.raksrinana.rsndiscord.utils.overwatch.stage.match.OverwatchMatch;
+import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.annotation.Nonnull;
 import java.util.function.BiFunction;
 
 public enum OverwatchConclusionStrategy{
@@ -39,8 +39,8 @@ public enum OverwatchConclusionStrategy{
 	}
 	
 	@JsonCreator
-	@Nonnull
-	public OverwatchConclusionStrategy getFromString(@Nonnull final String value){
+	@NonNull
+	public OverwatchConclusionStrategy getFromString(@NonNull final String value){
 		try{
 			return OverwatchConclusionStrategy.valueOf(value);
 		}
@@ -50,8 +50,8 @@ public enum OverwatchConclusionStrategy{
 		return UNKNOWN;
 	}
 	
-	@Nonnull
-	public String asString(@Nonnull final OverwatchMatch match){
+	@NonNull
+	public String asString(@NonNull final OverwatchMatch match){
 		return this.matchFunction.apply(this, match);
 	}
 }

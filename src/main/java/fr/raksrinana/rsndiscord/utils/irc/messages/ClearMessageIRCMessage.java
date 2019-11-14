@@ -1,8 +1,10 @@
 package fr.raksrinana.rsndiscord.utils.irc.messages;
 
 import fr.raksrinana.rsndiscord.utils.irc.IRCTag;
+import lombok.Getter;
 import java.util.List;
 
+@Getter
 public class ClearMessageIRCMessage implements IRCMessage{
 	private final List<IRCTag> tags;
 	private final String ircChannel;
@@ -12,17 +14,5 @@ public class ClearMessageIRCMessage implements IRCMessage{
 		this.tags = tags;
 		this.ircChannel = ircChannel;
 		this.message = message;
-	}
-	
-	public String getChannel(){
-		return this.ircChannel;
-	}
-	
-	public String getMessage(){
-		return this.message;
-	}
-	
-	public List<IRCTag> getTags(){
-		return this.tags;
 	}
 }

@@ -2,34 +2,28 @@ package fr.raksrinana.rsndiscord;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@SuppressWarnings("FieldMayBeFinal")
+/**
+ * Contains the elements passed through the CLI.
+ */
+@NoArgsConstructor
+@Getter
 public class CLIParameters{
 	@Parameter(names = {
 			"-s",
 			"--settings "
 	}, description = "The guild settings folder to use", converter = PathConverter.class)
-	private Path settingsFolder = Paths.get("config/settings");
+	@NonNull
+	private Path settingsPath = Paths.get("config/settings");
 	@Parameter(names = {
 			"-c",
 			"--config"
 	}, description = "The configuration file", converter = PathConverter.class)
+	@NonNull
 	private Path configurationFile = Paths.get("config/config.properties");
-	
-	CLIParameters(){
-	}
-	
-	@Nullable
-	Path getConfigurationFile(){
-		return this.configurationFile;
-	}
-	
-	@Nonnull
-	public Path getSettingsFolder(){
-		return this.settingsFolder;
-	}
 }

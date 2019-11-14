@@ -4,40 +4,39 @@ import fr.raksrinana.rsndiscord.commands.config.helpers.UserConfigurationCommand
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
 public class ThaUserConfigurationCommand extends UserConfigurationCommand{
-	public ThaUserConfigurationCommand(@Nullable final Command parent){
+	public ThaUserConfigurationCommand(final Command parent){
 		super(parent);
 	}
 	
-	@Nonnull
 	@Override
-	protected Optional<UserConfiguration> getConfig(@Nonnull final Guild guild){
-		return Settings.getConfiguration(guild).getAniListConfiguration().getThaUser();
+	protected void setConfig(@NonNull final Guild guild, @NonNull final UserConfiguration value){
+		Settings.get(guild).getAniListConfiguration().setThaUser(value);
 	}
 	
 	@Override
-	protected void setConfig(@Nonnull final Guild guild, @Nonnull final UserConfiguration value){
-		Settings.getConfiguration(guild).getAniListConfiguration().setThaUser(value);
+	protected void removeConfig(@NonNull final Guild guild){
+		Settings.get(guild).getAniListConfiguration().setThaUser(null);
 	}
 	
+	@NonNull
 	@Override
-	protected void removeConfig(@Nonnull final Guild guild){
-		Settings.getConfiguration(guild).getAniListConfiguration().setThaUser(null);
+	protected Optional<UserConfiguration> getConfig(@NonNull final Guild guild){
+		return Settings.get(guild).getAniListConfiguration().getThaUser();
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "AniList Tha notification channel";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("thaUser");

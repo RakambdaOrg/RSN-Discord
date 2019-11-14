@@ -2,24 +2,18 @@ package fr.raksrinana.rsndiscord.commands.generic;
 
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.Color;
+import java.text.MessageFormat;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com)
- *
- * @author Thomas Couchoud
- * @since 2018-05-26
- */
 public abstract class CommandComposite extends BasicCommand{
 	private final LinkedHashSet<Command> subCommands;
 	
@@ -36,7 +30,7 @@ public abstract class CommandComposite extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	protected CommandComposite(@Nullable final Command parent){
+	protected CommandComposite(final Command parent){
 		super(parent);
 		this.subCommands = new LinkedHashSet<>();
 	}
@@ -46,7 +40,10 @@ public abstract class CommandComposite extends BasicCommand{
 	 *
 	 * @param command The command to add.
 	 */
-	protected void addSubCommand(@Nonnull final Command command){
+	protected void addSubCommand(@NonNull final Command command){
+		if(this.subCommands.stream().flatMap(c -> c.getCommandStrings().stream()).anyMatch(commandStr -> command.getCommandStrings().contains(commandStr))){
+			throw new IllegalStateException(MessageFormat.format("Duplicate command found when adding {0} with inputs {1}", command.getClass(), command.getCommandStrings()));
+		}
 		this.subCommands.add(command);
 	}
 	
@@ -57,39 +54,39 @@ public abstract class CommandComposite extends BasicCommand{
 	 *
 	 * @return The command or null if not found.
 	 */
-	@Nonnull
+	@NonNull
 	public Optional<Command> getSubCommand(final String commandStr){
 		return this.subCommands.stream().filter(command -> command.getCommandStrings().contains(commandStr)).findAny();
 	}
 	
 	@Override
-	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder embedBuilder){
+	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder embedBuilder){
 		embedBuilder.addField("Sub-command", this.subCommands.stream().flatMap(command -> command.getCommandStrings().stream()).collect(Collectors.joining(", ")), false);
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
-	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args) throws RuntimeException{
 		if(!this.isAllowed(event.getMember())){
 			throw new NotAllowedException("You're not allowed to execute this command");
 		}
 		final var switchStr = args.poll();
 		if(Objects.isNull(switchStr)){
-			Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.RED, "Error while executing command").addField("Command", this.getName(), false).addField("Reason", this.getCommandUsage(), false).addField("Arguments available", this.subCommands.stream().flatMap(command -> command.getCommandStrings().stream()).collect(Collectors.joining(", ")), false).build());
+			Actions.reply(event, "", Utilities.buildEmbed(event.getAuthor(), Color.RED, "Error while executing command", null).addField("Command", this.getName(), false).addField("Reason", this.getCommandUsage(), false).addField("Arguments available", this.subCommands.stream().flatMap(command -> command.getCommandStrings().stream()).collect(Collectors.joining(", ")), false).build());
 		}
 		else{
 			final var toExecute = this.subCommands.stream().filter(command -> command.getCommandStrings().contains(switchStr)).findFirst();
 			if(toExecute.isPresent()){
-				toExecute.get().execute(event, args);
+				return toExecute.get().execute(event, args);
 			}
 			else{
-				Actions.reply(event, Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Error while executing command").addField("Command", this.getName(), false).addField("Reason", "Invalid argument", false).addField("Arguments available", this.subCommands.stream().flatMap(command -> command.getCommandStrings().stream()).collect(Collectors.joining(", ")), false).build());
+				Actions.reply(event, "", Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Error while executing command", null).addField("Command", this.getName(), false).addField("Reason", "Invalid argument", false).addField("Arguments available", this.subCommands.stream().flatMap(command -> command.getCommandStrings().stream()).collect(Collectors.joining(", ")), false).build());
 			}
 		}
 		return CommandResult.SUCCESS;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [sub-command]";

@@ -1,12 +1,12 @@
 package fr.raksrinana.rsndiscord.listeners.reply;
 
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
-import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
@@ -23,7 +23,7 @@ public class EmoteWaitingUserReply<T> extends BasicWaitingUserReply{
 	}
 	
 	@Override
-	public boolean onExecute(@Nonnull final GuildMessageReactionAddEvent event){
+	public boolean onExecute(@NonNull final GuildMessageReactionAddEvent event){
 		if(!Objects.equals(event.getUser(), event.getJDA().getSelfUser())){
 			final var replyEmote = BasicEmotes.getEmote(event.getReactionEmote().getName());
 			if(Objects.nonNull(replyEmote)){
@@ -43,7 +43,7 @@ public class EmoteWaitingUserReply<T> extends BasicWaitingUserReply{
 	}
 	
 	@Override
-	protected boolean onExecute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
+	protected boolean onExecute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		return false;
 	}
 }

@@ -2,17 +2,17 @@ package fr.raksrinana.rsndiscord.utils.overwatch.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
+import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.annotation.Nonnull;
 
 public enum OverwatchBracketType{
 	@JsonEnumDefaultValue UNKNOWN, SE, OPEN_MATCH, DE;
 	private static final Logger LOGGER = LoggerFactory.getLogger(OverwatchBracketType.class);
 	
 	@JsonCreator
-	@Nonnull
-	public OverwatchBracketType getFromString(@Nonnull final String value){
+	@NonNull
+	public OverwatchBracketType getFromString(@NonNull final String value){
 		try{
 			return OverwatchBracketType.valueOf(value);
 		}

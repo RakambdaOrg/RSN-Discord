@@ -7,8 +7,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.settings.guild.participation.EntityParticipation;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
@@ -21,28 +23,30 @@ import java.util.Set;
 		"emotesLock"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
 public class ParticipationConfig{
 	@JsonIgnore
 	private final Object emotesLock = new Object();
 	@JsonIgnore
 	private final Object usersLock = new Object();
 	@JsonProperty("emotes")
+	@Getter
 	private Set<EntityParticipation> emotesParticipation = new HashSet<>();
 	@JsonProperty("users")
 	private Set<EntityParticipation> usersParticipation = new HashSet<>();
 	@JsonProperty("usersPenned")
+	@Getter
+	@Setter
 	private Set<UserConfiguration> usersPinned = new HashSet<>();
 	@JsonProperty("reportChannel")
+	@Setter
 	private ChannelConfiguration reportChannel;
 	
-	public ParticipationConfig(){
-	}
-	
-	public EntityParticipation getUsers(@Nonnull final LocalDate date){
+	public EntityParticipation getUsers(@NonNull final LocalDate date){
 		return this.getUsers(date, true).orElseThrow();
 	}
 	
-	public Optional<EntityParticipation> getUsers(@Nonnull final LocalDate date, final boolean create){
+	public Optional<EntityParticipation> getUsers(@NonNull final LocalDate date, final boolean create){
 		synchronized(this.usersLock){
 			return this.usersParticipation.stream().filter(p -> Objects.equals(date, p.getDate())).findFirst().or(() -> {
 				if(create){
@@ -55,12 +59,12 @@ public class ParticipationConfig{
 		}
 	}
 	
-	private void addUserParticipation(@Nonnull final EntityParticipation entityParticipation){
+	private void addUserParticipation(@NonNull final EntityParticipation entityParticipation){
 		this.usersParticipation.add(entityParticipation);
 	}
 	
-	@Nonnull
-	public EntityParticipation getEmotes(@Nonnull final LocalDate date){
+	@NonNull
+	public EntityParticipation getEmotes(@NonNull final LocalDate date){
 		return this.getEmotes(date, true).orElseThrow();
 	}
 	
@@ -77,19 +81,19 @@ public class ParticipationConfig{
 		}
 	}
 	
-	private void addEmoteParticipation(@Nonnull final EntityParticipation entityParticipation){
+	private void addEmoteParticipation(@NonNull final EntityParticipation entityParticipation){
 		this.emotesParticipation.add(entityParticipation);
 	}
 	
-	public void removeUsers(@Nonnull final LocalDate date){
+	public void removeUsers(@NonNull final LocalDate date){
 		this.usersParticipation.removeIf(p -> Objects.equals(p.getDate(), date));
 	}
 	
-	public void removeEmotes(@Nonnull final LocalDate date){
+	public void removeEmotes(@NonNull final LocalDate date){
 		this.emotesParticipation.removeIf(p -> Objects.equals(p.getDate(), date));
 	}
 	
-	public void removeEmotesBefore(@Nonnull final LocalDate week){
+	public void removeEmotesBefore(@NonNull final LocalDate week){
 		this.emotesParticipation.removeIf(p -> p.getDate().isBefore(week));
 	}
 	
@@ -97,26 +101,8 @@ public class ParticipationConfig{
 		this.usersParticipation.removeIf(p -> p.getDate().isBefore(date));
 	}
 	
-	@Nonnull
-	public Set<EntityParticipation> getEmotes(){
-		return this.emotesParticipation;
-	}
-	
-	@Nonnull
+	@NonNull
 	public Optional<ChannelConfiguration> getReportChannel(){
 		return Optional.ofNullable(this.reportChannel);
-	}
-	
-	public void setReportChannel(@Nullable final ChannelConfiguration value){
-		this.reportChannel = value;
-	}
-	
-	@Nonnull
-	public Set<UserConfiguration> getUsersPinned(){
-		return this.usersPinned;
-	}
-	
-	public void setUsersPinned(@Nonnull final Set<UserConfiguration> usersPinned){
-		this.usersPinned = usersPinned;
 	}
 }

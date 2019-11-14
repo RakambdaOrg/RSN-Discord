@@ -1,19 +1,12 @@
 package fr.raksrinana.rsndiscord.commands.generic;
 
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.Objects;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 13/04/2018.
- *
- * @author Thomas Couchoud
- * @since 2018-04-13
- */
 public abstract class BasicCommand implements Command{
 	private final Command parent;
 	
@@ -29,17 +22,17 @@ public abstract class BasicCommand implements Command{
 	 *
 	 * @param parent The parent command.
 	 */
-	protected BasicCommand(@Nullable final Command parent){
+	protected BasicCommand(final Command parent){
 		this.parent = parent;
 	}
 	
 	@Override
-	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
+	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
-	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args) throws RuntimeException{
 		if(event.isWebhookMessage()){
 			throw new NotHandledException("This message is from a webhook");
 		}
@@ -49,13 +42,12 @@ public abstract class BasicCommand implements Command{
 		return CommandResult.SUCCESS;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getCommandUsage(){
 		return Objects.isNull(this.getParent()) || this.getParent() instanceof CommandComposite ? "" : this.getParent().getCommandUsage();
 	}
 	
-	@Nullable
 	@Override
 	public Command getParent(){
 		return this.parent;

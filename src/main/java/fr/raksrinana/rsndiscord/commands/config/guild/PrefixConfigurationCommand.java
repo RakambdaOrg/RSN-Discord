@@ -3,23 +3,24 @@ package fr.raksrinana.rsndiscord.commands.config.guild;
 import fr.raksrinana.rsndiscord.commands.config.helpers.ValueConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 public class PrefixConfigurationCommand extends ValueConfigurationCommand<String>{
-	public PrefixConfigurationCommand(@Nullable final Command parent){
+	public PrefixConfigurationCommand(final Command parent){
 		super(parent);
 	}
 	
-	@Nonnull
 	@Override
-	protected Optional<String> getConfig(@Nonnull final Guild guild){
-		return Settings.getConfiguration(guild).getPrefix();
+	protected String extractValue(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+		if(args.isEmpty()){
+			throw new IllegalArgumentException("Please provide the value");
+		}
+		return args.pop();
 	}
 	
 	@Override
@@ -28,32 +29,30 @@ public class PrefixConfigurationCommand extends ValueConfigurationCommand<String
 	}
 	
 	@Override
-	protected void setConfig(@Nonnull final Guild guild, @Nonnull final String value){
-		Settings.getConfiguration(guild).setPrefix(value);
+	protected void setConfig(@NonNull final Guild guild, @NonNull final String value){
+		Settings.get(guild).setPrefix(value);
 	}
 	
 	@Override
-	protected String extractValue(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args){
-		if(args.isEmpty()){
-			throw new IllegalArgumentException("Please provide the value");
-		}
-		return args.pop();
+	protected void removeConfig(@NonNull final Guild guild){
+		Settings.get(guild).setPrefix(null);
 	}
 	
+	@NonNull
 	@Override
-	protected void removeConfig(@Nonnull final Guild guild){
-		Settings.getConfiguration(guild).setPrefix(null);
+	protected Optional<String> getConfig(@NonNull final Guild guild){
+		return Settings.get(guild).getPrefix();
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
-		return "DJ Role";
+		return "Prefix";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("djRole");
+		return List.of("prefix");
 	}
 }

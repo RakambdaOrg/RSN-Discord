@@ -7,14 +7,13 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
-import javax.annotation.Nonnull;
 import java.awt.Color;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -24,26 +23,20 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-/**
- * Created by Thomas Couchoud (MrCraftCod - zerderr@gmail.com) on 12/04/2018.
- *
- * @author Thomas Couchoud
- * @since 2018-04-12
- */
 @BotCommand
 public class NicknameCommand extends BasicCommand{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	
 	@Override
-	public void addHelp(@Nonnull final Guild guild, @Nonnull final EmbedBuilder builder){
+	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("User", "The targeted user (default: @me)", false);
 		builder.addField("Nickname", "The new surname (if none are provided, the old nickname will be removed)", false);
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
-	public CommandResult execute(@Nonnull final GuildMessageReceivedEvent event, @Nonnull final LinkedList<String> args) throws Exception{
+	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		final Optional<Member> memberOptional;
 		if(!event.getMessage().getMentionedUsers().isEmpty()){
@@ -55,7 +48,7 @@ public class NicknameCommand extends BasicCommand{
 				builder.addField("User", memberOptional.get().getAsMention(), true);
 				builder.setTitle("You thought changing the name of another guy?");
 				builder.setColor(Color.RED);
-				Actions.reply(event, builder.build());
+				Actions.reply(event, "", builder.build());
 				return CommandResult.SUCCESS;
 			}
 		}
@@ -64,8 +57,8 @@ public class NicknameCommand extends BasicCommand{
 		}
 		memberOptional.ifPresentOrElse(member -> {
 			final var oldName = Optional.ofNullable(member.getNickname());
-			final var lastChange = Settings.getConfiguration(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser()).orElse(LocalDateTime.MIN);
-			final var delay = Duration.ofSeconds(Settings.getConfiguration(event.getGuild()).getNicknameConfiguration().getChangeDelay());
+			final var lastChange = Settings.get(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser()).orElse(LocalDateTime.MIN);
+			final var delay = Duration.ofSeconds(Settings.get(event.getGuild()).getNicknameConfiguration().getChangeDelay());
 			final String newName;
 			if(args.isEmpty()){
 				newName = null;
@@ -75,11 +68,11 @@ public class NicknameCommand extends BasicCommand{
 			}
 			final var builder = new EmbedBuilder();
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-			if(Objects.equals(newName, oldName)){
+			if(Objects.equals(newName, oldName.orElse(null))){
 				builder.setColor(Color.ORANGE);
 				builder.setTitle("No changes");
 				builder.addField("Reason", "Nickname is the same as the current one", false);
-				Actions.reply(event, builder.build());
+				Actions.reply(event, "", builder.build());
 			}
 			else if(Objects.nonNull(newName) && !Utilities.isTeam(event.getMember()) && lastChange.plus(delay).isAfter(LocalDateTime.now())){
 				builder.setColor(Color.RED);
@@ -88,17 +81,17 @@ public class NicknameCommand extends BasicCommand{
 				builder.addField("Reason", "You can change your nickname once every " + delay.toString().replace("PT", ""), true);
 				builder.addField("Last change", lastChange.format(DF), true);
 				builder.setTimestamp(LocalDateTime.now());
-				Actions.reply(event, builder.build());
+				Actions.reply(event, "", builder.build());
 			}
 			else{
 				builder.addField("Old nickname", oldName.orElse("*NONE*"), true);
 				builder.addField("New nickname", Objects.isNull(newName) ? "*NONE*" : newName, true);
 				builder.addField("User", member.getAsMention(), true);
 				try{
-					member.getGuild().modifyNickname(member, newName).complete();
+					Actions.changeNickname(member, newName);
 					builder.setColor(Color.GREEN);
-					Settings.getConfiguration(event.getGuild()).getNicknameConfiguration().setLastChange(member.getUser(), Objects.isNull(newName) ? null : LocalDateTime.now());
-					Settings.getConfiguration(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser()).map(d -> d.plus(delay)).filter(d -> d.isAfter(LocalDateTime.now())).ifPresent(d -> builder.addField("Next allowed change", d.format(DF), false));
+					Settings.get(event.getGuild()).getNicknameConfiguration().setLastChange(member.getUser(), Objects.isNull(newName) ? null : LocalDateTime.now());
+					Settings.get(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser()).map(d -> d.plus(delay)).filter(d -> d.isAfter(LocalDateTime.now())).ifPresent(d -> builder.addField("Next allowed change", d.format(DF), false));
 					Log.getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", event.getAuthor(), member.getUser(), oldName, newName);
 				}
 				catch(final HierarchyException e){
@@ -110,44 +103,33 @@ public class NicknameCommand extends BasicCommand{
 					builder.setTitle("Invalid nickname");
 					builder.addField("Reason", e.getMeaning(), false);
 				}
-				Actions.reply(event, builder.build());
+				Actions.reply(event, "", builder.build());
 			}
-		}, () -> Actions.reply(event, "Member not found"));
+		}, () -> Actions.reply(event, "Member not found", null));
 		return CommandResult.SUCCESS;
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [@user] [nickname]";
 	}
 	
-	@Nonnull
-	@Override
-	public AccessLevel getAccessLevel(){
-		return AccessLevel.ALL;
-	}
-	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getName(){
 		return "Nickname";
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("nickname", "nick");
 	}
 	
-	@Nonnull
+	@NonNull
 	@Override
 	public String getDescription(){
 		return "Change the nickname of a user";
-	}
-	
-	@Override
-	public int getScope(){
-		return ChannelType.TEXT.getId();
 	}
 }
