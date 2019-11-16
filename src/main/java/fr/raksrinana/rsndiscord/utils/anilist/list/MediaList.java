@@ -30,7 +30,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 public class MediaList implements DatedObject{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 	@Getter
-	private static final String QUERY = "mediaList(userId: $userID) {\n" + "id\n" + "private\n" + "progress\n" + "progressVolumes\n" + "priority\n" + "customLists\n" + "score(format: POINT_100)\n" + FuzzyDate.getQuery("completedAt") + "\n" + FuzzyDate.getQuery("startedAt") + "\n" + "status\n" + "updatedAt\n" + "createdAt\n" + Media.getQUERY() + "\n}";
+	private static final String QUERY = "mediaList(userId: $userID) {\n" + "id\n" + "private\n" + "progress\n" + "progressVolumes\n" + "priority\n" + "customLists\n" + "score(format: POINT_100)\n" + FuzzyDate.getQuery("completedAt") + "\n" + FuzzyDate.getQuery("startedAt") + "\n" + "status\n" + "updatedAt\n" + "createdAt\n" + "repeat\n" + "notes\n" + Media.getQUERY() + "\n}";
 	@JsonProperty("id")
 	private int id;
 	@JsonProperty("status")
@@ -59,6 +59,10 @@ public class MediaList implements DatedObject{
 	private HashMap<String, Boolean> customLists;
 	@JsonProperty("score")
 	private Integer score;
+	@JsonProperty("repeat")
+	private Integer repeat;
+	@JsonProperty("notes")
+	private String notes;
 	
 	@Override
 	public void fillEmbed(@NonNull final EmbedBuilder builder){
@@ -81,9 +85,15 @@ public class MediaList implements DatedObject{
 		if(Objects.nonNull(getProgressVolumes()) && getMedia() instanceof MangaMedia){
 			builder.addField("Volumes progress", getProgressVolumes() + "/" + Optional.ofNullable(((MangaMedia) getMedia()).getVolumes()).map(Object::toString).orElse("?"), true);
 		}
+		if(Objects.nonNull(getRepeat()) && getRepeat() > 0){
+			builder.addField("Repeat count", Integer.toString(this.getRepeat()), true);
+		}
 		final var lists = Optional.ofNullable(this.customLists).orElse(new HashMap<>()).entrySet().stream().filter(k -> Objects.nonNull(k.getValue()) && k.getValue()).map(Map.Entry::getKey).collect(Collectors.joining(", "));
 		if(!lists.isBlank()){
 			builder.addField("In custom lists", lists, true);
+		}
+		if(Objects.nonNull(getNotes()) && !getNotes().isBlank()){
+			builder.addField("Notes", getNotes(), false);
 		}
 		builder.addBlankField(false);
 		builder.addField("Media:", "", false);
