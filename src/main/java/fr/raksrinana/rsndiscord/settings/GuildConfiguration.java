@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -65,7 +66,7 @@ public class GuildConfiguration{
 	@JsonProperty("musicVolume")
 	private int musicVolume = 100;
 	@JsonProperty("todoMessages")
-	private Set<TodoConfiguration> todos = new HashSet<>();
+	private ConcurrentLinkedQueue<TodoConfiguration> todos = new ConcurrentLinkedQueue<>();
 	@JsonProperty("twitchAutoConnectUsers")
 	private Set<String> twitchAutoConnectUsers = new HashSet<>();
 	
@@ -252,7 +253,7 @@ public class GuildConfiguration{
 	}
 	
 	@NonNull
-	public Set<TodoConfiguration> getTodos(){
+	public Collection<TodoConfiguration> getTodos(){
 		return this.todos;
 	}
 	

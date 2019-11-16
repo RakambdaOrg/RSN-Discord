@@ -1,7 +1,9 @@
 package fr.raksrinana.rsndiscord.runners.anilist;
 
 import fr.raksrinana.rsndiscord.runners.ScheduledRunner;
+import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.guild.AniListConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.TodoConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
@@ -18,11 +20,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -64,23 +62,32 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 	@Override
 	public void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<MediaList>> userElements){
 		AniListRunner.super.sendMessages(channels, userElements);
-		this.getJda().getGuilds().stream().map(g -> Settings.get(g).getAniListConfiguration().getThaChannel().flatMap(ChannelConfiguration::getChannel)).filter(Optional::isPresent).map(Optional::get).forEach(textChannel -> Settings.get(textChannel.getGuild()).getAniListConfiguration().getThaUser().flatMap(UserConfiguration::getUser).ifPresent(user -> userElements.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> ImmutablePair.of(e.getKey(), v))).filter(v -> v.getRight().getCustomLists().entrySet().stream().filter(Map.Entry::getValue).anyMatch(entry -> Objects.equals("ThaPending", entry.getKey()) || Objects.equals("ThaReading", entry.getKey()) || Objects.equals("Test", entry.getKey()) || Objects.equals("ThaWatching", entry.getKey()))).forEach(p -> {
-			final var similarTodos = Settings.get(textChannel.getGuild()).getTodos().stream().filter(todo -> {
-				if(Objects.equals(todo.getMessage().getChannel().getChannelId(), textChannel.getIdLong())){
-					return todo.getMessage().getMessage().map(message -> {
-						final var isSameMedia = message.getEmbeds().stream().anyMatch(embed -> Objects.equals(embed.getDescription(), p.getRight().getMedia().getTitle().getUserPreferred()));
-						return isSameMedia && todo.isDeleteOnDone();
-					}).orElse(false);
-				}
-				return false;
-			}).collect(Collectors.toList());
-			Actions.sendMessage(textChannel, user.getAsMention(), this.buildMessage(p.getLeft(), p.getRight())).thenAccept(sentMessage -> {
+		final var thaChannels = this.getJda().getGuilds().stream().map(Settings::get).map(GuildConfiguration::getAniListConfiguration).map(AniListConfiguration::getThaChannel).flatMap(Optional::stream).map(ChannelConfiguration::getChannel).flatMap(Optional::stream).collect(Collectors.toSet());
+		final var thaMembers = this.getJda().getGuilds().stream().flatMap(guild -> Settings.get(guild).getAniListConfiguration().getThaUser().stream().map(UserConfiguration::getUser).flatMap(Optional::stream).map(user -> Optional.ofNullable(guild.getMember(user))).flatMap(Optional::stream)).collect(Collectors.toSet());
+		final var mediaListsToSend = userElements.values().stream().flatMap(Set::stream).filter(mediaList -> mediaList.getCustomLists().entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).anyMatch(customList -> Objects.equals("ThaPending", customList) || Objects.equals("ThaReading", customList) || Objects.equals("ThaWatching", customList))).collect(Collectors.toList());
+		thaChannels.forEach(channelToSend -> thaMembers.stream().filter(member -> Objects.equals(channelToSend.getGuild(), member.getGuild())).forEach(memberToSend -> mediaListsToSend.forEach(mediaListToSend -> {
+			final var similarTodos = getSimilarTodos(channelToSend, mediaListToSend.getMedia().getTitle().getUserPreferred());
+			Actions.sendMessage(channelToSend, memberToSend.getAsMention(), this.buildMessage(memberToSend.getUser(), mediaListToSend)).thenAccept(sentMessage -> {
 				Actions.addReaction(sentMessage, BasicEmotes.CHECK_OK.getValue());
-				similarTodos.forEach(todo -> Utilities.getMessageById(textChannel, todo.getMessage().getMessageId()).thenAccept(messageOptional -> messageOptional.ifPresent(Actions::deleteMessage)));
-				Settings.get(textChannel.getGuild()).getTodos().removeAll(similarTodos);
-				Settings.get(textChannel.getGuild()).addTodoMessage(new TodoConfiguration(sentMessage, true));
+				similarTodos.forEach(todo -> Utilities.getMessageById(channelToSend, todo.getMessage().getMessageId()).thenAccept(messageOptional -> messageOptional.ifPresent(message -> {
+					Actions.deleteMessage(message);
+					Settings.get(channelToSend.getGuild()).getTodos().remove(todo);
+				})));
+				Settings.get(channelToSend.getGuild()).addTodoMessage(new TodoConfiguration(sentMessage, true));
 			});
 		})));
+	}
+	
+	private Collection<TodoConfiguration> getSimilarTodos(@NonNull final TextChannel channel, final String mediaTitle){
+		return Settings.get(channel.getGuild()).getTodos().stream().filter(todo -> {
+			if(Objects.equals(todo.getMessage().getChannel().getChannelId(), channel.getIdLong())){
+				return todo.getMessage().getMessage().map(message -> {
+					final var isSameMedia = message.getEmbeds().stream().anyMatch(embed -> Objects.equals(embed.getDescription(), mediaTitle));
+					return isSameMedia && todo.isDeleteOnDone();
+				}).orElse(false);
+			}
+			return false;
+		}).collect(Collectors.toList());
 	}
 	
 	@NonNull
