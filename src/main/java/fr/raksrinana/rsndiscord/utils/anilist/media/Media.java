@@ -48,7 +48,7 @@ public abstract class Media implements AniListObject{
 	
 	@Override
 	public void fillEmbed(@NonNull final EmbedBuilder builder){
-		builder.setDescription(this.getTitle().getRomanji());
+		builder.setDescription(this.getTitle().getRomaji());
 		if(this.getType().isShouldDisplay()){
 			builder.addField("Type", this.getType().toString(), true);
 		}

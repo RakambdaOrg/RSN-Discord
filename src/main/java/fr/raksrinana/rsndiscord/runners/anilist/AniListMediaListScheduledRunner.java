@@ -85,7 +85,7 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 		return Settings.get(channel.getGuild()).getTodos().stream().filter(todo -> {
 			if(Objects.equals(todo.getMessage().getChannel().getChannelId(), channel.getIdLong())){
 				return todo.getMessage().getMessage().map(message -> {
-					final var isSameMedia = message.getEmbeds().stream().anyMatch(embed -> Objects.equals(embed.getTitle(), "User list information") && (Objects.equals(Optional.ofNullable(embed.getFooter()).map(MessageEmbed.Footer::getText).orElse(null), mediaIdStr) || Objects.equals(embed.getDescription(), media.getTitle().getRomanji())));
+					final var isSameMedia = message.getEmbeds().stream().anyMatch(embed -> Objects.equals(embed.getTitle(), "User list information") && (Objects.equals(Optional.ofNullable(embed.getFooter()).map(MessageEmbed.Footer::getText).orElse(null), mediaIdStr) || Objects.equals(embed.getDescription(), media.getTitle().getRomaji())));
 					return isSameMedia && todo.isDeleteOnDone();
 				}).orElse(false);
 			}

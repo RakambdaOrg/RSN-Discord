@@ -10,11 +10,11 @@ import lombok.Getter;
 @Getter
 public class MediaTitle{
 	@Getter
-	private static final String QUERY = "title {\n" + "userPreferred\n" + "romanji\n" + "english\n" + "native\n" + "}";
+	private static final String QUERY = "title {\n" + "userPreferred\n" + "romaji\n" + "english\n" + "native\n" + "}";
 	@JsonProperty("userPreferred")
 	private String userPreferred;
-	@JsonProperty("romanji")
-	private String romanji;
+	@JsonProperty("romaji")
+	private String romaji;
 	@JsonProperty("english")
 	private String english;
 	@JsonProperty("native")
