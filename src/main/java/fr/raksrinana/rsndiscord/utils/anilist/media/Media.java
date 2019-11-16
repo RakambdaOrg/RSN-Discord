@@ -48,7 +48,7 @@ public abstract class Media implements AniListObject{
 	
 	@Override
 	public void fillEmbed(@NonNull final EmbedBuilder builder){
-		builder.setDescription(this.getTitle().getUserPreferred());
+		builder.setDescription(this.getTitle().getRomanji());
 		if(this.getType().isShouldDisplay()){
 			builder.addField("Type", this.getType().toString(), true);
 		}
@@ -59,6 +59,7 @@ public abstract class Media implements AniListObject{
 		}
 		//builder.addField("Link", getUrl(), false);
 		builder.setThumbnail(this.getCoverImage().getLarge().toString());
+		builder.setFooter(Integer.toString(getId()));
 	}
 	
 	@Override
