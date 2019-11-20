@@ -87,7 +87,7 @@ public class LogListener extends ListenerAdapter{
 		super.onGuildVoiceLeave(event);
 		try{
 			if(event.getGuild().getAudioManager().isConnected() && event.getChannelLeft().equals(event.getGuild().getAudioManager().getConnectedChannel())){
-				if(event.getChannelLeft().getMembers().size() < 1){
+				if(event.getChannelLeft().getMembers().stream().allMatch(member -> Objects.equals(member.getUser(), event.getJDA().getSelfUser()))){
 					Log.getLogger(event.getGuild()).info("The last person left {}, disconnecting", event.getChannelLeft());
 					RSNAudioManager.leave(event.getGuild());
 				}
