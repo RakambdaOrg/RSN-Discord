@@ -15,4 +15,5 @@ open module fr.raksrinana.rsndiscord {
 	requires com.fasterxml.jackson.databind;
 	requires java.sql;
 	requires reflections;
+	requires okhttp3;
 }
