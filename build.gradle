@@ -3,7 +3,7 @@ plugins {
     id "com.github.ben-manes.versions" version '0.27.0'
     id 'java'
     id 'application'
-    id "io.freefair.lombok" version '4.1.4'
+    id "io.freefair.lombok" version '4.1.5'
 }
 
 group = 'fr.raksrinana'
@@ -22,7 +22,7 @@ dependencies {
 
     implementation("org.slf4j:slf4j-api:${project.slf4j_version}")
     implementation("ch.qos.logback:logback-classic:${project.logback_version}") {
-        exclude module: 'checker-framework'
+        exclude group: 'edu.washington.cs.types.checker', module: 'checker-framework'
     }
     implementation("fr.mrcraftcod:utils.http:${project.raksrinana_utils_version}")
 

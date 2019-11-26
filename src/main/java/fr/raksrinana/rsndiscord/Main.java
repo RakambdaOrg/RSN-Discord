@@ -163,5 +163,8 @@ public class Main{
 		consoleHandler.close();
 		Settings.close();
 		Main.getJda().shutdown();
+		final var client = Main.getJda().getHttpClient();
+		client.connectionPool().evictAll();
+		client.dispatcher().executorService().shutdown();
 	}
 }
