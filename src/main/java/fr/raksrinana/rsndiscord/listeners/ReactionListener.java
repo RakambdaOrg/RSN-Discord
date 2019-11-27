@@ -26,7 +26,7 @@ public class ReactionListener extends ListenerAdapter{
 	public void onGuildMessageReactionAdd(@NonNull final GuildMessageReactionAddEvent event){
 		super.onGuildMessageReactionAdd(event);
 		try{
-			if(!event.getUser().isBot()){
+			if(!event.getUser().isBot() && event.getReactionEmote().isEmoji()){
 				final var emote = BasicEmotes.getEmote(event.getReactionEmote().getEmoji());
 				if(Settings.get(event.getGuild()).getQuestionsConfiguration().getInputChannel().map(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong())).orElse(false)){
 					if(emote == BasicEmotes.CHECK_OK){
