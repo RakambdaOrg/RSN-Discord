@@ -65,4 +65,8 @@ public class AiringNotification extends Notification{
 	public String toString(){
 		return ToStringBuilder.reflectionToString(this);
 	}
+	
+	public static String getQuery(){
+		return QUERY;
+	}
 }
