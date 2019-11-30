@@ -68,6 +68,7 @@ public abstract class Media implements AniListObject{
 		if(this.isAdult()){
 			builder.addField("Adult content", "", true);
 		}
+		fillAdditionalEmbed(builder);
 		this.getStartDate().asDate().ifPresent(startDate -> builder.addField("Started releasing", startDate.format(DF), false));
 		this.getEndDate().asDate().ifPresent(startDate -> builder.addField("Ended releasing", startDate.format(DF), false));
 		if(!genres.isEmpty()){
@@ -77,6 +78,8 @@ public abstract class Media implements AniListObject{
 		builder.setThumbnail(this.getCoverImage().getLarge().toString());
 		builder.setFooter(Integer.toString(getId()));
 	}
+	
+	protected abstract void fillAdditionalEmbed(EmbedBuilder builder);
 	
 	@Override
 	public int hashCode(){

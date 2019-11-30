@@ -31,8 +31,7 @@ public class MangaMedia extends Media{
 	}
 	
 	@Override
-	public void fillEmbed(@NonNull final EmbedBuilder builder){
-		super.fillEmbed(builder);
+	protected void fillAdditionalEmbed(EmbedBuilder builder){
 		Optional.ofNullable(this.getChapters()).map(Object::toString).ifPresent(val -> builder.addField("Chapters", val, true));
 		Optional.ofNullable(this.getVolumes()).map(Object::toString).ifPresent(val -> builder.addField("Volumes", val, true));
 	}

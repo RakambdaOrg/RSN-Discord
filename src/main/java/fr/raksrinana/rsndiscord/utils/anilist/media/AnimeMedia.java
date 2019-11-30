@@ -29,8 +29,7 @@ public class AnimeMedia extends Media{
 	}
 	
 	@Override
-	public void fillEmbed(@NonNull final EmbedBuilder builder){
-		super.fillEmbed(builder);
+	protected void fillAdditionalEmbed(EmbedBuilder builder){
 		Optional.ofNullable(this.getEpisodes()).map(Object::toString).ifPresent(val -> builder.addField("Episodes", val, true));
 		Optional.ofNullable(this.getSeason()).map(Enum::toString).ifPresent(val -> builder.addField("Season", val, true));
 	}
