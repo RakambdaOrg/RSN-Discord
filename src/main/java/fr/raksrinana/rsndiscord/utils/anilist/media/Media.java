@@ -2,13 +2,17 @@ package fr.raksrinana.rsndiscord.utils.anilist.media;
 
 import com.fasterxml.jackson.annotation.*;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListObject;
+import fr.raksrinana.rsndiscord.utils.anilist.FuzzyDate;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -19,8 +23,9 @@ import java.util.Optional;
 })
 @Getter
 public abstract class Media implements AniListObject{
+	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 	@Getter
-	private static final String QUERY = "media {\n" + "id\n" + MediaTitle.getQUERY() + "\n" + "season\n" + "type\n" + "format\n" + "status\n" + "episodes\n" + "chapters\n" + "volumes\n" + "isAdult\n" + MediaCoverImage.getQUERY() + "\n" + "siteUrl" + "}";
+	private static final String QUERY = "media {\n" + "id\n" + MediaTitle.getQUERY() + "\n" + "season\n" + "type\n" + "format\n" + "status\n" + "episodes\n" + "chapters\n" + "volumes\n" + "startDate\n" + "endDate\n" + "genres\n" + "isAdult\n" + MediaCoverImage.getQUERY() + "\n" + "siteUrl" + "}";
 	private final MediaType type;
 	@JsonProperty("title")
 	private MediaTitle title;
@@ -36,6 +41,12 @@ public abstract class Media implements AniListObject{
 	private MediaCoverImage coverImage;
 	@JsonProperty("isAdult")
 	private boolean isAdult;
+	@JsonProperty("startDate")
+	private FuzzyDate startDate = new FuzzyDate();
+	@JsonProperty("endDate")
+	private FuzzyDate endDate = new FuzzyDate();
+	@JsonProperty("genres")
+	private Set<String> genres = new HashSet<>();
 	@JsonProperty("id")
 	private int id;
 	
@@ -56,6 +67,11 @@ public abstract class Media implements AniListObject{
 		builder.addField("Status", Optional.of(this.getStatus()).map(Enum::toString).orElse("UNKNOWN"), true);
 		if(this.isAdult()){
 			builder.addField("Adult content", "", true);
+		}
+		this.getStartDate().asDate().ifPresent(startDate -> builder.addField("Started releasing", startDate.format(DF), false));
+		this.getEndDate().asDate().ifPresent(startDate -> builder.addField("Ended releasing", startDate.format(DF), false));
+		if(!genres.isEmpty()){
+			builder.addField("Genres", String.join(", ", getGenres()), false);
 		}
 		//builder.addField("Link", getUrl(), false);
 		builder.setThumbnail(this.getCoverImage().getLarge().toString());

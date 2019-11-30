@@ -52,9 +52,9 @@ public class MediaList implements DatedObject{
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
 	private LocalDateTime updatedAt;
 	@JsonProperty("startedAt")
-	private FuzzyDate startedAt;
+	private FuzzyDate startedAt = new FuzzyDate();
 	@JsonProperty("completedAt")
-	private FuzzyDate completedAt;
+	private FuzzyDate completedAt = new FuzzyDate();
 	@JsonProperty("customLists")
 	private HashMap<String, Boolean> customLists;
 	@JsonProperty("score")
