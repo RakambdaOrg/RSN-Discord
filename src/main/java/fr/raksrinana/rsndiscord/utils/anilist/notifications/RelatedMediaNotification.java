@@ -19,6 +19,7 @@ import java.util.Optional;
 @JsonTypeName("RELATED_MEDIA_ADDITION")
 @Getter
 public class RelatedMediaNotification extends Notification{
+	@Getter
 	private static final String QUERY = "RelatedMediaAdditionNotification {\n" + "id\n" + "type\n" + "createdAt\n" + Media.getQUERY() + "\n}";
 	@JsonProperty("media")
 	private Media media;
@@ -51,9 +52,5 @@ public class RelatedMediaNotification extends Notification{
 	@Override
 	public String toString(){
 		return ToStringBuilder.reflectionToString(this);
-	}
-	
-	public static String getQuery(){
-		return QUERY;
 	}
 }

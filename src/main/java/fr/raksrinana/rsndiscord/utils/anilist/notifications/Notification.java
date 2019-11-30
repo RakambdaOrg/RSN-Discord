@@ -42,6 +42,6 @@ public abstract class Notification implements DatedObject{
 	}
 	
 	public static String getQuery(){
-		return "notifications(type_in: $type_in){\n" + "... on " + AiringNotification.getQuery() + "\n" + "... on " + RelatedMediaNotification.getQuery() + "\n" + "}\n";
+		return "notifications(type_in: $type_in){\n" + "... on " + AiringNotification.getQUERY() + "\n" + "... on " + RelatedMediaNotification.getQUERY() + "\n" + "}\n";
 	}
 }

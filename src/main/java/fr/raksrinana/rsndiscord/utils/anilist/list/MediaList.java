@@ -56,7 +56,7 @@ public class MediaList implements DatedObject{
 	@JsonProperty("completedAt")
 	private FuzzyDate completedAt = new FuzzyDate();
 	@JsonProperty("customLists")
-	private HashMap<String, Boolean> customLists;
+	private Map<String, Boolean> customLists = new HashMap<>();
 	@JsonProperty("score")
 	private Integer score;
 	@JsonProperty("repeat")
