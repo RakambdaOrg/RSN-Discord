@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class AniListMediaListScheduledRunner implements AniListRunner<MediaList, MediaListPagedQuery>, ScheduledRunner{
+	private static final Collection<String> acceptedThaLists = Set.of("ThaPending", "ThaReading", "ThaWatching", "ThaComplete");
 	@Getter
 	private final JDA jda;
 	@Getter
@@ -66,7 +67,7 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 		AniListRunner.super.sendMessages(channels, userElements);
 		final var thaChannels = this.getJda().getGuilds().stream().map(Settings::get).map(GuildConfiguration::getAniListConfiguration).map(AniListConfiguration::getThaChannel).flatMap(Optional::stream).map(ChannelConfiguration::getChannel).flatMap(Optional::stream).collect(Collectors.toSet());
 		final var thaMembers = this.getJda().getGuilds().stream().flatMap(guild -> Settings.get(guild).getAniListConfiguration().getThaUser().stream().map(UserConfiguration::getUser).flatMap(Optional::stream).map(user -> Optional.ofNullable(guild.getMember(user))).flatMap(Optional::stream)).collect(Collectors.toSet());
-		final var mediaListsToSend = userElements.values().stream().flatMap(Set::stream).filter(mediaList -> mediaList.getCustomLists().entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).anyMatch(customList -> Objects.equals("ThaPending", customList) || Objects.equals("ThaReading", customList) || Objects.equals("ThaWatching", customList))).collect(Collectors.toList());
+		final var mediaListsToSend = userElements.values().stream().flatMap(Set::stream).filter(mediaList -> mediaList.getCustomLists().entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).anyMatch(acceptedThaLists::contains)).collect(Collectors.toList());
 		thaChannels.forEach(channelToSend -> thaMembers.stream().filter(member -> Objects.equals(channelToSend.getGuild(), member.getGuild())).forEach(memberToSend -> mediaListsToSend.forEach(mediaListToSend -> {
 			final var similarTodos = getSimilarTodos(channelToSend, mediaListToSend.getMedia());
 			Actions.sendMessage(channelToSend, memberToSend.getAsMention(), this.buildMessage(memberToSend.getUser(), mediaListToSend)).thenAccept(sentMessage -> {
