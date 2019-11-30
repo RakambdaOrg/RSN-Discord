@@ -20,6 +20,7 @@ import java.util.Optional;
 @JsonTypeName("AIRING")
 @Getter
 public class AiringNotification extends Notification{
+	@Getter
 	private static final String QUERY = "AiringNotification {\n" + "id\n" + "type\n" + "episode\n" + "createdAt\n" + Media.getQUERY() + "\n}";
 	@JsonProperty("episode")
 	private int episode;
@@ -64,9 +65,5 @@ public class AiringNotification extends Notification{
 	@Override
 	public String toString(){
 		return ToStringBuilder.reflectionToString(this);
-	}
-	
-	public static String getQuery(){
-		return QUERY;
 	}
 }
