@@ -29,6 +29,7 @@ public class AniListUtils{
 	private static final String USER_INFO_QUERY = "query{Viewer {id name}}";
 	private static final int HTTP_OK = 200;
 	private static final int HTTP_ERROR = 503;
+	private static final int HTTP_TOO_MANY_REQUESTS = 429;
 	public static URL FALLBACK_URL;
 	
 	public static void getAndSaveToken(@NonNull final Member member, @NonNull final String code) throws MalformedURLException, URISyntaxException, InvalidResponseException{
@@ -110,7 +111,7 @@ public class AniListUtils{
 		if(Objects.equals(handler.getStatus(), HTTP_OK)){
 			return handler.getRequestResult().getObject();
 		}
-		if(Objects.equals(handler.getStatus(), HTTP_ERROR)){
+		if(Objects.equals(handler.getStatus(), HTTP_ERROR) || Objects.equals(handler.getStatus(), HTTP_TOO_MANY_REQUESTS)){
 			try{
 				final var result = handler.getRequestResult().getObject();
 				if(result.has("errors")){
