@@ -69,10 +69,10 @@ public abstract class Media implements AniListObject{
 			builder.addField("Adult content", "", true);
 		}
 		fillAdditionalEmbed(builder);
-		this.getStartDate().asDate().ifPresent(startDate -> builder.addField("Started releasing", startDate.format(DF), false));
-		this.getEndDate().asDate().ifPresent(startDate -> builder.addField("Ended releasing", startDate.format(DF), false));
+		this.getStartDate().asDate().ifPresent(startDate -> builder.addField("Started releasing", startDate.format(DF), true));
+		this.getEndDate().asDate().ifPresent(startDate -> builder.addField("Ended releasing", startDate.format(DF), true));
 		if(!genres.isEmpty()){
-			builder.addField("Genres", String.join(", ", getGenres()), false);
+			builder.addField("Genres", String.join(", ", getGenres()), true);
 		}
 		//builder.addField("Link", getUrl(), false);
 		builder.setThumbnail(this.getCoverImage().getLarge().toString());
