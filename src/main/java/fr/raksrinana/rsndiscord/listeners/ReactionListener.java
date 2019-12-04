@@ -38,7 +38,7 @@ public class ReactionListener extends ListenerAdapter{
 				}
 				else if(Settings.get(event.getGuild()).getQuestionsConfiguration().getOutputChannel().map(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong())).orElse(false)){
 					if(emote == BasicEmotes.CHECK_OK){
-						Utilities.getMessageById(event.getChannel(), event.getMessageIdLong()).thenAccept(messageOptional -> messageOptional.ifPresent(Actions::deleteMessage));
+						Utilities.getMessageById(event.getChannel(), event.getMessageIdLong()).thenAccept(Actions::deleteMessage);
 					}
 				}
 				else{
@@ -52,22 +52,20 @@ public class ReactionListener extends ListenerAdapter{
 	}
 	
 	private void handleQuestionOkEmote(@NonNull GuildMessageReactionAddEvent event){
-		Utilities.getMessageById(event.getChannel(), event.getMessageIdLong()).thenAccept(messageOptional -> messageOptional.ifPresent(message -> {
-			Settings.get(event.getGuild()).getQuestionsConfiguration().getOutputChannel().flatMap(ChannelConfiguration::getChannel).ifPresentOrElse(channel -> {
-				message.getEmbeds().stream().map(Utilities::copyEmbed).map(mess -> mess.addField("Approved by", event.getUser().getAsMention(), false).setTimestamp(message.getTimeCreated()).build()).forEach(embed -> Actions.sendMessage(channel, "", embed).thenAccept(mess -> Actions.addReaction(mess, BasicEmotes.CHECK_OK.getValue())));
-				Actions.deleteMessage(message);
-				final var text = MessageFormat.format("Your question (ID: {0}) has been accepted and forwarded.", getIdFromQuestion(message).orElse(""));
-				getUserFomQuestion(message).ifPresent(user -> Actions.replyPrivate(event.getGuild(), user, text, null));
-			}, () -> Log.getLogger(event.getGuild()).error("Couldn't move message"));
-		}));
+		Utilities.getMessageById(event.getChannel(), event.getMessageIdLong()).thenAccept(message -> Settings.get(event.getGuild()).getQuestionsConfiguration().getOutputChannel().flatMap(ChannelConfiguration::getChannel).ifPresentOrElse(channel -> {
+			message.getEmbeds().stream().map(Utilities::copyEmbed).map(mess -> mess.addField("Approved by", event.getUser().getAsMention(), false).setTimestamp(message.getTimeCreated()).build()).forEach(embed -> Actions.sendMessage(channel, "", embed).thenAccept(mess -> Actions.addReaction(mess, BasicEmotes.CHECK_OK.getValue())));
+			Actions.deleteMessage(message);
+			final var text = MessageFormat.format("Your question (ID: {0}) has been accepted and forwarded.", getIdFromQuestion(message).orElse(""));
+			getUserFomQuestion(message).ifPresent(user -> Actions.replyPrivate(event.getGuild(), user, text, null));
+		}, () -> Log.getLogger(event.getGuild()).error("Couldn't move message")));
 	}
 	
 	private void handleQuestionNoEmote(@NonNull GuildMessageReactionAddEvent event){
-		Utilities.getMessageById(event.getChannel(), event.getMessageIdLong()).thenAccept(messageOptional -> messageOptional.ifPresent(message -> {
+		Utilities.getMessageById(event.getChannel(), event.getMessageIdLong()).thenAccept(message -> {
 			Actions.deleteMessage(message);
 			final var text = MessageFormat.format("Your question (ID: {0}) has been rejected.", getIdFromQuestion(message).orElse(""));
 			getUserFomQuestion(message).ifPresent(value -> Actions.replyPrivate(event.getGuild(), value, text, null));
-		}));
+		});
 	}
 	
 	private void handleTodos(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emote){

@@ -59,7 +59,7 @@ public class MessageConfiguration{
 	public Optional<Message> getMessage(){
 		return this.getChannel().getChannel().map(channel -> Utilities.getMessageById(channel, this.getMessageId())).flatMap(future -> {
 			try{
-				return future.get();
+				return Optional.of(future.get());
 			}
 			catch(InterruptedException | ExecutionException e){
 				Log.getLogger(null).error("Failed to get message from configuration", e);

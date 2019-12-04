@@ -72,10 +72,10 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 			final var similarTodos = getSimilarTodos(channelToSend, mediaListToSend.getMedia());
 			Actions.sendMessage(channelToSend, memberToSend.getAsMention(), this.buildMessage(memberToSend.getUser(), mediaListToSend)).thenAccept(sentMessage -> {
 				Actions.addReaction(sentMessage, BasicEmotes.CHECK_OK.getValue());
-				similarTodos.forEach(todo -> Utilities.getMessageById(channelToSend, todo.getMessage().getMessageId()).thenAccept(messageOptional -> messageOptional.ifPresent(message -> {
+				similarTodos.forEach(todo -> Utilities.getMessageById(channelToSend, todo.getMessage().getMessageId()).thenAccept(message -> {
 					Actions.deleteMessage(message);
 					Settings.get(channelToSend.getGuild()).getTodos().remove(todo);
-				})));
+				}));
 				Settings.get(channelToSend.getGuild()).addTodoMessage(new TodoConfiguration(sentMessage, true));
 			});
 		})));

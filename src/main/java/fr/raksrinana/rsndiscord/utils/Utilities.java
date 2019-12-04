@@ -136,7 +136,7 @@ public class Utilities{
 	 *
 	 * @return An completable future of an optional message (see {@link RestAction#submit()}).
 	 */
-	public static CompletableFuture<Optional<Message>> getMessageById(@NonNull TextChannel channel, long messageId){
-		return channel.getHistoryAround(messageId, 1).submit().thenApply(hist -> Optional.ofNullable(hist.getMessageById(messageId)));
+	public static CompletableFuture<Message> getMessageById(@NonNull TextChannel channel, long messageId){
+		return channel.retrieveMessageById(messageId).submit();
 	}
 }
