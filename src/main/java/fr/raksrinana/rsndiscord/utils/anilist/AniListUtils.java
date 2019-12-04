@@ -1,12 +1,12 @@
 package fr.raksrinana.rsndiscord.utils.anilist;
 
-import fr.mrcraftcod.utils.http.requestssenders.post.JSONPostRequestSender;
 import fr.raksrinana.rsndiscord.listeners.CommandsMessageListener;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.anilist.AnilistAccessTokenConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.utils.http.requestssenders.post.JSONPostRequestSender;
 import kong.unirest.json.JSONObject;
 import lombok.Getter;
 import lombok.NonNull;

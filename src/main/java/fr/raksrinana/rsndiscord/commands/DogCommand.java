@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord.commands;
 
-import fr.mrcraftcod.utils.http.requestssenders.get.JSONGetRequestSender;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
@@ -8,6 +7,7 @@ import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.utils.http.requestssenders.get.JSONGetRequestSender;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;

@@ -4,7 +4,7 @@ open module fr.raksrinana.rsndiscord {
 	requires unirest.java;
 	requires org.apache.commons.lang3;
 	requires org.apache.commons.io;
-	requires fr.mrcraftcod.utils.http;
+	requires fr.raksrinana.utils.http;
 	requires reflections;
 	requires com.fasterxml.jackson.core;
 	requires com.fasterxml.jackson.annotation;
