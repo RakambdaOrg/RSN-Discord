@@ -15,7 +15,7 @@ import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.irc.TwitchIRC;
+import fr.raksrinana.rsndiscord.utils.irc.twitch.TwitchIRC;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
 import lombok.Getter;

@@ -1,6 +1,7 @@
 package fr.raksrinana.rsndiscord.utils.irc;
 
 import fr.raksrinana.rsndiscord.utils.irc.messages.PingIRCMessage;
+import fr.raksrinana.rsndiscord.utils.irc.twitch.TwitchIRC;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import java.io.*;

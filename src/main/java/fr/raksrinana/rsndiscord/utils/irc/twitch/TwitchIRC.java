@@ -1,6 +1,9 @@
-package fr.raksrinana.rsndiscord.utils.irc;
+package fr.raksrinana.rsndiscord.utils.irc.twitch;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.utils.irc.IRCClient;
+import fr.raksrinana.rsndiscord.utils.irc.IRCListener;
+import fr.raksrinana.rsndiscord.utils.irc.IRCUser;
 import fr.raksrinana.rsndiscord.utils.irc.messages.ChannelLeftIRCMessage;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
@@ -37,7 +40,7 @@ public class TwitchIRC{
 		disconnect(guild, user, true);
 	}
 	
-	static void disconnect(@NonNull final Guild guild, @NonNull final String user, final boolean removeListener){
+	public static void disconnect(@NonNull final Guild guild, @NonNull final String user, final boolean removeListener){
 		if(Objects.nonNull(CLIENT)){
 			final var ircChannel = String.format("#%s", user.toLowerCase());
 			CLIENT.getListeners().stream().filter(l -> Objects.equals(l.getUser(), user) && Objects.equals(guild, l.getGuild())).forEach(l -> l.onIRCMessage(new ChannelLeftIRCMessage(new IRCUser(""), ircChannel)));

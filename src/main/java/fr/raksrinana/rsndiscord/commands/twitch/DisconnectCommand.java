@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.commands.twitch;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.utils.irc.TwitchIRC;
+import fr.raksrinana.rsndiscord.utils.irc.twitch.TwitchIRC;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;

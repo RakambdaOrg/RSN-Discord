@@ -1,8 +1,10 @@
-package fr.raksrinana.rsndiscord.utils.irc;
+package fr.raksrinana.rsndiscord.utils.irc.twitch;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.irc.AbstractIRCListener;
+import fr.raksrinana.rsndiscord.utils.irc.IRCTag;
 import fr.raksrinana.rsndiscord.utils.irc.messages.*;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.Getter;
@@ -14,9 +16,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import java.text.MessageFormat;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class TwitchIRCListener extends AbstractIRCListener implements EventListener{
 	@Getter
@@ -54,34 +54,25 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 	protected void onIRCChannelMessage(@NonNull final ChannelMessageIRCMessage event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
 			this.lastMessage = System.currentTimeMillis();
-			var message = event.getMessage().replace("@everyone", "<everyone>").replace("@here", "<here>");
+			final var twitchMessage = new TwitchChannelMessageIRCMessage(event);
+			var message = twitchMessage.getParent().getMessage().replace("@everyone", "<everyone>").replace("@here", "<here>");
 			if(message.chars().filter(Character::isUpperCase).sum() > 10){
 				message = message.toLowerCase();
 			}
-			final var badges = event.getTags().stream().filter(t -> Objects.equals("badges", t.getKey())).map(IRCTag::getValue).flatMap(t -> Arrays.stream(t.split(",")).filter(v -> !v.isBlank()).map(v -> {
-				final var split = v.split("/");
-				return new TwitchBadge(split[0], split[1]);
-			})).collect(Collectors.toList());
 			final var displayName = event.getTags().stream().filter(t -> Objects.equals("display-name", t.getKey())).map(IRCTag::getValue).filter(Objects::nonNull).filter(t -> !t.isBlank()).findFirst().orElse(event.getUser().toString());
-			var role = "";
-			if(badges.stream().anyMatch(t -> Objects.equals("broadcaster", t.getName()))){
-				role += "(boss)";
+			final var role = new StringBuilder();
+			if(twitchMessage.isBroadcaster()){
+				role.append("(boss)");
 			}
-			if(event.getTags().stream().anyMatch(t -> Objects.equals("moderator", t.getKey()))){
-				role += "(mod)";
+			if(twitchMessage.isModerator()){
+				role.append("(mod)");
 			}
-			final var sub = badges.stream().filter(t -> Objects.equals("subscriber", t.getName())).findFirst();
-			if(sub.isPresent()){
-				role += "(sub/" + sub.get().getVersion() + ")";
+			twitchMessage.getSub().ifPresent(sub -> role.append("(sub/").append(sub.getVersion()).append(")"));
+			twitchMessage.getSubGifter().ifPresent(subGifter -> role.append("(subgifter/").append(subGifter.getVersion()).append(")"));
+			if(twitchMessage.isPartner()){
+				role.append("(partner)");
 			}
-			final var subGifter = badges.stream().filter(t -> Objects.equals("sub-gifter", t.getName())).findFirst();
-			if(subGifter.isPresent()){
-				role += "(subgifter/" + subGifter.get().getVersion() + ")";
-			}
-			if(event.getTags().stream().anyMatch(t -> Objects.equals("partner", t.getKey()))){
-				role += "(partner)";
-			}
-			Actions.sendMessage(this.channel, MessageFormat.format("**`{0}`{1}** {2}", displayName, role, message), null);
+			Actions.sendMessage(this.channel, MessageFormat.format("**`{0}`{1}** {2}}", displayName, role, message), null);
 		}
 	}
 	
