@@ -69,6 +69,8 @@ public class GuildConfiguration{
 	private ConcurrentLinkedQueue<TodoConfiguration> todos = new ConcurrentLinkedQueue<>();
 	@JsonProperty("twitchAutoConnectUsers")
 	private Set<String> twitchAutoConnectUsers = new HashSet<>();
+	@JsonProperty("reminders")
+	private List<ReminderConfiguration> reminders = new ArrayList<>();
 	
 	public GuildConfiguration(){
 	}
@@ -100,6 +102,14 @@ public class GuildConfiguration{
 	@NonNull
 	public List<RoleConfiguration> getAutoRolesAndAddBackRoles(@NonNull final Member member){
 		return Stream.concat(this.getAutoRoles().stream(), this.getAddBackRoles().stream().filter(c -> Objects.equals(c.getUser().getUserId(), member.getIdLong())).map(UserRoleConfiguration::getRole)).collect(Collectors.toList());
+	}
+	
+	public void addReminder(@NonNull ReminderConfiguration reminder){
+		this.reminders.add(reminder);
+	}
+	
+	public List<ReminderConfiguration> getReminders(){
+		return this.reminders;
 	}
 	
 	@NonNull
