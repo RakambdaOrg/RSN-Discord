@@ -5,10 +5,7 @@ import com.beust.jcommander.ParameterException;
 import fr.raksrinana.rsndiscord.listeners.*;
 import fr.raksrinana.rsndiscord.listeners.quiz.QuizListener;
 import fr.raksrinana.rsndiscord.listeners.reply.ReplyMessageListener;
-import fr.raksrinana.rsndiscord.runners.DisplayDailyStatsScheduledRunner;
-import fr.raksrinana.rsndiscord.runners.OverwatchLeagueScheduledRunner;
-import fr.raksrinana.rsndiscord.runners.RemoveRolesScheduledRunner;
-import fr.raksrinana.rsndiscord.runners.SaveConfigScheduledRunner;
+import fr.raksrinana.rsndiscord.runners.*;
 import fr.raksrinana.rsndiscord.runners.anilist.AniListMediaListScheduledRunner;
 import fr.raksrinana.rsndiscord.runners.anilist.AniListNotificationScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
@@ -88,7 +85,7 @@ public class Main{
 			jda.getPresence().setActivity(Activity.playing("g?help for the help"));
 			Log.getLogger(null).info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
 			Log.getLogger(null).info("Creating runners");
-			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda), new OverwatchLeagueScheduledRunner(jda));
+			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda), new OverwatchLeagueScheduledRunner(jda), new RemindersScheduledRunner(jda));
 			for(final var scheduledRunner : scheduledRunners){
 				executorService.scheduleAtFixedRate(scheduledRunner, scheduledRunner.getDelay(), scheduledRunner.getPeriod(), scheduledRunner.getPeriodUnit());
 			}
