@@ -23,6 +23,8 @@ public class GuildConfiguration{
 	private String prefix;
 	@JsonProperty("aniList")
 	private AniListConfiguration aniListConfiguration = new AniListConfiguration();
+	@JsonProperty("trakt")
+	private TraktConfiguration traktConfiguration = new TraktConfiguration();
 	@JsonProperty("autoRoles")
 	private Set<RoleConfiguration> autoRoles = new HashSet<>();
 	@JsonProperty("moderatorRoles")
@@ -106,6 +108,10 @@ public class GuildConfiguration{
 	
 	public void addReminder(@NonNull ReminderConfiguration reminder){
 		this.reminders.add(reminder);
+	}
+	
+	public TraktConfiguration getTraktConfiguration(){
+		return this.traktConfiguration;
 	}
 	
 	public List<ReminderConfiguration> getReminders(){
