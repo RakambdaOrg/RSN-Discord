@@ -100,7 +100,7 @@ public class ReminderCommand extends BasicCommand{
 		final var notifyDate = reminder.getNotifyDate();
 		final var builder = Utilities.buildEmbed(reminder.getUser().getUser().orElse(null), Color.ORANGE, "Reminder", null);
 		builder.addField("Date", notifyDate.format(DATE_FORMATTER), false);
-		builder.addField("Remaining time", Duration.between(LocalDateTime.now(), notifyDate).toString(), true);
+		builder.addField("Remaining time", Utilities.durationToString(Duration.between(LocalDateTime.now(), notifyDate)), true);
 		builder.addField("Message", reminder.getMessage(), true);
 		return builder.build();
 	}
