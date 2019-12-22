@@ -111,7 +111,7 @@ public class Utilities{
 	
 	@NonNull
 	public static String durationToString(final Duration duration){
-		return TIME_PATTERN.matcher(duration.toString().substring(2)).replaceAll("$1 ").toLowerCase();
+		return String.format("%dd %dh%02dm%02ds", duration.toDaysPart(), duration.toHoursPart(), duration.toMinutesPart(), duration.toSecondsPart());
 	}
 	
 	/**
