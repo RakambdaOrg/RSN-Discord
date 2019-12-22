@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.runners;
 
-import fr.raksrinana.rsndiscord.commands.ReminderCommand;
+import fr.raksrinana.rsndiscord.commands.reminder.DelayReminderCommand;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
@@ -39,7 +39,7 @@ public class RemindersScheduledRunner implements ScheduledRunner{
 					}, it::remove));
 				}
 				else{
-					final var embed = ReminderCommand.getEmbedFor(reminder);
+					final var embed = DelayReminderCommand.getEmbedFor(reminder);
 					Optional.ofNullable(reminder.getReminderCountdownMessage()).flatMap(MessageConfiguration::getMessage).ifPresentOrElse(message -> Actions.editMessage(message, embed), () -> reminder.getChannel().getChannel().ifPresent(channel -> Actions.sendMessage(channel, "", embed).thenAccept(message -> reminder.setReminderCountdownMessage(new MessageConfiguration(message)))));
 				}
 			}

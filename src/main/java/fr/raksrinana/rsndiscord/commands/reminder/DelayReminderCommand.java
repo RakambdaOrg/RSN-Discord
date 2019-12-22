@@ -1,33 +1,25 @@
-package fr.raksrinana.rsndiscord.commands;
+package fr.raksrinana.rsndiscord.commands.reminder;
 
-import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
-import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
+import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
-import fr.raksrinana.rsndiscord.settings.types.ReminderConfiguration;
-import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.awt.Color;
-import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@BotCommand
-public class ReminderCommand extends BasicCommand{
+public class DelayReminderCommand extends ReminderCommand{
 	private static final Pattern PERIOD_PATTERN = Pattern.compile("([0-9]+)([mhd])");
-	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+	
+	public DelayReminderCommand(Command parent){
+		super(parent);
+	}
 	
 	@Override
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
@@ -45,9 +37,7 @@ public class ReminderCommand extends BasicCommand{
 		}
 		final var delay = parsePeriod(args.pop());
 		final var notifyDate = LocalDateTime.now().plus(delay);
-		final var reminder = new ReminderConfiguration(event.getAuthor(), event.getChannel(), notifyDate, String.join(" ", args));
-		Settings.get(event.getGuild()).addReminder(reminder);
-		Actions.reply(event, MessageFormat.format("Reminder added for the {0}", notifyDate.format(DATE_FORMATTER)), getEmbedFor(reminder)).thenAccept(message -> reminder.setReminderCountdownMessage(new MessageConfiguration(message)));
+		addReminder(event, notifyDate, String.join(" ", args));
 		return CommandResult.SUCCESS;
 	}
 	
@@ -87,21 +77,12 @@ public class ReminderCommand extends BasicCommand{
 	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("reminder");
+		return List.of("delay");
 	}
 	
 	@NonNull
 	@Override
 	public String getDescription(){
-		return "Adds a reminder to be notified later";
-	}
-	
-	public static MessageEmbed getEmbedFor(@NonNull ReminderConfiguration reminder){
-		final var notifyDate = reminder.getNotifyDate();
-		final var builder = Utilities.buildEmbed(reminder.getUser().getUser().orElse(null), Color.ORANGE, "Reminder", null);
-		builder.addField("Date", notifyDate.format(DATE_FORMATTER), false);
-		builder.addField("Remaining time", Utilities.durationToString(Duration.between(LocalDateTime.now(), notifyDate)), true);
-		builder.addField("Message", reminder.getMessage(), true);
-		return builder.build();
+		return "Adds a reminder to be notified later after some delay";
 	}
 }
