@@ -32,9 +32,9 @@ public abstract class ReminderCommand extends BasicCommand{
 	public static MessageEmbed getEmbedFor(@NonNull ReminderConfiguration reminder){
 		final var notifyDate = reminder.getNotifyDate();
 		final var builder = Utilities.buildEmbed(reminder.getUser().getUser().orElse(null), Color.ORANGE, "Reminder", null);
-		builder.addField("Date", notifyDate.format(DATE_FORMATTER), false);
+		builder.addField("Date", notifyDate.format(DATE_FORMATTER), true);
 		builder.addField("Remaining time", Utilities.durationToString(Duration.between(LocalDateTime.now(), notifyDate)), true);
-		builder.addField("Message", reminder.getMessage(), true);
+		builder.addField("Message", reminder.getMessage(), false);
 		return builder.build();
 	}
 }
