@@ -1,6 +1,8 @@
 package fr.raksrinana.rsndiscord.runners;
 
+import fr.raksrinana.rsndiscord.commands.ReminderCommand;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.Getter;
@@ -8,6 +10,7 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public class RemindersScheduledRunner implements ScheduledRunner{
@@ -31,8 +34,13 @@ public class RemindersScheduledRunner implements ScheduledRunner{
 				if(currentDate.isAfter(reminder.getNotifyDate())){
 					reminder.getUser().getUser().ifPresent(user -> reminder.getChannel().getChannel().ifPresentOrElse(channel -> {
 						Actions.sendMessage(channel, MessageFormat.format("Reminder for {0}: {1}", user.getAsMention(), reminder.getMessage()), null);
+						Optional.ofNullable(reminder.getReminderCountdownMessage()).flatMap(MessageConfiguration::getMessage).ifPresent(Actions::deleteMessage);
 						it.remove();
 					}, it::remove));
+				}
+				else{
+					final var embed = ReminderCommand.getEmbedFor(reminder);
+					Optional.ofNullable(reminder.getReminderCountdownMessage()).flatMap(MessageConfiguration::getMessage).ifPresentOrElse(message -> Actions.editMessage(message, embed), () -> reminder.getChannel().getChannel().ifPresent(channel -> Actions.sendMessage(channel, "", embed).thenAccept(message -> reminder.setReminderCountdownMessage(new MessageConfiguration(message)))));
 				}
 			}
 		}

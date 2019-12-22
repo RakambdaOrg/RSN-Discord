@@ -204,13 +204,26 @@ public class Actions{
 	 * Modifies the content of a message.
 	 *
 	 * @param message    The message to edit.
-	 * @param newMessage The nex content for the message.
+	 * @param newMessage The new content for the message.
 	 *
 	 * @return A completable future of a message (see {@link RestAction#submit()}).
 	 */
 	public static CompletableFuture<Message> editMessage(@NonNull Message message, @NonNull String newMessage){
 		Log.getLogger(message.getGuild()).info("Editing message {} with {}", message, newMessage);
-		return message.editMessage(message).submit();
+		return message.editMessage(newMessage).submit();
+	}
+	
+	/**
+	 * Modifies the content of a message.
+	 *
+	 * @param message  The message to edit.
+	 * @param newEmbed The new embed for the message.
+	 *
+	 * @return A completable future of a message (see {@link RestAction#submit()}).
+	 */
+	public static CompletableFuture<Message> editMessage(@NonNull Message message, @NonNull MessageEmbed newEmbed){
+		Log.getLogger(message.getGuild()).info("Editing message {} with {}", message, newEmbed);
+		return message.editMessage(newEmbed).submit();
 	}
 	
 	/**

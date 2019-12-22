@@ -4,12 +4,16 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ReminderConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import java.awt.Color;
 import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -41,8 +45,9 @@ public class ReminderCommand extends BasicCommand{
 		}
 		final var delay = parsePeriod(args.pop());
 		final var notifyDate = LocalDateTime.now().plus(delay);
-		Settings.get(event.getGuild()).addReminder(new ReminderConfiguration(event.getAuthor(), event.getChannel(), notifyDate, String.join(" ", args)));
-		Actions.reply(event, MessageFormat.format("Reminder added for the {0}", notifyDate.format(DATE_FORMATTER)), null);
+		final var reminder = new ReminderConfiguration(event.getAuthor(), event.getChannel(), notifyDate, String.join(" ", args));
+		Settings.get(event.getGuild()).addReminder(reminder);
+		Actions.reply(event, MessageFormat.format("Reminder added for the {0}", notifyDate.format(DATE_FORMATTER)), getEmbedFor(reminder)).thenAccept(message -> reminder.setReminderCountdownMessage(new MessageConfiguration(message)));
 		return CommandResult.SUCCESS;
 	}
 	
@@ -89,5 +94,14 @@ public class ReminderCommand extends BasicCommand{
 	@Override
 	public String getDescription(){
 		return "Adds a reminder to be notified later";
+	}
+	
+	public static MessageEmbed getEmbedFor(@NonNull ReminderConfiguration reminder){
+		final var notifyDate = reminder.getNotifyDate();
+		final var builder = Utilities.buildEmbed(reminder.getUser().getUser().orElse(null), Color.ORANGE, "Reminder", null);
+		builder.addField("Date", notifyDate.format(DATE_FORMATTER), false);
+		builder.addField("Remaining time", Duration.between(LocalDateTime.now(), notifyDate).toString(), true);
+		builder.addField("Message", reminder.getMessage(), true);
+		return builder.build();
 	}
 }

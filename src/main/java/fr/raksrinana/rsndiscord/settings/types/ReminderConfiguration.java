@@ -10,6 +10,7 @@ import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import java.time.LocalDateTime;
@@ -29,6 +30,9 @@ public class ReminderConfiguration{
 	private LocalDateTime notifyDate;
 	@JsonProperty("message")
 	private String message;
+	@JsonProperty("reminderCountdownMessage")
+	@Setter
+	private MessageConfiguration reminderCountdownMessage;
 	
 	public ReminderConfiguration(@NonNull User user, @NonNull TextChannel channel, @NonNull LocalDateTime notifyDate, @NonNull String message){
 		this(new UserConfiguration(user), new ChannelConfiguration(channel), notifyDate, message);

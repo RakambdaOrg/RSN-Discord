@@ -82,7 +82,7 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 			builder.addField(BasicEmotes.P.getValue(), "Pause", true);
 			builder.addField(BasicEmotes.R.getValue(), "Resume", true);
 			builder.addField(BasicEmotes.S.getValue(), "Stop", true);
-			this.getInfoMessages().stream().findFirst().ifPresent(m -> m.editMessage(builder.build()).queue());
+			this.getInfoMessages().stream().findFirst().ifPresent(m -> Actions.editMessage(m, builder.build()));
 		}
 	}
 	
