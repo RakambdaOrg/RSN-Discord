@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
+import java.awt.Color;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -38,6 +39,7 @@ public abstract class UserHistory implements TraktDatedObject{
 	@Override
 	public void fillEmbed(EmbedBuilder builder){
 		builder.setFooter(Long.toString(this.getId()));
+		builder.setColor(Color.GREEN);
 		builder.setTimestamp(this.getWatchedAt());
 	}
 	
