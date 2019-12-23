@@ -60,6 +60,7 @@ public class UserHistoryPagedGetRequest implements TraktPagedGetRequest<UserHist
 	@Override
 	public Map<String, String> getParameters(){
 		final var parameters = new HashMap<String, String>();
+		parameters.put("extended", "full");
 		if(Objects.nonNull(startDate)){
 			parameters.put("start_at", startDate.format(DateTimeFormatter.ISO_DATE_TIME));
 		}

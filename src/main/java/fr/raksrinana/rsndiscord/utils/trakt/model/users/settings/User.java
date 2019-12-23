@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.utils.json.ISO8601Deserializer;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601DateTimeDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
@@ -27,7 +27,7 @@ public class User{
 	@JsonProperty("ids")
 	private UserIds ids;
 	@JsonProperty("joined_at")
-	@JsonDeserialize(using = ISO8601Deserializer.class)
+	@JsonDeserialize(using = ISO8601DateTimeDeserializer.class)
 	private LocalDateTime joinedAt;
 	@JsonProperty("location")
 	private String location;

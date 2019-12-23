@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.utils.trakt.model.users.history;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.utils.json.ISO8601Deserializer;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601DateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktDatedObject;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktMediaType;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktObject;
@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -22,10 +23,12 @@ import java.time.LocalDateTime;
 		@JsonSubTypes.Type(value = UserSerieHistory.class, name = "episode")
 })
 public abstract class UserHistory implements TraktDatedObject{
+	protected static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+	protected static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	@JsonProperty("id")
 	private long id;
 	@JsonProperty("watched_at")
-	@JsonDeserialize(using = ISO8601Deserializer.class)
+	@JsonDeserialize(using = ISO8601DateTimeDeserializer.class)
 	private LocalDateTime watchedAt;
 	@JsonProperty("action")
 	private String action;

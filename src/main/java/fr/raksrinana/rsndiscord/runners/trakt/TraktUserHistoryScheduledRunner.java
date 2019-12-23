@@ -30,7 +30,7 @@ public class TraktUserHistoryScheduledRunner implements TraktPagedGetRunner<User
 	
 	@Override
 	public Set<TextChannel> getChannels(){
-		return this.getJda().getGuilds().stream().map(g -> Settings.get(g).getAniListConfiguration().getNotificationsChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toSet());
+		return this.getJda().getGuilds().stream().map(g -> Settings.get(g).getTraktConfiguration().getMediaChangeChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toSet());
 	}
 	
 	@Override

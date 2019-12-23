@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
+import java.net.URL;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -21,5 +22,10 @@ public class UserMovieHistory extends UserHistory{
 	public void fillEmbed(EmbedBuilder builder){
 		super.fillEmbed(builder);
 		this.getMovie().fillEmbed(builder);
+	}
+	
+	@Override
+	public URL getUrl(){
+		return this.getMovie().getUrl();
 	}
 }
