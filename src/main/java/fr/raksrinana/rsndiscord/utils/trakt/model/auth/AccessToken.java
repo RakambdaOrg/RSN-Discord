@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.utils.trakt.responses;
+package fr.raksrinana.rsndiscord.utils.trakt.model.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 @Getter
-public class DeviceToken{
+public class AccessToken{
 	@JsonProperty("access_token")
 	private String accessToken;
 	@JsonProperty("token_type")

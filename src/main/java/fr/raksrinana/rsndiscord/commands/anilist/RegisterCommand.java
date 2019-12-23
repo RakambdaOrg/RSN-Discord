@@ -41,7 +41,7 @@ class RegisterCommand extends BasicCommand{
 			return CommandResult.BAD_ARGUMENTS;
 		}
 		try{
-			AniListUtils.getAndSaveToken(event.getMember(), args.pop());
+			AniListUtils.requestToken(event.getMember(), args.pop());
 			Actions.reply(event, "API code saved", null);
 		}
 		catch(final IllegalArgumentException e){

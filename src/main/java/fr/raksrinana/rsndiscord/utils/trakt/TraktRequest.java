@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.utils.trakt;
 
+import kong.unirest.GenericType;
 import lombok.NonNull;
 import java.util.Objects;
 
@@ -13,5 +14,5 @@ public interface TraktRequest<T>{
 	
 	@NonNull String getEndpoint();
 	
-	Class<? extends T> getResultClass();
+	GenericType<? extends T> getResultClass();
 }

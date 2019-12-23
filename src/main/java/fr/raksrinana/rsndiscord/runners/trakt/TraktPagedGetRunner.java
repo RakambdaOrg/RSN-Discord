@@ -1,12 +1,14 @@
-package fr.raksrinana.rsndiscord.runners.anilist;
+package fr.raksrinana.rsndiscord.runners.trakt;
 
+import fr.raksrinana.rsndiscord.runners.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.anilist.AniListObject;
-import fr.raksrinana.rsndiscord.utils.anilist.AnilistDatedObject;
-import fr.raksrinana.rsndiscord.utils.anilist.queries.PagedQuery;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.utils.trakt.TraktDatedObject;
+import fr.raksrinana.rsndiscord.utils.trakt.TraktObject;
+import fr.raksrinana.rsndiscord.utils.trakt.TraktPagedGetRequest;
+import fr.raksrinana.rsndiscord.utils.trakt.TraktUtils;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -22,7 +24,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>{
+public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPagedGetRequest<T>> extends ScheduledRunner{
 	default void runQueryOnDefaultUsersChannels(){
 		final var channels = this.getChannels();
 		final var members = this.getMembers();
@@ -32,11 +34,11 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 	Set<TextChannel> getChannels();
 	
 	default Set<Member> getMembers(){
-		return this.getChannels().stream().flatMap(channel -> Settings.get(channel.getGuild()).getAniListConfiguration().getRegisteredUsers().stream().map(user -> channel.getGuild().getMember(user))).collect(Collectors.toSet());
+		return this.getChannels().stream().flatMap(channel -> Settings.get(channel.getGuild()).getTraktConfiguration().getRegisteredUsers().stream().map(user -> channel.getGuild().getMember(user))).collect(Collectors.toSet());
 	}
 	
 	default void runQuery(@NonNull final Set<Member> members, @NonNull final Set<TextChannel> channels){
-		Log.getLogger(null).info("Starting AniList {} runner", this.getRunnerName());
+		Log.getLogger(null).info("Starting Trakt {} runner", this.getRunnerName());
 		try{
 			final var userElements = new HashMap<User, Set<T>>();
 			for(final var member : members){
@@ -50,12 +52,12 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 					return null;
 				});
 			}
-			Log.getLogger(null).debug("AniList API done");
+			Log.getLogger(null).debug("Trakt API done");
 			this.sendMessages(channels, userElements);
-			Log.getLogger(null).info("AniList {} runner done", this.getRunnerName());
+			Log.getLogger(null).info("Trakt {} runner done", this.getRunnerName());
 		}
 		catch(final Exception e){
-			Log.getLogger(null).error("Error in AniList {} runner", this.getRunnerName(), e);
+			Log.getLogger(null).error("Error in Trakt {} runner", this.getRunnerName(), e);
 		}
 	}
 	
@@ -64,14 +66,14 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 	@NonNull
 	default Set<T> getElements(@NonNull final Member member) throws Exception{
 		Log.getLogger(member.getGuild()).debug("Fetching user {}", member);
-		var elementList = this.initQuery(member).getResult(member);
+		var elementList = TraktUtils.getPagedQuery(Settings.get(member.getGuild()).getTraktConfiguration().getAccessToken(member.getIdLong()).orElse(null), this.initQuery(member));
 		if(this.isKeepOnlyNew()){
-			final var baseDate = Settings.get(member.getGuild()).getAniListConfiguration().getLastAccess(this.getRunnerName(), member.getUser().getIdLong()).map(UserDateConfiguration::getDate).orElse(LocalDateTime.of(2019, 7, 7, 0, 0));
-			elementList = elementList.stream().filter(e -> e instanceof AnilistDatedObject).filter(e -> ((AnilistDatedObject) e).getDate().isAfter(baseDate)).collect(Collectors.toSet());
+			final var baseDate = Settings.get(member.getGuild()).getTraktConfiguration().getLastAccess(this.getRunnerName(), member.getUser().getIdLong()).map(UserDateConfiguration::getDate).orElse(LocalDateTime.of(2019, 7, 7, 0, 0));
+			elementList = elementList.stream().filter(e -> e instanceof TraktDatedObject).filter(e -> ((TraktDatedObject) e).getDate().isAfter(baseDate)).collect(Collectors.toSet());
 		}
-		elementList.stream().filter(e -> e instanceof AnilistDatedObject).map(e -> (AnilistDatedObject) e).map(AnilistDatedObject::getDate).max(LocalDateTime::compareTo).ifPresent(val -> {
+		elementList.stream().filter(e -> e instanceof TraktDatedObject).map(e -> (TraktDatedObject) e).map(TraktDatedObject::getDate).max(LocalDateTime::compareTo).ifPresent(val -> {
 			Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {}", member, this.getRunnerName(), val);
-			Settings.get(member.getGuild()).getAniListConfiguration().setLastAccess(member.getUser(), this.getRunnerName(), val);
+			Settings.get(member.getGuild()).getTraktConfiguration().setLastAccess(member.getUser(), this.getRunnerName(), val);
 		});
 		return elementList;
 	}
@@ -101,15 +103,15 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 		final var builder = new EmbedBuilder();
 		try{
 			if(Objects.isNull(user)){
-				builder.setAuthor(this.getJda().getSelfUser().getName(), change.getUrl().toString(), this.getJda().getSelfUser().getAvatarUrl());
+				builder.setAuthor(this.getJda().getSelfUser().getName(), null, this.getJda().getSelfUser().getAvatarUrl());
 			}
 			else{
-				builder.setAuthor(user.getName(), change.getUrl().toString(), user.getAvatarUrl());
+				builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 			}
 			change.fillEmbed(builder);
 		}
 		catch(final Exception e){
-			Log.getLogger(null).error("Error with AniList {} runner", this.getRunnerName(), e);
+			Log.getLogger(null).error("Error with Trakt {} runner", this.getRunnerName(), e);
 			builder.addField("Error", e.getClass().getName() + " => " + e.getMessage(), false);
 			builder.setColor(Color.RED);
 		}
@@ -117,10 +119,8 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 	}
 	
 	default boolean sendToChannel(final TextChannel channel, final User user){
-		return Settings.get(channel.getGuild()).getAniListConfiguration().getAccessToken(user.getIdLong()).isPresent();
+		return Settings.get(channel.getGuild()).getTraktConfiguration().getAccessToken(user.getIdLong()).isPresent();
 	}
 	
 	@NonNull JDA getJda();
-	
-	@NonNull String getFetcherID();
 }

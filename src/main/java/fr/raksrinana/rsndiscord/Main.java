@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import fr.raksrinana.rsndiscord.listeners.*;
 import fr.raksrinana.rsndiscord.listeners.quiz.QuizListener;
 import fr.raksrinana.rsndiscord.listeners.reply.ReplyMessageListener;
@@ -17,6 +18,7 @@ import fr.raksrinana.rsndiscord.utils.irc.twitch.TwitchIRC;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktUtils;
+import kong.unirest.GenericType;
 import kong.unirest.ObjectMapper;
 import kong.unirest.Unirest;
 import lombok.Getter;
@@ -115,6 +117,7 @@ public class Main{
 		Unirest.config().setObjectMapper(new ObjectMapper(){
 			private com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
 			
+			@Override
 			public <T> T readValue(String value, Class<T> valueType){
 				try{
 					return this.jacksonObjectMapper.readValue(value, valueType);
@@ -124,6 +127,17 @@ public class Main{
 				}
 			}
 			
+			@Override
+			public <T> T readValue(String value, GenericType<T> genericType){
+				try{
+					return this.jacksonObjectMapper.readValue(value, new TypeReference<>(){});
+				}
+				catch(IOException var4){
+					throw new RuntimeException(var4);
+				}
+			}
+			
+			@Override
 			public String writeValue(Object value){
 				try{
 					return this.jacksonObjectMapper.writeValueAsString(value);

@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.utils.trakt.responses;
+package fr.raksrinana.rsndiscord.utils.trakt.model.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

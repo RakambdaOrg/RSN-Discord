@@ -6,7 +6,7 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktUtils;
-import fr.raksrinana.rsndiscord.utils.trakt.requests.DeviceCodePostRequest;
+import fr.raksrinana.rsndiscord.utils.trakt.requests.oauth.DeviceCodePostRequest;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;

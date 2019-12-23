@@ -53,4 +53,8 @@ public class TraktAccessTokenConfiguration{
 		final var that = (TraktAccessTokenConfiguration) o;
 		return new EqualsBuilder().append(this.getToken(), that.getToken()).isEquals();
 	}
+	
+	public boolean isExpired(){
+		return LocalDateTime.now().minusMinutes(1).isAfter(this.getExpireDate());
+	}
 }

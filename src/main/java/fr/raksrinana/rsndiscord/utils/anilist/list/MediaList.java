@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListObject;
-import fr.raksrinana.rsndiscord.utils.anilist.DatedObject;
+import fr.raksrinana.rsndiscord.utils.anilist.AnilistDatedObject;
 import fr.raksrinana.rsndiscord.utils.anilist.FuzzyDate;
 import fr.raksrinana.rsndiscord.utils.anilist.media.MangaMedia;
 import fr.raksrinana.rsndiscord.utils.anilist.media.Media;
@@ -27,7 +27,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
-public class MediaList implements DatedObject{
+public class MediaList implements AnilistDatedObject{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 	@Getter
 	private static final String QUERY = "mediaList(userId: $userID) {\n" + "id\n" + "private\n" + "progress\n" + "progressVolumes\n" + "priority\n" + "customLists\n" + "score(format: POINT_100)\n" + FuzzyDate.getQuery("completedAt") + "\n" + FuzzyDate.getQuery("startedAt") + "\n" + "status\n" + "updatedAt\n" + "createdAt\n" + "repeat\n" + "notes\n" + Media.getQUERY() + "\n}";
@@ -129,8 +129,8 @@ public class MediaList implements DatedObject{
 	
 	@Override
 	public int compareTo(@NonNull final AniListObject o){
-		if(o instanceof DatedObject){
-			return getDate().compareTo(((DatedObject) o).getDate());
+		if(o instanceof AnilistDatedObject){
+			return getDate().compareTo(((AnilistDatedObject) o).getDate());
 		}
 		return Integer.compare(getId(), o.getId());
 	}

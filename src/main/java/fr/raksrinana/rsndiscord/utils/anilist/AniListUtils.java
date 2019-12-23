@@ -32,9 +32,9 @@ public class AniListUtils{
 	private static final int HTTP_TOO_MANY_REQUESTS = 429;
 	public static URL FALLBACK_URL;
 	
-	public static void getAndSaveToken(@NonNull final Member member, @NonNull final String code) throws MalformedURLException, URISyntaxException, InvalidResponseException{
+	public static void requestToken(@NonNull final Member member, @NonNull final String code) throws MalformedURLException, URISyntaxException, InvalidResponseException{
 		Log.getLogger(member.getGuild()).debug("Getting access token for {}", member);
-		final var accessToken = getPreviousAccessToken(member);
+		final var accessToken = getAccessToken(member);
 		if(accessToken.isPresent()){
 			return;
 		}
@@ -61,7 +61,7 @@ public class AniListUtils{
 	}
 	
 	@NonNull
-	private static Optional<AnilistAccessTokenConfiguration> getPreviousAccessToken(@NonNull final Member member){
+	private static Optional<AnilistAccessTokenConfiguration> getAccessToken(@NonNull final Member member){
 		Log.getLogger(member.getGuild()).debug("Getting previous access token for {}", member);
 		final var accessToken = Settings.get(member.getGuild()).getAniListConfiguration().getAccessToken(member.getUser().getIdLong());
 		if(accessToken.isPresent()){
@@ -75,7 +75,7 @@ public class AniListUtils{
 	public static Optional<Integer> getUserId(@NonNull final Member member){
 		return Settings.get(member.getGuild()).getAniListConfiguration().getUserId(member.getUser().getIdLong()).map(Optional::of).orElseGet(() -> {
 			try{
-				final var userInfos = AniListUtils.getQuery(member, USER_INFO_QUERY, new JSONObject());
+				final var userInfos = AniListUtils.postQuery(member, USER_INFO_QUERY, new JSONObject());
 				final var userId = userInfos.getJSONObject("data").getJSONObject("Viewer").getInt("id");
 				Settings.get(member.getGuild()).getAniListConfiguration().setUserId(member.getUser().getIdLong(), userId);
 				return Optional.of(userId);
@@ -88,18 +88,18 @@ public class AniListUtils{
 	}
 	
 	@NonNull
-	public static JSONObject getQuery(@NonNull final Member member, @NonNull final String query, @NonNull final JSONObject variables) throws Exception{
+	public static JSONObject postQuery(@NonNull final Member member, @NonNull final String query, @NonNull final JSONObject variables) throws Exception{
 		Log.getLogger(member.getGuild()).debug("Sending query to AniList for user {}", member.getUser());
-		final var token = AniListUtils.getPreviousAccessToken(member).orElseThrow(() -> {
+		final var token = AniListUtils.getAccessToken(member).orElseThrow(() -> {
 			Settings.get(member.getGuild()).getAniListConfiguration().removeUser(member.getUser());
 			Actions.replyPrivate(member.getGuild(), member.getUser(), MessageFormat.format("Your token for AniList on {0} expired. Please use `{1}al r` to register again if you want to continue receiving information", member.getGuild().getName(), Settings.get(member.getGuild()).getPrefix().orElse(CommandsMessageListener.defaultPrefix)), null);
 			return new IllegalStateException("No valid token found, please register again");
 		});
-		return getQuery(token, query, variables);
+		return postQuery(token, query, variables);
 	}
 	
 	@NonNull
-	private static JSONObject getQuery(@NonNull final AnilistAccessTokenConfiguration token, @NonNull final String query, @NonNull final JSONObject variables) throws Exception{
+	private static JSONObject postQuery(@NonNull final AnilistAccessTokenConfiguration token, @NonNull final String query, @NonNull final JSONObject variables) throws Exception{
 		final var headers = new HashMap<String, String>();
 		headers.put("Authorization", "Bearer " + token.getToken());
 		headers.put("Content-Type", "application/json");

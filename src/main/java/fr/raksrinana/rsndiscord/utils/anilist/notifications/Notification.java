@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.utils.anilist.notifications;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListObject;
-import fr.raksrinana.rsndiscord.utils.anilist.DatedObject;
+import fr.raksrinana.rsndiscord.utils.anilist.AnilistDatedObject;
 import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
 import lombok.Getter;
 import lombok.NonNull;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 		@JsonSubTypes.Type(value = RelatedMediaNotification.class, name = "RELATED_MEDIA_ADDITION")
 })
 @Getter
-public abstract class Notification implements DatedObject{
+public abstract class Notification implements AnilistDatedObject{
 	private final NotificationType type;
 	@JsonProperty("id")
 	private int id;
@@ -29,8 +29,8 @@ public abstract class Notification implements DatedObject{
 	
 	@Override
 	public int compareTo(@NonNull AniListObject o){
-		if(o instanceof DatedObject){
-			return this.getDate().compareTo(((DatedObject) o).getDate());
+		if(o instanceof AnilistDatedObject){
+			return this.getDate().compareTo(((AnilistDatedObject) o).getDate());
 		}
 		return Integer.compare(this.getId(), o.getId());
 	}

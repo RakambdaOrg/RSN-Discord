@@ -35,6 +35,8 @@ public class TraktConfiguration{
 	@JsonProperty("thaUser")
 	@Setter
 	private UserConfiguration thaUser;
+	@JsonProperty("usernames")
+	private Map<Long, String> usernames = new HashMap<>();
 	
 	public void setLastAccess(final User user, final String section, final LocalDateTime date){
 		this.getLastAccess(section, user.getIdLong()).ifPresentOrElse(lastAccess -> lastAccess.setDate(date), () -> this.lastAccess.computeIfAbsent(section, sec -> new HashSet<>()).add(new UserDateConfiguration(user, date)));
@@ -65,6 +67,10 @@ public class TraktConfiguration{
 		this.lastAccess.values().forEach(l -> l.removeIf(v -> Objects.equals(v.getUserId(), user.getIdLong())));
 	}
 	
+	public void removeAccessToken(@NonNull TraktAccessTokenConfiguration value){
+		this.tokens.remove(value);
+	}
+	
 	@NonNull
 	public Optional<ChannelConfiguration> getMediaChangeChannel(){
 		return Optional.ofNullable(this.mediaChangeChannel);
@@ -83,5 +89,13 @@ public class TraktConfiguration{
 	@NonNull
 	public Optional<UserConfiguration> getThaUser(){
 		return Optional.ofNullable(this.thaUser);
+	}
+	
+	public void setUsername(final long userId, final String username){
+		this.usernames.put(userId, username);
+	}
+	
+	public Optional<String> getUserUsername(final long userId){
+		return Optional.ofNullable(this.usernames.get(userId));
 	}
 }

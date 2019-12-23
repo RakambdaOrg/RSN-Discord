@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.utils.anilist.queries;
 
 import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
-import fr.raksrinana.rsndiscord.utils.anilist.DatedObject;
+import fr.raksrinana.rsndiscord.utils.anilist.AnilistDatedObject;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import kong.unirest.json.JSONObject;
 import lombok.NonNull;
@@ -21,7 +21,7 @@ public interface PagedQuery<T>{
 		final var elements = new HashSet<T>();
 		var hasNext = true;
 		while(hasNext){
-			final var json = AniListUtils.getQuery(member, this.getQuery(), this.getParameters(this.getNextPage()));
+			final var json = AniListUtils.postQuery(member, this.getQuery(), this.getParameters(this.getNextPage()));
 			hasNext = json.getJSONObject("data").getJSONObject("Page").getJSONObject("pageInfo").getBoolean("hasNextPage");
 			elements.addAll(this.parseResult(json));
 		}
@@ -42,8 +42,8 @@ public interface PagedQuery<T>{
 				final var changeJSONObj = (JSONObject) change;
 				if(!changeJSONObj.isEmpty()){
 					Optional.ofNullable(this.buildChange(changeJSONObj)).ifPresent(changeObj -> {
-						if(Objects.nonNull(this.getBaseDate()) && changeObj instanceof DatedObject){
-							if(((DatedObject) changeObj).getDate().isAfter(this.getBaseDate())){
+						if(Objects.nonNull(this.getBaseDate()) && changeObj instanceof AnilistDatedObject){
+							if(((AnilistDatedObject) changeObj).getDate().isAfter(this.getBaseDate())){
 								changes.add(changeObj);
 							}
 						}

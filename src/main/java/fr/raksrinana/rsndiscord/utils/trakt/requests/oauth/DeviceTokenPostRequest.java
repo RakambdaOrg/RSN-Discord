@@ -1,13 +1,14 @@
-package fr.raksrinana.rsndiscord.utils.trakt.requests;
+package fr.raksrinana.rsndiscord.utils.trakt.requests.oauth;
 
 import fr.raksrinana.rsndiscord.utils.trakt.TraktPostRequest;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktUtils;
-import fr.raksrinana.rsndiscord.utils.trakt.responses.DeviceCode;
-import fr.raksrinana.rsndiscord.utils.trakt.responses.DeviceToken;
+import fr.raksrinana.rsndiscord.utils.trakt.model.auth.AccessToken;
+import fr.raksrinana.rsndiscord.utils.trakt.model.auth.DeviceCode;
+import kong.unirest.GenericType;
 import kong.unirest.json.JSONObject;
 import lombok.NonNull;
 
-public class DeviceTokenPostRequest implements TraktPostRequest<DeviceToken>{
+public class DeviceTokenPostRequest implements TraktPostRequest<AccessToken>{
 	private final String deviceCode;
 	
 	public DeviceTokenPostRequest(@NonNull DeviceCode deviceCode){
@@ -19,7 +20,7 @@ public class DeviceTokenPostRequest implements TraktPostRequest<DeviceToken>{
 	}
 	
 	@Override
-	public @NonNull JSONObject getBody(){
+	public JSONObject getBody(){
 		final var data = new JSONObject();
 		data.put("code", deviceCode);
 		data.put("client_id", TraktUtils.getClientId());
@@ -28,12 +29,12 @@ public class DeviceTokenPostRequest implements TraktPostRequest<DeviceToken>{
 	}
 	
 	@Override
-	public Class<? extends DeviceToken> getResultClass(){
-		return DeviceToken.class;
+	public @NonNull String getEndpoint(){
+		return "/oauth/device/token";
 	}
 	
 	@Override
-	public @NonNull String getEndpoint(){
-		return "/oauth/device/token";
+	public GenericType<? extends AccessToken> getResultClass(){
+		return new GenericType<>(){};
 	}
 }
