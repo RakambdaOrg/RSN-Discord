@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.Main;
-import fr.raksrinana.rsndiscord.settings.guild.anilist.AnilistAccessTokenConfiguration;
+import fr.raksrinana.rsndiscord.settings.guild.trakt.TraktAccessTokenConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
@@ -20,17 +20,12 @@ import java.util.stream.Collectors;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
-public class AniListConfiguration{
+public class TraktConfiguration{
 	@JsonProperty("accessToken")
-	private Set<AnilistAccessTokenConfiguration> tokens = new HashSet<>();
-	@JsonProperty("notificationsChannel")
-	@Setter
-	private ChannelConfiguration notificationsChannel;
+	private Set<TraktAccessTokenConfiguration> tokens = new HashSet<>();
 	@JsonProperty("mediaChangeChannel")
 	@Setter
 	private ChannelConfiguration mediaChangeChannel;
-	@JsonProperty("refreshTokens")
-	private Map<Long, String> refreshTokens = new HashMap<>();
 	@JsonProperty("lastAccess")
 	@Getter
 	private Map<String, Set<UserDateConfiguration>> lastAccess = new HashMap<>();
@@ -40,17 +35,8 @@ public class AniListConfiguration{
 	@JsonProperty("thaUser")
 	@Setter
 	private UserConfiguration thaUser;
-	@JsonProperty("userIds")
-	private Map<Long, Integer> userIds = new HashMap<>();
-	
-	@NonNull
-	public Optional<String> getRefreshToken(final long userId){
-		return Optional.ofNullable(this.refreshTokens.getOrDefault(userId, null));
-	}
-	
-	public void setRefreshToken(final long userId, @NonNull final String refreshToken){
-		this.refreshTokens.put(userId, refreshToken);
-	}
+	@JsonProperty("usernames")
+	private Map<Long, String> usernames = new HashMap<>();
 	
 	public void setLastAccess(final User user, final String section, final LocalDateTime date){
 		this.getLastAccess(section, user.getIdLong()).ifPresentOrElse(lastAccess -> lastAccess.setDate(date), () -> this.lastAccess.computeIfAbsent(section, sec -> new HashSet<>()).add(new UserDateConfiguration(user, date)));
@@ -67,28 +53,22 @@ public class AniListConfiguration{
 	}
 	
 	@NonNull
-	public Optional<AnilistAccessTokenConfiguration> getAccessToken(final long userId){
+	public Optional<TraktAccessTokenConfiguration> getAccessToken(final long userId){
 		final var now = LocalDateTime.now();
-		return this.tokens.stream().filter(t -> Objects.equals(t.getUserId(), userId)).filter(t -> t.getExpireDate().isAfter(now)).sorted(Comparator.comparing(AnilistAccessTokenConfiguration::getExpireDate).reversed()).findAny();
+		return this.tokens.stream().filter(t -> Objects.equals(t.getUserId(), userId)).filter(t -> t.getExpireDate().isAfter(now)).sorted(Comparator.comparing(TraktAccessTokenConfiguration::getExpireDate).reversed()).findAny();
 	}
 	
-	public void setUserId(final long userId, final int aniListUserId){
-		this.userIds.put(userId, aniListUserId);
-	}
-	
-	public Optional<Integer> getUserId(final long userId){
-		return Optional.ofNullable(this.userIds.get(userId));
-	}
-	
-	public void addAccessToken(@NonNull final AnilistAccessTokenConfiguration value){
+	public void addAccessToken(@NonNull final TraktAccessTokenConfiguration value){
 		this.tokens.add(value);
 	}
 	
 	public void removeUser(@NonNull final User user){
 		this.tokens.removeIf(t -> Objects.equals(t.getUserId(), user.getIdLong()));
-		this.refreshTokens.remove(user.getIdLong());
 		this.lastAccess.values().forEach(l -> l.removeIf(v -> Objects.equals(v.getUserId(), user.getIdLong())));
-		this.userIds.remove(user.getIdLong());
+	}
+	
+	public void removeAccessToken(@NonNull TraktAccessTokenConfiguration value){
+		this.tokens.remove(value);
 	}
 	
 	@NonNull
@@ -97,13 +77,8 @@ public class AniListConfiguration{
 	}
 	
 	@NonNull
-	public Optional<ChannelConfiguration> getNotificationsChannel(){
-		return Optional.ofNullable(this.notificationsChannel);
-	}
-	
-	@NonNull
 	public Set<User> getRegisteredUsers(){
-		return this.refreshTokens.keySet().stream().map(userId -> Main.getJda().getUserById(userId)).collect(Collectors.toSet());
+		return this.tokens.stream().map(TraktAccessTokenConfiguration::getUserId).map(userId -> Main.getJda().getUserById(userId)).collect(Collectors.toSet());
 	}
 	
 	@NonNull
@@ -114,5 +89,13 @@ public class AniListConfiguration{
 	@NonNull
 	public Optional<UserConfiguration> getThaUser(){
 		return Optional.ofNullable(this.thaUser);
+	}
+	
+	public void setUsername(final long userId, final String username){
+		this.usernames.put(userId, username);
+	}
+	
+	public Optional<String> getUserUsername(final long userId){
+		return Optional.ofNullable(this.usernames.get(userId));
 	}
 }

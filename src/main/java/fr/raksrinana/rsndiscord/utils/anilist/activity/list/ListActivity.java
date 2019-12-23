@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.utils.anilist.activity.list;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListObject;
-import fr.raksrinana.rsndiscord.utils.anilist.DatedObject;
+import fr.raksrinana.rsndiscord.utils.anilist.AnilistDatedObject;
 import fr.raksrinana.rsndiscord.utils.anilist.media.Media;
 import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
 import lombok.Getter;
@@ -24,7 +24,7 @@ import java.util.Objects;
 		@JsonSubTypes.Type(value = MangaListActivity.class, name = "MANGA_LIST")
 })
 @Getter
-public abstract class ListActivity implements DatedObject{
+public abstract class ListActivity implements AnilistDatedObject{
 	@Getter
 	private static final String QUERY = "ListActivity{\n" + "id\n" + "userId\n" + "type\n" + "createdAt\n" + "progress\n" + "siteUrl\n" + Media.getQUERY() + "\n}";
 	@JsonProperty("createdAt")
@@ -74,8 +74,8 @@ public abstract class ListActivity implements DatedObject{
 	
 	@Override
 	public int compareTo(@NonNull final AniListObject o){
-		if(o instanceof DatedObject){
-			return getDate().compareTo(((DatedObject) o).getDate());
+		if(o instanceof AnilistDatedObject){
+			return getDate().compareTo(((AnilistDatedObject) o).getDate());
 		}
 		return Integer.compare(getId(), o.getId());
 	}
