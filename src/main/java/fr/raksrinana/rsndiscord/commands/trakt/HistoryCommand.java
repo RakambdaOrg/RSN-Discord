@@ -9,13 +9,13 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
 
-class TestCommand extends BasicCommand{
+class HistoryCommand extends BasicCommand{
 	/**
 	 * Constructor.
 	 *
 	 * @param parent The parent command.
 	 */
-	TestCommand(final Command parent){
+	HistoryCommand(final Command parent){
 		super(parent);
 	}
 	
@@ -24,24 +24,24 @@ class TestCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		new TraktUserHistoryScheduledRunner(event.getJDA()).runQueryOnDefaultUsersChannels();
-		return CommandResult.FAILED;
+		return CommandResult.SUCCESS;
 	}
 	
 	@NonNull
 	@Override
 	public String getName(){
-		return "Trakt test";
+		return "Trakt history";
 	}
 	
 	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("test");
+		return List.of("history", "h");
 	}
 	
 	@NonNull
 	@Override
 	public String getDescription(){
-		return "Test";
+		return "Fetches the user history";
 	}
 }

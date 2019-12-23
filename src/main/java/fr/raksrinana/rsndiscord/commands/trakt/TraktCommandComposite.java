@@ -13,7 +13,7 @@ public class TraktCommandComposite extends CommandComposite{
 	public TraktCommandComposite(){
 		super();
 		this.addSubCommand(new RegisterCommand(this));
-		this.addSubCommand(new TestCommand(this));
+		this.addSubCommand(new HistoryCommand(this));
 	}
 	
 	@NonNull
