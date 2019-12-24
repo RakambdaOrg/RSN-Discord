@@ -1,6 +1,7 @@
 package fr.raksrinana.rsndiscord.listeners;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
@@ -13,6 +14,7 @@ import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class LogListener extends ListenerAdapter{
@@ -55,6 +57,14 @@ public class LogListener extends ListenerAdapter{
 				final var weekKey = now.minusDays(getDaysToRemove(now.getDayOfWeek()));
 				final var emotes = Settings.get(event.getGuild()).getParticipationConfiguration().getEmotes(weekKey);
 				event.getMessage().getEmotes().forEach(emote -> emotes.increment(emote.getIdLong(), emote.getName()));
+				final var sentDate = event.getMessage().getTimeCreated().toLocalDateTime();
+				if(sentDate.isBefore(LocalDateTime.of(2019, 12, 26, 5, 0, 0)) && sentDate.isAfter(LocalDateTime.of(2019, 12, 24, 20, 0, 0))){
+					Settings.get(event.getGuild()).getChristmasRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> {
+						if(!event.getMember().getRoles().contains(role)){
+							Actions.giveRole(event.getMember(), role);
+						}
+					});
+				}
 			}
 		}
 		catch(final Exception e){

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.settings.guild.*;
 import fr.raksrinana.rsndiscord.settings.types.*;
 import lombok.NonNull;
+import lombok.Setter;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
@@ -73,12 +74,19 @@ public class GuildConfiguration{
 	private Set<String> twitchAutoConnectUsers = new HashSet<>();
 	@JsonProperty("reminders")
 	private List<ReminderConfiguration> reminders = new ArrayList<>();
+	@JsonProperty("christmasRole")
+	@Setter
+	private RoleConfiguration christmasRole;
 	
 	public GuildConfiguration(){
 	}
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
+	}
+	
+	public Optional<RoleConfiguration> getChristmasRole(){
+		return Optional.ofNullable(christmasRole);
 	}
 	
 	public void removeTodo(TodoConfiguration todoConfiguration){
