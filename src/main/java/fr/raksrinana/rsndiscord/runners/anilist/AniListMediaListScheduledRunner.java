@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class AniListMediaListScheduledRunner implements AniListRunner<MediaList, MediaListPagedQuery>, ScheduledRunner{
-	private static final Collection<String> acceptedThaLists = Set.of("ThaPending", "ThaReading", "ThaWatching", "ThaComplete");
+	private static final Collection<String> acceptedThaLists = Set.of("Tha");
 	@Getter
 	private final JDA jda;
 	@Getter
