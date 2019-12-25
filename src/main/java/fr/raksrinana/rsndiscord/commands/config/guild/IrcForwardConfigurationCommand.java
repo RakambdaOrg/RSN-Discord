@@ -26,7 +26,7 @@ public class IrcForwardConfigurationCommand extends BooleanConfigurationCommand{
 	@NonNull
 	@Override
 	protected Optional<Boolean> getConfig(final Guild guild){
-		return Optional.of(Settings.get(guild).getIrcForward());
+		return Optional.of(Settings.get(guild).isIrcForward());
 	}
 	
 	@NonNull

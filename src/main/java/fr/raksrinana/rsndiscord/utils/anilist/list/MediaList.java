@@ -96,7 +96,6 @@ public class MediaList implements AnilistDatedObject{
 			builder.addField("Notes", getNotes(), false);
 		}
 		builder.addBlankField(false);
-		builder.addField("Media:", "", false);
 		getMedia().fillEmbed(builder);
 	}
 	

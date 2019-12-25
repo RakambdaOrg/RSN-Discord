@@ -51,11 +51,11 @@ public class LogListener extends ListenerAdapter{
 			if(!event.getAuthor().isBot()){
 				final var now = LocalDate.now();
 				if(Settings.get(event.getGuild()).getNoXpChannels().stream().noneMatch(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong()))){
-					final var users = Settings.get(event.getGuild()).getParticipationConfiguration().getUsers(now);
+					final var users = Settings.get(event.getGuild()).getParticipationConfig().getUsers(now);
 					users.increment(event.getAuthor().getIdLong(), event.getAuthor().getName());
 				}
 				final var weekKey = now.minusDays(getDaysToRemove(now.getDayOfWeek()));
-				final var emotes = Settings.get(event.getGuild()).getParticipationConfiguration().getEmotes(weekKey);
+				final var emotes = Settings.get(event.getGuild()).getParticipationConfig().getEmotes(weekKey);
 				event.getMessage().getEmotes().forEach(emote -> emotes.increment(emote.getIdLong(), emote.getName()));
 				final var sentDate = event.getMessage().getTimeCreated().toLocalDateTime();
 				if(sentDate.isBefore(LocalDateTime.of(2020, 1, 1, 5, 0, 0)) && sentDate.isAfter(LocalDateTime.of(2019, 12, 31, 20, 0, 0))){

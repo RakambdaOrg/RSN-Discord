@@ -18,14 +18,12 @@ public class UsersPinnedConfigurationCommand extends SetConfigurationCommand<Use
 	@NonNull
 	@Override
 	protected Optional<Set<UserConfiguration>> getConfig(@NonNull final Guild guild){
-		return Optional.of(Settings.get(guild).getParticipationConfiguration().getUsersPinned());
+		return Optional.of(Settings.get(guild).getParticipationConfig().getUsersPinned());
 	}
 	
 	@Override
-	protected void createConfig(@NonNull final Guild guild, @NonNull final UserConfiguration value){
-		final var set = new HashSet<UserConfiguration>();
-		set.add(value);
-		Settings.get(guild).getParticipationConfiguration().setUsersPinned(set);
+	protected void removeConfig(@NonNull final Guild guild, @NonNull final UserConfiguration value){
+		Settings.get(guild).getParticipationConfig().getUsersPinned().remove(value);
 	}
 	
 	@NonNull
@@ -38,8 +36,10 @@ public class UsersPinnedConfigurationCommand extends SetConfigurationCommand<Use
 	}
 	
 	@Override
-	protected void removeConfig(@NonNull final Guild guild, @NonNull final UserConfiguration value){
-		Settings.get(guild).getParticipationConfiguration().getUsersPinned().remove(value);
+	protected void createConfig(@NonNull final Guild guild, @NonNull final UserConfiguration value){
+		final var set = new HashSet<UserConfiguration>();
+		set.add(value);
+		Settings.get(guild).getParticipationConfig().setUsersPinned(set);
 	}
 	
 	@Override

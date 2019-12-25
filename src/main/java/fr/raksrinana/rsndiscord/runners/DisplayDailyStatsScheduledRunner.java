@@ -32,22 +32,22 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 		final var ytd = LocalDate.now().minusDays(1);
 		final var lastWeek = LocalDate.now().minusWeeks(1).minusDays(LogListener.getDaysToRemove(LocalDate.now().getDayOfWeek()));
 		for(final var guild : this.getJda().getGuilds()){
-			Settings.get(guild).getParticipationConfiguration().getReportChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(reportChannel -> {
+			Settings.get(guild).getParticipationConfig().getReportChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(reportChannel -> {
 				Log.getLogger(guild).debug("Processing stats for guild {}", guild);
 				var sent = false;
 				if(TempParticipationCommand.sendInfos(guild, ytd, this.getJda().getSelfUser(), reportChannel, 15)){
 					sent = true;
-					Settings.get(guild).getParticipationConfiguration().removeUsers(ytd);
-					Settings.get(guild).getParticipationConfiguration().removeUsersBefore(ytd);
+					Settings.get(guild).getParticipationConfig().removeUsers(ytd);
+					Settings.get(guild).getParticipationConfig().removeUsersBefore(ytd);
 				}
 				Log.getLogger(guild).debug("Processing stats for guild {}", guild);
 				if(EmotesCommand.sendInfos(guild, lastWeek, this.getJda().getSelfUser(), reportChannel, 10)){
 					sent = true;
-					Settings.get(guild).getParticipationConfiguration().removeEmotes(lastWeek);
-					Settings.get(guild).getParticipationConfiguration().removeEmotesBefore(lastWeek);
+					Settings.get(guild).getParticipationConfig().removeEmotes(lastWeek);
+					Settings.get(guild).getParticipationConfig().removeEmotesBefore(lastWeek);
 				}
 				if(sent){
-					final var toPin = Settings.get(guild).getParticipationConfiguration().getUsersPinned().stream().map(UserConfiguration::getUser).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+					final var toPin = Settings.get(guild).getParticipationConfig().getUsersPinned().stream().map(UserConfiguration::getUser).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
 					if(!toPin.isEmpty()){
 						Actions.sendMessage(reportChannel, toPin.stream().map(User::getAsMention).collect(Collectors.joining("\n")), null);
 					}

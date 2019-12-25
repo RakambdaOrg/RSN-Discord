@@ -28,7 +28,7 @@ public class TwitchIRC{
 		final var channel = String.format("#%s", user.toLowerCase());
 		if(CLIENT.getListeners().stream().noneMatch(l -> Objects.equals(l.getIrcChannel(), channel) && Objects.equals(guild, l.getGuild()))){
 			final var listener = new TwitchIRCListener(guild, user, channel);
-			if(Settings.get(guild).getIrcForward()){
+			if(Settings.get(guild).isIrcForward()){
 				guild.getJDA().addEventListener(listener);
 			}
 			CLIENT.addEventListener(listener);

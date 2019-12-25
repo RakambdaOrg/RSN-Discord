@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.settings.guild.*;
 import fr.raksrinana.rsndiscord.settings.types.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.Member;
@@ -17,62 +19,98 @@ import java.util.stream.Stream;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
 public class GuildConfiguration{
 	@JsonProperty("guildId")
 	private long guildId;
 	@JsonProperty("prefix")
+	@Setter
 	private String prefix;
 	@JsonProperty("aniList")
+	@Getter
 	private AniListConfiguration aniListConfiguration = new AniListConfiguration();
 	@JsonProperty("trakt")
+	@Getter
 	private TraktConfiguration traktConfiguration = new TraktConfiguration();
 	@JsonProperty("autoRoles")
+	@Getter
+	@Setter
 	private Set<RoleConfiguration> autoRoles = new HashSet<>();
 	@JsonProperty("moderatorRoles")
+	@Getter
+	@Setter
 	private Set<RoleConfiguration> moderatorRoles = new HashSet<>();
 	@JsonProperty("djRole")
+	@Setter
 	private RoleConfiguration djRole;
 	@JsonProperty("warns")
+	@Getter
 	private WarnsConfiguration warnsConfiguration = new WarnsConfiguration();
 	@JsonProperty("ideaChannels")
+	@Getter
+	@Setter
 	private Set<ChannelConfiguration> ideaChannels = new HashSet<>();
 	@JsonProperty("npXpChannels")
+	@Getter
+	@Setter
 	private Set<ChannelConfiguration> noXpChannels = new HashSet<>();
 	@JsonProperty("participation")
+	@Getter
 	private ParticipationConfig participationConfig = new ParticipationConfig();
 	@JsonProperty("reportChannel")
+	@Setter
 	private ChannelConfiguration reportChannel;
 	@JsonProperty("nickname")
+	@Getter
 	private NicknameConfiguration nicknameConfiguration = new NicknameConfiguration();
 	@JsonProperty("twitchChannel")
+	@Setter
 	private ChannelConfiguration twitchChannel;
 	@JsonProperty("quizChannel")
+	@Setter
 	private ChannelConfiguration quizChannel;
 	@JsonProperty("questions")
+	@Getter
 	private QuestionsConfiguration questionsConfiguration = new QuestionsConfiguration();
 	@JsonProperty("removeRoles")
+	@Getter
+	@Setter
 	private Set<RemoveRoleConfiguration> removeRoles = new HashSet<>();
 	@JsonProperty("trombinoscope")
+	@Getter
 	private TrombinoscopeConfiguration trombinoscopeConfiguration = new TrombinoscopeConfiguration();
 	@JsonProperty("addBackRoles")
+	@Getter
 	private Set<UserRoleConfiguration> addBackRoles = new HashSet<>();
 	@JsonProperty("leaverRole")
+	@Setter
 	private RoleConfiguration leaverRole;
 	@JsonProperty("poopRole")
+	@Setter
 	private RoleConfiguration poopRole;
 	@JsonProperty("ircForward")
+	@Getter
+	@Setter
 	private boolean ircForward = false;
 	@JsonProperty("overwatchLeague")
+	@Getter
 	private OverwatchLeagueConfiguration overwatchLeagueConfiguration = new OverwatchLeagueConfiguration();
 	@JsonProperty("announceStartChannel")
+	@Setter
 	private ChannelConfiguration announceStartChannel;
 	@JsonProperty("musicVolume")
+	@Getter
+	@Setter
 	private int musicVolume = 100;
 	@JsonProperty("todoMessages")
+	@Getter
 	private ConcurrentLinkedQueue<TodoConfiguration> todos = new ConcurrentLinkedQueue<>();
 	@JsonProperty("twitchAutoConnectUsers")
+	@Getter
+	@Setter
 	private Set<String> twitchAutoConnectUsers = new HashSet<>();
 	@JsonProperty("reminders")
+	@Getter
 	private List<ReminderConfiguration> reminders = new ArrayList<>();
 	@JsonProperty("christmasRole")
 	@Setter
@@ -80,9 +118,6 @@ public class GuildConfiguration{
 	@JsonProperty("newYearRole")
 	@Setter
 	private RoleConfiguration newYearRole;
-	
-	public GuildConfiguration(){
-	}
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
@@ -125,40 +160,9 @@ public class GuildConfiguration{
 		this.reminders.add(reminder);
 	}
 	
-	public TraktConfiguration getTraktConfiguration(){
-		return this.traktConfiguration;
-	}
-	
-	public List<ReminderConfiguration> getReminders(){
-		return this.reminders;
-	}
-	
-	@NonNull
-	public Set<RoleConfiguration> getAutoRoles(){
-		return this.autoRoles;
-	}
-	
-	@NonNull
-	private Set<UserRoleConfiguration> getAddBackRoles(){
-		return this.addBackRoles;
-	}
-	
-	public void setAutoRoles(@NonNull final Set<RoleConfiguration> autoRoles){
-		this.autoRoles = autoRoles;
-	}
-	
-	@NonNull
-	public AniListConfiguration getAniListConfiguration(){
-		return this.aniListConfiguration;
-	}
-	
 	@NonNull
 	public Optional<ChannelConfiguration> getAnnounceStartChannel(){
 		return Optional.ofNullable(this.announceStartChannel);
-	}
-	
-	public void setAnnounceStartChannel(final ChannelConfiguration channel){
-		this.announceStartChannel = channel;
 	}
 	
 	@NonNull
@@ -166,71 +170,9 @@ public class GuildConfiguration{
 		return Optional.ofNullable(this.djRole);
 	}
 	
-	public void setDjRole(final RoleConfiguration djRole){
-		this.djRole = djRole;
-	}
-	
-	@NonNull
-	public Set<ChannelConfiguration> getIdeaChannels(){
-		return this.ideaChannels;
-	}
-	
-	public void setIdeaChannels(@NonNull final Set<ChannelConfiguration> ideaChannels){
-		this.ideaChannels = ideaChannels;
-	}
-	
-	public boolean getIrcForward(){
-		return this.ircForward;
-	}
-	
 	@NonNull
 	public Optional<RoleConfiguration> getLeaverRole(){
 		return Optional.ofNullable(this.leaverRole);
-	}
-	
-	public void setLeaverRole(final RoleConfiguration role){
-		this.leaverRole = role;
-	}
-	
-	@NonNull
-	public Set<RoleConfiguration> getModeratorRoles(){
-		return this.moderatorRoles;
-	}
-	
-	public void setModeratorRoles(@NonNull final Set<RoleConfiguration> moderatorRoles){
-		this.moderatorRoles = moderatorRoles;
-	}
-	
-	@NonNull
-	public NicknameConfiguration getNicknameConfiguration(){
-		return this.nicknameConfiguration;
-	}
-	
-	public int getMusicVolume(){
-		return musicVolume;
-	}
-	
-	public void setMusicVolume(int musicVolume){
-		this.musicVolume = musicVolume;
-	}
-	
-	@NonNull
-	public Set<ChannelConfiguration> getNoXpChannels(){
-		return this.noXpChannels;
-	}
-	
-	public void setNoXpChannels(@NonNull final Set<ChannelConfiguration> noXpChannels){
-		this.noXpChannels = noXpChannels;
-	}
-	
-	@NonNull
-	public OverwatchLeagueConfiguration getOverwatchLeagueConfiguration(){
-		return this.overwatchLeagueConfiguration;
-	}
-	
-	@NonNull
-	public ParticipationConfig getParticipationConfiguration(){
-		return this.participationConfig;
 	}
 	
 	@NonNull
@@ -238,22 +180,9 @@ public class GuildConfiguration{
 		return Optional.ofNullable(this.poopRole);
 	}
 	
-	public void setPoopRole(final RoleConfiguration value){
-		this.poopRole = value;
-	}
-	
 	@NonNull
 	public Optional<String> getPrefix(){
 		return Optional.ofNullable(this.prefix);
-	}
-	
-	public void setPrefix(final String prefix){
-		this.prefix = prefix;
-	}
-	
-	@NonNull
-	public QuestionsConfiguration getQuestionsConfiguration(){
-		return this.questionsConfiguration;
 	}
 	
 	@NonNull
@@ -261,57 +190,13 @@ public class GuildConfiguration{
 		return Optional.ofNullable(this.quizChannel);
 	}
 	
-	public void setQuizChannel(final ChannelConfiguration channel){
-		this.quizChannel = channel;
-	}
-	
-	@NonNull
-	public Set<RemoveRoleConfiguration> getRemoveRoles(){
-		return this.removeRoles;
-	}
-	
-	public Set<String> getTwitchAutoConnectUsers(){
-		return this.twitchAutoConnectUsers;
-	}
-	
 	@NonNull
 	public Optional<ChannelConfiguration> getReportChannel(){
 		return Optional.ofNullable(this.reportChannel);
 	}
 	
-	public void setReportChannel(final ChannelConfiguration channel){
-		this.reportChannel = channel;
-	}
-	
-	@NonNull
-	public Collection<TodoConfiguration> getTodos(){
-		return this.todos;
-	}
-	
-	@NonNull
-	public TrombinoscopeConfiguration getTrombinoscopeConfiguration(){
-		return this.trombinoscopeConfiguration;
-	}
-	
 	@NonNull
 	public Optional<ChannelConfiguration> getTwitchChannel(){
 		return Optional.ofNullable(this.twitchChannel);
-	}
-	
-	public void setTwitchChannel(final ChannelConfiguration channel){
-		this.twitchChannel = channel;
-	}
-	
-	@NonNull
-	public WarnsConfiguration getWarnsConfiguration(){
-		return this.warnsConfiguration;
-	}
-	
-	public void setIrcForward(@NonNull final Boolean value){
-		this.ircForward = value;
-	}
-	
-	public void setTwitchAutoConnectUsers(@NonNull Set<String> users){
-		this.twitchAutoConnectUsers = users;
 	}
 }

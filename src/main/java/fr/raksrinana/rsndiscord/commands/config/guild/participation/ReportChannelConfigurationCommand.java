@@ -16,18 +16,18 @@ public class ReportChannelConfigurationCommand extends ChannelConfigurationComma
 	
 	@Override
 	protected void setConfig(@NonNull final Guild guild, @NonNull final ChannelConfiguration value){
-		Settings.get(guild).getParticipationConfiguration().setReportChannel(value);
+		Settings.get(guild).getParticipationConfig().setReportChannel(value);
 	}
 	
 	@Override
 	protected void removeConfig(@NonNull final Guild guild){
-		Settings.get(guild).getParticipationConfiguration().setReportChannel(null);
+		Settings.get(guild).getParticipationConfig().setReportChannel(null);
 	}
 	
 	@NonNull
 	@Override
 	protected Optional<ChannelConfiguration> getConfig(@NonNull final Guild guild){
-		return Settings.get(guild).getParticipationConfiguration().getReportChannel();
+		return Settings.get(guild).getParticipationConfig().getReportChannel();
 	}
 	
 	@NonNull
