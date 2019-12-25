@@ -10,6 +10,7 @@ import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -28,6 +29,7 @@ public class RemoveRoleConfiguration{
 	@JsonProperty("date")
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
+	@Setter
 	private LocalDateTime date;
 	
 	public RemoveRoleConfiguration(@NonNull final User user, @NonNull final Role role, @NonNull final LocalDateTime date){
@@ -51,9 +53,5 @@ public class RemoveRoleConfiguration{
 		}
 		final var that = (RemoveRoleConfiguration) o;
 		return new EqualsBuilder().append(this.getUser(), that.getUser()).append(this.getRole(), that.getRole()).isEquals();
-	}
-	
-	public void setEndDate(@NonNull final LocalDateTime date){
-		this.date = date;
 	}
 }

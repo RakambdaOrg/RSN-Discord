@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import net.dv8tion.jda.api.entities.Message;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -16,6 +17,7 @@ public class TodoConfiguration{
 	@JsonProperty("message")
 	private MessageConfiguration message;
 	@JsonProperty("deleteOnDone")
+	@Setter
 	private boolean deleteOnDone = false;
 	
 	public TodoConfiguration(@NonNull final Message message){
@@ -33,9 +35,5 @@ public class TodoConfiguration{
 	
 	public void setMessage(@NonNull final Message message){
 		this.message.setMessage(message);
-	}
-	
-	public void setDeleteOnDone(boolean deleteOnDone){
-		this.deleteOnDone = deleteOnDone;
 	}
 }

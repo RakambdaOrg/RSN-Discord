@@ -11,11 +11,12 @@ import java.util.Optional;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
-@Setter
 public class QuestionsConfiguration{
 	@JsonProperty("inputChannel")
+	@Setter
 	private ChannelConfiguration inputChannel;
 	@JsonProperty("outputChannel")
+	@Setter
 	private ChannelConfiguration outputChannel;
 	
 	public Optional<ChannelConfiguration> getInputChannel(){

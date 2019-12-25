@@ -11,6 +11,7 @@ import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import net.dv8tion.jda.api.entities.User;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -29,6 +30,7 @@ public class UserDateConfiguration{
 	@JsonProperty("date")
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
+	@Setter
 	private LocalDateTime date;
 	
 	public UserDateConfiguration(@NonNull final User user, @NonNull final LocalDateTime date){
@@ -65,9 +67,5 @@ public class UserDateConfiguration{
 	@NonNull
 	private Optional<User> getUser(){
 		return Optional.ofNullable(Main.getJda().getUserById(this.getUserId()));
-	}
-	
-	public void setDate(@NonNull final LocalDateTime date){
-		this.date = date;
 	}
 }

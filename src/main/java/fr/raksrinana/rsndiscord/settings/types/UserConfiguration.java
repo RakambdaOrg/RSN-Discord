@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.Main;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import net.dv8tion.jda.api.entities.User;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -18,9 +19,8 @@ import java.util.Optional;
 @NoArgsConstructor
 public class UserConfiguration{
 	@JsonProperty("userId")
+	@Setter
 	private long userId;
-	
-
 	
 	public UserConfiguration(final User user){
 		this(user.getIdLong());
@@ -58,10 +58,6 @@ public class UserConfiguration{
 	}
 	
 	public void setUser(@NonNull final User user){
-		this.setUser(user.getIdLong());
-	}
-	
-	private void setUser(final long userId){
-		this.userId = userId;
+		this.setUserId(user.getIdLong());
 	}
 }

@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.Main;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import net.dv8tion.jda.api.entities.Role;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -18,9 +19,8 @@ import java.util.Optional;
 @NoArgsConstructor
 public class RoleConfiguration{
 	@JsonProperty("roleId")
+	@Setter
 	private long roleId;
-	
-
 	
 	public RoleConfiguration(final Role role){
 		this(role.getIdLong());
@@ -58,10 +58,6 @@ public class RoleConfiguration{
 	}
 	
 	public void setRole(@NonNull final Role role){
-		this.setRole(role.getIdLong());
-	}
-	
-	private void setRole(final long roleId){
-		this.roleId = roleId;
+		this.setRoleId(role.getIdLong());
 	}
 }

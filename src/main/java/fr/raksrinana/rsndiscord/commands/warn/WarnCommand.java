@@ -45,7 +45,7 @@ public abstract class WarnCommand extends BasicCommand{
 				final var date = LocalDateTime.now();
 				Settings.get(event.getGuild()).getRemoveRole(user, role).ifPresentOrElse(c -> {
 					if(date.isAfter(c.getDate())){
-						c.setEndDate(date);
+						c.setDate(date);
 					}
 				}, () -> Settings.get(event.getGuild()).addRemoveRole(new RemoveRoleConfiguration(user, role, date)));
 				builder.setColor(Color.GREEN);

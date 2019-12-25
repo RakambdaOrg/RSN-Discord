@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import net.dv8tion.jda.api.entities.Message;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -22,6 +23,7 @@ public class MessageConfiguration{
 	@JsonProperty("channel")
 	private ChannelConfiguration channel;
 	@JsonProperty("messageId")
+	@Setter
 	private long messageId;
 	
 	public MessageConfiguration(@NonNull final Message message){
@@ -69,15 +71,11 @@ public class MessageConfiguration{
 	}
 	
 	public void setMessage(@NonNull final Message message){
-		this.setMessage(message.getIdLong());
+		this.setMessageId(message.getIdLong());
 		this.setChannel(message.getChannel().getIdLong());
 	}
 	
-	private void setMessage(final long messageId){
-		this.messageId = messageId;
-	}
-	
 	private void setChannel(final long channelId){
-		this.channel.setChannel(channelId);
+		this.channel.setChannelId(channelId);
 	}
 }

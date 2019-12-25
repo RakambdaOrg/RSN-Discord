@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.settings.guild.warns.WarnConfiguration;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -13,10 +14,13 @@ import java.util.Optional;
 @NoArgsConstructor
 public class WarnsConfiguration{
 	@JsonProperty("simpleWarn")
+	@Setter
 	private WarnConfiguration simpleWarn;
 	@JsonProperty("doubleWarn")
+	@Setter
 	private WarnConfiguration doubleWarn;
 	@JsonProperty("megaWarn")
+	@Setter
 	private WarnConfiguration megaWarn;
 	
 	@NonNull
@@ -24,25 +28,13 @@ public class WarnsConfiguration{
 		return Optional.ofNullable(this.doubleWarn);
 	}
 	
-	public void setDoubleWarn(final WarnConfiguration doubleWarn){
-		this.doubleWarn = doubleWarn;
-	}
-	
 	@NonNull
 	public Optional<WarnConfiguration> getMegaWarn(){
 		return Optional.ofNullable(this.megaWarn);
 	}
 	
-	public void setMegaWarn(final WarnConfiguration megaWarn){
-		this.megaWarn = megaWarn;
-	}
-	
 	@NonNull
 	public Optional<WarnConfiguration> getSimpleWarn(){
 		return Optional.ofNullable(this.simpleWarn);
-	}
-	
-	public void setSimpleWarn(final WarnConfiguration simpleWarn){
-		this.simpleWarn = simpleWarn;
 	}
 }
