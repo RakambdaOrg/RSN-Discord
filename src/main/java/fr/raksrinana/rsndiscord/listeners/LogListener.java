@@ -58,8 +58,8 @@ public class LogListener extends ListenerAdapter{
 				final var emotes = Settings.get(event.getGuild()).getParticipationConfiguration().getEmotes(weekKey);
 				event.getMessage().getEmotes().forEach(emote -> emotes.increment(emote.getIdLong(), emote.getName()));
 				final var sentDate = event.getMessage().getTimeCreated().toLocalDateTime();
-				if(sentDate.isBefore(LocalDateTime.of(2019, 12, 25, 5, 0, 0)) && sentDate.isAfter(LocalDateTime.of(2019, 12, 24, 20, 0, 0))){
-					Settings.get(event.getGuild()).getChristmasRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> {
+				if(sentDate.isBefore(LocalDateTime.of(2020, 1, 1, 5, 0, 0)) && sentDate.isAfter(LocalDateTime.of(2019, 12, 31, 20, 0, 0))){
+					Settings.get(event.getGuild()).getNewYearRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> {
 						if(!event.getMember().getRoles().contains(role)){
 							Actions.giveRole(event.getMember(), role);
 						}

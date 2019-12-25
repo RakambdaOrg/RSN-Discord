@@ -77,6 +77,9 @@ public class GuildConfiguration{
 	@JsonProperty("christmasRole")
 	@Setter
 	private RoleConfiguration christmasRole;
+	@JsonProperty("newYearRole")
+	@Setter
+	private RoleConfiguration newYearRole;
 	
 	public GuildConfiguration(){
 	}
@@ -87,6 +90,10 @@ public class GuildConfiguration{
 	
 	public Optional<RoleConfiguration> getChristmasRole(){
 		return Optional.ofNullable(christmasRole);
+	}
+	
+	public Optional<RoleConfiguration> getNewYearRole(){
+		return Optional.ofNullable(newYearRole);
 	}
 	
 	public void removeTodo(TodoConfiguration todoConfiguration){
