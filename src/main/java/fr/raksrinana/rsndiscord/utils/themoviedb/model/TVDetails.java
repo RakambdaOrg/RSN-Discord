@@ -24,7 +24,7 @@ public class TVDetails{
 	@JsonProperty("backdrop_path")
 	private String backdropPath;
 	@JsonProperty("created_by")
-	private User createdBy;
+	private Set<User> createdBy;
 	@JsonProperty("episode_run_time")
 	private List<Integer> episodeRunTime;
 	@JsonProperty("first_air_date")
