@@ -48,6 +48,7 @@ public class Episode implements TraktObject{
 	public void fillEmbed(EmbedBuilder builder){
 		builder.addField("Season", Integer.toString(this.getSeason()), true);
 		builder.addField("Episode", Integer.toString(this.getNumber()), true);
+		builder.addField("Overview", this.getOverview(), false);
 	}
 	
 	@Override

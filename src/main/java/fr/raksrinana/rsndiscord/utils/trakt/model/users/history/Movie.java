@@ -68,9 +68,9 @@ public class Movie implements TraktObject{
 		builder.addField("Title", getTitle(), true);
 		builder.addField("Year", Integer.toString(this.getYear()), true);
 		builder.addField("Status", this.getStatus(), true);
+		builder.addField("Aired at", this.getReleased().format(DATE_FORMAT), true);
 		builder.addField("Genres", String.join(", ", this.getGenres()), true);
 		builder.addField("Overview", this.getOverview(), false);
-		builder.addField("Aired at", this.getReleased().format(DATE_FORMAT), false);
 	}
 	
 	@Override

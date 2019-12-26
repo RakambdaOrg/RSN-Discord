@@ -71,9 +71,9 @@ public class Show implements TraktObject{
 		builder.addField("Year", Integer.toString(this.getYear()), true);
 		builder.addField("Episodes", Integer.toString(this.getAiredEpisodes()), true);
 		builder.addField("Status", this.getStatus(), true);
+		builder.addField("Aired at", this.getFirstAired().format(DATETIME_FORMAT), true);
 		builder.addField("Genres", String.join(", ", this.getGenres()), true);
 		builder.addField("Overview", this.getOverview(), false);
-		builder.addField("Aired at", this.getFirstAired().format(DATETIME_FORMAT), false);
 	}
 	
 	@Override

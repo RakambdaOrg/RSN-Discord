@@ -7,7 +7,6 @@ import fr.raksrinana.rsndiscord.utils.RequestException;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.themoviedb.TMDBUtils;
 import fr.raksrinana.rsndiscord.utils.themoviedb.model.MovieDetails;
-import fr.raksrinana.rsndiscord.utils.themoviedb.model.TVDetails;
 import fr.raksrinana.rsndiscord.utils.themoviedb.requests.MovieDetailsGetRequest;
 import fr.raksrinana.rsndiscord.utils.themoviedb.requests.TVDetailsGetRequest;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktUtils;
@@ -94,7 +93,8 @@ public class TraktUserHistoryScheduledRunner implements TraktPagedGetRunner<User
 			}).flatMap(MovieDetails::getPosterURL);
 		}
 		else if(change instanceof UserSerieHistory){
-			poster = Optional.ofNullable(((UserSerieHistory) change).getShow().getIds().getTmdb()).map(TVDetailsGetRequest::new).map(query -> {
+			final var tvChange = (UserSerieHistory) change;
+			poster = Optional.ofNullable(tvChange.getShow().getIds().getTmdb()).map(TVDetailsGetRequest::new).map(query -> {
 				try{
 					return TMDBUtils.getQuery(query);
 				}
@@ -102,7 +102,7 @@ public class TraktUserHistoryScheduledRunner implements TraktPagedGetRunner<User
 					Log.getLogger(null).error("Failed to get poster for change {}", change, e);
 				}
 				return null;
-			}).flatMap(TVDetails::getPosterURL);
+			}).flatMap(details -> details.getPosterURL(tvChange.getEpisode().getSeason()).or(details::getPosterURL));
 		}
 		poster.ifPresent(posterUrl -> builder.setThumbnail(posterUrl.toString()));
 	}

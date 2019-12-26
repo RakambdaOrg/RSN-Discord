@@ -101,4 +101,8 @@ public class TVDetails{
 	public Optional<URL> getPosterURL(){
 		return Optional.ofNullable(getPosterPath()).map(path -> TMDBUtils.getImageURL(path, "original"));
 	}
+	
+	public Optional<URL> getPosterURL(int seasonNumber){
+		return seasons.stream().filter(season -> Objects.equals(seasonNumber, season.getSeasonNumber())).findAny().map(season -> TMDBUtils.getImageURL(season.getPosterPath(), "original"));
+	}
 }
