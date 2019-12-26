@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -48,7 +49,7 @@ public class Episode implements TraktObject{
 	public void fillEmbed(EmbedBuilder builder){
 		builder.addField("Season", Integer.toString(this.getSeason()), true);
 		builder.addField("Episode", Integer.toString(this.getNumber()), true);
-		builder.addField("Overview", this.getOverview(), false);
+		Optional.ofNullable(this.getOverview()).ifPresent(overview -> builder.addField("Overview", overview, false));
 	}
 	
 	@Override

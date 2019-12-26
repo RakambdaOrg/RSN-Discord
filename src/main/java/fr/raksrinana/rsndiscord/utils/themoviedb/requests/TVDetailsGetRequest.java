@@ -16,7 +16,7 @@ public class TVDetailsGetRequest implements TMDBGetRequest<TVDetails>{
 	
 	@Override
 	public @NonNull String getEndpoint(){
-		return MessageFormat.format("/tv/{0}", this.id);
+		return MessageFormat.format("/tv/{0,number,#}", this.id);
 	}
 	
 	@Override
