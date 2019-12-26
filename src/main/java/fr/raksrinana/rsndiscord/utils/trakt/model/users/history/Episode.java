@@ -12,6 +12,7 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -57,5 +58,22 @@ public class Episode implements TraktObject{
 	@Override
 	public int compareTo(@NonNull TraktObject o){
 		return 0;
+	}
+	
+	@Override
+	public int hashCode(){
+		return Objects.hash(getSeason(), getNumber(), getIds());
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		if(this == o){
+			return true;
+		}
+		if(o == null || getClass() != o.getClass()){
+			return false;
+		}
+		Episode episode = (Episode) o;
+		return getSeason() == episode.getSeason() && getNumber() == episode.getNumber() && Objects.equals(getIds(), episode.getIds());
 	}
 }

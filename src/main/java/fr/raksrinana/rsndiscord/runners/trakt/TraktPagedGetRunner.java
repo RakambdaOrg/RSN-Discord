@@ -13,7 +13,6 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import java.awt.Color;
@@ -79,11 +78,19 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 		if(this.isSortedByUser()){
 			for(final var entry : userElements.entrySet()){
 				final var user = entry.getKey();
-				entry.getValue().stream().sorted().map(change -> this.buildMessage(user, change)).forEach(embed -> channels.stream().filter(channel -> this.sendToChannel(channel, user)).forEach(channel -> Actions.sendMessage(channel, "", embed)));
+				entry.getValue().stream().sorted().map(change -> {
+					final var builder = new EmbedBuilder();
+					this.buildMessage(builder, user, change);
+					return builder.build();
+				}).forEach(embed -> channels.stream().filter(channel -> this.sendToChannel(channel, user)).forEach(channel -> Actions.sendMessage(channel, "", embed)));
 			}
 		}
 		else{
-			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Map.Entry.comparingByValue()).map(change -> Map.entry(change.getKey(), this.buildMessage(change.getKey(), change.getValue()))).forEach(infos -> channels.stream().filter(chan -> this.sendToChannel(chan, infos.getKey())).forEach(chan -> Actions.sendMessage(chan, "", infos.getValue())));
+			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Map.Entry.comparingByValue()).map(change -> {
+				final var builder = new EmbedBuilder();
+				this.buildMessage(builder, change.getKey(), change.getValue());
+				return Map.entry(change.getKey(), builder.build());
+			}).forEach(infos -> channels.stream().filter(chan -> this.sendToChannel(chan, infos.getKey())).forEach(chan -> Actions.sendMessage(chan, "", infos.getValue())));
 		}
 	}
 	
@@ -95,9 +102,7 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 		return false;
 	}
 	
-	@NonNull
-	default MessageEmbed buildMessage(final User user, @NonNull final T change){
-		final var builder = new EmbedBuilder();
+	default void buildMessage(final EmbedBuilder builder, final User user, @NonNull final T change){
 		try{
 			if(Objects.isNull(user)){
 				builder.setAuthor(this.getJda().getSelfUser().getName(), Optional.ofNullable(change.getUrl()).map(Object::toString).orElse(null), this.getJda().getSelfUser().getAvatarUrl());
@@ -112,7 +117,6 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 			builder.addField("Error", e.getClass().getName() + " => " + e.getMessage(), false);
 			builder.setColor(Color.RED);
 		}
-		return builder.build();
 	}
 	
 	default boolean sendToChannel(final TextChannel channel, final User user){

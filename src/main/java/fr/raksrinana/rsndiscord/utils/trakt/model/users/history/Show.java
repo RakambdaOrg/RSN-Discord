@@ -13,6 +13,7 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Set;
 import static fr.raksrinana.rsndiscord.utils.trakt.model.users.history.UserHistory.DATETIME_FORMAT;
 
@@ -83,5 +84,22 @@ public class Show implements TraktObject{
 	@Override
 	public int compareTo(@NonNull TraktObject o){
 		return 0;
+	}
+	
+	@Override
+	public int hashCode(){
+		return Objects.hash(getIds());
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		if(this == o){
+			return true;
+		}
+		if(o == null || getClass() != o.getClass()){
+			return false;
+		}
+		Show show = (Show) o;
+		return Objects.equals(getIds(), show.getIds());
 	}
 }

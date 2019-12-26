@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.utils.trakt.model.users.settings;
+package fr.raksrinana.rsndiscord.utils.themoviedb.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -9,21 +9,17 @@ import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@NoArgsConstructor
 @Getter
-public class UserSettings{
-	@JsonProperty("user")
-	private User user;
-	@JsonProperty("account")
-	private Account account;
-	@JsonProperty("connections")
-	private Connections connections;
-	@JsonProperty("sharing_text")
-	private SharingText sharingText;
+@NoArgsConstructor
+public class Genre{
+	@JsonProperty("id")
+	private int id;
+	@JsonProperty("name")
+	private String name;
 	
 	@Override
 	public int hashCode(){
-		return Objects.hash(getUser());
+		return Objects.hash(getId());
 	}
 	
 	@Override
@@ -34,7 +30,7 @@ public class UserSettings{
 		if(o == null || getClass() != o.getClass()){
 			return false;
 		}
-		UserSettings that = (UserSettings) o;
-		return Objects.equals(getUser(), that.getUser());
+		Genre genre = (Genre) o;
+		return getId() == genre.getId();
 	}
 }

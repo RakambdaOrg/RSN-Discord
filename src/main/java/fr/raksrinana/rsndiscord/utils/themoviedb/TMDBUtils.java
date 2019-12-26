@@ -7,6 +7,7 @@ import lombok.NonNull;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -25,6 +26,19 @@ public class TMDBUtils{
 			return handler.getRequestResult();
 		}
 		throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString(), handler.getStatus());
+	}
+	
+	public static URL getImageURL(@NonNull String path, @NonNull String size){
+		if(!path.startsWith("/")){
+			path = "/" + path;
+		}
+		try{
+			return new URL(MessageFormat.format("https://image.tmdb.org/t/p/{0}{1}", size, path));
+		}
+		catch(MalformedURLException e){
+			Log.getLogger(null).error("Failed to generate image url of size {} for path {}", size, path, e);
+		}
+		return null;
 	}
 	
 	private static Map<String, String> getHeaders(){

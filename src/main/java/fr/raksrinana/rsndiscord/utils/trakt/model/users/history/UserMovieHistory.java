@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import java.net.URL;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -27,5 +28,22 @@ public class UserMovieHistory extends UserHistory{
 	@Override
 	public URL getUrl(){
 		return this.getMovie().getUrl();
+	}
+	
+	@Override
+	public int hashCode(){
+		return Objects.hash(getMovie());
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		if(this == o){
+			return true;
+		}
+		if(o == null || getClass() != o.getClass()){
+			return false;
+		}
+		UserMovieHistory that = (UserMovieHistory) o;
+		return Objects.equals(getMovie(), that.getMovie());
 	}
 }
