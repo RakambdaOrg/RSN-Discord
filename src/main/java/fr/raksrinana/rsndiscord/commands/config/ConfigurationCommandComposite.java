@@ -32,6 +32,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new TraktConfigurationCommandComposite(this));
 		this.addSubCommand(new ChristmasRoleConfigurationCommand(this));
 		this.addSubCommand(new NewYearRoleConfigurationCommand(this));
+		this.addSubCommand(new ArchiveCategoryConfigurationCommand(this));
 	}
 	
 	@NonNull

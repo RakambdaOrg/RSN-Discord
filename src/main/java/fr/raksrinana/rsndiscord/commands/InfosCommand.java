@@ -24,7 +24,7 @@ public class InfosCommand extends BasicCommand{
 		super.execute(event, args);
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Bot infos", null);
 		builder.addField("Bot version", Main.getRSNBotVersion(), false);
-		builder.addField("Current time:", LocalDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME), false);
+		builder.addField("Current time:", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), false);
 		builder.addField("Last start (local time):", Main.bootTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME), false);
 		builder.addField("Time elapsed", Duration.between(Main.bootTime, ZonedDateTime.now()).toString(), false);
 		Actions.reply(event, "", builder.build());

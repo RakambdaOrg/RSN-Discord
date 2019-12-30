@@ -118,6 +118,9 @@ public class GuildConfiguration{
 	@JsonProperty("newYearRole")
 	@Setter
 	private RoleConfiguration newYearRole;
+	@JsonProperty("archiveCategory")
+	@Setter
+	private CategoryConfiguration archiveCategory;
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
@@ -129,6 +132,10 @@ public class GuildConfiguration{
 	
 	public Optional<RoleConfiguration> getNewYearRole(){
 		return Optional.ofNullable(newYearRole);
+	}
+	
+	public Optional<CategoryConfiguration> getArchiveCategory(){
+		return Optional.ofNullable(archiveCategory);
 	}
 	
 	public void removeTodo(TodoConfiguration todoConfiguration){
