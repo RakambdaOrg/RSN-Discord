@@ -16,6 +16,7 @@ public class AniListCommandComposite extends CommandComposite{
 		this.addSubCommand(new FetchCommandComposite(this));
 		this.addSubCommand(new RegisterCommand(this));
 		this.addSubCommand(new MediaListDifferencesCommand(this));
+		this.addSubCommand(new NextAiringCommand(this));
 	}
 	
 	@NonNull
