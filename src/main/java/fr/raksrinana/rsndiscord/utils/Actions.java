@@ -286,4 +286,9 @@ public class Actions{
 	public static CompletableFuture<Void> changeNickname(@NonNull Member member, String nickname){
 		return member.getGuild().modifyNickname(member, nickname).submit();
 	}
+	
+	public static void setCategoryAndSync(TextChannel channel, Category archiveCategory){
+		final var manager = channel.getManager();
+		manager.setParent(archiveCategory).sync(archiveCategory).submit();
+	}
 }
