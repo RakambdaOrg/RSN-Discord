@@ -5,7 +5,6 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
-import fr.raksrinana.rsndiscord.utils.reminder.DefaultReminderHandler;
 import fr.raksrinana.rsndiscord.utils.reminder.ReminderUtils;
 import lombok.Getter;
 import lombok.NonNull;
@@ -37,11 +36,10 @@ public class RemindersScheduledRunner implements ScheduledRunner{
 						if(handler.acceptTag(reminder.getTag())){
 							if(handler.accept(reminder)){
 								it.remove();
+								break;
 							}
 						}
 					}
-					final var handler = new DefaultReminderHandler();
-					handler.accept(reminder);
 				}
 				else{
 					final var embed = DelayReminderCommand.getEmbedFor(reminder);

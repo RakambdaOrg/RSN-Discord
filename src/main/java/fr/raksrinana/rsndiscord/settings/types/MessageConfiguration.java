@@ -30,7 +30,7 @@ public class MessageConfiguration{
 		this(message.getChannel().getIdLong(), message.getIdLong());
 	}
 	
-	MessageConfiguration(final long channelId, final long messageId){
+	public MessageConfiguration(final long channelId, final long messageId){
 		this.channel = new ChannelConfiguration(channelId);
 		this.messageId = messageId;
 	}

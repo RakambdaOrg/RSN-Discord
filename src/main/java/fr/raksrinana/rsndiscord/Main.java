@@ -18,6 +18,8 @@ import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.irc.twitch.TwitchIRC;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
+import fr.raksrinana.rsndiscord.utils.reaction.DefaultReactionHandler;
+import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
 import fr.raksrinana.rsndiscord.utils.reminder.AnilistReleaseReminderHandler;
 import fr.raksrinana.rsndiscord.utils.reminder.DefaultReminderHandler;
 import fr.raksrinana.rsndiscord.utils.reminder.ReminderUtils;
@@ -73,9 +75,10 @@ public class Main{
 			jda.awaitReady();
 			jda.getPresence().setActivity(Activity.playing("g?help for the help"));
 			Log.getLogger(null).info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
-			Log.getLogger(null).info("Adding reminder handlers");
+			Log.getLogger(null).info("Adding handlers");
 			ReminderUtils.addHandler(new DefaultReminderHandler());
 			ReminderUtils.addHandler(new AnilistReleaseReminderHandler());
+			ReactionUtils.addHandler(new DefaultReactionHandler());
 			Log.getLogger(null).info("Creating runners");
 			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda), new OverwatchLeagueScheduledRunner(jda), new RemindersScheduledRunner(jda), new TraktUserHistoryScheduledRunner(jda));
 			for(final var scheduledRunner : scheduledRunners){

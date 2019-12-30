@@ -21,9 +21,16 @@ public class AnimeReactionCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		try{
+			var hasEpisodes = true;
+			var askArchive = false;
 			final var lines = new LinkedList<>(Arrays.asList(String.join(" ", args).strip().split("\n")));
 			if(!lines.isEmpty()){
-				var newText = "__**EP " + lines.pop() + "**__";
+				if(lines.peek().startsWith("o")){
+					final var options = lines.pop();
+					hasEpisodes = !options.contains("m");
+					askArchive = options.contains("a");
+				}
+				var newText = hasEpisodes ? "__**EP " + lines.pop() + "**__" : "";
 				if(!lines.isEmpty()){
 					newText += "\n" + lines.stream().map(s -> {
 						var decorator = "||";
@@ -41,7 +48,8 @@ public class AnimeReactionCommand extends BasicCommand{
 						return convertTime(parts) + decorator + String.join(" ", parts) + decorator;
 					}).collect(Collectors.joining("\n"));
 				}
-				Actions.reply(event, newText, null);
+				Actions.reply(event, newText, null).thenAccept(message -> {
+				});
 			}
 			return CommandResult.SUCCESS;
 		}

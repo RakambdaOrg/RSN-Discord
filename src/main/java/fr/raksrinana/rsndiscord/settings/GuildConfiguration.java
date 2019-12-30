@@ -121,9 +121,16 @@ public class GuildConfiguration{
 	@JsonProperty("archiveCategory")
 	@Setter
 	private CategoryConfiguration archiveCategory;
+	@JsonProperty("messagesAwaitingReaction")
+	@Setter
+	private Set<WaitingReactionMessageConfiguration> messagesAwaitingReaction;
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
+	}
+	
+	public Set<WaitingReactionMessageConfiguration> getMessagesAwaitingReaction(){
+		return this.messagesAwaitingReaction;
 	}
 	
 	public Optional<RoleConfiguration> getChristmasRole(){
