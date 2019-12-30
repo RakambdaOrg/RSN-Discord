@@ -1,19 +1,19 @@
 package fr.raksrinana.rsndiscord.utils.anilist.queries;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.raksrinana.rsndiscord.utils.anilist.list.MediaList;
+import fr.raksrinana.rsndiscord.utils.anilist.airing.AiringSchedule;
 import kong.unirest.json.JSONObject;
 import lombok.NonNull;
 import java.time.LocalDateTime;
 
-public class MediaListPagedQuery implements PagedQuery<MediaList>{
-	private static final String QUERY = PagedQuery.pagedQuery(", $userID: Int", MediaList.getQUERY());
+public class AiringSchedulePagedQuery implements PagedQuery<AiringSchedule>{
+	private static final String QUERY = PagedQuery.pagedQuery(", $mediaID: Int", AiringSchedule.getQUERY());
 	private final JSONObject variables;
 	private int nextPage = 0;
 	
-	public MediaListPagedQuery(final int userId){
+	public AiringSchedulePagedQuery(final int mediaId){
 		this.variables = new JSONObject();
-		this.variables.put("userID", userId);
+		this.variables.put("mediaID", mediaId);
 		this.variables.put("page", 1);
 		this.variables.put("perPage", PER_PAGE);
 	}
@@ -39,12 +39,12 @@ public class MediaListPagedQuery implements PagedQuery<MediaList>{
 	@NonNull
 	@Override
 	public String getPageElementName(){
-		return "mediaList";
+		return "airingSchedules";
 	}
 	
 	@NonNull
-	public MediaList buildChange(@NonNull final JSONObject change) throws Exception{
-		return new ObjectMapper().readerFor(MediaList.class).readValue(change.toString());
+	public AiringSchedule buildChange(@NonNull final JSONObject change) throws Exception{
+		return new ObjectMapper().readerFor(AiringSchedule.class).readValue(change.toString());
 	}
 	
 	@Override

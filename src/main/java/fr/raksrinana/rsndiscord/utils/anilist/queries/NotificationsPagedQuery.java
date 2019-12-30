@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class NotificationsPagedQuery implements PagedQuery<Notification>{
-	private static final String QUERY_NOTIFICATIONS = PagedQuery.pagedQuery("$type_in: [NotificationType]", Notification.getQuery());
+	private static final String QUERY = PagedQuery.pagedQuery("$type_in: [NotificationType]", Notification.getQuery());
 	private final JSONObject variables;
 	private final LocalDateTime date;
 	private int nextPage = 0;
@@ -25,7 +25,7 @@ public class NotificationsPagedQuery implements PagedQuery<Notification>{
 	@NonNull
 	@Override
 	public String getQuery(){
-		return QUERY_NOTIFICATIONS;
+		return QUERY;
 	}
 	
 	@NonNull

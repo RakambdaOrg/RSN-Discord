@@ -5,10 +5,11 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.utils.reminder.DefaultReminderHandler;
+import fr.raksrinana.rsndiscord.utils.reminder.ReminderUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
-import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -32,11 +33,15 @@ public class RemindersScheduledRunner implements ScheduledRunner{
 			while(it.hasNext()){
 				final var reminder = it.next();
 				if(currentDate.isAfter(reminder.getNotifyDate())){
-					reminder.getUser().getUser().ifPresent(user -> reminder.getChannel().getChannel().ifPresentOrElse(channel -> {
-						Actions.sendMessage(channel, MessageFormat.format("Reminder for {0}: {1}", user.getAsMention(), reminder.getMessage()), null);
-						Optional.ofNullable(reminder.getReminderCountdownMessage()).flatMap(MessageConfiguration::getMessage).ifPresent(Actions::deleteMessage);
-						it.remove();
-					}, it::remove));
+					for(final var handler : ReminderUtils.getHandlers()){
+						if(handler.acceptTag(reminder.getTag())){
+							if(handler.accept(reminder)){
+								it.remove();
+							}
+						}
+					}
+					final var handler = new DefaultReminderHandler();
+					handler.accept(reminder);
 				}
 				else{
 					final var embed = DelayReminderCommand.getEmbedFor(reminder);

@@ -12,6 +12,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import java.awt.Color;
 import java.text.MessageFormat;
 import java.time.Duration;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -21,6 +22,7 @@ public class Utilities{
 	public static final long RAKSRINANA_ACCOUNT = 170119951498084352L;
 	private static final long LOPINETTE_ACCOUNT = 432628353024131085L;
 	private static final Pattern TIME_PATTERN = Pattern.compile("(\\d[HMS])(?!$)");
+	public static final DateTimeFormatter DATE_TIME_MINUTE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 	
 	/**
 	 * Tell if a member is part of the team (admin or moderator).

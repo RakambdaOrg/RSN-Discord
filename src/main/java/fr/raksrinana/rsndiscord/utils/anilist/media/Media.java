@@ -54,6 +54,10 @@ public abstract class Media implements AniListObject{
 		this.type = type;
 	}
 	
+	public static String getQueryWithId(){
+		return "media(mediaId: $mediaId) {\n" + "id\n" + MediaTitle.getQUERY() + "\n" + "season\n" + "type\n" + "format\n" + "status\n" + "episodes\n" + "chapters\n" + "volumes\n" + FuzzyDate.getQuery("startDate") + "\n" + FuzzyDate.getQuery("endDate") + "\n" + "genres\n" + "isAdult\n" + MediaCoverImage.getQUERY() + "\n" + "siteUrl" + "}";
+	}
+	
 	@NonNull
 	public abstract String getProgressType(final boolean contains);
 	
