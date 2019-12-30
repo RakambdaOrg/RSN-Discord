@@ -16,7 +16,7 @@ public class MovieDetailsGetRequest implements TMDBGetRequest<MovieDetails>{
 	
 	@Override
 	public @NonNull String getEndpoint(){
-		return MessageFormat.format("/movie/{0}", this.id);
+		return MessageFormat.format("/movie/{0,number,#q}", this.id);
 	}
 	
 	@Override
