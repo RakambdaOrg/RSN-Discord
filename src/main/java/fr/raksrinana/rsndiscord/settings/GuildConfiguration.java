@@ -145,14 +145,6 @@ public class GuildConfiguration{
 		return Optional.ofNullable(archiveCategory);
 	}
 	
-	public void removeTodo(TodoConfiguration todoConfiguration){
-		this.todos.remove(todoConfiguration);
-	}
-	
-	public void addTodoMessage(@NonNull TodoConfiguration todoConfiguration){
-		this.todos.add(todoConfiguration);
-	}
-	
 	public void addRemoveRole(@NonNull final RemoveRoleConfiguration value){
 		this.removeRoles.add(value);
 	}

@@ -4,7 +4,6 @@ import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
-import fr.raksrinana.rsndiscord.settings.types.TodoConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
@@ -42,9 +41,6 @@ public class ReactionListener extends ListenerAdapter{
 							handleQuestionNoEmote(event);
 						}
 					}
-					else{
-						handleTodos(event, emote);
-					}
 				}
 				final var it = Settings.get(event.getGuild()).getMessagesAwaitingReaction().iterator();
 				while(it.hasNext()){
@@ -73,7 +69,7 @@ public class ReactionListener extends ListenerAdapter{
 	private void handleQuestionOkEmote(@NonNull GuildMessageReactionAddEvent event){
 		Utilities.getMessageById(event.getChannel(), event.getMessageIdLong()).thenAccept(message -> Settings.get(event.getGuild()).getQuestionsConfiguration().getOutputChannel().flatMap(ChannelConfiguration::getChannel).ifPresentOrElse(channel -> {
 			message.getEmbeds().stream().map(Utilities::copyEmbed).map(mess -> mess.addField("Approved by", event.getUser().getAsMention(), false).setTimestamp(message.getTimeCreated()).build()).forEach(embed -> Actions.sendMessage(channel, "", embed).thenAccept(mess -> {
-				Settings.get(event.getGuild()).getMessagesAwaitingReaction().add(new WaitingReactionMessageConfiguration(new MessageConfiguration(event.getChannel().getIdLong(), event.getMessageIdLong()), ReactionTag.ACCEPTED_QUESTION));
+				Settings.get(event.getGuild()).getMessagesAwaitingReaction().add(new WaitingReactionMessageConfiguration(new MessageConfiguration(event.getChannel().getIdLong(), event.getMessageIdLong()), ReactionTag.ACCEPTED_QUESTION, null));
 				Actions.addReaction(mess, BasicEmotes.CHECK_OK.getValue());
 			}));
 			Actions.deleteMessage(message);
@@ -90,39 +86,11 @@ public class ReactionListener extends ListenerAdapter{
 		});
 	}
 	
-	private void handleTodos(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emote){
-		Settings.get(event.getGuild()).getTodos().stream().filter(todo -> Objects.equals(todo.getMessage().getChannel().getChannelId(), event.getChannel().getIdLong())).filter(todo -> Objects.equals(todo.getMessage().getMessageId(), event.getMessageIdLong())).findFirst().ifPresent(todo -> {
-			if(emote == BasicEmotes.CHECK_OK){
-				processTodoCompleted(event, todo);
-			}
-		});
-	}
-	
 	private Optional<String> getIdFromQuestion(@NonNull Message message){
 		return message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> Objects.equals(e.getName(), "ID")).map(MessageEmbed.Field::getValue).findAny();
 	}
 	
 	private Optional<User> getUserFomQuestion(@NonNull Message message){
 		return message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> Objects.equals(e.getName(), "User")).map(MessageEmbed.Field::getValue).filter(Objects::nonNull).map(e -> Main.getJda().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e).replaceAll("")))).findAny();
-	}
-	
-	private void processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull TodoConfiguration todo){
-		todo.getMessage().getMessage().ifPresent(message -> {
-			if(Objects.equals(todo.getMessage().getChannel().getChannelId(), Settings.get(event.getGuild()).getAniListConfiguration().getThaChannel().map(ChannelConfiguration::getChannelId).orElse(null))){
-				Optional.ofNullable(event.getJDA().getUserById(Utilities.RAKSRINANA_ACCOUNT)).map(User::openPrivateChannel).ifPresent(user -> user.queue(privateChannel -> message.getEmbeds().forEach(embed -> Actions.sendPrivateMessage(event.getGuild(), privateChannel, event.getMember().getUser().getAsMention() + " completed", embed))));
-			}
-			if(todo.isDeleteOnDone()){
-				Actions.deleteMessage(message);
-			}
-			else{
-				Actions.editMessage(message, BasicEmotes.OK_HAND.getValue() + " __**DONE**__:  " + message.getContentRaw());
-				Actions.clearReactions(message);
-				message.clearReactions().queue();
-				if(message.isPinned()){
-					Actions.unpin(message);
-				}
-			}
-			Settings.get(event.getGuild()).removeTodo(todo);
-		});
 	}
 }

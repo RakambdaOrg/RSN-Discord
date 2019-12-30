@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Message;
+import java.util.HashMap;
+import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -18,13 +20,20 @@ public class WaitingReactionMessageConfiguration{
 	private MessageConfiguration message;
 	@JsonProperty("tag")
 	private ReactionTag tag;
+	@JsonProperty("data")
+	private Map<String, String> data = new HashMap<>();
 	
 	public WaitingReactionMessageConfiguration(@NonNull Message message, @NonNull ReactionTag tag){
-		this(new MessageConfiguration(message), tag);
+		this(message, tag, null);
 	}
 	
-	public WaitingReactionMessageConfiguration(@NonNull MessageConfiguration message, @NonNull ReactionTag tag){
+	public WaitingReactionMessageConfiguration(@NonNull Message message, @NonNull ReactionTag tag, Map<String, String> data){
+		this(new MessageConfiguration(message), tag, data);
+	}
+	
+	public WaitingReactionMessageConfiguration(@NonNull MessageConfiguration message, @NonNull ReactionTag tag, Map<String, String> data){
 		this.message = message;
 		this.tag = tag;
+		this.data = data;
 	}
 }

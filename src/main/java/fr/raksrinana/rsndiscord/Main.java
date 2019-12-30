@@ -14,12 +14,12 @@ import fr.raksrinana.rsndiscord.runners.trakt.TraktUserHistoryScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.settings.types.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.irc.twitch.TwitchIRC;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
-import fr.raksrinana.rsndiscord.utils.reaction.DefaultReactionHandler;
-import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
+import fr.raksrinana.rsndiscord.utils.reaction.*;
 import fr.raksrinana.rsndiscord.utils.reminder.AnilistReleaseReminderHandler;
 import fr.raksrinana.rsndiscord.utils.reminder.DefaultReminderHandler;
 import fr.raksrinana.rsndiscord.utils.reminder.ReminderUtils;
@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executors;
@@ -79,6 +80,9 @@ public class Main{
 			ReminderUtils.addHandler(new DefaultReminderHandler());
 			ReminderUtils.addHandler(new AnilistReleaseReminderHandler());
 			ReactionUtils.addHandler(new DefaultReactionHandler());
+			ReactionUtils.addHandler(new AcceptedQuestionReactionHandler());
+			ReactionUtils.addHandler(new AnilistTodosReactionHandler());
+			ReactionUtils.addHandler(new TodosReactionHandler());
 			Log.getLogger(null).info("Creating runners");
 			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda), new OverwatchLeagueScheduledRunner(jda), new RemindersScheduledRunner(jda), new TraktUserHistoryScheduledRunner(jda));
 			for(final var scheduledRunner : scheduledRunners){
@@ -99,6 +103,13 @@ public class Main{
 		Log.getLogger(null).info("Shutdown hook registered");
 		consoleHandler = new ConsoleHandler();
 		consoleHandler.start();
+		jda.getGuilds().forEach(guild -> {
+			final var settings = Settings.get(guild);
+			for(final var todo : settings.getTodos()){
+				settings.getMessagesAwaitingReaction().add(new WaitingReactionMessageConfiguration(todo.getMessage(), ReactionTag.TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(todo.isDeleteOnDone()))));
+			}
+			settings.getTodos().clear();
+		});
 	}
 	
 	static CLIParameters loadEnv(@NonNull String[] args){
