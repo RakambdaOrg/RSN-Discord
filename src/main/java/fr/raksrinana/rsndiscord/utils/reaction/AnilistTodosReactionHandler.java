@@ -17,7 +17,7 @@ public class AnilistTodosReactionHandler extends TodosReactionHandler{
 	
 	@Override
 	public int getPriority(){
-		return 1000;
+		return 990;
 	}
 	
 	@Override

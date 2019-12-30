@@ -3,17 +3,23 @@ package fr.raksrinana.rsndiscord.commands;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
+import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.types.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
+import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @BotCommand
-public class AnimeReactionCommand extends BasicCommand{
+public class MediaReactionCommand extends BasicCommand{
 	private static final String COMMENT_STR = "--";
 	
 	@NonNull
@@ -30,7 +36,13 @@ public class AnimeReactionCommand extends BasicCommand{
 					hasEpisodes = !options.contains("m");
 					askArchive = options.contains("a");
 				}
-				var newText = hasEpisodes ? "__**EP " + lines.pop() + "**__" : "";
+				if(lines.isEmpty()){
+					return CommandResult.BAD_ARGUMENTS;
+				}
+				var newText = "";
+				if(hasEpisodes){
+					newText += "__**EP " + lines.pop() + "**__";
+				}
 				if(!lines.isEmpty()){
 					newText += "\n" + lines.stream().map(s -> {
 						var decorator = "||";
@@ -48,10 +60,19 @@ public class AnimeReactionCommand extends BasicCommand{
 						return convertTime(parts) + decorator + String.join(" ", parts) + decorator;
 					}).collect(Collectors.joining("\n"));
 				}
-				Actions.reply(event, newText, null).thenAccept(message -> {
-				});
+				if(askArchive){
+					newText += "\nClicking the " + BasicEmotes.PACKAGE.getValue() + " reaction will archive the channel. Use it if you don't wanna watch this media or if there's nothing more to say.";
+				}
+				final var restMessage = Actions.reply(event, newText, null);
+				if(askArchive){
+					restMessage.thenAccept(message -> {
+						Actions.addReaction(message, BasicEmotes.PACKAGE.getValue());
+						Settings.get(event.getGuild()).getMessagesAwaitingReaction().add(new WaitingReactionMessageConfiguration(message, ReactionTag.MEDIA_REACTION, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(false))));
+					});
+				}
+				return CommandResult.SUCCESS;
 			}
-			return CommandResult.SUCCESS;
+			return CommandResult.BAD_ARGUMENTS;
 		}
 		catch(Exception e){
 			Log.getLogger(event.getGuild()).error("Failed to parse anime reaction", e);
@@ -95,18 +116,18 @@ public class AnimeReactionCommand extends BasicCommand{
 	@NonNull
 	@Override
 	public String getName(){
-		return "Anime reaction";
+		return "Media reaction";
 	}
 	
 	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("animereaction", "ar");
+		return List.of("mediareaction", "mr");
 	}
 	
 	@NonNull
 	@Override
 	public String getDescription(){
-		return "Formats anime reactions";
+		return "Formats media reactions";
 	}
 }

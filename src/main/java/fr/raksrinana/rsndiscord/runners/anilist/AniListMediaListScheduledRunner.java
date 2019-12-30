@@ -5,7 +5,6 @@ import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.AniListConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
-import fr.raksrinana.rsndiscord.settings.types.TodoConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
@@ -79,7 +78,7 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 					Actions.deleteMessage(message);
 					Settings.get(channelToSend.getGuild()).getMessagesAwaitingReaction().remove(reaction);
 				}));
-				Settings.get(channelToSend.getGuild()).addTodoMessage(new TodoConfiguration(sentMessage, true));
+				Settings.get(channelToSend.getGuild()).getMessagesAwaitingReaction().add(new WaitingReactionMessageConfiguration(sentMessage, ReactionTag.ANILIST_TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
 			});
 		})));
 	}

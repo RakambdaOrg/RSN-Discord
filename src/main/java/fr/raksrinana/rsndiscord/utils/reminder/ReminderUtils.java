@@ -5,16 +5,16 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ReminderConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.SortedList;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.PriorityQueue;
 
 public class ReminderUtils{
-	private static final Collection<ReminderHandler> handlers = new PriorityQueue<>();
+	private static final Collection<ReminderHandler> handlers = new SortedList<>();
 	
 	/**
 	 * Add a reminder into the configuration and send a notification message with a countdown.

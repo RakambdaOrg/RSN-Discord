@@ -7,6 +7,7 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import java.util.Objects;
 import java.util.Optional;
+import static fr.raksrinana.rsndiscord.utils.BasicEmotes.CHECK_OK;
 
 public class TodosReactionHandler implements ReactionHandler{
 	@Override
@@ -18,12 +19,16 @@ public class TodosReactionHandler implements ReactionHandler{
 	public ReactionHandlerResult accept(@NonNull GuildMessageReactionAddEvent event, @NonNull WaitingReactionMessageConfiguration reaction){
 		if(event.getReactionEmote().isEmoji()){
 			final var emote = BasicEmotes.getEmote(event.getReactionEmote().getEmoji());
-			if(emote == BasicEmotes.CHECK_OK){
+			if(isValidEmote(emote)){
 				processTodoCompleted(event, reaction);
 				return ReactionHandlerResult.PROCESSED_DELETE;
 			}
 		}
 		return ReactionHandlerResult.PROCESSED;
+	}
+	
+	protected boolean isValidEmote(@NonNull BasicEmotes emote){
+		return emote == CHECK_OK;
 	}
 	
 	@Override

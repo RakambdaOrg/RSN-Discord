@@ -4,9 +4,10 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.types.TodoConfiguration;
+import fr.raksrinana.rsndiscord.settings.types.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
+import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -32,7 +33,7 @@ public class TodoCommand extends BasicCommand{
 		else{
 			Actions.reply(event, String.join(" ", args), null).thenAccept(message -> {
 				Actions.addReaction(message, BasicEmotes.CHECK_OK.getValue());
-				Settings.get(event.getGuild()).addTodoMessage(new TodoConfiguration(message));
+				Settings.get(event.getGuild()).getMessagesAwaitingReaction().add(new WaitingReactionMessageConfiguration(message, ReactionTag.TODO));
 				Actions.pin(message);
 			});
 		}

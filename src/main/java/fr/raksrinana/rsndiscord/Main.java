@@ -83,6 +83,7 @@ public class Main{
 			ReactionUtils.addHandler(new AcceptedQuestionReactionHandler());
 			ReactionUtils.addHandler(new AnilistTodosReactionHandler());
 			ReactionUtils.addHandler(new TodosReactionHandler());
+			ReactionUtils.addHandler(new MediaReactionReactionHandler());
 			Log.getLogger(null).info("Creating runners");
 			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda), new OverwatchLeagueScheduledRunner(jda), new RemindersScheduledRunner(jda), new TraktUserHistoryScheduledRunner(jda));
 			for(final var scheduledRunner : scheduledRunners){

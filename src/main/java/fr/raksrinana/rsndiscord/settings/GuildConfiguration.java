@@ -123,7 +123,7 @@ public class GuildConfiguration{
 	private CategoryConfiguration archiveCategory;
 	@JsonProperty("messagesAwaitingReaction")
 	@Setter
-	private Set<WaitingReactionMessageConfiguration> messagesAwaitingReaction;
+	private Set<WaitingReactionMessageConfiguration> messagesAwaitingReaction = new HashSet<>();
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
