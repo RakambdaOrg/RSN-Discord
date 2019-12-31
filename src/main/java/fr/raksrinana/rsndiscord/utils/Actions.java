@@ -286,4 +286,16 @@ public class Actions{
 	public static CompletableFuture<Void> changeNickname(@NonNull Member member, String nickname){
 		return member.getGuild().modifyNickname(member, nickname).submit();
 	}
+	
+	/**
+	 * Sets the category of a channel and sync its permissions.
+	 *
+	 * @param channel  The channel to move.
+	 * @param category The category to move it into and sync with.
+	 *
+	 * @return A completable future (see {@link RestAction#submit()}).
+	 */
+	public static CompletableFuture<Void> setCategoryAndSync(@NonNull GuildChannel channel, @NonNull Category category){
+		return channel.getManager().setParent(category).sync(category).submit();
+	}
 }
