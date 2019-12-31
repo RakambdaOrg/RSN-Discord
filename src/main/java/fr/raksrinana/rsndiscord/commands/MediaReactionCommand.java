@@ -61,7 +61,7 @@ public class MediaReactionCommand extends BasicCommand{
 					}).collect(Collectors.joining("\n"));
 				}
 				if(askArchive){
-					newText += "\nClicking the " + BasicEmotes.PACKAGE.getValue() + " reaction will archive the channel. Use it if you don't wanna watch this media or if there's nothing more to say.";
+					newText += "\n\nClicking the " + BasicEmotes.PACKAGE.getValue() + " reaction will archive the channel. Use it if you don't wanna watch this media or if there's nothing more to say.";
 				}
 				final var restMessage = Actions.reply(event, newText, null);
 				if(askArchive){
