@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Objects;
 
 public class LogListener extends ListenerAdapter{
@@ -57,7 +58,7 @@ public class LogListener extends ListenerAdapter{
 				final var weekKey = now.minusDays(getDaysToRemove(now.getDayOfWeek()));
 				final var emotes = Settings.get(event.getGuild()).getParticipationConfig().getEmotes(weekKey);
 				event.getMessage().getEmotes().forEach(emote -> emotes.increment(emote.getIdLong(), emote.getName()));
-				final var sentDate = event.getMessage().getTimeCreated().toLocalDateTime();
+				final var sentDate = event.getMessage().getTimeCreated().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
 				if(sentDate.isBefore(LocalDateTime.of(2020, 1, 1, 5, 0, 0)) && sentDate.isAfter(LocalDateTime.of(2019, 12, 31, 20, 0, 0))){
 					Settings.get(event.getGuild()).getNewYearRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> {
 						if(!event.getMember().getRoles().contains(role)){
