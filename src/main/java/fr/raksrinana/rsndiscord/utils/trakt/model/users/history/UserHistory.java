@@ -2,6 +2,7 @@ package fr.raksrinana.rsndiscord.utils.trakt.model.users.history;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601DateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktDatedObject;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktMediaType;
@@ -41,6 +42,7 @@ public abstract class UserHistory implements TraktDatedObject{
 		builder.setFooter(Long.toString(this.getId()));
 		builder.setColor(Color.GREEN);
 		builder.setTimestamp(this.getWatchedAt());
+		builder.addField("Watched at", watchedAt.format(Utilities.DATE_TIME_MINUTE_FORMATTER), true);
 	}
 	
 	@Override

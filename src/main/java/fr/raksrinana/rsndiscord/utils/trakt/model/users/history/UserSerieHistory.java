@@ -23,10 +23,11 @@ public class UserSerieHistory extends UserHistory{
 	
 	@Override
 	public void fillEmbed(EmbedBuilder builder){
-		super.fillEmbed(builder);
 		this.getShow().fillEmbed(builder);
 		builder.addBlankField(false);
 		this.getEpisode().fillEmbed(builder);
+		builder.addBlankField(false);
+		super.fillEmbed(builder);
 	}
 	
 	@Override

@@ -21,8 +21,9 @@ public class UserMovieHistory extends UserHistory{
 	
 	@Override
 	public void fillEmbed(EmbedBuilder builder){
-		super.fillEmbed(builder);
 		this.getMovie().fillEmbed(builder);
+		builder.addBlankField(false);
+		super.fillEmbed(builder);
 	}
 	
 	@Override
