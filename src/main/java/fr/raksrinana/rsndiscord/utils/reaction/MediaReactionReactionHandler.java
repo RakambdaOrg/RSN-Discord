@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import java.text.MessageFormat;
 import java.util.Objects;
 
 public class MediaReactionReactionHandler extends TodosReactionHandler{
@@ -29,6 +30,6 @@ public class MediaReactionReactionHandler extends TodosReactionHandler{
 	@Override
 	protected void processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull WaitingReactionMessageConfiguration todo){
 		Utilities.getMessageById(event.getChannel(), event.getMessageIdLong()).thenAccept(message -> message.removeReaction(event.getReactionEmote().getEmoji()).queue());
-		Settings.get(event.getGuild()).getArchiveCategory().flatMap(CategoryConfiguration::getCategory).ifPresent(archiveCategory -> Actions.setCategoryAndSync(event.getChannel(), archiveCategory));
+		Settings.get(event.getGuild()).getArchiveCategory().flatMap(CategoryConfiguration::getCategory).map(archiveCategory -> Actions.setCategoryAndSync(event.getChannel(), archiveCategory)).ifPresent(future -> Actions.sendMessage(event.getChannel(), MessageFormat.format("{0} archived this channel.", event.getMember().getAsMention()), null));
 	}
 }

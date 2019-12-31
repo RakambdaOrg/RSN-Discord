@@ -296,6 +296,7 @@ public class Actions{
 	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
 	public static CompletableFuture<Void> setCategoryAndSync(@NonNull GuildChannel channel, @NonNull Category category){
+		Log.getLogger(channel.getGuild()).info("Archiving channel {} to {} and syncing it", channel, category);
 		return channel.getManager().setParent(category).sync(category).submit();
 	}
 }

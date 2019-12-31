@@ -46,7 +46,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 		super.onGuildMessageReceived(event);
 		try{
 			if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
-				Log.getLogger(event.getGuild()).debug("Processing potential command: {}", event.getMessage().getContentRaw());
+				Log.getLogger(event.getGuild()).debug("Processing potential command from {}: {}", event.getAuthor(), event.getMessage().getContentRaw());
 				Actions.deleteMessage(event.getMessage());
 				final var args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 				final var cmdText = args.pop().substring(Settings.get(event.getGuild()).getPrefix().orElse(defaultPrefix).length());
