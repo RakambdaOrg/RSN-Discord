@@ -67,7 +67,7 @@ public class MediaReactionCommand extends BasicCommand{
 				if(askArchive){
 					restMessage.thenAccept(message -> {
 						Actions.addReaction(message, BasicEmotes.PACKAGE.getValue());
-						Settings.get(event.getGuild()).getMessagesAwaitingReaction().add(new WaitingReactionMessageConfiguration(message, ReactionTag.MEDIA_REACTION, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(false))));
+						Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, ReactionTag.MEDIA_REACTION, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(false))));
 					});
 				}
 				return CommandResult.SUCCESS;

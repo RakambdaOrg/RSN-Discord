@@ -107,7 +107,7 @@ public class Main{
 		jda.getGuilds().forEach(guild -> {
 			final var settings = Settings.get(guild);
 			for(final var todo : settings.getTodos()){
-				settings.getMessagesAwaitingReaction().add(new WaitingReactionMessageConfiguration(todo.getMessage(), ReactionTag.TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(todo.isDeleteOnDone()))));
+				settings.addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(todo.getMessage(), ReactionTag.TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(todo.isDeleteOnDone()))));
 			}
 			settings.getTodos().clear();
 		});

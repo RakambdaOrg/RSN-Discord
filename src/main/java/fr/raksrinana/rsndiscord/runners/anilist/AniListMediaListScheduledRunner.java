@@ -76,16 +76,16 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 				Actions.addReaction(sentMessage, BasicEmotes.CHECK_OK.getValue());
 				similarWaitingReactions.forEach(reaction -> Utilities.getMessageById(channelToSend, reaction.getMessage().getMessageId()).thenAccept(message -> {
 					Actions.deleteMessage(message);
-					Settings.get(channelToSend.getGuild()).getMessagesAwaitingReaction().remove(reaction);
+					Settings.get(channelToSend.getGuild()).removeMessagesAwaitingReaction(reaction);
 				}));
-				Settings.get(channelToSend.getGuild()).getMessagesAwaitingReaction().add(new WaitingReactionMessageConfiguration(sentMessage, ReactionTag.ANILIST_TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
+				Settings.get(channelToSend.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(sentMessage, ReactionTag.ANILIST_TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
 			});
 		})));
 	}
 	
 	private Collection<WaitingReactionMessageConfiguration> getSimilarWaitingReactions(@NonNull final TextChannel channel, @NonNull final Media media){
 		final var mediaIdStr = Integer.toString(media.getId());
-		return Settings.get(channel.getGuild()).getMessagesAwaitingReaction().stream().filter(reaction -> Objects.equals(reaction.getTag(), ReactionTag.ANILIST_TODO)).filter(reaction -> {
+		return Settings.get(channel.getGuild()).getMessagesAwaitingReaction(ReactionTag.ANILIST_TODO).stream().filter(reaction -> Objects.equals(reaction.getTag(), ReactionTag.ANILIST_TODO)).filter(reaction -> {
 			if(Objects.equals(reaction.getMessage().getChannel().getChannelId(), channel.getIdLong())){
 				return reaction.getMessage().getMessage().map(message -> {
 					final var isSameMedia = message.getEmbeds().stream().anyMatch(embed -> Objects.equals(embed.getTitle(), "User list information") && (Objects.equals(Optional.ofNullable(embed.getFooter()).map(MessageEmbed.Footer::getText).orElse(null), mediaIdStr) || Objects.equals(embed.getDescription(), media.getTitle().getRomaji())));

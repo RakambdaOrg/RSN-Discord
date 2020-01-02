@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.settings.guild.*;
 import fr.raksrinana.rsndiscord.settings.types.*;
+import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -129,8 +130,20 @@ public class GuildConfiguration{
 		this.guildId = guildId;
 	}
 	
-	public Set<WaitingReactionMessageConfiguration> getMessagesAwaitingReaction(){
-		return this.messagesAwaitingReaction;
+	public void addMessagesAwaitingReaction(@NonNull WaitingReactionMessageConfiguration reaction){
+		this.messagesAwaitingReaction.add(reaction);
+	}
+	
+	public void removeMessagesAwaitingReaction(@NonNull WaitingReactionMessageConfiguration reaction){
+		this.messagesAwaitingReaction.remove(reaction);
+	}
+	
+	public Collection<WaitingReactionMessageConfiguration> getMessagesAwaitingReaction(@NonNull ReactionTag tag){
+		return new HashSet<>(this.messagesAwaitingReaction).stream().filter(reaction -> Objects.equals(reaction.getTag(), tag)).collect(Collectors.toSet());
+	}
+	
+	public Iterator<WaitingReactionMessageConfiguration> getMessagesAwaitingReaction(){
+		return this.messagesAwaitingReaction.iterator();
 	}
 	
 	public Optional<RoleConfiguration> getChristmasRole(){

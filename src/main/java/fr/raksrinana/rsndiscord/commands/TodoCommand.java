@@ -33,7 +33,7 @@ public class TodoCommand extends BasicCommand{
 		else{
 			Actions.reply(event, String.join(" ", args), null).thenAccept(message -> {
 				Actions.addReaction(message, BasicEmotes.CHECK_OK.getValue());
-				Settings.get(event.getGuild()).getMessagesAwaitingReaction().add(new WaitingReactionMessageConfiguration(message, ReactionTag.TODO));
+				Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, ReactionTag.TODO));
 				Actions.pin(message);
 			});
 		}

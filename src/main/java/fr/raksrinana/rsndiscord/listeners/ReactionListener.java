@@ -42,7 +42,7 @@ public class ReactionListener extends ListenerAdapter{
 						}
 					}
 				}
-				final var it = Settings.get(event.getGuild()).getMessagesAwaitingReaction().iterator();
+				final var it = Settings.get(event.getGuild()).getMessagesAwaitingReaction();
 				while(it.hasNext()){
 					final var waitingReactionMessage = it.next();
 					if(Objects.equals(waitingReactionMessage.getMessage().getMessageId(), event.getMessageIdLong()) && Objects.equals(waitingReactionMessage.getMessage().getChannel().getChannelId(), event.getChannel().getIdLong())){
@@ -69,7 +69,7 @@ public class ReactionListener extends ListenerAdapter{
 	private void handleQuestionOkEmote(@NonNull GuildMessageReactionAddEvent event){
 		Utilities.getMessageById(event.getChannel(), event.getMessageIdLong()).thenAccept(message -> Settings.get(event.getGuild()).getQuestionsConfiguration().getOutputChannel().flatMap(ChannelConfiguration::getChannel).ifPresentOrElse(channel -> {
 			message.getEmbeds().stream().map(Utilities::copyEmbed).map(mess -> mess.addField("Approved by", event.getUser().getAsMention(), false).setTimestamp(message.getTimeCreated()).build()).forEach(embed -> Actions.sendMessage(channel, "", embed).thenAccept(mess -> {
-				Settings.get(event.getGuild()).getMessagesAwaitingReaction().add(new WaitingReactionMessageConfiguration(new MessageConfiguration(event.getChannel().getIdLong(), event.getMessageIdLong()), ReactionTag.ACCEPTED_QUESTION, null));
+				Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(new MessageConfiguration(event.getChannel().getIdLong(), event.getMessageIdLong()), ReactionTag.ACCEPTED_QUESTION, null));
 				Actions.addReaction(mess, BasicEmotes.CHECK_OK.getValue());
 			}));
 			Actions.deleteMessage(message);
