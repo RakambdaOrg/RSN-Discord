@@ -29,7 +29,12 @@ public class MediaReactionReactionHandler extends TodosReactionHandler{
 	
 	@Override
 	protected void processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull WaitingReactionMessageConfiguration todo){
-		Utilities.getMessageById(event.getChannel(), event.getMessageIdLong()).thenAccept(message -> message.removeReaction(event.getReactionEmote().getEmoji()).queue());
-		Settings.get(event.getGuild()).getArchiveCategory().flatMap(CategoryConfiguration::getCategory).map(archiveCategory -> Actions.setCategoryAndSync(event.getChannel(), archiveCategory)).ifPresent(future -> Actions.sendMessage(event.getChannel(), MessageFormat.format("{0} archived this channel.", event.getMember().getAsMention()), null));
+		Settings.get(event.getGuild()).getArchiveCategory().flatMap(CategoryConfiguration::getCategory).ifPresentOrElse(archiveCategory -> {
+			Utilities.getMessageById(event.getChannel(), event.getMessageIdLong()).thenAccept(message -> message.removeReaction(event.getReactionEmote().getEmoji()).queue());
+			Actions.setCategoryAndSync(event.getChannel(), archiveCategory).thenAccept(future -> Actions.sendMessage(event.getChannel(), MessageFormat.format("{0} archived this channel.", event.getMember().getAsMention()), null));
+		}, () -> {
+			Actions.removeReaction(event.getReaction(), event.getUser());
+			Actions.reply(event, "No archive category have been defined", null);
+		});
 	}
 }
