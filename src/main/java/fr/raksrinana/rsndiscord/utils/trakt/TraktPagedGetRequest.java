@@ -6,7 +6,7 @@ public interface TraktPagedGetRequest<T> extends TraktGetRequest<Set<T>>{
 	TraktPagedGetRequest<T> getForPage(int page);
 	
 	default int getLimit(){
-		return 10;
+		return 50;
 	}
 	
 	int getPage();
