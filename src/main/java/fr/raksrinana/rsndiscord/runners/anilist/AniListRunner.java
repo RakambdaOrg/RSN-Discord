@@ -68,11 +68,11 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 		if(this.isKeepOnlyNew()){
 			final var baseDate = Settings.get(member.getGuild()).getAniListConfiguration().getLastAccess(this.getRunnerName(), member.getUser().getIdLong()).map(UserDateConfiguration::getDate).orElse(LocalDateTime.of(2019, 7, 7, 0, 0));
 			elementList = elementList.stream().filter(e -> e instanceof AnilistDatedObject).filter(e -> ((AnilistDatedObject) e).getDate().isAfter(baseDate)).collect(Collectors.toSet());
+			elementList.stream().filter(e -> e instanceof AnilistDatedObject).map(e -> (AnilistDatedObject) e).map(AnilistDatedObject::getDate).max(LocalDateTime::compareTo).ifPresent(val -> {
+				Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {} (last was {})", member, this.getRunnerName(), val, baseDate);
+				Settings.get(member.getGuild()).getAniListConfiguration().setLastAccess(member.getUser(), this.getRunnerName(), val);
+			});
 		}
-		elementList.stream().filter(e -> e instanceof AnilistDatedObject).map(e -> (AnilistDatedObject) e).map(AnilistDatedObject::getDate).max(LocalDateTime::compareTo).ifPresent(val -> {
-			Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {}", member, this.getRunnerName(), val);
-			Settings.get(member.getGuild()).getAniListConfiguration().setLastAccess(member.getUser(), this.getRunnerName(), val);
-		});
 		return elementList;
 	}
 	

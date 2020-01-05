@@ -39,14 +39,14 @@ public class TraktUtils{
 			parameters.putIfAbsent("limit", Integer.toString(request.getLimit()));
 			final var handler = new ObjectGetRequestSender<>(request.getResultClass(), new URL(API_URL + request.getEndpoint()), headers, parameters).getRequestHandler();
 			handler.getResult().getParsingError().ifPresent(error -> Log.getLogger(null).warn("Failed to parse response", error));
-			if(request.isValidResult(handler.getStatus())){
+			if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
 				results.addAll(handler.getRequestResult());
 				pageCount = Optional.ofNullable(handler.getHeaders().getFirst("X-Pagination-Page-Count")).map(Integer::parseInt).orElseThrow(() -> new RequestException("No page count in header", handler.getStatus()));
 				@NonNull final var finalRequest = request;
 				request = Optional.ofNullable(handler.getHeaders().getFirst("X-Pagination-Page")).map(Integer::parseInt).map(page -> page + 1).map(finalRequest::getForPage).orElseThrow(() -> new RequestException("No page in header", handler.getStatus()));
 			}
 			else{
-				throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString(), handler.getStatus());
+				throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult() + "(" + handler.getResult().getParsingError() + ")", handler.getStatus());
 			}
 		}
 		while(request.getPage() < pageCount);

@@ -49,7 +49,7 @@ public class AniListUtils{
 		body.put("code", code);
 		final var sender = new JSONPostRequestSender(new URL(API_URL + "/oauth/token"), headers, new HashMap<>(), body.toString());
 		final var result = sender.getRequestHandler();
-		if(!Objects.equals(result.getStatus(), HTTP_OK)){
+		if(!result.getResult().isSuccess()){
 			throw new InvalidResponseException("Getting token failed HTTP code " + result.getStatus());
 		}
 		final var json = result.getRequestResult().getObject();
@@ -108,7 +108,7 @@ public class AniListUtils{
 		body.put("query", query);
 		body.put("variables", variables);
 		final var handler = new JSONPostRequestSender(new URL("https://graphql.anilist.co"), headers, new HashMap<>(), body.toString()).getRequestHandler();
-		if(Objects.equals(handler.getStatus(), HTTP_OK)){
+		if(handler.getResult().isSuccess()){
 			return handler.getRequestResult().getObject();
 		}
 		if(Objects.equals(handler.getStatus(), HTTP_ERROR) || Objects.equals(handler.getStatus(), HTTP_TOO_MANY_REQUESTS)){
