@@ -58,7 +58,7 @@ public class LuxBusUtils{
 			if(request.getStatus() == HTTP_OK){
 				final var response = request.getRequestResult().getObject();
 				if(response.has("Departure")){
-					return new ObjectMapper().readerFor(new TypeReference<List<LuxBusDeparture>>(){}).readValue(response.getJSONArray("Departure").toString());
+					return new ObjectMapper().readerFor(new TypeReference<Set<LuxBusDeparture>>(){}).readValue(response.getJSONArray("Departure").toString());
 				}
 			}
 			else{
