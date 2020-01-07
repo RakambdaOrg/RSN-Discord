@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.Optional;
@@ -60,7 +62,15 @@ public class MessageConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public boolean shouldBeRemoved(){
-		return getMessage().isEmpty();
+		return this.getChannel().shouldBeRemoved() || this.getChannel().getChannel().map(channel -> channel.retrieveMessageById(getMessageId()).submit().thenApply(m -> false).exceptionally(throwable -> ((ErrorResponseException) throwable).getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE)).map(future -> {
+			try{
+				return future.get();
+			}
+			catch(InterruptedException | ExecutionException e){
+				Log.getLogger(null).error("Failed to get message", e);
+			}
+			return null;
+		}).orElse(false);
 	}
 	
 	@NonNull
