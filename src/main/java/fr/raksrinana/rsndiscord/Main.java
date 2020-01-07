@@ -103,7 +103,6 @@ public class Main{
 		Log.getLogger(null).info("Shutdown hook registered");
 		consoleHandler = new ConsoleHandler();
 		consoleHandler.start();
-		Settings.clean();
 	}
 	
 	static CLIParameters loadEnv(@NonNull String[] args){
