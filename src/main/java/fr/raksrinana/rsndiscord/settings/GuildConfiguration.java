@@ -125,6 +125,10 @@ public class GuildConfiguration{
 	@JsonProperty("messagesAwaitingReaction")
 	@Setter
 	private Set<WaitingReactionMessageConfiguration> messagesAwaitingReaction = new HashSet<>();
+	@JsonProperty("amazonTrackings")
+	@Getter
+	@Setter
+	private Set<AmazonTrackingConfiguration> amazonTrackings = new HashSet<>();
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;

@@ -2,8 +2,8 @@ package fr.raksrinana.rsndiscord.utils.reminder;
 
 import fr.raksrinana.rsndiscord.commands.reminder.ReminderCommand;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.guild.ReminderConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
-import fr.raksrinana.rsndiscord.settings.types.ReminderConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.SortedList;
 import fr.raksrinana.rsndiscord.utils.Utilities;

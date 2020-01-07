@@ -47,6 +47,7 @@ dependencies {
         exclude group: 'edu.washington.cs.types.checker', module: 'checker-framework'
     }
     implementation("fr.raksrinana:utils.http:${project.raksrinana_utils_version}")
+    implementation("org.jsoup:jsoup:${project.jsoup_version}")
 
     implementation("com.konghq:unirest-java:${project.unirest_version}")
     implementation("com.beust:jcommander:${project.jcommander_version}")

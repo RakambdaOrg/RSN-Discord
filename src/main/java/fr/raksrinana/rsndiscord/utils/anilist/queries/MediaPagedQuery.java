@@ -13,10 +13,10 @@ public class MediaPagedQuery implements PagedQuery<Media>{
 	
 	public MediaPagedQuery(final int mediaId){
 		this.variables = new JSONObject();
-		this.variables.put("mediaID", mediaId);
+		this.variables.put("mediaId", mediaId);
 		this.variables.put("page", 1);
 		this.variables.put("perPage", PER_PAGE);
-		this.QUERY = PagedQuery.pagedQuery(", $mediaID: Int", Media.getQueryWithId());
+		this.QUERY = PagedQuery.pagedQuery(", $mediaId: Int", Media.getQueryWithId());
 	}
 	
 	@NonNull

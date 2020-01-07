@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.exceptions.HierarchyException;
 import java.awt.Color;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
@@ -80,7 +81,7 @@ public class NicknameCommand extends BasicCommand{
 				builder.addField("User", member.getAsMention(), true);
 				builder.addField("Reason", "You can change your nickname once every " + delay.toString().replace("PT", ""), true);
 				builder.addField("Last change", lastChange.format(DF), true);
-				builder.setTimestamp(LocalDateTime.now());
+				builder.setTimestamp(ZonedDateTime.now());
 				Actions.reply(event, "", builder.build());
 			}
 			else{

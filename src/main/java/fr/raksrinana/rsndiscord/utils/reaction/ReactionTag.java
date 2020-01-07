@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.NonNull;
 
 public enum ReactionTag{
-	NONE, TODO, ANILIST_TODO, ACCEPTED_QUESTION, MEDIA_REACTION;
+	NONE, TODO, ANILIST_TODO, ACCEPTED_QUESTION, MEDIA_REACTION, AMAZON_TRACKER;
 	
 	@JsonCreator
 	@NonNull

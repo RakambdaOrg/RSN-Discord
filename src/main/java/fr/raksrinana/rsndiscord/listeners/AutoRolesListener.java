@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.listeners;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.types.RemoveRoleConfiguration;
+import fr.raksrinana.rsndiscord.settings.guild.RemoveRoleConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserRoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;

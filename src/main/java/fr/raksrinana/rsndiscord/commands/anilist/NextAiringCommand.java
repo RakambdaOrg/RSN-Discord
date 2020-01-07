@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.commands.anilist;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.settings.types.ReminderConfiguration;
+import fr.raksrinana.rsndiscord.settings.guild.ReminderConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.anilist.airing.AiringSchedule;
 import fr.raksrinana.rsndiscord.utils.anilist.queries.AiringSchedulePagedQuery;

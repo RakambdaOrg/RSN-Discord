@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.commands.warn;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.types.RemoveRoleConfiguration;
+import fr.raksrinana.rsndiscord.settings.guild.RemoveRoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;

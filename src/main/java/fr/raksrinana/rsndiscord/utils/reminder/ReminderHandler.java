@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.utils.reminder;
 
-import fr.raksrinana.rsndiscord.settings.types.ReminderConfiguration;
+import fr.raksrinana.rsndiscord.settings.guild.ReminderConfiguration;
 import lombok.NonNull;
 
 public interface ReminderHandler extends Comparable<ReminderHandler>{

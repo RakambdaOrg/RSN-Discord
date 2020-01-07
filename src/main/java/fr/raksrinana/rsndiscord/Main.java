@@ -14,7 +14,6 @@ import fr.raksrinana.rsndiscord.runners.trakt.TraktUserHistoryScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
-import fr.raksrinana.rsndiscord.settings.types.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.irc.twitch.TwitchIRC;
 import fr.raksrinana.rsndiscord.utils.log.Log;
@@ -38,7 +37,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executors;
@@ -84,8 +82,9 @@ public class Main{
 			ReactionUtils.addHandler(new AnilistTodosReactionHandler());
 			ReactionUtils.addHandler(new TodosReactionHandler());
 			ReactionUtils.addHandler(new MediaReactionReactionHandler());
+			ReactionUtils.addHandler(new AmazonTrackingReactionHandler());
 			Log.getLogger(null).info("Creating runners");
-			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda), new OverwatchLeagueScheduledRunner(jda), new RemindersScheduledRunner(jda), new TraktUserHistoryScheduledRunner(jda));
+			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda), new OverwatchLeagueScheduledRunner(jda), new RemindersScheduledRunner(jda), new TraktUserHistoryScheduledRunner(jda), new AmazonPriceCheckerScheduledRunner(jda));
 			for(final var scheduledRunner : scheduledRunners){
 				executorService.scheduleAtFixedRate(scheduledRunner, scheduledRunner.getDelay(), scheduledRunner.getPeriod(), scheduledRunner.getPeriodUnit());
 			}
@@ -104,13 +103,6 @@ public class Main{
 		Log.getLogger(null).info("Shutdown hook registered");
 		consoleHandler = new ConsoleHandler();
 		consoleHandler.start();
-		jda.getGuilds().forEach(guild -> {
-			final var settings = Settings.get(guild);
-			for(final var todo : settings.getTodos()){
-				settings.addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(todo.getMessage(), ReactionTag.TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(todo.isDeleteOnDone()))));
-			}
-			settings.getTodos().clear();
-		});
 	}
 	
 	static CLIParameters loadEnv(@NonNull String[] args){

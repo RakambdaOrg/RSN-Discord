@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.utils.reminder;
 
+import fr.raksrinana.rsndiscord.settings.guild.ReminderConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
-import fr.raksrinana.rsndiscord.settings.types.ReminderConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.anilist.queries.MediaPagedQuery;
 import fr.raksrinana.rsndiscord.utils.log.Log;

@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.commands.reminder;
 
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
-import fr.raksrinana.rsndiscord.settings.types.ReminderConfiguration;
+import fr.raksrinana.rsndiscord.settings.guild.ReminderConfiguration;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.reminder.ReminderUtils;
 import lombok.NonNull;

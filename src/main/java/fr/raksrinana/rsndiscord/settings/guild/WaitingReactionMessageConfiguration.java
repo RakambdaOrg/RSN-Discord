@@ -1,8 +1,9 @@
-package fr.raksrinana.rsndiscord.settings.types;
+package fr.raksrinana.rsndiscord.settings.guild;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
