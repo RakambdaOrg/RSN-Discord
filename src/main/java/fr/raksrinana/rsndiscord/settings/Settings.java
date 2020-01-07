@@ -69,7 +69,7 @@ public class Settings{
 	public static void clean(){
 		configurations.values().forEach(guildConfiguration -> {
 			try{
-				guildConfiguration.cleanFields(guildConfiguration);
+				guildConfiguration.cleanFields();
 			}
 			catch(IllegalAccessException e){
 				Log.getLogger(null).error("Failed to clean guild configuration", e);

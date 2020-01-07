@@ -48,7 +48,7 @@ public abstract class WarnConfigurationCommand extends BaseConfigurationCommand{
 			}
 			final var role = event.getMessage().getMentionedRoles().get(0);
 			this.getConfig(event.getGuild()).ifPresentOrElse(config -> {
-				config.setRole(role);
+				config.getRole().setRole(role);
 				config.setDelay(delay);
 			}, () -> this.createConfig(event.getGuild(), role, delay));
 			final var builder = this.getConfigEmbed(event, ConfigurationOperation.SET.name(), Color.GREEN);

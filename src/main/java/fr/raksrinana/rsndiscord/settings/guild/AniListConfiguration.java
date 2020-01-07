@@ -60,7 +60,7 @@ public class AniListConfiguration implements CompositeConfiguration{
 	
 	@NonNull
 	public Optional<UserDateConfiguration> getLastAccess(@NonNull final String section, final long userId){
-		return this.getLastAccess(section).stream().filter(lastAccess -> Objects.equals(lastAccess.getUserId(), userId)).findAny();
+		return this.getLastAccess(section).stream().filter(lastAccess -> Objects.equals(lastAccess.getUser().getUserId(), userId)).findAny();
 	}
 	
 	@NonNull
@@ -89,7 +89,7 @@ public class AniListConfiguration implements CompositeConfiguration{
 	public void removeUser(@NonNull final User user){
 		this.tokens.removeIf(t -> Objects.equals(t.getUserId(), user.getIdLong()));
 		this.refreshTokens.remove(user.getIdLong());
-		this.lastAccess.values().forEach(l -> l.removeIf(v -> Objects.equals(v.getUserId(), user.getIdLong())));
+		this.lastAccess.values().forEach(l -> l.removeIf(v -> Objects.equals(v.getUser().getUserId(), user.getIdLong())));
 		this.userIds.remove(user.getIdLong());
 	}
 	

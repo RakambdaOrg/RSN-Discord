@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import net.dv8tion.jda.api.entities.Role;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -20,6 +21,7 @@ public class WarnConfiguration implements AtomicConfiguration{
 	@JsonProperty("role")
 	private RoleConfiguration role;
 	@JsonProperty("delay")
+	@Setter
 	private long delay = 1L;
 	
 	public WarnConfiguration(@NonNull final Role role, final long delay){
