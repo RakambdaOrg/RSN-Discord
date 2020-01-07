@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.settings.types;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fr.raksrinana.rsndiscord.settings.AtomicConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -13,7 +14,7 @@ import net.dv8tion.jda.api.entities.Message;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class TodoConfiguration{
+public class TodoConfiguration implements AtomicConfiguration{
 	@JsonProperty("message")
 	private MessageConfiguration message;
 	@JsonProperty("deleteOnDone")
@@ -31,6 +32,11 @@ public class TodoConfiguration{
 	private TodoConfiguration(final long channelId, final long messageId, final boolean deleteOnDone){
 		this.message = new MessageConfiguration(channelId, messageId);
 		this.deleteOnDone = deleteOnDone;
+	}
+	
+	@Override
+	public boolean shouldBeRemoved(){
+		return getMessage().shouldBeRemoved();
 	}
 	
 	public void setMessage(@NonNull final Message message){

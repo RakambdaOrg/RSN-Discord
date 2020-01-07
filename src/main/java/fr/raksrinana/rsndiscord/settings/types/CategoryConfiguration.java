@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.Main;
+import fr.raksrinana.rsndiscord.settings.AtomicConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -17,7 +18,7 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class CategoryConfiguration{
+public class CategoryConfiguration implements AtomicConfiguration{
 	@JsonProperty("categoryId")
 	@Setter
 	private long categoryId;
@@ -50,6 +51,11 @@ public class CategoryConfiguration{
 	@Override
 	public String toString(){
 		return this.getCategory().map(Category::getName).orElse("<Unknown category>");
+	}
+	
+	@Override
+	public boolean shouldBeRemoved(){
+		return getCategory().isPresent();
 	}
 	
 	@NonNull

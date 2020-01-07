@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fr.raksrinana.rsndiscord.settings.CompositeConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.participation.EntityParticipation;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
@@ -23,19 +24,18 @@ import java.util.Set;
 		"emotesLock"
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 @NoArgsConstructor
-public class ParticipationConfig{
+public class ParticipationConfig implements CompositeConfiguration{
 	@JsonIgnore
 	private final Object emotesLock = new Object();
 	@JsonIgnore
 	private final Object usersLock = new Object();
 	@JsonProperty("emotes")
-	@Getter
 	private Set<EntityParticipation> emotesParticipation = new HashSet<>();
 	@JsonProperty("users")
 	private Set<EntityParticipation> usersParticipation = new HashSet<>();
 	@JsonProperty("usersPenned")
-	@Getter
 	@Setter
 	private Set<UserConfiguration> usersPinned = new HashSet<>();
 	@JsonProperty("reportChannel")

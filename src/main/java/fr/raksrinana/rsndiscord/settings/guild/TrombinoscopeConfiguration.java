@@ -3,9 +3,11 @@ package fr.raksrinana.rsndiscord.settings.guild;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fr.raksrinana.rsndiscord.settings.CompositeConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.trombinoscope.PhotoEntryConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
@@ -15,8 +17,9 @@ import java.util.stream.Collectors;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 @NoArgsConstructor
-public class TrombinoscopeConfiguration{
+public class TrombinoscopeConfiguration implements CompositeConfiguration{
 	@JsonProperty("photoChannel")
 	@Setter
 	private ChannelConfiguration photoChannel;
@@ -27,15 +30,15 @@ public class TrombinoscopeConfiguration{
 	private Set<PhotoEntryConfiguration> photos = new HashSet<>();
 	
 	public List<PhotoEntryConfiguration> getPhotos(final User user){
-		return this.photos.stream().filter(p -> Objects.equals(p.getUserId(), user.getIdLong())).collect(Collectors.toList());
+		return this.photos.stream().filter(p -> Objects.equals(p.getUser().getUserId(), user.getIdLong())).collect(Collectors.toList());
 	}
 	
 	public void removePhoto(@NonNull final User user, @NonNull final String photo){
-		this.photos.removeIf(p -> Objects.equals(p.getUserId(), user.getIdLong()) && Objects.equals(p.getPhoto(), photo));
+		this.photos.removeIf(p -> Objects.equals(p.getUser().getUserId(), user.getIdLong()) && Objects.equals(p.getPhoto(), photo));
 	}
 	
 	public void removePhoto(@NonNull final User user){
-		this.photos.removeIf(p -> Objects.equals(p.getUserId(), user.getIdLong()));
+		this.photos.removeIf(p -> Objects.equals(p.getUser().getUserId(), user.getIdLong()));
 	}
 	
 	@NonNull

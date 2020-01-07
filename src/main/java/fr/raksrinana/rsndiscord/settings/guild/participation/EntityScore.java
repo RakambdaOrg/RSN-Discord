@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.settings.guild.participation;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fr.raksrinana.rsndiscord.settings.AtomicConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -13,8 +14,9 @@ import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 @NoArgsConstructor
-public class EntityScore{
+public class EntityScore implements AtomicConfiguration{
 	@JsonProperty("id")
 	@Getter
 	private long id;
@@ -58,6 +60,11 @@ public class EntityScore{
 		}
 		final var that = (EntityScore) o;
 		return new EqualsBuilder().append(this.getId(), that.getId()).isEquals();
+	}
+	
+	@Override
+	public boolean shouldBeRemoved(){
+		return false;
 	}
 	
 	@NonNull

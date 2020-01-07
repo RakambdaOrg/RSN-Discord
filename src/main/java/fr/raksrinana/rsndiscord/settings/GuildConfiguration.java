@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
-public class GuildConfiguration{
+public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("guildId")
 	private long guildId;
 	@JsonProperty("prefix")

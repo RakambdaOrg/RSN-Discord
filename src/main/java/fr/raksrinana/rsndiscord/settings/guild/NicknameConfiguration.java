@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import fr.raksrinana.rsndiscord.settings.CompositeConfiguration;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeSerializer;
 import lombok.Getter;
@@ -19,10 +20,10 @@ import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 @NoArgsConstructor
-public class NicknameConfiguration{
+public class NicknameConfiguration implements CompositeConfiguration{
 	@JsonProperty("changeDelay")
-	@Getter
 	@Setter
 	private long changeDelay = 3600;
 	@JsonSerialize(contentUsing = LocalDateTimeSerializer.class)

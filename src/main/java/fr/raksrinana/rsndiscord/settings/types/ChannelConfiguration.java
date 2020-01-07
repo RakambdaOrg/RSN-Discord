@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.Main;
+import fr.raksrinana.rsndiscord.settings.AtomicConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -23,7 +24,7 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class ChannelConfiguration{
+public class ChannelConfiguration implements AtomicConfiguration{
 	@JsonProperty("channelId")
 	@Setter
 	private long channelId;
@@ -56,6 +57,11 @@ public class ChannelConfiguration{
 	@Override
 	public String toString(){
 		return "" + this.getChannelId();
+	}
+	
+	@Override
+	public boolean shouldBeRemoved(){
+		return getChannel().isPresent();
 	}
 	
 	@NonNull

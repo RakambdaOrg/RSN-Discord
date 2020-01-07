@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.Main;
+import fr.raksrinana.rsndiscord.settings.AtomicConfiguration;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeSerializer;
 import lombok.Getter;
@@ -23,7 +24,7 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class UserDateConfiguration{
+public class UserDateConfiguration implements AtomicConfiguration{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	@JsonProperty("userId")
 	private long userId;
@@ -62,6 +63,11 @@ public class UserDateConfiguration{
 	@Override
 	public String toString(){
 		return this.getUser().map(User::getAsMention).map(s -> s + " " + this.getDate().format(DF)).orElse("<Unknown date>");
+	}
+	
+	@Override
+	public boolean shouldBeRemoved(){
+		return getUser().isPresent();
 	}
 	
 	@NonNull
