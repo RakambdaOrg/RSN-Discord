@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import fr.raksrinana.rsndiscord.settings.AtomicConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
@@ -22,7 +23,7 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class AmazonTrackingConfiguration{
+public class AmazonTrackingConfiguration implements AtomicConfiguration{
 	@JsonProperty("user")
 	private UserConfiguration user;
 	@JsonProperty("channel")
@@ -65,5 +66,10 @@ public class AmazonTrackingConfiguration{
 		}
 		AmazonTrackingConfiguration that = (AmazonTrackingConfiguration) o;
 		return Objects.equals(getUser(), that.getUser()) && Objects.equals(getUrl(), that.getUrl());
+	}
+	
+	@Override
+	public boolean shouldBeRemoved(){
+		return getUser().shouldBeRemoved() || getNotificationChannel().shouldBeRemoved();
 	}
 }

@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.settings.guild;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fr.raksrinana.rsndiscord.settings.AtomicConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
 import lombok.Getter;
@@ -17,7 +18,7 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class WaitingReactionMessageConfiguration{
+public class WaitingReactionMessageConfiguration implements AtomicConfiguration{
 	@JsonProperty("message")
 	private MessageConfiguration message;
 	@JsonProperty("tag")
@@ -54,5 +55,10 @@ public class WaitingReactionMessageConfiguration{
 		}
 		WaitingReactionMessageConfiguration that = (WaitingReactionMessageConfiguration) o;
 		return getMessage().equals(that.getMessage()) && getTag() == that.getTag();
+	}
+	
+	@Override
+	public boolean shouldBeRemoved(){
+		return getMessage().shouldBeRemoved();
 	}
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import fr.raksrinana.rsndiscord.settings.AtomicConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeDeserializer;
@@ -23,7 +24,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class RemoveRoleConfiguration{
+public class RemoveRoleConfiguration implements AtomicConfiguration{
 	@JsonProperty("user")
 	private UserConfiguration user;
 	@JsonProperty("role")
@@ -55,5 +56,10 @@ public class RemoveRoleConfiguration{
 		}
 		final var that = (RemoveRoleConfiguration) o;
 		return new EqualsBuilder().append(this.getUser(), that.getUser()).append(this.getRole(), that.getRole()).isEquals();
+	}
+	
+	@Override
+	public boolean shouldBeRemoved(){
+		return getRole().shouldBeRemoved() || getUser().shouldBeRemoved();
 	}
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import fr.raksrinana.rsndiscord.settings.AtomicConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
@@ -25,7 +26,7 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class ReminderConfiguration{
+public class ReminderConfiguration implements AtomicConfiguration{
 	@JsonProperty("tag")
 	private ReminderTag tag = ReminderTag.NONE;
 	@JsonProperty("user")
@@ -59,5 +60,10 @@ public class ReminderConfiguration{
 		this.message = message;
 		this.tag = tag;
 		this.data = data;
+	}
+	
+	@Override
+	public boolean shouldBeRemoved(){
+		return getUser().shouldBeRemoved() || getChannel().shouldBeRemoved();
 	}
 }

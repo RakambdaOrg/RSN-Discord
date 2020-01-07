@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import fr.raksrinana.rsndiscord.settings.AtomicConfiguration;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeSerializer;
 import lombok.Getter;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 @Getter
-public class TraktAccessTokenConfiguration{
+public class TraktAccessTokenConfiguration implements AtomicConfiguration{
 	@JsonProperty("userId")
 	private long userId;
 	@JsonProperty("expireDate")
@@ -52,6 +53,11 @@ public class TraktAccessTokenConfiguration{
 		}
 		final var that = (TraktAccessTokenConfiguration) o;
 		return new EqualsBuilder().append(this.getToken(), that.getToken()).isEquals();
+	}
+	
+	@Override
+	public boolean shouldBeRemoved(){
+		return false;
 	}
 	
 	public boolean isExpired(){

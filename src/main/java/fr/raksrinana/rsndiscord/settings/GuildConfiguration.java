@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.settings.guild.*;
-import fr.raksrinana.rsndiscord.settings.types.*;
+import fr.raksrinana.rsndiscord.settings.types.CategoryConfiguration;
+import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
+import fr.raksrinana.rsndiscord.settings.types.UserRoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,14 +17,13 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
-public class GuildConfiguration{
+public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("guildId")
 	private long guildId;
 	@JsonProperty("prefix")
@@ -103,9 +105,6 @@ public class GuildConfiguration{
 	@Getter
 	@Setter
 	private int musicVolume = 100;
-	@JsonProperty("todoMessages")
-	@Getter
-	private ConcurrentLinkedQueue<TodoConfiguration> todos = new ConcurrentLinkedQueue<>();
 	@JsonProperty("twitchAutoConnectUsers")
 	@Getter
 	@Setter

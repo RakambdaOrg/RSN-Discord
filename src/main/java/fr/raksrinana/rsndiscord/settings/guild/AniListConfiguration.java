@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.Main;
+import fr.raksrinana.rsndiscord.settings.CompositeConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.anilist.AnilistAccessTokenConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
@@ -19,8 +20,9 @@ import java.util.stream.Collectors;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 @NoArgsConstructor
-public class AniListConfiguration{
+public class AniListConfiguration implements CompositeConfiguration{
 	@JsonProperty("accessToken")
 	private Set<AnilistAccessTokenConfiguration> tokens = new HashSet<>();
 	@JsonProperty("notificationsChannel")
@@ -58,7 +60,7 @@ public class AniListConfiguration{
 	
 	@NonNull
 	public Optional<UserDateConfiguration> getLastAccess(@NonNull final String section, final long userId){
-		return this.getLastAccess(section).stream().filter(lastAccess -> Objects.equals(lastAccess.getUserId(), userId)).findAny();
+		return this.getLastAccess(section).stream().filter(lastAccess -> Objects.equals(lastAccess.getUser().getUserId(), userId)).findAny();
 	}
 	
 	@NonNull
@@ -87,7 +89,7 @@ public class AniListConfiguration{
 	public void removeUser(@NonNull final User user){
 		this.tokens.removeIf(t -> Objects.equals(t.getUserId(), user.getIdLong()));
 		this.refreshTokens.remove(user.getIdLong());
-		this.lastAccess.values().forEach(l -> l.removeIf(v -> Objects.equals(v.getUserId(), user.getIdLong())));
+		this.lastAccess.values().forEach(l -> l.removeIf(v -> Objects.equals(v.getUser().getUserId(), user.getIdLong())));
 		this.userIds.remove(user.getIdLong());
 	}
 	

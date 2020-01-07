@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.Main;
+import fr.raksrinana.rsndiscord.settings.CompositeConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.trakt.TraktAccessTokenConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
@@ -21,16 +22,16 @@ import java.util.stream.Collectors;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 @NoArgsConstructor
 @Slf4j
-public class TraktConfiguration{
+public class TraktConfiguration implements CompositeConfiguration{
 	@JsonProperty("accessToken")
 	private Set<TraktAccessTokenConfiguration> tokens = new HashSet<>();
 	@JsonProperty("mediaChangeChannel")
 	@Setter
 	private ChannelConfiguration mediaChangeChannel;
 	@JsonProperty("lastAccess")
-	@Getter
 	private Map<String, Set<UserDateConfiguration>> lastAccess = new HashMap<>();
 	@JsonProperty("thaChannel")
 	@Setter
@@ -48,7 +49,7 @@ public class TraktConfiguration{
 	
 	@NonNull
 	public Optional<UserDateConfiguration> getLastAccess(@NonNull final String section, final long userId){
-		return this.getLastAccess(section).stream().filter(lastAccess -> Objects.equals(lastAccess.getUserId(), userId)).findAny();
+		return this.getLastAccess(section).stream().filter(lastAccess -> Objects.equals(lastAccess.getUser().getUserId(), userId)).findAny();
 	}
 	
 	@NonNull
@@ -68,7 +69,7 @@ public class TraktConfiguration{
 	
 	public void removeUser(@NonNull final User user){
 		this.tokens.removeIf(t -> Objects.equals(t.getUserId(), user.getIdLong()));
-		this.lastAccess.values().forEach(l -> l.removeIf(v -> Objects.equals(v.getUserId(), user.getIdLong())));
+		this.lastAccess.values().forEach(l -> l.removeIf(v -> Objects.equals(v.getUser().getUserId(), user.getIdLong())));
 	}
 	
 	public void removeAccessToken(@NonNull TraktAccessTokenConfiguration value){

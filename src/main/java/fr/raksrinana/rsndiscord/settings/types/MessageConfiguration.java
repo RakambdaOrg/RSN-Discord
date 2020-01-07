@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.settings.types;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fr.raksrinana.rsndiscord.settings.AtomicConfiguration;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.Getter;
@@ -19,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class MessageConfiguration{
+public class MessageConfiguration implements AtomicConfiguration{
 	@JsonProperty("channel")
 	private ChannelConfiguration channel;
 	@JsonProperty("messageId")
@@ -55,6 +56,11 @@ public class MessageConfiguration{
 	@Override
 	public String toString(){
 		return "" + this.getMessageId() + '(' + this.getChannel() + ')';
+	}
+	
+	@Override
+	public boolean shouldBeRemoved(){
+		return getMessage().isEmpty();
 	}
 	
 	@NonNull

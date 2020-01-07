@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.Main;
+import fr.raksrinana.rsndiscord.settings.AtomicConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -17,7 +18,7 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class UserConfiguration{
+public class UserConfiguration implements AtomicConfiguration{
 	@JsonProperty("userId")
 	@Setter
 	private long userId;
@@ -50,6 +51,11 @@ public class UserConfiguration{
 	@Override
 	public String toString(){
 		return this.getUser().map(User::getAsMention).orElse("<Unknown user>");
+	}
+	
+	@Override
+	public boolean shouldBeRemoved(){
+		return getUser().isEmpty();
 	}
 	
 	@NonNull

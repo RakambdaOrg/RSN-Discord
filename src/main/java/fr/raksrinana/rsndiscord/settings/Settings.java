@@ -66,6 +66,18 @@ public class Settings{
 		}
 	}
 	
+	public static void clean(){
+		Log.getLogger(null).info("Cleaning settings");
+		configurations.values().forEach(guildConfiguration -> {
+			try{
+				guildConfiguration.cleanFields();
+			}
+			catch(IllegalAccessException e){
+				Log.getLogger(null).error("Failed to clean guild configuration", e);
+			}
+		});
+	}
+	
 	static{
 		final var mapper = new ObjectMapper();
 		mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker().withFieldVisibility(JsonAutoDetect.Visibility.ANY).withGetterVisibility(JsonAutoDetect.Visibility.NONE).withSetterVisibility(JsonAutoDetect.Visibility.NONE).withCreatorVisibility(JsonAutoDetect.Visibility.NONE));

@@ -47,7 +47,7 @@ public class AniListActivityScheduledRunner implements AniListRunner<ListActivit
 	@NonNull
 	@Override
 	public ActivityPagedQuery initQuery(@NonNull final Member member){
-		return new ActivityPagedQuery(AniListUtils.getUserId(member).orElseThrow(), Settings.get(member.getGuild()).getAniListConfiguration().getLastAccess(this.getFetcherID()).stream().filter(a -> Objects.equals(a.getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate()));
+		return new ActivityPagedQuery(AniListUtils.getUserId(member).orElseThrow(), Settings.get(member.getGuild()).getAniListConfiguration().getLastAccess(this.getFetcherID()).stream().filter(a -> Objects.equals(a.getUser().getUserId(), member.getUser().getIdLong())).map(UserDateConfiguration::getDate).findAny().orElse(AniListUtils.getDefaultDate()));
 	}
 	
 	@Override

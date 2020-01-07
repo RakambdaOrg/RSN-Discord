@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.commands.warn;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.warns.WarnConfiguration;
+import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
@@ -16,7 +17,7 @@ public class NormalWarnCommand extends WarnCommand{
 	@NonNull
 	@Override
 	protected Optional<Role> getRole(@NonNull final Guild guild, @NonNull final Message message, @NonNull final LinkedList<String> args){
-		return Settings.get(guild).getWarnsConfiguration().getSimpleWarn().flatMap(WarnConfiguration::getRole);
+		return Settings.get(guild).getWarnsConfiguration().getSimpleWarn().map(WarnConfiguration::getRole).flatMap(RoleConfiguration::getRole);
 	}
 	
 	@Override

@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.settings.types;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fr.raksrinana.rsndiscord.settings.AtomicConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.entities.Role;
@@ -14,7 +15,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class UserRoleConfiguration{
+public class UserRoleConfiguration implements AtomicConfiguration{
 	@JsonProperty("user")
 	private UserConfiguration user;
 	@JsonProperty("role")
@@ -44,5 +45,10 @@ public class UserRoleConfiguration{
 		}
 		final var that = (UserRoleConfiguration) o;
 		return new EqualsBuilder().append(this.getUser(), that.getUser()).append(this.getRole(), that.getRole()).isEquals();
+	}
+	
+	@Override
+	public boolean shouldBeRemoved(){
+		return getUser().shouldBeRemoved() || getRole().shouldBeRemoved();
 	}
 }
