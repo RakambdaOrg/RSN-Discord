@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public interface PagedQuery<T>{
-	int PER_PAGE = 50;
+	int PER_PAGE = 150;
 	
 	static String pagedQuery(final String additionalParams, final String query){
 		return "query($page: Int, $perPage: Int" + additionalParams + "){\n" + "  Page (page: $page, perPage: $perPage) {\n" + "    pageInfo {\n" + "      total\n" + "      currentPage\n" + "      lastPage\n" + "      hasNextPage\n" + "      perPage\n" + "    }\n" + query + "  }\n" + "}";
