@@ -31,10 +31,14 @@ public class MediaReactionCommand extends BasicCommand{
 			var askArchive = false;
 			final var lines = new LinkedList<>(Arrays.asList(String.join(" ", args).strip().split("\n")));
 			if(!lines.isEmpty()){
+				var defaultDecorator = "||";
 				if(lines.peek().startsWith("o")){
 					final var options = lines.pop();
 					hasEpisodes = !options.contains("m");
 					askArchive = options.contains("a");
+					if(options.contains("c")){
+						defaultDecorator = "";
+					}
 				}
 				if(lines.isEmpty()){
 					return CommandResult.BAD_ARGUMENTS;
@@ -44,8 +48,9 @@ public class MediaReactionCommand extends BasicCommand{
 					newText += "__**EP " + lines.pop() + "**__";
 				}
 				if(!lines.isEmpty()){
+					final var finalDefaultDecorator = defaultDecorator;
 					newText += "\n" + lines.stream().map(s -> {
-						var decorator = "||";
+						var decorator = finalDefaultDecorator;
 						if(s.isBlank()){
 							return "";
 						}

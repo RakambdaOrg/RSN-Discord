@@ -72,7 +72,7 @@ public class TwitchIRCListener extends AbstractIRCListener implements EventListe
 			if(twitchMessage.isPartner()){
 				role.append("(partner)");
 			}
-			Actions.sendMessage(this.channel, MessageFormat.format("**`{0}`{1}** {2}}", displayName, role, message), null);
+			Actions.sendMessage(this.channel, MessageFormat.format("**`{0}`{1}** {2}", displayName, role, message), null);
 		}
 	}
 	

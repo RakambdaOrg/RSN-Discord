@@ -43,7 +43,7 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 						return this.getElements(member);
 					}
 					catch(final Exception e){
-						Log.getLogger(member.getGuild()).error("Error fetching user {} on AniList", member, e);
+						Log.getLogger(member.getGuild()).error("Error fetching user {} on Trakt", member, e);
 					}
 					return null;
 				});
@@ -66,11 +66,11 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 		if(this.isKeepOnlyNew()){
 			final var baseDate = Settings.get(member.getGuild()).getTraktConfiguration().getLastAccess(this.getRunnerName(), member.getUser().getIdLong()).map(UserDateConfiguration::getDate).orElse(LocalDateTime.of(2019, 7, 7, 0, 0));
 			elementList = elementList.stream().filter(e -> e instanceof TraktDatedObject).filter(e -> ((TraktDatedObject) e).getDate().isAfter(baseDate)).collect(Collectors.toSet());
+			elementList.stream().filter(e -> e instanceof TraktDatedObject).map(e -> (TraktDatedObject) e).map(TraktDatedObject::getDate).max(LocalDateTime::compareTo).ifPresent(val -> {
+				Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {} (last was {})", member, this.getRunnerName(), val, baseDate);
+				Settings.get(member.getGuild()).getTraktConfiguration().setLastAccess(member.getUser(), this.getRunnerName(), val);
+			});
 		}
-		elementList.stream().filter(e -> e instanceof TraktDatedObject).map(e -> (TraktDatedObject) e).map(TraktDatedObject::getDate).max(LocalDateTime::compareTo).ifPresent(val -> {
-			Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {}", member, this.getRunnerName(), val);
-			Settings.get(member.getGuild()).getTraktConfiguration().setLastAccess(member.getUser(), this.getRunnerName(), val);
-		});
 		return elementList;
 	}
 	
