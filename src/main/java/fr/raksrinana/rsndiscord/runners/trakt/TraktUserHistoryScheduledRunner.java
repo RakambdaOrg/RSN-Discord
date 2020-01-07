@@ -54,7 +54,7 @@ public class TraktUserHistoryScheduledRunner implements TraktPagedGetRunner<User
 	@NonNull
 	@Override
 	public UserHistoryPagedGetRequest initQuery(@NonNull Member member){
-		return new UserHistoryPagedGetRequest(TraktUtils.getUsername(member).orElseThrow(() -> new RuntimeException("Failed to get username for member " + member)), 1, Settings.get(member.getGuild()).getTraktConfiguration().getLastAccess(getRunnerName(), member.getIdLong()).map(UserDateConfiguration::getDate).orElse(null));
+		return new UserHistoryPagedGetRequest(TraktUtils.getUsername(member).orElseThrow(() -> new RuntimeException("Failed to get username for member " + member)), 1, Settings.get(member.getGuild()).getTraktConfiguration().getLastAccess(getRunnerName(), member.getIdLong()).map(UserDateConfiguration::getDate).map(date -> date.plusNanos(1000L)).orElse(null));
 	}
 	
 	@Override
