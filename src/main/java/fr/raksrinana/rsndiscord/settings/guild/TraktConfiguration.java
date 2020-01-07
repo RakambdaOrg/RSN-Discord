@@ -8,10 +8,12 @@ import fr.raksrinana.rsndiscord.settings.guild.trakt.TraktAccessTokenConfigurati
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
+import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.User;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
+@Slf4j
 public class TraktConfiguration{
 	@JsonProperty("accessToken")
 	private Set<TraktAccessTokenConfiguration> tokens = new HashSet<>();
@@ -39,6 +42,7 @@ public class TraktConfiguration{
 	private Map<Long, String> usernames = new HashMap<>();
 	
 	public void setLastAccess(final User user, final String section, final LocalDateTime date){
+		Log.getLogger(null).error("Setting Trakt last access for {} with user {} to {}", section, user, date, new Exception("Give me stacktrace"));
 		this.getLastAccess(section, user.getIdLong()).ifPresentOrElse(lastAccess -> lastAccess.setDate(date), () -> this.lastAccess.computeIfAbsent(section, sec -> new HashSet<>()).add(new UserDateConfiguration(user, date)));
 	}
 	

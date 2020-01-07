@@ -62,10 +62,10 @@ public class AniListUtils{
 	
 	@NonNull
 	private static Optional<AnilistAccessTokenConfiguration> getAccessToken(@NonNull final Member member){
-		Log.getLogger(member.getGuild()).debug("Getting previous access token for {}", member);
+		Log.getLogger(member.getGuild()).trace("Getting previous access token for {}", member);
 		final var accessToken = Settings.get(member.getGuild()).getAniListConfiguration().getAccessToken(member.getUser().getIdLong());
 		if(accessToken.isPresent()){
-			Log.getLogger(member.getGuild()).debug("Found previous access token for {}", member);
+			Log.getLogger(member.getGuild()).trace("Found previous access token for {}", member);
 			return accessToken;
 		}
 		Log.getLogger(member.getGuild()).debug("No access token found for {}", member);
