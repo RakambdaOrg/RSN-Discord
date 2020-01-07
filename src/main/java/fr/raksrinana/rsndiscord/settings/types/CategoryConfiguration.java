@@ -55,7 +55,7 @@ public class CategoryConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public boolean shouldBeRemoved(){
-		return getCategory().isPresent();
+		return getCategory().isEmpty();
 	}
 	
 	@NonNull

@@ -55,7 +55,7 @@ public class RoleConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public boolean shouldBeRemoved(){
-		return getRole().isPresent();
+		return getRole().isEmpty();
 	}
 	
 	@NonNull

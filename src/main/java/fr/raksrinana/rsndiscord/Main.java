@@ -72,7 +72,7 @@ public class Main{
 			jdaBuilder.setAutoReconnect(true);
 			jda = jdaBuilder.build();
 			jda.awaitReady();
-			jda.getPresence().setActivity(Activity.playing("g?help for the help"));
+			jda.getPresence().setActivity(Activity.playing(CommandsMessageListener.defaultPrefix + "help for the help"));
 			Log.getLogger(null).info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
 			Log.getLogger(null).info("Adding handlers");
 			ReminderUtils.addHandler(new DefaultReminderHandler());
@@ -84,7 +84,7 @@ public class Main{
 			ReactionUtils.addHandler(new MediaReactionReactionHandler());
 			ReactionUtils.addHandler(new AmazonTrackingReactionHandler());
 			Log.getLogger(null).info("Creating runners");
-			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda), new OverwatchLeagueScheduledRunner(jda), new RemindersScheduledRunner(jda), new TraktUserHistoryScheduledRunner(jda), new AmazonPriceCheckerScheduledRunner(jda));
+			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda), new OverwatchLeagueScheduledRunner(jda), new RemindersScheduledRunner(jda), new TraktUserHistoryScheduledRunner(jda), new AmazonPriceCheckerScheduledRunner(jda), new CleanConfigScheduledRunner());
 			for(final var scheduledRunner : scheduledRunners){
 				executorService.scheduleAtFixedRate(scheduledRunner, scheduledRunner.getDelay(), scheduledRunner.getPeriod(), scheduledRunner.getPeriodUnit());
 			}
@@ -103,6 +103,7 @@ public class Main{
 		Log.getLogger(null).info("Shutdown hook registered");
 		consoleHandler = new ConsoleHandler();
 		consoleHandler.start();
+		Settings.clean();
 	}
 	
 	static CLIParameters loadEnv(@NonNull String[] args){

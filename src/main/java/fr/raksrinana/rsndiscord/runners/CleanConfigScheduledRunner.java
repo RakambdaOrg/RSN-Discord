@@ -22,7 +22,7 @@ public class CleanConfigScheduledRunner implements ScheduledRunner{
 	
 	@Override
 	public long getPeriod(){
-		return 60;
+		return 12 * 60;
 	}
 	
 	@NonNull

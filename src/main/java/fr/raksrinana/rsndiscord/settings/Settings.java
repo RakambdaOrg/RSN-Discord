@@ -67,6 +67,7 @@ public class Settings{
 	}
 	
 	public static void clean(){
+		Log.getLogger(null).info("Cleaning settings");
 		configurations.values().forEach(guildConfiguration -> {
 			try{
 				guildConfiguration.cleanFields();

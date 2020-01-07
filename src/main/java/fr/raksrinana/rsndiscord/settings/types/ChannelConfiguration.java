@@ -61,7 +61,7 @@ public class ChannelConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public boolean shouldBeRemoved(){
-		return getChannel().isPresent();
+		return getChannel().isEmpty();
 	}
 	
 	@NonNull

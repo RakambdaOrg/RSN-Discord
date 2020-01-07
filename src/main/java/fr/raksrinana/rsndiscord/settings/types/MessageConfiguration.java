@@ -60,7 +60,7 @@ public class MessageConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public boolean shouldBeRemoved(){
-		return getMessage().isPresent();
+		return getMessage().isEmpty();
 	}
 	
 	@NonNull

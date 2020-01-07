@@ -55,7 +55,7 @@ public class UserConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public boolean shouldBeRemoved(){
-		return getUser().isPresent();
+		return getUser().isEmpty();
 	}
 	
 	@NonNull

@@ -53,6 +53,6 @@ public class WarnConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public boolean shouldBeRemoved(){
-		return role.shouldBeRemoved();
+		return getRole().shouldBeRemoved();
 	}
 }
