@@ -1,13 +1,17 @@
 /.idea
+/.gradle
+/build
+/config
+/log
+/logs
+/out
+/pictures
+/config/settings
 /target
-/pictures/
-/settings/
-/log/*
-/logs/*
 
 *.iml
-/*.properties
-!/template_config.properties
+!/config/template_config.properties
 /*.csv
 /*.json
 
+secrets.properties
