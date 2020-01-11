@@ -3,7 +3,6 @@ package fr.raksrinana.rsndiscord.utils.irc.twitch;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.irc.IRCClient;
 import fr.raksrinana.rsndiscord.utils.irc.IRCListener;
-import fr.raksrinana.rsndiscord.utils.irc.IRCUser;
 import fr.raksrinana.rsndiscord.utils.irc.messages.ChannelLeftIRCMessage;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
@@ -18,7 +17,7 @@ public class TwitchIRC{
 	
 	public static void connect(@NonNull final Guild guild, @NonNull final String user) throws IOException{
 		if(Objects.isNull(CLIENT)){
-			CLIENT = new IRCClient("irc.chat.twitch.tv", 6667);
+			CLIENT = new IRCClient("irc.chat.twitch.tv", 6667, new TwitchIRCMessageBuilder());
 			CLIENT.setSecureKeyPassword(String.format("oauth:%s", System.getProperty("TWITCH_TOKEN")));
 			CLIENT.connect();
 			CLIENT.setNick(System.getProperty("TWITCH_NICKNAME"));

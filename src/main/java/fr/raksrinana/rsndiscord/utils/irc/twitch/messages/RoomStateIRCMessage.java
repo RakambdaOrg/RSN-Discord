@@ -1,6 +1,7 @@
-package fr.raksrinana.rsndiscord.utils.irc.messages;
+package fr.raksrinana.rsndiscord.utils.irc.twitch.messages;
 
-import fr.raksrinana.rsndiscord.utils.irc.IRCTag;
+import fr.raksrinana.rsndiscord.utils.irc.messages.IRCMessage;
+import fr.raksrinana.rsndiscord.utils.irc.twitch.IRCTag;
 import lombok.Getter;
 import java.util.List;
 

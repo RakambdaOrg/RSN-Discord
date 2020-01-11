@@ -9,6 +9,8 @@ public interface IRCListener{
 	
 	boolean handlesChannel(@NonNull String channel);
 	
+	void timedOut();
+	
 	@NonNull Guild getGuild();
 	
 	@NonNull String getIrcChannel();

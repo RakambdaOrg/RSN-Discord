@@ -1,9 +1,11 @@
-package fr.raksrinana.rsndiscord.utils.irc;
+package fr.raksrinana.rsndiscord.utils.irc.twitch;
 
+import fr.raksrinana.rsndiscord.utils.irc.IRCListener;
 import fr.raksrinana.rsndiscord.utils.irc.messages.*;
+import fr.raksrinana.rsndiscord.utils.irc.twitch.messages.*;
 import lombok.NonNull;
 
-public abstract class AbstractIRCListener implements IRCListener{
+public abstract class AbstractTwitchIRCListener implements IRCListener{
 	@Override
 	public void onIRCMessage(@NonNull final IRCMessage event){
 		if(event instanceof ChannelJoinIRCMessage){

@@ -1,11 +1,12 @@
-package fr.raksrinana.rsndiscord.utils.irc.messages;
+package fr.raksrinana.rsndiscord.utils.irc.twitch.messages;
 
-import fr.raksrinana.rsndiscord.utils.irc.IRCTag;
+import fr.raksrinana.rsndiscord.utils.irc.twitch.AbstractTwitchMessageWithId;
+import fr.raksrinana.rsndiscord.utils.irc.twitch.IRCTag;
 import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class UserNoticeIRCMessage implements IRCMessage{
+public class UserNoticeIRCMessage extends AbstractTwitchMessageWithId{
 	private final List<IRCTag> tags;
 	private final String ircChannel;
 	private final String message;

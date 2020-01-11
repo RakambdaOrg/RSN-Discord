@@ -1,5 +1,6 @@
-package fr.raksrinana.rsndiscord.utils.irc.messages;
+package fr.raksrinana.rsndiscord.utils.irc.twitch.messages;
 
+import fr.raksrinana.rsndiscord.utils.irc.messages.IRCMessage;
 import lombok.Getter;
 
 @Getter

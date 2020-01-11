@@ -1,8 +1,7 @@
 package fr.raksrinana.rsndiscord.utils.irc.twitch;
 
-import fr.raksrinana.rsndiscord.utils.irc.IRCTag;
-import fr.raksrinana.rsndiscord.utils.irc.messages.ChannelMessageIRCMessage;
 import fr.raksrinana.rsndiscord.utils.irc.messages.IRCMessage;
+import fr.raksrinana.rsndiscord.utils.irc.twitch.messages.ChannelMessageIRCMessage;
 import lombok.Getter;
 import lombok.NonNull;
 import java.util.Arrays;
@@ -16,8 +15,6 @@ public class TwitchChannelMessageIRCMessage implements IRCMessage{
 	private final ChannelMessageIRCMessage parent;
 	@Getter
 	private final List<TwitchBadge> badges;
-	@Getter
-	private final TwitchMessageId msgId;
 	
 	public TwitchChannelMessageIRCMessage(@NonNull ChannelMessageIRCMessage event){
 		this.parent = event;
@@ -25,7 +22,6 @@ public class TwitchChannelMessageIRCMessage implements IRCMessage{
 			final var split = v.split("/");
 			return new TwitchBadge(split[0], split[1]);
 		})).collect(Collectors.toList());
-		this.msgId = event.getTags().stream().filter(t -> Objects.equals("msg-id", t.getKey())).map(t -> TwitchMessageId.getFromName(t.getValue())).findFirst().orElse(TwitchMessageId.NONE);
 	}
 	
 	public Optional<TwitchBadge> getSub(){

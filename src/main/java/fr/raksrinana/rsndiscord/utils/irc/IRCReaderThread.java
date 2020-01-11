@@ -13,11 +13,13 @@ public class IRCReaderThread extends Thread implements Closeable{
 	private final BufferedReader reader;
 	private final IRCClient client;
 	private boolean stop;
+	private final IIRCMessageBuilder ircMessageBuilder;
 	
-	public IRCReaderThread(@NonNull final IRCClient client, @NonNull final InputStream inputStream){
+	public IRCReaderThread(@NonNull final IRCClient client, @NonNull final IIRCMessageBuilder ircMessageBuilder, @NonNull final InputStream inputStream){
 		this.client = client;
 		this.reader = new BufferedReader(new InputStreamReader(inputStream));
 		this.stop = false;
+		this.ircMessageBuilder = ircMessageBuilder;
 	}
 	
 	@Override
@@ -51,7 +53,7 @@ public class IRCReaderThread extends Thread implements Closeable{
 	
 	private void processLine(@NonNull String line){
 		try{
-			IRCUtils.buildEvent(line).ifPresent(event -> {
+			ircMessageBuilder.buildEvent(line).ifPresent(event -> {
 				if(event instanceof PingIRCMessage){
 					Log.getLogger(null).debug("Replying to IRC ping message");
 					this.client.sendMessage("PONG");

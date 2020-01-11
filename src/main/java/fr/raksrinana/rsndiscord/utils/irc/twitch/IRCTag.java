@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.utils.irc;
+package fr.raksrinana.rsndiscord.utils.irc.twitch;
 
 import lombok.Getter;
 

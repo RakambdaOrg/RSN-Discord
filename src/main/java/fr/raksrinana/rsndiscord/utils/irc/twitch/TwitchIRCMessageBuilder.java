@@ -1,8 +1,10 @@
-package fr.raksrinana.rsndiscord.utils.irc;
+package fr.raksrinana.rsndiscord.utils.irc.twitch;
 
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.irc.IIRCMessageBuilder;
 import fr.raksrinana.rsndiscord.utils.irc.messages.*;
+import fr.raksrinana.rsndiscord.utils.irc.twitch.messages.*;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import java.util.Arrays;
@@ -12,11 +14,11 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-class IRCUtils{
+class TwitchIRCMessageBuilder implements IIRCMessageBuilder{
 	private static final Pattern EVENT_PATTERN = Pattern.compile("^(@([^\\s]+)\\s)?:([^\\s]+)\\s([^\\s]+)\\s([^:]+)\\s?(:(.*))?$");
 	
 	@NonNull
-	static Optional<IRCMessage> buildEvent(@NonNull final String message){
+	public Optional<IRCMessage> buildEvent(@NonNull final String message){
 		try{
 			if("PING :tmi.twitch.tv".equals(message)){
 				return Optional.of(new PingIRCMessage());

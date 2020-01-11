@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord.utils.irc;
 
-import fr.raksrinana.rsndiscord.utils.irc.twitch.TwitchIRC;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.Getter;
 import lombok.NonNull;
@@ -18,6 +17,7 @@ public class IRCClient implements Closeable{
 	private final Set<String> joinedChannels;
 	@Getter
 	private final Collection<IRCListener> listeners;
+	private final IIRCMessageBuilder ircMessageBuilder;
 	private String pass;
 	private Socket socket;
 	private PrintWriter socketWriter;
@@ -25,20 +25,21 @@ public class IRCClient implements Closeable{
 	private boolean connected;
 	private IRCReaderThread ircReader;
 	
-	public IRCClient(@NonNull final String host, final int port){
+	public IRCClient(@NonNull final String host, final int port, @NonNull final IIRCMessageBuilder ircMessageBuilder){
 		this.host = host;
 		this.port = port;
 		this.pass = null;
 		this.connected = false;
 		this.joinedChannels = new HashSet<>();
 		this.listeners = new HashSet<>();
+		this.ircMessageBuilder = ircMessageBuilder;
 	}
 	
 	public void connect() throws IOException{
 		this.socket = new Socket(this.host, this.port);
 		this.socket.setSoTimeout(DEFAULT_TIMEOUT);
 		this.socketWriter = new PrintWriter(this.socket.getOutputStream(), true);
-		this.ircReader = new IRCReaderThread(this, this.socket.getInputStream());
+		this.ircReader = new IRCReaderThread(this, this.ircMessageBuilder, this.socket.getInputStream());
 		this.ircReader.start();
 		if(Objects.nonNull(this.pass)){
 			this.sendMessage(String.format("PASS %s", this.pass));
@@ -76,15 +77,7 @@ public class IRCClient implements Closeable{
 	
 	public void timedOut(){
 		final var ls = new ArrayList<>(this.listeners);
-		ls.forEach(l -> TwitchIRC.disconnect(l.getGuild(), l.getUser()));
-		ls.forEach(l -> {
-			try{
-				TwitchIRC.connect(l.getGuild(), l.getUser());
-			}
-			catch(final IOException e){
-				Log.getLogger(null).warn("Failed to reconnect {} to user {}", l.getGuild(), l.getUser());
-			}
-		});
+		ls.forEach(IRCListener::timedOut);
 	}
 	
 	public void addEventListener(@NonNull final IRCListener ircListener){
