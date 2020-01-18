@@ -59,6 +59,13 @@ public class Episode implements TraktObject{
 	
 	@Override
 	public int compareTo(@NonNull TraktObject o){
+		if(o instanceof Episode){
+			final var e = (Episode) o;
+			if(getSeason() == e.getSeason()){
+				return Integer.compare(getNumber(), e.getNumber());
+			}
+			return Integer.compare(getSeason(), e.getSeason());
+		}
 		return 0;
 	}
 	

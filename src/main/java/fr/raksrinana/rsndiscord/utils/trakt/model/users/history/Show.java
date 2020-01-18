@@ -83,6 +83,9 @@ public class Show implements TraktObject{
 	
 	@Override
 	public int compareTo(@NonNull TraktObject o){
+		if(o instanceof Show){
+			return getTitle().compareTo(((Show) o).getTitle());
+		}
 		return 0;
 	}
 	

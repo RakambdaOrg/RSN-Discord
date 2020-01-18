@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import fr.raksrinana.rsndiscord.utils.trakt.TraktObject;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import java.net.URL;
 import java.util.Objects;
@@ -34,6 +36,14 @@ public class UserMovieHistory extends UserHistory{
 	@Override
 	public int hashCode(){
 		return Objects.hash(getMovie());
+	}
+	
+	@Override
+	public int compareTo(@NonNull TraktObject o){
+		if(o instanceof UserMovieHistory){
+			return getMovie().compareTo(((UserMovieHistory) o).getMovie());
+		}
+		return super.compareTo(o);
 	}
 	
 	@Override

@@ -80,6 +80,9 @@ public class Movie implements TraktObject{
 	
 	@Override
 	public int compareTo(@NonNull TraktObject o){
+		if(o instanceof Movie){
+			return getTitle().compareTo(((Movie) o).getTitle());
+		}
 		return 0;
 	}
 	
