@@ -11,6 +11,7 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import java.net.URL;
 import java.util.Objects;
+import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -23,6 +24,7 @@ public class UserMovieHistory extends UserHistory{
 	
 	@Override
 	public void fillEmbed(EmbedBuilder builder){
+		builder.setTitle("Movie watched", Optional.of(getUrl()).map(Object::toString).orElse(null));
 		this.getMovie().fillEmbed(builder);
 		builder.addBlankField(false);
 		super.fillEmbed(builder);

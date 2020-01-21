@@ -17,7 +17,10 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import java.awt.Color;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPagedGetRequest<T>> extends ScheduledRunner{
@@ -105,7 +108,7 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 	default void buildMessage(final EmbedBuilder builder, final User user, @NonNull final T change){
 		try{
 			if(Objects.isNull(user)){
-				builder.setAuthor(this.getJda().getSelfUser().getName(), Optional.ofNullable(change.getUrl()).map(Object::toString).orElse(null), this.getJda().getSelfUser().getAvatarUrl());
+				builder.setAuthor(this.getJda().getSelfUser().getName(), null, this.getJda().getSelfUser().getAvatarUrl());
 			}
 			else{
 				builder.setAuthor(user.getName(), null, user.getAvatarUrl());
