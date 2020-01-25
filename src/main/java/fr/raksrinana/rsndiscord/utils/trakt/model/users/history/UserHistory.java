@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601DateTimeDeserializer;
+import fr.raksrinana.rsndiscord.utils.themoviedb.model.MediaDetails;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktDatedObject;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktMediaType;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktObject;
@@ -38,7 +39,11 @@ public abstract class UserHistory implements TraktDatedObject{
 	private TraktMediaType type;
 	
 	@Override
-	public void fillEmbed(EmbedBuilder builder){
+	public void fillEmbed(@NonNull EmbedBuilder builder){
+		fillEmbed(builder, null);
+	}
+	
+	public void fillEmbed(@NonNull EmbedBuilder builder, MediaDetails mediaDetails){
 		builder.setFooter(Long.toString(this.getId()));
 		builder.setColor(Color.GREEN);
 		builder.setTimestamp(this.getWatchedAt());
@@ -52,6 +57,8 @@ public abstract class UserHistory implements TraktDatedObject{
 		}
 		return 0;
 	}
+	
+	public abstract MediaIds getIds();
 	
 	@Override
 	public @NonNull LocalDateTime getDate(){

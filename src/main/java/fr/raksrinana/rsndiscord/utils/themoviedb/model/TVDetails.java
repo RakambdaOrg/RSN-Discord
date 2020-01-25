@@ -20,7 +20,7 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class TVDetails{
+public class TVDetails implements MediaDetails{
 	@JsonProperty("backdrop_path")
 	private String backdropPath;
 	@JsonProperty("created_by")
@@ -98,11 +98,17 @@ public class TVDetails{
 		return getId() == tvDetails.getId();
 	}
 	
-	public Optional<URL> getPosterURL(){
-		return Optional.ofNullable(getPosterPath()).map(path -> TMDBUtils.getImageURL(path, "original"));
+	@Override
+	public Optional<URL> getPosterURL(int seasonNumber){
+		return getSeason(seasonNumber).map(season -> TMDBUtils.getImageURL(season.getPosterPath(), "original"));
 	}
 	
-	public Optional<URL> getPosterURL(int seasonNumber){
-		return seasons.stream().filter(season -> Objects.equals(seasonNumber, season.getSeasonNumber())).findAny().map(season -> TMDBUtils.getImageURL(season.getPosterPath(), "original"));
+	public Optional<Season> getSeason(int seasonNumber){
+		return this.getSeasons().stream().filter(season -> Objects.equals(season.getSeasonNumber(), seasonNumber)).findFirst();
+	}
+	
+	@Override
+	public Optional<URL> getPosterURL(){
+		return Optional.ofNullable(getPosterPath()).map(path -> TMDBUtils.getImageURL(path, "original"));
 	}
 }

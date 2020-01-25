@@ -9,6 +9,7 @@ import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
 import fr.raksrinana.rsndiscord.utils.themoviedb.TMDBUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.dv8tion.jda.api.EmbedBuilder;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -19,7 +20,7 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class MovieDetails{
+public class MovieDetails implements MediaDetails{
 	@JsonProperty("adult")
 	private boolean adult;
 	@JsonProperty("backdrop_path")
@@ -90,6 +91,15 @@ public class MovieDetails{
 		return getId() == that.getId();
 	}
 	
+	public void fillEmbed(EmbedBuilder builder){
+	}
+	
+	@Override
+	public Optional<URL> getPosterURL(int seasonNumber){
+		return getPosterURL();
+	}
+	
+	@Override
 	public Optional<URL> getPosterURL(){
 		return Optional.ofNullable(getPosterPath()).map(path -> TMDBUtils.getImageURL(path, "original"));
 	}

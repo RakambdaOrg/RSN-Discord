@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601DateDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601DateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
+import fr.raksrinana.rsndiscord.utils.themoviedb.model.MovieDetails;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktObject;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -64,7 +65,11 @@ public class Movie implements TraktObject{
 	private Set<String> genres;
 	
 	@Override
-	public void fillEmbed(EmbedBuilder builder){
+	public void fillEmbed(@NonNull EmbedBuilder builder){
+		fillEmbed(builder, null);
+	}
+	
+	public void fillEmbed(@NonNull EmbedBuilder builder, MovieDetails movieDetails){
 		builder.addField("Title", getTitle(), true);
 		builder.addField("Year", Integer.toString(this.getYear()), true);
 		builder.addField("Status", this.getStatus(), true);

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601DateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
+import fr.raksrinana.rsndiscord.utils.themoviedb.model.TVDetails;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktObject;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,8 +15,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
-import static fr.raksrinana.rsndiscord.utils.trakt.model.users.history.UserHistory.DATETIME_FORMAT;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -66,12 +67,16 @@ public class Show implements TraktObject{
 	private int airedEpisodes;
 	
 	@Override
-	public void fillEmbed(EmbedBuilder builder){
+	public void fillEmbed(@NonNull EmbedBuilder builder){
+		fillEmbed(builder, null);
+	}
+	
+	public void fillEmbed(@NonNull EmbedBuilder builder, TVDetails tvDetails){
 		builder.addField("Title", this.getTitle(), true);
 		builder.addField("Year", Integer.toString(this.getYear()), true);
+		Optional.ofNullable(tvDetails).map(TVDetails::getNumberOfSeasons).ifPresent(numberOfSeasons -> builder.addField("Seasons", Integer.toString(numberOfSeasons), true));
 		builder.addField("Episodes", Integer.toString(this.getAiredEpisodes()), true);
 		builder.addField("Status", this.getStatus(), true);
-		builder.addField("Aired at", this.getFirstAired().format(DATETIME_FORMAT), true);
 		builder.addField("Genres", String.join(", ", this.getGenres()), true);
 		builder.addField("Overview", this.getOverview(), false);
 	}

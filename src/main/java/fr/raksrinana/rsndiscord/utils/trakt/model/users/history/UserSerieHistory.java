@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import fr.raksrinana.rsndiscord.utils.themoviedb.model.MediaDetails;
+import fr.raksrinana.rsndiscord.utils.themoviedb.model.TVDetails;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktObject;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,11 +27,12 @@ public class UserSerieHistory extends UserHistory{
 	private Show show;
 	
 	@Override
-	public void fillEmbed(EmbedBuilder builder){
+	public void fillEmbed(@NonNull EmbedBuilder builder, MediaDetails mediaDetails){
 		builder.setTitle("Episode watched", Optional.of(getUrl()).map(Object::toString).orElse(null));
-		this.getShow().fillEmbed(builder);
+		Optional.ofNullable(mediaDetails).flatMap(details -> details.getPosterURL(getEpisode().getSeason()).or(details::getPosterURL)).ifPresent(posterUrl -> builder.setThumbnail(posterUrl.toString()));
+		this.getShow().fillEmbed(builder, mediaDetails instanceof TVDetails ? (TVDetails) mediaDetails : null);
 		builder.addBlankField(false);
-		this.getEpisode().fillEmbed(builder);
+		this.getEpisode().fillEmbed(builder, mediaDetails instanceof TVDetails ? (TVDetails) mediaDetails : null);
 		builder.addBlankField(false);
 		super.fillEmbed(builder);
 	}
@@ -54,6 +57,11 @@ public class UserSerieHistory extends UserHistory{
 			return getShow().compareTo(h.getShow());
 		}
 		return super.compareTo(o);
+	}
+	
+	@Override
+	public MediaIds getIds(){
+		return getShow().getIds();
 	}
 	
 	@Override

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import fr.raksrinana.rsndiscord.utils.themoviedb.model.MediaDetails;
+import fr.raksrinana.rsndiscord.utils.themoviedb.model.MovieDetails;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktObject;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,9 +25,10 @@ public class UserMovieHistory extends UserHistory{
 	private Movie movie;
 	
 	@Override
-	public void fillEmbed(EmbedBuilder builder){
+	public void fillEmbed(@NonNull EmbedBuilder builder, MediaDetails mediaDetails){
 		builder.setTitle("Movie watched", Optional.of(getUrl()).map(Object::toString).orElse(null));
-		this.getMovie().fillEmbed(builder);
+		Optional.ofNullable(mediaDetails).flatMap(MediaDetails::getPosterURL).ifPresent(posterUrl -> builder.setThumbnail(posterUrl.toString()));
+		this.getMovie().fillEmbed(builder, mediaDetails instanceof MovieDetails ? (MovieDetails) mediaDetails : null);
 		builder.addBlankField(false);
 		super.fillEmbed(builder);
 	}
@@ -46,6 +49,11 @@ public class UserMovieHistory extends UserHistory{
 			return getMovie().compareTo(((UserMovieHistory) o).getMovie());
 		}
 		return super.compareTo(o);
+	}
+	
+	@Override
+	public MediaIds getIds(){
+		return getMovie().getIds();
 	}
 	
 	@Override
