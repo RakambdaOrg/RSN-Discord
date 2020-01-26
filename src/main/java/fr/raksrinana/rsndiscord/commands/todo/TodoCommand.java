@@ -35,6 +35,7 @@ public class TodoCommand extends BasicCommand{
 		}
 		else{
 			final var data = new HashMap<String, String>();
+			data.put(ReactionUtils.DELETE_KEY, Boolean.toString(false));
 			if(Objects.equals(args.peek(), "true")){
 				args.pop();
 				data.put(ReactionUtils.DELETE_KEY, Boolean.toString(true));
