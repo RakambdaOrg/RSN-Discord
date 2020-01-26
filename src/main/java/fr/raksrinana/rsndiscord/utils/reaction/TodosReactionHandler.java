@@ -38,16 +38,15 @@ public class TodosReactionHandler implements ReactionHandler{
 	
 	protected void processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull WaitingReactionMessageConfiguration todo){
 		todo.getMessage().getMessage().ifPresent(message -> {
+			if(message.isPinned()){
+				Actions.unpin(message);
+			}
 			if(Optional.ofNullable(todo.getData().get(ReactionUtils.DELETE_KEY)).map(Boolean::parseBoolean).orElse(false)){
 				Actions.deleteMessage(message);
 			}
 			else{
 				Actions.editMessage(message, BasicEmotes.OK_HAND.getValue() + " __**DONE**__:  " + message.getContentRaw());
 				Actions.clearReactions(message);
-				message.clearReactions().queue();
-				if(message.isPinned()){
-					Actions.unpin(message);
-				}
 			}
 		});
 	}
