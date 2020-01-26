@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.commands;
+package fr.raksrinana.rsndiscord.commands.todo;
 
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
@@ -8,12 +8,15 @@ import fr.raksrinana.rsndiscord.settings.guild.WaitingReactionMessageConfigurati
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
+import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 @BotCommand
 public class TodoCommand extends BasicCommand{
@@ -31,9 +34,14 @@ public class TodoCommand extends BasicCommand{
 			return CommandResult.BAD_ARGUMENTS;
 		}
 		else{
+			final var data = new HashMap<String, String>();
+			if(Objects.equals(args.peek(), "true")){
+				args.pop();
+				data.put(ReactionUtils.DELETE_KEY, Boolean.toString(true));
+			}
 			Actions.reply(event, String.join(" ", args), null).thenAccept(message -> {
 				Actions.addReaction(message, BasicEmotes.CHECK_OK.getValue());
-				Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, ReactionTag.TODO));
+				Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, ReactionTag.TODO, data));
 				Actions.pin(message);
 			});
 		}
