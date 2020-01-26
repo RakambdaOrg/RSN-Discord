@@ -35,10 +35,10 @@ public class TodoCommand extends BasicCommand{
 		}
 		else{
 			final var data = new HashMap<String, String>();
-			data.put(ReactionUtils.DELETE_KEY, Boolean.toString(false));
-			if(Objects.equals(args.peek(), "true")){
+			data.put(ReactionUtils.DELETE_KEY, Boolean.toString(true));
+			if(Objects.equals(args.peek(), "false")){
 				args.pop();
-				data.put(ReactionUtils.DELETE_KEY, Boolean.toString(true));
+				data.put(ReactionUtils.DELETE_KEY, Boolean.toString(false));
 			}
 			Actions.reply(event, String.join(" ", args), null).thenAccept(message -> {
 				Actions.addReaction(message, BasicEmotes.CHECK_OK.getValue());
