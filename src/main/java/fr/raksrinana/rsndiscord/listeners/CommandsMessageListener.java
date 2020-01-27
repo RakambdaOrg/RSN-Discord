@@ -95,7 +95,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 				});
 			}
 			else if(Settings.get(event.getGuild()).getAutoTodoChannels().stream().anyMatch(channelConfiguration -> Objects.equals(channelConfiguration.getChannelId(), event.getChannel().getIdLong()))){
-				if(!event.getMessage().isFromGuild()){
+				if(!event.getAuthor().isBot() && !event.getAuthor().isFake()){
 					Actions.addReaction(event.getMessage(), BasicEmotes.CHECK_OK.getValue());
 					Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(event.getMessage(), ReactionTag.TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
 					Actions.pin(event.getMessage());
