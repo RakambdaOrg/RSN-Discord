@@ -57,7 +57,7 @@ public class MessageConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public String toString(){
-		return "" + this.getMessageId() + '(' + this.getChannel() + ')';
+		return "Message(" + this.getMessageId() + '/' + this.getChannel() + ')';
 	}
 	
 	@Override

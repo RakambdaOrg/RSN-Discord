@@ -56,7 +56,7 @@ public class ChannelConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public String toString(){
-		return "" + this.getChannelId();
+		return "Channel(" + this.getChannelId() + ')';
 	}
 	
 	@Override

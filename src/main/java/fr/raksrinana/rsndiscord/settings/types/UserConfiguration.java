@@ -50,7 +50,7 @@ public class UserConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public String toString(){
-		return this.getUser().map(User::getAsMention).orElse("<Unknown user>");
+		return "User(" + this.getUserId() + ')';
 	}
 	
 	@Override

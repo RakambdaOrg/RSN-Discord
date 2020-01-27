@@ -48,6 +48,11 @@ public class UserRoleConfiguration implements AtomicConfiguration{
 	}
 	
 	@Override
+	public String toString(){
+		return "UserRole(" + this.getUser().toString() + '|' + this.getRole() + ')';
+	}
+	
+	@Override
 	public boolean shouldBeRemoved(){
 		return getUser().shouldBeRemoved() || getRole().shouldBeRemoved();
 	}

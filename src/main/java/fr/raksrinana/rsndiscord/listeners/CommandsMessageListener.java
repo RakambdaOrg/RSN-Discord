@@ -3,8 +3,12 @@ package fr.raksrinana.rsndiscord.listeners;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.commands.generic.*;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.guild.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
+import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -89,6 +93,11 @@ public class CommandsMessageListener extends ListenerAdapter{
 					builder.addField("Command", cmdText, false);
 					Actions.reply(event, "", builder.build());
 				});
+			}
+			else if(Settings.get(event.getGuild()).getAutoTodoChannels().stream().anyMatch(channelConfiguration -> Objects.equals(channelConfiguration.getChannelId(), event.getChannel().getIdLong()))){
+				Actions.addReaction(event.getMessage(), BasicEmotes.CHECK_OK.getValue());
+				Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(event.getMessage(), ReactionTag.TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
+				Actions.pin(event.getMessage());
 			}
 		}
 		catch(final Exception e){

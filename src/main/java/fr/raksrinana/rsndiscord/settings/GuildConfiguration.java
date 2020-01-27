@@ -31,10 +31,10 @@ public class GuildConfiguration implements CompositeConfiguration{
 	private String prefix;
 	@JsonProperty("aniList")
 	@Getter
-	private AniListConfiguration aniListConfiguration = new AniListConfiguration();
+	private final AniListConfiguration aniListConfiguration = new AniListConfiguration();
 	@JsonProperty("trakt")
 	@Getter
-	private TraktConfiguration traktConfiguration = new TraktConfiguration();
+	private final TraktConfiguration traktConfiguration = new TraktConfiguration();
 	@JsonProperty("autoRoles")
 	@Getter
 	@Setter
@@ -48,7 +48,7 @@ public class GuildConfiguration implements CompositeConfiguration{
 	private RoleConfiguration djRole;
 	@JsonProperty("warns")
 	@Getter
-	private WarnsConfiguration warnsConfiguration = new WarnsConfiguration();
+	private final WarnsConfiguration warnsConfiguration = new WarnsConfiguration();
 	@JsonProperty("ideaChannels")
 	@Getter
 	@Setter
@@ -59,13 +59,13 @@ public class GuildConfiguration implements CompositeConfiguration{
 	private Set<ChannelConfiguration> noXpChannels = new HashSet<>();
 	@JsonProperty("participation")
 	@Getter
-	private ParticipationConfig participationConfig = new ParticipationConfig();
+	private final ParticipationConfig participationConfig = new ParticipationConfig();
 	@JsonProperty("reportChannel")
 	@Setter
 	private ChannelConfiguration reportChannel;
 	@JsonProperty("nickname")
 	@Getter
-	private NicknameConfiguration nicknameConfiguration = new NicknameConfiguration();
+	private final NicknameConfiguration nicknameConfiguration = new NicknameConfiguration();
 	@JsonProperty("twitchChannel")
 	@Setter
 	private ChannelConfiguration twitchChannel;
@@ -74,17 +74,17 @@ public class GuildConfiguration implements CompositeConfiguration{
 	private ChannelConfiguration quizChannel;
 	@JsonProperty("questions")
 	@Getter
-	private QuestionsConfiguration questionsConfiguration = new QuestionsConfiguration();
+	private final QuestionsConfiguration questionsConfiguration = new QuestionsConfiguration();
 	@JsonProperty("removeRoles")
 	@Getter
 	@Setter
 	private Set<RemoveRoleConfiguration> removeRoles = new HashSet<>();
 	@JsonProperty("trombinoscope")
 	@Getter
-	private TrombinoscopeConfiguration trombinoscopeConfiguration = new TrombinoscopeConfiguration();
+	private final TrombinoscopeConfiguration trombinoscopeConfiguration = new TrombinoscopeConfiguration();
 	@JsonProperty("addBackRoles")
 	@Getter
-	private Set<UserRoleConfiguration> addBackRoles = new HashSet<>();
+	private final Set<UserRoleConfiguration> addBackRoles = new HashSet<>();
 	@JsonProperty("leaverRole")
 	@Setter
 	private RoleConfiguration leaverRole;
@@ -97,7 +97,7 @@ public class GuildConfiguration implements CompositeConfiguration{
 	private boolean ircForward = false;
 	@JsonProperty("overwatchLeague")
 	@Getter
-	private OverwatchLeagueConfiguration overwatchLeagueConfiguration = new OverwatchLeagueConfiguration();
+	private final OverwatchLeagueConfiguration overwatchLeagueConfiguration = new OverwatchLeagueConfiguration();
 	@JsonProperty("announceStartChannel")
 	@Setter
 	private ChannelConfiguration announceStartChannel;
@@ -111,7 +111,7 @@ public class GuildConfiguration implements CompositeConfiguration{
 	private Set<String> twitchAutoConnectUsers = new HashSet<>();
 	@JsonProperty("reminders")
 	@Getter
-	private List<ReminderConfiguration> reminders = new ArrayList<>();
+	private final List<ReminderConfiguration> reminders = new ArrayList<>();
 	@JsonProperty("christmasRole")
 	@Setter
 	private RoleConfiguration christmasRole;
@@ -128,6 +128,10 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Setter
 	private Set<AmazonTrackingConfiguration> amazonTrackings = new HashSet<>();
+	@JsonProperty("autoTodoChannels")
+	@Getter
+	@Setter
+	private Set<ChannelConfiguration> autoTodoChannels = new HashSet<>();
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;

@@ -50,7 +50,7 @@ public class RoleConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public String toString(){
-		return this.getRole().map(Role::getAsMention).orElse("<Unknown role>");
+		return "Role(" + this.getRoleId() + ')';
 	}
 	
 	@Override

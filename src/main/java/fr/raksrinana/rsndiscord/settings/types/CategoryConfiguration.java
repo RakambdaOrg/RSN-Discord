@@ -50,7 +50,7 @@ public class CategoryConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public String toString(){
-		return this.getCategory().map(Category::getName).orElse("<Unknown category>");
+		return "Category(" + this.getCategoryId() + ')';
 	}
 	
 	@Override

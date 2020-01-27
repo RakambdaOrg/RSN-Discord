@@ -25,7 +25,6 @@ import java.time.format.DateTimeFormatter;
 public class UserDateConfiguration implements AtomicConfiguration{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	@JsonProperty("userId")
-	@JsonDeserialize(using = UserDateUserConfigurationDeserializer.class)
 	private UserConfiguration user;
 	@JsonProperty("date")
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -61,7 +60,7 @@ public class UserDateConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public String toString(){
-		return this.getUser().toString() + this.getDate().format(DF);
+		return "UserDate(" + this.getUser().toString() + '|' + this.getDate().format(DF) + ')';
 	}
 	
 	@Override
