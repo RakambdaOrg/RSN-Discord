@@ -95,9 +95,11 @@ public class CommandsMessageListener extends ListenerAdapter{
 				});
 			}
 			else if(Settings.get(event.getGuild()).getAutoTodoChannels().stream().anyMatch(channelConfiguration -> Objects.equals(channelConfiguration.getChannelId(), event.getChannel().getIdLong()))){
-				Actions.addReaction(event.getMessage(), BasicEmotes.CHECK_OK.getValue());
-				Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(event.getMessage(), ReactionTag.TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
-				Actions.pin(event.getMessage());
+				if(!event.getMessage().isFromGuild()){
+					Actions.addReaction(event.getMessage(), BasicEmotes.CHECK_OK.getValue());
+					Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(event.getMessage(), ReactionTag.TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
+					Actions.pin(event.getMessage());
+				}
 			}
 		}
 		catch(final Exception e){
