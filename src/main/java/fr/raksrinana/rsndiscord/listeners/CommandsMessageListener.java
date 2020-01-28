@@ -12,6 +12,7 @@ import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.reflections.Reflections;
@@ -49,56 +50,61 @@ public class CommandsMessageListener extends ListenerAdapter{
 	public void onGuildMessageReceived(@NonNull final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
-			if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
-				Log.getLogger(event.getGuild()).debug("Processing potential command from {}: {}", event.getAuthor(), event.getMessage().getContentRaw());
-				Actions.deleteMessage(event.getMessage());
-				final var args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
-				final var cmdText = args.pop().substring(Settings.get(event.getGuild()).getPrefix().orElse(defaultPrefix).length());
-				this.getCommand(cmdText).ifPresentOrElse(command -> {
-					try{
-						Log.getLogger(event.getGuild()).info("Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(), event.getAuthor(), args);
-						final var executionResult = command.execute(event, args);
-						if(executionResult == CommandResult.FAILED){
-							Actions.replyPrivate(event.getGuild(), event.getAuthor(), "An error occurred", null);
+			if(!event.getAuthor().isBot()){
+				if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
+					Log.getLogger(event.getGuild()).debug("Processing potential command from {}: {}", event.getAuthor(), event.getMessage().getContentRaw());
+					Actions.deleteMessage(event.getMessage());
+					final var args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
+					final var cmdText = args.pop().substring(Settings.get(event.getGuild()).getPrefix().orElse(defaultPrefix).length());
+					this.getCommand(cmdText).ifPresentOrElse(command -> {
+						try{
+							Log.getLogger(event.getGuild()).info("Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(), event.getAuthor(), args);
+							final var executionResult = command.execute(event, args);
+							if(executionResult == CommandResult.FAILED){
+								Actions.replyPrivate(event.getGuild(), event.getAuthor(), "An error occurred", null);
+							}
+							else if(executionResult == CommandResult.BAD_ARGUMENTS){
+								Actions.replyPrivate(event.getGuild(), event.getAuthor(), "The given arguments aren't valid. Please check the help.", null);
+							}
 						}
-						else if(executionResult == CommandResult.BAD_ARGUMENTS){
-							Actions.replyPrivate(event.getGuild(), event.getAuthor(), "The given arguments aren't valid. Please check the help.", null);
+						catch(final NotAllowedException e){
+							Log.getLogger(event.getGuild()).error("Error executing command {} (not allowed)", command, e);
+							final var builder = new EmbedBuilder();
+							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+							builder.setColor(Color.RED);
+							builder.setTitle("You're not allowed to execute this command");
+							Actions.reply(event, "", builder.build());
 						}
-					}
-					catch(final NotAllowedException e){
-						Log.getLogger(event.getGuild()).error("Error executing command {} (not allowed)", command, e);
+						catch(final NotHandledException e){
+							Log.getLogger(event.getGuild()).warn("Command {} isn't handled for {} ({})", command, event.getAuthor(), e.getMessage());
+						}
+						catch(final Exception e){
+							Log.getLogger(event.getGuild()).error("Error executing command {}", command, e);
+							final var builder = new EmbedBuilder();
+							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
+							builder.setColor(Color.RED);
+							builder.setTitle("Something exploded");
+							builder.addField("Exception kind", e.getClass().getName(), false);
+							Actions.reply(event, "", builder.build());
+						}
+					}, () -> {
 						final var builder = new EmbedBuilder();
 						builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-						builder.setColor(Color.RED);
-						builder.setTitle("You're not allowed to execute this command");
+						builder.setColor(Color.ORANGE);
+						builder.setTitle("Command not found");
+						builder.addField("Command", cmdText, false);
 						Actions.reply(event, "", builder.build());
+					});
+				}
+				else if(Settings.get(event.getGuild()).getAutoTodoChannels().stream().anyMatch(channelConfiguration -> Objects.equals(channelConfiguration.getChannelId(), event.getChannel().getIdLong()))){
+					if(event.getMessage().getType() == MessageType.CHANNEL_PINNED_ADD){
+						Actions.deleteMessage(event.getMessage());
 					}
-					catch(final NotHandledException e){
-						Log.getLogger(event.getGuild()).warn("Command {} isn't handled for {} ({})", command, event.getAuthor(), e.getMessage());
+					else{
+						Actions.addReaction(event.getMessage(), BasicEmotes.CHECK_OK.getValue());
+						Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(event.getMessage(), ReactionTag.TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
+						Actions.pin(event.getMessage());
 					}
-					catch(final Exception e){
-						Log.getLogger(event.getGuild()).error("Error executing command {}", command, e);
-						final var builder = new EmbedBuilder();
-						builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-						builder.setColor(Color.RED);
-						builder.setTitle("Something exploded");
-						builder.addField("Exception kind", e.getClass().getName(), false);
-						Actions.reply(event, "", builder.build());
-					}
-				}, () -> {
-					final var builder = new EmbedBuilder();
-					builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-					builder.setColor(Color.ORANGE);
-					builder.setTitle("Command not found");
-					builder.addField("Command", cmdText, false);
-					Actions.reply(event, "", builder.build());
-				});
-			}
-			else if(Settings.get(event.getGuild()).getAutoTodoChannels().stream().anyMatch(channelConfiguration -> Objects.equals(channelConfiguration.getChannelId(), event.getChannel().getIdLong()))){
-				if(!event.getAuthor().isBot() && !event.getAuthor().isFake()){
-					Actions.addReaction(event.getMessage(), BasicEmotes.CHECK_OK.getValue());
-					Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(event.getMessage(), ReactionTag.TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
-					Actions.pin(event.getMessage());
 				}
 			}
 		}
