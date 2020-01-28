@@ -50,8 +50,8 @@ public class CommandsMessageListener extends ListenerAdapter{
 	public void onGuildMessageReceived(@NonNull final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
-			if(!event.getAuthor().isBot()){
-				if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
+			if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
+				if(!event.getAuthor().isBot()){
 					Log.getLogger(event.getGuild()).debug("Processing potential command from {}: {}", event.getAuthor(), event.getMessage().getContentRaw());
 					Actions.deleteMessage(event.getMessage());
 					final var args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
@@ -96,15 +96,15 @@ public class CommandsMessageListener extends ListenerAdapter{
 						Actions.reply(event, "", builder.build());
 					});
 				}
-				else if(Settings.get(event.getGuild()).getAutoTodoChannels().stream().anyMatch(channelConfiguration -> Objects.equals(channelConfiguration.getChannelId(), event.getChannel().getIdLong()))){
-					if(event.getMessage().getType() == MessageType.CHANNEL_PINNED_ADD){
-						Actions.deleteMessage(event.getMessage());
-					}
-					else{
-						Actions.addReaction(event.getMessage(), BasicEmotes.CHECK_OK.getValue());
-						Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(event.getMessage(), ReactionTag.TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
-						Actions.pin(event.getMessage());
-					}
+			}
+			else if(Settings.get(event.getGuild()).getAutoTodoChannels().stream().anyMatch(channelConfiguration -> Objects.equals(channelConfiguration.getChannelId(), event.getChannel().getIdLong()))){
+				if(event.getMessage().getType() == MessageType.CHANNEL_PINNED_ADD){
+					Actions.deleteMessage(event.getMessage());
+				}
+				else{
+					Actions.addReaction(event.getMessage(), BasicEmotes.CHECK_OK.getValue());
+					Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(event.getMessage(), ReactionTag.TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
+					Actions.pin(event.getMessage());
 				}
 			}
 		}
