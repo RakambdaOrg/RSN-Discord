@@ -7,12 +7,12 @@ import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.utils.http.requestssenders.post.JSONPostRequestSender;
+import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Member;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -27,12 +27,11 @@ public class AniListUtils{
 	@Getter
 	private static final String CODE_LINK = String.format("%s/oauth/authorize?client_id=%d&response_type=code&redirect_uri=%s", API_URL, APP_ID, REDIRECT_URI);
 	private static final String USER_INFO_QUERY = "query{Viewer {id name}}";
-	private static final int HTTP_OK = 200;
 	private static final int HTTP_ERROR = 503;
 	private static final int HTTP_TOO_MANY_REQUESTS = 429;
 	public static URL FALLBACK_URL;
 	
-	public static void requestToken(@NonNull final Member member, @NonNull final String code) throws MalformedURLException, URISyntaxException, InvalidResponseException{
+	public static void requestToken(@NonNull final Member member, @NonNull final String code) throws InvalidResponseException{
 		Log.getLogger(member.getGuild()).debug("Getting access token for {}", member);
 		final var accessToken = getAccessToken(member);
 		if(accessToken.isPresent()){
@@ -47,8 +46,7 @@ public class AniListUtils{
 		body.put("client_secret", System.getProperty("ANILIST_SECRET"));
 		body.put("redirect_uri", REDIRECT_URI);
 		body.put("code", code);
-		final var sender = new JSONPostRequestSender(new URL(API_URL + "/oauth/token"), headers, new HashMap<>(), body.toString());
-		final var result = sender.getRequestHandler();
+		final var result = new JSONPostRequestSender(Unirest.post(API_URL + "/oauth/token").headers(headers).body(body)).getRequestHandler();
 		if(!result.getResult().isSuccess()){
 			throw new InvalidResponseException("Getting token failed HTTP code " + result.getStatus());
 		}
@@ -107,7 +105,7 @@ public class AniListUtils{
 		final var body = new JSONObject();
 		body.put("query", query);
 		body.put("variables", variables);
-		final var handler = new JSONPostRequestSender(new URL("https://graphql.anilist.co"), headers, new HashMap<>(), body.toString()).getRequestHandler();
+		final var handler = new JSONPostRequestSender(Unirest.post("https://graphql.anilist.co").headers(headers).body(body)).getRequestHandler();
 		if(handler.getResult().isSuccess()){
 			return handler.getRequestResult().getObject();
 		}

@@ -6,11 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.utils.http.requestssenders.get.JSONGetRequestSender;
 import fr.raksrinana.utils.http.requestssenders.get.StringGetRequestSender;
+import kong.unirest.Unirest;
 import lombok.NonNull;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,29 +30,11 @@ public class LuxBusUtils{
 	}
 	
 	@NonNull
-	static Set<LuxBusStop> getStopIds(){
-		if(System.currentTimeMillis() - lastCheck > DATA_TIMEOUT){
-			lastCheck = System.currentTimeMillis();
-			Log.getLogger(null).debug("Fetching bus stop infos");
-			try{
-				final var request = new StringGetRequestSender("http://travelplanner.mobiliteit.lu/hafas/query.exe/dot?performLocating=2&tpl=stop2csv&look_maxdist=150000&look_x=6112550&look_y=49610700&stationProxy=yes").getRequestHandler();
-				if(request.getStatus() == HTTP_OK){
-					Arrays.stream(request.getRequestResult().split(";")).map(s -> s.replace("id=", "").replace("\n", "").trim()).filter(s -> !s.isBlank()).map(LuxBusStop::createStop).filter(stop -> !stops.contains(stop)).forEach(stops::add);
-				}
-			}
-			catch(final URISyntaxException | MalformedURLException e){
-				Log.getLogger(null).warn("Failed to get bus stops", e);
-			}
-		}
-		return stops;
-	}
-	
-	@NonNull
 	public static Set<LuxBusDeparture> getDepartures(@NonNull final LuxBusStop stop){
 		try{
 			Log.getLogger(null).info("Getting departures for stop {}", stop);
-			final var request = new JSONGetRequestSender(String.format("http://travelplanner.mobiliteit.lu/restproxy/departureBoard?accessId=cdt&format=json&id=%s", URLEncoder.encode(stop.getId(), StandardCharsets.UTF_8))).getRequestHandler();
-			if(request.getStatus() == HTTP_OK){
+			final var request = new JSONGetRequestSender(Unirest.get("http://travelplanner.mobiliteit.lu/restproxy/departureBoard?accessId=cdt&format=json&id={id}").queryString("accessId", "cdt").queryString("format", "json").queryString("id", stop.getId())).getRequestHandler();
+			if(request.getResult().isSuccess()){
 				final var response = request.getRequestResult().getObject();
 				if(response.has("Departure")){
 					return new ObjectMapper().readerFor(new TypeReference<Set<LuxBusDeparture>>(){}).readValue(response.getJSONArray("Departure").toString());
@@ -66,9 +45,22 @@ public class LuxBusUtils{
 				throw new IllegalStateException("Bus API didn't reply correctly");
 			}
 		}
-		catch(final URISyntaxException | MalformedURLException | JsonProcessingException e){
+		catch(final JsonProcessingException e){
 			Log.getLogger(null).warn("Failed to get bus stop departures (id: {})", stop, e);
 		}
 		return Set.of();
+	}
+	
+	@NonNull
+	static Set<LuxBusStop> getStopIds(){
+		if(System.currentTimeMillis() - lastCheck > DATA_TIMEOUT){
+			lastCheck = System.currentTimeMillis();
+			Log.getLogger(null).debug("Fetching bus stop infos");
+			final var request = new StringGetRequestSender(Unirest.get("http://travelplanner.mobiliteit.lu/hafas/query.exe/dot").queryString("performLocating", 2).queryString("tpl", "stop2csv").queryString("look_maxdist", 150000).queryString("look_y", 49610700).queryString("stationProxy", "yes")).getRequestHandler();
+			if(request.getResult().isSuccess()){
+				Arrays.stream(request.getRequestResult().split(";")).map(s -> s.replace("id=", "").replace("\n", "").trim()).filter(s -> !s.isBlank()).map(LuxBusStop::createStop).filter(stop -> !stops.contains(stop)).forEach(stops::add);
+			}
+		}
+		return stops;
 	}
 }

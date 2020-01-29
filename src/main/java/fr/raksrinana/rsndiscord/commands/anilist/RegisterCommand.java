@@ -12,8 +12,6 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -48,7 +46,7 @@ class RegisterCommand extends BasicCommand{
 			Actions.reply(event, "Provided API code isn't valid", null);
 			return CommandResult.NOT_HANDLED;
 		}
-		catch(final URISyntaxException | MalformedURLException | InvalidResponseException e){
+		catch(final InvalidResponseException e){
 			Log.getLogger(event.getGuild()).error("Error getting AniList access token", e);
 			Actions.reply(event, "Error while saving API code", null);
 			Utilities.reportException(e);

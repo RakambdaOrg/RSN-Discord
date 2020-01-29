@@ -1,24 +1,20 @@
 package fr.raksrinana.rsndiscord.utils.trakt.requests.users;
 
 import fr.raksrinana.rsndiscord.utils.trakt.TraktGetRequest;
+import fr.raksrinana.rsndiscord.utils.trakt.TraktUtils;
 import fr.raksrinana.rsndiscord.utils.trakt.model.users.settings.UserSettings;
 import kong.unirest.GenericType;
-import lombok.NonNull;
-import java.util.Map;
+import kong.unirest.GetRequest;
+import kong.unirest.Unirest;
 
 public class UserSettingsGetRequest implements TraktGetRequest<UserSettings>{
 	@Override
-	public @NonNull String getEndpoint(){
-		return "/users/settings";
-	}
-	
-	@Override
-	public GenericType<? extends UserSettings> getResultClass(){
+	public GenericType<UserSettings> getOutputType(){
 		return new GenericType<>(){};
 	}
 	
 	@Override
-	public Map<String, String> getParameters(){
-		return null;
+	public GetRequest getRequest(){
+		return Unirest.get(TraktUtils.API_URL + "/users/settings");
 	}
 }

@@ -2,8 +2,6 @@ package fr.raksrinana.rsndiscord;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import fr.raksrinana.rsndiscord.listeners.*;
 import fr.raksrinana.rsndiscord.listeners.quiz.QuizListener;
 import fr.raksrinana.rsndiscord.listeners.reply.ReplyMessageListener;
@@ -23,8 +21,7 @@ import fr.raksrinana.rsndiscord.utils.reminder.AnilistReleaseReminderHandler;
 import fr.raksrinana.rsndiscord.utils.reminder.DefaultReminderHandler;
 import fr.raksrinana.rsndiscord.utils.reminder.ReminderUtils;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktUtils;
-import kong.unirest.GenericType;
-import kong.unirest.ObjectMapper;
+import fr.raksrinana.utils.http.JacksonObjectMapper;
 import kong.unirest.Unirest;
 import lombok.Getter;
 import lombok.NonNull;
@@ -59,6 +56,7 @@ public class Main{
 	 */
 	public static void main(@NonNull final String[] args){
 		parameters = Optional.ofNullable(loadEnv(args)).orElseThrow(() -> new IllegalStateException("Failed to load environment"));
+		Unirest.config().setObjectMapper(new JacksonObjectMapper()).connectTimeout(30000).socketTimeout(30000).enableCookieManagement(true).verifySsl(true);
 		try{
 			Log.getLogger(null).info("Building JDA");
 			final var jdaBuilder = new JDABuilder(AccountType.BOT).setToken(System.getProperty("RSN_TOKEN"));
@@ -128,39 +126,6 @@ public class Main{
 		}
 		prop.forEach((key, value) -> System.setProperty(key.toString(), value.toString()));
 		Log.getLogger(null).debug("Loaded {} properties from file", prop.keySet().size());
-		Unirest.config().setObjectMapper(new ObjectMapper(){
-			private com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
-			
-			@Override
-			public <T> T readValue(String value, Class<T> valueType){
-				try{
-					return this.jacksonObjectMapper.readValue(value, valueType);
-				}
-				catch(IOException var4){
-					throw new RuntimeException(var4);
-				}
-			}
-			
-			@Override
-			public <T> T readValue(String value, GenericType<T> genericType){
-				try{
-					return this.jacksonObjectMapper.readValue(value, new TypeReference<>(){});
-				}
-				catch(IOException var4){
-					throw new RuntimeException(var4);
-				}
-			}
-			
-			@Override
-			public String writeValue(Object value){
-				try{
-					return this.jacksonObjectMapper.writeValueAsString(value);
-				}
-				catch(JsonProcessingException var3){
-					throw new RuntimeException(var3);
-				}
-			}
-		});
 		return parameters;
 	}
 	

@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.utils.themoviedb;
 
-import java.util.Map;
+import kong.unirest.GetRequest;
 
 public interface TMDBGetRequest<T> extends TMDBRequest<T>{
-	Map<String, String> getParameters();
+	GetRequest getRequest();
 }

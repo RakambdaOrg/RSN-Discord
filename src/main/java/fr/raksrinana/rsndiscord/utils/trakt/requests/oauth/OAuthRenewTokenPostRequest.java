@@ -5,6 +5,8 @@ import fr.raksrinana.rsndiscord.utils.trakt.TraktPostRequest;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktUtils;
 import fr.raksrinana.rsndiscord.utils.trakt.model.auth.AccessToken;
 import kong.unirest.GenericType;
+import kong.unirest.RequestBodyEntity;
+import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
 import lombok.NonNull;
 
@@ -19,7 +21,6 @@ public class OAuthRenewTokenPostRequest implements TraktPostRequest<AccessToken>
 		this.refreshToken = refreshToken;
 	}
 	
-	@Override
 	public JSONObject getBody(){
 		final var data = new JSONObject();
 		data.put("client_id", TraktUtils.getClientId());
@@ -31,12 +32,12 @@ public class OAuthRenewTokenPostRequest implements TraktPostRequest<AccessToken>
 	}
 	
 	@Override
-	public @NonNull String getEndpoint(){
-		return "/oauth/token";
+	public GenericType<AccessToken> getOutputType(){
+		return new GenericType<>(){};
 	}
 	
 	@Override
-	public GenericType<? extends AccessToken> getResultClass(){
-		return new GenericType<>(){};
+	public RequestBodyEntity getRequest(){
+		return Unirest.post(TraktUtils.API_URL + "/oauth/token").body(getBody());
 	}
 }

@@ -1,14 +1,14 @@
 package fr.raksrinana.rsndiscord.utils.trakt.requests.users;
 
 import fr.raksrinana.rsndiscord.utils.trakt.TraktPagedGetRequest;
+import fr.raksrinana.rsndiscord.utils.trakt.TraktUtils;
 import fr.raksrinana.rsndiscord.utils.trakt.model.users.history.UserHistory;
 import kong.unirest.GenericType;
+import kong.unirest.GetRequest;
+import kong.unirest.Unirest;
 import lombok.NonNull;
-import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -16,7 +16,7 @@ public class UserHistoryPagedGetRequest implements TraktPagedGetRequest<UserHist
 	private final int page;
 	private final LocalDateTime startDate;
 	private final LocalDateTime endDate;
-	private String username;
+	private final String username;
 	
 	public UserHistoryPagedGetRequest(@NonNull String username){
 		this(username, 1);
@@ -43,30 +43,24 @@ public class UserHistoryPagedGetRequest implements TraktPagedGetRequest<UserHist
 	}
 	
 	@Override
+	public GenericType<Set<UserHistory>> getOutputType(){
+		return new GenericType<>(){};
+	}
+	
+	@Override
 	public int getPage(){
 		return this.page;
 	}
 	
 	@Override
-	public @NonNull String getEndpoint(){
-		return MessageFormat.format("/users/{0}/history", username);
-	}
-	
-	@Override
-	public GenericType<? extends Set<UserHistory>> getResultClass(){
-		return new GenericType<>(){};
-	}
-	
-	@Override
-	public Map<String, String> getParameters(){
-		final var parameters = new HashMap<String, String>();
-		parameters.put("extended", "full");
+	public GetRequest getRequest(){
+		final var request = Unirest.get(TraktUtils.API_URL + "/users/{username}/history").routeParam("username", this.username).queryString("extended", "full").queryString("page", getPage()).queryString("limit", getLimit());
 		if(Objects.nonNull(startDate)){
-			parameters.put("start_at", startDate.format(DateTimeFormatter.ISO_DATE_TIME));
+			request.queryString("start_at", startDate.format(DateTimeFormatter.ISO_DATE_TIME));
 		}
 		if(Objects.nonNull(endDate)){
-			parameters.put("end_at", endDate.format(DateTimeFormatter.ISO_DATE_TIME));
+			request.queryString("end_at", endDate.format(DateTimeFormatter.ISO_DATE_TIME));
 		}
-		return parameters;
+		return request;
 	}
 }

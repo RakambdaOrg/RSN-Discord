@@ -4,11 +4,11 @@ import fr.raksrinana.rsndiscord.utils.trakt.TraktPostRequest;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktUtils;
 import fr.raksrinana.rsndiscord.utils.trakt.model.auth.DeviceCode;
 import kong.unirest.GenericType;
+import kong.unirest.RequestBodyEntity;
+import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
-import lombok.NonNull;
 
 public class DeviceCodePostRequest implements TraktPostRequest<DeviceCode>{
-	@Override
 	public JSONObject getBody(){
 		final var data = new JSONObject();
 		data.put("client_id", TraktUtils.getClientId());
@@ -16,12 +16,12 @@ public class DeviceCodePostRequest implements TraktPostRequest<DeviceCode>{
 	}
 	
 	@Override
-	public @NonNull String getEndpoint(){
-		return "/oauth/device/code";
+	public GenericType<DeviceCode> getOutputType(){
+		return new GenericType<>(){};
 	}
 	
 	@Override
-	public GenericType<? extends DeviceCode> getResultClass(){
-		return new GenericType<>(){};
+	public RequestBodyEntity getRequest(){
+		return Unirest.post(TraktUtils.API_URL + "/oauth/device/code").body(getBody());
 	}
 }

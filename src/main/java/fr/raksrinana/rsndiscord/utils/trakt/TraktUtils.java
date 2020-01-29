@@ -15,29 +15,23 @@ import fr.raksrinana.utils.http.requestssenders.post.ObjectPostRequestSender;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class TraktUtils{
-	private static final String API_URL = "https://api.trakt.tv";
+	public static final String API_URL = "https://api.trakt.tv";
 	private static String CLIENT_ID;
 	private static String CLIENT_SECRET;
-	private static ExecutorService executor = Executors.newSingleThreadExecutor();
+	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 	
-	public static <T> Set<T> getPagedQuery(TraktAccessTokenConfiguration token, @NonNull TraktPagedGetRequest<T> request) throws RequestException, MalformedURLException, URISyntaxException, InvalidResponseException{
+	public static <T> Set<T> getPagedQuery(TraktAccessTokenConfiguration token, @NonNull TraktPagedGetRequest<T> request) throws RequestException, InvalidResponseException{
 		final var results = new HashSet<T>();
 		final var headers = getHeaders(token);
 		var pageCount = 1;
 		do{
-			final var parameters = Optional.ofNullable(request.getParameters()).orElseGet(HashMap::new);
-			parameters.putIfAbsent("page", Integer.toString(request.getPage()));
-			parameters.putIfAbsent("limit", Integer.toString(request.getLimit()));
-			final var handler = new ObjectGetRequestSender<>(request.getResultClass(), new URL(API_URL + request.getEndpoint()), headers, parameters).getRequestHandler();
+			final var handler = new ObjectGetRequestSender<>(request.getOutputType(), request.getRequest().headers(headers)).getRequestHandler();
 			handler.getResult().getParsingError().ifPresent(error -> Log.getLogger(null).warn("Failed to parse response", error));
 			if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
 				results.addAll(handler.getRequestResult());
@@ -84,10 +78,6 @@ public class TraktUtils{
 					}
 					retry = false;
 				}
-				catch(MalformedURLException | URISyntaxException e){
-					Log.getLogger(null).error("Failed to get device token", e);
-					retry = false;
-				}
 				Actions.reply(event, "Error while authenticating, please try again", null);
 			}
 		});
@@ -125,20 +115,20 @@ public class TraktUtils{
 				traktConfig.setUsername(member.getIdLong(), username);
 				return username;
 			}
-			catch(RequestException | MalformedURLException | URISyntaxException e){
+			catch(RequestException e){
 				Log.getLogger(null).error("Failed to renew token", e);
 			}
 			return null;
 		}));
 	}
 	
-	public static <T> T postQuery(TraktAccessTokenConfiguration token, @NonNull TraktPostRequest<T> request) throws RequestException, MalformedURLException, URISyntaxException{
-		final var headers = getHeaders(token);
-		final var handler = new ObjectPostRequestSender<>(request.getResultClass(), new URL(API_URL + request.getEndpoint()), headers, new HashMap<>(), request.getBody().toString()).getRequestHandler();
-		if(request.isValidResult(handler.getStatus())){
+	public static <T> T getQuery(TraktAccessTokenConfiguration token, @NonNull TraktGetRequest<T> request) throws RequestException{
+		final var handler = new ObjectGetRequestSender<T>(request.getOutputType(), request.getRequest().headers(getHeaders(token))).getRequestHandler();
+		handler.getResult().getParsingError().ifPresent(error -> Log.getLogger(null).warn("Failed to parse response", error));
+		if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
 			return handler.getRequestResult();
 		}
-		throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + Optional.ofNullable(handler.getRequestResult()).map(Object::toString).orElse(null), handler.getStatus());
+		throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString(), handler.getStatus());
 	}
 	
 	public static String getClientSecret(){
@@ -169,17 +159,6 @@ public class TraktUtils{
 		return Optional.empty();
 	}
 	
-	public static <T> T getQuery(TraktAccessTokenConfiguration token, @NonNull TraktGetRequest<T> request) throws RequestException, MalformedURLException, URISyntaxException{
-		final var headers = getHeaders(token);
-		final var parameters = Optional.ofNullable(request.getParameters()).orElseGet(HashMap::new);
-		final var handler = new ObjectGetRequestSender<>(request.getResultClass(), new URL(API_URL + request.getEndpoint()), headers, parameters).getRequestHandler();
-		handler.getResult().getParsingError().ifPresent(error -> Log.getLogger(null).warn("Failed to parse response", error));
-		if(request.isValidResult(handler.getStatus())){
-			return handler.getRequestResult();
-		}
-		throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString(), handler.getStatus());
-	}
-	
 	private static Optional<TraktAccessTokenConfiguration> renewToken(@NonNull TraktAccessTokenConfiguration token, @NonNull Member member){
 		final var renewTokenQuery = new OAuthRenewTokenPostRequest(token);
 		try{
@@ -188,9 +167,17 @@ public class TraktUtils{
 			Settings.get(member.getGuild()).getTraktConfiguration().addAccessToken(newToken);
 			return Optional.of(newToken);
 		}
-		catch(RequestException | MalformedURLException | URISyntaxException e){
+		catch(RequestException e){
 			Log.getLogger(null).error("Failed to renew token", e);
 		}
 		return Optional.empty();
+	}
+	
+	public static <T> T postQuery(TraktAccessTokenConfiguration token, @NonNull TraktPostRequest<T> request) throws RequestException{
+		final var handler = new ObjectPostRequestSender<>(request.getOutputType(), request.getRequest().headers(getHeaders(token))).getRequestHandler();
+		if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
+			return handler.getRequestResult();
+		}
+		throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + Optional.ofNullable(handler.getRequestResult()).map(Object::toString).orElse(null), handler.getStatus());
 	}
 }

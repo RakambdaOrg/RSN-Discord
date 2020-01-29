@@ -21,8 +21,6 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -95,7 +93,7 @@ public class TraktUserHistoryScheduledRunner implements TraktPagedGetRunner<User
 			try{
 				return TMDBUtils.getQuery(query);
 			}
-			catch(RequestException | URISyntaxException | MalformedURLException e){
+			catch(RequestException e){
 				Log.getLogger(null).error("Failed to get extra movie infos for {}", change, e);
 			}
 			return null;
