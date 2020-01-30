@@ -76,6 +76,7 @@ public class Settings{
 				Log.getLogger(null).error("Failed to clean guild configuration", e);
 			}
 		});
+		Log.getLogger(null).info("Done cleaning settings");
 	}
 	
 	static{
