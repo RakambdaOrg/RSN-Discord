@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -196,5 +197,9 @@ public class Team{
 	@Override
 	public String toString(){
 		return getName();
+	}
+	
+	public Optional<URL> getPreferredLogoURL(){
+		return Optional.ofNullable(getLogoTransparent()).or(() -> Optional.ofNullable(getLogoLarge()));
 	}
 }

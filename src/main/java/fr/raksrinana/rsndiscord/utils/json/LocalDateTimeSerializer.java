@@ -7,10 +7,12 @@ import lombok.NonNull;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime>{
 	@Override
 	public void serialize(@NonNull final LocalDateTime date, @NonNull final JsonGenerator jsonGenerator, final @NonNull SerializerProvider serializerProvider) throws IOException{
-		jsonGenerator.writeNumber(date.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli());
+		final var utcDate = ZonedDateTime.ofLocal(date, ZoneId.systemDefault(), null).withZoneSameInstant(ZoneId.of("UTC"));
+		jsonGenerator.writeNumber(utcDate.toInstant().toEpochMilli());
 	}
 }

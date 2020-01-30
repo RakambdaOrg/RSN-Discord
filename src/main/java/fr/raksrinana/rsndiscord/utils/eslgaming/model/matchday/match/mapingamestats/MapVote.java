@@ -11,13 +11,15 @@ import fr.raksrinana.rsndiscord.utils.eslgaming.model.matchday.match.mapingamest
 import fr.raksrinana.rsndiscord.utils.json.ISO8601DateTimeDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class MapVote{
+public class MapVote implements Comparable<MapVote>{
 	@JsonProperty("createdAt")
 	@JsonDeserialize(using = ISO8601DateTimeDeserializer.class)
 	private LocalDateTime createdAt;
@@ -38,4 +40,12 @@ public class MapVote{
 	private Round round;
 	@JsonProperty("matchKey")
 	private String matchKey;
+	
+	@Override
+	public int compareTo(@NonNull MapVote o){
+		if(Objects.equals(getMatchKey(), o.getMatchKey())){
+			return getMatchKey().compareTo(o.getMatchKey());
+		}
+		return Integer.compare(getStep(), o.getStep());
+	}
 }

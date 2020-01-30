@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.eslgaming.model.matchday.match.*;
+import fr.raksrinana.rsndiscord.utils.eslgaming.model.matchday.match.mapingamestats.mapvote.Contestant;
+import fr.raksrinana.rsndiscord.utils.eslgaming.model.matchday.match.mapingamestats.mapvote.contestant.TournamentContestant;
+import fr.raksrinana.rsndiscord.utils.eslgaming.model.matchday.match.mapingamestats.mapvote.contestant.tournamentcontestant.Squad;
 import fr.raksrinana.rsndiscord.utils.json.IntegerBooleanDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.MapInGameStatsDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.MatchMetaListDeserializer;
@@ -19,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -186,11 +190,27 @@ public class Match implements Comparable<Match>{
 	}
 	
 	public void buildEmbed(EmbedBuilder builder){
+		builder.setTitle(getTeam1() + " vs " + getTeam2());
 		builder.setFooter("ID: " + getUid());
 		builder.setTimestamp(getPlayDate());
-		builder.setDescription(MessageFormat.format("Score: {0,number,#} - {1,number,#}", getResultTeam1(), getResultTeam2()));
+		getWinnerTeam().flatMap(winner -> winner.getPreferredLogoURL().map(Object::toString)).ifPresent(builder::setThumbnail);
+		builder.addField("Score", MessageFormat.format("{0,number,#} - {1,number,#}", getResultTeam1(), getResultTeam2()), true);
 		getMaps().forEach(mapResult -> builder.addField("Map " + mapResult.getMapNumber(), MessageFormat.format("{0}: {1,number,#} - {2,number,#}", mapResult.getMapName(), mapResult.getTeam1Score(), mapResult.getTeam2Score()), false));
-		getWinnerTeam().flatMap(winner -> Optional.ofNullable(winner.getLogoTransparent()).map(Object::toString)).ifPresent(builder::setThumbnail);
+		builder.addField("Tournament type", getTournamentType(), true);
+		builder.addField("Group name", getGroupName(), true);
+		builder.addField("Meta", getMeta().stream().map(MatchMeta::getName).collect(Collectors.joining(" - ")), true);
+		buildMapVotes(builder, getMap1InGameStats());
+		buildMapVotes(builder, getMap2InGameStats());
+		buildMapVotes(builder, getMap3InGameStats());
+		buildMapVotes(builder, getMap4InGameStats());
+		buildMapVotes(builder, getMap5InGameStats());
+	}
+	
+	private static void buildMapVotes(@NonNull EmbedBuilder builder, MapInGameStats stats){
+		Optional.ofNullable(stats).map(MapInGameStats::getMapVotes).filter(votes -> !votes.isEmpty()).ifPresent(votes -> {
+			builder.addBlankField(false);
+			votes.stream().sorted().forEachOrdered(vote -> builder.addField(Optional.ofNullable(vote.getContestant()).map(Contestant::getTournamentContestant).map(TournamentContestant::getSquad).map(Squad::getDescription).map(name -> name + " ").orElse("") + vote.getAction(), vote.getGameVersionMap().getName(), false));
+		});
 	}
 	
 	private List<MapResult> getMaps(){
@@ -242,7 +262,7 @@ public class Match implements Comparable<Match>{
 	
 	@Override
 	public String toString(){
-		return getTeam1() + " vs " + getTeam2();
+		return getTeam1() + " vs " + getTeam2() + " (" + getUid() + ')';
 	}
 	
 	public boolean isCompleted(){

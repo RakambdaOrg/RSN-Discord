@@ -45,7 +45,7 @@ public class Rainbow6ProLeagueScheduledRunner implements ScheduledRunner{
 				final var notified = Settings.get(guild).getRainbow6ProLeagueConfiguration().getNotifiedMatches();
 				matches.stream().filter(match -> !notified.contains(match.getUid())).sorted().forEachOrdered(match -> {
 					Log.getLogger(guild).info("Notifying match {} to {}", match, channel);
-					final var embed = Utilities.buildEmbed(this.getJda().getSelfUser(), Color.GREEN, match.toString(), null);
+					final var embed = Utilities.buildEmbed(this.getJda().getSelfUser(), Color.GREEN, null, null);
 					match.buildEmbed(embed);
 					Actions.sendMessage(channel, "", embed.build());
 					Settings.get(guild).getRainbow6ProLeagueConfiguration().setNotifiedMatch(match.getUid());

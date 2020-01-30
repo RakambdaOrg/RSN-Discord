@@ -13,7 +13,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.StringJoiner;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -62,6 +61,6 @@ public class MatchDay{
 	
 	@Override
 	public String toString(){
-		return new StringJoiner(", ", MatchDay.class.getSimpleName() + "[", "]").add("dateMatchDay='" + dateMatchDay + "'").add("matches=[..." + matches.size() + "...]").toString();
+		return getDateMatchDay() + '(' + getMatches().size() + ')';
 	}
 }

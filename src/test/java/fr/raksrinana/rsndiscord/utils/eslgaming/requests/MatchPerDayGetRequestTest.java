@@ -27,6 +27,6 @@ public class MatchPerDayGetRequestTest{
 	public void testRequest200(ESLRegion region) throws RequestException{
 		final var request = new MatchPerDayGetRequest(region);
 		final var result = ESLUtils.getQuery(request);
-		Assertions.assertNotNull(result, "Result should be a list");
+		Assertions.assertNotNull(result, "Result should not be null");
 	}
 }
