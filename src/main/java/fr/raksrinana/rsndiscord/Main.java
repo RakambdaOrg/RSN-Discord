@@ -82,7 +82,7 @@ public class Main{
 			ReactionUtils.addHandler(new MediaReactionReactionHandler());
 			ReactionUtils.addHandler(new AmazonTrackingReactionHandler());
 			Log.getLogger(null).info("Creating runners");
-			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda), new OverwatchLeagueScheduledRunner(jda), new RemindersScheduledRunner(jda), new TraktUserHistoryScheduledRunner(jda), new AmazonPriceCheckerScheduledRunner(jda), new CleanConfigScheduledRunner());
+			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda), new OverwatchLeagueScheduledRunner(jda), new RemindersScheduledRunner(jda), new TraktUserHistoryScheduledRunner(jda), new AmazonPriceCheckerScheduledRunner(jda), new CleanConfigScheduledRunner(), new Rainbow6ProLeagueScheduledRunner(jda));
 			for(final var scheduledRunner : scheduledRunners){
 				executorService.scheduleAtFixedRate(scheduledRunner, scheduledRunner.getDelay(), scheduledRunner.getPeriod(), scheduledRunner.getPeriodUnit());
 			}

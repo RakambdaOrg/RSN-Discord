@@ -11,7 +11,11 @@ import fr.raksrinana.rsndiscord.utils.json.MatchMetaListDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import net.dv8tion.jda.api.EmbedBuilder;
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -20,7 +24,7 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class Match{
+public class Match implements Comparable<Match>{
 	@JsonProperty("uid")
 	private int uid;
 	@JsonProperty("pid")
@@ -181,13 +185,67 @@ public class Match{
 		return getUid() == match.getUid();
 	}
 	
-	public Optional<Team> getWinnerTeam(){
-		switch(getWinner()){
-			case 1:
+	public void buildEmbed(EmbedBuilder builder){
+		builder.setFooter("ID: " + getUid());
+		builder.setTimestamp(getPlayDate());
+		builder.setDescription(MessageFormat.format("Score: {0,number,#} - {1,number,#}", getResultTeam1(), getResultTeam2()));
+		getMaps().forEach(mapResult -> builder.addField("Map " + mapResult.getMapNumber(), MessageFormat.format("{0}: {1,number,#} - {2,number,#}", mapResult.getMapName(), mapResult.getTeam1Score(), mapResult.getTeam2Score()), false));
+		getWinnerTeam().flatMap(winner -> Optional.ofNullable(winner.getLogoTransparent()).map(Object::toString)).ifPresent(builder::setThumbnail);
+	}
+	
+	private List<MapResult> getMaps(){
+		final var maps = new LinkedList<MapResult>();
+		if(Objects.nonNull(getMap1()) && !getMap1().isBlank()){
+			maps.add(new MapResult(1, getMap1(), getResultMap1Team1(), getResultMap1Team2()));
+		}
+		if(Objects.nonNull(getMap2()) && !getMap2().isBlank()){
+			maps.add(new MapResult(2, getMap2(), getResultMap2Team1(), getResultMap2Team2()));
+		}
+		if(Objects.nonNull(getMap3()) && !getMap3().isBlank()){
+			maps.add(new MapResult(3, getMap3(), getResultMap3Team1(), getResultMap3Team2()));
+		}
+		if(Objects.nonNull(getMap4()) && !getMap4().isBlank()){
+			maps.add(new MapResult(4, getMap4(), getResultMap4Team1(), getResultMap4Team2()));
+		}
+		if(Objects.nonNull(getMap5()) && !getMap5().isBlank()){
+			maps.add(new MapResult(5, getMap5(), getResultMap5Team1(), getResultMap5Team2()));
+		}
+		return maps;
+	}
+	
+	private Optional<Team> getWinnerTeam(){
+		switch(getStatus()){
+			case TEAM1_WON:
 				return Optional.of(getTeam1());
-			case 2:
+			case TEAM2_WON:
 				return Optional.of(getTeam2());
 		}
 		return Optional.empty();
+	}
+	
+	public MatchStatus getStatus(){
+		switch(getWinner()){
+			case 1:
+				return MatchStatus.TEAM1_WON;
+			case 2:
+				return MatchStatus.TEAM2_WON;
+			case 3:
+				return MatchStatus.DRAW;
+		}
+		return MatchStatus.PENDING;
+	}
+	
+	@Override
+	public int compareTo(@NonNull Match o){
+		return getPlayDate().compareTo(o.getPlayDate());
+	}
+	
+	@Override
+	public String toString(){
+		return getTeam1() + " vs " + getTeam2();
+	}
+	
+	public boolean isCompleted(){
+		return getStatus() != MatchStatus.PENDING;
 	}
 }

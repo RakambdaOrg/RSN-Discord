@@ -34,6 +34,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new NewYearRoleConfigurationCommand(this));
 		this.addSubCommand(new ArchiveCategoryConfigurationCommand(this));
 		this.addSubCommand(new AutoTodoChannelsConfigurationCommand(this));
+		this.addSubCommand(new Rainbow6ProLeagueConfigurationCommandComposite(this));
 	}
 	
 	@NonNull

@@ -98,6 +98,9 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("overwatchLeague")
 	@Getter
 	private final OverwatchLeagueConfiguration overwatchLeagueConfiguration = new OverwatchLeagueConfiguration();
+	@JsonProperty("rainbow6ProLeague")
+	@Getter
+	private final Rainbow6ProLeagueConfiguration rainbow6ProLeagueConfiguration = new Rainbow6ProLeagueConfiguration();
 	@JsonProperty("announceStartChannel")
 	@Setter
 	private ChannelConfiguration announceStartChannel;

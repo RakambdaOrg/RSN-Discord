@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.StringJoiner;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -196,6 +195,6 @@ public class Team{
 	
 	@Override
 	public String toString(){
-		return new StringJoiner(", ", Team.class.getSimpleName() + "[", "]").add("name='" + name + "'").toString();
+		return getName();
 	}
 }
