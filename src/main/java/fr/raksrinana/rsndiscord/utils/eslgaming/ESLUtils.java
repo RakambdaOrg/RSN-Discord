@@ -13,7 +13,7 @@ public class ESLUtils{
 	public static <T> T getQuery(@NonNull ESLGetRequest<T> request) throws RequestException{
 		final var handler = new ObjectGetRequestSender<>(request.getOutputType(), request.getRequest().headers(HEADERS)).getRequestHandler();
 		handler.getResult().getParsingError().ifPresent(error -> Log.getLogger(null).warn("Failed to parse response", error));
-		if(request.isValidResult(handler.getStatus())){
+		if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
 			return handler.getRequestResult();
 		}
 		throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString(), handler.getStatus());
