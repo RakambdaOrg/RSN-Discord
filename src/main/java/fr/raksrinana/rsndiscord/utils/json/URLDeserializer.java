@@ -15,7 +15,7 @@ public class URLDeserializer extends JsonDeserializer<URL>{
 	public URL deserialize(@NonNull final JsonParser jsonParser, @NonNull final DeserializationContext deserializationContext) throws IOException{
 		try{
 			final var value = jsonParser.getValueAsString();
-			if(Objects.nonNull(value) && !value.isBlank()){
+			if(Objects.nonNull(value) && !value.isBlank() && !value.equals(".")){
 				return new URL(value);
 			}
 		}
