@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import fr.raksrinana.rsndiscord.utils.anilist.FuzzyDate;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -30,8 +32,9 @@ public class AnimeMedia extends Media{
 	
 	@Override
 	protected void fillAdditionalEmbed(EmbedBuilder builder){
+		final var year = Optional.ofNullable(this.getStartDate()).flatMap(FuzzyDate::asDate).map(LocalDate::getYear);
 		Optional.ofNullable(this.getEpisodes()).map(Object::toString).ifPresent(val -> builder.addField("Episodes", val, true));
-		Optional.ofNullable(this.getSeason()).map(Enum::toString).ifPresent(val -> builder.addField("Season", val, true));
+		Optional.ofNullable(this.getSeason()).map(Enum::toString).ifPresent(val -> builder.addField("Season", val + year.map(y -> " " + y).orElse(""), true));
 	}
 	
 	@Override
