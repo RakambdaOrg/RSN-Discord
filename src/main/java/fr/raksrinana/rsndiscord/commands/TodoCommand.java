@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.commands.todo;
+package fr.raksrinana.rsndiscord.commands;
 
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;

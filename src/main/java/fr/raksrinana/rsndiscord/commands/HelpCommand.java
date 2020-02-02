@@ -1,23 +1,19 @@
 package fr.raksrinana.rsndiscord.commands;
 
-import fr.raksrinana.rsndiscord.Main;
-import fr.raksrinana.rsndiscord.commands.generic.*;
+import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
+import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
+import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
+import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.listeners.CommandsMessageListener;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import org.reflections.Reflections;
 import java.awt.Color;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @BotCommand
 public class HelpCommand extends BasicCommand{
@@ -32,25 +28,17 @@ public class HelpCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		final var prefix = Settings.get(event.getGuild()).getPrefix().orElse(CommandsMessageListener.defaultPrefix);
-		final var commands = new Reflections(Main.class.getPackage().getName() + ".commands").getTypesAnnotatedWith(BotCommand.class).stream().map(c -> {
-			try{
-				return c.getConstructor().newInstance();
-			}
-			catch(InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e){
-				Log.getLogger(null).error("Failed to create instance of {}", c.getName());
-			}
-			return null;
-		}).filter(Objects::nonNull).filter(c -> c instanceof Command).map(c -> (Command) c);
+		final var allCommands = event.getJDA().getRegisteredListeners().stream().filter(l -> l instanceof CommandsMessageListener).findFirst().map(CommandsMessageListener.class::cast).map(CommandsMessageListener::getCommands).orElseGet(Set::of);
 		if(args.isEmpty()){
 			final var builder = new EmbedBuilder();
 			builder.setColor(Color.GREEN);
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setTitle("Available commands");
-			commands.filter(command -> command.isAllowed(event.getMember())).map(command -> new MessageEmbed.Field(prefix + command.getCommandStrings().get(0), command.getDescription(), false)).filter(message -> Objects.nonNull(message.getName())).sorted(Comparator.comparing(MessageEmbed.Field::getName)).forEach(builder::addField);
+			allCommands.stream().filter(command -> command.isAllowed(event.getMember())).map(command -> new MessageEmbed.Field(prefix + command.getCommandStrings().get(0), command.getDescription(), false)).filter(message -> Objects.nonNull(message.getName())).sorted(Comparator.comparing(MessageEmbed.Field::getName)).forEach(builder::addField);
 			Actions.reply(event, "", builder.build());
 		}
 		else{
-			var command = commands.filter(command1 -> command1.getCommandStrings().contains(args.get(0).toLowerCase())).filter(command1 -> command1.isAllowed(event.getMember())).findAny();
+			var command = allCommands.stream().filter(command1 -> command1.getCommandStrings().contains(args.get(0).toLowerCase())).filter(command1 -> command1.isAllowed(event.getMember())).findAny();
 			args.poll();
 			while(!args.isEmpty() && command.isPresent() && command.get() instanceof CommandComposite){
 				final var command2 = ((CommandComposite) command.get()).getSubCommand(args.get(0).toLowerCase());

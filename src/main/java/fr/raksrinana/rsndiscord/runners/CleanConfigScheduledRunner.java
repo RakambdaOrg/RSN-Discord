@@ -3,10 +3,11 @@ package fr.raksrinana.rsndiscord.runners;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
+import net.dv8tion.jda.api.JDA;
 import java.util.concurrent.TimeUnit;
 
 public class CleanConfigScheduledRunner implements ScheduledRunner{
-	public CleanConfigScheduledRunner(){
+	public CleanConfigScheduledRunner(JDA jda){
 		Log.getLogger(null).info("Creating cleaner runner");
 	}
 	

@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 /**
  * Contains the elements passed through the CLI.
  */
+@SuppressWarnings("FieldMayBeFinal")
 @NoArgsConstructor
 @Getter
 public class CLIParameters{

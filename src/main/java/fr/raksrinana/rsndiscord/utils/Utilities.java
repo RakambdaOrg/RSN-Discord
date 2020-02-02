@@ -9,14 +9,19 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.reflections.Reflections;
 import java.awt.Color;
 import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Utilities{
 	public static final long RAKSRINANA_ACCOUNT = 170119951498084352L;
@@ -140,5 +145,9 @@ public class Utilities{
 	 */
 	public static CompletableFuture<Message> getMessageById(@NonNull TextChannel channel, long messageId){
 		return channel.retrieveMessageById(messageId).submit();
+	}
+	
+	public static <T> Collection<? extends T> getAllInstancesOf(Class<T> klass, @NonNull String packageName, Function<Class<? extends T>, ? extends T> createInstance){
+		return new Reflections(packageName).getSubTypesOf(klass).stream().filter(c -> !c.isInterface()).sorted(Comparator.comparing(Class::getCanonicalName)).map(createInstance).filter(Objects::nonNull).map(klass::cast).collect(Collectors.toList());
 	}
 }

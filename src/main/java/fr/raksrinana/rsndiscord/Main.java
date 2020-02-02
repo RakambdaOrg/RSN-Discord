@@ -5,21 +5,17 @@ import com.beust.jcommander.ParameterException;
 import fr.raksrinana.rsndiscord.listeners.*;
 import fr.raksrinana.rsndiscord.listeners.quiz.QuizListener;
 import fr.raksrinana.rsndiscord.listeners.reply.ReplyMessageListener;
-import fr.raksrinana.rsndiscord.runners.*;
-import fr.raksrinana.rsndiscord.runners.anilist.AniListMediaListScheduledRunner;
-import fr.raksrinana.rsndiscord.runners.anilist.AniListNotificationScheduledRunner;
-import fr.raksrinana.rsndiscord.runners.trakt.TraktUserHistoryScheduledRunner;
+import fr.raksrinana.rsndiscord.runners.ScheduledRunner;
+import fr.raksrinana.rsndiscord.runners.anilist.AniListActivityScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.irc.twitch.TwitchIRC;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
-import fr.raksrinana.rsndiscord.utils.reaction.*;
-import fr.raksrinana.rsndiscord.utils.reminder.AnilistReleaseReminderHandler;
-import fr.raksrinana.rsndiscord.utils.reminder.DefaultReminderHandler;
-import fr.raksrinana.rsndiscord.utils.reminder.ReminderUtils;
+import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktUtils;
 import fr.raksrinana.utils.http.JacksonObjectMapper;
 import kong.unirest.Unirest;
@@ -31,9 +27,9 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executors;
@@ -73,19 +69,9 @@ public class Main{
 			jda.getPresence().setActivity(Activity.playing(CommandsMessageListener.defaultPrefix + "help for the help"));
 			Log.getLogger(null).info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
 			Log.getLogger(null).info("Adding handlers");
-			ReminderUtils.addHandler(new DefaultReminderHandler());
-			ReminderUtils.addHandler(new AnilistReleaseReminderHandler());
-			ReactionUtils.addHandler(new DefaultReactionHandler());
-			ReactionUtils.addHandler(new AcceptedQuestionReactionHandler());
-			ReactionUtils.addHandler(new AnilistTodosReactionHandler());
-			ReactionUtils.addHandler(new TodosReactionHandler());
-			ReactionUtils.addHandler(new MediaReactionReactionHandler());
-			ReactionUtils.addHandler(new AmazonTrackingReactionHandler());
+			ReactionUtils.registerAllHandlers();
 			Log.getLogger(null).info("Creating runners");
-			final var scheduledRunners = List.of(new RemoveRolesScheduledRunner(jda), new AniListNotificationScheduledRunner(jda), new AniListMediaListScheduledRunner(jda), new SaveConfigScheduledRunner(), new DisplayDailyStatsScheduledRunner(jda), new OverwatchLeagueScheduledRunner(jda), new RemindersScheduledRunner(jda), new TraktUserHistoryScheduledRunner(jda), new AmazonPriceCheckerScheduledRunner(jda), new CleanConfigScheduledRunner(), new Rainbow6ProLeagueScheduledRunner(jda));
-			for(final var scheduledRunner : scheduledRunners){
-				executorService.scheduleAtFixedRate(scheduledRunner, scheduledRunner.getDelay(), scheduledRunner.getPeriod(), scheduledRunner.getPeriodUnit());
-			}
+			registerAllScheduledRunners(jda);
 			Log.getLogger(null).info("Started");
 			announceStart();
 			restartTwitchIRCConnections();
@@ -101,6 +87,20 @@ public class Main{
 		Log.getLogger(null).info("Shutdown hook registered");
 		consoleHandler = new ConsoleHandler();
 		consoleHandler.start();
+	}
+	
+	private static void registerAllScheduledRunners(@NonNull JDA jda){
+		Utilities.getAllInstancesOf(ScheduledRunner.class, Main.class.getPackage().getName() + ".runners", c -> {
+			try{
+				if(!c.equals(AniListActivityScheduledRunner.class)){
+					return c.getConstructor(JDA.class).newInstance(jda);
+				}
+			}
+			catch(InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e){
+				Log.getLogger(null).error("Failed to create instance of {}", c.getName(), e);
+			}
+			return null;
+		}).stream().peek(c -> Log.getLogger(null).info("Loaded scheduled runner {}", c.getClass().getName())).forEach(scheduledRunner -> executorService.scheduleAtFixedRate(scheduledRunner, scheduledRunner.getDelay(), scheduledRunner.getPeriod(), scheduledRunner.getPeriodUnit()));
 	}
 	
 	static CLIParameters loadEnv(@NonNull String[] args){
