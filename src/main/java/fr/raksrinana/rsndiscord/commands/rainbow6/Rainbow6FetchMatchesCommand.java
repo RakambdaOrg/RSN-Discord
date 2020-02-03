@@ -18,7 +18,7 @@ public class Rainbow6FetchMatchesCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		new Rainbow6ProLeagueScheduledRunner(event.getJDA()).run();
+		new Rainbow6ProLeagueScheduledRunner(event.getJDA()).execute();
 		return CommandResult.SUCCESS;
 	}
 	

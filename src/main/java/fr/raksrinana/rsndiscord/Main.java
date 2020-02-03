@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.listeners.*;
 import fr.raksrinana.rsndiscord.listeners.quiz.QuizListener;
 import fr.raksrinana.rsndiscord.listeners.reply.ReplyMessageListener;
 import fr.raksrinana.rsndiscord.runners.ScheduledRunner;
+import fr.raksrinana.rsndiscord.runners.ScheduledRunnerRunnable;
 import fr.raksrinana.rsndiscord.runners.anilist.AniListActivityScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
@@ -100,7 +101,7 @@ public class Main{
 				Log.getLogger(null).error("Failed to create instance of {}", c.getName(), e);
 			}
 			return null;
-		}).stream().peek(c -> Log.getLogger(null).info("Loaded scheduled runner {}", c.getClass().getName())).forEach(scheduledRunner -> executorService.scheduleAtFixedRate(scheduledRunner, scheduledRunner.getDelay(), scheduledRunner.getPeriod(), scheduledRunner.getPeriodUnit()));
+		}).stream().peek(c -> Log.getLogger(null).info("Loaded scheduled runner {}", c.getClass().getName())).forEach(scheduledRunner -> executorService.scheduleAtFixedRate(new ScheduledRunnerRunnable(scheduledRunner), scheduledRunner.getDelay(), scheduledRunner.getPeriod(), scheduledRunner.getPeriodUnit()));
 	}
 	
 	static CLIParameters loadEnv(@NonNull String[] args){

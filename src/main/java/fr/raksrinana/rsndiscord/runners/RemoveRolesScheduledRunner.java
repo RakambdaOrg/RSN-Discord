@@ -16,12 +16,10 @@ public class RemoveRolesScheduledRunner implements ScheduledRunner{
 	
 	public RemoveRolesScheduledRunner(JDA jda){
 		this.jda = jda;
-		Log.getLogger(null).info("Creating roles runner");
 	}
 	
 	@Override
-	public void run(){
-		Log.getLogger(null).info("Starting roles runner");
+	public void execute(){
 		final var currentDate = LocalDateTime.now();
 		for(final var guild : this.getJda().getGuilds()){
 			Log.getLogger(guild).debug("Processing guild {}", guild);
@@ -36,7 +34,12 @@ public class RemoveRolesScheduledRunner implements ScheduledRunner{
 				}
 			}
 		}
-		Log.getLogger(null).info("Roles runner done");
+	}
+	
+	@NonNull
+	@Override
+	public String getName(){
+		return "roles remover";
 	}
 	
 	@Override

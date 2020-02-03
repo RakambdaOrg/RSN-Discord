@@ -17,12 +17,10 @@ public class OverwatchLeagueScheduledRunner implements ScheduledRunner{
 	
 	public OverwatchLeagueScheduledRunner(JDA jda){
 		this.jda = jda;
-		Log.getLogger(null).info("Creating Overwatch league runner");
 	}
 	
 	@Override
-	public void run(){
-		Log.getLogger(null).info("Starting Overwatch league runner");
+	public void execute(){
 		OverwatchUtils.getData().ifPresent(ow -> this.getJda().getGuilds().forEach(guild -> Settings.get(guild).getOverwatchLeagueConfiguration().getNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> {
 			final var notified = Settings.get(guild).getOverwatchLeagueConfiguration().getNotifiedMatches();
 			ow.getData().getStages().stream().flatMap(s -> s.getMatches().stream()).filter(OverwatchMatch::hasEnded).filter(m -> !notified.contains(m.getId())).sorted().forEachOrdered(m -> {
@@ -31,7 +29,12 @@ public class OverwatchLeagueScheduledRunner implements ScheduledRunner{
 				Settings.get(guild).getOverwatchLeagueConfiguration().setNotifiedMatch(m.getId());
 			});
 		})));
-		Log.getLogger(null).info("Overwatch league runner done");
+	}
+	
+	@NonNull
+	@Override
+	public String getName(){
+		return "Overwatch league";
 	}
 	
 	@Override

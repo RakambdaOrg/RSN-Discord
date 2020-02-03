@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord.runners.anilist;
 
-import fr.raksrinana.rsndiscord.runners.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.AniListConfiguration;
@@ -14,7 +13,6 @@ import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
 import fr.raksrinana.rsndiscord.utils.anilist.list.MediaList;
 import fr.raksrinana.rsndiscord.utils.anilist.media.Media;
 import fr.raksrinana.rsndiscord.utils.anilist.queries.MediaListPagedQuery;
-import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
 import lombok.Getter;
@@ -28,7 +26,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class AniListMediaListScheduledRunner implements AniListRunner<MediaList, MediaListPagedQuery>, ScheduledRunner{
+public class AniListMediaListScheduledRunner implements AniListRunner<MediaList, MediaListPagedQuery>{
 	private static final Collection<String> acceptedThaLists = Set.of("Tha");
 	@Getter
 	private final JDA jda;
@@ -42,14 +40,13 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 	}
 	
 	private AniListMediaListScheduledRunner(@NonNull final JDA jda, final boolean keepOnlyNew){
-		Log.getLogger(null).info("Creating AniList {} runner", this.getRunnerName());
 		this.jda = jda;
 		this.keepOnlyNew = keepOnlyNew;
 		this.sortedByUser = false;
 	}
 	
 	@Override
-	public void run(){
+	public void execute(){
 		this.runQueryOnDefaultUsersChannels();
 	}
 	
@@ -60,8 +57,8 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 	
 	@NonNull
 	@Override
-	public String getRunnerName(){
-		return "media list";
+	public String getName(){
+		return "AniList media list";
 	}
 	
 	@Override

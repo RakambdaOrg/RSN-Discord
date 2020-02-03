@@ -19,12 +19,10 @@ public class RemindersScheduledRunner implements ScheduledRunner{
 	
 	public RemindersScheduledRunner(JDA jda){
 		this.jda = jda;
-		Log.getLogger(null).info("Creating reminders runner");
 	}
 	
 	@Override
-	public void run(){
-		Log.getLogger(null).info("Starting reminders runner");
+	public void execute(){
 		final var currentDate = LocalDateTime.now();
 		for(final var guild : this.getJda().getGuilds()){
 			Log.getLogger(guild).debug("Processing guild {}", guild);
@@ -47,7 +45,12 @@ public class RemindersScheduledRunner implements ScheduledRunner{
 				}
 			}
 		}
-		Log.getLogger(null).info("Reminders role done");
+	}
+	
+	@NonNull
+	@Override
+	public String getName(){
+		return "reminders refresher";
 	}
 	
 	@Override

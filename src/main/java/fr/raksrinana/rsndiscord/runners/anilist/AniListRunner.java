@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.runners.anilist;
 
+import fr.raksrinana.rsndiscord.runners.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
@@ -22,7 +23,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>{
+public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>> extends ScheduledRunner{
 	default void runQueryOnDefaultUsersChannels(){
 		final var channels = this.getChannels();
 		final var members = this.getMembers();
@@ -36,41 +37,32 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 	}
 	
 	default void runQuery(@NonNull final Set<Member> members, @NonNull final Set<TextChannel> channels){
-		Log.getLogger(null).info("Starting AniList {} runner", this.getRunnerName());
-		try{
-			final var userElements = new HashMap<User, Set<T>>();
-			for(final var member : members){
-				userElements.computeIfAbsent(member.getUser(), user -> {
-					try{
-						return this.getElements(member);
-					}
-					catch(final Exception e){
-						Log.getLogger(member.getGuild()).error("Error fetching user {} on AniList", member, e);
-					}
-					return null;
-				});
-			}
-			Log.getLogger(null).debug("AniList API done");
-			this.sendMessages(channels, userElements);
-			Log.getLogger(null).info("AniList {} runner done", this.getRunnerName());
+		final var userElements = new HashMap<User, Set<T>>();
+		for(final var member : members){
+			userElements.computeIfAbsent(member.getUser(), user -> {
+				try{
+					return this.getElements(member);
+				}
+				catch(final Exception e){
+					Log.getLogger(member.getGuild()).error("Error fetching user {} on AniList", member, e);
+				}
+				return null;
+			});
 		}
-		catch(final Exception e){
-			Log.getLogger(null).error("Error in AniList {} runner", this.getRunnerName(), e);
-		}
+		Log.getLogger(null).debug("AniList API done");
+		this.sendMessages(channels, userElements);
 	}
-	
-	@NonNull String getRunnerName();
 	
 	@NonNull
 	default Set<T> getElements(@NonNull final Member member) throws Exception{
 		Log.getLogger(member.getGuild()).debug("Fetching user {}", member);
 		var elementList = this.initQuery(member).getResult(member);
 		if(this.isKeepOnlyNew()){
-			final var baseDate = Settings.get(member.getGuild()).getAniListConfiguration().getLastAccess(this.getRunnerName(), member.getUser().getIdLong()).map(UserDateConfiguration::getDate).orElse(LocalDateTime.of(2019, 7, 7, 0, 0));
+			final var baseDate = Settings.get(member.getGuild()).getAniListConfiguration().getLastAccess(this.getFetcherID(), member.getUser().getIdLong()).map(UserDateConfiguration::getDate).orElse(LocalDateTime.of(2019, 7, 7, 0, 0));
 			elementList = elementList.stream().filter(e -> e instanceof AnilistDatedObject).filter(e -> ((AnilistDatedObject) e).getDate().isAfter(baseDate)).collect(Collectors.toSet());
 			elementList.stream().filter(e -> e instanceof AnilistDatedObject).map(e -> (AnilistDatedObject) e).map(AnilistDatedObject::getDate).max(LocalDateTime::compareTo).ifPresent(val -> {
-				Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {} (last was {})", member, this.getRunnerName(), val, baseDate);
-				Settings.get(member.getGuild()).getAniListConfiguration().setLastAccess(member.getUser(), this.getRunnerName(), val);
+				Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {} (last was {})", member, this.getFetcherID(), val, baseDate);
+				Settings.get(member.getGuild()).getAniListConfiguration().setLastAccess(member.getUser(), this.getFetcherID(), val);
 			});
 		}
 		return elementList;
@@ -109,7 +101,7 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 			change.fillEmbed(builder);
 		}
 		catch(final Exception e){
-			Log.getLogger(null).error("Error with AniList {} runner", this.getRunnerName(), e);
+			Log.getLogger(null).error("Error building message for {}", this.getName(), e);
 			builder.addField("Error", e.getClass().getName() + " => " + e.getMessage(), false);
 			builder.setColor(Color.RED);
 		}

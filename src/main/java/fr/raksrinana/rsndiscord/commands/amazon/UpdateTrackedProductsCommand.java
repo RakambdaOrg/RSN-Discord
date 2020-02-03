@@ -23,7 +23,7 @@ public class UpdateTrackedProductsCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		new AmazonPriceCheckerScheduledRunner(event.getJDA()).run();
+		new AmazonPriceCheckerScheduledRunner(event.getJDA()).execute();
 		return CommandResult.SUCCESS;
 	}
 	

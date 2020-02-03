@@ -32,50 +32,43 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 	
 	Set<TextChannel> getChannels();
 	
+	default void runQuery(@NonNull final Set<Member> members, @NonNull final Set<TextChannel> channels){
+		final var userElements = new HashMap<User, Set<T>>();
+		for(final var member : members){
+			userElements.computeIfAbsent(member.getUser(), user -> {
+				try{
+					return this.getElements(member);
+				}
+				catch(final Exception e){
+					Log.getLogger(member.getGuild()).error("Error fetching user {} on Trakt", member, e);
+				}
+				return null;
+			});
+		}
+		Log.getLogger(null).debug("Trakt API done");
+		this.sendMessages(channels, userElements);
+	}
+	
 	default Set<Member> getMembers(){
 		return this.getChannels().stream().flatMap(channel -> Settings.get(channel.getGuild()).getTraktConfiguration().getRegisteredUsers().stream().map(user -> channel.getGuild().getMember(user))).collect(Collectors.toSet());
 	}
-	
-	default void runQuery(@NonNull final Set<Member> members, @NonNull final Set<TextChannel> channels){
-		Log.getLogger(null).info("Starting Trakt {} runner", this.getRunnerName());
-		try{
-			final var userElements = new HashMap<User, Set<T>>();
-			for(final var member : members){
-				userElements.computeIfAbsent(member.getUser(), user -> {
-					try{
-						return this.getElements(member);
-					}
-					catch(final Exception e){
-						Log.getLogger(member.getGuild()).error("Error fetching user {} on Trakt", member, e);
-					}
-					return null;
-				});
-			}
-			Log.getLogger(null).debug("Trakt API done");
-			this.sendMessages(channels, userElements);
-			Log.getLogger(null).info("Trakt {} runner done", this.getRunnerName());
-		}
-		catch(final Exception e){
-			Log.getLogger(null).error("Error in Trakt {} runner", this.getRunnerName(), e);
-		}
-	}
-	
-	@NonNull String getRunnerName();
 	
 	@NonNull
 	default Set<T> getElements(@NonNull final Member member) throws Exception{
 		Log.getLogger(member.getGuild()).debug("Fetching user {}", member);
 		var elementList = TraktUtils.getPagedQuery(Settings.get(member.getGuild()).getTraktConfiguration().getAccessToken(member.getIdLong()).orElse(null), this.initQuery(member));
 		if(this.isKeepOnlyNew()){
-			final var baseDate = Settings.get(member.getGuild()).getTraktConfiguration().getLastAccess(this.getRunnerName(), member.getUser().getIdLong()).map(UserDateConfiguration::getDate).orElse(LocalDateTime.of(2019, 7, 7, 0, 0));
+			final var baseDate = Settings.get(member.getGuild()).getTraktConfiguration().getLastAccess(this.getFetcherID(), member.getUser().getIdLong()).map(UserDateConfiguration::getDate).orElse(LocalDateTime.of(2019, 7, 7, 0, 0));
 			elementList = elementList.stream().filter(e -> e instanceof TraktDatedObject).filter(e -> ((TraktDatedObject) e).getDate().isAfter(baseDate)).collect(Collectors.toSet());
 			elementList.stream().filter(e -> e instanceof TraktDatedObject).map(e -> (TraktDatedObject) e).map(TraktDatedObject::getDate).max(LocalDateTime::compareTo).ifPresent(val -> {
-				Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {} (last was {})", member, this.getRunnerName(), val, baseDate);
-				Settings.get(member.getGuild()).getTraktConfiguration().setLastAccess(member.getUser(), this.getRunnerName(), val);
+				Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {} (last was {})", member, this.getFetcherID(), val, baseDate);
+				Settings.get(member.getGuild()).getTraktConfiguration().setLastAccess(member.getUser(), this.getFetcherID(), val);
 			});
 		}
 		return elementList;
 	}
+	
+	String getFetcherID();
 	
 	default void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<T>> userElements){
 		if(this.isSortedByUser()){
@@ -116,7 +109,7 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 			change.fillEmbed(builder);
 		}
 		catch(final Exception e){
-			Log.getLogger(null).error("Error with Trakt {} runner", this.getRunnerName(), e);
+			Log.getLogger(null).error("Error building message for {}", this.getName(), e);
 			builder.addField("Error", e.getClass().getName() + " => " + e.getMessage(), false);
 			builder.setColor(Color.RED);
 		}

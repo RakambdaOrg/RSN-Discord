@@ -35,8 +35,14 @@ public class TraktUserHistoryScheduledRunner implements TraktPagedGetRunner<User
 	public TraktUserHistoryScheduledRunner(JDA jda){this.jda = jda;}
 	
 	@Override
-	public void run(){
+	public void execute(){
 		this.runQueryOnDefaultUsersChannels();
+	}
+	
+	@NonNull
+	@Override
+	public String getName(){
+		return "Trakt user history";
 	}
 	
 	@Override
@@ -45,14 +51,14 @@ public class TraktUserHistoryScheduledRunner implements TraktPagedGetRunner<User
 	}
 	
 	@Override
-	public @NonNull String getRunnerName(){
+	public String getFetcherID(){
 		return "history";
 	}
 	
 	@NonNull
 	@Override
 	public UserHistoryPagedGetRequest initQuery(@NonNull Member member){
-		return new UserHistoryPagedGetRequest(TraktUtils.getUsername(member).orElseThrow(() -> new RuntimeException("Failed to get username for member " + member)), 1, Settings.get(member.getGuild()).getTraktConfiguration().getLastAccess(getRunnerName(), member.getIdLong()).map(UserDateConfiguration::getDate).map(date -> date.plusNanos(1000L)).orElse(null));
+		return new UserHistoryPagedGetRequest(TraktUtils.getUsername(member).orElseThrow(() -> new RuntimeException("Failed to get username for member " + member)), 1, Settings.get(member.getGuild()).getTraktConfiguration().getLastAccess(getFetcherID(), member.getIdLong()).map(UserDateConfiguration::getDate).map(date -> date.plusNanos(1000L)).orElse(null));
 	}
 	
 	@Override

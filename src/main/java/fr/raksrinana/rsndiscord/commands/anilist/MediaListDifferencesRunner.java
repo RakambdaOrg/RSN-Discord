@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 class MediaListDifferencesRunner implements AniListRunner<MediaList, MediaListPagedQuery>{
 	@Getter
@@ -41,10 +42,30 @@ class MediaListDifferencesRunner implements AniListRunner<MediaList, MediaListPa
 		return Set.of(this.channel);
 	}
 	
+	@Override
+	public long getDelay(){
+		return 0;
+	}
+	
+	@Override
+	public long getPeriod(){
+		return 0;
+	}
+	
+	@Override
+	public @NonNull TimeUnit getPeriodUnit(){
+		return TimeUnit.MINUTES;
+	}
+	
+	@Override
+	public void execute() throws Exception{
+		this.runQueryOnDefaultUsersChannels();
+	}
+	
 	@NonNull
 	@Override
-	public String getRunnerName(){
-		return "differences";
+	public String getName(){
+		return "AniList list differences";
 	}
 	
 	@Override

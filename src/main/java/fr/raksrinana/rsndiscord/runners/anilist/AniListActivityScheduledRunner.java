@@ -1,13 +1,11 @@
 package fr.raksrinana.rsndiscord.runners.anilist;
 
-import fr.raksrinana.rsndiscord.runners.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
 import fr.raksrinana.rsndiscord.utils.anilist.activity.list.ListActivity;
 import fr.raksrinana.rsndiscord.utils.anilist.queries.ActivityPagedQuery;
-import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
@@ -19,17 +17,16 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class AniListActivityScheduledRunner implements AniListRunner<ListActivity, ActivityPagedQuery>, ScheduledRunner{
+public class AniListActivityScheduledRunner implements AniListRunner<ListActivity, ActivityPagedQuery>{
 	@Getter
 	private final JDA jda;
 	
 	public AniListActivityScheduledRunner(@NonNull final JDA jda){
-		Log.getLogger(null).info("Creating AniList {} runner", this.getRunnerName());
 		this.jda = jda;
 	}
 	
 	@Override
-	public void run(){
+	public void execute(){
 		this.runQueryOnDefaultUsersChannels();
 	}
 	
@@ -40,8 +37,8 @@ public class AniListActivityScheduledRunner implements AniListRunner<ListActivit
 	
 	@NonNull
 	@Override
-	public String getRunnerName(){
-		return "list activity";
+	public String getName(){
+		return "AniList list activity";
 	}
 	
 	@NonNull

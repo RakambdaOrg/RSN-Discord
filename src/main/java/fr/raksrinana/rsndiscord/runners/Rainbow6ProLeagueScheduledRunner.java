@@ -25,12 +25,10 @@ public class Rainbow6ProLeagueScheduledRunner implements ScheduledRunner{
 	
 	public Rainbow6ProLeagueScheduledRunner(JDA jda){
 		this.jda = jda;
-		Log.getLogger(null).info("Creating R6 PL runner");
 	}
 	
 	@Override
-	public void run(){
-		Log.getLogger(null).info("Starting R6 PL runner");
+	public void execute(){
 		final var matches = Arrays.stream(ESLRegion.values()).map(MatchPerDayGetRequest::new).map(query -> {
 			try{
 				return ESLUtils.getQuery(query);
@@ -52,7 +50,12 @@ public class Rainbow6ProLeagueScheduledRunner implements ScheduledRunner{
 				});
 			});
 		});
-		Log.getLogger(null).info("R6 PL runner done");
+	}
+	
+	@NonNull
+	@Override
+	public String getName(){
+		return "R6 PL";
 	}
 	
 	@Override

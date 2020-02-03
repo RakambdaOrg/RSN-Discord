@@ -23,12 +23,10 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 	
 	public DisplayDailyStatsScheduledRunner(JDA jda){
 		this.jda = jda;
-		Log.getLogger(null).info("Creating daily stats runner");
 	}
 	
 	@Override
-	public void run(){
-		Log.getLogger(null).info("Starting daily stats runner");
+	public void execute(){
 		final var ytd = LocalDate.now().minusDays(1);
 		final var lastWeek = LocalDate.now().minusWeeks(1).minusDays(LogListener.getDaysToRemove(LocalDate.now().getDayOfWeek()));
 		for(final var guild : this.getJda().getGuilds()){
@@ -54,7 +52,12 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 				}
 			});
 		}
-		Log.getLogger(null).info("Daily stats runner done");
+	}
+	
+	@NonNull
+	@Override
+	public String getName(){
+		return "daily stats";
 	}
 	
 	@Override

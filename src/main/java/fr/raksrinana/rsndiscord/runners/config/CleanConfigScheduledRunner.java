@@ -1,19 +1,24 @@
-package fr.raksrinana.rsndiscord.runners;
+package fr.raksrinana.rsndiscord.runners.config;
 
+import fr.raksrinana.rsndiscord.runners.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import java.util.concurrent.TimeUnit;
 
 public class CleanConfigScheduledRunner implements ScheduledRunner{
 	public CleanConfigScheduledRunner(JDA jda){
-		Log.getLogger(null).info("Creating cleaner runner");
 	}
 	
 	@Override
-	public void run(){
+	public void execute(){
 		Settings.clean();
+	}
+	
+	@NonNull
+	@Override
+	public String getName(){
+		return "config cleaner";
 	}
 	
 	@Override

@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord.runners.anilist;
 
-import fr.raksrinana.rsndiscord.runners.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
@@ -8,7 +7,6 @@ import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
 import fr.raksrinana.rsndiscord.utils.anilist.notifications.Notification;
 import fr.raksrinana.rsndiscord.utils.anilist.queries.NotificationsPagedQuery;
-import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
@@ -19,17 +17,16 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class AniListNotificationScheduledRunner implements AniListRunner<Notification, NotificationsPagedQuery>, ScheduledRunner{
+public class AniListNotificationScheduledRunner implements AniListRunner<Notification, NotificationsPagedQuery>{
 	@Getter
 	private final JDA jda;
 	
 	public AniListNotificationScheduledRunner(@NonNull final JDA jda){
-		Log.getLogger(null).info("Creating AniList {} runner", this.getRunnerName());
 		this.jda = jda;
 	}
 	
 	@Override
-	public void run(){
+	public void execute(){
 		this.runQueryOnDefaultUsersChannels();
 	}
 	
@@ -45,7 +42,7 @@ public class AniListNotificationScheduledRunner implements AniListRunner<Notific
 	
 	@NonNull
 	@Override
-	public String getRunnerName(){
+	public String getName(){
 		return "notification";
 	}
 	
