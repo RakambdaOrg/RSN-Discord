@@ -9,6 +9,7 @@ import fr.raksrinana.rsndiscord.settings.guild.trakt.TraktAccessTokenConfigurati
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
+import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -57,8 +58,11 @@ public class TraktConfiguration implements CompositeConfiguration{
 	
 	@NonNull
 	public Optional<TraktAccessTokenConfiguration> getAccessToken(final long userId){
+		Log.getLogger(null).debug("EEE");
 		final var now = LocalDateTime.now();
-		return this.tokens.stream().filter(t -> Objects.equals(t.getUserId(), userId)).filter(t -> t.getExpireDate().isAfter(now)).sorted(Comparator.comparing(TraktAccessTokenConfiguration::getExpireDate).reversed()).findAny();
+		final var d = this.tokens.stream().filter(t -> Objects.equals(t.getUserId(), userId)).filter(t -> t.getExpireDate().isAfter(now)).sorted(Comparator.comparing(TraktAccessTokenConfiguration::getExpireDate).reversed()).findAny();
+		Log.getLogger(null).debug("FFF {}", d);
+		return d;
 	}
 	
 	public void addAccessToken(@NonNull final TraktAccessTokenConfiguration value){

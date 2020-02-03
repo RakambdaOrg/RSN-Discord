@@ -73,7 +73,6 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 	default void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<T>> userElements){
 		Log.getLogger(null).debug("AAA {}", userElements.values().stream().map(Set::size).collect(Collectors.toList()));
 		userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Map.Entry.comparingByValue()).map(change -> {
-			Log.getLogger(null).debug("BBB {}", userElements.values().stream().map(Set::size).collect(Collectors.toList()));
 			final var builder = new EmbedBuilder();
 			this.buildMessage(builder, change.getKey(), change.getValue());
 			return Map.entry(change.getKey(), builder.build());
@@ -103,6 +102,7 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 	}
 	
 	default boolean sendToChannel(final TextChannel channel, final User user){
+		Log.getLogger(null).debug("DDD");
 		return Settings.get(channel.getGuild()).getTraktConfiguration().getAccessToken(user.getIdLong()).isPresent();
 	}
 	
