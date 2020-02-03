@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public interface CompositeConfiguration{
-	default void cleanFields() throws IllegalAccessException{
+	default void cleanFields() throws Exception{
 		for(final var field : this.getClass().getDeclaredFields()){
 			final var fieldValue = FieldUtils.readField(field, this, true);
 			if(cleanObject(fieldValue)){
@@ -17,7 +17,7 @@ public interface CompositeConfiguration{
 		}
 	}
 	
-	default boolean cleanObject(Object fieldValue) throws IllegalAccessException{
+	default boolean cleanObject(Object fieldValue) throws Exception{
 		if(fieldValue instanceof AtomicConfiguration){
 			return ((AtomicConfiguration) fieldValue).shouldBeRemoved();
 		}
@@ -36,7 +36,7 @@ public interface CompositeConfiguration{
 				try{
 					cleanObject(elem);
 				}
-				catch(IllegalAccessException e){
+				catch(Exception e){
 					Log.getLogger(null).error("Failed to clean settings object {}", this.getClass(), e);
 				}
 			});
@@ -53,7 +53,7 @@ public interface CompositeConfiguration{
 				try{
 					cleanObject(elem);
 				}
-				catch(IllegalAccessException e){
+				catch(Exception e){
 					Log.getLogger(null).error("Failed to clean settings object {}", this.getClass(), e);
 				}
 			});

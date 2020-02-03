@@ -42,11 +42,11 @@ public abstract class Media implements AniListObject{
 	@JsonProperty("isAdult")
 	private boolean isAdult;
 	@JsonProperty("startDate")
-	private FuzzyDate startDate = new FuzzyDate();
+	private final FuzzyDate startDate = new FuzzyDate();
 	@JsonProperty("endDate")
-	private FuzzyDate endDate = new FuzzyDate();
+	private final FuzzyDate endDate = new FuzzyDate();
 	@JsonProperty("genres")
-	private Set<String> genres = new HashSet<>();
+	private final Set<String> genres = new HashSet<>();
 	@JsonProperty("id")
 	private int id;
 	
@@ -67,8 +67,8 @@ public abstract class Media implements AniListObject{
 		if(this.getType().isShouldDisplay()){
 			builder.addField("Type", this.getType().toString(), true);
 		}
-		builder.addField("Format", Optional.of(this.getFormat()).map(Enum::toString).orElse("UNKNOWN"), true);
-		builder.addField("Status", Optional.of(this.getStatus()).map(Enum::toString).orElse("UNKNOWN"), true);
+		builder.addField("Format", Optional.ofNullable(this.getFormat()).map(Enum::toString).orElse("UNKNOWN"), true);
+		builder.addField("Status", Optional.ofNullable(this.getStatus()).map(Enum::toString).orElse("UNKNOWN"), true);
 		if(this.isAdult()){
 			builder.addField("Adult content", "", true);
 		}

@@ -72,7 +72,7 @@ public class Settings{
 			try{
 				guildConfiguration.cleanFields();
 			}
-			catch(IllegalAccessException e){
+			catch(Exception e){
 				Log.getLogger(null).error("Failed to clean guild configuration", e);
 			}
 		});
