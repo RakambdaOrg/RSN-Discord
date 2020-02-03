@@ -71,18 +71,32 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 	String getFetcherID();
 	
 	default void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<T>> userElements){
-		Log.getLogger(null).debug("AAA {}", userElements.values().stream().map(Set::size).collect(Collectors.toList()));
-		userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Map.Entry.comparingByValue()).map(change -> {
-			final var builder = new EmbedBuilder();
-			this.buildMessage(builder, change.getKey(), change.getValue());
-			return Map.entry(change.getKey(), builder.build());
-		}).forEach(infos -> channels.stream().filter(chan -> this.sendToChannel(chan, infos.getKey())).forEach(chan -> Actions.sendMessage(chan, "", infos.getValue())));
-		Log.getLogger(null).debug("CCC");
+		if(this.isSortedByUser()){
+			for(final var entry : userElements.entrySet()){
+				final var user = entry.getKey();
+				entry.getValue().stream().sorted().map(change -> {
+					final var builder = new EmbedBuilder();
+					this.buildMessage(builder, user, change);
+					return builder.build();
+				}).forEach(embed -> channels.stream().filter(channel -> this.sendToChannel(channel, user)).forEach(channel -> Actions.sendMessage(channel, "", embed)));
+			}
+		}
+		else{
+			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Map.Entry.comparingByValue()).map(change -> {
+				final var builder = new EmbedBuilder();
+				this.buildMessage(builder, change.getKey(), change.getValue());
+				return Map.entry(change.getKey(), builder.build());
+			}).forEach(infos -> channels.stream().filter(chan -> this.sendToChannel(chan, infos.getKey())).forEach(chan -> Actions.sendMessage(chan, "", infos.getValue())));
+		}
 	}
 	
 	@NonNull U initQuery(@NonNull Member member);
 	
 	boolean isKeepOnlyNew();
+	
+	default boolean isSortedByUser(){
+		return false;
+	}
 	
 	default void buildMessage(final EmbedBuilder builder, final User user, @NonNull final T change){
 		try{
@@ -102,7 +116,6 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 	}
 	
 	default boolean sendToChannel(final TextChannel channel, final User user){
-		Log.getLogger(null).debug("DDD");
 		return Settings.get(channel.getGuild()).getTraktConfiguration().getAccessToken(user.getIdLong()).isPresent();
 	}
 	

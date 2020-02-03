@@ -34,7 +34,7 @@ public class UserSerieHistory extends UserHistory{
 		builder.addBlankField(false);
 		this.getEpisode().fillEmbed(builder, mediaDetails instanceof TVDetails ? (TVDetails) mediaDetails : null);
 		builder.addBlankField(false);
-		super.fillEmbed(builder);
+		super.fillEmbed(builder, mediaDetails);
 	}
 	
 	@Override

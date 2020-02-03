@@ -9,7 +9,6 @@ import fr.raksrinana.rsndiscord.settings.guild.trakt.TraktAccessTokenConfigurati
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
-import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -20,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
@@ -27,12 +27,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TraktConfiguration implements CompositeConfiguration{
 	@JsonProperty("accessToken")
-	private final Set<TraktAccessTokenConfiguration> tokens = new HashSet<>();
+	private Set<TraktAccessTokenConfiguration> tokens = new HashSet<>();
 	@JsonProperty("mediaChangeChannel")
 	@Setter
 	private ChannelConfiguration mediaChangeChannel;
 	@JsonProperty("lastAccess")
-	private final Map<String, Set<UserDateConfiguration>> lastAccess = new HashMap<>();
+	private Map<String, Set<UserDateConfiguration>> lastAccess = new HashMap<>();
 	@JsonProperty("thaChannel")
 	@Setter
 	private ChannelConfiguration thaChannel;
@@ -40,7 +40,7 @@ public class TraktConfiguration implements CompositeConfiguration{
 	@Setter
 	private UserConfiguration thaUser;
 	@JsonProperty("usernames")
-	private final Map<Long, String> usernames = new HashMap<>();
+	private Map<Long, String> usernames = new HashMap<>();
 	
 	public void setLastAccess(final User user, final String section, final LocalDateTime date){
 		this.getLastAccess(section, user.getIdLong()).ifPresentOrElse(lastAccess -> lastAccess.setDate(date), () -> this.lastAccess.computeIfAbsent(section, sec -> new HashSet<>()).add(new UserDateConfiguration(user, date)));
@@ -58,11 +58,8 @@ public class TraktConfiguration implements CompositeConfiguration{
 	
 	@NonNull
 	public Optional<TraktAccessTokenConfiguration> getAccessToken(final long userId){
-		Log.getLogger(null).debug("EEE");
 		final var now = LocalDateTime.now();
-		final var d = this.tokens.stream().filter(t -> Objects.equals(t.getUserId(), userId)).filter(t -> t.getExpireDate().isAfter(now)).sorted(Comparator.comparing(TraktAccessTokenConfiguration::getExpireDate).reversed()).findAny();
-		Log.getLogger(null).debug("FFF {}", d);
-		return d;
+		return this.tokens.stream().filter(t -> Objects.equals(t.getUserId(), userId)).filter(t -> t.getExpireDate().isAfter(now)).sorted(Comparator.comparing(TraktAccessTokenConfiguration::getExpireDate).reversed()).findAny();
 	}
 	
 	public void addAccessToken(@NonNull final TraktAccessTokenConfiguration value){

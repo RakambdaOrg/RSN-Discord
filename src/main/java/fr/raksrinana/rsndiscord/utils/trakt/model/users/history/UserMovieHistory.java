@@ -30,7 +30,7 @@ public class UserMovieHistory extends UserHistory{
 		Optional.ofNullable(mediaDetails).flatMap(MediaDetails::getPosterURL).ifPresent(posterUrl -> builder.setThumbnail(posterUrl.toString()));
 		this.getMovie().fillEmbed(builder, mediaDetails instanceof MovieDetails ? (MovieDetails) mediaDetails : null);
 		builder.addBlankField(false);
-		super.fillEmbed(builder);
+		super.fillEmbed(builder, mediaDetails);
 	}
 	
 	@Override
