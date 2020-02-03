@@ -9,7 +9,6 @@ import fr.raksrinana.rsndiscord.settings.guild.trakt.TraktAccessTokenConfigurati
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
-import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -27,12 +26,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TraktConfiguration implements CompositeConfiguration{
 	@JsonProperty("accessToken")
-	private Set<TraktAccessTokenConfiguration> tokens = new HashSet<>();
+	private final Set<TraktAccessTokenConfiguration> tokens = new HashSet<>();
 	@JsonProperty("mediaChangeChannel")
 	@Setter
 	private ChannelConfiguration mediaChangeChannel;
 	@JsonProperty("lastAccess")
-	private Map<String, Set<UserDateConfiguration>> lastAccess = new HashMap<>();
+	private final Map<String, Set<UserDateConfiguration>> lastAccess = new HashMap<>();
 	@JsonProperty("thaChannel")
 	@Setter
 	private ChannelConfiguration thaChannel;
@@ -40,10 +39,9 @@ public class TraktConfiguration implements CompositeConfiguration{
 	@Setter
 	private UserConfiguration thaUser;
 	@JsonProperty("usernames")
-	private Map<Long, String> usernames = new HashMap<>();
+	private final Map<Long, String> usernames = new HashMap<>();
 	
 	public void setLastAccess(final User user, final String section, final LocalDateTime date){
-		Log.getLogger(null).error("Setting Trakt last access for {} with user {} to {}", section, user, date, new Exception("Give me stacktrace"));
 		this.getLastAccess(section, user.getIdLong()).ifPresentOrElse(lastAccess -> lastAccess.setDate(date), () -> this.lastAccess.computeIfAbsent(section, sec -> new HashSet<>()).add(new UserDateConfiguration(user, date)));
 	}
 	

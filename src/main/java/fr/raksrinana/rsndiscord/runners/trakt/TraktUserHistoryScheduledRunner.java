@@ -68,12 +68,12 @@ public class TraktUserHistoryScheduledRunner implements TraktPagedGetRunner<User
 	
 	@Override
 	public long getDelay(){
-		return 7;
+		return 1;
 	}
 	
 	@Override
 	public long getPeriod(){
-		return 30;
+		return 5;
 	}
 	
 	@Override
