@@ -30,9 +30,9 @@ public class UserSerieHistory extends UserHistory{
 	public void fillEmbed(@NonNull EmbedBuilder builder, MediaDetails mediaDetails){
 		builder.setTitle("Episode watched", Optional.of(getUrl()).map(Object::toString).orElse(null));
 		Optional.ofNullable(mediaDetails).flatMap(details -> details.getPosterURL(getEpisode().getSeason()).or(details::getPosterURL)).ifPresent(posterUrl -> builder.setThumbnail(posterUrl.toString()));
-		this.getShow().fillEmbed(builder, mediaDetails instanceof TVDetails ? (TVDetails) mediaDetails : null);
-		builder.addBlankField(false);
 		this.getEpisode().fillEmbed(builder, mediaDetails instanceof TVDetails ? (TVDetails) mediaDetails : null);
+		builder.addBlankField(false);
+		this.getShow().fillEmbed(builder, mediaDetails instanceof TVDetails ? (TVDetails) mediaDetails : null);
 		builder.addBlankField(false);
 		super.fillEmbed(builder, mediaDetails);
 	}
