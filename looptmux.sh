@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-set -x
-tmux new -d -s RSNDiscord ./loop.sh
+tmux new -d -s RSNDiscord 'cd "${HOME}/RSN-Discord" && ./loop.sh'
+
