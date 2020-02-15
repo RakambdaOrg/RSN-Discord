@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public enum OverwatchState{
-	@JsonEnumDefaultValue UNKNOWN("UNKNOWN"), CONCLUDED("Ended"), PENDING("Pending"), IN_PROGRESS("In progress");
+	@JsonEnumDefaultValue UNKNOWN("UNKNOWN"), CONCLUDED("Ended"), PENDING("Pending"), IN_PROGRESS("In progress"), CONCLUDED_BYE("Concluded bye");
 	private static final Logger LOGGER = LoggerFactory.getLogger(OverwatchState.class);
 	private final String stateName;
 	

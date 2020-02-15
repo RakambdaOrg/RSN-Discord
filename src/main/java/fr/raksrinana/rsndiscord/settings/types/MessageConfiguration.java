@@ -62,7 +62,7 @@ public class MessageConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public boolean shouldBeRemoved(){
-		return this.getChannel().shouldBeRemoved() || this.getChannel().getChannel().map(channel -> channel.retrieveMessageById(getMessageId()).submit().thenApply(m -> false).exceptionally(throwable -> ((ErrorResponseException) throwable).getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE)).map(future -> {
+		return this.getChannel().shouldBeRemoved() || this.getChannel().getChannel().map(channel -> channel.retrieveMessageById(getMessageId()).submit().thenApply(m -> false).exceptionally(throwable -> throwable instanceof ErrorResponseException && ((ErrorResponseException) throwable).getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE)).map(future -> {
 			try{
 				return future.get();
 			}
