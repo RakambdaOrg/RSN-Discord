@@ -3,12 +3,13 @@ package fr.raksrinana.rsndiscord.runners;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
-import fr.raksrinana.rsndiscord.utils.overwatch.OverwatchUtils;
-import fr.raksrinana.rsndiscord.utils.overwatch.stage.match.OverwatchMatch;
+import fr.raksrinana.rsndiscord.utils.overwatch.year2020.OverwatchUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
+import java.awt.Color;
 import java.util.concurrent.TimeUnit;
 
 public class OverwatchLeagueScheduledRunner implements ScheduledRunner{
@@ -21,14 +22,17 @@ public class OverwatchLeagueScheduledRunner implements ScheduledRunner{
 	
 	@Override
 	public void execute(){
-		OverwatchUtils.getData().ifPresent(ow -> this.getJda().getGuilds().forEach(guild -> Settings.get(guild).getOverwatchLeagueConfiguration().getNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> {
+		final var weeksData = OverwatchUtils.getWeeksData();
+		this.getJda().getGuilds().forEach(guild -> Settings.get(guild).getOverwatchLeagueConfiguration().getNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> {
 			final var notified = Settings.get(guild).getOverwatchLeagueConfiguration().getNotifiedMatches();
-			ow.getData().getStages().stream().flatMap(s -> s.getMatches().stream()).filter(OverwatchMatch::hasEnded).filter(m -> !notified.contains(m.getId())).sorted().forEachOrdered(m -> {
-				Log.getLogger(guild).info("Notifying match {} to {}", m, channel);
-				Actions.sendMessage(channel, "", m.buildEmbed(this.getJda().getSelfUser()).build());
-				Settings.get(guild).getOverwatchLeagueConfiguration().setNotifiedMatch(m.getId());
+			weeksData.stream().flatMap(weekData -> weekData.getEvents().stream()).flatMap(event -> event.getMatches().stream()).forEach(match -> {
+				Log.getLogger(guild).info("Notifying match {} to {}", match, channel);
+				final var embed = Utilities.buildEmbed(guild.getJDA().getSelfUser(), Color.GREEN, "", null);
+				match.fillEmbed(embed);
+				Actions.sendMessage(channel, "", embed.build());
+				Settings.get(guild).getOverwatchLeagueConfiguration().setNotifiedMatch(match.getId());
 			});
-		})));
+		}));
 	}
 	
 	@NonNull

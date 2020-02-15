@@ -13,7 +13,11 @@ public class HexColorDeserializer extends JsonDeserializer<Color>{
 	@Override
 	public Color deserialize(@NonNull final JsonParser jsonParser, @NonNull final DeserializationContext deserializationContext) throws IOException{
 		try{
-			return Color.decode("#" + jsonParser.getValueAsString());
+			var str = jsonParser.getValueAsString();
+			if(!str.startsWith("#")){
+				str = "#" + str;
+			}
+			return Color.decode(str);
 		}
 		catch(final MalformedURLException e){
 			Log.getLogger(null).warn("Failed to get color {}", jsonParser.getValueAsString());

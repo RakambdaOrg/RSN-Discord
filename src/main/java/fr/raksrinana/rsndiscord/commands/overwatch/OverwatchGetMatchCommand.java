@@ -8,10 +8,9 @@ import fr.raksrinana.rsndiscord.listeners.reply.ReplyMessageListener;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import fr.raksrinana.rsndiscord.utils.overwatch.OverwatchUtils;
-import fr.raksrinana.rsndiscord.utils.overwatch.stage.OverwatchStage;
-import fr.raksrinana.rsndiscord.utils.overwatch.stage.match.OverwatchMatch;
-import fr.raksrinana.rsndiscord.utils.overwatch.stage.week.OverwatchWeek;
+import fr.raksrinana.rsndiscord.utils.overwatch.year2020.OverwatchUtils;
+import fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.week.WeekData;
+import fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.week.event.match.Match;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
@@ -23,54 +22,31 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 
 public class OverwatchGetMatchCommand extends BasicCommand{
-	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchMatch> onMatch = (event, match) -> Actions.reply(event, "", match.buildEmbed(event.getUser()).build());
-	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchWeek> onWeek = (event, week) -> {
-		if(!week.getMatches().isEmpty()){
-			if(week.getMatches().size() == 1){
-				onMatch.accept(event, week.getMatches().get(0));
-			}
-			else{
-				final var counter = new AtomicInteger('a');
-				final var options = new HashMap<BasicEmotes, OverwatchMatch>();
-				final var currentMatch = week.getCurrentMatch();
-				final var nextMatch = week.getNextMatch();
-				final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, "Available matches", null);
-				week.getMatches().forEach(m -> {
-					final var emote = BasicEmotes.getEmote(String.valueOf((char) counter.getAndIncrement()));
-					options.put(emote, m);
-					builder.addField(emote.getValue() + ": " + m.getVsCompetitorsNames(), currentMatch.map(m::equals).orElse(false) ? "Current" : (nextMatch.map(m::equals).orElse(false) ? "Next" : ""), false);
-				});
-				builder.setFooter("ID: " + week.getId());
-				Actions.reply(event, "", builder.build()).thenAccept(message -> {
-					options.keySet().stream().sorted().forEachOrdered(e -> Actions.addReaction(message, e.getValue()));
-					ReplyMessageListener.handleReply(new EmoteWaitingUserReply<>(options, event, event.getUser(), message, OverwatchGetMatchCommand.onMatch));
-				});
-			}
-		}
-		else{
-			Actions.reply(event, "No matches found", null);
-		}
+	private static final BiConsumer<GuildMessageReactionAddEvent, Match> onMatch = (event, match) -> {
+		final var embed = Utilities.buildEmbed(event.getUser(), Color.GREEN, match.getVsCompetitorsNames(), null);
+		match.fillEmbed(embed);
+		Actions.reply(event, "", embed.build());
 	};
-	private static final BiConsumer<GuildMessageReactionAddEvent, OverwatchStage> onStage = (event, stage) -> {
-		if(!stage.getWeeks().isEmpty()){
-			if(stage.getWeeks().size() == 1){
-				onWeek.accept(event, stage.getWeeks().get(0));
+	private static final BiConsumer<GuildMessageReactionAddEvent, WeekData> onWeekData = (event, weekData) -> {
+		if(weekData.getMatchCount() > 0){
+			if(weekData.getMatchCount() == 1){
+				onMatch.accept(event, weekData.getMatches().get(0));
 			}
 			else{
 				final var counter = new AtomicInteger('a');
-				final var options = new HashMap<BasicEmotes, OverwatchWeek>();
-				final var currentWeek = stage.getCurrentWeek();
-				final var nextWeek = stage.getNextWeek();
-				final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, "Available weeks", null);
-				stage.getWeeks().forEach(w -> {
+				final var options = new HashMap<BasicEmotes, Match>();
+				final var currentWeek = weekData.getCurrentMatch();
+				final var nextWeek = weekData.getNextMatch();
+				final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, "Available matches", null);
+				weekData.getMatches().forEach(match -> {
 					final var emote = BasicEmotes.getEmote(String.valueOf((char) counter.getAndIncrement()));
-					options.put(emote, w);
-					builder.addField(emote.getValue() + ": " + w.getName(), currentWeek.map(w::equals).orElse(false) ? "Current" : (nextWeek.map(w::equals).orElse(false) ? "Next" : ""), false);
+					options.put(emote, match);
+					builder.addField(emote.getValue() + ": " + match.getVsCompetitorsNames(), currentWeek.map(match::equals).orElse(false) ? "Current" : (nextWeek.map(match::equals).orElse(false) ? "Next" : ""), false);
 				});
-				builder.setFooter("ID: " + stage.getId());
+				builder.setFooter("ID: " + weekData.getWeekNumber());
 				Actions.reply(event, "", builder.build()).thenAccept(message -> {
 					options.keySet().stream().sorted().forEachOrdered(e -> Actions.addReaction(message, e.getValue()));
-					ReplyMessageListener.handleReply(new EmoteWaitingUserReply<>(options, event, event.getUser(), message, OverwatchGetMatchCommand.onWeek));
+					ReplyMessageListener.handleReply(new EmoteWaitingUserReply<>(options, event, event.getUser(), message, onMatch));
 				});
 			}
 		}
@@ -87,27 +63,26 @@ public class OverwatchGetMatchCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		OverwatchUtils.getData().ifPresentOrElse(overwatchResponse -> {
-			if(!overwatchResponse.getData().getStages().isEmpty()){
-				final var counter = new AtomicInteger('a');
-				final var options = new HashMap<BasicEmotes, OverwatchStage>();
-				final var currentStage = overwatchResponse.getData().getCurrentStage();
-				final var nextStage = overwatchResponse.getData().getNextStage();
-				final var builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Available stages", null);
-				overwatchResponse.getData().getStages().forEach(s -> {
-					final var emote = BasicEmotes.getEmote(String.valueOf((char) counter.getAndIncrement()));
-					options.put(emote, s);
-					builder.addField(emote.getValue() + ": " + s.getName(), currentStage.map(s::equals).orElse(false) ? "Current" : (nextStage.map(s::equals).orElse(false) ? "Next" : ""), false);
-				});
-				Actions.reply(event, "", builder.build()).thenAccept(message -> {
-					options.keySet().stream().sorted().forEachOrdered(e -> Actions.addReaction(message, e.getValue()));
-					ReplyMessageListener.handleReply(new EmoteWaitingUserReply<>(options, event, event.getAuthor(), message, onStage));
-				});
-			}
-			else{
-				Actions.reply(event, "No stages found", null);
-			}
-		}, () -> Actions.reply(event, "Error while getting data from Overwatch", null));
+		final var weeksData = OverwatchUtils.getWeeksData();
+		if(!weeksData.isEmpty()){
+			final var counter = new AtomicInteger('a');
+			final var options = new HashMap<BasicEmotes, WeekData>();
+			final var currentStage = OverwatchUtils.getCurrentStage(weeksData);
+			final var nextStage = OverwatchUtils.getCurrentStage(weeksData);
+			final var builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Available weeks", null);
+			weeksData.forEach(s -> {
+				final var emote = BasicEmotes.getEmote(String.valueOf((char) counter.getAndIncrement()));
+				options.put(emote, s);
+				builder.addField(emote.getValue() + ": " + s.getName(), currentStage.map(s::equals).orElse(false) ? "Current" : (nextStage.map(s::equals).orElse(false) ? "Next" : ""), false);
+			});
+			Actions.reply(event, "", builder.build()).thenAccept(message -> {
+				options.keySet().stream().sorted().forEachOrdered(e -> Actions.addReaction(message, e.getValue()));
+				ReplyMessageListener.handleReply(new EmoteWaitingUserReply<>(options, event, event.getAuthor(), message, onWeekData));
+			});
+		}
+		else{
+			Actions.reply(event, "No weeks found", null);
+		}
 		return CommandResult.SUCCESS;
 	}
 	
