@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2020.OverwatchUtils;
+import fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.week.event.match.Status;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
@@ -25,7 +26,7 @@ public class OverwatchLeagueScheduledRunner implements ScheduledRunner{
 		final var weeksData = OverwatchUtils.getWeeksData();
 		this.getJda().getGuilds().forEach(guild -> Settings.get(guild).getOverwatchLeagueConfiguration().getNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> {
 			final var notified = Settings.get(guild).getOverwatchLeagueConfiguration().getNotifiedMatches();
-			weeksData.stream().flatMap(weekData -> weekData.getEvents().stream()).flatMap(event -> event.getMatches().stream()).forEach(match -> {
+			weeksData.stream().flatMap(weekData -> weekData.getEvents().stream()).flatMap(event -> event.getMatches().stream()).filter(match -> match.getStatus() == Status.CONCLUDED).filter(match -> !notified.contains(match.getId())).forEach(match -> {
 				Log.getLogger(guild).info("Notifying match {} to {}", match, channel);
 				final var embed = Utilities.buildEmbed(guild.getJDA().getSelfUser(), Color.GREEN, "", null);
 				match.fillEmbed(embed);

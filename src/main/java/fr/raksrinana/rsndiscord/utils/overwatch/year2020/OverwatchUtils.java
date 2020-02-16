@@ -1,6 +1,8 @@
 package fr.raksrinana.rsndiscord.utils.overwatch.year2020;
 
-import fr.raksrinana.rsndiscord.utils.overwatch.year2019.OverwatchMap;
+import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.ResponseContent;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.week.WeekData;
 import fr.raksrinana.utils.http.requestssenders.get.ObjectGetRequestSender;
@@ -12,24 +14,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class OverwatchUtils{
-	private static final int MAP_DATA_TIMEOUT = 3600000;
 	private static final int DATA_TIMEOUT = 120000;
 	private static final Map<Integer, Long> lastChecks = new HashMap<>();
 	private static final Map<Integer, Response> lastResponses = new HashMap<>();
-	private static long lastCheckMaps = 0;
-	private static Collection<OverwatchMap> lastMaps;
-	
-	@NonNull
-	public static Optional<OverwatchMap> getMap(final String guid){
-		if(Objects.isNull(lastMaps) || System.currentTimeMillis() - lastCheckMaps > MAP_DATA_TIMEOUT){
-			lastCheckMaps = System.currentTimeMillis();
-			final var handler = new ObjectGetRequestSender<>(new GenericType<List<OverwatchMap>>(){}, Unirest.get("https://api.overwatchleague.com/maps")).getRequestHandler();
-			if(handler.getResult().isSuccess()){
-				lastMaps = handler.getRequestResult();
-			}
-		}
-		return Optional.ofNullable(lastMaps).stream().flatMap(Collection::stream).filter(map -> Objects.equals(map.getGuid(), guid)).findFirst();
-	}
 	
 	public static Optional<WeekData> getCurrentStage(List<WeekData> weeksData){
 		final var now = LocalDateTime.now();
@@ -57,8 +44,13 @@ public class OverwatchUtils{
 	@NonNull
 	public static Optional<Response> getData(int page){
 		if(Objects.isNull(lastResponses.get(page)) || System.currentTimeMillis() - lastChecks.getOrDefault(page, 0L) > DATA_TIMEOUT){
+			Log.getLogger(null).debug("Fetching overwatch league page {}", page);
 			lastChecks.put(page, System.currentTimeMillis());
-			final var handler = new ObjectGetRequestSender<>(new GenericType<Response>(){}, Unirest.get("https://api.overwatchleague.com/schedule").queryString("stage", "regular_season").queryString("page", page).queryString("season", 2020).queryString("locale", "en-us")).getRequestHandler();
+			final var handler = new ObjectGetRequestSender<>(new GenericType<Response>(){}, Unirest.get("https://wzavfvwgfk.execute-api.us-east-2.amazonaws.com/production/owl/paginator/schedule").queryString("stage", "regular_season").queryString("page", page).queryString("season", 2020).queryString("locale", "en-us").header("Referer", "https://overwatchleague.com/en-us/schedule?stage=regular_season&week=1")).getRequestHandler();
+			handler.getResult().getParsingError().ifPresent(error -> {
+				Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Failed to parse Overwatch league response", Utilities.throwableToEmbed(error).build());
+				Log.getLogger(null).warn("Failed to parse Overwatch league response", error);
+			});
 			if(handler.getResult().isSuccess()){
 				lastResponses.put(page, handler.getRequestResult());
 			}

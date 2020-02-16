@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601DateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.UnknownDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.net.URL;
@@ -35,7 +36,8 @@ public class Asset{
 	@JsonProperty("filesize")
 	private long filesize;
 	@JsonProperty("tags")
-	private Set<String> tags;
+	@JsonDeserialize(contentUsing = UnknownDeserializer.class)
+	private Set<Object> tags;
 	@JsonProperty("filename")
 	private String filename;
 	@JsonProperty("url")

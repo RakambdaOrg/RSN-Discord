@@ -1,6 +1,8 @@
 package fr.raksrinana.rsndiscord.utils.themoviedb;
 
+import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.RequestException;
+import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.utils.http.requestssenders.get.ObjectGetRequestSender;
 import lombok.NonNull;
@@ -17,7 +19,10 @@ public class TMDBUtils{
 	
 	public static <T> T getQuery(@NonNull TMDBGetRequest<T> request) throws RequestException{
 		final var handler = new ObjectGetRequestSender<>(request.getOutputType(), request.getRequest().headers(getHeaders())).getRequestHandler();
-		handler.getResult().getParsingError().ifPresent(error -> Log.getLogger(null).warn("Failed to parse response", error));
+		handler.getResult().getParsingError().ifPresent(error -> {
+			Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Failed to parse TMDB response", Utilities.throwableToEmbed(error).build());
+			Log.getLogger(null).warn("Failed to parse TMDB response", error);
+		});
 		if(request.isValidResult(handler.getStatus())){
 			return handler.getRequestResult();
 		}

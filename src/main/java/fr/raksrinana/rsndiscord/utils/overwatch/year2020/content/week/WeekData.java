@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601DateTimeDeserializer;
-import fr.raksrinana.rsndiscord.utils.json.UnknownDeserializer;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.week.event.Event;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.week.event.match.Match;
 import lombok.Getter;
@@ -21,9 +20,9 @@ import java.util.stream.Collectors;
 public class WeekData{
 	@JsonProperty("name")
 	private String name;
-	@JsonProperty("sponsor")
-	@JsonDeserialize(using = UnknownDeserializer.class)
-	private Set<Object> sponsor;
+	// @JsonProperty("sponsor")
+	// @JsonDeserialize(using = UnknownDeserializer.class)
+	// private Set<Object> sponsor;
 	@JsonProperty("presentedBy")
 	private String presentedBy;
 	@JsonProperty("subtitle")

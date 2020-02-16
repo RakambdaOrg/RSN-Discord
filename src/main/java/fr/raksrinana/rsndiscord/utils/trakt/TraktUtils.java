@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.settings.guild.trakt.TraktAccessTokenConfigurati
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import fr.raksrinana.rsndiscord.utils.RequestException;
+import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.trakt.model.auth.DeviceCode;
 import fr.raksrinana.rsndiscord.utils.trakt.requests.oauth.DeviceTokenPostRequest;
@@ -32,7 +33,10 @@ public class TraktUtils{
 		var pageCount = 1;
 		do{
 			final var handler = new ObjectGetRequestSender<>(request.getOutputType(), request.getRequest().headers(headers)).getRequestHandler();
-			handler.getResult().getParsingError().ifPresent(error -> Log.getLogger(null).warn("Failed to parse response", error));
+			handler.getResult().getParsingError().ifPresent(error -> {
+				Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Failed to parse Trakt response", Utilities.throwableToEmbed(error).build());
+				Log.getLogger(null).warn("Failed to parse Trakt response", error);
+			});
 			if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
 				results.addAll(handler.getRequestResult());
 				pageCount = Optional.ofNullable(handler.getHeaders().getFirst("X-Pagination-Page-Count")).map(Integer::parseInt).orElseThrow(() -> new RequestException("No page count in header", handler.getStatus()));
@@ -124,7 +128,10 @@ public class TraktUtils{
 	
 	public static <T> T getQuery(TraktAccessTokenConfiguration token, @NonNull TraktGetRequest<T> request) throws RequestException{
 		final var handler = new ObjectGetRequestSender<T>(request.getOutputType(), request.getRequest().headers(getHeaders(token))).getRequestHandler();
-		handler.getResult().getParsingError().ifPresent(error -> Log.getLogger(null).warn("Failed to parse response", error));
+		handler.getResult().getParsingError().ifPresent(error -> {
+			Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Failed to parse Trakt response", Utilities.throwableToEmbed(error).build());
+			Log.getLogger(null).warn("Failed to parse Trakt response", error);
+		});
 		if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
 			return handler.getRequestResult();
 		}

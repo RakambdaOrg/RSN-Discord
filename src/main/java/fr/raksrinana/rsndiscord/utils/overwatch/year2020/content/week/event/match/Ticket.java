@@ -21,9 +21,9 @@ import java.util.Set;
 public class Ticket{
 	@JsonProperty("locale")
 	private String locale;
-	@JsonProperty("ACL")
-	@JsonDeserialize(using = UnknownDeserializer.class)
-	private Object acl;
+	// @JsonProperty("ACL")
+	// @JsonDeserialize(using = UnknownDeserializer.class)
+	// private Object acl;
 	@JsonProperty("ContentTypeUid")
 	private String contentTypeUid;
 	@JsonProperty("InProgress")
@@ -42,7 +42,7 @@ public class Ticket{
 	@JsonProperty("statusText")
 	private Set<StatusText> statusText;
 	@JsonProperty("tags")
-	@JsonDeserialize(using = UnknownDeserializer.class)
+	@JsonDeserialize(contentUsing = UnknownDeserializer.class)
 	private Set<Object> tags;
 	@JsonProperty("title")
 	private String title;

@@ -35,13 +35,13 @@ public class OverwatchGetMatchCommand extends BasicCommand{
 			else{
 				final var counter = new AtomicInteger('a');
 				final var options = new HashMap<BasicEmotes, Match>();
-				final var currentWeek = weekData.getCurrentMatch();
-				final var nextWeek = weekData.getNextMatch();
+				final var currentMatch = weekData.getCurrentMatch();
+				final var nextMatch = weekData.getNextMatch();
 				final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, "Available matches", null);
 				weekData.getMatches().forEach(match -> {
 					final var emote = BasicEmotes.getEmote(String.valueOf((char) counter.getAndIncrement()));
 					options.put(emote, match);
-					builder.addField(emote.getValue() + ": " + match.getVsCompetitorsNames(), currentWeek.map(match::equals).orElse(false) ? "Current" : (nextWeek.map(match::equals).orElse(false) ? "Next" : ""), false);
+					builder.addField(emote.getValue() + ": " + match.getVsCompetitorsNames(), currentMatch.map(match::equals).orElse(false) ? "Current" : (nextMatch.map(match::equals).orElse(false) ? "Next" : ""), false);
 				});
 				builder.setFooter("ID: " + weekData.getWeekNumber());
 				Actions.reply(event, "", builder.build()).thenAccept(message -> {

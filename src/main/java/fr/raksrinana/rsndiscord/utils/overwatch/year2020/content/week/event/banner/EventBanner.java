@@ -27,10 +27,10 @@ public class EventBanner{
 	@JsonDeserialize(using = URLDeserializer.class)
 	private URL backgroundImageUrl;
 	@JsonProperty("backgroundVideos")
-	@JsonDeserialize(using = UnknownDeserializer.class)
+	@JsonDeserialize(contentUsing = UnknownDeserializer.class)
 	private Set<Object> backgroundVideos;
 	@JsonProperty("featuredImage")
-	@JsonDeserialize(using = UnknownDeserializer.class)
+	@JsonDeserialize(using = URLDeserializer.class)
 	private URL featuredImage;
 	@JsonProperty("hostedBy")
 	private String hostedBy;
@@ -39,7 +39,7 @@ public class EventBanner{
 	@JsonProperty("headings")
 	private Map<String, Heading> headings;
 	@JsonProperty("sponsors")
-	@JsonDeserialize(using = UnknownDeserializer.class)
+	@JsonDeserialize(contentUsing = UnknownDeserializer.class)
 	private Set<Object> sponsors;
 	@JsonProperty("ticket")
 	private Ticket ticket;

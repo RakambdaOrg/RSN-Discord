@@ -3,6 +3,9 @@ package fr.raksrinana.rsndiscord.utils.json;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import java.io.IOException;
 
@@ -12,6 +15,8 @@ public class UnknownDeserializer extends JsonDeserializer<Object>{
 		if(jsonParser.isNaN()){
 			return null;
 		}
-		throw new IOException("Unknown field isn't null: " + jsonParser.getText());
+		Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Parsing error: Unknown field isn't null: " + jsonParser.getCurrentName(), null);
+		Log.getLogger(null).error("Unknown field isn't null: " + jsonParser.getCurrentName());
+		return getNullValue(deserializationContext);
 	}
 }

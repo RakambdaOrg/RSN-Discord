@@ -10,6 +10,7 @@ import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2020.OverwatchUtils;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.week.WeekData;
+import fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.week.event.match.Status;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
@@ -28,7 +29,7 @@ public class OverwatchGetWeekMatchesCommand extends BasicCommand{
 	private static final BiConsumer<GuildMessageReactionAddEvent, WeekData> onWeekData = (event, week) -> {
 		final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, week.getName(), null);
 		week.getEvents().stream().flatMap(weekEvent -> weekEvent.getMatches().stream()).forEach(m -> {
-			final var message = m.isLive() ? (m.getScores().stream().map(Object::toString).collect(Collectors.joining(" - ")) + " (In progress)") : ("On the " + m.getStartDate().atZone(ZoneId.of("Europe/Paris")).format(FORMATTER) + " (Europe/Paris)");
+			final var message = m.getScores().stream().map(Object::toString).collect(Collectors.joining(" - ")) + (m.isLive() ? " (In progress)" : (m.getStatus() == Status.PENDING ? ("On the " + m.getStartDate().atZone(ZoneId.of("Europe/Paris")).format(FORMATTER) + " (Europe/Paris)") : ""));
 			builder.addField(m.getVsCompetitorsNames(), message, false);
 		});
 		builder.setFooter("ID: " + week.getWeekNumber());

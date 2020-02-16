@@ -20,9 +20,9 @@ import java.util.Set;
 public class StatusText{
 	@JsonProperty("locale")
 	private String locale;
-	@JsonProperty("ACL")
-	@JsonDeserialize(using = UnknownDeserializer.class)
-	private Object acl;
+	// @JsonProperty("ACL")
+	// @JsonDeserialize(using = UnknownDeserializer.class)
+	// private Object acl;
 	@JsonProperty("ContentTypeUid")
 	private String contentTypeUid;
 	@JsonProperty("InProgress")
@@ -35,7 +35,7 @@ public class StatusText{
 	@JsonProperty("createdBy")
 	private String createdBy;
 	@JsonProperty("tags")
-	@JsonDeserialize(using = UnknownDeserializer.class)
+	@JsonDeserialize(contentUsing = UnknownDeserializer.class)
 	private Set<Object> tags;
 	@JsonProperty("title")
 	private String title;

@@ -53,7 +53,7 @@ public class Match{
 	@JsonProperty("home")
 	private String home;
 	@JsonProperty("games")
-	@JsonDeserialize(using = UnknownDeserializer.class)
+	@JsonDeserialize(contentUsing = UnknownDeserializer.class)
 	private Set<Object> games;
 	@JsonProperty("live")
 	private boolean live;

@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.utils;
 
+import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -15,6 +16,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -359,5 +361,20 @@ public class Actions{
 	public static CompletableFuture<Void> setCategoryAndSync(@NonNull GuildChannel channel, @NonNull Category category){
 		Log.getLogger(channel.getGuild()).info("Archiving channel {} to {} and syncing it", channel, category);
 		return channel.getManager().setParent(category).sync(category).submit();
+	}
+	
+	/**
+	 * Send a message to a private channel.
+	 *
+	 * @param userId  The userId to send the message to.
+	 * @param message The message to send.
+	 * @param embed   The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
+	 *
+	 * @return A completable future of a message (see {@link RestAction#submit()}).
+	 *
+	 * @throws IllegalArgumentException If trying to send a message to another bot.
+	 */
+	public static Optional<CompletableFuture<Message>> sendPrivateMessage(long userId, String message, MessageEmbed embed){
+		return Optional.ofNullable(Main.getJda().getUserById(userId)).map(user -> user.openPrivateChannel().submit().thenCompose(privateChannel -> sendPrivateMessage(null, privateChannel, message, embed)));
 	}
 }

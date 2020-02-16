@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.utils.irc.twitch;
 
-import fr.raksrinana.rsndiscord.Main;
+import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.irc.IIRCMessageBuilder;
 import fr.raksrinana.rsndiscord.utils.irc.messages.*;
@@ -61,7 +61,7 @@ class TwitchIRCMessageBuilder implements IIRCMessageBuilder{
 						return Optional.of(new HostTargetIRCMessage(matcher.group(5).trim(), matcher.group(7)));
 				}
 			}
-			Optional.ofNullable(Main.getJda().getUserById(Utilities.RAKSRINANA_ACCOUNT)).ifPresent(rsn -> rsn.openPrivateChannel().queue(c -> c.sendMessage("Unknown IRC message: " + message).queue()));
+			Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Unknown IRC message: " + message, null);
 			Log.getLogger(null).warn("Unknown IRC message: {}", message);
 			return Optional.empty();
 		}

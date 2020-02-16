@@ -150,4 +150,13 @@ public class Utilities{
 	public static <T> Collection<? extends T> getAllInstancesOf(Class<T> klass, @NonNull String packageName, Function<Class<? extends T>, ? extends T> createInstance){
 		return new Reflections(packageName).getSubTypesOf(klass).stream().filter(c -> !c.isInterface()).sorted(Comparator.comparing(Class::getCanonicalName)).map(createInstance).filter(Objects::nonNull).map(klass::cast).collect(Collectors.toList());
 	}
+	
+	public static EmbedBuilder throwableToEmbed(Throwable throwable){
+		final var embed = new EmbedBuilder();
+		embed.setTitle(throwable.getMessage().substring(0, Math.min(throwable.getMessage().length(), MessageEmbed.TITLE_MAX_LENGTH)));
+		embed.setColor(Color.RED);
+		final var trace = ExceptionUtils.getStackTrace(throwable);
+		embed.addField("Trace", trace.substring(0, Math.min(trace.length(), MessageEmbed.VALUE_MAX_LENGTH)), false);
+		return embed;
+	}
 }
