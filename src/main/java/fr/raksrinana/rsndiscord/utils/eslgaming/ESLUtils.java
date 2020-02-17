@@ -14,10 +14,12 @@ public class ESLUtils{
 	
 	public static <T> T getQuery(@NonNull ESLGetRequest<T> request) throws RequestException{
 		final var handler = new ObjectGetRequestSender<>(request.getOutputType(), request.getRequest().headers(HEADERS)).getRequestHandler();
-		handler.getResult().getParsingError().ifPresent(error -> {
-			Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Failed to parse ESL response", Utilities.throwableToEmbed(error).build());
-			Log.getLogger(null).warn("Failed to parse ESL response", error);
-		});
+		if(handler.getStatus() != 502){
+			handler.getResult().getParsingError().ifPresent(error -> {
+				Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Failed to parse ESL response", Utilities.throwableToEmbed(error).build());
+				Log.getLogger(null).warn("Failed to parse ESL response", error);
+			});
+		}
 		if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
 			return handler.getRequestResult();
 		}
