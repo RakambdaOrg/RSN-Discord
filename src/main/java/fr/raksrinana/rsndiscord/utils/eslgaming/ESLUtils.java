@@ -1,8 +1,6 @@
 package fr.raksrinana.rsndiscord.utils.eslgaming;
 
-import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.RequestException;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.utils.http.requestssenders.get.ObjectGetRequestSender;
 import lombok.NonNull;
@@ -14,12 +12,9 @@ public class ESLUtils{
 	
 	public static <T> T getQuery(@NonNull ESLGetRequest<T> request) throws RequestException{
 		final var handler = new ObjectGetRequestSender<>(request.getOutputType(), request.getRequest().headers(HEADERS)).getRequestHandler();
-		if(handler.getStatus() != 502){
-			handler.getResult().getParsingError().ifPresent(error -> {
-				Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Failed to parse ESL response", Utilities.throwableToEmbed(error).build());
-				Log.getLogger(null).warn("Failed to parse ESL response", error);
-			});
-		}
+		handler.getResult().getParsingError().ifPresent(error -> {
+			Log.getLogger(null).warn("Failed to parse ESL response", error);
+		});
 		if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
 			return handler.getRequestResult();
 		}
