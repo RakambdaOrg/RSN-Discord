@@ -1,6 +1,8 @@
 package fr.raksrinana.rsndiscord.utils.reaction;
 
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.WaitingReactionMessageConfiguration;
+import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import lombok.NonNull;
@@ -8,6 +10,7 @@ import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEve
 import java.util.Objects;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.utils.BasicEmotes.CHECK_OK;
+import static fr.raksrinana.rsndiscord.utils.BasicEmotes.PAPERCLIP;
 
 public class TodosReactionHandler implements ReactionHandler{
 	@Override
@@ -20,15 +23,14 @@ public class TodosReactionHandler implements ReactionHandler{
 		if(event.getReactionEmote().isEmoji()){
 			final var emote = BasicEmotes.getEmote(event.getReactionEmote().getEmoji());
 			if(isValidEmote(emote)){
-				processTodoCompleted(event, reaction);
-				return ReactionHandlerResult.PROCESSED_DELETE;
+				return processTodoCompleted(event, emote, reaction);
 			}
 		}
 		return ReactionHandlerResult.PROCESSED;
 	}
 	
 	protected boolean isValidEmote(@NonNull BasicEmotes emote){
-		return emote == CHECK_OK;
+		return emote == CHECK_OK || emote == PAPERCLIP;
 	}
 	
 	@Override
@@ -36,8 +38,19 @@ public class TodosReactionHandler implements ReactionHandler{
 		return 1000;
 	}
 	
-	protected void processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull WaitingReactionMessageConfiguration todo){
-		todo.getMessage().getMessage().ifPresent(message -> {
+	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emote, @NonNull WaitingReactionMessageConfiguration todo){
+		return todo.getMessage().getMessage().map(message -> {
+			if(emote == PAPERCLIP){
+				final var forwarded = Optional.ofNullable(Settings.get(event.getGuild()).getReactionsConfiguration().getSavedForwarding().get(new ChannelConfiguration(event.getChannel()))).flatMap(ChannelConfiguration::getChannel).map(forwardChannel -> {
+					Actions.sendMessage(forwardChannel, message.getContentRaw(), message.getEmbeds().stream().findFirst().orElse(null));
+					return true;
+				}).orElse(false);
+				if(!forwarded){
+					Actions.replyWithPrivateMessage(event, "The saved channel isn't configured yet for this channel, please contact and admin.", null);
+					Actions.removeReaction(event.getReaction(), event.getUser());
+					return ReactionHandlerResult.PROCESSED;
+				}
+			}
 			if(message.isPinned()){
 				Actions.unpin(message);
 			}
@@ -48,6 +61,7 @@ public class TodosReactionHandler implements ReactionHandler{
 				Actions.editMessage(message, BasicEmotes.OK_HAND.getValue() + " __**DONE**__:  " + message.getContentRaw());
 				Actions.clearReactions(message);
 			}
-		});
+			return ReactionHandlerResult.PROCESSED_DELETE;
+		}).orElse(ReactionHandlerResult.PROCESSED);
 	}
 }

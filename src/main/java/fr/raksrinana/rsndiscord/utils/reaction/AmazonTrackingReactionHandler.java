@@ -28,7 +28,7 @@ public class AmazonTrackingReactionHandler extends TodosReactionHandler{
 	}
 	
 	@Override
-	protected void processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull WaitingReactionMessageConfiguration todo){
+	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emotes, @NonNull WaitingReactionMessageConfiguration todo){
 		try{
 			final var url = new URL(todo.getData().get(ReactionUtils.URL_KEY));
 			final var userId = Long.parseLong(todo.getData().get(ReactionUtils.USER_ID_KEY));
@@ -45,5 +45,6 @@ public class AmazonTrackingReactionHandler extends TodosReactionHandler{
 		catch(Exception e){
 			Log.getLogger(event.getGuild()).error("Failed to stop tracking Amazon product", e);
 		}
+		return ReactionHandlerResult.PROCESSED_DELETE;
 	}
 }

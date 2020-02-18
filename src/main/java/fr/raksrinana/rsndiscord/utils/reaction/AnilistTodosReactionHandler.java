@@ -2,6 +2,7 @@ package fr.raksrinana.rsndiscord.utils.reaction;
 
 import fr.raksrinana.rsndiscord.settings.guild.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.User;
@@ -21,8 +22,8 @@ public class AnilistTodosReactionHandler extends TodosReactionHandler{
 	}
 	
 	@Override
-	protected void processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull WaitingReactionMessageConfiguration todo){
+	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emotes, @NonNull WaitingReactionMessageConfiguration todo){
 		todo.getMessage().getMessage().ifPresent(message -> Optional.ofNullable(event.getJDA().getUserById(Utilities.RAKSRINANA_ACCOUNT)).map(User::openPrivateChannel).ifPresent(user -> user.queue(privateChannel -> message.getEmbeds().forEach(embed -> Actions.sendPrivateMessage(event.getGuild(), privateChannel, event.getMember().getUser().getAsMention() + " completed", embed)))));
-		super.processTodoCompleted(event, todo);
+		return super.processTodoCompleted(event, emotes, todo);
 	}
 }

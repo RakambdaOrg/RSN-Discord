@@ -23,7 +23,7 @@ public class Settings{
 	
 	@NonNull
 	public static GuildConfiguration get(@NonNull final Guild guild){
-		return configurations.computeIfAbsent(guild.getIdLong(), guildId -> loadConfiguration(guild).orElse(new GuildConfiguration(guildId)));
+		return configurations.computeIfAbsent(guild.getIdLong(), guildId -> loadConfiguration(guild).orElseThrow(() -> new RuntimeException("Failed to load configuration for guild " + guild)));
 	}
 	
 	@NonNull
@@ -35,9 +35,10 @@ public class Settings{
 			}
 			catch(final IOException e){
 				Log.getLogger(guild).error("Failed to read settings in {}", guildConfPath, e);
+				return Optional.empty();
 			}
 		}
-		return Optional.empty();
+		return Optional.of(new GuildConfiguration(guild.getIdLong()));
 	}
 	
 	@NonNull

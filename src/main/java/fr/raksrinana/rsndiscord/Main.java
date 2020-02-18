@@ -76,6 +76,7 @@ public class Main{
 			Log.getLogger(null).info("Started");
 			announceStart();
 			restartTwitchIRCConnections();
+			jda.getGuilds().stream().map(Settings::get).forEach(settings -> settings.getReactionsConfiguration().getAutoTodoChannels().addAll(settings.getAutoTodoChannels()));
 		}
 		catch(final LoginException | InterruptedException e){
 			Log.getLogger(null).error("Couldn't start bot", e);

@@ -33,7 +33,7 @@ public class ChannelConfiguration implements AtomicConfiguration{
 		this(channel.getIdLong());
 	}
 	
-	ChannelConfiguration(final long channelId){
+	public ChannelConfiguration(final long channelId){
 		this.channelId = channelId;
 	}
 	

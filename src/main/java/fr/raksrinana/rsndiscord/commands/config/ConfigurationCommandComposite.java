@@ -1,6 +1,7 @@
 package fr.raksrinana.rsndiscord.commands.config;
 
 import fr.raksrinana.rsndiscord.commands.config.guild.*;
+import fr.raksrinana.rsndiscord.commands.config.guild.reactions.AutoTodoChannelsConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
 import lombok.NonNull;
@@ -35,6 +36,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new ArchiveCategoryConfigurationCommand(this));
 		this.addSubCommand(new AutoTodoChannelsConfigurationCommand(this));
 		this.addSubCommand(new Rainbow6ProLeagueConfigurationCommandComposite(this));
+		this.addSubCommand(new ReactionsConfigurationCommandComposite(this));
 	}
 	
 	@NonNull

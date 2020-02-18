@@ -28,13 +28,15 @@ public class MediaReactionReactionHandler extends TodosReactionHandler{
 	}
 	
 	@Override
-	protected void processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull WaitingReactionMessageConfiguration todo){
-		Settings.get(event.getGuild()).getArchiveCategory().flatMap(CategoryConfiguration::getCategory).ifPresentOrElse(archiveCategory -> {
+	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emotes, @NonNull WaitingReactionMessageConfiguration todo){
+		return Settings.get(event.getGuild()).getArchiveCategory().flatMap(CategoryConfiguration::getCategory).map(archiveCategory -> {
 			Utilities.getMessageById(event.getChannel(), event.getMessageIdLong()).thenAccept(message -> message.removeReaction(event.getReactionEmote().getEmoji()).queue());
 			Actions.setCategoryAndSync(event.getChannel(), archiveCategory).thenAccept(future -> Actions.sendMessage(event.getChannel(), MessageFormat.format("{0} archived this channel.", event.getMember().getAsMention()), null));
-		}, () -> {
+			return ReactionHandlerResult.PROCESSED_DELETE;
+		}).orElseGet(() -> {
 			Actions.removeReaction(event.getReaction(), event.getUser());
 			Actions.reply(event, "No archive category have been defined", null);
+			return ReactionHandlerResult.PROCESSED_DELETE;
 		});
 	}
 }

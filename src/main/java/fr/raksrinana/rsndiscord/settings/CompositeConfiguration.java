@@ -17,6 +17,10 @@ public interface CompositeConfiguration{
 		}
 	}
 	
+	default boolean atomicShouldBeRemoved(Object object){
+		return object instanceof AtomicConfiguration && ((AtomicConfiguration) object).shouldBeRemoved();
+	}
+	
 	default boolean cleanObject(Object fieldValue) throws Exception{
 		if(fieldValue instanceof AtomicConfiguration){
 			return ((AtomicConfiguration) fieldValue).shouldBeRemoved();
@@ -27,7 +31,7 @@ public interface CompositeConfiguration{
 		}
 		else if(fieldValue instanceof Collection){
 			final var collection = (Collection<?>) fieldValue;
-			final var toRemove = collection.stream().filter(elem -> elem instanceof AtomicConfiguration && ((AtomicConfiguration) elem).shouldBeRemoved()).collect(Collectors.toList());
+			final var toRemove = collection.stream().filter(this::atomicShouldBeRemoved).collect(Collectors.toList());
 			if(!toRemove.isEmpty()){
 				Log.getLogger(null).debug("Removing values {} from collection {}", toRemove, collection);
 			}
@@ -44,11 +48,11 @@ public interface CompositeConfiguration{
 		}
 		else if(fieldValue instanceof Map){
 			final var map = (Map<?, ?>) fieldValue;
-			final var toRemove = map.entrySet().stream().filter(entry -> entry.getValue() instanceof AtomicConfiguration && ((AtomicConfiguration) entry.getValue()).shouldBeRemoved()).map(Map.Entry::getKey).collect(Collectors.toSet());
+			final var toRemove = map.entrySet().stream().filter(entry -> atomicShouldBeRemoved(entry.getKey()) || atomicShouldBeRemoved(entry.getValue())).map(Map.Entry::getKey).collect(Collectors.toSet());
 			if(!toRemove.isEmpty()){
 				Log.getLogger(null).debug("Removing keys {} from map {}", toRemove, map);
 			}
-			toRemove.forEach(map::remove);
+			toRemove.removeAll(toRemove);
 			map.values().forEach(elem -> {
 				try{
 					cleanObject(elem);

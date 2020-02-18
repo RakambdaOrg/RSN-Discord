@@ -17,4 +17,5 @@ open module fr.raksrinana.rsndiscord {
 	requires okhttp3;
 	requires static lombok;
 	requires org.jsoup;
+	requires com.google.gson;
 }

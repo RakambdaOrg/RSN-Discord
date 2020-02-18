@@ -6,6 +6,7 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import java.io.IOException;
@@ -376,5 +377,21 @@ public class Actions{
 	 */
 	public static Optional<CompletableFuture<Message>> sendPrivateMessage(long userId, String message, MessageEmbed embed){
 		return Optional.ofNullable(Main.getJda().getUserById(userId)).map(user -> user.openPrivateChannel().submit().thenCompose(privateChannel -> sendPrivateMessage(null, privateChannel, message, embed)));
+	}
+	
+	/**
+	 * Reply to a message event in private.
+	 *
+	 * @param event   The source event to reply to.
+	 * @param message The message to send.
+	 * @param embed   The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
+	 *
+	 * @return A completable future of a message (see {@link RestAction#submit()}).
+	 *
+	 * @throws IllegalArgumentException If trying to send a message to another bot.
+	 */
+	@NonNull
+	public static CompletableFuture<Message> replyWithPrivateMessage(GuildMessageReactionAddEvent event, String message, MessageEmbed embed){
+		return event.getUser().openPrivateChannel().submit().thenCompose(privateChannel -> sendPrivateMessage(event.getGuild(), privateChannel, message, embed));
 	}
 }

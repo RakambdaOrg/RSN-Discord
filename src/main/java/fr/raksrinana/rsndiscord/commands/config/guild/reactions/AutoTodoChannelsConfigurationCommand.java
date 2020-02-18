@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.commands.config.guild;
+package fr.raksrinana.rsndiscord.commands.config.guild.reactions;
 
 import fr.raksrinana.rsndiscord.commands.config.helpers.SetConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
@@ -18,7 +18,7 @@ public class AutoTodoChannelsConfigurationCommand extends SetConfigurationComman
 	@NonNull
 	@Override
 	protected Optional<Set<ChannelConfiguration>> getConfig(@NonNull final Guild guild){
-		return Optional.of(Settings.get(guild).getAutoTodoChannels());
+		return Optional.of(Settings.get(guild).getReactionsConfiguration().getAutoTodoChannels());
 	}
 	
 	@NonNull
@@ -32,14 +32,14 @@ public class AutoTodoChannelsConfigurationCommand extends SetConfigurationComman
 	
 	@Override
 	protected void removeConfig(@NonNull final Guild guild, @NonNull final ChannelConfiguration value){
-		Settings.get(guild).getAutoTodoChannels().remove(value);
+		Settings.get(guild).getReactionsConfiguration().getAutoTodoChannels().remove(value);
 	}
 	
 	@Override
 	protected void createConfig(@NonNull final Guild guild, @NonNull final ChannelConfiguration value){
 		final var set = new HashSet<ChannelConfiguration>();
 		set.add(value);
-		Settings.get(guild).setAutoTodoChannels(set);
+		Settings.get(guild).getReactionsConfiguration().setAutoTodoChannels(set);
 	}
 	
 	@Override

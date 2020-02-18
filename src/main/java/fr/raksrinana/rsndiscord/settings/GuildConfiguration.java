@@ -134,7 +134,12 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("autoTodoChannels")
 	@Getter
 	@Setter
+	@Deprecated
 	private Set<ChannelConfiguration> autoTodoChannels = new HashSet<>();
+	@JsonProperty("reactions")
+	@Getter
+	@Setter
+	private ReactionsConfiguration reactionsConfiguration = new ReactionsConfiguration();
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
