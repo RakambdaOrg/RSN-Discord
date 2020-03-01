@@ -177,6 +177,19 @@ public class Actions{
 	}
 	
 	/**
+	 * Delete a channel.
+	 *
+	 * @param channel The channel to delete.
+	 *
+	 * @return A completable future (see {@link RestAction#submit()}).
+	 */
+	@NonNull
+	public static CompletableFuture<Void> deleteChannel(@NonNull final GuildChannel channel){
+		Log.getLogger(channel.getGuild()).info("Deleting channel {}", channel);
+		return channel.delete().submit();
+	}
+	
+	/**
 	 * Send a file to a channel.
 	 *
 	 * @param channel The channel to send to.

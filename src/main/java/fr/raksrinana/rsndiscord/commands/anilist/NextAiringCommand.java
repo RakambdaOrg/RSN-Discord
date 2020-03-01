@@ -3,24 +3,20 @@ package fr.raksrinana.rsndiscord.commands.anilist;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.settings.guild.ReminderConfiguration;
+import fr.raksrinana.rsndiscord.settings.guild.schedule.AnilistAiringScheduleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.anilist.airing.AiringSchedule;
 import fr.raksrinana.rsndiscord.utils.anilist.queries.AiringSchedulePagedQuery;
-import fr.raksrinana.rsndiscord.utils.reminder.AnilistReleaseReminderHandler;
-import fr.raksrinana.rsndiscord.utils.reminder.ReminderTag;
-import fr.raksrinana.rsndiscord.utils.reminder.ReminderUtils;
+import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 class NextAiringCommand extends BasicCommand{
@@ -59,7 +55,7 @@ class NextAiringCommand extends BasicCommand{
 			schedules.stream().filter(schedule -> now.isBefore(schedule.getAiringAt())).min(Comparator.comparingInt(AiringSchedule::getTimeUntilAiring)).ifPresentOrElse(schedule -> {
 				final var builder = new EmbedBuilder();
 				schedule.fillEmbed(builder);
-				ReminderUtils.addReminderAndNotify(new ReminderConfiguration(event.getAuthor(), event.getChannel(), schedule.getDate(), MessageFormat.format("Episode {0} is airing", schedule.getEpisode()), ReminderTag.ANILIST_AIRING_SCHEDULE, Map.of(AnilistReleaseReminderHandler.MEDIA_ID_KEY, Integer.toString(mediaId))), event.getChannel());
+				ScheduleUtils.addScheduleAndNotify(new AnilistAiringScheduleConfiguration(event.getAuthor(), event.getChannel(), schedule.getDate(), schedule), event.getChannel());
 			}, () -> Actions.reply(event, "No information on the next airing for media", null));
 		}
 		catch(Exception e){

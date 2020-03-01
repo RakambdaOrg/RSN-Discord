@@ -3,9 +3,12 @@ package fr.raksrinana.rsndiscord.commands.warn;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.guild.RemoveRoleConfiguration;
+import fr.raksrinana.rsndiscord.settings.guild.schedule.RemoveRoleScheduleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.utils.schedule.RemoveRoleScheduleHandler;
+import fr.raksrinana.rsndiscord.utils.schedule.ScheduleTag;
+import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -16,6 +19,7 @@ import java.awt.Color;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Optional;
 
 public abstract class WarnCommand extends BasicCommand{
@@ -43,11 +47,11 @@ public abstract class WarnCommand extends BasicCommand{
 			roleOptional.ifPresentOrElse(role -> {
 				Actions.giveRole(event.getMember(), role);
 				final var date = LocalDateTime.now();
-				Settings.get(event.getGuild()).getRemoveRole(user, role).ifPresentOrElse(c -> {
-					if(date.isAfter(c.getDate())){
-						c.setDate(date);
+				Settings.get(event.getGuild()).getSchedules().stream().filter(configuration -> Objects.equals(configuration.getTag(), ScheduleTag.REMOVE_ROLE) && Objects.equals(user.getIdLong(), configuration.getUser().getUserId())).filter(configuration -> Objects.equals(configuration.getData().get(RemoveRoleScheduleHandler.ROLE_ID_KEY), role.getId())).findFirst().ifPresentOrElse(c -> {
+					if(date.isAfter(c.getScheduleDate())){
+						c.setScheduleDate(date);
 					}
-				}, () -> Settings.get(event.getGuild()).addRemoveRole(new RemoveRoleConfiguration(user, role, date)));
+				}, () -> ScheduleUtils.addSchedule(new RemoveRoleScheduleConfiguration(user, event.getChannel(), date, role), event.getGuild()));
 				builder.setColor(Color.GREEN);
 				builder.addField("Congratulations", user.getAsMention() + " joined the role " + role.getAsMention() + " for " + duration + " seconds(s)", false);
 				builder.addField("", "To know how your warn is doing, user the magic command: g?warninfo " + user.getAsMention(), false);

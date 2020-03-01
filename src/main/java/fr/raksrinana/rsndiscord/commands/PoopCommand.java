@@ -4,9 +4,10 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.guild.RemoveRoleConfiguration;
+import fr.raksrinana.rsndiscord.settings.guild.schedule.RemoveRoleScheduleConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -35,7 +36,7 @@ public class PoopCommand extends BasicCommand{
 				Actions.reply(event, MessageFormat.format("{0} you poop", member.getAsMention()), null);
 				poopRoleOptional.ifPresent(role -> {
 					Actions.giveRole(member, role);
-					Settings.get(event.getGuild()).addRemoveRole(new RemoveRoleConfiguration(event.getAuthor(), role, removeDate));
+					ScheduleUtils.addSchedule(new RemoveRoleScheduleConfiguration(event.getAuthor(), event.getChannel(), removeDate, role), event.getGuild());
 				});
 			}));
 		}

@@ -1,6 +1,6 @@
-package fr.raksrinana.rsndiscord.utils.reminder;
+package fr.raksrinana.rsndiscord.utils.schedule;
 
-import fr.raksrinana.rsndiscord.settings.guild.ReminderConfiguration;
+import fr.raksrinana.rsndiscord.settings.guild.ScheduleConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.anilist.queries.MediaPagedQuery;
@@ -11,16 +11,16 @@ import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.Optional;
 
-public class AnilistReleaseReminderHandler implements ReminderHandler{
+public class AnilistReleaseScheduleHandler implements ScheduleHandler{
 	public static final String MEDIA_ID_KEY = "mediaId";
 	
 	@Override
-	public boolean acceptTag(@NonNull ReminderTag tag){
-		return Objects.equals(tag, ReminderTag.ANILIST_AIRING_SCHEDULE);
+	public boolean acceptTag(@NonNull ScheduleTag tag){
+		return Objects.equals(tag, ScheduleTag.ANILIST_AIRING_SCHEDULE);
 	}
 	
 	@Override
-	public boolean accept(@NonNull ReminderConfiguration reminder){
+	public boolean accept(@NonNull ScheduleConfiguration reminder){
 		final var data = reminder.getData();
 		if(data.containsKey(MEDIA_ID_KEY)){
 			return reminder.getUser().getUser().flatMap(user -> reminder.getChannel().getChannel().flatMap(channel -> Optional.ofNullable(channel.getGuild().getMember(user)).map(member -> {

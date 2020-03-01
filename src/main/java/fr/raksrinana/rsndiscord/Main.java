@@ -17,6 +17,7 @@ import fr.raksrinana.rsndiscord.utils.irc.twitch.TwitchIRC;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
+import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktUtils;
 import fr.raksrinana.utils.http.JacksonObjectMapper;
 import kong.unirest.Unirest;
@@ -71,12 +72,12 @@ public class Main{
 			Log.getLogger(null).info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
 			Log.getLogger(null).info("Adding handlers");
 			ReactionUtils.registerAllHandlers();
+			ScheduleUtils.registerAllHandlers();
 			Log.getLogger(null).info("Creating runners");
 			registerAllScheduledRunners(jda);
 			Log.getLogger(null).info("Started");
 			announceStart();
 			restartTwitchIRCConnections();
-			jda.getGuilds().stream().map(Settings::get).forEach(settings -> settings.getReactionsConfiguration().getAutoTodoChannels().addAll(settings.getAutoTodoChannels()));
 		}
 		catch(final LoginException | InterruptedException e){
 			Log.getLogger(null).error("Couldn't start bot", e);

@@ -159,4 +159,8 @@ public class Utilities{
 		embed.addField("Trace", trace.substring(0, Math.min(trace.length(), MessageEmbed.VALUE_MAX_LENGTH)), false);
 		return embed;
 	}
+	
+	public static Optional<Role> getRoleById(long id){
+		return Optional.ofNullable(Main.getJda().getRoleById(id));
+	}
 }

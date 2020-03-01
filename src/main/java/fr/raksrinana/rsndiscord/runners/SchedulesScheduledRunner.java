@@ -1,11 +1,10 @@
 package fr.raksrinana.rsndiscord.runners;
 
-import fr.raksrinana.rsndiscord.commands.reminder.DelayReminderCommand;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
-import fr.raksrinana.rsndiscord.utils.reminder.ReminderUtils;
+import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
@@ -13,11 +12,11 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-public class RemindersScheduledRunner implements ScheduledRunner{
+public class SchedulesScheduledRunner implements ScheduledRunner{
 	@Getter
 	private final JDA jda;
 	
-	public RemindersScheduledRunner(JDA jda){
+	public SchedulesScheduledRunner(JDA jda){
 		this.jda = jda;
 	}
 	
@@ -26,13 +25,13 @@ public class RemindersScheduledRunner implements ScheduledRunner{
 		final var currentDate = LocalDateTime.now();
 		for(final var guild : this.getJda().getGuilds()){
 			Log.getLogger(guild).debug("Processing guild {}", guild);
-			final var it = Settings.get(guild).getReminders().iterator();
+			final var it = Settings.get(guild).getSchedules().iterator();
 			while(it.hasNext()){
-				final var reminder = it.next();
-				if(currentDate.isAfter(reminder.getNotifyDate())){
-					for(final var handler : ReminderUtils.getHandlers()){
-						if(handler.acceptTag(reminder.getTag())){
-							if(handler.accept(reminder)){
+				final var schedule = it.next();
+				if(currentDate.isAfter(schedule.getScheduleDate())){
+					for(final var handler : ScheduleUtils.getHandlers()){
+						if(handler.acceptTag(schedule.getTag())){
+							if(handler.accept(schedule)){
 								it.remove();
 								break;
 							}
@@ -40,8 +39,8 @@ public class RemindersScheduledRunner implements ScheduledRunner{
 					}
 				}
 				else{
-					final var embed = DelayReminderCommand.getEmbedFor(reminder);
-					Optional.ofNullable(reminder.getReminderCountdownMessage()).flatMap(MessageConfiguration::getMessage).ifPresentOrElse(message -> Actions.editMessage(message, embed), () -> reminder.getChannel().getChannel().ifPresent(channel -> Actions.sendMessage(channel, "", embed).thenAccept(message -> reminder.setReminderCountdownMessage(new MessageConfiguration(message)))));
+					final var embed = ScheduleUtils.getEmbedFor(schedule);
+					Optional.ofNullable(schedule.getReminderCountdownMessage()).flatMap(MessageConfiguration::getMessage).ifPresentOrElse(message -> Actions.editMessage(message, embed), () -> schedule.getChannel().getChannel().ifPresent(channel -> Actions.sendMessage(channel, "", embed).thenAccept(message -> schedule.setReminderCountdownMessage(new MessageConfiguration(message)))));
 				}
 			}
 		}
@@ -50,7 +49,7 @@ public class RemindersScheduledRunner implements ScheduledRunner{
 	@NonNull
 	@Override
 	public String getName(){
-		return "reminders refresher";
+		return "schedules refresher";
 	}
 	
 	@Override

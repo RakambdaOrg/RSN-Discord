@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.settings;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,8 +25,10 @@ import java.util.stream.Stream;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 public class GuildConfiguration implements CompositeConfiguration{
-	@JsonProperty("guildId")
-	private long guildId;
+	@JsonProperty("schedules")
+	@JsonAlias({"reminders"})
+	@Getter
+	private final List<ScheduleConfiguration> schedules = new ArrayList<>();
 	@JsonProperty("prefix")
 	@Setter
 	private String prefix;
@@ -75,10 +78,9 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("questions")
 	@Getter
 	private final QuestionsConfiguration questionsConfiguration = new QuestionsConfiguration();
-	@JsonProperty("removeRoles")
+	@JsonProperty("guildId")
 	@Getter
-	@Setter
-	private Set<RemoveRoleConfiguration> removeRoles = new HashSet<>();
+	private long guildId;
 	@JsonProperty("trombinoscope")
 	@Getter
 	private final TrombinoscopeConfiguration trombinoscopeConfiguration = new TrombinoscopeConfiguration();
@@ -112,9 +114,11 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Setter
 	private Set<String> twitchAutoConnectUsers = new HashSet<>();
-	@JsonProperty("reminders")
+	@JsonProperty("removeRoles")
 	@Getter
-	private final List<ReminderConfiguration> reminders = new ArrayList<>();
+	@Setter
+	@Deprecated
+	private Set<RemoveRoleConfiguration> removeRoles = new HashSet<>();
 	@JsonProperty("christmasRole")
 	@Setter
 	private RoleConfiguration christmasRole;
@@ -131,11 +135,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Setter
 	private Set<AmazonTrackingConfiguration> amazonTrackings = new HashSet<>();
-	@JsonProperty("autoTodoChannels")
-	@Getter
-	@Setter
-	@Deprecated
-	private Set<ChannelConfiguration> autoTodoChannels = new HashSet<>();
 	@JsonProperty("reactions")
 	@Getter
 	@Setter
@@ -173,10 +172,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 		return Optional.ofNullable(archiveCategory);
 	}
 	
-	public void addRemoveRole(@NonNull final RemoveRoleConfiguration value){
-		this.removeRoles.add(value);
-	}
-	
 	public void addAddBackRole(@NonNull final UserRoleConfiguration userRoleConfiguration){
 		this.addBackRoles.add(userRoleConfiguration);
 	}
@@ -190,8 +185,8 @@ public class GuildConfiguration implements CompositeConfiguration{
 		return Stream.concat(this.getAutoRoles().stream(), this.getAddBackRoles().stream().filter(c -> Objects.equals(c.getUser().getUserId(), member.getIdLong())).map(UserRoleConfiguration::getRole)).collect(Collectors.toList());
 	}
 	
-	public void addReminder(@NonNull ReminderConfiguration reminder){
-		this.reminders.add(reminder);
+	public void addSchedule(@NonNull ScheduleConfiguration schedule){
+		this.schedules.add(schedule);
 	}
 	
 	@NonNull

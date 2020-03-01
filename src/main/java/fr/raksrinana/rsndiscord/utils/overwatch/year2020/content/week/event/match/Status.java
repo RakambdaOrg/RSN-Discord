@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public enum Status{
-	PENDING("Pending"), CONCLUDED("Concluded");
+	PENDING("Pending"), CONCLUDED("Concluded"), ONGOING("Ongoing");
 	private String value;
 	
 	Status(String value){
