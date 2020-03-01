@@ -64,7 +64,7 @@ public class ScheduleCommandComposite extends CommandComposite{
 	@Override
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("delay", "The delay before deleting the channel in the format XdXhXm where Xs are numbers", false);
+		builder.addField("delay", "The delay before executing the action in the format `XdXhXm` where Xs are numbers or `yyyy-MM-dd!HH:mm`", false);
 	}
 	
 	@NonNull
