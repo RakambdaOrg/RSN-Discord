@@ -40,7 +40,7 @@ public class ChannelCommand extends BasicCommand{
 		return ScheduleCommandComposite.getReminderDate(args.pop()).map(date -> {
 			final var toDelete = event.getMessage().getMentionedChannels().stream().findFirst().orElse(event.getChannel());
 			ScheduleUtils.addScheduleAndNotify(new SimpleScheduleConfiguration(event.getAuthor(), toDelete, date, "Deleting this channel", ScheduleTag.DELETE_CHANNEL), toDelete, builder -> builder.addField("Info", "React " + BasicEmotes.CROSS_NO.getValue() + " to cancel the deletion", false)).thenAccept(message -> {
-				Actions.addReaction(event.getMessage(), BasicEmotes.CROSS_NO.getValue());
+				Actions.addReaction(message, BasicEmotes.CROSS_NO.getValue());
 				Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, ReactionTag.SCHEDULED_DELETE_CHANNEL));
 			});
 			return CommandResult.SUCCESS;
