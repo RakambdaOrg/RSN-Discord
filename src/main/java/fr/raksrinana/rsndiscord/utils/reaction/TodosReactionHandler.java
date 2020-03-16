@@ -9,8 +9,7 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import java.util.Objects;
 import java.util.Optional;
-import static fr.raksrinana.rsndiscord.utils.BasicEmotes.CHECK_OK;
-import static fr.raksrinana.rsndiscord.utils.BasicEmotes.PAPERCLIP;
+import static fr.raksrinana.rsndiscord.utils.BasicEmotes.*;
 
 public class TodosReactionHandler implements ReactionHandler{
 	@Override
@@ -30,7 +29,7 @@ public class TodosReactionHandler implements ReactionHandler{
 	}
 	
 	protected boolean isValidEmote(@NonNull BasicEmotes emote){
-		return emote == CHECK_OK || emote == PAPERCLIP;
+		return emote == CHECK_OK || emote == PAPERCLIP || emote == RIGHT_ARROW_CURVING_LEFT;
 	}
 	
 	@Override
@@ -50,6 +49,15 @@ public class TodosReactionHandler implements ReactionHandler{
 					Actions.removeReaction(event.getReaction(), event.getUser());
 					return ReactionHandlerResult.PROCESSED;
 				}
+			}
+			if(emote == RIGHT_ARROW_CURVING_LEFT){
+				message.getCategory().createTextChannel("reply-" + event.getMessageIdLong()).submit().thenAccept(forwardChannel -> {
+					Actions.sendMessage(forwardChannel, message.getContentRaw(), message.getEmbeds().stream().findFirst().orElse(null));
+					Actions.sendMessage(forwardChannel, event.getUser().getAsMention() + " is replying to this message. React with " + CROSS_NO.getValue() + " to delete this channel when done", null).thenAccept(message1 -> {
+						Actions.addReaction(message1, CROSS_NO.getValue());
+						Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message1, ReactionTag.DELETE_CHANNEL));
+					});
+				});
 			}
 			if(message.isPinned()){
 				Actions.unpin(message);
