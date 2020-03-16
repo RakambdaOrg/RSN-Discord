@@ -85,9 +85,9 @@ public class Covid19ScheduledRunner implements ScheduledRunner{
 		final var builder = Utilities.buildEmbed(this.jda.getSelfUser(), Color.GREEN, countryResponse.getCountry(), "https://www.worldometers.info/coronavirus/");
 		builder.addField("Today cases", Integer.toString(countryResponse.getTodayCases()), true);
 		builder.addField("Today deaths", Integer.toString(countryResponse.getTodayDeaths()), true);
-		builder.addField("Total cases", Integer.toString(countryResponse.getCases()), false);
+		builder.addField("Total cases", Integer.toString(countryResponse.getCases()), true);
 		builder.addField("Total deaths", Integer.toString(countryResponse.getDeaths()), true);
-		builder.addField("Active", Integer.toString(countryResponse.getActive()), false);
+		builder.addField("Active", Integer.toString(countryResponse.getActive()), true);
 		builder.addField("Recovered", Integer.toString(countryResponse.getRecovered()), true);
 		builder.addField("Critical", Integer.toString(countryResponse.getCritical()), true);
 		return builder.build();
