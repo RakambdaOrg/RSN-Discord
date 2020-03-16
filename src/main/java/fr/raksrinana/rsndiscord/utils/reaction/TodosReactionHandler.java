@@ -51,7 +51,8 @@ public class TodosReactionHandler implements ReactionHandler{
 				}
 			}
 			if(emote == RIGHT_ARROW_CURVING_LEFT){
-				message.getCategory().createTextChannel("reply-" + event.getMessageIdLong()).submit().thenAccept(forwardChannel -> {
+				event.getGuild().createTextChannel("reply-" + event.getMessageIdLong()).submit().thenAccept(forwardChannel -> {
+					Optional.ofNullable(message.getTextChannel().getParent()).ifPresent(category -> Actions.setCategoryAndSync(forwardChannel, category));
 					Actions.sendMessage(forwardChannel, message.getContentRaw(), message.getEmbeds().stream().findFirst().orElse(null));
 					Actions.sendMessage(forwardChannel, event.getUser().getAsMention() + " is replying to this message. React with " + CROSS_NO.getValue() + " to delete this channel when done", null).thenAccept(message1 -> {
 						Actions.addReaction(message1, CROSS_NO.getValue());
