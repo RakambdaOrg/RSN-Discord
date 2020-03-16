@@ -139,6 +139,9 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Setter
 	private ReactionsConfiguration reactionsConfiguration = new ReactionsConfiguration();
+	@JsonProperty("covid19Channel")
+	@Setter
+	private ChannelConfiguration covid19Channel;
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
@@ -227,5 +230,10 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@NonNull
 	public Optional<ChannelConfiguration> getTwitchChannel(){
 		return Optional.ofNullable(this.twitchChannel);
+	}
+	
+	@NonNull
+	public Optional<ChannelConfiguration> getCovid19Channel(){
+		return Optional.ofNullable(this.covid19Channel);
 	}
 }
