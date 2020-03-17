@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.utils.BasicEmotes.*;
@@ -53,6 +54,7 @@ public class TodosReactionHandler implements ReactionHandler{
 			if(emote == RIGHT_ARROW_CURVING_LEFT){
 				event.getGuild().createTextChannel("reply-" + event.getMessageIdLong()).submit().thenAccept(forwardChannel -> {
 					Optional.ofNullable(message.getTextChannel().getParent()).ifPresent(category -> Actions.setCategoryAndSync(forwardChannel, category));
+					Actions.sendMessage(forwardChannel, MessageFormat.format("Original message from {0}", message.getAuthor().getAsMention()), null);
 					Actions.sendMessage(forwardChannel, message.getContentRaw(), message.getEmbeds().stream().findFirst().orElse(null));
 					Actions.sendMessage(forwardChannel, event.getUser().getAsMention() + " is replying to this message. React with " + CROSS_NO.getValue() + " to delete this channel when done", null).thenAccept(message1 -> {
 						Actions.addReaction(message1, CROSS_NO.getValue());

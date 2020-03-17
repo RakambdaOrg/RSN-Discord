@@ -15,7 +15,7 @@ public class ChannelDeletionReactionHandler extends TodosReactionHandler{
 	
 	@Override
 	protected boolean isValidEmote(@NonNull BasicEmotes emote){
-		return BasicEmotes.RIGHT_ARROW_CURVING_LEFT == emote;
+		return BasicEmotes.CROSS_NO == emote;
 	}
 	
 	@Override
