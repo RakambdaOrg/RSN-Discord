@@ -25,7 +25,7 @@ public class ChannelDeletionReactionHandler extends TodosReactionHandler{
 	
 	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emote, @NonNull WaitingReactionMessageConfiguration todo){
 		return todo.getMessage().getMessage().map(message -> {
-			Actions.deleteMessage(message);
+			Actions.deleteChannel(message.getTextChannel());
 			return ReactionHandlerResult.PROCESSED_DELETE;
 		}).orElse(ReactionHandlerResult.PROCESSED);
 	}
