@@ -15,7 +15,10 @@ import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,12 +42,16 @@ public class ChannelCommand extends BasicCommand{
 		}
 		return ScheduleCommandComposite.getReminderDate(args.pop()).map(date -> {
 			final var toDelete = event.getMessage().getMentionedChannels().stream().findFirst().orElse(event.getChannel());
-			ScheduleUtils.addScheduleAndNotify(new SimpleScheduleConfiguration(event.getAuthor(), toDelete, date, "Deleting this channel", ScheduleTag.DELETE_CHANNEL), toDelete, builder -> builder.addField("Info", "React " + BasicEmotes.CROSS_NO.getValue() + " to cancel the deletion", false)).thenAccept(message -> {
-				Actions.addReaction(message, BasicEmotes.CROSS_NO.getValue());
-				Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, ReactionTag.SCHEDULED_DELETE_CHANNEL));
-			});
+			scheduleDeletion(date, toDelete, event.getAuthor());
 			return CommandResult.SUCCESS;
 		}).orElse(CommandResult.BAD_ARGUMENTS);
+	}
+	
+	public static void scheduleDeletion(LocalDateTime date, TextChannel channel, User author){
+		ScheduleUtils.addScheduleAndNotify(new SimpleScheduleConfiguration(author, channel, date, "Deleting this channel", ScheduleTag.DELETE_CHANNEL), channel, builder -> builder.addField("Info", "React " + BasicEmotes.CROSS_NO.getValue() + " to cancel the deletion", false)).thenAccept(message -> {
+			Actions.addReaction(message, BasicEmotes.CROSS_NO.getValue());
+			Settings.get(channel.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, ReactionTag.SCHEDULED_DELETE_CHANNEL));
+		});
 	}
 	
 	@Override

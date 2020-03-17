@@ -48,8 +48,8 @@ public class OverwatchUtils{
 			lastChecks.put(page, System.currentTimeMillis());
 			final var handler = new ObjectGetRequestSender<>(new GenericType<Response>(){}, Unirest.get("https://wzavfvwgfk.execute-api.us-east-2.amazonaws.com/production/owl/paginator/schedule").queryString("stage", "regular_season").queryString("page", page).queryString("season", 2020).queryString("locale", "en-us").header("Referer", "https://overwatchleague.com/en-us/schedule?stage=regular_season&week=1")).getRequestHandler();
 			handler.getResult().getParsingError().ifPresent(error -> {
-				Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Failed to parse Overwatch league response", Utilities.throwableToEmbed(error).build());
-				Log.getLogger(null).warn("Failed to parse Overwatch league response", error);
+				Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Failed to parse Overwatch league response (page " + page + ")", Utilities.throwableToEmbed(error).build());
+				Log.getLogger(null).warn("Failed to parse Overwatch league response for page {}", page, error);
 			});
 			if(handler.getResult().isSuccess()){
 				lastResponses.put(page, handler.getRequestResult());

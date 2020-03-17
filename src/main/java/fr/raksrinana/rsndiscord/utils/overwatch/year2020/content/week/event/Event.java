@@ -3,6 +3,8 @@ package fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.week.event;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fr.raksrinana.rsndiscord.utils.json.MatchDeserializer;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.week.event.banner.EventBanner;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.week.event.match.Match;
 import lombok.Getter;
@@ -18,6 +20,7 @@ public class Event{
 	@JsonProperty("eventBanner")
 	private EventBanner eventBanner;
 	@JsonProperty("matches")
+	@JsonDeserialize(contentUsing = MatchDeserializer.class)
 	private Set<Match> matches;
 	
 	@Override
