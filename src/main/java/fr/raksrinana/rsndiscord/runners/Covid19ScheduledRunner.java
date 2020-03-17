@@ -56,9 +56,16 @@ public class Covid19ScheduledRunner implements ScheduledRunner{
 		return 0;
 	}
 	
-	@Override
-	public long getPeriod(){
-		return 1;
+	private MessageEmbed buildEmbed(Covid19CountryResponse countryResponse){
+		final var builder = Utilities.buildEmbed(this.jda.getSelfUser(), Color.GREEN, countryResponse.getCountry(), "https://www.worldometers.info/coronavirus/country/" + countryResponse.getCountry());
+		builder.addField("Today cases", Integer.toString(countryResponse.getTodayCases()), true);
+		builder.addField("Today deaths", Integer.toString(countryResponse.getTodayDeaths()), true);
+		builder.addField("Total cases", Integer.toString(countryResponse.getCases()), true);
+		builder.addField("Total deaths", Integer.toString(countryResponse.getDeaths()), true);
+		builder.addField("Active", Integer.toString(countryResponse.getActive()), true);
+		builder.addField("Recovered", Integer.toString(countryResponse.getRecovered()), true);
+		builder.addField("Critical", Integer.toString(countryResponse.getCritical()), true);
+		return builder.build();
 	}
 	
 	@NonNull
@@ -81,16 +88,9 @@ public class Covid19ScheduledRunner implements ScheduledRunner{
 		return List.of();
 	}
 	
-	private MessageEmbed buildEmbed(Covid19CountryResponse countryResponse){
-		final var builder = Utilities.buildEmbed(this.jda.getSelfUser(), Color.GREEN, countryResponse.getCountry(), "https://www.worldometers.info/coronavirus/");
-		builder.addField("Today cases", Integer.toString(countryResponse.getTodayCases()), true);
-		builder.addField("Today deaths", Integer.toString(countryResponse.getTodayDeaths()), true);
-		builder.addField("Total cases", Integer.toString(countryResponse.getCases()), true);
-		builder.addField("Total deaths", Integer.toString(countryResponse.getDeaths()), true);
-		builder.addField("Active", Integer.toString(countryResponse.getActive()), true);
-		builder.addField("Recovered", Integer.toString(countryResponse.getRecovered()), true);
-		builder.addField("Critical", Integer.toString(countryResponse.getCritical()), true);
-		return builder.build();
+	@Override
+	public long getPeriod(){
+		return 6;
 	}
 	
 	@NonNull
