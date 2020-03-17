@@ -39,8 +39,7 @@ public class EventBanner{
 	@JsonProperty("headings")
 	private Map<String, Heading> headings;
 	@JsonProperty("sponsors")
-	@JsonDeserialize(contentUsing = UnknownDeserializer.class)
-	private Set<Object> sponsors;
+	private Set<Sponsor> sponsors;
 	@JsonProperty("ticket")
 	private Ticket ticket;
 	@JsonProperty("venue")
