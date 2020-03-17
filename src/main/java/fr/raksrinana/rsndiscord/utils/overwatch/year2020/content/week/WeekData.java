@@ -63,7 +63,7 @@ public class WeekData{
 	}
 	
 	public List<Match> getMatches(){
-		return getEvents().stream().flatMap(event -> event.getMatches().stream()).collect(Collectors.toList());
+		return getEvents().stream().flatMap(event -> event.getMatches().stream()).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 	
 	public int getMatchCount(){
