@@ -15,8 +15,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -114,11 +112,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Setter
 	private Set<String> twitchAutoConnectUsers = new HashSet<>();
-	@JsonProperty("removeRoles")
-	@Getter
-	@Setter
-	@Deprecated
-	private Set<RemoveRoleConfiguration> removeRoles = new HashSet<>();
 	@JsonProperty("christmasRole")
 	@Setter
 	private RoleConfiguration christmasRole;
@@ -177,10 +170,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 	
 	public void addAddBackRole(@NonNull final UserRoleConfiguration userRoleConfiguration){
 		this.addBackRoles.add(userRoleConfiguration);
-	}
-	
-	public Optional<RemoveRoleConfiguration> getRemoveRole(final User user, final Role role){
-		return this.removeRoles.stream().filter(r -> Objects.equals(r.getUser().getUserId(), user.getIdLong()) && Objects.equals(r.getRole().getRoleId(), role.getIdLong())).findFirst();
 	}
 	
 	@NonNull

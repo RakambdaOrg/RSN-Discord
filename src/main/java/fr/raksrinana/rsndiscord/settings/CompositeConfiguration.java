@@ -52,7 +52,7 @@ public interface CompositeConfiguration{
 			if(!toRemove.isEmpty()){
 				Log.getLogger(null).debug("Removing keys {} from map {}", toRemove, map);
 			}
-			toRemove.removeAll(toRemove);
+			toRemove.forEach(map::remove);
 			map.values().forEach(elem -> {
 				try{
 					cleanObject(elem);

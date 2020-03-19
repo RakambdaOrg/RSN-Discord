@@ -127,7 +127,7 @@ public class TraktUtils{
 	}
 	
 	public static <T> T getQuery(TraktAccessTokenConfiguration token, @NonNull TraktGetRequest<T> request) throws RequestException{
-		final var handler = new ObjectGetRequestSender<T>(request.getOutputType(), request.getRequest().headers(getHeaders(token))).getRequestHandler();
+		final var handler = new ObjectGetRequestSender<>(request.getOutputType(), request.getRequest().headers(getHeaders(token))).getRequestHandler();
 		handler.getResult().getParsingError().ifPresent(error -> {
 			Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Failed to parse Trakt response", Utilities.throwableToEmbed(error).build());
 			Log.getLogger(null).warn("Failed to parse Trakt response", error);

@@ -58,7 +58,7 @@ class MediaListDifferencesRunner implements AniListRunner<MediaList, MediaListPa
 	}
 	
 	@Override
-	public void execute() throws Exception{
+	public void execute(){
 		this.runQueryOnDefaultUsersChannels();
 	}
 	

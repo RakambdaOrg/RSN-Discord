@@ -18,7 +18,7 @@ public class StopCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		if(Utilities.isCreator(event.getMember().getUser())){
+		if(Utilities.isCreator(event.getAuthor())){
 			Main.close();
 			Log.getLogger(event.getGuild()).info("BOT STOPPING");
 		}

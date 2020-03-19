@@ -30,7 +30,7 @@ buildProperties {
 
 group = 'fr.raksrinana'
 description = 'RSNDiscord'
-sourceCompatibility = targetCompatibility = JavaVersion.VERSION_13
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_14
 
 ext.moduleName = project.moduleName
 mainClassName = project.mainClass
