@@ -82,7 +82,7 @@ public class TraktConfiguration implements CompositeConfiguration{
 	
 	@NonNull
 	public Set<User> getRegisteredUsers(){
-		return this.tokens.stream().map(TraktAccessTokenConfiguration::getUserId).map(userId -> Main.getJda().getUserById(userId)).collect(Collectors.toSet());
+		return this.tokens.stream().map(TraktAccessTokenConfiguration::getUserId).map(userId -> Main.getJda().getUserById(userId)).filter(Objects::nonNull).collect(Collectors.toSet());
 	}
 	
 	@NonNull
