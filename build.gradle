@@ -80,6 +80,7 @@ repositories {
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.gradle.api.tasks.wrapper.Wrapper
 
 processResources {
     from 'src/main/resources'
@@ -114,4 +115,8 @@ shadowJar {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+}
+
+tasks.withType(Wrapper) {
+    gradleVersion = project.wrapper_version
 }
