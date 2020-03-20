@@ -60,7 +60,7 @@ public class UserConfiguration implements AtomicConfiguration{
 	
 	@NonNull
 	public Optional<User> getUser(){
-		return Optional.ofNullable(Main.getJda().getUserById(this.getUserId()));
+		return Optional.ofNullable(Main.getJda().retrieveUserById(this.getUserId()).complete());
 	}
 	
 	public void setUser(@NonNull final User user){

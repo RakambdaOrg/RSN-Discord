@@ -105,7 +105,7 @@ public class AniListConfiguration implements CompositeConfiguration{
 	
 	@NonNull
 	public Set<User> getRegisteredUsers(){
-		return this.refreshTokens.keySet().stream().map(userId -> Main.getJda().getUserById(userId)).filter(Objects::nonNull).collect(Collectors.toSet());
+		return this.refreshTokens.keySet().stream().map(userId -> Main.getJda().retrieveUserById(userId).complete()).filter(Objects::nonNull).collect(Collectors.toSet());
 	}
 	
 	@NonNull

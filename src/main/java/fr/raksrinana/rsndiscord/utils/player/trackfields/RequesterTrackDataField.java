@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.entities.User;
 
 public class RequesterTrackDataField implements AudioTrackDataFields<User>{
 	public User parseObject(@NonNull final Object value) throws IllegalArgumentException{
-		return Main.getJda().getUserById((long) value);
+		return Main.getJda().retrieveUserById((long) value).complete();
 	}
 	
 	@NonNull

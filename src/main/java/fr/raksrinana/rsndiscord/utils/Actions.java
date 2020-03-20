@@ -17,7 +17,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -388,8 +387,8 @@ public class Actions{
 	 *
 	 * @throws IllegalArgumentException If trying to send a message to another bot.
 	 */
-	public static Optional<CompletableFuture<Message>> sendPrivateMessage(long userId, String message, MessageEmbed embed){
-		return Optional.ofNullable(Main.getJda().getUserById(userId)).map(user -> user.openPrivateChannel().submit().thenCompose(privateChannel -> sendPrivateMessage(null, privateChannel, message, embed)));
+	public static CompletableFuture<Message> sendPrivateMessage(long userId, String message, MessageEmbed embed){
+		return Main.getJda().retrieveUserById(userId).submit().thenCompose(user -> user.openPrivateChannel().submit()).thenCompose(privateChannel -> sendPrivateMessage(null, privateChannel, message, embed));
 	}
 	
 	/**

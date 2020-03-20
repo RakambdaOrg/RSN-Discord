@@ -1,6 +1,7 @@
 package fr.raksrinana.rsndiscord.runners.config;
 
 import fr.raksrinana.rsndiscord.runners.ScheduledRunner;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import java.util.concurrent.TimeUnit;
@@ -11,7 +12,7 @@ public class CleanConfigScheduledRunner implements ScheduledRunner{
 	
 	@Override
 	public void execute(){
-		// Settings.clean();
+		Settings.clean();
 	}
 	
 	@NonNull

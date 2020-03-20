@@ -91,6 +91,6 @@ public class ReactionListener extends ListenerAdapter{
 	}
 	
 	private Optional<User> getUserFomQuestion(@NonNull Message message){
-		return message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> Objects.equals(e.getName(), "User")).map(MessageEmbed.Field::getValue).filter(Objects::nonNull).map(e -> Main.getJda().getUserById(Long.parseLong(NUMBER_ONLY.matcher(e).replaceAll("")))).findAny();
+		return message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> Objects.equals(e.getName(), "User")).map(MessageEmbed.Field::getValue).filter(Objects::nonNull).map(e -> Main.getJda().retrieveUserById(Long.parseLong(NUMBER_ONLY.matcher(e).replaceAll(""))).complete()).findAny();
 	}
 }

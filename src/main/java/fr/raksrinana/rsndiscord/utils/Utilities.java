@@ -126,13 +126,13 @@ public class Utilities{
 	 *
 	 * @param throwable The exception to send.
 	 *
-	 * @return An optional of a completable future of a message (see {@link RestAction#submit()}).
+	 * @return A completable future of a message (see {@link RestAction#submit()}).
 	 *
 	 * @see Actions#sendPrivateMessage(Guild, PrivateChannel, CharSequence, MessageEmbed)
 	 */
 	@NonNull
-	public static Optional<CompletableFuture<Message>> reportException(@NonNull Throwable throwable){
-		return Optional.ofNullable(Main.getJda().getUserById(RAKSRINANA_ACCOUNT)).map(User::openPrivateChannel).map(RestAction::submit).map(channelFuture -> channelFuture.thenCompose(channel -> Actions.sendPrivateMessage(null, channel, MessageFormat.format("RSN got an exception: {0}\n{1}", ExceptionUtils.getMessage(throwable), ExceptionUtils.getStackTrace(throwable)), null)));
+	public static CompletableFuture<Message> reportException(@NonNull Throwable throwable){
+		return Actions.sendPrivateMessage(RAKSRINANA_ACCOUNT, MessageFormat.format("RSN got an exception: {0}\n{1}", ExceptionUtils.getMessage(throwable), ExceptionUtils.getStackTrace(throwable)), null);
 	}
 	
 	/**
