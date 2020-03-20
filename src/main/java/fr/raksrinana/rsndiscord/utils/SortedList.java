@@ -4,7 +4,7 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 
 public class SortedList<E> extends AbstractList<E>{
-	private ArrayList<E> internalList = new ArrayList<>();
+	private final ArrayList<E> internalList = new ArrayList<>();
 	
 	@Override
 	public E get(int i){

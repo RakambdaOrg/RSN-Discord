@@ -23,7 +23,6 @@ import fr.raksrinana.utils.http.JacksonObjectMapper;
 import kong.unirest.Unirest;
 import lombok.Getter;
 import lombok.NonNull;
-import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -40,7 +39,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class Main{
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
 	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-	public static boolean DEVELOPMENT = Boolean.parseBoolean(System.getProperty("rsndev", "false"));
+	public static final boolean DEVELOPMENT = Boolean.parseBoolean(System.getProperty("rsndev", "false"));
 	@Getter
 	private static CLIParameters parameters;
 	@Getter
@@ -57,7 +56,7 @@ public class Main{
 		Unirest.config().setObjectMapper(new JacksonObjectMapper()).connectTimeout(30000).socketTimeout(30000).enableCookieManagement(true).verifySsl(true);
 		try{
 			Log.getLogger(null).info("Building JDA");
-			final var jdaBuilder = new JDABuilder(AccountType.BOT).setToken(System.getProperty("RSN_TOKEN"));
+			final var jdaBuilder = JDABuilder.createDefault(System.getProperty("RSN_TOKEN"));
 			jdaBuilder.addEventListeners(new CommandsMessageListener());
 			jdaBuilder.addEventListeners(new ShutdownListener());
 			jdaBuilder.addEventListeners(new LogListener());

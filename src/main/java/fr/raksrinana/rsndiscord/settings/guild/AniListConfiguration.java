@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class AniListConfiguration implements CompositeConfiguration{
 	@JsonProperty("accessToken")
-	private Set<AnilistAccessTokenConfiguration> tokens = new HashSet<>();
+	private final Set<AnilistAccessTokenConfiguration> tokens = new HashSet<>();
 	@JsonProperty("notificationsChannel")
 	@Setter
 	private ChannelConfiguration notificationsChannel;
@@ -32,10 +32,10 @@ public class AniListConfiguration implements CompositeConfiguration{
 	@Setter
 	private ChannelConfiguration mediaChangeChannel;
 	@JsonProperty("refreshTokens")
-	private Map<Long, String> refreshTokens = new HashMap<>();
+	private final Map<Long, String> refreshTokens = new HashMap<>();
 	@JsonProperty("lastAccess")
 	@Getter
-	private Map<String, Set<UserDateConfiguration>> lastAccess = new HashMap<>();
+	private final Map<String, Set<UserDateConfiguration>> lastAccess = new HashMap<>();
 	@JsonProperty("thaChannel")
 	@Setter
 	private ChannelConfiguration thaChannel;
@@ -43,7 +43,7 @@ public class AniListConfiguration implements CompositeConfiguration{
 	@Setter
 	private UserConfiguration thaUser;
 	@JsonProperty("userIds")
-	private Map<Long, Integer> userIds = new HashMap<>();
+	private final Map<Long, Integer> userIds = new HashMap<>();
 	
 	@NonNull
 	public Optional<String> getRefreshToken(final long userId){
@@ -105,7 +105,7 @@ public class AniListConfiguration implements CompositeConfiguration{
 	
 	@NonNull
 	public Set<User> getRegisteredUsers(){
-		return this.refreshTokens.keySet().stream().map(userId -> Main.getJda().getUserById(userId)).collect(Collectors.toSet());
+		return this.refreshTokens.keySet().stream().map(userId -> Main.getJda().getUserById(userId)).filter(Objects::nonNull).collect(Collectors.toSet());
 	}
 	
 	@NonNull

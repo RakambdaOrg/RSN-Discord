@@ -38,18 +38,16 @@ public class Rainbow6ProLeagueScheduledRunner implements ScheduledRunner{
 			}
 			return null;
 		}).filter(Objects::nonNull).flatMap(requestResult -> requestResult.getItems().stream()).flatMap(matchDay -> matchDay.getMatches().stream()).filter(Match::isCompleted).collect(Collectors.toList());
-		this.getJda().getGuilds().forEach(guild -> {
-			Settings.get(guild).getRainbow6ProLeagueConfiguration().getNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> {
-				final var notified = Settings.get(guild).getRainbow6ProLeagueConfiguration().getNotifiedMatches();
-				matches.stream().filter(match -> !notified.contains(match.getUid())).sorted().forEachOrdered(match -> {
-					Log.getLogger(guild).info("Notifying match {} to {}", match, channel);
-					final var embed = Utilities.buildEmbed(this.getJda().getSelfUser(), Color.GREEN, null, null);
-					match.buildEmbed(embed);
-					Actions.sendMessage(channel, "", embed.build());
-					Settings.get(guild).getRainbow6ProLeagueConfiguration().setNotifiedMatch(match.getUid());
-				});
+		this.getJda().getGuilds().forEach(guild -> Settings.get(guild).getRainbow6ProLeagueConfiguration().getNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> {
+			final var notified = Settings.get(guild).getRainbow6ProLeagueConfiguration().getNotifiedMatches();
+			matches.stream().filter(match -> !notified.contains(match.getUid())).sorted().forEachOrdered(match -> {
+				Log.getLogger(guild).info("Notifying match {} to {}", match, channel);
+				final var embed = Utilities.buildEmbed(this.getJda().getSelfUser(), Color.GREEN, null, null);
+				match.buildEmbed(embed);
+				Actions.sendMessage(channel, "", embed.build());
+				Settings.get(guild).getRainbow6ProLeagueConfiguration().setNotifiedMatch(match.getUid());
 			});
-		});
+		}));
 	}
 	
 	@NonNull

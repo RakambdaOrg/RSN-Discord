@@ -9,7 +9,7 @@ import fr.raksrinana.rsndiscord.utils.schedule.RemoveRoleScheduleHandler;
 import fr.raksrinana.rsndiscord.utils.schedule.ScheduleTag;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberLeaveEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,8 +28,8 @@ public class AutoRolesListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildMemberLeave(@NonNull final GuildMemberLeaveEvent event){
-		super.onGuildMemberLeave(event);
+	public void onGuildMemberRemove(@NonNull final GuildMemberRemoveEvent event){
+		super.onGuildMemberRemove(event);
 		try{
 			Settings.get(event.getGuild()).getLeaverRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Settings.get(event.getGuild()).addAddBackRole(new UserRoleConfiguration(event.getUser(), role)));
 		}

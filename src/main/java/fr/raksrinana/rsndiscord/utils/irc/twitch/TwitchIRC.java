@@ -83,7 +83,7 @@ public class TwitchIRC{
 	@NonNull
 	public static Set<String> getConnectedTo(){
 		if(Objects.nonNull(CLIENT)){
-			return CLIENT.getListeners().stream().map(IRCListener::getUser).distinct().collect(Collectors.toSet());
+			return CLIENT.getListeners().stream().map(IRCListener::getUser).collect(Collectors.toSet());
 		}
 		return Set.of();
 	}
