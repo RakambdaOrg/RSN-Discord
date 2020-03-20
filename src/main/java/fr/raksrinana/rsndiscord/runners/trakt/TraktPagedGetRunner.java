@@ -50,7 +50,7 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 	}
 	
 	default Set<Member> getMembers(){
-		return this.getChannels().stream().flatMap(channel -> Settings.get(channel.getGuild()).getTraktConfiguration().getRegisteredUsers().stream().map(user -> channel.getGuild().getMember(user))).collect(Collectors.toSet());
+		return this.getChannels().stream().flatMap(channel -> Settings.get(channel.getGuild()).getTraktConfiguration().getRegisteredUsers().stream().map(user -> channel.getGuild().retrieveMember(user).complete())).filter(Objects::nonNull).collect(Collectors.toSet());
 	}
 	
 	@NonNull
