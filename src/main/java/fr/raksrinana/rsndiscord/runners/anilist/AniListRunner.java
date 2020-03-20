@@ -33,7 +33,7 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 	Set<TextChannel> getChannels();
 	
 	default Set<Member> getMembers(){
-		return this.getChannels().stream().flatMap(channel -> Settings.get(channel.getGuild()).getAniListConfiguration().getRegisteredUsers().stream().map(user -> channel.getGuild().getMember(user))).collect(Collectors.toSet());
+		return this.getChannels().stream().flatMap(channel -> Settings.get(channel.getGuild()).getAniListConfiguration().getRegisteredUsers().stream().map(user -> channel.getGuild().retrieveMember(user).complete())).filter(Objects::nonNull).collect(Collectors.toSet());
 	}
 	
 	default void runQuery(@NonNull final Set<Member> members, @NonNull final Set<TextChannel> channels){
