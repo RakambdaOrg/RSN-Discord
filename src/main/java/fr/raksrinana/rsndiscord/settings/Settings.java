@@ -71,7 +71,7 @@ public class Settings{
 		Log.getLogger(null).info("Cleaning settings");
 		configurations.values().forEach(guildConfiguration -> {
 			try{
-				guildConfiguration.cleanFields();
+				guildConfiguration.cleanFields("[root]");
 			}
 			catch(Exception e){
 				Log.getLogger(null).error("Failed to clean guild configuration", e);
