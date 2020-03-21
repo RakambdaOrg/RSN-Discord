@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("schedules")
 	@JsonAlias({"reminders"})
-	@Getter
 	private final List<ScheduleConfiguration> schedules = new ArrayList<>();
 	@JsonProperty("prefix")
 	@Setter
