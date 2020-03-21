@@ -1,6 +1,7 @@
 package fr.raksrinana.rsndiscord.runners;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.guild.ScheduleConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
@@ -25,14 +26,12 @@ public class SchedulesScheduledRunner implements ScheduledRunner{
 		final var currentDate = LocalDateTime.now();
 		for(final var guild : this.getJda().getGuilds()){
 			Log.getLogger(guild).debug("Processing guild {}", guild);
-			final var it = Settings.get(guild).getSchedules().iterator();
-			while(it.hasNext()){
-				final var schedule = it.next();
+			for(ScheduleConfiguration schedule : Settings.get(guild).getSchedules()){
 				if(currentDate.isAfter(schedule.getScheduleDate())){
 					for(final var handler : ScheduleUtils.getHandlers()){
 						if(handler.acceptTag(schedule.getTag())){
 							if(handler.accept(schedule)){
-								it.remove();
+								Settings.get(guild).removeSchedule(schedule);
 								break;
 							}
 						}

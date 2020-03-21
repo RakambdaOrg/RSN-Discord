@@ -152,6 +152,10 @@ public class GuildConfiguration implements CompositeConfiguration{
 		return new HashSet<>(this.messagesAwaitingReaction).stream().filter(reaction -> Objects.equals(reaction.getTag(), tag)).collect(Collectors.toSet());
 	}
 	
+	public void removeSchedule(ScheduleConfiguration schedule){
+		this.schedules.remove(schedule);
+	}
+	
 	public Iterator<WaitingReactionMessageConfiguration> getMessagesAwaitingReaction(){
 		return this.messagesAwaitingReaction.iterator();
 	}
@@ -179,6 +183,10 @@ public class GuildConfiguration implements CompositeConfiguration{
 	
 	public void addSchedule(@NonNull ScheduleConfiguration schedule){
 		this.schedules.add(schedule);
+	}
+	
+	public List<ScheduleConfiguration> getSchedules(){
+		return new LinkedList<>(this.schedules);
 	}
 	
 	@NonNull
