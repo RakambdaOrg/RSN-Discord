@@ -34,7 +34,7 @@ public class MediaReactionReactionHandler extends TodosReactionHandler{
 		return Settings.get(event.getGuild()).getArchiveCategory().flatMap(CategoryConfiguration::getCategory).map(archiveCategory -> {
 			Utilities.getMessageById(event.getChannel(), event.getMessageIdLong()).thenAccept(message -> message.removeReaction(event.getReactionEmote().getEmoji()).queue());
 			Actions.setCategoryAndSync(event.getChannel(), archiveCategory).thenAccept(future -> Actions.sendMessage(event.getChannel(), MessageFormat.format("{0} archived this channel.", event.getMember().getAsMention()), null));
-			ChannelCommand.scheduleDeletion(LocalDateTime.now().plusMonths(1), event.getChannel(), event.getUser());
+			ChannelCommand.scheduleDeletion(LocalDateTime.now().plusWeeks(2), event.getChannel(), event.getUser());
 			return ReactionHandlerResult.PROCESSED_DELETE;
 		}).orElseGet(() -> {
 			Actions.removeReaction(event.getReaction(), event.getUser());

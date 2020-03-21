@@ -32,7 +32,7 @@ public class ChannelDeletionReactionHandler extends TodosReactionHandler{
 		return todo.getMessage().getMessage().map(message -> {
 			Settings.get(event.getGuild()).getArchiveCategory().flatMap(CategoryConfiguration::getCategory).ifPresentOrElse(archiveCategory -> {
 				Actions.setCategoryAndSync(message.getTextChannel(), archiveCategory).thenAccept(future -> Actions.sendMessage(message.getTextChannel(), MessageFormat.format("{0} archived this channel.", event.getMember().getAsMention()), null));
-				ChannelCommand.scheduleDeletion(LocalDateTime.now().plusDays(7), message.getTextChannel(), event.getUser());
+				ChannelCommand.scheduleDeletion(LocalDateTime.now().plusDays(4), message.getTextChannel(), event.getUser());
 			}, () -> Actions.deleteChannel(message.getTextChannel()));
 			return ReactionHandlerResult.PROCESSED_DELETE;
 		}).orElse(ReactionHandlerResult.PROCESSED);

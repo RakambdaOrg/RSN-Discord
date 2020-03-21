@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.entities.User;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -72,5 +73,10 @@ public class ScheduleConfiguration implements AtomicConfiguration{
 	@Override
 	public boolean shouldBeRemoved(){
 		return getUser().shouldBeRemoved() || getChannel().shouldBeRemoved();
+	}
+	
+	@Override
+	public String toString(){
+		return new StringJoiner(", ", ScheduleConfiguration.class.getSimpleName() + "[", "]").add("tag=" + tag).add("user=" + user).add("channel=" + channel).add("scheduleDate=" + scheduleDate).toString();
 	}
 }
