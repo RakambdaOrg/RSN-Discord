@@ -6,12 +6,17 @@ import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import static fr.raksrinana.rsndiscord.utils.BasicEmotes.*;
 
+@Slf4j
 public class TodosReactionHandler implements ReactionHandler{
 	@Override
 	public boolean acceptTag(@NonNull ReactionTag tag){
@@ -42,8 +47,13 @@ public class TodosReactionHandler implements ReactionHandler{
 		return todo.getMessage().getMessage().map(message -> {
 			if(emote == PAPERCLIP){
 				final var forwarded = Optional.ofNullable(Settings.get(event.getGuild()).getReactionsConfiguration().getSavedForwarding().get(new ChannelConfiguration(event.getChannel()))).flatMap(ChannelConfiguration::getChannel).map(forwardChannel -> {
-					Actions.sendMessage(forwardChannel, message.getContentRaw(), message.getEmbeds().stream().findFirst().orElse(null));
-					return true;
+					try{
+						return Actions.forwardMessage(message, forwardChannel).thenApply(forwardedMessage -> true).exceptionally(e -> false).get(30, TimeUnit.SECONDS);
+					}
+					catch(InterruptedException | ExecutionException | TimeoutException e){
+						log.error("Failed to forward message", e);
+					}
+					return false;
 				}).orElse(false);
 				if(!forwarded){
 					Actions.replyWithPrivateMessage(event, "The saved channel isn't configured yet for this channel, please contact and admin.", null);
@@ -55,7 +65,7 @@ public class TodosReactionHandler implements ReactionHandler{
 				event.getGuild().createTextChannel("reply-" + event.getMessageIdLong()).submit().thenAccept(forwardChannel -> {
 					Optional.ofNullable(message.getTextChannel().getParent()).ifPresent(category -> Actions.setCategoryAndSync(forwardChannel, category));
 					Actions.sendMessage(forwardChannel, MessageFormat.format("Original message from {0}", message.getAuthor().getAsMention()), null);
-					Actions.sendMessage(forwardChannel, message.getContentRaw(), message.getEmbeds().stream().findFirst().orElse(null));
+					Actions.forwardMessage(message, forwardChannel);
 					Actions.sendMessage(forwardChannel, event.getUser().getAsMention() + " is replying to this message. React with " + CROSS_NO.getValue() + " to delete this channel when done", null).thenAccept(message1 -> {
 						Actions.addReaction(message1, CROSS_NO.getValue());
 						Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message1, ReactionTag.DELETE_CHANNEL));

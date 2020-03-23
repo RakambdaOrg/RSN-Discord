@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.utils;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
@@ -18,10 +19,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Actions to do with JDA, logging them.
  */
+@Slf4j
 public class Actions{
 	/**
 	 * Reply to a message event.
@@ -39,6 +43,12 @@ public class Actions{
 		return sendMessage(event.getChannel(), message, embed);
 	}
 	
+	@NonNull
+	public static CompletableFuture<Message> forwardMessage(Message source, TextChannel toChannel){
+		String attachments = source.getAttachments().stream().map(Message.Attachment::getUrl).collect(Collectors.joining("\n"));
+		return Actions.sendMessage(toChannel, source.getContentRaw() + attachments, source.getEmbeds().stream().findFirst().orElse(null));
+	}
+	
 	/**
 	 * Send a message to a channel.
 	 *
@@ -48,67 +58,11 @@ public class Actions{
 	 *
 	 * @return A completable future of a message (see {@link RestAction#submit()}).
 	 *
-	 * @see #sendMessage(TextChannel, CharSequence, MessageEmbed, boolean)
+	 * @see #sendMessage(TextChannel, CharSequence, MessageEmbed, Consumer, boolean)
 	 */
 	@NonNull
 	public static CompletableFuture<Message> sendMessage(@NonNull final TextChannel channel, @NonNull final CharSequence message, MessageEmbed embed){
-		return sendMessage(channel, message, embed, false);
-	}
-	
-	/**
-	 * Send a message to a channel.
-	 * If the message is too long (greater than {@link Message#MAX_CONTENT_LENGTH}) and that allowSplitting is true, it'll be split into several messages and only the last future will be returned.
-	 *
-	 * @param channel        The channel to send the message to.
-	 * @param message        The message to send.
-	 * @param embed          The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
-	 * @param allowSplitting Tell if the message can be split when too long.
-	 *
-	 * @return A completable future of a message (see {@link RestAction#submit()}).
-	 */
-	@NonNull
-	public static CompletableFuture<Message> sendMessage(@NonNull final TextChannel channel, @NonNull final CharSequence message, MessageEmbed embed, boolean allowSplitting){
-		Log.getLogger(channel.getGuild()).info("Sending message to {} : {}", channel, message);
-		var buildUnique = false;
-		final var actionsToSend = new ArrayList<MessageAction>();
-		if(allowSplitting && message.length() >= Message.MAX_CONTENT_LENGTH){
-			Log.getLogger(channel.getGuild()).info("Message is too long ({} >= {}), splitting it if possible", message.length(), Message.MAX_CONTENT_LENGTH);
-			final var newLine = "\n";
-			final var lines = new LinkedList<>(Arrays.asList(message.toString().split(newLine)));
-			while(!lines.isEmpty()){
-				var currentMessage = new StringBuilder();
-				while(!lines.isEmpty() && currentMessage.length() + lines.peek().length() + newLine.length() < Message.MAX_CONTENT_LENGTH){
-					currentMessage.append(lines.pop()).append(newLine);
-				}
-				if(currentMessage.length() > 0){
-					final var messageBuilder = new MessageBuilder().sendTo(channel).append(currentMessage);
-					if(lines.isEmpty()){
-						actionsToSend.add(messageBuilder.embed(embed));
-					}
-					else{
-						actionsToSend.add(messageBuilder);
-					}
-				}
-				else if(!lines.isEmpty() && lines.peek().length() + newLine.length() >= Message.MAX_CONTENT_LENGTH){
-					Log.getLogger(channel.getGuild()).warn("This message has a line that is too long, can't process it and is therefore removed: {}", lines.pop());
-				}
-				else{
-					Log.getLogger(channel.getGuild()).error("Got in a state that shouldn't be possible, lines: {}", lines);
-					break;
-				}
-			}
-		}
-		else{
-			buildUnique = true;
-		}
-		if(buildUnique || actionsToSend.isEmpty()){
-			actionsToSend.add(new MessageBuilder().sendTo(channel).append(message).embed(embed));
-		}
-		var lastSent = new CompletableFuture<Message>();
-		for(var action : actionsToSend){
-			lastSent = action.submit();
-		}
-		return lastSent;
+		return sendMessage(channel, message, embed, messageAction -> {}, false);
 	}
 	
 	/**
@@ -405,5 +359,63 @@ public class Actions{
 	@NonNull
 	public static CompletableFuture<Message> replyWithPrivateMessage(GuildMessageReactionAddEvent event, String message, MessageEmbed embed){
 		return event.getUser().openPrivateChannel().submit().thenCompose(privateChannel -> sendPrivateMessage(event.getGuild(), privateChannel, message, embed));
+	}
+	
+	/**
+	 * Send a message to a channel.
+	 * If the message is too long (greater than {@link Message#MAX_CONTENT_LENGTH}) and that allowSplitting is true, it'll be split into several messages and only the last future will be returned.
+	 *
+	 * @param channel        The channel to send the message to.
+	 * @param message        The message to send.
+	 * @param embed          The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
+	 * @param actionConsumer A consumer of message action to modify messages before sending.
+	 * @param allowSplitting Tell if the message can be split when too long.
+	 *
+	 * @return A completable future of a message (see {@link RestAction#submit()}).
+	 */
+	@NonNull
+	public static CompletableFuture<Message> sendMessage(@NonNull final TextChannel channel, @NonNull final CharSequence message, MessageEmbed embed, Consumer<MessageAction> actionConsumer, boolean allowSplitting){
+		Log.getLogger(channel.getGuild()).info("Sending message to {} : {}", channel, message);
+		var buildUnique = false;
+		final var actionsToSend = new ArrayList<MessageAction>();
+		if(allowSplitting && message.length() >= Message.MAX_CONTENT_LENGTH){
+			Log.getLogger(channel.getGuild()).info("Message is too long ({} >= {}), splitting it if possible", message.length(), Message.MAX_CONTENT_LENGTH);
+			final var newLine = "\n";
+			final var lines = new LinkedList<>(Arrays.asList(message.toString().split(newLine)));
+			while(!lines.isEmpty()){
+				var currentMessage = new StringBuilder();
+				while(!lines.isEmpty() && currentMessage.length() + lines.peek().length() + newLine.length() < Message.MAX_CONTENT_LENGTH){
+					currentMessage.append(lines.pop()).append(newLine);
+				}
+				if(currentMessage.length() > 0){
+					final var messageBuilder = new MessageBuilder().sendTo(channel).append(currentMessage);
+					if(lines.isEmpty()){
+						actionsToSend.add(messageBuilder.embed(embed));
+					}
+					else{
+						actionsToSend.add(messageBuilder);
+					}
+				}
+				else if(!lines.isEmpty() && lines.peek().length() + newLine.length() >= Message.MAX_CONTENT_LENGTH){
+					Log.getLogger(channel.getGuild()).warn("This message has a line that is too long, can't process it and is therefore removed: {}", lines.pop());
+				}
+				else{
+					Log.getLogger(channel.getGuild()).error("Got in a state that shouldn't be possible, lines: {}", lines);
+					break;
+				}
+			}
+		}
+		else{
+			buildUnique = true;
+		}
+		if(buildUnique || actionsToSend.isEmpty()){
+			actionsToSend.add(new MessageBuilder().sendTo(channel).append(message).embed(embed));
+		}
+		actionsToSend.forEach(actionConsumer);
+		var lastSent = new CompletableFuture<Message>();
+		for(var action : actionsToSend){
+			lastSent = action.submit();
+		}
+		return lastSent;
 	}
 }
