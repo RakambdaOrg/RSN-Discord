@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -58,11 +57,11 @@ public class Actions{
 	 *
 	 * @return A completable future of a message (see {@link RestAction#submit()}).
 	 *
-	 * @see #sendMessage(TextChannel, CharSequence, MessageEmbed, Consumer, boolean)
+	 * @see #sendMessage(TextChannel, CharSequence, MessageEmbed, boolean)
 	 */
 	@NonNull
 	public static CompletableFuture<Message> sendMessage(@NonNull final TextChannel channel, @NonNull final CharSequence message, MessageEmbed embed){
-		return sendMessage(channel, message, embed, messageAction -> {}, false);
+		return sendMessage(channel, message, embed, false);
 	}
 	
 	/**
@@ -368,13 +367,12 @@ public class Actions{
 	 * @param channel        The channel to send the message to.
 	 * @param message        The message to send.
 	 * @param embed          The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
-	 * @param actionConsumer A consumer of message action to modify messages before sending.
 	 * @param allowSplitting Tell if the message can be split when too long.
 	 *
 	 * @return A completable future of a message (see {@link RestAction#submit()}).
 	 */
 	@NonNull
-	public static CompletableFuture<Message> sendMessage(@NonNull final TextChannel channel, @NonNull final CharSequence message, MessageEmbed embed, Consumer<MessageAction> actionConsumer, boolean allowSplitting){
+	public static CompletableFuture<Message> sendMessage(@NonNull final TextChannel channel, @NonNull final CharSequence message, MessageEmbed embed, boolean allowSplitting){
 		Log.getLogger(channel.getGuild()).info("Sending message to {} : {}", channel, message);
 		var buildUnique = false;
 		final var actionsToSend = new ArrayList<MessageAction>();
@@ -411,7 +409,6 @@ public class Actions{
 		if(buildUnique || actionsToSend.isEmpty()){
 			actionsToSend.add(new MessageBuilder().sendTo(channel).append(message).embed(embed));
 		}
-		actionsToSend.forEach(actionConsumer);
 		var lastSent = new CompletableFuture<Message>();
 		for(var action : actionsToSend){
 			lastSent = action.submit();
