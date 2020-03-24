@@ -26,6 +26,7 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -56,7 +57,7 @@ public class Main{
 		Unirest.config().setObjectMapper(new JacksonObjectMapper()).connectTimeout(30000).socketTimeout(30000).enableCookieManagement(true).verifySsl(true);
 		try{
 			Log.getLogger(null).info("Building JDA");
-			final var jdaBuilder = JDABuilder.createDefault(System.getProperty("RSN_TOKEN"));
+			final var jdaBuilder = JDABuilder.createDefault(System.getProperty("RSN_TOKEN"), GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_BANS, GatewayIntent.GUILD_EMOJIS, GatewayIntent.GUILD_INVITES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_VOICE_STATES);
 			jdaBuilder.addEventListeners(new CommandsMessageListener());
 			jdaBuilder.addEventListeners(new ShutdownListener());
 			jdaBuilder.addEventListeners(new LogListener());
