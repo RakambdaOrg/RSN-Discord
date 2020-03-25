@@ -84,11 +84,15 @@ public class AddMusicCommand extends BasicCommand{
 						final var queue = RSNAudioManager.getQueue(event.getGuild());
 						final var before = queue.stream().takeWhile(t -> !Objects.equals(audioTrack, t)).collect(Collectors.toList());
 						final var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Music added", audioTrack.getInfo().uri);
+						final var isCurrentTrack = RSNAudioManager.currentTrack(event.getGuild()).map(trk -> Objects.equals(trk, audioTrack)).orElse(false);
 						embed.setDescription(audioTrack.getInfo().title);
 						embed.addField("Requester", event.getAuthor().getAsMention(), true);
+						embed.addField("Duration", NowPlayingMusicCommand.getDuration(audioTrack.getDuration()), true);
 						embed.addField("ETA", getDuration(RSNAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + before.stream().mapToLong(AudioTrack::getDuration).sum()), true);
 						embed.addField("Repeating", String.valueOf(repeat), true);
-						embed.addField("Position in queue", String.valueOf(RSNAudioManager.currentTrack(event.getGuild()).map(trk -> Objects.equals(trk, audioTrack)).orElse(false) ? 0 : (1 + before.size())), true);
+						if(isCurrentTrack){
+							embed.addField("Position in queue", String.valueOf(1 + before.size()), true);
+						}
 						Actions.reply(event, "", embed.build());
 					}
 				};
