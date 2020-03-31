@@ -54,13 +54,6 @@ public abstract class Media implements AniListObject{
 		this.type = type;
 	}
 	
-	public static String getQueryWithId(){
-		return "media(mediaId: $mediaId) {\n" + "id\n" + MediaTitle.getQUERY() + "\n" + "season\n" + "type\n" + "format\n" + "status\n" + "episodes\n" + "chapters\n" + "volumes\n" + FuzzyDate.getQuery("startDate") + "\n" + FuzzyDate.getQuery("endDate") + "\n" + "genres\n" + "isAdult\n" + MediaCoverImage.getQUERY() + "\n" + "siteUrl" + "}";
-	}
-	
-	@NonNull
-	public abstract String getProgressType(final boolean contains);
-	
 	@Override
 	public void fillEmbed(@NonNull final EmbedBuilder builder){
 		builder.setDescription(this.getTitle().getRomaji());
@@ -80,7 +73,14 @@ public abstract class Media implements AniListObject{
 		}
 		//builder.addField("Link", getUrl(), false);
 		builder.setThumbnail(this.getCoverImage().getLarge().toString());
-		builder.setFooter(Integer.toString(getId()));
+		builder.setFooter("ID: " + getId());
+	}
+	
+	@NonNull
+	public abstract String getProgressType(final boolean contains);
+	
+	public static String getQueryWithId(){
+		return "media(id: $mediaId) {\n" + "id\n" + MediaTitle.getQUERY() + "\n" + "season\n" + "type\n" + "format\n" + "status\n" + "episodes\n" + "chapters\n" + "volumes\n" + FuzzyDate.getQuery("startDate") + "\n" + FuzzyDate.getQuery("endDate") + "\n" + "genres\n" + "isAdult\n" + MediaCoverImage.getQUERY() + "\n" + "siteUrl" + "}";
 	}
 	
 	protected abstract void fillAdditionalEmbed(EmbedBuilder builder);
