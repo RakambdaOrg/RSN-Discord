@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.settings;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -31,7 +32,7 @@ public interface CompositeConfiguration{
 		}
 		else if(fieldValue instanceof Collection){
 			final var collection = (Collection<?>) fieldValue;
-			final var toRemove = collection.stream().filter(this::atomicShouldBeRemoved).collect(Collectors.toList());
+			final var toRemove = List.copyOf(collection).stream().filter(this::atomicShouldBeRemoved).collect(Collectors.toList());
 			if(!toRemove.isEmpty()){
 				Log.getLogger(null).debug("Removing values {} from collection {}", toRemove, fieldName);
 			}
@@ -48,7 +49,7 @@ public interface CompositeConfiguration{
 		}
 		else if(fieldValue instanceof Map){
 			final var map = (Map<?, ?>) fieldValue;
-			final var toRemove = map.entrySet().stream().filter(entry -> atomicShouldBeRemoved(entry.getKey()) || atomicShouldBeRemoved(entry.getValue())).map(Map.Entry::getKey).collect(Collectors.toSet());
+			final var toRemove = Map.copyOf(map).entrySet().stream().filter(entry -> atomicShouldBeRemoved(entry.getKey()) || atomicShouldBeRemoved(entry.getValue())).map(Map.Entry::getKey).collect(Collectors.toSet());
 			if(!toRemove.isEmpty()){
 				Log.getLogger(null).debug("Removing keys {} from map {}", toRemove, fieldName);
 			}

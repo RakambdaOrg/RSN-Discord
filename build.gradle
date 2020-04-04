@@ -5,6 +5,7 @@ plugins {
     id 'java'
     id 'application'
     id "io.freefair.lombok" version '4.1.6'
+    id 'idea'
 }
 
 def secretsFile = new File(".", "secrets.properties")
@@ -83,8 +84,10 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.api.tasks.wrapper.Wrapper
 
 processResources {
-    from 'src/main/resources'
-    filter(ReplaceTokens, tokens: [project_version: project.version, project_name: project.name])
+    doFirst {
+        from 'src/main/resources'
+        filter(ReplaceTokens, tokens: [project_version: project.version, project_name: project.name])
+    }
 }
 
 compileJava {

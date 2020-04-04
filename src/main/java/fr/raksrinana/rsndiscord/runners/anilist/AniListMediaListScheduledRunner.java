@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.requests.RestAction;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -32,8 +33,6 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 	private final JDA jda;
 	@Getter
 	private final boolean keepOnlyNew;
-	@Getter
-	private final boolean sortedByUser;
 	
 	public AniListMediaListScheduledRunner(@NonNull final JDA jda){
 		this(jda, true);
@@ -42,7 +41,6 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 	private AniListMediaListScheduledRunner(@NonNull final JDA jda, final boolean keepOnlyNew){
 		this.jda = jda;
 		this.keepOnlyNew = keepOnlyNew;
-		this.sortedByUser = false;
 	}
 	
 	@Override
@@ -65,9 +63,8 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 	public void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<MediaList>> userElements){
 		AniListRunner.super.sendMessages(channels, userElements);
 		final var thaChannels = this.getJda().getGuilds().stream().map(Settings::get).map(GuildConfiguration::getAniListConfiguration).map(AniListConfiguration::getThaChannel).flatMap(Optional::stream).map(ChannelConfiguration::getChannel).flatMap(Optional::stream).collect(Collectors.toSet());
-		final var thaMembers = this.getJda().getGuilds().stream().flatMap(guild -> Settings.get(guild).getAniListConfiguration().getThaUser().stream().map(UserConfiguration::getUser).flatMap(Optional::stream).map(user -> Optional.ofNullable(guild.getMember(user))).flatMap(Optional::stream)).collect(Collectors.toSet());
 		final var mediaListsToSend = userElements.values().stream().flatMap(Set::stream).filter(mediaList -> mediaList.getCustomLists().entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).anyMatch(acceptedThaLists::contains)).collect(Collectors.toList());
-		thaChannels.forEach(channelToSend -> thaMembers.stream().filter(member -> Objects.equals(channelToSend.getGuild(), member.getGuild())).forEach(memberToSend -> mediaListsToSend.forEach(mediaListToSend -> {
+		thaChannels.forEach(channelToSend -> Settings.get(channelToSend.getGuild()).getAniListConfiguration().getThaUser().flatMap(UserConfiguration::getUser).map(channelToSend.getGuild()::retrieveMember).map(RestAction::complete).ifPresent(memberToSend -> mediaListsToSend.forEach(mediaListToSend -> {
 			final var similarWaitingReactions = getSimilarWaitingReactions(channelToSend, mediaListToSend.getMedia());
 			Actions.sendMessage(channelToSend, memberToSend.getAsMention(), this.buildMessage(memberToSend.getUser(), mediaListToSend)).thenAccept(sentMessage -> {
 				Actions.addReaction(sentMessage, BasicEmotes.CHECK_OK.getValue());

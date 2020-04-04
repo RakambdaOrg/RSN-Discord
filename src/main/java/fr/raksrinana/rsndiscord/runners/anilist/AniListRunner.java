@@ -32,8 +32,8 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 	
 	Set<TextChannel> getChannels();
 	
-	default Set<Member> getMembers(){
-		return this.getChannels().stream().flatMap(channel -> Settings.get(channel.getGuild()).getAniListConfiguration().getRegisteredUsers().stream().map(user -> channel.getGuild().retrieveMember(user).complete())).filter(Objects::nonNull).collect(Collectors.toSet());
+	default void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<T>> userElements){
+		userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Map.Entry.comparingByValue()).map(change -> Map.entry(change.getKey(), this.buildMessage(change.getKey(), change.getValue()))).forEach(infos -> channels.stream().filter(chan -> this.sendToChannel(chan, infos.getKey())).forEach(chan -> Actions.sendMessage(chan, "", infos.getValue())));
 	}
 	
 	default void runQuery(@NonNull final Set<Member> members, @NonNull final Set<TextChannel> channels){
@@ -68,25 +68,13 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 		return elementList;
 	}
 	
-	default void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<T>> userElements){
-		if(this.isSortedByUser()){
-			for(final var entry : userElements.entrySet()){
-				final var user = entry.getKey();
-				entry.getValue().stream().sorted().map(change -> this.buildMessage(user, change)).forEach(embed -> channels.stream().filter(channel -> this.sendToChannel(channel, user)).forEach(channel -> Actions.sendMessage(channel, "", embed)));
-			}
-		}
-		else{
-			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Map.Entry.comparingByValue()).map(change -> Map.entry(change.getKey(), this.buildMessage(change.getKey(), change.getValue()))).forEach(infos -> channels.stream().filter(chan -> this.sendToChannel(chan, infos.getKey())).forEach(chan -> Actions.sendMessage(chan, "", infos.getValue())));
-		}
+	default Set<Member> getMembers(){
+		return this.getJda().getGuilds().stream().flatMap(guild -> Settings.get(guild).getAniListConfiguration().getRegisteredMembers(guild).stream()).collect(Collectors.toSet());
 	}
 	
 	@NonNull U initQuery(@NonNull Member member);
 	
 	boolean isKeepOnlyNew();
-	
-	default boolean isSortedByUser(){
-		return false;
-	}
 	
 	@NonNull
 	default MessageEmbed buildMessage(final User user, @NonNull final T change){

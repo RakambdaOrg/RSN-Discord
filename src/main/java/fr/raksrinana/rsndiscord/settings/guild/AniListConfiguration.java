@@ -3,7 +3,6 @@ package fr.raksrinana.rsndiscord.settings.guild;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.settings.CompositeConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.anilist.AnilistAccessTokenConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
@@ -13,7 +12,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.requests.RestAction;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -93,6 +95,10 @@ public class AniListConfiguration implements CompositeConfiguration{
 		this.userIds.remove(user.getIdLong());
 	}
 	
+	public Set<Member> getRegisteredMembers(@NonNull Guild guild){
+		return this.tokens.stream().map(token -> guild.retrieveMemberById(token.getUserId())).map(RestAction::complete).filter(Objects::nonNull).collect(Collectors.toSet());
+	}
+	
 	@NonNull
 	public Optional<ChannelConfiguration> getMediaChangeChannel(){
 		return Optional.ofNullable(this.mediaChangeChannel);
@@ -101,11 +107,6 @@ public class AniListConfiguration implements CompositeConfiguration{
 	@NonNull
 	public Optional<ChannelConfiguration> getNotificationsChannel(){
 		return Optional.ofNullable(this.notificationsChannel);
-	}
-	
-	@NonNull
-	public Set<User> getRegisteredUsers(){
-		return this.refreshTokens.keySet().stream().map(userId -> Main.getJda().retrieveUserById(userId).complete()).filter(Objects::nonNull).collect(Collectors.toSet());
 	}
 	
 	@NonNull
