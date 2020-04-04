@@ -26,7 +26,6 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new TrombinoscopeConfigurationCommandComposite(this));
 		this.addSubCommand(new QuizChannelConfigurationCommand(this));
 		this.addSubCommand(new LeaverRoleConfigurationCommand(this));
-		this.addSubCommand(new IrcForwardConfigurationCommand(this));
 		this.addSubCommand(new OverwatchConfigurationCommandComposite(this));
 		this.addSubCommand(new PoopRoleConfigurationCommand(this));
 		this.addSubCommand(new AnnounceStartChannelConfigurationCommand(this));

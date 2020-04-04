@@ -1,6 +1,7 @@
 package fr.raksrinana.rsndiscord.commands.config.guild;
 
-import fr.raksrinana.rsndiscord.commands.config.guild.twitch.TwitchAutoConnectUsersConfigurationCommand;
+import fr.raksrinana.rsndiscord.commands.config.guild.twitch.AutoConnectUsersConfigurationCommand;
+import fr.raksrinana.rsndiscord.commands.config.guild.twitch.IrcForwardConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.config.guild.twitch.TwitchChannelConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
@@ -11,7 +12,8 @@ public class TwitchConfigurationCommandComposite extends CommandComposite{
 	public TwitchConfigurationCommandComposite(final Command parent){
 		super(parent);
 		this.addSubCommand(new TwitchChannelConfigurationCommand(this));
-		this.addSubCommand(new TwitchAutoConnectUsersConfigurationCommand(this));
+		this.addSubCommand(new AutoConnectUsersConfigurationCommand(this));
+		this.addSubCommand(new IrcForwardConfigurationCommand(this));
 	}
 	
 	@NonNull

@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.commands.config.guild;
+package fr.raksrinana.rsndiscord.commands.config.guild.twitch;
 
 import fr.raksrinana.rsndiscord.commands.config.helpers.BooleanConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
@@ -15,18 +15,18 @@ public class IrcForwardConfigurationCommand extends BooleanConfigurationCommand{
 	
 	@Override
 	protected void setConfig(@NonNull final Guild guild, @NonNull final Boolean value){
-		Settings.get(guild).setIrcForward(value);
+		Settings.get(guild).getTwitchConfiguration().setIrcForward(value);
 	}
 	
 	@Override
 	protected void removeConfig(@NonNull final Guild guild){
-		Settings.get(guild).setIrcForward(false);
+		Settings.get(guild).getTwitchConfiguration().setIrcForward(false);
 	}
 	
 	@NonNull
 	@Override
 	protected Optional<Boolean> getConfig(final Guild guild){
-		return Optional.of(Settings.get(guild).isIrcForward());
+		return Optional.of(Settings.get(guild).getTwitchConfiguration().isIrcForward());
 	}
 	
 	@NonNull
@@ -38,6 +38,6 @@ public class IrcForwardConfigurationCommand extends BooleanConfigurationCommand{
 	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("ircForward");
+		return List.of("forward");
 	}
 }

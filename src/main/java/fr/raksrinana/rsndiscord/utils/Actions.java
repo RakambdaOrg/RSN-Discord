@@ -50,12 +50,13 @@ public class Actions{
 		final var builder = new MessageBuilder(source);
 		var action = builder.sendTo(toChannel);
 		for(Message.Attachment attachment : source.getAttachments()){
+			final var finalAction = action;
 			try{
-				final var finalAction = action;
 				action = attachment.retrieveInputStream().thenApply(is -> finalAction.addFile(is, attachment.getFileName())).get(30, TimeUnit.SECONDS);
 			}
 			catch(InterruptedException | ExecutionException | TimeoutException e){
 				Log.getLogger(toChannel.getGuild()).error("Failed to forward attachment {}", attachment, e);
+				action = action.append("\n<Attachment").append(attachment.getFileName()).append(".").append(attachment.getFileExtension() == null ? "" : attachment.getFileExtension()).append(">");
 			}
 		}
 		return action.submit();

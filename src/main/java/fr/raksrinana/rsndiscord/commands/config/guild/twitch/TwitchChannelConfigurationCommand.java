@@ -16,18 +16,18 @@ public class TwitchChannelConfigurationCommand extends ChannelConfigurationComma
 	
 	@Override
 	protected void setConfig(@NonNull final Guild guild, @NonNull final ChannelConfiguration value){
-		Settings.get(guild).setTwitchChannel(value);
+		Settings.get(guild).getTwitchConfiguration().setTwitchChannel(value);
 	}
 	
 	@Override
 	protected void removeConfig(@NonNull final Guild guild){
-		Settings.get(guild).setTwitchChannel(null);
+		Settings.get(guild).getTwitchConfiguration().setTwitchChannel(null);
 	}
 	
 	@NonNull
 	@Override
 	protected Optional<ChannelConfiguration> getConfig(@NonNull final Guild guild){
-		return Settings.get(guild).getTwitchChannel();
+		return Settings.get(guild).getTwitchConfiguration().getTwitchChannel();
 	}
 	
 	@NonNull

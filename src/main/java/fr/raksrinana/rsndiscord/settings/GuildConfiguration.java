@@ -66,9 +66,10 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("nickname")
 	@Getter
 	private final NicknameConfiguration nicknameConfiguration = new NicknameConfiguration();
-	@JsonProperty("twitchChannel")
-	@Setter
-	private ChannelConfiguration twitchChannel;
+	@JsonProperty("ircForward")
+	@Getter
+	@Deprecated
+	private final boolean ircForward = false;
 	@JsonProperty("quizChannel")
 	@Setter
 	private ChannelConfiguration quizChannel;
@@ -90,10 +91,10 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("poopRole")
 	@Setter
 	private RoleConfiguration poopRole;
-	@JsonProperty("ircForward")
+	@JsonProperty("twitchAutoConnectUsers")
 	@Getter
-	@Setter
-	private boolean ircForward = false;
+	@Deprecated
+	private final Set<String> twitchAutoConnectUsers = new HashSet<>();
 	@JsonProperty("overwatchLeague")
 	@Getter
 	private final OverwatchLeagueConfiguration overwatchLeagueConfiguration = new OverwatchLeagueConfiguration();
@@ -107,10 +108,9 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Setter
 	private int musicVolume = 100;
-	@JsonProperty("twitchAutoConnectUsers")
+	@JsonProperty("twitchConfiguration")
 	@Getter
-	@Setter
-	private Set<String> twitchAutoConnectUsers = new HashSet<>();
+	private final TwitchConfiguration twitchConfiguration = new TwitchConfiguration();
 	@JsonProperty("christmasRole")
 	@Setter
 	private RoleConfiguration christmasRole;
@@ -134,6 +134,10 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("covid19Channel")
 	@Setter
 	private ChannelConfiguration covid19Channel;
+	@JsonProperty("twitchChannel")
+	@Getter
+	@Deprecated
+	private ChannelConfiguration twitchChannel;
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
@@ -221,11 +225,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@NonNull
 	public Optional<ChannelConfiguration> getReportChannel(){
 		return Optional.ofNullable(this.reportChannel);
-	}
-	
-	@NonNull
-	public Optional<ChannelConfiguration> getTwitchChannel(){
-		return Optional.ofNullable(this.twitchChannel);
 	}
 	
 	@NonNull

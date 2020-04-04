@@ -9,22 +9,20 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.*;
 
-public class TwitchAutoConnectUsersConfigurationCommand extends SetConfigurationCommand<String>{
-	public TwitchAutoConnectUsersConfigurationCommand(final Command parent){
+public class AutoConnectUsersConfigurationCommand extends SetConfigurationCommand<String>{
+	public AutoConnectUsersConfigurationCommand(final Command parent){
 		super(parent);
 	}
 	
 	@NonNull
 	@Override
 	protected Optional<Set<String>> getConfig(@NonNull final Guild guild){
-		return Optional.of(Settings.get(guild).getTwitchAutoConnectUsers());
+		return Optional.of(Settings.get(guild).getTwitchConfiguration().getTwitchAutoConnectUsers());
 	}
 	
 	@Override
-	protected void createConfig(@NonNull final Guild guild, @NonNull final String value){
-		final var set = new HashSet<String>();
-		set.add(value);
-		Settings.get(guild).setTwitchAutoConnectUsers(set);
+	protected void removeConfig(@NonNull final Guild guild, @NonNull final String value){
+		Settings.get(guild).getTwitchConfiguration().getTwitchAutoConnectUsers().remove(value);
 	}
 	
 	@NonNull
@@ -37,8 +35,10 @@ public class TwitchAutoConnectUsersConfigurationCommand extends SetConfiguration
 	}
 	
 	@Override
-	protected void removeConfig(@NonNull final Guild guild, @NonNull final String value){
-		Settings.get(guild).getTwitchAutoConnectUsers().remove(value);
+	protected void createConfig(@NonNull final Guild guild, @NonNull final String value){
+		final var set = new HashSet<String>();
+		set.add(value);
+		Settings.get(guild).getTwitchConfiguration().setTwitchAutoConnectUsers(set);
 	}
 	
 	@Override

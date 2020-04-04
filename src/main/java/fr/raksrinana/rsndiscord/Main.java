@@ -75,6 +75,14 @@ public class Main{
 			ScheduleUtils.registerAllHandlers();
 			Log.getLogger(null).info("Creating runners");
 			registerAllScheduledRunners(jda);
+			jda.getGuilds().forEach(guild -> {
+				var settings = Settings.get(guild);
+				settings.getTwitchConfiguration().getTwitchAutoConnectUsers().addAll(settings.getTwitchAutoConnectUsers());
+				Optional.ofNullable(settings.getTwitchChannel()).ifPresent(chan -> settings.getTwitchConfiguration().setTwitchChannel(chan));
+				if(settings.isIrcForward()){
+					settings.getTwitchConfiguration().setIrcForward(true);
+				}
+			});
 			Log.getLogger(null).info("Started");
 			announceStart();
 			restartTwitchIRCConnections();
@@ -161,10 +169,10 @@ public class Main{
 	/**
 	 * Connects to IRC channels defined in the configuration.
 	 *
-	 * @see GuildConfiguration#getTwitchAutoConnectUsers()
+	 * @see fr.raksrinana.rsndiscord.settings.guild.TwitchConfiguration#getTwitchAutoConnectUsers()
 	 */
 	private static void restartTwitchIRCConnections(){
-		Main.getJda().getGuilds().forEach(guild -> Settings.get(guild).getTwitchAutoConnectUsers().forEach(user -> {
+		Main.getJda().getGuilds().forEach(guild -> Settings.get(guild).getTwitchConfiguration().getTwitchAutoConnectUsers().forEach(user -> {
 			try{
 				TwitchIRC.connect(guild, user);
 			}
