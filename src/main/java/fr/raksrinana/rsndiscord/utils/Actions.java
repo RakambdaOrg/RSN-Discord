@@ -19,7 +19,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Actions to do with JDA, logging them.
@@ -44,8 +46,19 @@ public class Actions{
 	
 	@NonNull
 	public static CompletableFuture<Message> forwardMessage(Message source, TextChannel toChannel){
-		String attachments = source.getAttachments().stream().map(Message.Attachment::getUrl).collect(Collectors.joining("\n"));
-		return Actions.sendMessage(toChannel, source.getContentRaw() + attachments, source.getEmbeds().stream().findFirst().orElse(null));
+		Log.getLogger(toChannel.getGuild()).info("Forwarding message {} to channel {}", source, toChannel);
+		final var builder = new MessageBuilder(source);
+		var action = builder.sendTo(toChannel);
+		for(Message.Attachment attachment : source.getAttachments()){
+			try{
+				final var finalAction = action;
+				action = attachment.retrieveInputStream().thenApply(is -> finalAction.addFile(is, attachment.getFileName())).get(30, TimeUnit.SECONDS);
+			}
+			catch(InterruptedException | ExecutionException | TimeoutException e){
+				Log.getLogger(toChannel.getGuild()).error("Failed to forward attachment {}", attachment, e);
+			}
+		}
+		return action.submit();
 	}
 	
 	/**
@@ -414,5 +427,20 @@ public class Actions{
 			lastSent = action.submit();
 		}
 		return lastSent;
+	}
+	
+	/**
+	 * Send a message to a channel.
+	 *
+	 * @param channel        The channel to send the message to.
+	 * @param messageBuilder The message to send.
+	 *
+	 * @return A completable future of a message (see {@link RestAction#submit()}).
+	 */
+	@NonNull
+	public static CompletableFuture<Message> sendMessage(@NonNull final TextChannel channel, @NonNull MessageBuilder messageBuilder){
+		final var action = messageBuilder.sendTo(channel);
+		Log.getLogger(channel.getGuild()).info("Sending message to {} : {}", channel, action);
+		return action.submit();
 	}
 }
