@@ -2,10 +2,7 @@ package fr.raksrinana.rsndiscord.settings;
 
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public interface CompositeConfiguration{
@@ -50,7 +47,7 @@ public interface CompositeConfiguration{
 		}
 		else if(fieldValue instanceof Map){
 			final var map = (Map<?, ?>) fieldValue;
-			final var toRemove = new HashMap<>(map).entrySet().stream().filter(entry -> atomicShouldBeRemoved(entry.getKey()) || atomicShouldBeRemoved(entry.getValue())).map(Map.Entry::getKey).collect(Collectors.toSet());
+			final var toRemove = new HashMap<>(map).entrySet().stream().filter(entry -> Objects.isNull(entry.getValue()) || atomicShouldBeRemoved(entry.getKey()) || atomicShouldBeRemoved(entry.getValue())).map(Map.Entry::getKey).collect(Collectors.toSet());
 			if(!toRemove.isEmpty()){
 				Log.getLogger(null).debug("Removing keys {} from map {}", toRemove, fieldName);
 			}
