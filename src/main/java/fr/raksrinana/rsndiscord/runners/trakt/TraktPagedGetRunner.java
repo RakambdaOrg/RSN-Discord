@@ -4,6 +4,7 @@ import fr.raksrinana.rsndiscord.runners.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.RequestException;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktDatedObject;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktObject;
@@ -38,6 +39,13 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 			userElements.computeIfAbsent(member.getUser(), user -> {
 				try{
 					return this.getElements(member);
+				}
+				catch(final RequestException e){
+					Log.getLogger(member.getGuild()).error("Error fetching user {} on Trakt", member, e);
+					if(e.getStatus() == 403){
+						final var traktConfiguration = Settings.get(member.getGuild()).getTraktConfiguration();
+						traktConfiguration.getAccessToken(member.getIdLong()).ifPresent(traktConfiguration::removeAccessToken);
+					}
 				}
 				catch(final Exception e){
 					Log.getLogger(member.getGuild()).error("Error fetching user {} on Trakt", member, e);
