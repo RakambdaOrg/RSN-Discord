@@ -108,7 +108,6 @@ public class CommandsMessageListener extends ListenerAdapter{
 					Actions.addReaction(event.getMessage(), BasicEmotes.PAPERCLIP.getValue());
 					Actions.addReaction(event.getMessage(), BasicEmotes.RIGHT_ARROW_CURVING_LEFT.getValue());
 					Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(event.getMessage(), ReactionTag.TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
-					Actions.pin(event.getMessage());
 				}
 			}
 		}
