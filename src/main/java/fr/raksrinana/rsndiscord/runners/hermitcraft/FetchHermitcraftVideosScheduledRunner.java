@@ -44,7 +44,7 @@ public class FetchHermitcraftVideosScheduledRunner implements ScheduledRunner{
 	public void execute(){
 		HermitcraftUtils.getVideos().ifPresent(videos -> this.jda.getGuilds().forEach(guild -> {
 			final var config = Settings.get(guild).getHermitcraftConfiguration();
-			config.getVideoNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> videos.stream().sorted(Comparator.comparing(HermitcraftVideo::getUploaded)).filter(video -> config.isVideoNotified(video.getId())).forEach(video -> {
+			config.getVideoNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> videos.stream().sorted(Comparator.comparing(HermitcraftVideo::getUploaded)).filter(video -> !config.isVideoNotified(video.getId())).forEach(video -> {
 				sendVideo(video, channel);
 				config.setVideoNotified(video.getId());
 			}));
@@ -60,12 +60,12 @@ public class FetchHermitcraftVideosScheduledRunner implements ScheduledRunner{
 		embed.setFooter(video.getId());
 		embed.setThumbnail(video.getUploader().getProfilePicture().toString());
 		embed.setImage(String.format("https://i.ytimg.com/vi/%s/mqdefault.jpg", video.getId()));
-		Actions.sendMessage(channel, "New hermitcraft video", embed.build());
+		Actions.sendMessage(channel, "", embed.build());
 	}
 	
 	@NonNull
 	@Override
 	public String getName(){
-		return "hermitcraft video fetcher";
+		return "Hermitcraft video fetcher";
 	}
 }
