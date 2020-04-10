@@ -58,10 +58,6 @@ dependencies {
     implementation("org.apache.httpcomponents:httpclient:${project.httpclient_version}")
     implementation("org.apache.commons:commons-lang3:${project.lang3_version}")
     implementation("org.reflections:reflections:${project.reflections_version}")
-
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${project.junit_version}")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:${project.junit_version}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${project.junit_version}")
 }
 
 repositories {

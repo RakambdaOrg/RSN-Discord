@@ -37,6 +37,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new Rainbow6ProLeagueConfigurationCommandComposite(this));
 		this.addSubCommand(new ReactionsConfigurationCommandComposite(this));
 		this.addSubCommand(new Covid19ChannelConfigurationCommand(this));
+		this.addSubCommand(new HermitcraftConfigurationCommandComposite(this));
 	}
 	
 	@NonNull

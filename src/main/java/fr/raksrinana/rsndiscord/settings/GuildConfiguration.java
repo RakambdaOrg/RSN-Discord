@@ -138,6 +138,9 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Deprecated
 	private ChannelConfiguration twitchChannel;
+	@JsonProperty("hermitcraft")
+	@Getter
+	private final HermitcraftConfiguration hermitcraftConfiguration = new HermitcraftConfiguration();
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
