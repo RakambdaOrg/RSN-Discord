@@ -20,11 +20,6 @@ public class AutoConnectUsersConfigurationCommand extends SetConfigurationComman
 		return Optional.of(Settings.get(guild).getTwitchConfiguration().getTwitchAutoConnectUsers());
 	}
 	
-	@Override
-	protected void removeConfig(@NonNull final Guild guild, @NonNull final String value){
-		Settings.get(guild).getTwitchConfiguration().getTwitchAutoConnectUsers().remove(value);
-	}
-	
 	@NonNull
 	@Override
 	protected String extractValue(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args) throws IllegalArgumentException{
@@ -32,6 +27,11 @@ public class AutoConnectUsersConfigurationCommand extends SetConfigurationComman
 			throw new IllegalArgumentException("Please mention a user");
 		}
 		return args.pop();
+	}
+	
+	@Override
+	protected void removeConfig(@NonNull final Guild guild, @NonNull final String value){
+		Settings.get(guild).getTwitchConfiguration().getTwitchAutoConnectUsers().remove(value);
 	}
 	
 	@Override

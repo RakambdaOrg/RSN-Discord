@@ -25,7 +25,6 @@ public abstract class SetConfigurationCommand<T> extends BaseConfigurationComman
 		return Set.of(ConfigurationOperation.ADD, ConfigurationOperation.REMOVE, ConfigurationOperation.SHOW);
 	}
 	
-	@SuppressWarnings("DuplicatedCode")
 	@Override
 	protected void onAdd(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		try{
@@ -40,7 +39,6 @@ public abstract class SetConfigurationCommand<T> extends BaseConfigurationComman
 		}
 	}
 	
-	@SuppressWarnings("DuplicatedCode")
 	@Override
 	protected void onRemove(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		try{
@@ -55,7 +53,6 @@ public abstract class SetConfigurationCommand<T> extends BaseConfigurationComman
 		}
 	}
 	
-	@SuppressWarnings("DuplicatedCode")
 	@Override
 	protected void onShow(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		final var values = this.getConfig(event.getGuild()).stream().flatMap(Set::stream).map(Objects::toString).collect(Collectors.joining(", "));
@@ -64,13 +61,13 @@ public abstract class SetConfigurationCommand<T> extends BaseConfigurationComman
 		Actions.reply(event, "", builder.build());
 	}
 	
-	@NonNull
-	protected abstract Optional<Set<T>> getConfig(@NonNull Guild guild);
+	protected abstract void removeConfig(@NonNull Guild guild, @NonNull T value);
 	
 	@NonNull
 	protected abstract T extractValue(@NonNull GuildMessageReceivedEvent event, @NonNull LinkedList<String> args) throws IllegalArgumentException;
 	
-	protected abstract void removeConfig(@NonNull Guild guild, @NonNull T value);
+	@NonNull
+	protected abstract Optional<Set<T>> getConfig(@NonNull Guild guild);
 	
 	protected abstract void createConfig(@NonNull Guild guild, @NonNull T value);
 }

@@ -25,15 +25,15 @@ public class MangaMedia extends Media{
 	}
 	
 	@Override
-	@NonNull
-	public String getProgressType(final boolean contains){
-		return "read chapter";
-	}
-	
-	@Override
 	protected void fillAdditionalEmbed(EmbedBuilder builder){
 		Optional.ofNullable(this.getChapters()).map(Object::toString).ifPresent(val -> builder.addField("Chapters", val, true));
 		Optional.ofNullable(this.getVolumes()).map(Object::toString).ifPresent(val -> builder.addField("Volumes", val, true));
+	}
+	
+	@Override
+	@NonNull
+	public String getProgressType(final boolean contains){
+		return "read chapter";
 	}
 	
 	@Override

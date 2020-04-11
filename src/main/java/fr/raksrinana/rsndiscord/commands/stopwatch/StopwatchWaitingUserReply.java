@@ -30,6 +30,24 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 		this.executor.scheduleAtFixedRate(this::updateTimer, 5, 10, TimeUnit.SECONDS);
 	}
 	
+	private void updateTimer(){
+		final var newTotalTime = this.totalTime.plus(this.counting ? Duration.between(this.lastStart, ZonedDateTime.now()) : Duration.ZERO);
+		if(!Objects.equals(newTotalTime, this.totalTime)){
+			final var builder = Utilities.buildEmbed(this.getWaitUser(), Color.GREEN, "Stopwatch", null);
+			builder.addField("Time", Utilities.durationToString(newTotalTime), false);
+			builder.addField(BasicEmotes.P.getValue(), "Pause", true);
+			builder.addField(BasicEmotes.R.getValue(), "Resume", true);
+			builder.addField(BasicEmotes.S.getValue(), "Stop", true);
+			this.getInfoMessages().stream().findFirst().ifPresent(m -> Actions.editMessage(m, builder.build()));
+		}
+	}
+	
+	@Override
+	public void close() throws IOException{
+		super.close();
+		this.executor.shutdownNow();
+	}
+	
 	@Override
 	protected boolean onExecute(@NonNull final GuildMessageReactionAddEvent event){
 		if(!Objects.equals(event.getUser(), event.getJDA().getSelfUser())){
@@ -72,24 +90,6 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 		return false;
 	}
 	
-	private void updateTimer(){
-		final var newTotalTime = this.totalTime.plus(this.counting ? Duration.between(this.lastStart, ZonedDateTime.now()) : Duration.ZERO);
-		if(!Objects.equals(newTotalTime, this.totalTime)){
-			final var builder = Utilities.buildEmbed(this.getWaitUser(), Color.GREEN, "Stopwatch", null);
-			builder.addField("Time", Utilities.durationToString(newTotalTime), false);
-			builder.addField(BasicEmotes.P.getValue(), "Pause", true);
-			builder.addField(BasicEmotes.R.getValue(), "Resume", true);
-			builder.addField(BasicEmotes.S.getValue(), "Stop", true);
-			this.getInfoMessages().stream().findFirst().ifPresent(m -> Actions.editMessage(m, builder.build()));
-		}
-	}
-	
-	@Override
-	public void close() throws IOException{
-		super.close();
-		this.executor.shutdownNow();
-	}
-	
 	@Override
 	public boolean onExpire(){
 		this.counting = false;
@@ -100,12 +100,12 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 	}
 	
 	@Override
-	protected boolean onExecute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
-		return false;
+	public boolean handleEvent(final GuildMessageReactionAddEvent event){
+		return Objects.equals(this.getWaitChannel(), event.getChannel()) && Objects.equals(this.getEmoteMessageId(), event.getMessageIdLong());
 	}
 	
 	@Override
-	public boolean handleEvent(final GuildMessageReactionAddEvent event){
-		return Objects.equals(this.getWaitChannel(), event.getChannel()) && Objects.equals(this.getEmoteMessageId(), event.getMessageIdLong());
+	protected boolean onExecute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+		return false;
 	}
 }

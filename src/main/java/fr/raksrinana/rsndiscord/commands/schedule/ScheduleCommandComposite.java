@@ -47,15 +47,9 @@ public class ScheduleCommandComposite extends CommandComposite{
 			int amount = Integer.parseInt(matcher.group(1));
 			String type = matcher.group(2);
 			switch(type){
-				case "m":
-					duration = duration.plus(Duration.ofMinutes(amount));
-					break;
-				case "h":
-					duration = duration.plus(Duration.ofHours(amount));
-					break;
-				case "d":
-					duration = duration.plus(Duration.ofDays(amount));
-					break;
+				case "m" -> duration = duration.plus(Duration.ofMinutes(amount));
+				case "h" -> duration = duration.plus(Duration.ofHours(amount));
+				case "d" -> duration = duration.plus(Duration.ofDays(amount));
 			}
 		}
 		return duration;

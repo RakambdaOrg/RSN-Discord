@@ -19,7 +19,7 @@ public class AmazonPriceCheckerScheduledRunner implements ScheduledRunner{
 	public void execute(){
 		this.getJda().getGuilds().forEach(guild -> {
 			final var settings = Settings.get(guild);
-			settings.getAmazonTrackings().forEach(tracking -> AmazonUtils.getProduct(tracking.getUrl()).ifPresent(product -> {
+			settings.getAmazonTracking().forEach(tracking -> AmazonUtils.getProduct(tracking.getUrl()).ifPresent(product -> {
 				if(product.getPrice() != tracking.getLastPrice()){
 					tracking.setLastPrice(product.getPrice());
 					AmazonUtils.sendMessage(tracking, product);
@@ -28,15 +28,15 @@ public class AmazonPriceCheckerScheduledRunner implements ScheduledRunner{
 		});
 	}
 	
+	@Override
+	public long getDelay(){
+		return 0;
+	}
+	
 	@NonNull
 	@Override
 	public String getName(){
 		return "Amazon price";
-	}
-	
-	@Override
-	public long getDelay(){
-		return 0;
 	}
 	
 	@Override

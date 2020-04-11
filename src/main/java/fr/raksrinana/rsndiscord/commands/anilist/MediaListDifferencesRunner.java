@@ -33,18 +33,19 @@ class MediaListDifferencesRunner implements AniListRunner<MediaList, MediaListPa
 	}
 	
 	@Override
-	public Set<Member> getMembers(){
-		return Set.of(this.member1, this.member2);
-	}
-	
-	@Override
-	public Set<TextChannel> getChannels(){
-		return Set.of(this.channel);
+	public void execute(){
+		this.runQueryOnDefaultUsersChannels();
 	}
 	
 	@Override
 	public long getDelay(){
 		return 0;
+	}
+	
+	@NonNull
+	@Override
+	public String getName(){
+		return "AniList list differences";
 	}
 	
 	@Override
@@ -58,14 +59,13 @@ class MediaListDifferencesRunner implements AniListRunner<MediaList, MediaListPa
 	}
 	
 	@Override
-	public void execute(){
-		this.runQueryOnDefaultUsersChannels();
+	public Set<TextChannel> getChannels(){
+		return Set.of(this.channel);
 	}
 	
-	@NonNull
 	@Override
-	public String getName(){
-		return "AniList list differences";
+	public Set<Member> getMembers(){
+		return Set.of(this.member1, this.member2);
 	}
 	
 	@Override

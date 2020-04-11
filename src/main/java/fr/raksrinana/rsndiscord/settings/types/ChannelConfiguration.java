@@ -14,12 +14,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.Optional;
 
-/**
- * Created by mrcraftcod (MrCraftCod - zerderr@gmail.com) on 2019-06-23.
- *
- * @author Thomas Couchoud
- * @since 2019-06-23
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter

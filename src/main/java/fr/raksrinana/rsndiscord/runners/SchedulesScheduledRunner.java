@@ -45,15 +45,15 @@ public class SchedulesScheduledRunner implements ScheduledRunner{
 		}
 	}
 	
+	@Override
+	public long getDelay(){
+		return 3;
+	}
+	
 	@NonNull
 	@Override
 	public String getName(){
 		return "schedules refresher";
-	}
-	
-	@Override
-	public long getDelay(){
-		return 3;
 	}
 	
 	@Override

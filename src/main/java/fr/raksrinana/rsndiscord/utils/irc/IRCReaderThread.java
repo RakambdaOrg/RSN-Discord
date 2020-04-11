@@ -12,8 +12,8 @@ public class IRCReaderThread extends Thread implements Closeable{
 	public static final double MESSAGE_TIMEOUT = 6.048e8;
 	private final BufferedReader reader;
 	private final IRCClient client;
-	private boolean stop;
 	private final IIRCMessageBuilder ircMessageBuilder;
+	private boolean stop;
 	
 	public IRCReaderThread(@NonNull final IRCClient client, @NonNull final IIRCMessageBuilder ircMessageBuilder, @NonNull final InputStream inputStream){
 		this.client = client;

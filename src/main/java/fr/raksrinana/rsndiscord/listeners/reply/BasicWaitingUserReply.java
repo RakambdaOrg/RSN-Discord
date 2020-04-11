@@ -106,15 +106,15 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 		return Objects.equals(this.getUser(), event.getUser()) && Objects.equals(this.getWaitChannel(), event.getChannel()) && Objects.equals(this.getEmoteMessageId(), event.getMessageIdLong());
 	}
 	
+	@Override
+	public long getEmoteMessageId(){
+		return this.getInfoMessages().stream().map(Message::getIdLong).findFirst().orElse(-1L);
+	}
+	
 	@NonNull
 	@Override
 	public User getUser(){
 		return this.waitUser;
-	}
-	
-	@Override
-	public long getEmoteMessageId(){
-		return this.getInfoMessages().stream().map(Message::getIdLong).findFirst().orElse(-1L);
 	}
 	
 	protected abstract boolean onExecute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args);

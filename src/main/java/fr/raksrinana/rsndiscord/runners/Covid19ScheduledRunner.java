@@ -52,8 +52,39 @@ public class Covid19ScheduledRunner implements ScheduledRunner{
 	}
 	
 	@Override
+	public void execute(){
+		Collection<MessageEmbed> embeds = getEmbeds();
+		this.jda.getGuilds().stream().map(Settings::get).flatMap(settings -> settings.getCovid19Channel().stream()).flatMap(channel -> channel.getChannel().stream()).forEach(channel -> embeds.forEach(embed -> Actions.sendMessage(channel, "", embed)));
+	}
+	
+	@Override
 	public long getDelay(){
 		return 0;
+	}
+	
+	@NonNull
+	@Override
+	public String getName(){
+		return "Covid 19";
+	}
+	
+	@Override
+	public long getPeriod(){
+		return 6;
+	}
+	
+	@NonNull
+	@Override
+	public TimeUnit getPeriodUnit(){
+		return TimeUnit.HOURS;
+	}
+	
+	private Collection<MessageEmbed> getEmbeds(){
+		var request = new ObjectGetRequestSender<List<Covid19CountryResponse>>(new GenericType<>(){}, Unirest.get("https://coronavirus-19-api.herokuapp.com/countries")).getRequestHandler();
+		if(request.getResult().isSuccess()){
+			return request.getRequestResult().stream().filter(countryResponse -> Objects.equals(countryResponse.getCountry(), "France") || Objects.equals(countryResponse.getCountry(), "Thailand")).map(this::buildEmbed).collect(Collectors.toList());
+		}
+		return List.of();
 	}
 	
 	private MessageEmbed buildEmbed(Covid19CountryResponse countryResponse){
@@ -66,36 +97,5 @@ public class Covid19ScheduledRunner implements ScheduledRunner{
 		builder.addField("Recovered", Integer.toString(countryResponse.getRecovered()), true);
 		builder.addField("Critical", Integer.toString(countryResponse.getCritical()), true);
 		return builder.build();
-	}
-	
-	@NonNull
-	@Override
-	public TimeUnit getPeriodUnit(){
-		return TimeUnit.HOURS;
-	}
-	
-	@Override
-	public void execute(){
-		Collection<MessageEmbed> embeds = getEmbeds();
-		this.jda.getGuilds().stream().map(Settings::get).flatMap(settings -> settings.getCovid19Channel().stream()).flatMap(channel -> channel.getChannel().stream()).forEach(channel -> embeds.forEach(embed -> Actions.sendMessage(channel, "", embed)));
-	}
-	
-	private Collection<MessageEmbed> getEmbeds(){
-		var request = new ObjectGetRequestSender<List<Covid19CountryResponse>>(new GenericType<>(){}, Unirest.get("https://coronavirus-19-api.herokuapp.com/countries")).getRequestHandler();
-		if(request.getResult().isSuccess()){
-			return request.getRequestResult().stream().filter(countryResponse -> Objects.equals(countryResponse.getCountry(), "France") || Objects.equals(countryResponse.getCountry(), "Thailand")).map(this::buildEmbed).collect(Collectors.toList());
-		}
-		return List.of();
-	}
-	
-	@Override
-	public long getPeriod(){
-		return 6;
-	}
-	
-	@NonNull
-	@Override
-	public String getName(){
-		return "Covid 19";
 	}
 }

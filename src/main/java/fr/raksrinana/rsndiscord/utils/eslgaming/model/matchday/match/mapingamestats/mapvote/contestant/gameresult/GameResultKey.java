@@ -16,7 +16,7 @@ public enum GameResultKey{
 	
 	@JsonCreator
 	@NonNull
-	public GameResultKey getFromString(@NonNull final String value){
+	public static GameResultKey getFromString(@NonNull final String value){
 		for(final var action : GameResultKey.values()){
 			if(action.name().equalsIgnoreCase(value)){
 				return action;

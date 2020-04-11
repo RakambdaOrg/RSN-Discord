@@ -189,6 +189,13 @@ public class Match implements Comparable<Match>{
 		return getUid() == match.getUid();
 	}
 	
+	private static void buildMapVotes(@NonNull EmbedBuilder builder, MapInGameStats stats){
+		Optional.ofNullable(stats).map(MapInGameStats::getMapVotes).filter(votes -> !votes.isEmpty()).ifPresent(votes -> {
+			builder.addBlankField(false);
+			votes.stream().sorted().forEachOrdered(vote -> builder.addField(Optional.ofNullable(vote.getContestant()).map(Contestant::getTournamentContestant).map(TournamentContestant::getSquad).map(Squad::getDescription).map(name -> name + " ").orElse("") + vote.getAction(), vote.getGameVersionMap().getName(), false));
+		});
+	}
+	
 	public void buildEmbed(EmbedBuilder builder){
 		builder.setTitle(getTeam1() + " vs " + getTeam2());
 		builder.setFooter("ID: " + getUid());
@@ -206,11 +213,9 @@ public class Match implements Comparable<Match>{
 		buildMapVotes(builder, getMap5InGameStats());
 	}
 	
-	private static void buildMapVotes(@NonNull EmbedBuilder builder, MapInGameStats stats){
-		Optional.ofNullable(stats).map(MapInGameStats::getMapVotes).filter(votes -> !votes.isEmpty()).ifPresent(votes -> {
-			builder.addBlankField(false);
-			votes.stream().sorted().forEachOrdered(vote -> builder.addField(Optional.ofNullable(vote.getContestant()).map(Contestant::getTournamentContestant).map(TournamentContestant::getSquad).map(Squad::getDescription).map(name -> name + " ").orElse("") + vote.getAction(), vote.getGameVersionMap().getName(), false));
-		});
+	@Override
+	public String toString(){
+		return getTeam1() + " vs " + getTeam2() + " (" + getUid() + ')';
 	}
 	
 	private List<MapResult> getMaps(){
@@ -234,35 +239,25 @@ public class Match implements Comparable<Match>{
 	}
 	
 	private Optional<Team> getWinnerTeam(){
-		switch(getStatus()){
-			case TEAM1_WON:
-				return Optional.of(getTeam1());
-			case TEAM2_WON:
-				return Optional.of(getTeam2());
-		}
-		return Optional.empty();
+		return switch(getStatus()){
+			case TEAM1_WON -> Optional.of(getTeam1());
+			case TEAM2_WON -> Optional.of(getTeam2());
+			default -> Optional.empty();
+		};
 	}
 	
 	public MatchStatus getStatus(){
-		switch(getWinner()){
-			case 1:
-				return MatchStatus.TEAM1_WON;
-			case 2:
-				return MatchStatus.TEAM2_WON;
-			case 3:
-				return MatchStatus.DRAW;
-		}
-		return MatchStatus.PENDING;
+		return switch(getWinner()){
+			case 1 -> MatchStatus.TEAM1_WON;
+			case 2 -> MatchStatus.TEAM2_WON;
+			case 3 -> MatchStatus.DRAW;
+			default -> MatchStatus.PENDING;
+		};
 	}
 	
 	@Override
 	public int compareTo(@NonNull Match o){
 		return getPlayDate().compareTo(o.getPlayDate());
-	}
-	
-	@Override
-	public String toString(){
-		return getTeam1() + " vs " + getTeam2() + " (" + getUid() + ')';
 	}
 	
 	public boolean isCompleted(){

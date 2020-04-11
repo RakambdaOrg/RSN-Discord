@@ -44,13 +44,13 @@ public class UserHistoryPagedGetRequest implements TraktPagedGetRequest<UserHist
 	}
 	
 	@Override
-	public GenericType<Set<UserHistory>> getOutputType(){
-		return new GenericType<>(){};
+	public int getPage(){
+		return this.page;
 	}
 	
 	@Override
-	public int getPage(){
-		return this.page;
+	public GenericType<Set<UserHistory>> getOutputType(){
+		return new GenericType<>(){};
 	}
 	
 	@Override

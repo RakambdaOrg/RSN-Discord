@@ -82,16 +82,16 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	}
 	
 	@NonNull
+	private Optional<ZonedDateTime> getRealTimeDateTime(){
+		return Optional.ofNullable(this.realTimeDateTime);
+	}
+	
+	@NonNull
 	private String getEmbedDate(@NonNull final ZonedDateTime dateTime){
 		if(LocalDate.now().equals(dateTime.toLocalDate())){
 			return dateTime.format(this.dateTimeFormatterEmbedShort);
 		}
 		return dateTime.format(this.dateTimeFormatterEmbedLong);
-	}
-	
-	@NonNull
-	private Optional<ZonedDateTime> getRealTimeDateTime(){
-		return Optional.ofNullable(this.realTimeDateTime);
 	}
 	
 	@Override

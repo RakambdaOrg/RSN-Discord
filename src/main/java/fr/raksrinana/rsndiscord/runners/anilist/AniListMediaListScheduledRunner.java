@@ -31,32 +31,14 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 	private static final Collection<String> acceptedThaLists = Set.of("Tha");
 	@Getter
 	private final JDA jda;
-	@Getter
-	private final boolean keepOnlyNew;
 	
-	public AniListMediaListScheduledRunner(@NonNull final JDA jda){
-		this(jda, true);
-	}
-	
-	private AniListMediaListScheduledRunner(@NonNull final JDA jda, final boolean keepOnlyNew){
+	private AniListMediaListScheduledRunner(@NonNull final JDA jda){
 		this.jda = jda;
-		this.keepOnlyNew = keepOnlyNew;
-	}
-	
-	@Override
-	public void execute(){
-		this.runQueryOnDefaultUsersChannels();
 	}
 	
 	@Override
 	public Set<TextChannel> getChannels(){
 		return this.getJda().getGuilds().stream().map(g -> Settings.get(g).getAniListConfiguration().getMediaChangeChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toSet());
-	}
-	
-	@NonNull
-	@Override
-	public String getName(){
-		return "AniList media list";
 	}
 	
 	@Override
@@ -77,7 +59,7 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 		})));
 	}
 	
-	private Collection<WaitingReactionMessageConfiguration> getSimilarWaitingReactions(@NonNull final TextChannel channel, @NonNull final Media media){
+	private static Collection<WaitingReactionMessageConfiguration> getSimilarWaitingReactions(@NonNull final TextChannel channel, @NonNull final Media media){
 		final var mediaIdStr = Integer.toString(media.getId());
 		return Settings.get(channel.getGuild()).getMessagesAwaitingReaction(ReactionTag.ANILIST_TODO).stream().filter(reaction -> Objects.equals(reaction.getTag(), ReactionTag.ANILIST_TODO)).filter(reaction -> {
 			if(Objects.equals(reaction.getMessage().getChannel().getChannelId(), channel.getIdLong())){
@@ -96,6 +78,11 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 		return new MediaListPagedQuery(AniListUtils.getUserId(member).orElseThrow());
 	}
 	
+	@Override
+	public void execute(){
+		this.runQueryOnDefaultUsersChannels();
+	}
+	
 	@NonNull
 	@Override
 	public String getFetcherID(){
@@ -109,6 +96,12 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 	
 	@NonNull
 	@Override
+	public String getName(){
+		return "AniList media list";
+	}
+	
+	@NonNull
+	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.HOURS;
 	}
@@ -116,5 +109,10 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 	@Override
 	public long getPeriod(){
 		return 1;
+	}
+	
+	@Override
+	public boolean isKeepOnlyNew(){
+		return true;
 	}
 }

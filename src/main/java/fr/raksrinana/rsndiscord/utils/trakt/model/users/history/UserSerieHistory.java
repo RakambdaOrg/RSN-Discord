@@ -43,11 +43,6 @@ public class UserSerieHistory extends UserHistory{
 	}
 	
 	@Override
-	public int hashCode(){
-		return Objects.hash(getEpisode(), getShow());
-	}
-	
-	@Override
 	public int compareTo(@NonNull TraktObject o){
 		if(o instanceof UserSerieHistory){
 			final var h = (UserSerieHistory) o;
@@ -62,6 +57,11 @@ public class UserSerieHistory extends UserHistory{
 	@Override
 	public MediaIds getIds(){
 		return getShow().getIds();
+	}
+	
+	@Override
+	public int hashCode(){
+		return Objects.hash(getEpisode(), getShow());
 	}
 	
 	@Override

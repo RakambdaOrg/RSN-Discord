@@ -26,19 +26,8 @@ public class AniListActivityScheduledRunner implements AniListRunner<ListActivit
 	}
 	
 	@Override
-	public void execute(){
-		this.runQueryOnDefaultUsersChannels();
-	}
-	
-	@Override
 	public Set<TextChannel> getChannels(){
 		return this.getJda().getGuilds().stream().map(g -> Settings.get(g).getAniListConfiguration().getMediaChangeChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toSet());
-	}
-	
-	@NonNull
-	@Override
-	public String getName(){
-		return "AniList list activity";
 	}
 	
 	@NonNull
@@ -72,5 +61,16 @@ public class AniListActivityScheduledRunner implements AniListRunner<ListActivit
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.HOURS;
+	}
+	
+	@Override
+	public void execute(){
+		this.runQueryOnDefaultUsersChannels();
+	}
+	
+	@NonNull
+	@Override
+	public String getName(){
+		return "AniList list activity";
 	}
 }

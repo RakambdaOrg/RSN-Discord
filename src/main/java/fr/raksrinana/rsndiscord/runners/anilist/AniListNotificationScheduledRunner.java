@@ -26,24 +26,8 @@ public class AniListNotificationScheduledRunner implements AniListRunner<Notific
 	}
 	
 	@Override
-	public void execute(){
-		this.runQueryOnDefaultUsersChannels();
-	}
-	
-	@Override
 	public Set<TextChannel> getChannels(){
 		return this.getJda().getGuilds().stream().map(g -> Settings.get(g).getAniListConfiguration().getNotificationsChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toSet());
-	}
-	
-	@Override
-	public long getDelay(){
-		return 1;
-	}
-	
-	@NonNull
-	@Override
-	public String getName(){
-		return "notification";
 	}
 	
 	@Override
@@ -70,11 +54,6 @@ public class AniListNotificationScheduledRunner implements AniListRunner<Notific
 	}
 	
 	@Override
-	public long getPeriod(){
-		return 15;
-	}
-	
-	@Override
 	public boolean isKeepOnlyNew(){
 		return true;
 	}
@@ -85,9 +64,30 @@ public class AniListNotificationScheduledRunner implements AniListRunner<Notific
 		return "notification";
 	}
 	
+	@Override
+	public void execute(){
+		this.runQueryOnDefaultUsersChannels();
+	}
+	
+	@Override
+	public long getDelay(){
+		return 1;
+	}
+	
 	@NonNull
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.MINUTES;
+	}
+	
+	@NonNull
+	@Override
+	public String getName(){
+		return "notification";
+	}
+	
+	@Override
+	public long getPeriod(){
+		return 15;
 	}
 }

@@ -26,13 +26,13 @@ public class DogCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		final var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, ":dog: ** | Here's your random dog:**", null);
-		embed.setImage(this.getDogPictureURL(event.getGuild()));
+		embed.setImage(DogCommand.getDogPictureURL(event.getGuild()));
 		Actions.reply(event, "", embed.build());
 		return CommandResult.SUCCESS;
 	}
 	
 	@NonNull
-	private String getDogPictureURL(final Guild guild){
+	private static String getDogPictureURL(final Guild guild){
 		Log.getLogger(guild).debug("Getting random dog picture");
 		final var handler = new JSONGetRequestSender(Unirest.get("https://dog.ceo/api/breeds/image/random")).getRequestHandler();
 		if(Objects.equals(handler.getStatus(), HTTP_OK)){

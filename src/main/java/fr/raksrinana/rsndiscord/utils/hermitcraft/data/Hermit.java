@@ -5,9 +5,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
+import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -44,4 +47,26 @@ public class Hermit{
 	private String channelId;
 	@JsonProperty("UploadPlaylistID")
 	private String uploadPlaylistId;
+	
+	public Optional<URL> getLiveUrl(){
+		try{
+			if(isStreaming()){
+				return Optional.of(new URL("https://twitch.tv/" + getTwitchName()));
+			}
+			if(isBeamStreaming()){
+				return Optional.of(new URL("https://mixer.com/" + getBeamName()));
+			}
+			if(isYtStreaming()){
+				return Optional.of(new URL("https://youtube.com/channel/" + getChannelId()));
+			}
+		}
+		catch(MalformedURLException e){
+			Log.getLogger(null).error("Failed to build hermit livestream url", e);
+		}
+		return Optional.empty();
+	}
+	
+	public boolean isLive(){
+		return isStreaming() || isYtStreaming() || isBeamStreaming();
+	}
 }

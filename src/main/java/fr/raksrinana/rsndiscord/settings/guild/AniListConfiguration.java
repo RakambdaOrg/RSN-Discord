@@ -26,26 +26,26 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class AniListConfiguration implements CompositeConfiguration{
 	@JsonProperty("accessToken")
-	private final Set<AnilistAccessTokenConfiguration> tokens = new HashSet<>();
+	private Set<AnilistAccessTokenConfiguration> tokens = new HashSet<>();
+	@JsonProperty("refreshTokens")
+	private Map<Long, String> refreshTokens = new HashMap<>();
+	@JsonProperty("lastAccess")
+	@Getter
+	private Map<String, Set<UserDateConfiguration>> lastAccess = new HashMap<>();
+	@JsonProperty("userIds")
+	private Map<Long, Integer> userIds = new HashMap<>();
 	@JsonProperty("notificationsChannel")
 	@Setter
 	private ChannelConfiguration notificationsChannel;
 	@JsonProperty("mediaChangeChannel")
 	@Setter
 	private ChannelConfiguration mediaChangeChannel;
-	@JsonProperty("refreshTokens")
-	private final Map<Long, String> refreshTokens = new HashMap<>();
-	@JsonProperty("lastAccess")
-	@Getter
-	private final Map<String, Set<UserDateConfiguration>> lastAccess = new HashMap<>();
 	@JsonProperty("thaChannel")
 	@Setter
 	private ChannelConfiguration thaChannel;
 	@JsonProperty("thaUser")
 	@Setter
 	private UserConfiguration thaUser;
-	@JsonProperty("userIds")
-	private final Map<Long, Integer> userIds = new HashMap<>();
 	
 	@NonNull
 	public Optional<String> getRefreshToken(final long userId){

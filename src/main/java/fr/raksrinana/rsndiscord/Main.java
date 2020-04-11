@@ -39,8 +39,8 @@ import java.util.concurrent.ScheduledExecutorService;
 
 public class Main{
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
-	private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
 	public static final boolean DEVELOPMENT = Boolean.parseBoolean(System.getProperty("rsndev", "false"));
+	private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
 	@Getter
 	private static CLIParameters parameters;
 	@Getter
@@ -100,20 +100,6 @@ public class Main{
 		consoleHandler.start();
 	}
 	
-	private static void registerAllScheduledRunners(@NonNull JDA jda){
-		Utilities.getAllInstancesOf(ScheduledRunner.class, Main.class.getPackage().getName() + ".runners", c -> {
-			try{
-				if(!c.equals(AniListActivityScheduledRunner.class)){
-					return c.getConstructor(JDA.class).newInstance(jda);
-				}
-			}
-			catch(InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e){
-				Log.getLogger(null).error("Failed to create instance of {}", c.getName(), e);
-			}
-			return null;
-		}).stream().peek(c -> Log.getLogger(null).info("Loaded scheduled runner {}", c.getClass().getName())).forEach(scheduledRunner -> executorService.scheduleAtFixedRate(new ScheduledRunnerRunnable(scheduledRunner), scheduledRunner.getDelay(), scheduledRunner.getPeriod(), scheduledRunner.getPeriodUnit()));
-	}
-	
 	static CLIParameters loadEnv(@NonNull String[] args){
 		Log.getLogger(null).info("Starting bot version {}", getRSNBotVersion());
 		if(DEVELOPMENT){
@@ -140,21 +126,18 @@ public class Main{
 		return parameters;
 	}
 	
-	/**
-	 * Get the version of the bot.
-	 *
-	 * @return The version, or {@code "Unknown"} if unknown.
-	 */
-	@NonNull
-	public static String getRSNBotVersion(){
-		final var properties = new Properties();
-		try{
-			properties.load(Main.class.getResource("/version.properties").openStream());
-		}
-		catch(final Exception e){
-			Log.getLogger(null).warn("Error reading version", e);
-		}
-		return properties.getProperty("bot.version", "Unknown");
+	private static void registerAllScheduledRunners(@NonNull JDA jda){
+		Utilities.getAllInstancesOf(ScheduledRunner.class, Main.class.getPackage().getName() + ".runners", c -> {
+			try{
+				if(!c.equals(AniListActivityScheduledRunner.class)){
+					return c.getConstructor(JDA.class).newInstance(jda);
+				}
+			}
+			catch(InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e){
+				Log.getLogger(null).error("Failed to create instance of {}", c.getName(), e);
+			}
+			return null;
+		}).stream().peek(c -> Log.getLogger(null).info("Loaded scheduled runner {}", c.getClass().getName())).forEach(scheduledRunner -> executorService.scheduleAtFixedRate(new ScheduledRunnerRunnable(scheduledRunner), scheduledRunner.getDelay(), scheduledRunner.getPeriod(), scheduledRunner.getPeriodUnit()));
 	}
 	
 	/**
@@ -180,6 +163,23 @@ public class Main{
 				Log.getLogger(guild).error("Failed to automatically connect to twitch user {}", user, e);
 			}
 		}));
+	}
+	
+	/**
+	 * Get the version of the bot.
+	 *
+	 * @return The version, or {@code "Unknown"} if unknown.
+	 */
+	@NonNull
+	public static String getRSNBotVersion(){
+		final var properties = new Properties();
+		try{
+			properties.load(Main.class.getResource("/version.properties").openStream());
+		}
+		catch(final Exception e){
+			Log.getLogger(null).warn("Error reading version", e);
+		}
+		return properties.getProperty("bot.version", "Unknown");
 	}
 	
 	/**

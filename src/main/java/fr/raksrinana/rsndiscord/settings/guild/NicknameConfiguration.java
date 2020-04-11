@@ -23,13 +23,13 @@ import java.util.Optional;
 @Getter
 @NoArgsConstructor
 public class NicknameConfiguration implements CompositeConfiguration{
-	@JsonProperty("changeDelay")
-	@Setter
-	private long changeDelay = 3600;
 	@JsonSerialize(contentUsing = ZonedDateTimeSerializer.class)
 	@JsonDeserialize(contentUsing = ZonedDateTimeDeserializer.class)
 	@JsonProperty("lastChange")
-	private final Map<Long, ZonedDateTime> lastChange = new HashMap<>();
+	private Map<Long, ZonedDateTime> lastChange = new HashMap<>();
+	@JsonProperty("changeDelay")
+	@Setter
+	private long changeDelay = 3600;
 	
 	public Optional<ZonedDateTime> getLastChange(@NonNull final User user){
 		return this.getLastChange(user.getIdLong());

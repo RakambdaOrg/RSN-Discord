@@ -23,9 +23,9 @@ import java.util.concurrent.Executors;
 
 public class TraktUtils{
 	public static final String API_URL = "https://api.trakt.tv";
-	private static String CLIENT_ID;
-	private static String CLIENT_SECRET;
 	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+	private static String clientId;
+	private static String clientSecret;
 	
 	public static <T> Set<T> getPagedQuery(TraktAccessTokenConfiguration token, @NonNull TraktPagedGetRequest<T> request) throws RequestException, InvalidResponseException{
 		final var results = new HashSet<T>();
@@ -49,6 +49,25 @@ public class TraktUtils{
 		}
 		while(request.getPage() < pageCount);
 		return results;
+	}
+	
+	public static <T> T postQuery(TraktAccessTokenConfiguration token, @NonNull TraktPostRequest<T> request) throws RequestException{
+		final var handler = new ObjectPostRequestSender<>(request.getOutputType(), request.getRequest().headers(getHeaders(token))).getRequestHandler();
+		if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
+			return handler.getRequestResult();
+		}
+		throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + Optional.ofNullable(handler.getRequestResult()).map(Object::toString).orElse(null), handler.getStatus());
+	}
+	
+	private static Map<String, String> getHeaders(TraktAccessTokenConfiguration token){
+		final var headers = new HashMap<String, String>();
+		if(Objects.nonNull(token)){
+			headers.put("Authorization", "Bearer " + token.getToken());
+		}
+		headers.put("Content-Type", "application/json");
+		headers.put("trakt-api-key", getClientId());
+		headers.put("trakt-api-version", "2");
+		return headers;
 	}
 	
 	public static void pollDeviceToken(@NonNull GuildMessageReceivedEvent event, @NonNull DeviceCode deviceCode){
@@ -87,22 +106,11 @@ public class TraktUtils{
 		});
 	}
 	
-	private static Map<String, String> getHeaders(TraktAccessTokenConfiguration token){
-		final var headers = new HashMap<String, String>();
-		if(Objects.nonNull(token)){
-			headers.put("Authorization", "Bearer " + token.getToken());
-		}
-		headers.put("Content-Type", "application/json");
-		headers.put("trakt-api-key", getClientId());
-		headers.put("trakt-api-version", "2");
-		return headers;
-	}
-	
 	public static String getClientId(){
-		if(Objects.isNull(CLIENT_ID)){
-			CLIENT_ID = System.getProperty("TRAKT_CLIENT_ID");
+		if(Objects.isNull(clientId)){
+			clientId = System.getProperty("TRAKT_CLIENT_ID");
 		}
-		return CLIENT_ID;
+		return clientId;
 	}
 	
 	public static void stopAll(){
@@ -136,13 +144,6 @@ public class TraktUtils{
 			return handler.getRequestResult();
 		}
 		throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString(), handler.getStatus());
-	}
-	
-	public static String getClientSecret(){
-		if(Objects.isNull(CLIENT_SECRET)){
-			CLIENT_SECRET = System.getProperty("TRAKT_CLIENT_SECRET");
-		}
-		return CLIENT_SECRET;
 	}
 	
 	@NonNull
@@ -180,11 +181,10 @@ public class TraktUtils{
 		return Optional.empty();
 	}
 	
-	public static <T> T postQuery(TraktAccessTokenConfiguration token, @NonNull TraktPostRequest<T> request) throws RequestException{
-		final var handler = new ObjectPostRequestSender<>(request.getOutputType(), request.getRequest().headers(getHeaders(token))).getRequestHandler();
-		if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
-			return handler.getRequestResult();
+	public static String getClientSecret(){
+		if(Objects.isNull(clientSecret)){
+			clientSecret = System.getProperty("TRAKT_CLIENT_SECRET");
 		}
-		throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + Optional.ofNullable(handler.getRequestResult()).map(Object::toString).orElse(null), handler.getStatus());
+		return clientSecret;
 	}
 }

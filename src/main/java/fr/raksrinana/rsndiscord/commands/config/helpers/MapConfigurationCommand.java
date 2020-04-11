@@ -22,7 +22,6 @@ public abstract class MapConfigurationCommand<K, V> extends BaseConfigurationCom
 		return Set.of(ConfigurationOperation.ADD, ConfigurationOperation.REMOVE, ConfigurationOperation.SHOW);
 	}
 	
-	@SuppressWarnings("DuplicatedCode")
 	@Override
 	protected void onAdd(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		try{
@@ -38,7 +37,6 @@ public abstract class MapConfigurationCommand<K, V> extends BaseConfigurationCom
 		}
 	}
 	
-	@SuppressWarnings("DuplicatedCode")
 	@Override
 	protected void onRemove(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		try{
@@ -53,7 +51,6 @@ public abstract class MapConfigurationCommand<K, V> extends BaseConfigurationCom
 		}
 	}
 	
-	@SuppressWarnings("DuplicatedCode")
 	@Override
 	protected void onShow(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		final var values = this.getConfig(event.getGuild()).stream().map(Map::entrySet).flatMap(Set::stream).map(Objects::toString).collect(Collectors.joining(", "));

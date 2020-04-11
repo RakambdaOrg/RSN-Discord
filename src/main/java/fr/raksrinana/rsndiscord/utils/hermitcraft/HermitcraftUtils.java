@@ -27,12 +27,6 @@ public class HermitcraftUtils{
 		return getRequestResult(new GenericType<>(){}, "/hermit", Map.of());
 	}
 	
-	@NonNull
-	public static Optional<List<HermitcraftVideo>> getVideos(){
-		Log.getLogger(null).debug("Fetching hermitcraft videos");
-		return getRequestResult(new GenericType<>(){}, "/videos", Map.of("type", "HermitCraft", "start", ZonedDateTime.now(ZoneId.of("UTC")).format(DF)));
-	}
-	
 	private static <T> Optional<T> getRequestResult(GenericType<T> type, String endpoint, Map<String, Object> parameters){
 		final var handler = new ObjectGetRequestSender<>(type, Unirest.get(ENDPOINT + endpoint).queryString(parameters)).getRequestHandler();
 		handler.getResult().getParsingError().ifPresent(error -> {
@@ -43,5 +37,11 @@ public class HermitcraftUtils{
 			return Optional.of(handler.getRequestResult());
 		}
 		return Optional.empty();
+	}
+	
+	@NonNull
+	public static Optional<List<HermitcraftVideo>> getVideos(){
+		Log.getLogger(null).debug("Fetching hermitcraft videos");
+		return getRequestResult(new GenericType<>(){}, "/videos", Map.of("type", "HermitCraft", "start", ZonedDateTime.now(ZoneId.of("UTC")).format(DF)));
 	}
 }

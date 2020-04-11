@@ -23,6 +23,11 @@ public class LuxBusStopSelectionWaitingReply extends BasicWaitingUserReply{
 	}
 	
 	@Override
+	public long getEmoteMessageId(){
+		return -1;
+	}
+	
+	@Override
 	protected boolean onExecute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		if(args.isEmpty()){
 			Actions.reply(event, "Invalid selection", null);
@@ -44,10 +49,5 @@ public class LuxBusStopSelectionWaitingReply extends BasicWaitingUserReply{
 			}
 		}
 		return false;
-	}
-	
-	@Override
-	public long getEmoteMessageId(){
-		return -1;
 	}
 }

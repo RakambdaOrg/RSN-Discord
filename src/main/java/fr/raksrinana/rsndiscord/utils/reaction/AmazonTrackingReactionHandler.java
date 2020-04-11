@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEve
 import java.net.URL;
 import java.util.Objects;
 
-public class AmazonTrackingReactionHandler extends TodosReactionHandler{
+public class AmazonTrackingReactionHandler extends TodoReactionHandler{
 	@Override
 	public boolean acceptTag(@NonNull ReactionTag tag){
 		return Objects.equals(tag, ReactionTag.AMAZON_TRACKER);
@@ -23,16 +23,11 @@ public class AmazonTrackingReactionHandler extends TodosReactionHandler{
 	}
 	
 	@Override
-	public int getPriority(){
-		return 990;
-	}
-	
-	@Override
 	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emotes, @NonNull WaitingReactionMessageConfiguration todo){
 		try{
 			final var url = new URL(todo.getData().get(ReactionUtils.URL_KEY));
 			final var userId = Long.parseLong(todo.getData().get(ReactionUtils.USER_ID_KEY));
-			if(Settings.get(event.getGuild()).getAmazonTrackings().removeIf(tracking -> {
+			if(Settings.get(event.getGuild()).getAmazonTracking().removeIf(tracking -> {
 				final var delete = Objects.equals(url, tracking.getUrl()) && Objects.equals(userId, tracking.getUser().getUserId());
 				if(delete){
 					Actions.replyPrivate(event.getGuild(), event.getUser(), "This product won't be tracked anymore", null);
@@ -46,5 +41,10 @@ public class AmazonTrackingReactionHandler extends TodosReactionHandler{
 			Log.getLogger(event.getGuild()).error("Failed to stop tracking Amazon product", e);
 		}
 		return ReactionHandlerResult.PROCESSED_DELETE;
+	}
+	
+	@Override
+	public int getPriority(){
+		return 990;
 	}
 }

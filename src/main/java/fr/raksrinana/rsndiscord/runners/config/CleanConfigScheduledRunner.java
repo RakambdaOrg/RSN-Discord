@@ -11,17 +11,6 @@ public class CleanConfigScheduledRunner implements ScheduledRunner{
 	}
 	
 	@Override
-	public void execute(){
-		Settings.clean();
-	}
-	
-	@NonNull
-	@Override
-	public String getName(){
-		return "config cleaner";
-	}
-	
-	@Override
 	public long getDelay(){
 		return 2;
 	}
@@ -35,5 +24,16 @@ public class CleanConfigScheduledRunner implements ScheduledRunner{
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.MINUTES;
+	}
+	
+	@Override
+	public void execute(){
+		Settings.clean();
+	}
+	
+	@NonNull
+	@Override
+	public String getName(){
+		return "config cleaner";
 	}
 }

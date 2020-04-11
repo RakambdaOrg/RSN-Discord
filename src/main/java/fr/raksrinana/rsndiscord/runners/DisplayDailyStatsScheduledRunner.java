@@ -54,15 +54,15 @@ public class DisplayDailyStatsScheduledRunner implements ScheduledRunner{
 		}
 	}
 	
+	@Override
+	public long getDelay(){
+		return 0;
+	}
+	
 	@NonNull
 	@Override
 	public String getName(){
 		return "daily stats";
-	}
-	
-	@Override
-	public long getDelay(){
-		return 0;
 	}
 	
 	@Override

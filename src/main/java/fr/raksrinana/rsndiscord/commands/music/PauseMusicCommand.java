@@ -33,12 +33,8 @@ public class PauseMusicCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		switch(RSNAudioManager.pause(event.getGuild())){
-			case NO_MUSIC:
-				Actions.reply(event, MessageFormat.format("{0}, no music is being played", event.getAuthor().getAsMention()), null);
-				break;
-			case OK:
-				Actions.reply(event, MessageFormat.format("{0} paused the music", event.getAuthor().getAsMention()), null);
-				break;
+			case NO_MUSIC -> Actions.reply(event, MessageFormat.format("{0}, no music is being played", event.getAuthor().getAsMention()), null);
+			case OK -> Actions.reply(event, MessageFormat.format("{0} paused the music", event.getAuthor().getAsMention()), null);
 		}
 		return CommandResult.SUCCESS;
 	}

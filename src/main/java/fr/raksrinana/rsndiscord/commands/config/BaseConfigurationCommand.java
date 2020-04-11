@@ -51,18 +51,10 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 			}
 			Log.getLogger(event.getGuild()).info("Executing configuration operation {}", operation);
 			switch(operation){
-				case ADD:
-					this.onAdd(event, args);
-					break;
-				case SET:
-					this.onSet(event, args);
-					break;
-				case REMOVE:
-					this.onRemove(event, args);
-					break;
-				case SHOW:
-					this.onShow(event, args);
-					break;
+				case ADD -> this.onAdd(event, args);
+				case SET -> this.onSet(event, args);
+				case REMOVE -> this.onRemove(event, args);
+				case SHOW -> this.onShow(event, args);
 			}
 		}
 		catch(final IllegalArgumentException e){

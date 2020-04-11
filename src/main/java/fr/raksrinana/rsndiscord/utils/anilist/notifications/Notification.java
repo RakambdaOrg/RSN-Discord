@@ -19,11 +19,11 @@ import java.time.ZonedDateTime;
 @Getter
 public abstract class Notification implements AnilistDatedObject{
 	private final NotificationType type;
-	@JsonProperty("id")
-	private int id;
 	@JsonProperty("createdAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private final ZonedDateTime createdAt = ZonedDateTime.now();
+	private ZonedDateTime createdAt = ZonedDateTime.now();
+	@JsonProperty("id")
+	private int id;
 	
 	public Notification(NotificationType type){this.type = type;}
 	

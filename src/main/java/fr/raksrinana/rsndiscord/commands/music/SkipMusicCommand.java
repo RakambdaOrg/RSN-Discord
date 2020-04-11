@@ -36,12 +36,8 @@ public class SkipMusicCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		switch(RSNAudioManager.skip(event.getGuild())){
-			case NO_MUSIC:
-				Actions.reply(event, MessageFormat.format("{0}, no music currently playing", event.getAuthor().getAsMention()), null);
-				break;
-			case OK:
-				Actions.reply(event, MessageFormat.format("{0} skipped the music", event.getAuthor().getAsMention()), null);
-				break;
+			case NO_MUSIC -> Actions.reply(event, MessageFormat.format("{0}, no music currently playing", event.getAuthor().getAsMention()), null);
+			case OK -> Actions.reply(event, MessageFormat.format("{0} skipped the music", event.getAuthor().getAsMention()), null);
 		}
 		return CommandResult.SUCCESS;
 	}

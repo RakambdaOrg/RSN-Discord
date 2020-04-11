@@ -34,6 +34,8 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 	
 	Set<TextChannel> getChannels();
 	
+	String getFetcherID();
+	
 	default void runQuery(@NonNull final Set<Member> members, @NonNull final Set<TextChannel> channels){
 		final var userElements = new HashMap<User, Set<T>>();
 		for(final var member : members){
@@ -51,10 +53,6 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 		this.sendMessages(channels, userElements);
 	}
 	
-	default Set<Member> getMembers(){
-		return this.getChannels().stream().flatMap(channel -> Settings.get(channel.getGuild()).getTraktConfiguration().getRegisteredUsers().stream().map(user -> channel.getGuild().retrieveMember(user).complete())).filter(Objects::nonNull).collect(Collectors.toSet());
-	}
-	
 	@NonNull
 	default Set<T> getElements(@NonNull final Member member) throws Exception{
 		Log.getLogger(member.getGuild()).debug("Fetching user {}", member);
@@ -69,8 +67,6 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 		}
 		return elementList;
 	}
-	
-	String getFetcherID();
 	
 	default void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<T>> userElements){
 		if(this.isSortedByUser()){
@@ -95,6 +91,10 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 	@NonNull U initQuery(@NonNull Member member);
 	
 	boolean isKeepOnlyNew();
+	
+	default Set<Member> getMembers(){
+		return this.getChannels().stream().flatMap(channel -> Settings.get(channel.getGuild()).getTraktConfiguration().getRegisteredUsers().stream().map(user -> channel.getGuild().retrieveMember(user).complete())).filter(Objects::nonNull).collect(Collectors.toSet());
+	}
 	
 	default boolean isSortedByUser(){
 		return false;

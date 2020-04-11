@@ -12,15 +12,15 @@ public abstract class RoleConfigurationCommand extends ValueConfigurationCommand
 	}
 	
 	@Override
-	protected String getValueName(){
-		return "Role";
-	}
-	
-	@Override
 	protected RoleConfiguration extractValue(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		if(event.getMessage().getMentionedRoles().isEmpty()){
 			throw new IllegalArgumentException("Please mention the role");
 		}
 		return new RoleConfiguration(event.getMessage().getMentionedRoles().get(0));
+	}
+	
+	@Override
+	protected String getValueName(){
+		return "Role";
 	}
 }

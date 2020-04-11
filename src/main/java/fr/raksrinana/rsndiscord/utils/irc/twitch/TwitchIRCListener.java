@@ -83,6 +83,11 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 	}
 	
 	@Override
+	protected void onInfoMessage(final InfoMessageIRCMessage event){
+		Log.getLogger(this.getGuild()).info("IRC Info: {}", event.getMessage());
+	}
+	
+	@Override
 	protected void onUserNotice(final UserNoticeIRCMessage event){
 		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
 			Actions.sendMessage(this.channel, MessageFormat.format("__NOTICE__: {0}", event.getTags().stream().filter(t -> Objects.equals("system-msg", t.getKey())).map(IRCTag::getValue).map(v -> v.replace("\\s", " ").trim()).findFirst().orElse("UNKNOWN")), null);
@@ -113,11 +118,6 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 				Log.getLogger(this.getGuild()).debug("Unhandled notice: {}", event.getMessage());
 			}
 		}
-	}
-	
-	@Override
-	protected void onInfoMessage(final InfoMessageIRCMessage event){
-		Log.getLogger(this.getGuild()).info("IRC Info: {}", event.getMessage());
 	}
 	
 	@Override

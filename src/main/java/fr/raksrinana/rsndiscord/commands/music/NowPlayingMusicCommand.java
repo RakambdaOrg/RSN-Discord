@@ -45,7 +45,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 			builder.setDescription(track.getInfo().title);
 			builder.addField("Requester", userData.get(new RequesterTrackDataField()).map(User::getAsMention).orElse("Unknown"), true);
 			builder.addField("Repeating", userData.get(new ReplayTrackDataField()).map(Object::toString).orElse("False"), true);
-			builder.addField("Position", String.format("%s %s / %s", this.buildBar(track.getPosition(), track.getDuration()), getDuration(track.getPosition()), getDuration(track.getDuration())), true);
+			builder.addField("Position", String.format("%s %s / %s", NowPlayingMusicCommand.buildBar(track.getPosition(), track.getDuration()), getDuration(track.getPosition()), getDuration(track.getDuration())), true);
 		}, () -> {
 			builder.setColor(Color.RED);
 			builder.setDescription("No music are currently playing");
@@ -55,7 +55,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	}
 	
 	@NonNull
-	private String buildBar(double current, final double total){
+	private static String buildBar(double current, final double total){
 		final var charCount = 10;
 		if(current > total){
 			current = total;

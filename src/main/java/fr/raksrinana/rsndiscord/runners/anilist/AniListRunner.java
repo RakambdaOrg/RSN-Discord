@@ -53,6 +53,8 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 		this.sendMessages(channels, userElements);
 	}
 	
+	@NonNull String getFetcherID();
+	
 	@NonNull
 	default Set<T> getElements(@NonNull final Member member) throws Exception{
 		Log.getLogger(member.getGuild()).debug("Fetching user {}", member);
@@ -75,6 +77,8 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 	@NonNull U initQuery(@NonNull Member member);
 	
 	boolean isKeepOnlyNew();
+	
+	@NonNull JDA getJda();
 	
 	@NonNull
 	default MessageEmbed buildMessage(final User user, @NonNull final T change){
@@ -99,8 +103,4 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 	default boolean sendToChannel(final TextChannel channel, final User user){
 		return Settings.get(channel.getGuild()).getAniListConfiguration().getAccessToken(user.getIdLong()).isPresent();
 	}
-	
-	@NonNull JDA getJda();
-	
-	@NonNull String getFetcherID();
 }

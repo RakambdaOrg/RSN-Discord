@@ -27,6 +27,12 @@ public abstract class Media implements AniListObject{
 	@Getter
 	private static final String QUERY = "media {\n" + "id\n" + MediaTitle.getQUERY() + "\n" + "season\n" + "type\n" + "format\n" + "status\n" + "episodes\n" + "chapters\n" + "volumes\n" + FuzzyDate.getQuery("startDate") + "\n" + FuzzyDate.getQuery("endDate") + "\n" + "genres\n" + "isAdult\n" + MediaCoverImage.getQUERY() + "\n" + "siteUrl" + "}";
 	private final MediaType type;
+	@JsonProperty("startDate")
+	private FuzzyDate startDate = new FuzzyDate();
+	@JsonProperty("endDate")
+	private FuzzyDate endDate = new FuzzyDate();
+	@JsonProperty("genres")
+	private Set<String> genres = new HashSet<>();
 	@JsonProperty("title")
 	private MediaTitle title;
 	@JsonProperty("season")
@@ -41,12 +47,6 @@ public abstract class Media implements AniListObject{
 	private MediaCoverImage coverImage;
 	@JsonProperty("isAdult")
 	private boolean isAdult;
-	@JsonProperty("startDate")
-	private final FuzzyDate startDate = new FuzzyDate();
-	@JsonProperty("endDate")
-	private final FuzzyDate endDate = new FuzzyDate();
-	@JsonProperty("genres")
-	private final Set<String> genres = new HashSet<>();
 	@JsonProperty("id")
 	private int id;
 	
@@ -76,14 +76,10 @@ public abstract class Media implements AniListObject{
 		builder.setFooter("ID: " + getId());
 	}
 	
+	protected abstract void fillAdditionalEmbed(EmbedBuilder builder);
+	
 	@NonNull
 	public abstract String getProgressType(final boolean contains);
-	
-	public static String getQueryWithId(){
-		return "media(id: $mediaId) {\n" + "id\n" + MediaTitle.getQUERY() + "\n" + "season\n" + "type\n" + "format\n" + "status\n" + "episodes\n" + "chapters\n" + "volumes\n" + FuzzyDate.getQuery("startDate") + "\n" + FuzzyDate.getQuery("endDate") + "\n" + "genres\n" + "isAdult\n" + MediaCoverImage.getQUERY() + "\n" + "siteUrl" + "}";
-	}
-	
-	protected abstract void fillAdditionalEmbed(EmbedBuilder builder);
 	
 	@Override
 	public int hashCode(){
@@ -106,4 +102,8 @@ public abstract class Media implements AniListObject{
 	}
 	
 	public abstract Integer getItemCount();
+	
+	public static String getQueryWithId(){
+		return "media(id: $mediaId) {\n" + "id\n" + MediaTitle.getQUERY() + "\n" + "season\n" + "type\n" + "format\n" + "status\n" + "episodes\n" + "chapters\n" + "volumes\n" + FuzzyDate.getQuery("startDate") + "\n" + FuzzyDate.getQuery("endDate") + "\n" + "genres\n" + "isAdult\n" + MediaCoverImage.getQUERY() + "\n" + "siteUrl" + "}";
+	}
 }

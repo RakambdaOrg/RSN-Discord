@@ -37,15 +37,15 @@ public class OverwatchLeagueScheduledRunner implements ScheduledRunner{
 		}));
 	}
 	
+	@Override
+	public long getDelay(){
+		return 3;
+	}
+	
 	@NonNull
 	@Override
 	public String getName(){
 		return "Overwatch league";
-	}
-	
-	@Override
-	public long getDelay(){
-		return 3;
 	}
 	
 	@Override

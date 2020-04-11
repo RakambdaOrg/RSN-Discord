@@ -75,6 +75,14 @@ public class TraktConfiguration implements CompositeConfiguration{
 		this.tokens.remove(value);
 	}
 	
+	public void setUsername(final long userId, final String username){
+		this.usernames.put(userId, username);
+	}
+	
+	public Optional<String> getUserUsername(final long userId){
+		return Optional.ofNullable(this.usernames.get(userId));
+	}
+	
 	@NonNull
 	public Optional<ChannelConfiguration> getMediaChangeChannel(){
 		return Optional.ofNullable(this.mediaChangeChannel);
@@ -93,13 +101,5 @@ public class TraktConfiguration implements CompositeConfiguration{
 	@NonNull
 	public Optional<UserConfiguration> getThaUser(){
 		return Optional.ofNullable(this.thaUser);
-	}
-	
-	public void setUsername(final long userId, final String username){
-		this.usernames.put(userId, username);
-	}
-	
-	public Optional<String> getUserUsername(final long userId){
-		return Optional.ofNullable(this.usernames.get(userId));
 	}
 }

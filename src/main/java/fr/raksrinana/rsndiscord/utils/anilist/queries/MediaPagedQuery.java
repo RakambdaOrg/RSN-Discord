@@ -3,11 +3,13 @@ package fr.raksrinana.rsndiscord.utils.anilist.queries;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.raksrinana.rsndiscord.utils.anilist.media.Media;
 import kong.unirest.json.JSONObject;
+import lombok.Getter;
 import lombok.NonNull;
 import java.time.ZonedDateTime;
 
 public class MediaPagedQuery implements PagedQuery<Media>{
-	private final String QUERY;
+	@Getter
+	private final String query;
 	private final JSONObject variables;
 	private int nextPage = 0;
 	
@@ -16,13 +18,7 @@ public class MediaPagedQuery implements PagedQuery<Media>{
 		this.variables.put("mediaId", mediaId);
 		this.variables.put("page", 1);
 		this.variables.put("perPage", PER_PAGE);
-		this.QUERY = PagedQuery.pagedQuery(", $mediaId: Int", Media.getQueryWithId());
-	}
-	
-	@NonNull
-	@Override
-	public String getQuery(){
-		return QUERY;
+		this.query = PagedQuery.pagedQuery(", $mediaId: Int", Media.getQueryWithId());
 	}
 	
 	@NonNull

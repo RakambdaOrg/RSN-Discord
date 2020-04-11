@@ -49,7 +49,7 @@ public class AddProductCommand extends BasicCommand{
 				final var url = new URL(arg1);
 				AmazonUtils.getProduct(url).ifPresentOrElse(product -> {
 					final var tracking = new AmazonTrackingConfiguration(event.getAuthor(), url, event.getChannel(), product.getPrice());
-					Settings.get(event.getGuild()).getAmazonTrackings().add(tracking);
+					Settings.get(event.getGuild()).getAmazonTracking().add(tracking);
 					AmazonUtils.sendMessage(tracking, product);
 				}, () -> Actions.reply(event, "Couldn't access product information. This product won't be tracked.", null));
 			}

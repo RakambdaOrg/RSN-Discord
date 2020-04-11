@@ -25,16 +25,16 @@ public class AnimeMedia extends Media{
 	}
 	
 	@Override
-	@NonNull
-	public String getProgressType(final boolean contains){
-		return "watched episode";
-	}
-	
-	@Override
 	protected void fillAdditionalEmbed(EmbedBuilder builder){
 		final var year = Optional.ofNullable(this.getStartDate()).flatMap(FuzzyDate::asDate).map(LocalDate::getYear);
 		Optional.ofNullable(this.getEpisodes()).map(Object::toString).ifPresent(val -> builder.addField("Episodes", val, true));
 		Optional.ofNullable(this.getSeason()).map(Enum::toString).ifPresent(val -> builder.addField("Season", val + year.map(y -> " " + y).orElse(""), true));
+	}
+	
+	@Override
+	@NonNull
+	public String getProgressType(final boolean contains){
+		return "watched episode";
 	}
 	
 	@Override

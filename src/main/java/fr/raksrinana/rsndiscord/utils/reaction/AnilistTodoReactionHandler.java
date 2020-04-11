@@ -8,20 +8,20 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import java.util.Objects;
 
-public class AnilistTodosReactionHandler extends TodosReactionHandler{
+public class AnilistTodoReactionHandler extends TodoReactionHandler{
 	@Override
 	public boolean acceptTag(@NonNull ReactionTag tag){
 		return Objects.equals(tag, ReactionTag.ANILIST_TODO);
 	}
 	
 	@Override
-	public int getPriority(){
-		return 990;
-	}
-	
-	@Override
 	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emotes, @NonNull WaitingReactionMessageConfiguration todo){
 		todo.getMessage().getMessage().ifPresent(message -> message.getEmbeds().forEach(embed -> Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, event.getMember().getUser().getAsMention() + " completed", embed)));
 		return super.processTodoCompleted(event, emotes, todo);
+	}
+	
+	@Override
+	public int getPriority(){
+		return 990;
 	}
 }

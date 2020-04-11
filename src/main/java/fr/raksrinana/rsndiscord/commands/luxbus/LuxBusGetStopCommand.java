@@ -51,7 +51,7 @@ public class LuxBusGetStopCommand extends BasicCommand{
 				Actions.reply(event, "", embed.build());
 			}
 			else{
-				this.askStop(event, stops);
+				LuxBusGetStopCommand.askStop(event, stops);
 			}
 		}
 		catch(final Exception e){
@@ -60,7 +60,7 @@ public class LuxBusGetStopCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
-	private void askStop(@NonNull final GuildMessageReceivedEvent event, @NonNull final List<LuxBusStop> stops){
+	private static void askStop(@NonNull final GuildMessageReceivedEvent event, @NonNull final List<LuxBusStop> stops){
 		if(stops.size() < 2){
 			askLine(event, stops.get(0));
 		}

@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter

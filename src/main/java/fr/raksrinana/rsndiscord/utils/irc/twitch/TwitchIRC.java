@@ -13,25 +13,25 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class TwitchIRC{
-	private static IRCClient CLIENT = null;
+	private static IRCClient client = null;
 	
 	public static void connect(@NonNull final Guild guild, @NonNull final String user) throws IOException{
-		if(Objects.isNull(CLIENT)){
-			CLIENT = new IRCClient("irc.chat.twitch.tv", 6667, new TwitchIRCMessageBuilder());
-			CLIENT.setSecureKeyPassword(String.format("oauth:%s", System.getProperty("TWITCH_TOKEN")));
-			CLIENT.connect();
-			CLIENT.setNick(System.getProperty("TWITCH_NICKNAME"));
-			CLIENT.sendMessage("CAP REQ :twitch.tv/tags");
-			CLIENT.sendMessage("CAP REQ :twitch.tv/commands");
+		if(Objects.isNull(client)){
+			client = new IRCClient("irc.chat.twitch.tv", 6667, new TwitchIRCMessageBuilder());
+			client.setSecureKeyPassword(String.format("oauth:%s", System.getProperty("TWITCH_TOKEN")));
+			client.connect();
+			client.setNick(System.getProperty("TWITCH_NICKNAME"));
+			client.sendMessage("CAP REQ :twitch.tv/tags");
+			client.sendMessage("CAP REQ :twitch.tv/commands");
 		}
 		final var channel = String.format("#%s", user.toLowerCase());
-		if(CLIENT.getListeners().stream().noneMatch(l -> Objects.equals(l.getIrcChannel(), channel) && Objects.equals(guild, l.getGuild()))){
+		if(client.getListeners().stream().noneMatch(l -> Objects.equals(l.getIrcChannel(), channel) && Objects.equals(guild, l.getGuild()))){
 			final var listener = new TwitchIRCListener(guild, user, channel);
 			if(Settings.get(guild).getTwitchConfiguration().isIrcForward()){
 				guild.getJDA().addEventListener(listener);
 			}
-			CLIENT.addEventListener(listener);
-			CLIENT.joinChannel(channel);
+			client.addEventListener(listener);
+			client.joinChannel(channel);
 		}
 	}
 	
@@ -40,11 +40,11 @@ public class TwitchIRC{
 	}
 	
 	public static void disconnect(@NonNull final Guild guild, @NonNull final String user, final boolean removeListener){
-		if(Objects.nonNull(CLIENT)){
+		if(Objects.nonNull(client)){
 			final var ircChannel = String.format("#%s", user.toLowerCase());
-			CLIENT.getListeners().stream().filter(l -> Objects.equals(l.getUser(), user) && Objects.equals(guild, l.getGuild())).forEach(l -> l.onIRCMessage(new ChannelLeftIRCMessage(new IRCUser(""), ircChannel)));
+			client.getListeners().stream().filter(l -> Objects.equals(l.getUser(), user) && Objects.equals(guild, l.getGuild())).forEach(l -> l.onIRCMessage(new ChannelLeftIRCMessage(new IRCUser(""), ircChannel)));
 			if(removeListener){
-				CLIENT.getListeners().removeIf(obj -> {
+				client.getListeners().removeIf(obj -> {
 					if(obj instanceof TwitchIRCListener && Objects.equals(obj.getUser(), user) && Objects.equals(guild, obj.getGuild())){
 						guild.getJDA().removeEventListener(obj);
 						return true;
@@ -52,38 +52,38 @@ public class TwitchIRC{
 					return false;
 				});
 			}
-			if(CLIENT.getListeners().stream().noneMatch(l -> Objects.equals(l.getUser(), user))){
-				CLIENT.leaveChannel(ircChannel);
+			if(client.getListeners().stream().noneMatch(l -> Objects.equals(l.getUser(), user))){
+				client.leaveChannel(ircChannel);
 			}
-			if(CLIENT.getJoinedChannels().isEmpty()){
+			if(client.getJoinedChannels().isEmpty()){
 				close();
 			}
 		}
 	}
 	
 	public static void close(){
-		if(Objects.nonNull(CLIENT)){
+		if(Objects.nonNull(client)){
 			try{
-				CLIENT.close();
+				client.close();
 			}
 			catch(final IOException e){
 				Log.getLogger(null).error("Error closing IRC connection", e);
 			}
-			CLIENT = null;
+			client = null;
 		}
 	}
 	
 	public static void sendMessage(final Guild guild, @NonNull final String ircChannel, @NonNull final String message){
-		if(Objects.nonNull(CLIENT) && CLIENT.getJoinedChannels().contains(ircChannel)){
+		if(Objects.nonNull(client) && client.getJoinedChannels().contains(ircChannel)){
 			Log.getLogger(guild).info("Sending IRC message tp {}: {}", ircChannel, message);
-			CLIENT.sendMessage(String.format("PRIVMSG %s :%s", ircChannel, message));
+			client.sendMessage(String.format("PRIVMSG %s :%s", ircChannel, message));
 		}
 	}
 	
 	@NonNull
 	public static Set<String> getConnectedTo(){
-		if(Objects.nonNull(CLIENT)){
-			return CLIENT.getListeners().stream().map(IRCListener::getUser).collect(Collectors.toSet());
+		if(Objects.nonNull(client)){
+			return client.getListeners().stream().map(IRCListener::getUser).collect(Collectors.toSet());
 		}
 		return Set.of();
 	}

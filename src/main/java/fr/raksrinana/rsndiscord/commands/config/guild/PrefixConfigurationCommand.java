@@ -24,11 +24,6 @@ public class PrefixConfigurationCommand extends ValueConfigurationCommand<String
 	}
 	
 	@Override
-	protected String getValueName(){
-		return "Prefix";
-	}
-	
-	@Override
 	protected void setConfig(@NonNull final Guild guild, @NonNull final String value){
 		Settings.get(guild).setPrefix(value);
 	}
@@ -36,6 +31,11 @@ public class PrefixConfigurationCommand extends ValueConfigurationCommand<String
 	@Override
 	protected void removeConfig(@NonNull final Guild guild){
 		Settings.get(guild).setPrefix(null);
+	}
+	
+	@Override
+	protected String getValueName(){
+		return "Prefix";
 	}
 	
 	@NonNull

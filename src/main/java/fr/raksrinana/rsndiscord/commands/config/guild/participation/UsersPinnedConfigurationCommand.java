@@ -21,11 +21,6 @@ public class UsersPinnedConfigurationCommand extends SetConfigurationCommand<Use
 		return Optional.of(Settings.get(guild).getParticipationConfig().getUsersPinned());
 	}
 	
-	@Override
-	protected void removeConfig(@NonNull final Guild guild, @NonNull final UserConfiguration value){
-		Settings.get(guild).getParticipationConfig().getUsersPinned().remove(value);
-	}
-	
 	@NonNull
 	@Override
 	protected UserConfiguration extractValue(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args) throws IllegalArgumentException{
@@ -33,6 +28,11 @@ public class UsersPinnedConfigurationCommand extends SetConfigurationCommand<Use
 			throw new IllegalArgumentException("Please mention a user");
 		}
 		return new UserConfiguration(event.getMessage().getMentionedUsers().get(0));
+	}
+	
+	@Override
+	protected void removeConfig(@NonNull final Guild guild, @NonNull final UserConfiguration value){
+		Settings.get(guild).getParticipationConfig().getUsersPinned().remove(value);
 	}
 	
 	@Override

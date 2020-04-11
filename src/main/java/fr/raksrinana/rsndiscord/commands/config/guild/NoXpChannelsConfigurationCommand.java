@@ -21,13 +21,6 @@ public class NoXpChannelsConfigurationCommand extends SetConfigurationCommand<Ch
 		return Optional.of(Settings.get(guild).getNoXpChannels());
 	}
 	
-	@Override
-	protected void createConfig(@NonNull final Guild guild, @NonNull final ChannelConfiguration value){
-		final var set = new HashSet<ChannelConfiguration>();
-		set.add(value);
-		Settings.get(guild).setNoXpChannels(set);
-	}
-	
 	@NonNull
 	@Override
 	protected ChannelConfiguration extractValue(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args) throws IllegalArgumentException{
@@ -40,6 +33,13 @@ public class NoXpChannelsConfigurationCommand extends SetConfigurationCommand<Ch
 	@Override
 	protected void removeConfig(@NonNull final Guild guild, @NonNull final ChannelConfiguration value){
 		Settings.get(guild).getNoXpChannels().remove(value);
+	}
+	
+	@Override
+	protected void createConfig(@NonNull final Guild guild, @NonNull final ChannelConfiguration value){
+		final var set = new HashSet<ChannelConfiguration>();
+		set.add(value);
+		Settings.get(guild).setNoXpChannels(set);
 	}
 	
 	@Override

@@ -21,16 +21,6 @@ public class OAuthRenewTokenPostRequest implements TraktPostRequest<AccessToken>
 		this.refreshToken = refreshToken;
 	}
 	
-	public JSONObject getBody(){
-		final var data = new JSONObject();
-		data.put("client_id", TraktUtils.getClientId());
-		data.put("client_secret", TraktUtils.getClientSecret());
-		data.put("grant_type", "refresh_token");
-		data.put("redirect_uri", "urn:ietf:wg:oauth:2.0:oob");
-		data.put("refresh_token", this.refreshToken);
-		return data;
-	}
-	
 	@Override
 	public GenericType<AccessToken> getOutputType(){
 		return new GenericType<>(){};
@@ -39,5 +29,15 @@ public class OAuthRenewTokenPostRequest implements TraktPostRequest<AccessToken>
 	@Override
 	public RequestBodyEntity getRequest(){
 		return Unirest.post(TraktUtils.API_URL + "/oauth/token").body(getBody());
+	}
+	
+	public JSONObject getBody(){
+		final var data = new JSONObject();
+		data.put("client_id", TraktUtils.getClientId());
+		data.put("client_secret", TraktUtils.getClientSecret());
+		data.put("grant_type", "refresh_token");
+		data.put("redirect_uri", "urn:ietf:wg:oauth:2.0:oob");
+		data.put("refresh_token", this.refreshToken);
+		return data;
 	}
 }

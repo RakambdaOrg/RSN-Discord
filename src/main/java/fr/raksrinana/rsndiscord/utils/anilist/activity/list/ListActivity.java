@@ -63,16 +63,6 @@ public abstract class ListActivity implements AnilistDatedObject{
 	}
 	
 	@Override
-	public boolean equals(final Object obj){
-		return obj instanceof ListActivity && Objects.equals(((ListActivity) obj).getId(), getId());
-	}
-	
-	@Override
-	public String toString(){
-		return ToStringBuilder.reflectionToString(this);
-	}
-	
-	@Override
 	public int compareTo(@NonNull final AniListObject o){
 		if(o instanceof AnilistDatedObject){
 			return getDate().compareTo(((AnilistDatedObject) o).getDate());
@@ -83,5 +73,15 @@ public abstract class ListActivity implements AnilistDatedObject{
 	@Override
 	public int hashCode(){
 		return this.getId();
+	}
+	
+	@Override
+	public boolean equals(final Object obj){
+		return obj instanceof ListActivity && Objects.equals(((ListActivity) obj).getId(), getId());
+	}
+	
+	@Override
+	public String toString(){
+		return ToStringBuilder.reflectionToString(this);
 	}
 }

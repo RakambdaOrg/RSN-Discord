@@ -16,11 +16,6 @@ public class DoubleWarnConfigurationCommand extends WarnConfigurationCommand{
 	}
 	
 	@Override
-	protected void createConfig(@NonNull final Guild guild, @NonNull final Role role, final long delay){
-		Settings.get(guild).getWarnsConfiguration().setDoubleWarn(new WarnConfiguration(role, delay));
-	}
-	
-	@Override
 	protected void removeConfig(@NonNull final Guild guild){
 		Settings.get(guild).getWarnsConfiguration().setDoubleWarn(null);
 	}
@@ -29,6 +24,11 @@ public class DoubleWarnConfigurationCommand extends WarnConfigurationCommand{
 	@Override
 	protected Optional<WarnConfiguration> getConfig(final Guild guild){
 		return Settings.get(guild).getWarnsConfiguration().getDoubleWarn();
+	}
+	
+	@Override
+	protected void createConfig(@NonNull final Guild guild, @NonNull final Role role, final long delay){
+		Settings.get(guild).getWarnsConfiguration().setDoubleWarn(new WarnConfiguration(role, delay));
 	}
 	
 	@NonNull

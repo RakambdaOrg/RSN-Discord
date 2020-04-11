@@ -9,12 +9,6 @@ import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
 
 public class DeviceCodePostRequest implements TraktPostRequest<DeviceCode>{
-	public JSONObject getBody(){
-		final var data = new JSONObject();
-		data.put("client_id", TraktUtils.getClientId());
-		return data;
-	}
-	
 	@Override
 	public GenericType<DeviceCode> getOutputType(){
 		return new GenericType<>(){};
@@ -23,5 +17,11 @@ public class DeviceCodePostRequest implements TraktPostRequest<DeviceCode>{
 	@Override
 	public RequestBodyEntity getRequest(){
 		return Unirest.post(TraktUtils.API_URL + "/oauth/device/code").body(getBody());
+	}
+	
+	public static JSONObject getBody(){
+		final var data = new JSONObject();
+		data.put("client_id", TraktUtils.getClientId());
+		return data;
 	}
 }

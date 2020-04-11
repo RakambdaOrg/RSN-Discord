@@ -11,17 +11,6 @@ public class SaveConfigScheduledRunner implements ScheduledRunner{
 	}
 	
 	@Override
-	public void execute(){
-		Settings.close();
-	}
-	
-	@NonNull
-	@Override
-	public String getName(){
-		return "config saver";
-	}
-	
-	@Override
 	public long getDelay(){
 		return 2;
 	}
@@ -35,5 +24,16 @@ public class SaveConfigScheduledRunner implements ScheduledRunner{
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return TimeUnit.MINUTES;
+	}
+	
+	@Override
+	public void execute(){
+		Settings.close();
+	}
+	
+	@NonNull
+	@Override
+	public String getName(){
+		return "config saver";
 	}
 }

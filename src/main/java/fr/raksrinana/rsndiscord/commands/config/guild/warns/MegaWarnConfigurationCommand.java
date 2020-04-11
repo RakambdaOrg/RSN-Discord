@@ -16,11 +16,6 @@ public class MegaWarnConfigurationCommand extends WarnConfigurationCommand{
 	}
 	
 	@Override
-	protected void createConfig(@NonNull final Guild guild, @NonNull final Role role, final long delay){
-		Settings.get(guild).getWarnsConfiguration().setMegaWarn(new WarnConfiguration(role, delay));
-	}
-	
-	@Override
 	protected void removeConfig(@NonNull final Guild guild){
 		Settings.get(guild).getWarnsConfiguration().setMegaWarn(null);
 	}
@@ -29,6 +24,11 @@ public class MegaWarnConfigurationCommand extends WarnConfigurationCommand{
 	@Override
 	protected Optional<WarnConfiguration> getConfig(final Guild guild){
 		return Settings.get(guild).getWarnsConfiguration().getMegaWarn();
+	}
+	
+	@Override
+	protected void createConfig(@NonNull final Guild guild, @NonNull final Role role, final long delay){
+		Settings.get(guild).getWarnsConfiguration().setMegaWarn(new WarnConfiguration(role, delay));
 	}
 	
 	@NonNull

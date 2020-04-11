@@ -58,10 +58,10 @@ public abstract class UserHistory implements TraktDatedObject{
 		return 0;
 	}
 	
-	public abstract MediaIds getIds();
-	
 	@Override
 	public @NonNull ZonedDateTime getDate(){
 		return this.getWatchedAt();
 	}
+	
+	public abstract MediaIds getIds();
 }

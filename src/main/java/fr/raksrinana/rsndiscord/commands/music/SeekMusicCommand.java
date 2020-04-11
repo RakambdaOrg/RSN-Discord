@@ -52,15 +52,9 @@ public class SeekMusicCommand extends BasicCommand{
 			}
 			else{
 				switch(RSNAudioManager.seek(event.getGuild(), time)){
-					case NO_MUSIC:
-						Actions.reply(event, MessageFormat.format("{0}, No music currently playing", event.getAuthor().getAsMention()), null);
-						break;
-					case OK:
-						Actions.reply(event, MessageFormat.format("{0} seeked the music to {1}", event.getAuthor().getAsMention(), NowPlayingMusicCommand.getDuration(time)), null);
-						break;
-					case IMPOSSIBLE:
-						Actions.reply(event, MessageFormat.format("{0}, the time of this music cannot be changed", event.getAuthor().getAsMention()), null);
-						break;
+					case NO_MUSIC -> Actions.reply(event, MessageFormat.format("{0}, No music currently playing", event.getAuthor().getAsMention()), null);
+					case OK -> Actions.reply(event, MessageFormat.format("{0} seeked the music to {1}", event.getAuthor().getAsMention(), NowPlayingMusicCommand.getDuration(time)), null);
+					case IMPOSSIBLE -> Actions.reply(event, MessageFormat.format("{0}, the time of this music cannot be changed", event.getAuthor().getAsMention()), null);
 				}
 			}
 		}
@@ -73,13 +67,13 @@ public class SeekMusicCommand extends BasicCommand{
 			return -1;
 		}
 		var duration = 0L;
-		duration += this.getAsInt(guild, matcher.group(2)) * SECOND_PER_HOUR;
-		duration += this.getAsInt(guild, matcher.group(4)) * SECOND_PER_MINUTE;
-		duration += this.getAsInt(guild, matcher.group(5));
+		duration += SeekMusicCommand.getAsInt(guild, matcher.group(2)) * SECOND_PER_HOUR;
+		duration += SeekMusicCommand.getAsInt(guild, matcher.group(4)) * SECOND_PER_MINUTE;
+		duration += SeekMusicCommand.getAsInt(guild, matcher.group(5));
 		return duration * 1000;
 	}
 	
-	private int getAsInt(final Guild guild, final String str){
+	private static int getAsInt(final Guild guild, final String str){
 		if(Objects.isNull(str) || str.isBlank()){
 			return 0;
 		}

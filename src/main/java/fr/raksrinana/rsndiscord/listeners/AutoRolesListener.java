@@ -16,6 +16,17 @@ import java.util.Optional;
 
 public class AutoRolesListener extends ListenerAdapter{
 	@Override
+	public void onGuildMemberRemove(@NonNull final GuildMemberRemoveEvent event){
+		super.onGuildMemberRemove(event);
+		try{
+			Settings.get(event.getGuild()).getLeaverRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Settings.get(event.getGuild()).addAddBackRole(new UserRoleConfiguration(event.getUser(), role)));
+		}
+		catch(final Exception e){
+			Log.getLogger(event.getGuild()).error("Error on user leave", e);
+		}
+	}
+	
+	@Override
 	public void onGuildMemberJoin(@NonNull final GuildMemberJoinEvent event){
 		super.onGuildMemberJoin(event);
 		try{
@@ -24,17 +35,6 @@ public class AutoRolesListener extends ListenerAdapter{
 		}
 		catch(final Exception e){
 			Log.getLogger(event.getGuild()).error("Error on user join", e);
-		}
-	}
-	
-	@Override
-	public void onGuildMemberRemove(@NonNull final GuildMemberRemoveEvent event){
-		super.onGuildMemberRemove(event);
-		try{
-			Settings.get(event.getGuild()).getLeaverRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Settings.get(event.getGuild()).addAddBackRole(new UserRoleConfiguration(event.getUser(), role)));
-		}
-		catch(final Exception e){
-			Log.getLogger(event.getGuild()).error("Error on user leave", e);
 		}
 	}
 }

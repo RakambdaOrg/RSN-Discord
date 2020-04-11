@@ -21,14 +21,6 @@ public class DeviceTokenPostRequest implements TraktPostRequest<AccessToken>{
 		this.deviceCode = deviceCode;
 	}
 	
-	public JSONObject getBody(){
-		final var data = new JSONObject();
-		data.put("code", deviceCode);
-		data.put("client_id", TraktUtils.getClientId());
-		data.put("client_secret", TraktUtils.getClientSecret());
-		return data;
-	}
-	
 	@Override
 	public GenericType<AccessToken> getOutputType(){
 		return new GenericType<>(){};
@@ -37,5 +29,13 @@ public class DeviceTokenPostRequest implements TraktPostRequest<AccessToken>{
 	@Override
 	public RequestBodyEntity getRequest(){
 		return Unirest.post(TraktUtils.API_URL + "/oauth/device/token").body(getBody());
+	}
+	
+	public JSONObject getBody(){
+		final var data = new JSONObject();
+		data.put("code", deviceCode);
+		data.put("client_id", TraktUtils.getClientId());
+		data.put("client_secret", TraktUtils.getClientSecret());
+		return data;
 	}
 }

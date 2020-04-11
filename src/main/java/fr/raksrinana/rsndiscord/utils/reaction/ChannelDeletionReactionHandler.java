@@ -12,7 +12,7 @@ import java.text.MessageFormat;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
-public class ChannelDeletionReactionHandler extends TodosReactionHandler{
+public class ChannelDeletionReactionHandler extends TodoReactionHandler{
 	@Override
 	public boolean acceptTag(@NonNull ReactionTag tag){
 		return Objects.equals(tag, ReactionTag.DELETE_CHANNEL);
@@ -23,11 +23,6 @@ public class ChannelDeletionReactionHandler extends TodosReactionHandler{
 		return BasicEmotes.CROSS_NO == emote;
 	}
 	
-	@Override
-	public int getPriority(){
-		return 990;
-	}
-	
 	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emote, @NonNull WaitingReactionMessageConfiguration todo){
 		return todo.getMessage().getMessage().map(message -> {
 			Settings.get(event.getGuild()).getArchiveCategory().flatMap(CategoryConfiguration::getCategory).ifPresentOrElse(archiveCategory -> {
@@ -36,5 +31,10 @@ public class ChannelDeletionReactionHandler extends TodosReactionHandler{
 			}, () -> Actions.deleteChannel(message.getTextChannel()));
 			return ReactionHandlerResult.PROCESSED_DELETE;
 		}).orElse(ReactionHandlerResult.PROCESSED);
+	}
+	
+	@Override
+	public int getPriority(){
+		return 990;
 	}
 }

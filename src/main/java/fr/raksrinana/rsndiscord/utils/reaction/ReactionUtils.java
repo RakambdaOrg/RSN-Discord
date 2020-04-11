@@ -14,10 +14,6 @@ public class ReactionUtils{
 	public static final String URL_KEY = "url";
 	private static final Collection<ReactionHandler> handlers = new SortedList<>();
 	
-	public static void addHandler(@NonNull ReactionHandler handler){
-		handlers.add(handler);
-	}
-	
 	public static void registerAllHandlers(){
 		Utilities.getAllInstancesOf(ReactionHandler.class, Main.class.getPackage().getName() + ".utils.reaction", c -> {
 			try{
@@ -28,6 +24,10 @@ public class ReactionUtils{
 			}
 			return null;
 		}).stream().peek(c -> Log.getLogger(null).info("Loaded reaction handler {}", c.getClass().getName())).forEach(ReactionUtils::addHandler);
+	}
+	
+	public static void addHandler(@NonNull ReactionHandler handler){
+		handlers.add(handler);
 	}
 	
 	public static Collection<ReactionHandler> getHandlers(){

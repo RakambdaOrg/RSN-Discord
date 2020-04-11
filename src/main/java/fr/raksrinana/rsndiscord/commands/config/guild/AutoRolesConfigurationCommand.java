@@ -21,13 +21,6 @@ public class AutoRolesConfigurationCommand extends SetConfigurationCommand<RoleC
 		return Optional.of(Settings.get(guild).getAutoRoles());
 	}
 	
-	@Override
-	protected void createConfig(@NonNull final Guild guild, @NonNull final RoleConfiguration value){
-		final var set = new HashSet<RoleConfiguration>();
-		set.add(value);
-		Settings.get(guild).setAutoRoles(set);
-	}
-	
 	@NonNull
 	@Override
 	protected RoleConfiguration extractValue(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args) throws IllegalArgumentException{
@@ -40,6 +33,13 @@ public class AutoRolesConfigurationCommand extends SetConfigurationCommand<RoleC
 	@Override
 	protected void removeConfig(@NonNull final Guild guild, @NonNull final RoleConfiguration value){
 		Settings.get(guild).getAutoRoles().remove(value);
+	}
+	
+	@Override
+	protected void createConfig(@NonNull final Guild guild, @NonNull final RoleConfiguration value){
+		final var set = new HashSet<RoleConfiguration>();
+		set.add(value);
+		Settings.get(guild).setAutoRoles(set);
 	}
 	
 	@Override

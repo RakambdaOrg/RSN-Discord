@@ -12,15 +12,15 @@ public abstract class UserConfigurationCommand extends ValueConfigurationCommand
 	}
 	
 	@Override
-	protected String getValueName(){
-		return "User";
-	}
-	
-	@Override
 	protected UserConfiguration extractValue(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		if(event.getMessage().getMentionedUsers().isEmpty()){
 			throw new IllegalArgumentException("Please mention the channel");
 		}
 		return new UserConfiguration(event.getMessage().getMentionedUsers().get(0));
+	}
+	
+	@Override
+	protected String getValueName(){
+		return "User";
 	}
 }

@@ -30,6 +30,19 @@ public class LuxBusUtils{
 	}
 	
 	@NonNull
+	static Set<LuxBusStop> getStopIds(){
+		if(System.currentTimeMillis() - lastCheck > DATA_TIMEOUT){
+			lastCheck = System.currentTimeMillis();
+			Log.getLogger(null).debug("Fetching bus stop infos");
+			final var request = new StringGetRequestSender(Unirest.get("http://travelplanner.mobiliteit.lu/hafas/query.exe/dot").queryString("performLocating", 2).queryString("tpl", "stop2csv").queryString("look_maxdist", 150000).queryString("look_y", 49610700).queryString("stationProxy", "yes")).getRequestHandler();
+			if(request.getResult().isSuccess()){
+				Arrays.stream(request.getRequestResult().split(";")).map(s -> s.replace("id=", "").replace("\n", "").trim()).filter(s -> !s.isBlank()).map(LuxBusStop::createStop).filter(stop -> !stops.contains(stop)).forEach(stops::add);
+			}
+		}
+		return stops;
+	}
+	
+	@NonNull
 	public static Set<LuxBusDeparture> getDepartures(@NonNull final LuxBusStop stop){
 		try{
 			Log.getLogger(null).info("Getting departures for stop {}", stop);
@@ -49,18 +62,5 @@ public class LuxBusUtils{
 			Log.getLogger(null).warn("Failed to get bus stop departures (id: {})", stop, e);
 		}
 		return Set.of();
-	}
-	
-	@NonNull
-	static Set<LuxBusStop> getStopIds(){
-		if(System.currentTimeMillis() - lastCheck > DATA_TIMEOUT){
-			lastCheck = System.currentTimeMillis();
-			Log.getLogger(null).debug("Fetching bus stop infos");
-			final var request = new StringGetRequestSender(Unirest.get("http://travelplanner.mobiliteit.lu/hafas/query.exe/dot").queryString("performLocating", 2).queryString("tpl", "stop2csv").queryString("look_maxdist", 150000).queryString("look_y", 49610700).queryString("stationProxy", "yes")).getRequestHandler();
-			if(request.getResult().isSuccess()){
-				Arrays.stream(request.getRequestResult().split(";")).map(s -> s.replace("id=", "").replace("\n", "").trim()).filter(s -> !s.isBlank()).map(LuxBusStop::createStop).filter(stop -> !stops.contains(stop)).forEach(stops::add);
-			}
-		}
-		return stops;
 	}
 }

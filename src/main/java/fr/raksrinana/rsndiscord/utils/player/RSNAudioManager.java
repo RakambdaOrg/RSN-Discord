@@ -172,6 +172,27 @@ public class RSNAudioManager implements StatusTrackSchedulerListener{
 		return MusicActionResponse.NO_MUSIC;
 	}
 	
+	private void close(){
+		if(!this.isSearchingTracks){
+			final var executor = Executors.newScheduledThreadPool(1);
+			executor.schedule(() -> {
+				this.getAudioPlayerManager().shutdown();
+				this.getAudioManager().setSendingHandler(null);
+				if(this.getAudioManager().isConnected()){
+					this.getAudioManager().closeAudioConnection();
+				}
+				managers.remove(this.channel.getGuild());
+				Log.getLogger(this.getChannel().getGuild()).info("Audio manager shutdown");
+			}, 2, TimeUnit.SECONDS);
+			executor.shutdown();
+		}
+	}
+	
+	@NonNull
+	private AudioManager getAudioManager(){
+		return this.audioManager;
+	}
+	
 	@NonNull
 	public static List<AudioTrack> getQueue(@NonNull final Guild guild){
 		if(managers.containsKey(guild)){
@@ -265,27 +286,6 @@ public class RSNAudioManager implements StatusTrackSchedulerListener{
 	
 	@Override
 	public void onTrackStart(@NonNull final AudioTrack track){
-	}
-	
-	private void close(){
-		if(!this.isSearchingTracks){
-			final var executor = Executors.newScheduledThreadPool(1);
-			executor.schedule(() -> {
-				this.getAudioPlayerManager().shutdown();
-				this.getAudioManager().setSendingHandler(null);
-				if(this.getAudioManager().isConnected()){
-					this.getAudioManager().closeAudioConnection();
-				}
-				managers.remove(this.channel.getGuild());
-				Log.getLogger(this.getChannel().getGuild()).info("Audio manager shutdown");
-			}, 2, TimeUnit.SECONDS);
-			executor.shutdown();
-		}
-	}
-	
-	@NonNull
-	private AudioManager getAudioManager(){
-		return this.audioManager;
 	}
 	
 	public int getVolume(){

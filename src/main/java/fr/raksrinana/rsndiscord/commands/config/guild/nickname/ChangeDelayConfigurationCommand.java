@@ -29,17 +29,17 @@ public class ChangeDelayConfigurationCommand extends ValueConfigurationCommand<L
 	}
 	
 	@Override
-	protected String getValueName(){
-		return "Change delay";
-	}
-	
-	@Override
 	protected void setConfig(@NonNull final Guild guild, @NonNull final Long value){
 		Settings.get(guild).getNicknameConfiguration().setChangeDelay(value);
 	}
 	
 	@Override
 	protected void removeConfig(@NonNull final Guild guild){
+	}
+	
+	@Override
+	protected String getValueName(){
+		return "Change delay";
 	}
 	
 	@NonNull

@@ -56,7 +56,7 @@ public class Info{
 	@JsonDeserialize(using = IntegerBooleanDeserializer.class)
 	private boolean joined;
 	@JsonProperty("eslid")
-	private String eslid;
+	private String eslId;
 	@JsonProperty("hometown")
 	private String hometown;
 	@JsonProperty("country")
@@ -94,7 +94,7 @@ public class Info{
 	@JsonProperty("gameaccount_name")
 	private String gameAccountName;
 	@JsonProperty("teamname")
-	private String teamname;
+	private String teamName;
 	@JsonProperty("facebook")
 	@JsonDeserialize(using = URLDeserializer.class)
 	private URL facebook;
@@ -115,7 +115,7 @@ public class Info{
 	private boolean disqualified;
 	@JsonProperty("outofcompetition")
 	@JsonDeserialize(using = IntegerBooleanDeserializer.class)
-	private boolean outofcompetition;
+	private boolean outOfCompetition;
 	@JsonProperty("prodbkey")
 	private String prodBKey;
 	@JsonProperty("updateviaprodb")

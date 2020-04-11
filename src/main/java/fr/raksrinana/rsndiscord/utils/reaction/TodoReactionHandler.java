@@ -17,7 +17,7 @@ import java.util.concurrent.TimeoutException;
 import static fr.raksrinana.rsndiscord.utils.BasicEmotes.*;
 
 @Slf4j
-public class TodosReactionHandler implements ReactionHandler{
+public class TodoReactionHandler implements ReactionHandler{
 	@Override
 	public boolean acceptTag(@NonNull ReactionTag tag){
 		return Objects.equals(tag, ReactionTag.TODO);
@@ -36,11 +36,6 @@ public class TodosReactionHandler implements ReactionHandler{
 	
 	protected boolean isValidEmote(@NonNull BasicEmotes emote){
 		return emote == CHECK_OK || emote == PAPERCLIP || emote == RIGHT_ARROW_CURVING_LEFT;
-	}
-	
-	@Override
-	public int getPriority(){
-		return 1000;
 	}
 	
 	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emote, @NonNull WaitingReactionMessageConfiguration todo){
@@ -84,5 +79,10 @@ public class TodosReactionHandler implements ReactionHandler{
 			}
 			return ReactionHandlerResult.PROCESSED_DELETE;
 		}).orElse(ReactionHandlerResult.PROCESSED);
+	}
+	
+	@Override
+	public int getPriority(){
+		return 1000;
 	}
 }

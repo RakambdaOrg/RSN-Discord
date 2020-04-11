@@ -27,14 +27,6 @@ public class EntityScore implements AtomicConfiguration{
 	@Setter
 	private long score;
 	
-	public EntityScore(final long id){
-		this(id, null);
-	}
-	
-	private EntityScore(final long id, final String name){
-		this(id, name, 0);
-	}
-	
 	public EntityScore(final long id, final String name, final long score){
 		this.id = id;
 		this.name = name;

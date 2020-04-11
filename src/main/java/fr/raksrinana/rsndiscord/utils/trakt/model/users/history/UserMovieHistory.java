@@ -39,11 +39,6 @@ public class UserMovieHistory extends UserHistory{
 	}
 	
 	@Override
-	public int hashCode(){
-		return Objects.hash(getMovie());
-	}
-	
-	@Override
 	public int compareTo(@NonNull TraktObject o){
 		if(o instanceof UserMovieHistory){
 			return getMovie().compareTo(((UserMovieHistory) o).getMovie());
@@ -54,6 +49,11 @@ public class UserMovieHistory extends UserHistory{
 	@Override
 	public MediaIds getIds(){
 		return getMovie().getIds();
+	}
+	
+	@Override
+	public int hashCode(){
+		return Objects.hash(getMovie());
 	}
 	
 	@Override

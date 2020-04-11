@@ -16,7 +16,7 @@ public enum Action{
 	
 	@JsonCreator
 	@NonNull
-	public Action getFromString(@NonNull final String value){
+	public static Action getFromString(@NonNull final String value){
 		for(final var action : Action.values()){
 			if(action.name().equalsIgnoreCase(value)){
 				return action;

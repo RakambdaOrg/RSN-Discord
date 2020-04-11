@@ -66,7 +66,7 @@ public class ReactionListener extends ListenerAdapter{
 		}
 	}
 	
-	private void handleQuestionOkEmote(@NonNull GuildMessageReactionAddEvent event){
+	private static void handleQuestionOkEmote(@NonNull GuildMessageReactionAddEvent event){
 		Utilities.getMessageById(event.getChannel(), event.getMessageIdLong()).thenAccept(message -> Settings.get(event.getGuild()).getQuestionsConfiguration().getOutputChannel().flatMap(ChannelConfiguration::getChannel).ifPresentOrElse(channel -> {
 			message.getEmbeds().stream().map(Utilities::copyEmbed).map(mess -> mess.addField("Approved by", event.getUser().getAsMention(), false).setTimestamp(message.getTimeCreated()).build()).forEach(embed -> Actions.sendMessage(channel, "", embed).thenAccept(mess -> {
 				Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(new MessageConfiguration(event.getChannel().getIdLong(), event.getMessageIdLong()), ReactionTag.ACCEPTED_QUESTION, null));
@@ -78,19 +78,19 @@ public class ReactionListener extends ListenerAdapter{
 		}, () -> Log.getLogger(event.getGuild()).error("Couldn't move message")));
 	}
 	
-	private void handleQuestionNoEmote(@NonNull GuildMessageReactionAddEvent event){
+	private static Optional<String> getIdFromQuestion(@NonNull Message message){
+		return message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> Objects.equals(e.getName(), "ID")).map(MessageEmbed.Field::getValue).findAny();
+	}
+	
+	private static Optional<User> getUserFomQuestion(@NonNull Message message){
+		return message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> Objects.equals(e.getName(), "User")).map(MessageEmbed.Field::getValue).filter(Objects::nonNull).map(e -> Main.getJda().retrieveUserById(Long.parseLong(NUMBER_ONLY.matcher(e).replaceAll(""))).complete()).findAny();
+	}
+	
+	private static void handleQuestionNoEmote(@NonNull GuildMessageReactionAddEvent event){
 		Utilities.getMessageById(event.getChannel(), event.getMessageIdLong()).thenAccept(message -> {
 			Actions.deleteMessage(message);
 			final var text = MessageFormat.format("Your question (ID: {0}) has been rejected.", getIdFromQuestion(message).orElse(""));
 			getUserFomQuestion(message).ifPresent(value -> Actions.replyPrivate(event.getGuild(), value, text, null));
 		});
-	}
-	
-	private Optional<String> getIdFromQuestion(@NonNull Message message){
-		return message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> Objects.equals(e.getName(), "ID")).map(MessageEmbed.Field::getValue).findAny();
-	}
-	
-	private Optional<User> getUserFomQuestion(@NonNull Message message){
-		return message.getEmbeds().stream().flatMap(e -> e.getFields().stream()).filter(e -> Objects.equals(e.getName(), "User")).map(MessageEmbed.Field::getValue).filter(Objects::nonNull).map(e -> Main.getJda().retrieveUserById(Long.parseLong(NUMBER_ONLY.matcher(e).replaceAll(""))).complete()).findAny();
 	}
 }

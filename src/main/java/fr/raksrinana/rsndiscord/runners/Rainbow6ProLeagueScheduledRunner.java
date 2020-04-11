@@ -50,15 +50,15 @@ public class Rainbow6ProLeagueScheduledRunner implements ScheduledRunner{
 		}));
 	}
 	
+	@Override
+	public long getDelay(){
+		return 4;
+	}
+	
 	@NonNull
 	@Override
 	public String getName(){
 		return "R6 PL";
-	}
-	
-	@Override
-	public long getDelay(){
-		return 4;
 	}
 	
 	@Override

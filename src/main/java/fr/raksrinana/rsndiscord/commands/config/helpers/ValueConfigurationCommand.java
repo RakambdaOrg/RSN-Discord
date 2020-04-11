@@ -72,8 +72,8 @@ public abstract class ValueConfigurationCommand<T> extends BaseConfigurationComm
 		return super.getDescription() + " [" + this.getValueName().toLowerCase() + "]";
 	}
 	
-	protected abstract String getValueName();
-	
 	@NonNull
 	protected abstract Optional<T> getConfig(Guild guild);
+	
+	protected abstract String getValueName();
 }

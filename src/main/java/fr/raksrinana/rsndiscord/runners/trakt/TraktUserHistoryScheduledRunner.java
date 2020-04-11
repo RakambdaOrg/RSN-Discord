@@ -35,24 +35,8 @@ public class TraktUserHistoryScheduledRunner implements TraktPagedGetRunner<User
 	public TraktUserHistoryScheduledRunner(JDA jda){this.jda = jda;}
 	
 	@Override
-	public void execute(){
-		this.runQueryOnDefaultUsersChannels();
-	}
-	
-	@NonNull
-	@Override
-	public String getName(){
-		return "Trakt user history";
-	}
-	
-	@Override
 	public Set<TextChannel> getChannels(){
 		return this.getJda().getGuilds().stream().map(g -> Settings.get(g).getTraktConfiguration().getMediaChangeChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toSet());
-	}
-	
-	@Override
-	public String getFetcherID(){
-		return "history";
 	}
 	
 	@NonNull
@@ -66,19 +50,18 @@ public class TraktUserHistoryScheduledRunner implements TraktPagedGetRunner<User
 		return true;
 	}
 	
-	@Override
-	public long getDelay(){
-		return 7;
-	}
-	
-	@Override
-	public long getPeriod(){
-		return 30;
-	}
-	
-	@Override
-	public @NonNull TimeUnit getPeriodUnit(){
-		return TimeUnit.MINUTES;
+	@NonNull
+	private static Optional<MediaDetails> getTMDBInfos(@NonNull UserHistory change){
+		final Function<Long, TMDBGetRequest<? extends MediaDetails>> requestBuilder = change instanceof UserMovieHistory ? MovieDetailsGetRequest::new : TVDetailsGetRequest::new;
+		return Optional.ofNullable(change.getIds().getTmdb()).map(requestBuilder).map(query -> {
+			try{
+				return TMDBUtils.getQuery(query);
+			}
+			catch(RequestException e){
+				Log.getLogger(null).error("Failed to get extra movie infos for {}", change, e);
+			}
+			return null;
+		});
 	}
 	
 	@Override
@@ -92,17 +75,34 @@ public class TraktUserHistoryScheduledRunner implements TraktPagedGetRunner<User
 		getTMDBInfos(change).ifPresentOrElse(mediaDetails -> change.fillEmbed(builder, mediaDetails), () -> change.fillEmbed(builder));
 	}
 	
+	@Override
+	public void execute(){
+		this.runQueryOnDefaultUsersChannels();
+	}
+	
+	@Override
+	public long getDelay(){
+		return 7;
+	}
+	
 	@NonNull
-	private Optional<MediaDetails> getTMDBInfos(@NonNull UserHistory change){
-		final Function<Long, TMDBGetRequest<? extends MediaDetails>> requestBuilder = change instanceof UserMovieHistory ? MovieDetailsGetRequest::new : TVDetailsGetRequest::new;
-		return Optional.ofNullable(change.getIds().getTmdb()).map(requestBuilder).map(query -> {
-			try{
-				return TMDBUtils.getQuery(query);
-			}
-			catch(RequestException e){
-				Log.getLogger(null).error("Failed to get extra movie infos for {}", change, e);
-			}
-			return null;
-		});
+	@Override
+	public String getName(){
+		return "Trakt user history";
+	}
+	
+	@Override
+	public long getPeriod(){
+		return 30;
+	}
+	
+	@Override
+	public @NonNull TimeUnit getPeriodUnit(){
+		return TimeUnit.MINUTES;
+	}
+	
+	@Override
+	public String getFetcherID(){
+		return "history";
 	}
 }

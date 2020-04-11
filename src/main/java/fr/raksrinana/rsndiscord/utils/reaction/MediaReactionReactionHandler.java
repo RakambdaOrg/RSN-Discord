@@ -13,7 +13,7 @@ import java.text.MessageFormat;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
-public class MediaReactionReactionHandler extends TodosReactionHandler{
+public class MediaReactionReactionHandler extends TodoReactionHandler{
 	@Override
 	public boolean acceptTag(@NonNull ReactionTag tag){
 		return Objects.equals(tag, ReactionTag.MEDIA_REACTION);
@@ -22,11 +22,6 @@ public class MediaReactionReactionHandler extends TodosReactionHandler{
 	@Override
 	protected boolean isValidEmote(@NonNull BasicEmotes emote){
 		return emote == BasicEmotes.PACKAGE;
-	}
-	
-	@Override
-	public int getPriority(){
-		return 990;
 	}
 	
 	@Override
@@ -41,5 +36,10 @@ public class MediaReactionReactionHandler extends TodosReactionHandler{
 			Actions.reply(event, "No archive category have been defined", null);
 			return ReactionHandlerResult.PROCESSED_DELETE;
 		});
+	}
+	
+	@Override
+	public int getPriority(){
+		return 990;
 	}
 }

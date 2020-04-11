@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 
 public class Utilities{
 	public static final long RAKSRINANA_ACCOUNT = 170119951498084352L;
-	private static final long LOPINETTE_ACCOUNT = 432628353024131085L;
 	public static final DateTimeFormatter DATE_TIME_MINUTE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
+	private static final long LOPINETTE_ACCOUNT = 432628353024131085L;
 	
 	/**
 	 * Tell if a member is part of the team (admin or moderator).

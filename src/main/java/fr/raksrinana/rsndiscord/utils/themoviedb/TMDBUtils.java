@@ -15,7 +15,7 @@ import java.util.Objects;
 
 public class TMDBUtils{
 	public static final String API_URL = "https://api.themoviedb.org/3";
-	private static String ACCESS_TOKEN;
+	private static String accessToken;
 	
 	public static <T> T getQuery(@NonNull TMDBGetRequest<T> request) throws RequestException{
 		final var handler = new ObjectGetRequestSender<>(request.getOutputType(), request.getRequest().headers(getHeaders())).getRequestHandler();
@@ -29,6 +29,20 @@ public class TMDBUtils{
 		throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString(), handler.getStatus());
 	}
 	
+	private static Map<String, String> getHeaders(){
+		final var headers = new HashMap<String, String>();
+		headers.put("Authorization", "Bearer " + getAccessToken());
+		headers.put("Content-Type", "application/json");
+		return headers;
+	}
+	
+	public static String getAccessToken(){
+		if(Objects.isNull(accessToken)){
+			accessToken = System.getProperty("TMDB_ACCESS_TOKEN");
+		}
+		return accessToken;
+	}
+	
 	public static URL getImageURL(@NonNull String path, @NonNull String size){
 		if(!path.startsWith("/")){
 			path = "/" + path;
@@ -40,19 +54,5 @@ public class TMDBUtils{
 			Log.getLogger(null).error("Failed to generate image url of size {} for path {}", size, path, e);
 		}
 		return null;
-	}
-	
-	private static Map<String, String> getHeaders(){
-		final var headers = new HashMap<String, String>();
-		headers.put("Authorization", "Bearer " + getAccessToken());
-		headers.put("Content-Type", "application/json");
-		return headers;
-	}
-	
-	public static String getAccessToken(){
-		if(Objects.isNull(ACCESS_TOKEN)){
-			ACCESS_TOKEN = System.getProperty("TMDB_ACCESS_TOKEN");
-		}
-		return ACCESS_TOKEN;
 	}
 }

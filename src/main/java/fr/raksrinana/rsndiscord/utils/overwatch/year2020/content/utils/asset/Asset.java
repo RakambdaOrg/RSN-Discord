@@ -34,7 +34,7 @@ public class Asset{
 	@JsonProperty("contentType")
 	private String contentType;
 	@JsonProperty("filesize")
-	private long filesize;
+	private long fileSize;
 	@JsonProperty("tags")
 	@JsonDeserialize(contentUsing = UnknownDeserializer.class)
 	private Set<Object> tags;
