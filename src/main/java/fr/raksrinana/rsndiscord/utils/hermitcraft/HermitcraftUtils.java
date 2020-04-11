@@ -30,7 +30,7 @@ public class HermitcraftUtils{
 	@NonNull
 	public static Optional<List<HermitcraftVideo>> getVideos(){
 		Log.getLogger(null).debug("Fetching hermitcraft videos");
-		return getRequestResult(new GenericType<>(){}, "/videos", Map.of("type", "Latest", "start", ZonedDateTime.now(ZoneId.of("UTC")).format(DF)));
+		return getRequestResult(new GenericType<>(){}, "/videos", Map.of("type", "HermitCraft", "start", ZonedDateTime.now(ZoneId.of("UTC")).format(DF)));
 	}
 	
 	private static <T> Optional<T> getRequestResult(GenericType<T> type, String endpoint, Map<String, Object> parameters){
