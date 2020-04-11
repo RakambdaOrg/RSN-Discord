@@ -19,7 +19,7 @@ public class TimeCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		Actions.reply(event, "", Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Server time infos", null).addField("Time:", ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME), false).addField("Ms", String.valueOf(System.currentTimeMillis()), false).build());
+		Actions.reply(event, "", Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Server time infos", null).addField("Time:", ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME), false).addField("Ms", String.valueOf(System.currentTimeMillis()), false).build());
 		return CommandResult.SUCCESS;
 	}
 	

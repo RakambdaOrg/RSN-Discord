@@ -9,7 +9,7 @@ import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -23,7 +23,7 @@ public class SchedulesScheduledRunner implements ScheduledRunner{
 	
 	@Override
 	public void execute(){
-		final var currentDate = LocalDateTime.now();
+		final var currentDate = ZonedDateTime.now();
 		for(final var guild : this.getJda().getGuilds()){
 			Log.getLogger(guild).debug("Processing guild {}", guild);
 			for(ScheduleConfiguration schedule : Settings.get(guild).getSchedules()){

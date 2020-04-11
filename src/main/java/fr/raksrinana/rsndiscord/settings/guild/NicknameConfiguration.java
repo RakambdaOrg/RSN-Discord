@@ -6,14 +6,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.settings.CompositeConfiguration;
-import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeDeserializer;
-import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeSerializer;
+import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.User;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -26,20 +26,20 @@ public class NicknameConfiguration implements CompositeConfiguration{
 	@JsonProperty("changeDelay")
 	@Setter
 	private long changeDelay = 3600;
-	@JsonSerialize(contentUsing = LocalDateTimeSerializer.class)
-	@JsonDeserialize(contentUsing = LocalDateTimeDeserializer.class)
+	@JsonSerialize(contentUsing = ZonedDateTimeSerializer.class)
+	@JsonDeserialize(contentUsing = ZonedDateTimeDeserializer.class)
 	@JsonProperty("lastChange")
-	private Map<Long, LocalDateTime> lastChange = new HashMap<>();
+	private final Map<Long, ZonedDateTime> lastChange = new HashMap<>();
 	
-	public Optional<LocalDateTime> getLastChange(@NonNull final User user){
+	public Optional<ZonedDateTime> getLastChange(@NonNull final User user){
 		return this.getLastChange(user.getIdLong());
 	}
 	
-	private Optional<LocalDateTime> getLastChange(final long userId){
+	private Optional<ZonedDateTime> getLastChange(final long userId){
 		return Optional.ofNullable(this.lastChange.get(userId));
 	}
 	
-	public void setLastChange(@NonNull final User user, final LocalDateTime date){
+	public void setLastChange(@NonNull final User user, final ZonedDateTime date){
 		this.lastChange.put(user.getIdLong(), date);
 	}
 }

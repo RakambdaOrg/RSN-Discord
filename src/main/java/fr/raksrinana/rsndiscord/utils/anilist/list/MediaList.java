@@ -15,7 +15,7 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.net.URL;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,35 +28,35 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 public class MediaList implements AnilistDatedObject{
-	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	@Getter
 	private static final String QUERY = "mediaList(userId: $userID) {\n" + "id\n" + "private\n" + "progress\n" + "progressVolumes\n" + "priority\n" + "customLists\n" + "score(format: POINT_100)\n" + FuzzyDate.getQuery("completedAt") + "\n" + FuzzyDate.getQuery("startedAt") + "\n" + "status\n" + "updatedAt\n" + "createdAt\n" + "repeat\n" + "notes\n" + Media.getQUERY() + "\n}";
 	@JsonProperty("id")
 	private int id;
 	@JsonProperty("status")
-	private MediaListStatus status = MediaListStatus.UNKNOWN;
+	private final MediaListStatus status = MediaListStatus.UNKNOWN;
 	@JsonProperty("media")
 	private Media media;
 	@JsonProperty("private")
-	private boolean privateItem = false;
+	private final boolean privateItem = false;
 	@JsonProperty("priority")
 	private Integer priority;
 	@JsonProperty("progress")
 	private Integer progress;
 	@JsonProperty("progressVolumes")
 	private Integer progressVolumes;
+	@JsonProperty("startedAt")
+	private final FuzzyDate startedAt = new FuzzyDate();
+	@JsonProperty("completedAt")
+	private final FuzzyDate completedAt = new FuzzyDate();
+	@JsonProperty("customLists")
+	private final Map<String, Boolean> customLists = new HashMap<>();
 	@JsonProperty("createdAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private LocalDateTime createdAt;
+	private ZonedDateTime createdAt;
 	@JsonProperty("updatedAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private LocalDateTime updatedAt;
-	@JsonProperty("startedAt")
-	private FuzzyDate startedAt = new FuzzyDate();
-	@JsonProperty("completedAt")
-	private FuzzyDate completedAt = new FuzzyDate();
-	@JsonProperty("customLists")
-	private Map<String, Boolean> customLists = new HashMap<>();
+	private ZonedDateTime updatedAt;
 	@JsonProperty("score")
 	private Integer score;
 	@JsonProperty("repeat")
@@ -101,7 +101,7 @@ public class MediaList implements AnilistDatedObject{
 	
 	@Override
 	@NonNull
-	public LocalDateTime getDate(){
+	public ZonedDateTime getDate(){
 		return this.getUpdatedAt();
 	}
 	

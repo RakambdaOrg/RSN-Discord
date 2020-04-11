@@ -23,7 +23,7 @@ import java.util.Set;
 })
 @Getter
 public abstract class Media implements AniListObject{
-	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	@Getter
 	private static final String QUERY = "media {\n" + "id\n" + MediaTitle.getQUERY() + "\n" + "season\n" + "type\n" + "format\n" + "status\n" + "episodes\n" + "chapters\n" + "volumes\n" + FuzzyDate.getQuery("startDate") + "\n" + FuzzyDate.getQuery("endDate") + "\n" + "genres\n" + "isAdult\n" + MediaCoverImage.getQUERY() + "\n" + "siteUrl" + "}";
 	private final MediaType type;

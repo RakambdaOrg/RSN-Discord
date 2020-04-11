@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.OverwatchIDTeamDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2019.enums.*;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2019.stage.match.bracket.OverwatchBracket;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2019.stage.match.game.OverwatchGame;
@@ -16,7 +16,7 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 import java.awt.Color;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,8 +56,8 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 	@JsonProperty("bracket")
 	private OverwatchBracket bracket;
 	@JsonProperty("dateCreated")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	private LocalDateTime dateCreated;
+	@JsonDeserialize(using = ZonedDateTimeDeserializer.class)
+	private ZonedDateTime dateCreated;
 	@JsonProperty("flags")
 	private List<String> flags; //TODO
 	@JsonProperty("handle")
@@ -67,11 +67,11 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 	@JsonProperty("timeZone")
 	private String timeZone;
 	@JsonProperty("actualStartDate")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	private LocalDateTime actualStartDate;
+	@JsonDeserialize(using = ZonedDateTimeDeserializer.class)
+	private ZonedDateTime actualStartDate;
 	@JsonProperty("actualEndDate")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	private LocalDateTime actualEndDate;
+	@JsonDeserialize(using = ZonedDateTimeDeserializer.class)
+	private ZonedDateTime actualEndDate;
 	@JsonProperty("startDate")
 	private String startDateString;
 	@JsonProperty("endDate")
@@ -81,11 +81,11 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 	@JsonProperty("showEndTime")
 	private boolean showEndTime;
 	@JsonProperty("startDateTS")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	private LocalDateTime startDate;
+	@JsonDeserialize(using = ZonedDateTimeDeserializer.class)
+	private ZonedDateTime startDate;
 	@JsonProperty("endDateTS")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	private LocalDateTime endDate;
+	@JsonDeserialize(using = ZonedDateTimeDeserializer.class)
+	private ZonedDateTime endDate;
 	@JsonProperty("youtubeId")
 	private String youtubeId;
 	@JsonProperty("wins")
@@ -147,7 +147,7 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 	}
 	
 	public boolean hasStarted(){
-		return this.getActualStartDate().orElse(this.getStartDate()).isBefore(LocalDateTime.now());
+		return this.getActualStartDate().orElse(this.getStartDate()).isBefore(ZonedDateTime.now());
 	}
 	
 	@Override
@@ -176,12 +176,12 @@ public class OverwatchMatch implements Comparable<OverwatchMatch>{
 	}
 	
 	@NonNull
-	public Optional<LocalDateTime> getActualEndDate(){
-		return Optional.ofNullable(this.actualEndDate);
+	private Optional<ZonedDateTime> getActualStartDate(){
+		return Optional.ofNullable(this.actualStartDate);
 	}
 	
 	@NonNull
-	private Optional<LocalDateTime> getActualStartDate(){
-		return Optional.ofNullable(this.actualStartDate);
+	public Optional<ZonedDateTime> getActualEndDate(){
+		return Optional.ofNullable(this.actualEndDate);
 	}
 }

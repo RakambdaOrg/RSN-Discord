@@ -16,7 +16,6 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 import java.awt.Color;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
@@ -26,7 +25,7 @@ import java.util.Optional;
 
 @BotCommand
 public class NicknameCommand extends BasicCommand{
-	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
 	
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
@@ -58,7 +57,7 @@ public class NicknameCommand extends BasicCommand{
 		}
 		memberOptional.ifPresentOrElse(member -> {
 			final var oldName = Optional.ofNullable(member.getNickname());
-			final var lastChange = Settings.get(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser()).orElse(LocalDateTime.MIN);
+			final var lastChange = Settings.get(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser());
 			final var delay = Duration.ofSeconds(Settings.get(event.getGuild()).getNicknameConfiguration().getChangeDelay());
 			final String newName;
 			if(args.isEmpty()){
@@ -75,12 +74,12 @@ public class NicknameCommand extends BasicCommand{
 				builder.addField("Reason", "Nickname is the same as the current one", false);
 				Actions.reply(event, "", builder.build());
 			}
-			else if(Objects.nonNull(newName) && !Utilities.isTeam(event.getMember()) && lastChange.plus(delay).isAfter(LocalDateTime.now())){
+			else if(Objects.nonNull(newName) && !Utilities.isTeam(event.getMember()) && lastChange.map(date -> date.plus(delay)).map(date -> date.isAfter(ZonedDateTime.now())).orElse(true)){
 				builder.setColor(Color.RED);
 				builder.addField("Old nickname", oldName.orElse("*NONE*"), true);
 				builder.addField("User", member.getAsMention(), true);
 				builder.addField("Reason", "You can change your nickname once every " + delay.toString().replace("PT", ""), true);
-				builder.addField("Last change", lastChange.format(DF), true);
+				builder.addField("Last change", lastChange.map(date -> date.format(DF)).orElse("<NONE>"), true);
 				builder.setTimestamp(ZonedDateTime.now());
 				Actions.reply(event, "", builder.build());
 			}
@@ -91,8 +90,8 @@ public class NicknameCommand extends BasicCommand{
 				try{
 					Actions.changeNickname(member, newName);
 					builder.setColor(Color.GREEN);
-					Settings.get(event.getGuild()).getNicknameConfiguration().setLastChange(member.getUser(), Objects.isNull(newName) ? null : LocalDateTime.now());
-					Settings.get(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser()).map(d -> d.plus(delay)).filter(d -> d.isAfter(LocalDateTime.now())).ifPresent(d -> builder.addField("Next allowed change", d.format(DF), false));
+					Settings.get(event.getGuild()).getNicknameConfiguration().setLastChange(member.getUser(), Objects.isNull(newName) ? null : ZonedDateTime.now());
+					Settings.get(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser()).map(d -> d.plus(delay)).filter(d -> d.isAfter(ZonedDateTime.now())).ifPresent(d -> builder.addField("Next allowed change", d.format(DF), false));
 					Log.getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", event.getAuthor(), member.getUser(), oldName, newName);
 				}
 				catch(final HierarchyException e){

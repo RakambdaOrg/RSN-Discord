@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import java.net.URL;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -21,14 +21,14 @@ import java.time.format.DateTimeFormatter;
 @Getter
 @NoArgsConstructor
 public class AiringSchedule implements AnilistDatedObject{
-	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
 	@Getter
 	private static final String QUERY = "airingSchedules(mediaId: $mediaID) {\n" + "id\n" + "airingAt\n" + "episode\n" + "timeUntilAiring\n" + Media.getQUERY() + "\n}";
 	@JsonProperty("id")
 	private int id;
 	@JsonProperty("airingAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private LocalDateTime airingAt;
+	private ZonedDateTime airingAt;
 	@JsonProperty("episode")
 	private int episode;
 	@JsonProperty("media")
@@ -58,7 +58,7 @@ public class AiringSchedule implements AnilistDatedObject{
 	}
 	
 	@Override
-	public @NonNull LocalDateTime getDate(){
+	public @NonNull ZonedDateTime getDate(){
 		return getAiringAt();
 	}
 }

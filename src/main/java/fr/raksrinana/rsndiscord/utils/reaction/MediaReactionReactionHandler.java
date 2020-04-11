@@ -10,7 +10,7 @@ import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 public class MediaReactionReactionHandler extends TodosReactionHandler{
@@ -34,7 +34,7 @@ public class MediaReactionReactionHandler extends TodosReactionHandler{
 		return Settings.get(event.getGuild()).getArchiveCategory().flatMap(CategoryConfiguration::getCategory).map(archiveCategory -> {
 			Utilities.getMessageById(event.getChannel(), event.getMessageIdLong()).thenAccept(message -> message.removeReaction(event.getReactionEmote().getEmoji()).queue());
 			Actions.setCategoryAndSync(event.getChannel(), archiveCategory).thenAccept(future -> Actions.sendMessage(event.getChannel(), MessageFormat.format("{0} archived this channel.", event.getMember().getAsMention()), null));
-			ChannelCommand.scheduleDeletion(LocalDateTime.now().plusWeeks(2), event.getChannel(), event.getUser());
+			ChannelCommand.scheduleDeletion(ZonedDateTime.now().plusWeeks(2), event.getChannel(), event.getUser());
 			return ReactionHandlerResult.PROCESSED_DELETE;
 		}).orElseGet(() -> {
 			Actions.removeReaction(event.getReaction(), event.getUser());

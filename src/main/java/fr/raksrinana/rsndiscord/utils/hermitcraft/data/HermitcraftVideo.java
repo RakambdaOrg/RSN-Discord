@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.utils.json.ISO8601DateTimeDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601ZonedDateTimeDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -17,8 +17,8 @@ public class HermitcraftVideo{
 	@JsonProperty("id")
 	private String id;
 	@JsonProperty("uploaded")
-	@JsonDeserialize(using = ISO8601DateTimeDeserializer.class)
-	private LocalDateTime uploaded;
+	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
+	private ZonedDateTime uploaded;
 	@JsonProperty("uploadedFriendly")
 	private String uploadedFriendly;
 	@JsonProperty("uploadedFriendlyMobile")

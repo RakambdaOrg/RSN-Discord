@@ -15,7 +15,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.User;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,7 +42,7 @@ public class TraktConfiguration implements CompositeConfiguration{
 	@JsonProperty("usernames")
 	private Map<Long, String> usernames = new HashMap<>();
 	
-	public void setLastAccess(final User user, final String section, final LocalDateTime date){
+	public void setLastAccess(final User user, final String section, final ZonedDateTime date){
 		this.getLastAccess(section, user.getIdLong()).ifPresentOrElse(lastAccess -> lastAccess.setDate(date), () -> this.lastAccess.computeIfAbsent(section, sec -> new HashSet<>()).add(new UserDateConfiguration(user, date)));
 	}
 	
@@ -58,7 +58,7 @@ public class TraktConfiguration implements CompositeConfiguration{
 	
 	@NonNull
 	public Optional<TraktAccessTokenConfiguration> getAccessToken(final long userId){
-		final var now = LocalDateTime.now();
+		final var now = ZonedDateTime.now();
 		return this.tokens.stream().filter(t -> Objects.equals(t.getUserId(), userId)).filter(t -> t.getExpireDate().isAfter(now)).sorted(Comparator.comparing(TraktAccessTokenConfiguration::getExpireDate).reversed()).findAny();
 	}
 	

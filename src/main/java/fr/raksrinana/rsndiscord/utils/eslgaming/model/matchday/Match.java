@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -35,10 +35,10 @@ public class Match implements Comparable<Match>{
 	private int pid;
 	@JsonProperty("tstamp")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private LocalDateTime timestamp;
+	private ZonedDateTime timestamp;
 	@JsonProperty("crdate")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private LocalDateTime createdDate;
+	private ZonedDateTime createdDate;
 	@JsonProperty("cruser_id")
 	private long creationUserId;
 	@JsonProperty("sorting")
@@ -55,7 +55,7 @@ public class Match implements Comparable<Match>{
 	private Team team2;
 	@JsonProperty("playdate")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private LocalDateTime playDate;
+	private ZonedDateTime playDate;
 	@JsonProperty("winner")
 	private int winner;
 	@JsonProperty("result_team1")

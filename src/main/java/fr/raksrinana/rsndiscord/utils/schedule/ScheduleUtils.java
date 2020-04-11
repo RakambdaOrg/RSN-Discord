@@ -18,7 +18,7 @@ import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -65,7 +65,7 @@ public class ScheduleUtils{
 		final var notifyDate = reminder.getScheduleDate();
 		final var builder = Utilities.buildEmbed(reminder.getUser().getUser().orElse(null), Color.ORANGE, "Reminder", null);
 		builder.addField("Date", notifyDate.format(Utilities.DATE_TIME_MINUTE_FORMATTER), true);
-		builder.addField("Remaining time", Utilities.durationToString(Duration.between(LocalDateTime.now(), notifyDate)), true);
+		builder.addField("Remaining time", Utilities.durationToString(Duration.between(ZonedDateTime.now(), notifyDate)), true);
 		builder.addField("Message", reminder.getMessage(), false);
 		if(Objects.nonNull(embedBuilderConsumer)){
 			embedBuilderConsumer.accept(builder);

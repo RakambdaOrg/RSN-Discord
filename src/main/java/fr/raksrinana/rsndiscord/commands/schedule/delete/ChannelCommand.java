@@ -18,7 +18,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -47,7 +47,7 @@ public class ChannelCommand extends BasicCommand{
 		}).orElse(CommandResult.BAD_ARGUMENTS);
 	}
 	
-	public static void scheduleDeletion(LocalDateTime date, TextChannel channel, User author){
+	public static void scheduleDeletion(ZonedDateTime date, TextChannel channel, User author){
 		ScheduleUtils.addScheduleAndNotify(new SimpleScheduleConfiguration(author, channel, date, "Deleting this channel", ScheduleTag.DELETE_CHANNEL), channel, builder -> builder.addField("Info", "React " + BasicEmotes.CROSS_NO.getValue() + " to cancel the deletion", false)).thenAccept(message -> {
 			Actions.addReaction(message, BasicEmotes.CROSS_NO.getValue());
 			Settings.get(channel.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, ReactionTag.SCHEDULED_DELETE_CHANNEL));

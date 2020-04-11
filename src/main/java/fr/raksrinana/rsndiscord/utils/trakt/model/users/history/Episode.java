@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.utils.json.ISO8601DateTimeDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.themoviedb.model.Season;
 import fr.raksrinana.rsndiscord.utils.themoviedb.model.TVDetails;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktObject;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import java.net.URL;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.utils.trakt.model.users.history.UserHistory.DATETIME_FORMAT;
@@ -40,11 +40,11 @@ public class Episode implements TraktObject{
 	@JsonProperty("comment_count")
 	private int commentCount;
 	@JsonProperty("first_aired")
-	@JsonDeserialize(using = ISO8601DateTimeDeserializer.class)
-	private LocalDateTime firstAired;
+	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
+	private ZonedDateTime firstAired;
 	@JsonProperty("updated_at")
-	@JsonDeserialize(using = ISO8601DateTimeDeserializer.class)
-	private LocalDateTime updatedAt;
+	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
+	private ZonedDateTime updatedAt;
 	@JsonProperty("runtime")
 	private int runtime;
 	

@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.awt.Color;
 import java.net.URL;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -29,7 +29,7 @@ public abstract class ListActivity implements AnilistDatedObject{
 	private static final String QUERY = "ListActivity{\n" + "id\n" + "userId\n" + "type\n" + "createdAt\n" + "progress\n" + "siteUrl\n" + Media.getQUERY() + "\n}";
 	@JsonProperty("createdAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private LocalDateTime createdAt;
+	private ZonedDateTime createdAt;
 	@JsonProperty("siteUrl")
 	private URL url;
 	@JsonProperty("progress")
@@ -58,7 +58,7 @@ public abstract class ListActivity implements AnilistDatedObject{
 	protected abstract Color getColor();
 	
 	@NonNull
-	public LocalDateTime getDate(){
+	public ZonedDateTime getDate(){
 		return this.getCreatedAt();
 	}
 	

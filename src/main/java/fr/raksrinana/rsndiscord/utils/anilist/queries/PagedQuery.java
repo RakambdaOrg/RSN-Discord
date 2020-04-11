@@ -6,7 +6,7 @@ import fr.raksrinana.rsndiscord.utils.log.Log;
 import kong.unirest.json.JSONObject;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Member;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 public interface PagedQuery<T>{
@@ -67,5 +67,5 @@ public interface PagedQuery<T>{
 	
 	T buildChange(@NonNull final JSONObject change) throws Exception;
 	
-	LocalDateTime getBaseDate();
+	ZonedDateTime getBaseDate();
 }

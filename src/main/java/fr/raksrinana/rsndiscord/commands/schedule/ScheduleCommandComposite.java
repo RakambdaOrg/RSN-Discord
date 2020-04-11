@@ -7,7 +7,7 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 @BotCommand
 public class ScheduleCommandComposite extends CommandComposite{
-	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'!'HH:mm");
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'!'HH:mm z");
 	private static final Pattern PERIOD_PATTERN = Pattern.compile("([0-9]+)([mhd])");
 	
 	public ScheduleCommandComposite(){
@@ -26,13 +26,13 @@ public class ScheduleCommandComposite extends CommandComposite{
 		this.addSubCommand(new DeleteCommandComposite(this));
 	}
 	
-	public static Optional<LocalDateTime> getReminderDate(@NonNull String string){
+	public static Optional<ZonedDateTime> getReminderDate(@NonNull String string){
 		try{
 			final var duration = parsePeriod(string);
 			if(!duration.isZero()){
-				return Optional.of(LocalDateTime.now().plus(duration));
+				return Optional.of(ZonedDateTime.now().plus(duration));
 			}
-			return Optional.of(LocalDateTime.parse(string, DATE_FORMATTER));
+			return Optional.of(ZonedDateTime.parse(string, DATE_FORMATTER));
 		}
 		catch(DateTimeParseException ignored){
 		}
@@ -64,7 +64,7 @@ public class ScheduleCommandComposite extends CommandComposite{
 	@Override
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("delay", "The delay before executing the action in the format `XdXhXm` where Xs are numbers or `yyyy-MM-dd!HH:mm`", false);
+		builder.addField("delay", "The delay before executing the action in the format `XdXhXm` where Xs are numbers or `yyyy-MM-dd!HH:mmz`", false);
 	}
 	
 	@NonNull

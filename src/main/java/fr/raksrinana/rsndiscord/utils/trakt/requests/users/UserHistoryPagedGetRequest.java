@@ -7,15 +7,16 @@ import kong.unirest.GenericType;
 import kong.unirest.GetRequest;
 import kong.unirest.Unirest;
 import lombok.NonNull;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Set;
 
 public class UserHistoryPagedGetRequest implements TraktPagedGetRequest<UserHistory>{
 	private final int page;
-	private final LocalDateTime startDate;
-	private final LocalDateTime endDate;
+	private final ZonedDateTime startDate;
+	private final ZonedDateTime endDate;
 	private final String username;
 	
 	public UserHistoryPagedGetRequest(@NonNull String username){
@@ -26,11 +27,11 @@ public class UserHistoryPagedGetRequest implements TraktPagedGetRequest<UserHist
 		this(username, page, null);
 	}
 	
-	public UserHistoryPagedGetRequest(@NonNull String username, int page, LocalDateTime startDate){
+	public UserHistoryPagedGetRequest(@NonNull String username, int page, ZonedDateTime startDate){
 		this(username, page, startDate, null);
 	}
 	
-	public UserHistoryPagedGetRequest(@NonNull String username, int page, LocalDateTime startDate, LocalDateTime endDate){
+	public UserHistoryPagedGetRequest(@NonNull String username, int page, ZonedDateTime startDate, ZonedDateTime endDate){
 		this.username = username;
 		this.page = page;
 		this.startDate = startDate;
@@ -56,10 +57,10 @@ public class UserHistoryPagedGetRequest implements TraktPagedGetRequest<UserHist
 	public GetRequest getRequest(){
 		final var request = Unirest.get(TraktUtils.API_URL + "/users/{username}/history").routeParam("username", this.username).queryString("extended", "full").queryString("page", getPage()).queryString("limit", getLimit());
 		if(Objects.nonNull(startDate)){
-			request.queryString("start_at", startDate.format(DateTimeFormatter.ISO_DATE_TIME));
+			request.queryString("start_at", startDate.withZoneSameInstant(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_DATE_TIME));
 		}
 		if(Objects.nonNull(endDate)){
-			request.queryString("end_at", endDate.format(DateTimeFormatter.ISO_DATE_TIME));
+			request.queryString("end_at", endDate.withZoneSameInstant(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_DATE_TIME));
 		}
 		return request;
 	}

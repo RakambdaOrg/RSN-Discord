@@ -11,19 +11,17 @@ import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEve
 import java.awt.Color;
 import java.io.IOException;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
-	private static final Pattern TIME_PATTERN = Pattern.compile("(\\d[HMS])(?!$)");
 	private final ScheduledExecutorService executor;
 	private boolean counting = true;
-	private LocalDateTime lastStart = LocalDateTime.now();
+	private ZonedDateTime lastStart = ZonedDateTime.now();
 	private Duration totalTime = Duration.ZERO;
 	
 	public StopwatchWaitingUserReply(final GuildMessageReceivedEvent event, final Message message){
@@ -39,7 +37,7 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 			if(Objects.nonNull(replyEmote)){
 				if(replyEmote == BasicEmotes.S){
 					this.counting = false;
-					this.totalTime = this.totalTime.plus(Duration.between(this.lastStart, LocalDateTime.now()));
+					this.totalTime = this.totalTime.plus(Duration.between(this.lastStart, ZonedDateTime.now()));
 					this.executor.shutdownNow();
 					Actions.sendMessage(this.getWaitChannel(), "Total time: " + this.totalTime, null);
 					return true;
@@ -47,7 +45,7 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 				if(this.counting){
 					if(replyEmote == BasicEmotes.P){
 						this.counting = false;
-						this.totalTime = this.totalTime.plus(Duration.between(this.lastStart, LocalDateTime.now()));
+						this.totalTime = this.totalTime.plus(Duration.between(this.lastStart, ZonedDateTime.now()));
 						final var message = this.getInfoMessages().stream().findFirst();
 						message.ifPresent(m -> {
 							m.clearReactions().queue();
@@ -60,7 +58,7 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 				else{
 					if(replyEmote == BasicEmotes.R){
 						this.counting = true;
-						this.lastStart = LocalDateTime.now();
+						this.lastStart = ZonedDateTime.now();
 						final var message = this.getInfoMessages().stream().findFirst();
 						message.ifPresent(m -> {
 							m.clearReactions().queue();
@@ -75,7 +73,7 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 	}
 	
 	private void updateTimer(){
-		final var newTotalTime = this.totalTime.plus(this.counting ? Duration.between(this.lastStart, LocalDateTime.now()) : Duration.ZERO);
+		final var newTotalTime = this.totalTime.plus(this.counting ? Duration.between(this.lastStart, ZonedDateTime.now()) : Duration.ZERO);
 		if(!Objects.equals(newTotalTime, this.totalTime)){
 			final var builder = Utilities.buildEmbed(this.getWaitUser(), Color.GREEN, "Stopwatch", null);
 			builder.addField("Time", Utilities.durationToString(newTotalTime), false);
@@ -95,7 +93,7 @@ public class StopwatchWaitingUserReply extends BasicWaitingUserReply{
 	@Override
 	public boolean onExpire(){
 		this.counting = false;
-		this.totalTime = this.totalTime.plus(Duration.between(this.lastStart, LocalDateTime.now()));
+		this.totalTime = this.totalTime.plus(Duration.between(this.lastStart, ZonedDateTime.now()));
 		this.executor.shutdown();
 		Actions.sendMessage(this.getWaitChannel(), "Total time: " + this.totalTime, null);
 		return true;

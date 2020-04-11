@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2019.stage.match.OverwatchMatch;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2019.stage.week.event.OverwatchEvent;
 import lombok.Getter;
 import lombok.NonNull;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -22,11 +22,11 @@ public class OverwatchWeek implements Comparable<OverwatchWeek>{
 	@JsonProperty("id")
 	private int id;
 	@JsonProperty("startDate")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	private LocalDateTime startDate;
+	@JsonDeserialize(using = ZonedDateTimeDeserializer.class)
+	private ZonedDateTime startDate;
 	@JsonProperty("endDate")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	private LocalDateTime endDate;
+	@JsonDeserialize(using = ZonedDateTimeDeserializer.class)
+	private ZonedDateTime endDate;
 	@JsonProperty("name")
 	private String name;
 	@JsonProperty("matches")

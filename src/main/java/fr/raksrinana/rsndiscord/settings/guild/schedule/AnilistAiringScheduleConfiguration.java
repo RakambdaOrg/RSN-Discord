@@ -8,11 +8,11 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 public class AnilistAiringScheduleConfiguration extends ScheduleConfiguration{
-	public AnilistAiringScheduleConfiguration(@NonNull User user, @NonNull TextChannel channel, @NonNull LocalDateTime scheduleDate, @NonNull AiringSchedule schedule){
+	public AnilistAiringScheduleConfiguration(@NonNull User user, @NonNull TextChannel channel, @NonNull ZonedDateTime scheduleDate, @NonNull AiringSchedule schedule){
 		super(user, channel, scheduleDate, MessageFormat.format("Episode {0} is airing", schedule.getEpisode()), ScheduleTag.ANILIST_AIRING_SCHEDULE, Map.of(AnilistReleaseScheduleHandler.MEDIA_ID_KEY, Integer.toString(schedule.getMedia().getId())));
 	}
 }

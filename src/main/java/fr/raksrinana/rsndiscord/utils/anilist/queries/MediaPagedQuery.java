@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.raksrinana.rsndiscord.utils.anilist.media.Media;
 import kong.unirest.json.JSONObject;
 import lombok.NonNull;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public class MediaPagedQuery implements PagedQuery<Media>{
 	private final String QUERY;
@@ -49,7 +49,7 @@ public class MediaPagedQuery implements PagedQuery<Media>{
 	}
 	
 	@Override
-	public LocalDateTime getBaseDate(){
+	public ZonedDateTime getBaseDate(){
 		return null;
 	}
 }

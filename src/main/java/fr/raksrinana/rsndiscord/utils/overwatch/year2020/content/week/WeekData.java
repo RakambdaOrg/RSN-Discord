@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.utils.json.ISO8601DateTimeDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.week.event.Event;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.week.event.match.Match;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,11 +30,11 @@ public class WeekData{
 	@JsonProperty("weekNumber")
 	private int weekNumber;
 	@JsonProperty("startDate")
-	@JsonDeserialize(using = ISO8601DateTimeDeserializer.class)
-	private LocalDateTime startDate;
+	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
+	private ZonedDateTime startDate;
 	@JsonProperty("endDate")
-	@JsonDeserialize(using = ISO8601DateTimeDeserializer.class)
-	private LocalDateTime endDate;
+	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
+	private ZonedDateTime endDate;
 	@JsonProperty("events")
 	private Set<Event> events;
 	@JsonProperty("pagination")
@@ -58,7 +58,7 @@ public class WeekData{
 	}
 	
 	public Optional<Match> getCurrentMatch(){
-		final var now = LocalDateTime.now();
+		final var now = ZonedDateTime.now();
 		return this.getMatches().stream().filter(match -> match.isLive() || (now.isAfter(match.getStartDate()) && now.isBefore(match.getEndDate()))).findFirst();
 	}
 	
@@ -71,7 +71,7 @@ public class WeekData{
 	}
 	
 	public Optional<Match> getNextMatch(){
-		final var now = LocalDateTime.now();
+		final var now = ZonedDateTime.now();
 		return this.getMatches().stream().filter(match -> now.isBefore(match.getStartDate())).min(Comparator.comparing(Match::getStartDate));
 	}
 }

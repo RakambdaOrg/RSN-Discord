@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.utils.json.ISO8601DateDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
@@ -16,7 +16,7 @@ import java.util.Objects;
 @NoArgsConstructor
 public class Season{
 	@JsonProperty("air_date")
-	@JsonDeserialize(using = ISO8601DateDeserializer.class)
+	@JsonDeserialize(using = ISO8601LocalDateDeserializer.class)
 	private LocalDate airDate;
 	@JsonProperty("episode_count")
 	private int episodeCount;

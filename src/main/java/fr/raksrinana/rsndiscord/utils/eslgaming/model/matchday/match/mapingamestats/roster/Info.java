@@ -11,7 +11,7 @@ import fr.raksrinana.rsndiscord.utils.json.UnknownDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.net.URL;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -24,10 +24,10 @@ public class Info{
 	private int pid;
 	@JsonProperty("tstamp")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private LocalDateTime timestamp;
+	private ZonedDateTime timestamp;
 	@JsonProperty("crdate")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private LocalDateTime createdDate;
+	private ZonedDateTime createdDate;
 	@JsonProperty("cruser_id")
 	private int creationUserId;
 	@JsonProperty("sorting")

@@ -6,14 +6,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.settings.AtomicConfiguration;
-import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeDeserializer;
-import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeSerializer;
+import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -23,13 +23,13 @@ public class AnilistAccessTokenConfiguration implements AtomicConfiguration{
 	@JsonProperty("userId")
 	private long userId;
 	@JsonProperty("expireDate")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime expireDate;
+	@JsonDeserialize(using = ZonedDateTimeDeserializer.class)
+	@JsonSerialize(using = ZonedDateTimeSerializer.class)
+	private ZonedDateTime expireDate;
 	@JsonProperty("token")
 	private String token;
 	
-	public AnilistAccessTokenConfiguration(final long userId, @NonNull final LocalDateTime expireDate, @NonNull final String token){
+	public AnilistAccessTokenConfiguration(final long userId, @NonNull final ZonedDateTime expireDate, @NonNull final String token){
 		this.userId = userId;
 		this.expireDate = expireDate;
 		this.token = token;
@@ -54,6 +54,6 @@ public class AnilistAccessTokenConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public boolean shouldBeRemoved(){
-		return LocalDateTime.now().isAfter(this.getExpireDate());
+		return ZonedDateTime.now().isAfter(this.getExpireDate());
 	}
 }

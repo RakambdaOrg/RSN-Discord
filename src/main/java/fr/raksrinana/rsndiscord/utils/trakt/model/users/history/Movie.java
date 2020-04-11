@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.utils.json.ISO8601DateDeserializer;
-import fr.raksrinana.rsndiscord.utils.json.ISO8601DateTimeDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
 import fr.raksrinana.rsndiscord.utils.themoviedb.model.MovieDetails;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktObject;
@@ -15,7 +15,7 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.Set;
 import static fr.raksrinana.rsndiscord.utils.trakt.model.users.history.UserHistory.DATE_FORMAT;
@@ -36,7 +36,7 @@ public class Movie implements TraktObject{
 	@JsonProperty("overview")
 	private String overview;
 	@JsonProperty("released")
-	@JsonDeserialize(using = ISO8601DateDeserializer.class)
+	@JsonDeserialize(using = ISO8601LocalDateDeserializer.class)
 	private LocalDate released;
 	@JsonProperty("runtime")
 	private int runtime;
@@ -57,8 +57,8 @@ public class Movie implements TraktObject{
 	@JsonProperty("comment_count")
 	private int commentCount;
 	@JsonProperty("updated_at")
-	@JsonDeserialize(using = ISO8601DateTimeDeserializer.class)
-	private LocalDateTime updatedAt;
+	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
+	private ZonedDateTime updatedAt;
 	@JsonProperty("language")
 	private String language;
 	@JsonProperty("genres")

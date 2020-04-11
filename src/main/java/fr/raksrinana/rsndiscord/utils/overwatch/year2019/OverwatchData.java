@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.utils.json.USADateStringDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.USALocalDateDeserializer;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2019.stage.OverwatchStage;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2019.stage.match.OverwatchMatch;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2019.stage.tournament.OverwatchTournament;
@@ -24,10 +24,10 @@ public class OverwatchData{
 	@JsonProperty("id")
 	private String id;
 	@JsonProperty("startDate")
-	@JsonDeserialize(using = USADateStringDeserializer.class)
+	@JsonDeserialize(using = USALocalDateDeserializer.class)
 	private LocalDate startDate;
 	@JsonProperty("endDate")
-	@JsonDeserialize(using = USADateStringDeserializer.class)
+	@JsonDeserialize(using = USALocalDateDeserializer.class)
 	private LocalDate endDate;
 	@JsonProperty("endDateMS")
 	private long endDateMs;

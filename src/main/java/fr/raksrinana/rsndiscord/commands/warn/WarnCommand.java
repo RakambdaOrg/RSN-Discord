@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.awt.Color;
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Optional;
@@ -46,7 +46,7 @@ public abstract class WarnCommand extends BasicCommand{
 			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 			roleOptional.ifPresentOrElse(role -> {
 				Actions.giveRole(event.getMember(), role);
-				final var date = LocalDateTime.now();
+				final var date = ZonedDateTime.now();
 				Settings.get(event.getGuild()).getSchedules().stream().filter(configuration -> Objects.equals(configuration.getTag(), ScheduleTag.REMOVE_ROLE) && Objects.equals(user.getIdLong(), configuration.getUser().getUserId())).filter(configuration -> Objects.equals(configuration.getData().get(RemoveRoleScheduleHandler.ROLE_ID_KEY), role.getId())).findFirst().ifPresentOrElse(c -> {
 					if(date.isAfter(c.getScheduleDate())){
 						c.setScheduleDate(date);

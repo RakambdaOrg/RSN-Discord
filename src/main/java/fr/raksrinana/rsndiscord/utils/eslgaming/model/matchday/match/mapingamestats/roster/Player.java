@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.utils.json.ISO8601DateDeserializer;
-import fr.raksrinana.rsndiscord.utils.json.ISO8601DateTimeDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601ZonedDateTimeDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -17,11 +17,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Player{
 	@JsonProperty("createdAt")
-	@JsonDeserialize(using = ISO8601DateTimeDeserializer.class)
-	private LocalDateTime createdAt;
+	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
+	private ZonedDateTime createdAt;
 	@JsonProperty("updatedAt")
-	@JsonDeserialize(using = ISO8601DateTimeDeserializer.class)
-	private LocalDateTime updatedAt;
+	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
+	private ZonedDateTime updatedAt;
 	@JsonProperty("key")
 	private String key;
 	@JsonProperty("name")
@@ -29,7 +29,7 @@ public class Player{
 	@JsonProperty("nameOriginal")
 	private String nameOriginal;
 	@JsonProperty("birthday")
-	@JsonDeserialize(using = ISO8601DateDeserializer.class)
+	@JsonDeserialize(using = ISO8601LocalDateDeserializer.class)
 	private LocalDate birthday;
 	@JsonProperty("gender")
 	private String gender;

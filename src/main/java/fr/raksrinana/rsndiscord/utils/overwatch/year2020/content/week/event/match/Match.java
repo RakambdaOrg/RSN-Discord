@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.UnknownDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.utils.Link;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.week.event.banner.Venue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -45,11 +45,11 @@ public class Match{
 	@JsonProperty("status")
 	private Status status;
 	@JsonProperty("startDate")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	private LocalDateTime startDate;
+	@JsonDeserialize(using = ZonedDateTimeDeserializer.class)
+	private ZonedDateTime startDate;
 	@JsonProperty("endDate")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	private LocalDateTime endDate;
+	@JsonDeserialize(using = ZonedDateTimeDeserializer.class)
+	private ZonedDateTime endDate;
 	@JsonProperty("home")
 	private String home;
 	@JsonProperty("games")

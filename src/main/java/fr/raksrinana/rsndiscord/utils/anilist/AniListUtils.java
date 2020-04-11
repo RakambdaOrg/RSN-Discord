@@ -15,7 +15,9 @@ import net.dv8tion.jda.api.entities.Member;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
@@ -55,7 +57,7 @@ public class AniListUtils{
 			throw new IllegalArgumentException("Getting token failed with error: " + json.getString("error"));
 		}
 		Settings.get(member.getGuild()).getAniListConfiguration().setRefreshToken(member.getUser().getIdLong(), json.getString("refresh_token"));
-		Settings.get(member.getGuild()).getAniListConfiguration().addAccessToken(new AnilistAccessTokenConfiguration(member.getUser().getIdLong(), LocalDateTime.now().plusSeconds(json.getInt("expires_in")), json.getString("access_token")));
+		Settings.get(member.getGuild()).getAniListConfiguration().addAccessToken(new AnilistAccessTokenConfiguration(member.getUser().getIdLong(), ZonedDateTime.now().plusSeconds(json.getInt("expires_in")), json.getString("access_token")));
 	}
 	
 	@NonNull
@@ -125,8 +127,8 @@ public class AniListUtils{
 		throw new Exception("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString() + " | query was " + query);
 	}
 	
-	public static LocalDateTime getDefaultDate(){
-		return LocalDateTime.of(2019, 7, 7, 0, 0);
+	public static ZonedDateTime getDefaultDate(){
+		return ZonedDateTime.ofInstant(Instant.parse("2019-07-07T00:00:00Z"), ZoneId.of("UTC"));
 	}
 	
 	static{

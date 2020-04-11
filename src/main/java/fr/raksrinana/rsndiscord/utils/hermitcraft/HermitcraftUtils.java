@@ -34,7 +34,7 @@ public class HermitcraftUtils{
 	}
 	
 	private static <T> Optional<T> getRequestResult(GenericType<T> type, String endpoint, Map<String, Object> parameters){
-		final var handler = new ObjectGetRequestSender<>(type, Unirest.get("https://hermitcraft.com/api" + endpoint).queryString(parameters)).getRequestHandler();
+		final var handler = new ObjectGetRequestSender<>(type, Unirest.get(ENDPOINT + endpoint).queryString(parameters)).getRequestHandler();
 		handler.getResult().getParsingError().ifPresent(error -> {
 			Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Failed to parse Hermitcraft response", Utilities.throwableToEmbed(error).build());
 			Log.getLogger(null).warn("Failed to parse Hermitcraft response", error);

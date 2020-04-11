@@ -6,15 +6,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.settings.CompositeConfiguration;
-import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeDeserializer;
-import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeSerializer;
+import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -24,15 +25,15 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 public class EntityParticipation implements CompositeConfiguration{
-	@JsonProperty("date")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDateTime dateTime;
 	@JsonProperty("scores")
-	private Set<EntityScore> scores = new HashSet<>();
+	private final Set<EntityScore> scores = new HashSet<>();
+	@JsonProperty("date")
+	@JsonDeserialize(using = ZonedDateTimeDeserializer.class)
+	@JsonSerialize(using = ZonedDateTimeSerializer.class)
+	private ZonedDateTime dateTime;
 	
 	public EntityParticipation(final LocalDate date){
-		this.dateTime = LocalDateTime.of(date, LocalTime.of(0, 0, 0));
+		this.dateTime = ZonedDateTime.of(date, LocalTime.MIDNIGHT, ZoneId.of("UTC"));
 	}
 	
 	public void increment(final long id, final String name){

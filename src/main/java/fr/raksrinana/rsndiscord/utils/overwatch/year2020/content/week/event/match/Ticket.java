@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.utils.json.ISO8601DateTimeDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.UnknownDeserializer;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.utils.Link;
 import fr.raksrinana.rsndiscord.utils.overwatch.year2020.content.utils.asset.PublishDetails;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.Set;
 
@@ -31,8 +31,8 @@ public class Ticket{
 	@JsonProperty("Version")
 	private int version;
 	@JsonProperty("createdAt")
-	@JsonDeserialize(using = ISO8601DateTimeDeserializer.class)
-	private LocalDateTime createdAt;
+	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
+	private ZonedDateTime createdAt;
 	@JsonProperty("createdBy")
 	private String createdBy;
 	@JsonProperty("link")
@@ -49,8 +49,8 @@ public class Ticket{
 	@JsonProperty("uid")
 	private String uid;
 	@JsonProperty("updatedAt")
-	@JsonDeserialize(using = ISO8601DateTimeDeserializer.class)
-	private LocalDateTime updatedAt;
+	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
+	private ZonedDateTime updatedAt;
 	@JsonProperty("updatedBy")
 	private String updatedBy;
 	@JsonProperty("publishDetails")

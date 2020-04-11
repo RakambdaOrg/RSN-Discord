@@ -1,8 +1,8 @@
 package fr.raksrinana.rsndiscord.utils.trakt;
 
 import lombok.NonNull;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public interface TraktDatedObject extends TraktObject{
-	@NonNull LocalDateTime getDate();
+	@NonNull ZonedDateTime getDate();
 }

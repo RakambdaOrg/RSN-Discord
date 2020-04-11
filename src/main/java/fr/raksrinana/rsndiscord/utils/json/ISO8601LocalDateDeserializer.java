@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class ISO8601DateDeserializer extends JsonDeserializer<LocalDate>{
+public class ISO8601LocalDateDeserializer extends JsonDeserializer<LocalDate>{
 	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_DATE;
 	
 	@Override

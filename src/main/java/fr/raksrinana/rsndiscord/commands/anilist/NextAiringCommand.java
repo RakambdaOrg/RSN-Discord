@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,7 +50,7 @@ class NextAiringCommand extends BasicCommand{
 			return CommandResult.BAD_ARGUMENTS;
 		}
 		try{
-			final var now = LocalDateTime.now();
+			final var now = ZonedDateTime.now();
 			final var schedules = new AiringSchedulePagedQuery(mediaId).getResult(event.getMember());
 			schedules.stream().filter(schedule -> now.isBefore(schedule.getAiringAt())).min(Comparator.comparingInt(AiringSchedule::getTimeUntilAiring)).ifPresentOrElse(schedule -> {
 				final var builder = new EmbedBuilder();

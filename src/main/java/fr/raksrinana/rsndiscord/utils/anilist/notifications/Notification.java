@@ -7,7 +7,7 @@ import fr.raksrinana.rsndiscord.utils.anilist.AnilistDatedObject;
 import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
 import lombok.Getter;
 import lombok.NonNull;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -23,7 +23,7 @@ public abstract class Notification implements AnilistDatedObject{
 	private int id;
 	@JsonProperty("createdAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private LocalDateTime createdAt = LocalDateTime.now();
+	private final ZonedDateTime createdAt = ZonedDateTime.now();
 	
 	public Notification(NotificationType type){this.type = type;}
 	
@@ -37,7 +37,7 @@ public abstract class Notification implements AnilistDatedObject{
 	
 	@NonNull
 	@Override
-	public LocalDateTime getDate(){
+	public ZonedDateTime getDate(){
 		return this.getCreatedAt();
 	}
 	

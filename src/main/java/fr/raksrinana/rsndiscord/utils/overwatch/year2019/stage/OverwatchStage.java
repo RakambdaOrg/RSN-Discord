@@ -8,7 +8,7 @@ import fr.raksrinana.rsndiscord.utils.overwatch.year2019.stage.tournament.Overwa
 import fr.raksrinana.rsndiscord.utils.overwatch.year2019.stage.week.OverwatchWeek;
 import lombok.Getter;
 import lombok.NonNull;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -36,7 +36,7 @@ public class OverwatchStage implements Comparable<OverwatchStage>{
 		return overwatchStage.getStartDate().map(d1 -> s2.map(d1::compareTo).orElse(-1)).orElseGet(() -> s2.isPresent() ? 1 : 0);
 	}
 	
-	private Optional<LocalDateTime> getStartDate(){
+	private Optional<ZonedDateTime> getStartDate(){
 		return this.getMatches().stream().map(OverwatchMatch::getStartDate).sorted().findFirst();
 	}
 	

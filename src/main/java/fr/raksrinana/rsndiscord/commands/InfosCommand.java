@@ -10,7 +10,6 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.awt.Color;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
@@ -22,11 +21,12 @@ public class InfosCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
+		final var now = ZonedDateTime.now();
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Bot infos", null);
 		builder.addField("Bot version", Main.getRSNBotVersion(), false);
-		builder.addField("Current time:", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME), false);
-		builder.addField("Last start (local time):", Main.bootTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME), false);
-		builder.addField("Time elapsed", Duration.between(Main.bootTime, ZonedDateTime.now()).toString(), false);
+		builder.addField("Current time:", now.format(DateTimeFormatter.ISO_ZONED_DATE_TIME), false);
+		builder.addField("Last start (local time):", Main.bootTime.format(DateTimeFormatter.ISO_ZONED_DATE_TIME), false);
+		builder.addField("Time elapsed", Duration.between(Main.bootTime, now).toString(), false);
 		Actions.reply(event, "", builder.build());
 		return CommandResult.SUCCESS;
 	}

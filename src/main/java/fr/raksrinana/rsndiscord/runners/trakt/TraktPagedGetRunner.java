@@ -16,7 +16,9 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import java.awt.Color;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -58,9 +60,9 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 		Log.getLogger(member.getGuild()).debug("Fetching user {}", member);
 		var elementList = TraktUtils.getPagedQuery(Settings.get(member.getGuild()).getTraktConfiguration().getAccessToken(member.getIdLong()).orElse(null), this.initQuery(member));
 		if(this.isKeepOnlyNew()){
-			final var baseDate = Settings.get(member.getGuild()).getTraktConfiguration().getLastAccess(this.getFetcherID(), member.getUser().getIdLong()).map(UserDateConfiguration::getDate).orElse(LocalDateTime.of(2019, 7, 7, 0, 0));
+			final var baseDate = Settings.get(member.getGuild()).getTraktConfiguration().getLastAccess(this.getFetcherID(), member.getUser().getIdLong()).map(UserDateConfiguration::getDate).orElse(ZonedDateTime.ofInstant(Instant.parse("2019-07-07T00:00:00Z"), ZoneId.of("UTC")));
 			elementList = elementList.stream().filter(e -> e instanceof TraktDatedObject).filter(e -> ((TraktDatedObject) e).getDate().isAfter(baseDate)).collect(Collectors.toSet());
-			elementList.stream().filter(e -> e instanceof TraktDatedObject).map(e -> (TraktDatedObject) e).map(TraktDatedObject::getDate).max(LocalDateTime::compareTo).ifPresent(val -> {
+			elementList.stream().filter(e -> e instanceof TraktDatedObject).map(e -> (TraktDatedObject) e).map(TraktDatedObject::getDate).max(ZonedDateTime::compareTo).ifPresent(val -> {
 				Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {} (last was {})", member, this.getFetcherID(), val, baseDate);
 				Settings.get(member.getGuild()).getTraktConfiguration().setLastAccess(member.getUser(), this.getFetcherID(), val);
 			});

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -26,5 +26,5 @@ public class AccessToken{
 	private String scope;
 	@JsonProperty("created_at")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private LocalDateTime createdAt;
+	private ZonedDateTime createdAt;
 }

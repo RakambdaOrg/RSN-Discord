@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @BotCommand
 public class TempParticipationCommand extends BasicCommand{
 	public static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyyMMdd");
-	public static final DateTimeFormatter DFD = DateTimeFormatter.ofPattern("dd/MM/yyy");
+	public static final DateTimeFormatter DFD = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	
 	@NonNull
 	public static String getKey(@NonNull final LocalDate localDate){

@@ -15,7 +15,6 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import java.awt.Color;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -26,11 +25,11 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 public class OverwatchGetWeekMatchesCommand extends BasicCommand{
-	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
 	private static final BiConsumer<GuildMessageReactionAddEvent, WeekData> onWeekData = (event, week) -> {
 		final var builder = Utilities.buildEmbed(event.getUser(), Color.GREEN, week.getName(), null);
 		week.getEvents().stream().flatMap(weekEvent -> weekEvent.getMatches().stream()).filter(Objects::nonNull).forEach(m -> {
-			final var message = m.getScores().stream().map(Object::toString).collect(Collectors.joining(" - ")) + (m.isLive() ? " (In progress)" : (m.getStatus() == Status.PENDING ? ("On the " + m.getStartDate().atZone(ZoneId.of("Europe/Paris")).format(FORMATTER) + " (Europe/Paris)") : ""));
+			final var message = m.getScores().stream().map(Object::toString).collect(Collectors.joining(" - ")) + (m.isLive() ? " (In progress)" : (m.getStatus() == Status.PENDING ? ("On the " + m.getStartDate().format(FORMATTER)) : ""));
 			builder.addField(m.getVsCompetitorsNames(), message, false);
 		});
 		builder.setFooter("ID: " + week.getWeekNumber());

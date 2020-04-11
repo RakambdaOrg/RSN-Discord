@@ -16,7 +16,7 @@ import fr.raksrinana.utils.http.requestssenders.post.ObjectPostRequestSender;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -53,13 +53,13 @@ public class TraktUtils{
 	
 	public static void pollDeviceToken(@NonNull GuildMessageReceivedEvent event, @NonNull DeviceCode deviceCode){
 		final var userToken = Settings.get(event.getGuild()).getTraktConfiguration().getAccessToken(event.getAuthor().getIdLong()).orElse(null);
-		final var expireDate = LocalDateTime.now().plusSeconds(deviceCode.getExpiresIn());
+		final var expireDate = ZonedDateTime.now().plusSeconds(deviceCode.getExpiresIn());
 		final var sleepTime = deviceCode.getInterval() * 1000L;
 		executor.submit(() -> {
 			final var deviceTokenQuery = new DeviceTokenPostRequest(deviceCode);
 			var additionalDelay = 0;
 			var retry = true;
-			while(retry && LocalDateTime.now().isBefore(expireDate)){
+			while(retry && ZonedDateTime.now().isBefore(expireDate)){
 				try{
 					Thread.sleep(sleepTime + additionalDelay);
 				}
@@ -68,7 +68,7 @@ public class TraktUtils{
 				}
 				try{
 					final var deviceToken = postQuery(userToken, deviceTokenQuery);
-					Settings.get(event.getGuild()).getTraktConfiguration().addAccessToken(new TraktAccessTokenConfiguration(event.getAuthor().getIdLong(), LocalDateTime.now().plusSeconds(deviceToken.getExpiresIn()), deviceToken.getAccessToken(), deviceToken.getRefreshToken()));
+					Settings.get(event.getGuild()).getTraktConfiguration().addAccessToken(new TraktAccessTokenConfiguration(event.getAuthor().getIdLong(), ZonedDateTime.now().plusSeconds(deviceToken.getExpiresIn()), deviceToken.getAccessToken(), deviceToken.getRefreshToken()));
 					Actions.reply(event, "Successfully authenticated", null);
 					return;
 				}
@@ -170,7 +170,7 @@ public class TraktUtils{
 		final var renewTokenQuery = new OAuthRenewTokenPostRequest(token);
 		try{
 			final var accessToken = postQuery(null, renewTokenQuery);
-			final var newToken = new TraktAccessTokenConfiguration(member.getIdLong(), LocalDateTime.now().plusSeconds(accessToken.getExpiresIn()), accessToken.getAccessToken(), accessToken.getRefreshToken());
+			final var newToken = new TraktAccessTokenConfiguration(member.getIdLong(), ZonedDateTime.now().plusSeconds(accessToken.getExpiresIn()), accessToken.getAccessToken(), accessToken.getRefreshToken());
 			Settings.get(member.getGuild()).getTraktConfiguration().addAccessToken(newToken);
 			return Optional.of(newToken);
 		}

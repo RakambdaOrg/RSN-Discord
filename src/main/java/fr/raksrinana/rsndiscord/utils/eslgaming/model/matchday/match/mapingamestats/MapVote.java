@@ -8,11 +8,11 @@ import fr.raksrinana.rsndiscord.utils.eslgaming.model.generic.GameVersionMap;
 import fr.raksrinana.rsndiscord.utils.eslgaming.model.matchday.match.mapingamestats.mapvote.Action;
 import fr.raksrinana.rsndiscord.utils.eslgaming.model.matchday.match.mapingamestats.mapvote.Contestant;
 import fr.raksrinana.rsndiscord.utils.eslgaming.model.matchday.match.mapingamestats.mapvote.Round;
-import fr.raksrinana.rsndiscord.utils.json.ISO8601DateTimeDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601ZonedDateTimeDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -21,11 +21,11 @@ import java.util.Objects;
 @NoArgsConstructor
 public class MapVote implements Comparable<MapVote>{
 	@JsonProperty("createdAt")
-	@JsonDeserialize(using = ISO8601DateTimeDeserializer.class)
-	private LocalDateTime createdAt;
+	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
+	private ZonedDateTime createdAt;
 	@JsonProperty("updatedAt")
-	@JsonDeserialize(using = ISO8601DateTimeDeserializer.class)
-	private LocalDateTime updatedAt;
+	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
+	private ZonedDateTime updatedAt;
 	@JsonProperty("key")
 	private String key;
 	@JsonProperty("step")

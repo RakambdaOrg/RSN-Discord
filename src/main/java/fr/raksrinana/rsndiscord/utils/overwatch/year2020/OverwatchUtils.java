@@ -9,7 +9,7 @@ import fr.raksrinana.utils.http.requestssenders.get.ObjectGetRequestSender;
 import kong.unirest.GenericType;
 import kong.unirest.Unirest;
 import lombok.NonNull;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -19,12 +19,12 @@ public class OverwatchUtils{
 	private static final Map<Integer, Response> lastResponses = new HashMap<>();
 	
 	public static Optional<WeekData> getCurrentStage(List<WeekData> weeksData){
-		final var now = LocalDateTime.now();
+		final var now = ZonedDateTime.now();
 		return weeksData.stream().filter(weekData -> now.isAfter(weekData.getStartDate()) && now.isBefore(weekData.getEndDate())).findAny();
 	}
 	
 	public static Optional<WeekData> getNextStage(List<WeekData> weeksData){
-		final var now = LocalDateTime.now();
+		final var now = ZonedDateTime.now();
 		return weeksData.stream().filter(weekData -> now.isBefore(weekData.getStartDate())).min(Comparator.comparing(WeekData::getStartDate));
 	}
 	

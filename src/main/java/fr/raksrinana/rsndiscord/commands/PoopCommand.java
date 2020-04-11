@@ -13,7 +13,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class PoopCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		if(!event.getMessage().getMentionedRoles().isEmpty()){
-			final var removeDate = LocalDateTime.now().plusMinutes(10);
+			final var removeDate = ZonedDateTime.now().plusMinutes(10);
 			final var poopRoleOptional = Settings.get(event.getGuild()).getPoopRole().flatMap(RoleConfiguration::getRole);
 			event.getMessage().getMentionedRoles().stream().findFirst().ifPresent(r -> event.getGuild().getMembersWithRoles(r).forEach(member -> {
 				Actions.reply(event, MessageFormat.format("{0} you poop", member.getAsMention()), null);

@@ -20,14 +20,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Utilities{
 	public static final long RAKSRINANA_ACCOUNT = 170119951498084352L;
 	private static final long LOPINETTE_ACCOUNT = 432628353024131085L;
-	private static final Pattern TIME_PATTERN = Pattern.compile("(\\d[HMS])(?!$)");
-	public static final DateTimeFormatter DATE_TIME_MINUTE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+	public static final DateTimeFormatter DATE_TIME_MINUTE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
 	
 	/**
 	 * Tell if a member is part of the team (admin or moderator).

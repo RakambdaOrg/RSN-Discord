@@ -10,6 +10,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import java.awt.Color;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
@@ -30,8 +32,8 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	private LuxBusStop stop;
 	@JsonProperty("trainNumber")
 	private String entityNumber;
-	private LocalDateTime plannedDateTime;
-	private LocalDateTime realTimeDateTime;
+	private ZonedDateTime plannedDateTime;
+	private ZonedDateTime realTimeDateTime;
 	@JsonProperty("Product")
 	private LuxBusProduct product;
 	@JsonProperty("direction")
@@ -41,8 +43,8 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	@NonNull
 	public static LuxBusDeparture createDeparture(@NonNull @JsonProperty("date") final String date, @NonNull @JsonProperty("time") final String time, @JsonProperty("rtDate") final String realTimeDate, @JsonProperty("rtTime") final String realTimeTime){
 		final var departure = new LuxBusDeparture();
-		departure.plannedDateTime = LocalDateTime.parse(String.format("%s %s", date, time), dateTimeFormatter);
-		departure.realTimeDateTime = Objects.nonNull(realTimeDate) && Objects.nonNull(realTimeTime) ? LocalDateTime.parse(String.format("%s %s", realTimeDate, realTimeTime), dateTimeFormatter) : null;
+		departure.plannedDateTime = LocalDateTime.parse(String.format("%s %s", date, time), dateTimeFormatter).atZone(ZoneId.of("Europe/Luxembourg"));
+		departure.realTimeDateTime = Objects.nonNull(realTimeDate) && Objects.nonNull(realTimeTime) ? LocalDateTime.parse(String.format("%s %s", realTimeDate, realTimeTime), dateTimeFormatter).atZone(ZoneId.of("Europe/Luxembourg")) : null;
 		return departure;
 	}
 	
@@ -80,16 +82,16 @@ public class LuxBusDeparture implements Comparable<LuxBusDeparture>{
 	}
 	
 	@NonNull
-	private Optional<LocalDateTime> getRealTimeDateTime(){
-		return Optional.ofNullable(this.realTimeDateTime);
-	}
-	
-	@NonNull
-	private String getEmbedDate(@NonNull final LocalDateTime dateTime){
+	private String getEmbedDate(@NonNull final ZonedDateTime dateTime){
 		if(LocalDate.now().equals(dateTime.toLocalDate())){
 			return dateTime.format(this.dateTimeFormatterEmbedShort);
 		}
 		return dateTime.format(this.dateTimeFormatterEmbedLong);
+	}
+	
+	@NonNull
+	private Optional<ZonedDateTime> getRealTimeDateTime(){
+		return Optional.ofNullable(this.realTimeDateTime);
 	}
 	
 	@Override

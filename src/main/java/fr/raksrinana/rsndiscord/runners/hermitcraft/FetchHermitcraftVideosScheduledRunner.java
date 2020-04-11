@@ -17,7 +17,7 @@ import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
 
 public class FetchHermitcraftVideosScheduledRunner implements ScheduledRunner{
-	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
 	private final JDA jda;
 	
 	public FetchHermitcraftVideosScheduledRunner(@NonNull JDA jda){

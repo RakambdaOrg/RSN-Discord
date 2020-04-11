@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.settings.AtomicConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
-import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeDeserializer;
-import fr.raksrinana.rsndiscord.utils.json.LocalDateTimeSerializer;
+import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -18,7 +18,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -30,12 +30,12 @@ public class RemoveRoleConfiguration implements AtomicConfiguration{
 	@JsonProperty("role")
 	private RoleConfiguration role;
 	@JsonProperty("date")
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	@JsonSerialize(using = LocalDateTimeSerializer.class)
+	@JsonDeserialize(using = ZonedDateTimeDeserializer.class)
+	@JsonSerialize(using = ZonedDateTimeSerializer.class)
 	@Setter
-	private LocalDateTime date;
+	private ZonedDateTime date;
 	
-	public RemoveRoleConfiguration(@NonNull final User user, @NonNull final Role role, @NonNull final LocalDateTime date){
+	public RemoveRoleConfiguration(@NonNull final User user, @NonNull final Role role, @NonNull final ZonedDateTime date){
 		this.user = new UserConfiguration(user);
 		this.role = new RoleConfiguration(role);
 		this.date = date;

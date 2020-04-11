@@ -1,8 +1,8 @@
 package fr.raksrinana.rsndiscord.utils.anilist;
 
 import lombok.NonNull;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public interface AnilistDatedObject extends AniListObject{
-	@NonNull LocalDateTime getDate();
+	@NonNull ZonedDateTime getDate();
 }

@@ -4,20 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.raksrinana.rsndiscord.utils.anilist.activity.list.ListActivity;
 import kong.unirest.json.JSONObject;
 import lombok.NonNull;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public class ActivityPagedQuery implements PagedQuery<ListActivity>{
 	private static final String QUERY = PagedQuery.pagedQuery(", $userID: Int, $date: Int", "activities(userId: $userID, createdAt_greater: $date){\n" + "... on " + ListActivity.getQUERY() + "\n}");
 	private final JSONObject variables;
 	private int nextPage = 0;
 	
-	public ActivityPagedQuery(final int userId, final LocalDateTime date){
+	public ActivityPagedQuery(final int userId, final ZonedDateTime date){
 		this.variables = new JSONObject();
 		this.variables.put("userID", userId);
 		this.variables.put("page", 1);
 		this.variables.put("perPage", PER_PAGE);
-		final var s = date.atZone(ZoneId.of("UTC")).toEpochSecond();
+		final var s = date.toEpochSecond();
 		this.variables.put("date", s >= 0 ? s : 0);
 	}
 	
@@ -51,7 +50,7 @@ public class ActivityPagedQuery implements PagedQuery<ListActivity>{
 	}
 	
 	@Override
-	public LocalDateTime getBaseDate(){
+	public ZonedDateTime getBaseDate(){
 		return null;
 	}
 }

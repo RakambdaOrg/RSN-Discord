@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.utils.json.ISO8601DateDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
 import fr.raksrinana.rsndiscord.utils.themoviedb.TMDBUtils;
 import lombok.Getter;
@@ -53,7 +53,7 @@ public class MovieDetails implements MediaDetails{
 	@JsonProperty("production_countries")
 	private Set<ProductionCountry> productionCountries;
 	@JsonProperty("release_date")
-	@JsonDeserialize(using = ISO8601DateDeserializer.class)
+	@JsonDeserialize(using = ISO8601LocalDateDeserializer.class)
 	private LocalDate releaseDate;
 	@JsonProperty("revenue")
 	private int revenue;

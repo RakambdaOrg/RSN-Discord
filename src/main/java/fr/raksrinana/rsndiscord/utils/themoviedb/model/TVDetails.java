@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.utils.json.ISO8601DateDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
 import fr.raksrinana.rsndiscord.utils.themoviedb.TMDBUtils;
 import lombok.Getter;
@@ -28,7 +28,7 @@ public class TVDetails implements MediaDetails{
 	@JsonProperty("episode_run_time")
 	private List<Integer> episodeRunTime;
 	@JsonProperty("first_air_date")
-	@JsonDeserialize(using = ISO8601DateDeserializer.class)
+	@JsonDeserialize(using = ISO8601LocalDateDeserializer.class)
 	private LocalDate firstAirDate;
 	@JsonProperty("genres")
 	private Set<Genre> genres;
@@ -42,7 +42,7 @@ public class TVDetails implements MediaDetails{
 	@JsonProperty("languages")
 	private Set<String> languages;
 	@JsonProperty("last_air_date")
-	@JsonDeserialize(using = ISO8601DateDeserializer.class)
+	@JsonDeserialize(using = ISO8601LocalDateDeserializer.class)
 	private LocalDate lastAirDate;
 	@JsonProperty("last_episode_to_air")
 	private Episode lastEpisodeToAir;

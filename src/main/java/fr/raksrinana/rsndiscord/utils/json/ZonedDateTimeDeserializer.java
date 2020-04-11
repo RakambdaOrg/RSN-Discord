@@ -9,9 +9,13 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-public class SQLTimestampDeserializer extends JsonDeserializer<ZonedDateTime>{
+public class ZonedDateTimeDeserializer extends JsonDeserializer<ZonedDateTime>{
 	@Override
 	public ZonedDateTime deserialize(@NonNull final JsonParser jsonParser, @NonNull final DeserializationContext deserializationContext) throws IOException{
-		return ZonedDateTime.ofInstant(Instant.ofEpochSecond(jsonParser.getValueAsLong()), ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault());
+		long timestamp = jsonParser.getValueAsLong(-1L);
+		if(timestamp >= 0){
+			return ZonedDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault());
+		}
+		return ZonedDateTime.parse(jsonParser.getValueAsString());
 	}
 }
