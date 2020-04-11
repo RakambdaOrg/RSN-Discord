@@ -39,7 +39,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 public class Main{
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
-	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+	private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
 	public static final boolean DEVELOPMENT = Boolean.parseBoolean(System.getProperty("rsndev", "false"));
 	@Getter
 	private static CLIParameters parameters;
