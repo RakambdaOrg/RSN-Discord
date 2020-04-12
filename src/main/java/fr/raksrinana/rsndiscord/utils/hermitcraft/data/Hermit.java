@@ -69,4 +69,9 @@ public class Hermit{
 	public boolean isLive(){
 		return isStreaming() || isYtStreaming() || isBeamStreaming();
 	}
+	
+	@Override
+	public String toString(){
+		return this.getDisplayName();
+	}
 }

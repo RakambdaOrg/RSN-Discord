@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 public class FetchHermitcraftStreamsScheduledRunner implements ScheduledRunner{
 	private final JDA jda;
-	private final Set<Integer> hermitAlreadyNotified;
+	private final Set<String> hermitAlreadyNotified;
 	
 	public FetchHermitcraftStreamsScheduledRunner(@NonNull JDA jda){
 		this.jda = jda;
@@ -31,13 +31,13 @@ public class FetchHermitcraftStreamsScheduledRunner implements ScheduledRunner{
 		HermitcraftUtils.getHermits().ifPresent(hermits -> {
 			for(final var hermit : hermits){
 				if(hermit.isLive()){
-					if(!this.hermitAlreadyNotified.contains(hermit.getId())){
-						this.hermitAlreadyNotified.add(hermit.getId());
+					if(!this.hermitAlreadyNotified.contains(hermit.getChannelId())){
+						this.hermitAlreadyNotified.add(hermit.getChannelId());
 						this.jda.getGuilds().forEach(guild -> Settings.get(guild).getHermitcraftConfiguration().getStreamingNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> sendStream(hermit, channel)));
 					}
 				}
 				else{
-					this.hermitAlreadyNotified.remove(hermit.getId());
+					this.hermitAlreadyNotified.remove(hermit.getChannelId());
 				}
 			}
 		});
