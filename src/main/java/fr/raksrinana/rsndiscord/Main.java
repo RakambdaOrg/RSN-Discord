@@ -75,14 +75,6 @@ public class Main{
 			ScheduleUtils.registerAllHandlers();
 			Log.getLogger(null).info("Creating runners");
 			registerAllScheduledRunners(jda);
-			jda.getGuilds().forEach(guild -> {
-				var settings = Settings.get(guild);
-				settings.getTwitchConfiguration().getTwitchAutoConnectUsers().addAll(settings.getTwitchAutoConnectUsers());
-				Optional.ofNullable(settings.getTwitchChannel()).ifPresent(chan -> settings.getTwitchConfiguration().setTwitchChannel(chan));
-				if(settings.isIrcForward()){
-					settings.getTwitchConfiguration().setIrcForward(true);
-				}
-			});
 			Log.getLogger(null).info("Started");
 			announceStart();
 			restartTwitchIRCConnections();
