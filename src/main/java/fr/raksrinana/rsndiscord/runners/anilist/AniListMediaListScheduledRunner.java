@@ -32,7 +32,7 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 	@Getter
 	private final JDA jda;
 	
-	private AniListMediaListScheduledRunner(@NonNull final JDA jda){
+	public AniListMediaListScheduledRunner(@NonNull final JDA jda){
 		this.jda = jda;
 	}
 	
