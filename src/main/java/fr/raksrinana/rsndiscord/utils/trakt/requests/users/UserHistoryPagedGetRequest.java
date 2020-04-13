@@ -64,4 +64,9 @@ public class UserHistoryPagedGetRequest implements TraktPagedGetRequest<UserHist
 		}
 		return request;
 	}
+	
+	@Override
+	public int getLimit(){
+		return 5;
+	}
 }
