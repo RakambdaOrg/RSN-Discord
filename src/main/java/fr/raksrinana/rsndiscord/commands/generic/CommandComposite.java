@@ -1,13 +1,16 @@
 package fr.raksrinana.rsndiscord.commands.generic;
 
+import fr.raksrinana.rsndiscord.settings.guild.schedule.DeleteMessageScheduleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.awt.Color;
 import java.text.MessageFormat;
+import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -80,7 +83,7 @@ public abstract class CommandComposite extends BasicCommand{
 				return toExecute.get().execute(event, args);
 			}
 			else{
-				Actions.reply(event, "", Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Error while executing command", null).addField("Command", this.getName(), false).addField("Reason", "Invalid argument `" + switchStr + "`", false).addField("Arguments available", this.subCommands.stream().flatMap(command -> command.getCommandStrings().stream()).collect(Collectors.joining(", ")), false).build());
+				Actions.reply(event, "", Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Error while executing command", null).addField("Command", this.getName(), false).addField("Reason", "Invalid argument `" + switchStr + "`", false).addField("Arguments available", this.subCommands.stream().flatMap(command -> command.getCommandStrings().stream()).collect(Collectors.joining(", ")), false).build()).thenAccept(message -> ScheduleUtils.addSchedule(new DeleteMessageScheduleConfiguration(message.getAuthor(), ZonedDateTime.now().plusMinutes(2), message), message.getGuild()));
 			}
 		}
 		return CommandResult.SUCCESS;

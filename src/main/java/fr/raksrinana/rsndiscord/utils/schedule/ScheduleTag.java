@@ -10,7 +10,7 @@ import lombok.NonNull;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 public enum ScheduleTag{
-	NONE, ANILIST_AIRING_SCHEDULE, DELETE_CHANNEL, REMOVE_ROLE;
+	NONE, ANILIST_AIRING_SCHEDULE, DELETE_CHANNEL, REMOVE_ROLE, DELETE_MESSAGE;
 	
 	@JsonCreator
 	@NonNull
