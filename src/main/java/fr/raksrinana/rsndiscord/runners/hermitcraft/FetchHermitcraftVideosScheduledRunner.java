@@ -52,7 +52,7 @@ public class FetchHermitcraftVideosScheduledRunner implements ScheduledRunner{
 	}
 	
 	private void sendVideo(HermitcraftVideo video, TextChannel channel){
-		EmbedBuilder embed = Utilities.buildEmbed(this.jda.getSelfUser(), Color.GREEN, "New hermitcraft video", "https://youtu.be/" + video.getId());
+		EmbedBuilder embed = Utilities.buildEmbed(this.jda.getSelfUser(), Color.GREEN, video.getUploader().getDisplayName() + " posted a video", "https://youtu.be/" + video.getId());
 		embed.setDescription(video.getTitle());
 		embed.addField("Uploader", video.getUploader().getDisplayName(), true);
 		embed.addField("Uploaded date", video.getUploaded().format(DF), true);
