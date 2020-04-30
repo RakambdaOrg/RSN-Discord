@@ -4,7 +4,7 @@ plugins {
     id 'com.novoda.build-properties' version '0.4.1'
     id 'java'
     id 'application'
-    id "io.freefair.lombok" version '5.0.0'
+    id "io.freefair.lombok" version '5.0.1'
     id 'idea'
 }
 
