@@ -3,7 +3,6 @@ package fr.raksrinana.rsndiscord;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import fr.raksrinana.rsndiscord.listeners.*;
-import fr.raksrinana.rsndiscord.listeners.quiz.QuizListener;
 import fr.raksrinana.rsndiscord.listeners.reply.ReplyMessageListener;
 import fr.raksrinana.rsndiscord.runners.ScheduledRunner;
 import fr.raksrinana.rsndiscord.runners.ScheduledRunnerRunnable;
@@ -15,7 +14,7 @@ import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.irc.twitch.TwitchIRC;
 import fr.raksrinana.rsndiscord.utils.log.Log;
-import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
+import fr.raksrinana.rsndiscord.utils.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
 import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktUtils;
@@ -178,7 +177,6 @@ public class Main{
 	 * Close the bot.
 	 */
 	public static void close(){
-		QuizListener.stopAll();
 		TraktUtils.stopAll();
 		ReplyMessageListener.stopAll();
 		RSNAudioManager.stopAll();

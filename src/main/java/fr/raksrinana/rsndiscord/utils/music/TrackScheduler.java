@@ -1,11 +1,11 @@
-package fr.raksrinana.rsndiscord.utils.player;
+package fr.raksrinana.rsndiscord.utils.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import fr.raksrinana.rsndiscord.utils.player.trackfields.ReplayTrackDataField;
-import fr.raksrinana.rsndiscord.utils.player.trackfields.TrackUserFields;
+import fr.raksrinana.rsndiscord.utils.music.trackfields.ReplayTrackDataField;
+import fr.raksrinana.rsndiscord.utils.music.trackfields.TrackUserFields;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;

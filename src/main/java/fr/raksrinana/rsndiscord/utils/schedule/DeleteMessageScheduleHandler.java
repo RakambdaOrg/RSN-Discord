@@ -23,7 +23,7 @@ public class DeleteMessageScheduleHandler implements ScheduleHandler{
 		return true;
 	}
 	
-	private Optional<CompletableFuture<Message>> getMessage(ScheduleConfiguration configuration){
+	private static Optional<CompletableFuture<Message>> getMessage(ScheduleConfiguration configuration){
 		return Optional.ofNullable(configuration.getData().get(DeleteMessageScheduleHandler.MESSAGE_ID_KEY)).map(Long::parseLong).flatMap(messageId -> configuration.getChannel().getChannel().map(channel -> Utilities.getMessageById(channel, messageId)));
 	}
 	

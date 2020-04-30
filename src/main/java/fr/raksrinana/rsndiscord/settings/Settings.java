@@ -11,6 +11,7 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
@@ -56,8 +57,8 @@ public class Settings{
 	
 	private static void saveConfiguration(final long guildId, @NonNull final GuildConfiguration value){
 		final var guildConfPath = getConfigPath(guildId);
-		guildConfPath.getParent().toFile().mkdirs();
 		try{
+			Files.createDirectories(guildConfPath.getParent());
 			objectWriter.writeValueAsString(value);
 			objectWriter.writeValue(guildConfPath.toFile(), value);
 			Log.getLogger(null).info("Wrote settings to {}", guildConfPath);

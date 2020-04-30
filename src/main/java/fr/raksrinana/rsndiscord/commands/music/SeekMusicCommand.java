@@ -6,7 +6,7 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
-import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
+import fr.raksrinana.rsndiscord.utils.music.RSNAudioManager;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -46,7 +46,7 @@ public class SeekMusicCommand extends BasicCommand{
 			return CommandResult.BAD_ARGUMENTS;
 		}
 		else{
-			final var time = this.parseTime(event.getGuild(), args.pop());
+			final var time = SeekMusicCommand.parseTime(event.getGuild(), args.pop());
 			if(time < 0){
 				Actions.reply(event, "Invalid format", null);
 			}
@@ -61,7 +61,7 @@ public class SeekMusicCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
-	private long parseTime(@NonNull final Guild guild, @NonNull final String time){
+	private static long parseTime(@NonNull final Guild guild, @NonNull final String time){
 		final var matcher = TIME_PATTERN.matcher(time);
 		if(!matcher.matches()){
 			return -1;

@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.utils.player;
+package fr.raksrinana.rsndiscord.utils.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;

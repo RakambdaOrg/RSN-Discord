@@ -4,7 +4,7 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.player.RSNAudioManager;
+import fr.raksrinana.rsndiscord.utils.music.RSNAudioManager;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;

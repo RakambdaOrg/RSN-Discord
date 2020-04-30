@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.utils.player.trackfields;
+package fr.raksrinana.rsndiscord.utils.music.trackfields;
 
 import lombok.NonNull;
 import java.util.HashMap;

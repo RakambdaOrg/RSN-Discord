@@ -35,9 +35,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("warns")
 	@Getter
 	private WarnsConfiguration warnsConfiguration = new WarnsConfiguration();
-	@JsonProperty("participation")
-	@Getter
-	private ParticipationConfig participationConfig = new ParticipationConfig();
 	@JsonProperty("nickname")
 	@Getter
 	private NicknameConfiguration nicknameConfiguration = new NicknameConfiguration();
@@ -45,12 +42,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Deprecated
 	private boolean ircForward = false;
-	@JsonProperty("questions")
-	@Getter
-	private QuestionsConfiguration questionsConfiguration = new QuestionsConfiguration();
-	@JsonProperty("trombinoscope")
-	@Getter
-	private TrombinoscopeConfiguration trombinoscopeConfiguration = new TrombinoscopeConfiguration();
 	@JsonProperty("addBackRoles")
 	@Getter
 	private Set<UserRoleConfiguration> addBackRoles = new HashSet<>();
@@ -88,25 +79,15 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Setter
 	private Set<ChannelConfiguration> ideaChannels = new HashSet<>();
-	@JsonProperty("npXpChannels")
-	@Getter
-	@Setter
-	private Set<ChannelConfiguration> noXpChannels = new HashSet<>();
 	@JsonProperty("reportChannel")
 	@Setter
 	private ChannelConfiguration reportChannel;
-	@JsonProperty("quizChannel")
-	@Setter
-	private ChannelConfiguration quizChannel;
 	@JsonProperty("guildId")
 	@Getter
 	private long guildId;
 	@JsonProperty("leaverRole")
 	@Setter
 	private RoleConfiguration leaverRole;
-	@JsonProperty("poopRole")
-	@Setter
-	private RoleConfiguration poopRole;
 	@JsonProperty("announceStartChannel")
 	@Setter
 	private ChannelConfiguration announceStartChannel;
@@ -114,12 +95,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Setter
 	private int musicVolume = 100;
-	@JsonProperty("christmasRole")
-	@Setter
-	private RoleConfiguration christmasRole;
-	@JsonProperty("newYearRole")
-	@Setter
-	private RoleConfiguration newYearRole;
 	@JsonProperty("archiveCategory")
 	@Setter
 	private CategoryConfiguration archiveCategory;
@@ -130,10 +105,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Setter
 	private ReactionsConfiguration reactionsConfiguration = new ReactionsConfiguration();
-	@JsonProperty("twitchChannel")
-	@Getter
-	@Deprecated
-	private ChannelConfiguration twitchChannel;
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
@@ -177,10 +148,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 		return Optional.ofNullable(archiveCategory);
 	}
 	
-	public Optional<RoleConfiguration> getChristmasRole(){
-		return Optional.ofNullable(christmasRole);
-	}
-	
 	@NonNull
 	public Optional<RoleConfiguration> getDjRole(){
 		return Optional.ofNullable(this.djRole);
@@ -195,23 +162,9 @@ public class GuildConfiguration implements CompositeConfiguration{
 		return this.messagesAwaitingReaction.iterator();
 	}
 	
-	public Optional<RoleConfiguration> getNewYearRole(){
-		return Optional.ofNullable(newYearRole);
-	}
-	
-	@NonNull
-	public Optional<RoleConfiguration> getPoopRole(){
-		return Optional.ofNullable(this.poopRole);
-	}
-	
 	@NonNull
 	public Optional<String> getPrefix(){
 		return Optional.ofNullable(this.prefix);
-	}
-	
-	@NonNull
-	public Optional<ChannelConfiguration> getQuizChannel(){
-		return Optional.ofNullable(this.quizChannel);
 	}
 	
 	@NonNull
