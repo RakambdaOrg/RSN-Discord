@@ -126,18 +126,10 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("messagesAwaitingReaction")
 	@Setter
 	private Set<WaitingReactionMessageConfiguration> messagesAwaitingReaction = new HashSet<>();
-	@JsonProperty("amazonTracking")
-	@JsonAlias("amazonTrackings")
-	@Getter
-	@Setter
-	private Set<AmazonTrackingConfiguration> amazonTracking = new HashSet<>();
 	@JsonProperty("reactions")
 	@Getter
 	@Setter
 	private ReactionsConfiguration reactionsConfiguration = new ReactionsConfiguration();
-	@JsonProperty("covid19Channel")
-	@Setter
-	private ChannelConfiguration covid19Channel;
 	@JsonProperty("twitchChannel")
 	@Getter
 	@Deprecated
@@ -187,11 +179,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 	
 	public Optional<RoleConfiguration> getChristmasRole(){
 		return Optional.ofNullable(christmasRole);
-	}
-	
-	@NonNull
-	public Optional<ChannelConfiguration> getCovid19Channel(){
-		return Optional.ofNullable(this.covid19Channel);
 	}
 	
 	@NonNull
