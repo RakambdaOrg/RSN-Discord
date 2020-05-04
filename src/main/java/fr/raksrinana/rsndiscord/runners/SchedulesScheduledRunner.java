@@ -38,8 +38,7 @@ public class SchedulesScheduledRunner implements ScheduledRunner{
 					}
 				}
 				else{
-					final var embed = ScheduleUtils.getEmbedFor(schedule);
-					Optional.ofNullable(schedule.getReminderCountdownMessage()).flatMap(MessageConfiguration::getMessage).ifPresentOrElse(message -> Actions.editMessage(message, embed), () -> schedule.getChannel().getChannel().ifPresent(channel -> Actions.sendMessage(channel, "", embed).thenAccept(message -> schedule.setReminderCountdownMessage(new MessageConfiguration(message)))));
+					Optional.ofNullable(schedule.getReminderCountdownMessage()).flatMap(MessageConfiguration::getMessage).ifPresent(message -> Actions.editMessage(message, ScheduleUtils.getEmbedFor(schedule)));
 				}
 			}
 		}
