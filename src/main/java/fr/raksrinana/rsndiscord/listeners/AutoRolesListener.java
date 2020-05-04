@@ -2,30 +2,17 @@ package fr.raksrinana.rsndiscord.listeners;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
-import fr.raksrinana.rsndiscord.settings.types.UserRoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.schedule.RemoveRoleScheduleHandler;
 import fr.raksrinana.rsndiscord.utils.schedule.ScheduleTag;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import java.util.Objects;
 import java.util.Optional;
 
 public class AutoRolesListener extends ListenerAdapter{
-	@Override
-	public void onGuildMemberRemove(@NonNull final GuildMemberRemoveEvent event){
-		super.onGuildMemberRemove(event);
-		try{
-			Settings.get(event.getGuild()).getLeaverRole().flatMap(RoleConfiguration::getRole).ifPresent(role -> Settings.get(event.getGuild()).addAddBackRole(new UserRoleConfiguration(event.getUser(), role)));
-		}
-		catch(final Exception e){
-			Log.getLogger(event.getGuild()).error("Error on user leave", e);
-		}
-	}
-	
 	@Override
 	public void onGuildMemberJoin(@NonNull final GuildMemberJoinEvent event){
 		super.onGuildMemberJoin(event);

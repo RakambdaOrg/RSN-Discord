@@ -21,7 +21,7 @@ public class FetchCommandComposite extends CommandComposite{
 	@NonNull
 	@Override
 	public AccessLevel getAccessLevel(){
-		return AccessLevel.MODERATOR;
+		return AccessLevel.ADMIN;
 	}
 	
 	@NonNull

@@ -39,6 +39,11 @@ public class StopMusicCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
+	@Override
+	public @NonNull AccessLevel getAccessLevel(){
+		return AccessLevel.MODERATOR;
+	}
+	
 	@NonNull
 	@Override
 	public String getName(){

@@ -32,23 +32,12 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("trakt")
 	@Getter
 	private TraktConfiguration traktConfiguration = new TraktConfiguration();
-	@JsonProperty("warns")
-	@Getter
-	private WarnsConfiguration warnsConfiguration = new WarnsConfiguration();
 	@JsonProperty("nickname")
 	@Getter
 	private NicknameConfiguration nicknameConfiguration = new NicknameConfiguration();
-	@JsonProperty("ircForward")
-	@Getter
-	@Deprecated
-	private boolean ircForward = false;
 	@JsonProperty("addBackRoles")
 	@Getter
 	private Set<UserRoleConfiguration> addBackRoles = new HashSet<>();
-	@JsonProperty("twitchAutoConnectUsers")
-	@Getter
-	@Deprecated
-	private Set<String> twitchAutoConnectUsers = new HashSet<>();
 	@JsonProperty("overwatchLeague")
 	@Getter
 	private OverwatchLeagueConfiguration overwatchLeagueConfiguration = new OverwatchLeagueConfiguration();
@@ -79,15 +68,9 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Setter
 	private Set<ChannelConfiguration> ideaChannels = new HashSet<>();
-	@JsonProperty("reportChannel")
-	@Setter
-	private ChannelConfiguration reportChannel;
 	@JsonProperty("guildId")
 	@Getter
 	private long guildId;
-	@JsonProperty("leaverRole")
-	@Setter
-	private RoleConfiguration leaverRole;
 	@JsonProperty("announceStartChannel")
 	@Setter
 	private ChannelConfiguration announceStartChannel;
@@ -153,11 +136,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 		return Optional.ofNullable(this.djRole);
 	}
 	
-	@NonNull
-	public Optional<RoleConfiguration> getLeaverRole(){
-		return Optional.ofNullable(this.leaverRole);
-	}
-	
 	public Iterator<WaitingReactionMessageConfiguration> getMessagesAwaitingReaction(){
 		return this.messagesAwaitingReaction.iterator();
 	}
@@ -165,11 +143,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@NonNull
 	public Optional<String> getPrefix(){
 		return Optional.ofNullable(this.prefix);
-	}
-	
-	@NonNull
-	public Optional<ChannelConfiguration> getReportChannel(){
-		return Optional.ofNullable(this.reportChannel);
 	}
 	
 	public List<ScheduleConfiguration> getSchedules(){

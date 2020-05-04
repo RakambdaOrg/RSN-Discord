@@ -13,14 +13,11 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new AniListConfigurationCommandComposite(this));
 		this.addSubCommand(new AutoRolesConfigurationCommand(this));
 		this.addSubCommand(new DjRoleConfigurationCommand(this));
-		this.addSubCommand(new WarnsConfigurationCommandComposite(this));
 		this.addSubCommand(new ModeratorRolesConfigurationCommand(this));
 		this.addSubCommand(new IdeaChannelsConfigurationCommand(this));
 		this.addSubCommand(new PrefixConfigurationCommand(this));
-		this.addSubCommand(new ReportChannelConfigurationCommand(this));
 		this.addSubCommand(new NicknameConfigurationCommandComposite(this));
 		this.addSubCommand(new TwitchConfigurationCommandComposite(this));
-		this.addSubCommand(new LeaverRoleConfigurationCommand(this));
 		this.addSubCommand(new OverwatchConfigurationCommandComposite(this));
 		this.addSubCommand(new AnnounceStartChannelConfigurationCommand(this));
 		this.addSubCommand(new TraktConfigurationCommandComposite(this));
@@ -34,7 +31,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 	@NonNull
 	@Override
 	public AccessLevel getAccessLevel(){
-		return AccessLevel.MODERATOR;
+		return AccessLevel.ADMIN;
 	}
 	
 	@NonNull
