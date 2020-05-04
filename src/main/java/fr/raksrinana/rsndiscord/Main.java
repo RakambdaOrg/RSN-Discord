@@ -150,7 +150,7 @@ public class Main{
 			try{
 				TwitchIRC.connect(guild, user);
 			}
-			catch(IOException e){
+			catch(Exception e){
 				Log.getLogger(guild).error("Failed to automatically connect to twitch user {}", user, e);
 			}
 		}));
