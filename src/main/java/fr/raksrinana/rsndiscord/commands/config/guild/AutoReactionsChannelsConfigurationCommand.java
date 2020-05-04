@@ -10,15 +10,14 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.*;
 
-public class IdeaChannelsConfigurationCommand extends SetConfigurationCommand<ChannelConfiguration>{
-	public IdeaChannelsConfigurationCommand(final Command parent){
+public class AutoReactionsChannelsConfigurationCommand extends SetConfigurationCommand<ChannelConfiguration>{
+	public AutoReactionsChannelsConfigurationCommand(final Command parent){
 		super(parent);
 	}
 	
-	@NonNull
 	@Override
-	protected Optional<Set<ChannelConfiguration>> getConfig(@NonNull final Guild guild){
-		return Optional.of(Settings.get(guild).getIdeaChannels());
+	protected void removeConfig(@NonNull final Guild guild, @NonNull final ChannelConfiguration value){
+		Settings.get(guild).getAutoReactionsChannels().remove(value);
 	}
 	
 	@NonNull
@@ -30,16 +29,17 @@ public class IdeaChannelsConfigurationCommand extends SetConfigurationCommand<Ch
 		return new ChannelConfiguration(event.getMessage().getMentionedChannels().get(0));
 	}
 	
+	@NonNull
 	@Override
-	protected void removeConfig(@NonNull final Guild guild, @NonNull final ChannelConfiguration value){
-		Settings.get(guild).getIdeaChannels().remove(value);
+	protected Optional<Set<ChannelConfiguration>> getConfig(@NonNull final Guild guild){
+		return Optional.of(Settings.get(guild).getAutoThumbsChannels());
 	}
 	
 	@Override
 	protected void createConfig(@NonNull final Guild guild, @NonNull final ChannelConfiguration value){
 		final var set = new HashSet<ChannelConfiguration>();
 		set.add(value);
-		Settings.get(guild).setIdeaChannels(set);
+		Settings.get(guild).setAutoReactionsChannels(set);
 	}
 	
 	@Override
@@ -57,12 +57,12 @@ public class IdeaChannelsConfigurationCommand extends SetConfigurationCommand<Ch
 	@NonNull
 	@Override
 	public String getName(){
-		return "Idea channels";
+		return "Auto reactions channels";
 	}
 	
 	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("ideaChannels");
+		return List.of("autoReactionsChannels");
 	}
 }

@@ -64,10 +64,15 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("djRole")
 	@Setter
 	private RoleConfiguration djRole;
-	@JsonProperty("ideaChannels")
+	@JsonProperty("autoThumbChannels")
+	@JsonAlias("ideaChannels")
 	@Getter
 	@Setter
-	private Set<ChannelConfiguration> ideaChannels = new HashSet<>();
+	private Set<ChannelConfiguration> autoThumbsChannels = new HashSet<>();
+	@JsonProperty("autoReactionsChannels")
+	@Getter
+	@Setter
+	private Set<ChannelConfiguration> autoReactionsChannels = new HashSet<>();
 	@JsonProperty("guildId")
 	@Getter
 	private long guildId;
@@ -107,10 +112,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 	
 	public void removeSchedule(ScheduleConfiguration schedule){
 		this.schedules.remove(schedule);
-	}
-	
-	public void addAddBackRole(@NonNull final UserRoleConfiguration userRoleConfiguration){
-		this.addBackRoles.add(userRoleConfiguration);
 	}
 	
 	@NonNull

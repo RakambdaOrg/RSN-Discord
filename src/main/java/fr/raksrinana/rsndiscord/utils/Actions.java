@@ -300,6 +300,19 @@ public class Actions{
 	}
 	
 	/**
+	 * Add a reaction to a message.
+	 *
+	 * @param message The message to add the reaction to.
+	 * @param emote   The reaction emote to add.
+	 *
+	 * @return A completable future (see {@link RestAction#submit()}).
+	 */
+	public static CompletableFuture<Void> addReaction(@NonNull Message message, @NonNull Emote emote){
+		Log.getLogger(message.getGuild()).info("Adding reaction {} to {}", emote, message);
+		return message.addReaction(emote).submit();
+	}
+	
+	/**
 	 * Modifies the content of a message.
 	 *
 	 * @param message    The message to edit.

@@ -61,7 +61,7 @@ public class Main{
 			jdaBuilder.addEventListeners(new ShutdownListener());
 			jdaBuilder.addEventListeners(new LogListener());
 			jdaBuilder.addEventListeners(new AutoRolesListener());
-			jdaBuilder.addEventListeners(new IdeaChannelMessageListener());
+			jdaBuilder.addEventListeners(new AutoReactionsChannelMessageListener());
 			jdaBuilder.addEventListeners(new ReactionListener());
 			jdaBuilder.addEventListeners(new ReplyMessageListener());
 			jdaBuilder.setAutoReconnect(true);

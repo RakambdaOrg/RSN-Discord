@@ -14,7 +14,8 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new AutoRolesConfigurationCommand(this));
 		this.addSubCommand(new DjRoleConfigurationCommand(this));
 		this.addSubCommand(new ModeratorRolesConfigurationCommand(this));
-		this.addSubCommand(new IdeaChannelsConfigurationCommand(this));
+		this.addSubCommand(new AutoThumbsChannelsConfigurationCommand(this));
+		this.addSubCommand(new AutoReactionsChannelsConfigurationCommand(this));
 		this.addSubCommand(new PrefixConfigurationCommand(this));
 		this.addSubCommand(new NicknameConfigurationCommandComposite(this));
 		this.addSubCommand(new TwitchConfigurationCommandComposite(this));
