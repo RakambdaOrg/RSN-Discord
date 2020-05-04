@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.listeners;
 
+import com.vdurmont.emoji.EmojiParser;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
@@ -20,6 +21,7 @@ public class AutoReactionsChannelMessageListener extends ListenerAdapter{
 			}
 			if(Settings.get(event.getGuild()).getAutoReactionsChannels().stream().anyMatch(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong()))){
 				event.getMessage().getEmotes().stream().filter(emote -> !emote.isFake()).forEach(emote -> Actions.addReaction(event.getMessage(), emote));
+				EmojiParser.extractEmojis(event.getMessage().getContentRaw()).forEach(emoji -> Actions.addReaction(event.getMessage(), emoji));
 			}
 		}
 		catch(final Exception e){

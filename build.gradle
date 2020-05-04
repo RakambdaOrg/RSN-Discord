@@ -58,6 +58,7 @@ dependencies {
     implementation("org.apache.httpcomponents:httpclient:${project.httpclient_version}")
     implementation("org.apache.commons:commons-lang3:${project.lang3_version}")
     implementation("org.reflections:reflections:${project.reflections_version}")
+    implementation("com.vdurmont:emoji-java:${project.emoji_java_version}")
 }
 
 repositories {
