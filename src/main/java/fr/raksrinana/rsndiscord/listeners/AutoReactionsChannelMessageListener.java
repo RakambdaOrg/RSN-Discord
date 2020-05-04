@@ -19,7 +19,7 @@ public class AutoReactionsChannelMessageListener extends ListenerAdapter{
 				Actions.addReaction(event.getMessage(), BasicEmotes.THUMB_DOWN.getValue());
 			}
 			if(Settings.get(event.getGuild()).getAutoReactionsChannels().stream().anyMatch(c -> Objects.equals(c.getChannelId(), event.getChannel().getIdLong()))){
-				event.getMessage().getEmotes().forEach(emote -> Actions.addReaction(event.getMessage(), emote));
+				event.getMessage().getEmotes().stream().filter(emote -> !emote.isFake()).forEach(emote -> Actions.addReaction(event.getMessage(), emote));
 			}
 		}
 		catch(final Exception e){

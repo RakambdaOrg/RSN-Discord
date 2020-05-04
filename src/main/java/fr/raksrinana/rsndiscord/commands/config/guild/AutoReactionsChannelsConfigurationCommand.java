@@ -32,7 +32,7 @@ public class AutoReactionsChannelsConfigurationCommand extends SetConfigurationC
 	@NonNull
 	@Override
 	protected Optional<Set<ChannelConfiguration>> getConfig(@NonNull final Guild guild){
-		return Optional.of(Settings.get(guild).getAutoThumbsChannels());
+		return Optional.of(Settings.get(guild).getAutoReactionsChannels());
 	}
 	
 	@Override
