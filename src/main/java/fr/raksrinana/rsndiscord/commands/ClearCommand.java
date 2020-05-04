@@ -45,7 +45,7 @@ public class ClearCommand extends BasicCommand{
 	@NonNull
 	@Override
 	public AccessLevel getAccessLevel(){
-		return AccessLevel.ADMIN;
+		return AccessLevel.MODERATOR;
 	}
 	
 	@NonNull

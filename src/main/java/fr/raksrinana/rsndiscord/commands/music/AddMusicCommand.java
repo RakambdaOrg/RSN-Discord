@@ -90,7 +90,7 @@ public class AddMusicCommand extends BasicCommand{
 						embed.addField("Duration", NowPlayingMusicCommand.getDuration(audioTrack.getDuration()), true);
 						embed.addField("ETA", getDuration(RSNAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + before.stream().mapToLong(AudioTrack::getDuration).sum()), true);
 						embed.addField("Repeating", String.valueOf(repeat), true);
-						if(isCurrentTrack){
+						if(!isCurrentTrack){
 							embed.addField("Position in queue", String.valueOf(1 + before.size()), true);
 						}
 						Actions.reply(event, "", embed.build());
