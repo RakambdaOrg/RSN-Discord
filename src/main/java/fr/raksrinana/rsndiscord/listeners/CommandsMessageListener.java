@@ -4,11 +4,13 @@ import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.commands.generic.*;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.WaitingReactionMessageConfiguration;
+import fr.raksrinana.rsndiscord.settings.guild.schedule.DeleteMessageScheduleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
+import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -19,6 +21,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.reflections.Reflections;
 import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -95,7 +98,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 						builder.setColor(Color.ORANGE);
 						builder.setTitle("Command not found");
 						builder.addField("Command", cmdText, false);
-						Actions.reply(event, "", builder.build());
+						Actions.reply(event, "", builder.build()).thenAccept(message -> ScheduleUtils.addSchedule(new DeleteMessageScheduleConfiguration(event.getAuthor(), ZonedDateTime.now().plusMinutes(2), message), event.getGuild()));
 					});
 				}
 			}
