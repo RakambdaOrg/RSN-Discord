@@ -12,19 +12,16 @@ public class ConfigurationCommandComposite extends CommandComposite{
 	public ConfigurationCommandComposite(){
 		this.addSubCommand(new AniListConfigurationCommandComposite(this));
 		this.addSubCommand(new AutoRolesConfigurationCommand(this));
-		this.addSubCommand(new DjRoleConfigurationCommand(this));
 		this.addSubCommand(new ModeratorRolesConfigurationCommand(this));
 		this.addSubCommand(new AutoThumbsChannelsConfigurationCommand(this));
 		this.addSubCommand(new AutoReactionsChannelsConfigurationCommand(this));
 		this.addSubCommand(new PrefixConfigurationCommand(this));
 		this.addSubCommand(new NicknameConfigurationCommandComposite(this));
 		this.addSubCommand(new TwitchConfigurationCommandComposite(this));
-		this.addSubCommand(new OverwatchConfigurationCommandComposite(this));
 		this.addSubCommand(new AnnounceStartChannelConfigurationCommand(this));
 		this.addSubCommand(new TraktConfigurationCommandComposite(this));
 		this.addSubCommand(new ArchiveCategoryConfigurationCommand(this));
 		this.addSubCommand(new AutoTodoChannelsConfigurationCommand(this));
-		this.addSubCommand(new Rainbow6ProLeagueConfigurationCommandComposite(this));
 		this.addSubCommand(new ReactionsConfigurationCommandComposite(this));
 		this.addSubCommand(new HermitcraftConfigurationCommandComposite(this));
 	}

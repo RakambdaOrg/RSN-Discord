@@ -38,12 +38,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("addBackRoles")
 	@Getter
 	private Set<UserRoleConfiguration> addBackRoles = new HashSet<>();
-	@JsonProperty("overwatchLeague")
-	@Getter
-	private OverwatchLeagueConfiguration overwatchLeagueConfiguration = new OverwatchLeagueConfiguration();
-	@JsonProperty("rainbow6ProLeague")
-	@Getter
-	private Rainbow6ProLeagueConfiguration rainbow6ProLeagueConfiguration = new Rainbow6ProLeagueConfiguration();
 	@JsonProperty("twitchConfiguration")
 	@Getter
 	private TwitchConfiguration twitchConfiguration = new TwitchConfiguration();
@@ -61,9 +55,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Setter
 	private Set<RoleConfiguration> moderatorRoles = new HashSet<>();
-	@JsonProperty("djRole")
-	@Setter
-	private RoleConfiguration djRole;
 	@JsonProperty("autoThumbChannels")
 	@JsonAlias("ideaChannels")
 	@Getter
@@ -130,11 +121,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 	
 	public Optional<CategoryConfiguration> getArchiveCategory(){
 		return Optional.ofNullable(archiveCategory);
-	}
-	
-	@NonNull
-	public Optional<RoleConfiguration> getDjRole(){
-		return Optional.ofNullable(this.djRole);
 	}
 	
 	public Iterator<WaitingReactionMessageConfiguration> getMessagesAwaitingReaction(){
