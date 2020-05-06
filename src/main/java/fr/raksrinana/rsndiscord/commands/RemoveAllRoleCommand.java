@@ -18,9 +18,13 @@ public class RemoveAllRoleCommand extends BasicCommand{
 		super.execute(event, args);
 		if(!event.getMessage().getMentionedRoles().isEmpty()){
 			event.getMessage().getMentionedRoles().stream().findFirst().ifPresent(r -> {
-				final var members = event.getGuild().getMembersWithRoles(r);
-				Actions.reply(event, MessageFormat.format("Will remove the role of {0} people, this may take a while", members.size()), null);
-				members.forEach(m -> Actions.removeRole(m, r));
+				Actions.reply(event, "Retrieving all members", null);
+				event.getGuild().retrieveMembers().thenAccept(empty -> {
+					Actions.reply(event, "Getting members with role", null);
+					final var members = event.getGuild().getMembersWithRoles(r);
+					Actions.reply(event, MessageFormat.format("Will remove the role of {0} people, this may take a while", members.size()), null);
+					members.forEach(m -> Actions.removeRole(m, r));
+				});
 			});
 		}
 		else{
