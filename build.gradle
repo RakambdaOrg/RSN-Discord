@@ -2,10 +2,10 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '5.2.0'
     id "com.github.ben-manes.versions" version '0.28.0'
     id 'com.novoda.build-properties' version '0.4.1'
+    id 'idea'
     id 'java'
     id 'application'
     id "io.freefair.lombok" version '5.0.1'
-    id 'idea'
 }
 
 def secretsFile = new File(".", "secrets.properties")
@@ -33,7 +33,6 @@ group = 'fr.raksrinana'
 description = 'RSNDiscord'
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_14
 
-ext.moduleName = project.moduleName
 mainClassName = project.mainClass
 
 dependencies {
@@ -101,10 +100,13 @@ test {
     useJUnitPlatform()
 }
 
-jar {
-    manifest {
-        attributes 'Main-Class': project.mainClass
-    }
+application {
+    mainModule = project.moduleName
+    mainClass = project.mainClass
+}
+
+java {
+    modularity.inferModulePath.set(true)
 }
 
 shadowJar {
