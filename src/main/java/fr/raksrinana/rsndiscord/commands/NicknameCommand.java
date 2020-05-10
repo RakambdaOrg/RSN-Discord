@@ -39,9 +39,12 @@ public class NicknameCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		final Optional<Member> memberOptional;
-		if(!event.getMessage().getMentionedUsers().isEmpty()){
+		if(event.getMessage().getMentionedUsers().isEmpty()){
+			memberOptional = Optional.ofNullable(event.getMember());
+		}
+		else{
 			args.pop();
-			memberOptional = Optional.ofNullable(event.getGuild().getMember(event.getMessage().getMentionedUsers().get(0)));
+			memberOptional = Optional.ofNullable(event.getGuild().retrieveMember(event.getMessage().getMentionedUsers().get(0)).complete());
 			if(memberOptional.isPresent() && !Objects.equals(event.getAuthor(), memberOptional.get().getUser()) && !Utilities.isTeam(event.getMember())){
 				final var builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
@@ -51,9 +54,6 @@ public class NicknameCommand extends BasicCommand{
 				Actions.reply(event, "", builder.build());
 				return CommandResult.SUCCESS;
 			}
-		}
-		else{
-			memberOptional = Optional.ofNullable(event.getMember());
 		}
 		memberOptional.ifPresentOrElse(member -> {
 			final var oldName = Optional.ofNullable(member.getNickname());
