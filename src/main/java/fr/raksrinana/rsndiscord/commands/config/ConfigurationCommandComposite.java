@@ -24,6 +24,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new AutoTodoChannelsConfigurationCommand(this));
 		this.addSubCommand(new ReactionsConfigurationCommandComposite(this));
 		this.addSubCommand(new HermitcraftConfigurationCommandComposite(this));
+		this.addSubCommand(new ParticipationConfigurationCommandComposite(this));
 	}
 	
 	@NonNull

@@ -1,15 +1,19 @@
 package fr.raksrinana.rsndiscord.listeners;
 
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.music.RSNAudioManager;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildMuteEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.self.SelfUpdateNameEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import java.time.LocalDate;
 import java.util.Objects;
+import static java.time.ZoneOffset.UTC;
 
 public class LogListener extends ListenerAdapter{
 	@Override
@@ -60,6 +64,22 @@ public class LogListener extends ListenerAdapter{
 		if(Objects.equals(event.getMember().getUser(), event.getJDA().getSelfUser())){
 			Actions.mute(event.getMember(), false);
 			Actions.deafen(event.getMember(), false);
+		}
+	}
+	
+	@Override
+	public void onGuildMessageReceived(@NonNull GuildMessageReceivedEvent event){
+		super.onGuildMessageReceived(event);
+		try{
+			if(!event.getAuthor().isBot() && !event.isWebhookMessage()){
+				final var participationConfiguration = Settings.get(event.getGuild()).getParticipationConfiguration();
+				if(!participationConfiguration.isChannelIgnored(event.getChannel())){
+					participationConfiguration.getOrCreateDay(LocalDate.now(UTC)).incrementUser(event.getAuthor());
+				}
+			}
+		}
+		catch(final Exception e){
+			Log.getLogger(event.getGuild()).error("", e);
 		}
 	}
 }

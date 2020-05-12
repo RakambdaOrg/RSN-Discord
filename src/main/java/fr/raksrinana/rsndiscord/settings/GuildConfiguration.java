@@ -84,6 +84,9 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Setter
 	private ReactionsConfiguration reactionsConfiguration = new ReactionsConfiguration();
+	@JsonProperty("participation")
+	@Getter
+	private ParticipationConfiguration participationConfiguration = new ParticipationConfiguration();
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;

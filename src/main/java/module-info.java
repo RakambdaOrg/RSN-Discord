@@ -1,7 +1,6 @@
 open module fr.raksrinana.rsndiscord {
 	requires java.desktop;
 	requires java.sql;
-	requires unirest.java;
 	requires org.apache.commons.lang3;
 	requires org.apache.commons.io;
 	requires fr.raksrinana.utils.http;
@@ -16,7 +15,6 @@ open module fr.raksrinana.rsndiscord {
 	requires lavaplayer;
 	requires okhttp3;
 	requires static lombok;
-	requires org.jsoup;
 	requires com.google.gson;
 	requires emoji.java;
 }

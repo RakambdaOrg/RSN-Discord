@@ -47,9 +47,7 @@ dependencies {
         exclude group: 'edu.washington.cs.types.checker', module: 'checker-framework'
     }
     implementation("fr.raksrinana:utils.http:${project.raksrinana_utils_version}")
-    implementation("org.jsoup:jsoup:${project.jsoup_version}")
 
-    implementation("com.konghq:unirest-java:${project.unirest_version}")
     implementation("com.beust:jcommander:${project.jcommander_version}")
     implementation("com.fasterxml.jackson.core:jackson-core:${project.jackson_version}")
     implementation("com.fasterxml.jackson.core:jackson-annotations:${project.jackson_version}")
@@ -110,9 +108,8 @@ java {
 }
 
 shadowJar {
-    baseName = project.name
+    archivesBaseName = project.name
     classifier = 'shaded'
-    version = null
 }
 
 tasks.withType(JavaCompile) {
