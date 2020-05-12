@@ -10,6 +10,7 @@ import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -46,7 +47,7 @@ public class MessageParticipationCommand extends BasicCommand{
 		channel.getGuild().retrieveMembers().thenAccept(empty -> {
 			final var position = new AtomicInteger(0);
 			final var embed = Utilities.buildEmbed(author, Color.GREEN, "Participation for the " + day.format(DATE_FORMATTER), null);
-			messageParticipation.getUserCounts().entrySet().stream().sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue())).limit(maxUserCount).forEachOrdered(entry -> embed.addField("#" + position.incrementAndGet() + " : " + entry.getValue(), String.valueOf(channel.getGuild().getMemberById(entry.getValue())), false));
+			messageParticipation.getUserCounts().entrySet().stream().sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue())).limit(maxUserCount).forEachOrdered(entry -> embed.addField("#" + position.incrementAndGet() + " : " + entry.getValue(), Optional.ofNullable(channel.getGuild().getMemberById(entry.getKey())).map(Member::getAsMention).orElse(Long.toString(entry.getKey())), false));
 			Actions.sendMessage(channel, "", embed.build());
 		});
 	}
