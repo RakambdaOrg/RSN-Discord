@@ -110,7 +110,7 @@ java {
 shadowJar {
     archivesBaseName = project.name
     classifier = 'shaded'
-    archiveVersion = null
+    archiveVersion = ''
 }
 
 tasks.withType(JavaCompile) {
