@@ -10,6 +10,7 @@ import fr.raksrinana.rsndiscord.settings.guild.participation.MessageParticipatio
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateKeyDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateKeySerializer;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +25,7 @@ import java.util.*;
 @NoArgsConstructor
 public class ParticipationConfiguration implements CompositeConfiguration{
 	@JsonProperty("messagesParticipation")
-	@JsonSerialize(keyUsing = ISO8601LocalDateSerializer.class)
+	@JsonSerialize(keyUsing = ISO8601LocalDateKeySerializer.class)
 	@JsonDeserialize(keyUsing = ISO8601LocalDateKeyDeserializer.class)
 	private Map<LocalDate, MessageParticipation> messagesParticipation = new HashMap<>();
 	@JsonProperty("ignoredChannels")
