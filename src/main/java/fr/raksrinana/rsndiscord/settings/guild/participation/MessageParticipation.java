@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.entities.User;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import static java.time.ZoneOffset.UTC;
@@ -21,7 +22,7 @@ public class MessageParticipation implements AtomicConfiguration{
 	@JsonProperty("day")
 	private LocalDate day;
 	@JsonProperty("userCounts")
-	private Map<Long, Long> userCounts;
+	private Map<Long, Long> userCounts = new HashMap<>();
 	
 	public MessageParticipation(LocalDate day){
 		this.day = day;

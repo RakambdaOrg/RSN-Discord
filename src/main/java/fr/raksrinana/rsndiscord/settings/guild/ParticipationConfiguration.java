@@ -37,7 +37,7 @@ public class ParticipationConfiguration implements CompositeConfiguration{
 	@JsonSerialize(contentUsing = ISO8601LocalDateSerializer.class)
 	@JsonDeserialize(contentUsing = ISO8601LocalDateDeserializer.class)
 	@Setter
-	private Set<LocalDate> reportedDays;
+	private Set<LocalDate> reportedDays = new HashSet<>();
 	
 	public Optional<MessageParticipation> getDay(LocalDate date){
 		return Optional.ofNullable(this.messagesParticipation.get(date));
