@@ -39,6 +39,6 @@ public class ReportChannelConfigurationCommand extends ChannelConfigurationComma
 	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("thaChannel");
+		return List.of("reportChannel");
 	}
 }
