@@ -47,7 +47,7 @@ public class MessageParticipationCommand extends BasicCommand{
 		channel.getGuild().retrieveMembers().thenAccept(empty -> {
 			final var position = new AtomicInteger(0);
 			final var embed = Utilities.buildEmbed(author, Color.GREEN, "Participation for the " + day.format(DATE_FORMATTER), null);
-			messageParticipation.getUserCounts().entrySet().stream().sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue())).limit(maxUserCount).forEachOrdered(entry -> embed.addField("#" + position.incrementAndGet() + " : " + entry.getValue(), Optional.ofNullable(channel.getGuild().getMemberById(entry.getKey())).map(Member::getAsMention).orElse(Long.toString(entry.getKey())), false));
+			messageParticipation.getUserCounts().entrySet().stream().sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue())).limit(maxUserCount).forEachOrdered(entry -> embed.addField("#" + position.incrementAndGet() + " : " + entry.getValue() + " messages", Optional.ofNullable(channel.getGuild().getMemberById(entry.getKey())).map(Member::getAsMention).orElse(Long.toString(entry.getKey())), false));
 			Actions.sendMessage(channel, "", embed.build());
 		});
 	}
