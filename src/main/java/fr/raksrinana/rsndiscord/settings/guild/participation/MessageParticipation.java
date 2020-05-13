@@ -3,7 +3,11 @@ package fr.raksrinana.rsndiscord.settings.guild.participation;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.settings.AtomicConfiguration;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.entities.User;
@@ -20,6 +24,8 @@ import static java.time.ZoneOffset.UTC;
 @NoArgsConstructor
 public class MessageParticipation implements AtomicConfiguration{
 	@JsonProperty("day")
+	@JsonDeserialize(using = ISO8601LocalDateDeserializer.class)
+	@JsonSerialize(using = ISO8601LocalDateSerializer.class)
 	private LocalDate day;
 	@JsonProperty("userCounts")
 	private Map<Long, Long> userCounts = new HashMap<>();
