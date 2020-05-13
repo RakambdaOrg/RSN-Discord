@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.runners;
 import fr.raksrinana.rsndiscord.commands.MessageParticipationCommand;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import java.time.LocalDate;
@@ -19,8 +20,13 @@ public class ParticipationScheduledRunner implements ScheduledRunner{
 	@Override
 	public void execute(){
 		final var day = LocalDate.now(UTC).minusDays(1);
-		this.jda.getGuilds().stream().map(guild -> Settings.get(guild).getParticipationConfiguration()).forEach(participationConfiguration -> {
-			if(!participationConfiguration.getReportedDays().contains(day)){
+		this.jda.getGuilds().forEach(guild -> {
+			Log.getLogger(guild).info("Processing guild {}", guild);
+			final var participationConfiguration = Settings.get(guild).getParticipationConfiguration();
+			if(participationConfiguration.getReportedDays().contains(day)){
+				Log.getLogger(guild).info("Day {} has already been reported", day);
+			}
+			else{
 				participationConfiguration.getDay(day).ifPresent(messageParticipation -> participationConfiguration.getReportChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(reportChannel -> {
 					MessageParticipationCommand.sendReport(25, day, messageParticipation, this.jda.getSelfUser(), reportChannel);
 					participationConfiguration.getReportedDays().add(day);
