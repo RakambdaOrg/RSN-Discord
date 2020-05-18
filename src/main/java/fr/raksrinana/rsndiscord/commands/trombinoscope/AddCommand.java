@@ -4,6 +4,7 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
@@ -45,6 +46,7 @@ class AddCommand extends BasicCommand{
 		if(event.getMessage().getAttachments().isEmpty()){
 			return CommandResult.BAD_ARGUMENTS;
 		}
+		var trombinoscope = Settings.get(event.getGuild()).getTrombinoscope();
 		var target = event.getMessage().getMentionedMembers().stream().findFirst()
 				.or(() -> Optional.ofNullable(event.getMember()))
 				.orElseThrow(() -> new IllegalStateException("Failed to get member from event"));
@@ -64,8 +66,7 @@ class AddCommand extends BasicCommand{
 						})
 						.get(30, TimeUnit.SECONDS);
 				if(checkFile(attachment, savedFile)){
-					Settings.get(event.getGuild()).getTrombinoscope()
-							.registerPicture(target.getUser(), savedFile);
+					trombinoscope.registerPicture(target.getUser(), savedFile);
 				}
 				else{
 					failed = true;
@@ -78,14 +79,15 @@ class AddCommand extends BasicCommand{
 			Utilities.reportException(e);
 		}
 		if(failed){
-			Actions.reply(event, "Failed to save picture, please try again", null);
+			Actions.replyPrivate(event.getGuild(), event.getAuthor(), "Failed to save picture, please try again", null);
 		}
 		else{
-			Settings.get(event.getGuild()).getTrombinoscope()
-					.getPosterRole()
+			trombinoscope.getPosterRole()
 					.flatMap(RoleConfiguration::getRole)
 					.ifPresent(role -> Actions.giveRole(target, role));
-			Actions.reply(event, event.getAuthor().getAsMention() + " added pictures to the trombinoscope", null);
+			trombinoscope.getPicturesChannel()
+					.flatMap(ChannelConfiguration::getChannel)
+					.ifPresent(channel -> Actions.sendMessage(channel, event.getAuthor().getAsMention() + " added pictures to the trombinoscope", null));
 		}
 		return CommandResult.SUCCESS;
 	}
