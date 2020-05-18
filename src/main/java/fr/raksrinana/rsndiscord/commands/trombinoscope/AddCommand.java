@@ -13,6 +13,8 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -70,7 +72,7 @@ class AddCommand extends BasicCommand{
 				}
 			}
 		}
-		catch(InterruptedException | ExecutionException | TimeoutException e){
+		catch(InterruptedException | ExecutionException | TimeoutException | IOException e){
 			failed = true;
 			Log.getLogger(event.getGuild()).error("Failed to save file", e);
 			Utilities.reportException(e);
@@ -88,10 +90,11 @@ class AddCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
-	private File getFilePath(Member member, Message.Attachment attachment){
-		return trombinoscopeFolder.resolve(member.getId())
-				.resolve(String.format("%d-%s.%s", attachment.getIdLong(), attachment.getFileName(), attachment.getFileExtension()))
-				.toFile();
+	private File getFilePath(Member member, Message.Attachment attachment) throws IOException{
+		var path = trombinoscopeFolder.resolve(member.getId())
+				.resolve(String.format("%d-%s.%s", attachment.getIdLong(), attachment.getFileName(), attachment.getFileExtension()));
+		Files.createDirectories(path.getParent());
+		return path.toFile();
 	}
 	
 	private boolean checkFile(Message.Attachment attachment, File savedFile){
