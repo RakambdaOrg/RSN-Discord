@@ -89,7 +89,7 @@ public class GuildConfiguration implements CompositeConfiguration{
 	private ParticipationConfiguration participationConfiguration = new ParticipationConfiguration();
 	@JsonProperty("trombinoscope")
 	@Getter
-	private TrombinoscopeConfiguration trombinoscope;
+	private TrombinoscopeConfiguration trombinoscope = new TrombinoscopeConfiguration();
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;

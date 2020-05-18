@@ -12,12 +12,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
 public class Picture implements AtomicConfiguration{
+	@JsonProperty("uuid")
+	private UUID uuid;
 	@JsonProperty("path")
 	private Path path;
 	@JsonProperty("date")
@@ -26,6 +29,7 @@ public class Picture implements AtomicConfiguration{
 	private ZonedDateTime date;
 	
 	public Picture(Path path, ZonedDateTime date){
+		this.uuid = UUID.randomUUID();
 		this.path = path;
 		this.date = date;
 	}
