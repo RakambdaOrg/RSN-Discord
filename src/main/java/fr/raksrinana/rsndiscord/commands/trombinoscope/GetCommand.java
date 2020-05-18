@@ -6,7 +6,6 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.trombinoscope.Picture;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
-import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -20,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+import static fr.raksrinana.rsndiscord.utils.TrombinoscopeUtils.isRegistered;
 
 class GetCommand extends BasicCommand{
 	private static final Path trombinoscopeFolder = Paths.get("trombinoscope");
@@ -36,11 +36,7 @@ class GetCommand extends BasicCommand{
 	@Override
 	public boolean isAllowed(Member member){
 		if(super.isAllowed(member)){
-			return Settings.get(member.getGuild()).getTrombinoscope()
-					.getPosterRole()
-					.flatMap(RoleConfiguration::getRole)
-					.map(role -> member.getRoles().contains(role))
-					.orElse(false);
+			return isRegistered(member);
 		}
 		return false;
 	}
