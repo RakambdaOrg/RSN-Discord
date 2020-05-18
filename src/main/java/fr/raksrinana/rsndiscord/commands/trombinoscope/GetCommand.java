@@ -67,6 +67,7 @@ class GetCommand extends BasicCommand{
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("user", "The user to get the picture", true);
+		builder.addField("index", "The index of the picture to get", true);
 	}
 	
 	@NonNull
@@ -93,19 +94,23 @@ class GetCommand extends BasicCommand{
 					}
 					return null;
 				}).filter(arg -> arg > 0 && arg <= pictureCount)
+				.map(arg -> arg - 1)
 				.orElseGet(() -> ThreadLocalRandom.current().nextInt(pictureCount));
 		trombinoscope.getPictures(target).stream()
 				.sorted(Comparator.comparing(Picture::getDate))
-				.limit(pictureIndex)
+				.skip(pictureIndex)
 				.findFirst()
-				.ifPresent(picture -> trombinoscope.getPicturesChannel()
+				.ifPresentOrElse(picture -> trombinoscope.getPicturesChannel()
 						.flatMap(ChannelConfiguration::getChannel)
-						.ifPresent(picturesChannel -> Actions.sendFile(picturesChannel, picture.getPath())));
+						.ifPresent(picturesChannel -> {
+							Actions.sendMessage(picturesChannel, "Picture of " + target.getAsMention() + " (ID: `" + picture.getUuid() + "`)", null);
+							Actions.sendFile(picturesChannel, picture.getPath());
+						}), () -> Actions.reply(event, "Picture not found", null));
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
 	public @NonNull String getCommandUsage(){
-		return super.getCommandUsage() + " <user>";
+		return super.getCommandUsage() + " <user> [index]";
 	}
 }

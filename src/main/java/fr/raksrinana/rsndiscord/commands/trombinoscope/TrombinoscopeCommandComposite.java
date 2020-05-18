@@ -14,6 +14,8 @@ public class TrombinoscopeCommandComposite extends CommandComposite{
 		super();
 		this.addSubCommand(new AddCommand(this));
 		this.addSubCommand(new GetCommand(this));
+		this.addSubCommand(new RemoveCommand(this));
+		this.addSubCommand(new StatsCommand(this));
 	}
 	
 	@Override

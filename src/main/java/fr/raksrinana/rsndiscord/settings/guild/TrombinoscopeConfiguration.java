@@ -36,7 +36,26 @@ public class TrombinoscopeConfiguration implements CompositeConfiguration{
 	}
 	
 	public Set<Picture> getPictures(User user){
-		return pictures.getOrDefault(user.getIdLong(), Set.of());
+		return getPictures(user.getIdLong()).orElse(Set.of());
+	}
+	
+	public Optional<Set<Picture>> getPictures(long userId){
+		return Optional.ofNullable(pictures.get(userId));
+	}
+	
+	public Optional<Long> getUserIdOfPicture(UUID uuid){
+		return pictures.entrySet().stream()
+				.filter(entry -> entry.getValue().stream().anyMatch(picture -> Objects.equals(picture.getUuid(), uuid)))
+				.findFirst()
+				.map(Map.Entry::getKey);
+	}
+	
+	public void removePicture(long userId, UUID uuid){
+		getPictures(userId).ifPresent(pictures -> pictures.removeIf(picture -> Objects.equals(picture.getUuid(), uuid)));
+	}
+	
+	public boolean isUserPresent(long userId){
+		return getPictures(userId).map(pictures -> !pictures.isEmpty()).orElse(false);
 	}
 	
 	public Optional<ChannelConfiguration> getPicturesChannel(){
