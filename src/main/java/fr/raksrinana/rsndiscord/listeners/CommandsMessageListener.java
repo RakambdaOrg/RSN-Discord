@@ -58,7 +58,6 @@ public class CommandsMessageListener extends ListenerAdapter{
 			if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
 				if(!event.getAuthor().isBot()){
 					Log.getLogger(event.getGuild()).debug("Processing potential command from {}: {}", event.getAuthor(), event.getMessage().getContentRaw());
-					Actions.deleteMessage(event.getMessage());
 					final var args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 					final var cmdText = args.pop().substring(Settings.get(event.getGuild()).getPrefix().orElse(defaultPrefix).length());
 					this.getCommand(cmdText).ifPresentOrElse(command -> {
@@ -100,6 +99,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 						builder.addField("Command", cmdText, false);
 						Actions.reply(event, "", builder.build()).thenAccept(message -> ScheduleUtils.addSchedule(new DeleteMessageScheduleConfiguration(event.getAuthor(), ZonedDateTime.now().plusMinutes(2), message), event.getGuild()));
 					});
+					Actions.deleteMessage(event.getMessage());
 				}
 			}
 			else if(Settings.get(event.getGuild()).getReactionsConfiguration().getAutoTodoChannels().stream().anyMatch(channelConfiguration -> Objects.equals(channelConfiguration.getChannelId(), event.getChannel().getIdLong()))){

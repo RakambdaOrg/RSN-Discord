@@ -51,7 +51,7 @@ public class TodoReactionHandler implements ReactionHandler{
 					return false;
 				}).orElse(false);
 				if(!forwarded){
-					Actions.replyWithPrivateMessage(event, "The saved channel isn't configured yet for this channel, please contact and admin.", null);
+					Actions.replyPrivate(event.getGuild(), event.getUser(), "The saved channel isn't configured yet for this channel, please contact and admin.", null);
 					Actions.removeReaction(event.getReaction(), event.getUser());
 					return ReactionHandlerResult.PROCESSED;
 				}

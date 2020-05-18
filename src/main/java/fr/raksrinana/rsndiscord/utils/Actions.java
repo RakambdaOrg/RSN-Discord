@@ -7,12 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -218,31 +214,11 @@ public class Actions{
 	 * @param path    The file to send.
 	 *
 	 * @return A completable future of a message.
-	 *
-	 * @see #sendFile(TextChannel, InputStream, String)
 	 */
 	@NonNull
-	public static CompletableFuture<Message> sendFile(final TextChannel channel, final Path path) throws IOException{
+	public static CompletableFuture<Message> sendFile(final TextChannel channel, final Path path){
 		Log.getLogger(channel.getGuild()).debug("Sending file {} to {}", path, channel);
-		return sendFile(channel, Files.newInputStream(path), path.getFileName().toString());
-	}
-	
-	/**
-	 * Send a file to a channel.
-	 * Closes the stream when done.
-	 *
-	 * @param channel     The channel to send to.
-	 * @param inputStream The file data to send.
-	 * @param name        The name of the file.
-	 *
-	 * @return A completable future of a message (see {@link RestAction#submit()}).
-	 */
-	@NonNull
-	public static CompletableFuture<Message> sendFile(final TextChannel channel, final InputStream inputStream, final String name) throws IOException{
-		Log.getLogger(channel.getGuild()).info("Sending file {} to {}", name, channel);
-		try(final var is = inputStream){
-			return new MessageBuilder().sendTo(channel).addFile(is, name).submit();
-		}
+		return new MessageBuilder().sendTo(channel).addFile(path.toFile()).submit();
 	}
 	
 	/**
@@ -424,13 +400,13 @@ public class Actions{
 	 * @throws IllegalArgumentException If trying to send a message to another bot.
 	 */
 	public static CompletableFuture<Message> sendPrivateMessage(long userId, String message, MessageEmbed embed){
-		return Main.getJda().retrieveUserById(userId).submit().thenCompose(user -> user.openPrivateChannel().submit()).thenCompose(privateChannel -> sendPrivateMessage(null, privateChannel, message, embed));
+		return Main.getJda().retrieveUserById(userId).submit().thenCompose(user -> sendPrivateMessage(user, message, embed));
 	}
 	
 	/**
-	 * Reply to a message event in private.
+	 * Send a message to a private channel.
 	 *
-	 * @param event   The source event to reply to.
+	 * @param user    The user to send the message to.
 	 * @param message The message to send.
 	 * @param embed   The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
 	 *
@@ -439,8 +415,8 @@ public class Actions{
 	 * @throws IllegalArgumentException If trying to send a message to another bot.
 	 */
 	@NonNull
-	public static CompletableFuture<Message> replyWithPrivateMessage(GuildMessageReactionAddEvent event, String message, MessageEmbed embed){
-		return event.getUser().openPrivateChannel().submit().thenCompose(privateChannel -> sendPrivateMessage(event.getGuild(), privateChannel, message, embed));
+	public static CompletableFuture<Message> sendPrivateMessage(User user, String message, MessageEmbed embed){
+		return user.openPrivateChannel().submit().thenCompose(privateChannel -> sendPrivateMessage(null, privateChannel, message, embed));
 	}
 	
 	/**

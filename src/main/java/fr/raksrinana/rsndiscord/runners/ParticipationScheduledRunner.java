@@ -28,7 +28,7 @@ public class ParticipationScheduledRunner implements ScheduledRunner{
 			}
 			else{
 				participationConfiguration.getDay(day).ifPresent(messageParticipation -> participationConfiguration.getReportChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(reportChannel -> {
-					MessageParticipationCommand.sendReport(25, day, messageParticipation, this.jda.getSelfUser(), reportChannel);
+					MessageParticipationCommand.sendReport(15, day, messageParticipation, this.jda.getSelfUser(), reportChannel);
 					participationConfiguration.getReportedDays().add(day);
 				}));
 			}

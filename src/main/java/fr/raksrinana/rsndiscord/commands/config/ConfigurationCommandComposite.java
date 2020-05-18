@@ -25,6 +25,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new ReactionsConfigurationCommandComposite(this));
 		this.addSubCommand(new HermitcraftConfigurationCommandComposite(this));
 		this.addSubCommand(new ParticipationConfigurationCommandComposite(this));
+		this.addSubCommand(new TrombinoscopeConfigurationCommandComposite(this));
 	}
 	
 	@NonNull

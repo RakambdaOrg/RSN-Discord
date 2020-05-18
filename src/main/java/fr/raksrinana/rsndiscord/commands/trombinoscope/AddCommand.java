@@ -1,0 +1,118 @@
+package fr.raksrinana.rsndiscord.commands.trombinoscope;
+
+import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
+import fr.raksrinana.rsndiscord.commands.generic.Command;
+import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
+import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
+import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.log.Log;
+import lombok.NonNull;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import static fr.raksrinana.rsndiscord.utils.Utilities.isModerator;
+
+class AddCommand extends BasicCommand{
+	private static final Path trombinoscopeFolder = Paths.get("trombinoscope");
+	
+	/**
+	 * Constructor.
+	 *
+	 * @param parent The parent command.
+	 */
+	AddCommand(final Command parent){
+		super(parent);
+	}
+	
+	@NonNull
+	@Override
+	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+		super.execute(event, args);
+		if(event.getMessage().getAttachments().isEmpty()){
+			return CommandResult.BAD_ARGUMENTS;
+		}
+		var target = event.getMessage().getMentionedMembers().stream().findFirst()
+				.or(() -> Optional.ofNullable(event.getMember()))
+				.orElseThrow(() -> new IllegalStateException("Failed to get member from event"));
+		if(!Objects.equals(target, event.getMember()) && !isModerator(event.getMember())){
+			Actions.sendPrivateMessage(event.getAuthor(), "You cannot add a picture for someone else.", null);
+			return CommandResult.SUCCESS;
+		}
+		boolean failed = false;
+		try{
+			for(Message.Attachment attachment : event.getMessage().getAttachments()){
+				Log.getLogger(event.getGuild()).info("Downloading {}", attachment);
+				var savedFile = attachment.downloadToFile(getFilePath(target, attachment))
+						.exceptionally(e -> {
+							Log.getLogger(event.getGuild()).error("Failed to save file", e);
+							Utilities.reportException(e);
+							return null;
+						})
+						.get(30, TimeUnit.SECONDS);
+				if(checkFile(attachment, savedFile)){
+					Settings.get(event.getGuild()).getTrombinoscope()
+							.registerPicture(target.getUser(), savedFile);
+				}
+				else{
+					failed = true;
+				}
+			}
+		}
+		catch(InterruptedException | ExecutionException | TimeoutException e){
+			failed = true;
+			Log.getLogger(event.getGuild()).error("Failed to save file", e);
+			Utilities.reportException(e);
+		}
+		if(failed){
+			Actions.reply(event, "Failed to save picture, please try again", null);
+		}
+		else{
+			Settings.get(event.getGuild()).getTrombinoscope()
+					.getPosterRole()
+					.flatMap(RoleConfiguration::getRole)
+					.ifPresent(role -> Actions.giveRole(target, role));
+			Actions.reply(event, event.getAuthor().getAsMention() + " added pictures to the trombinoscope", null);
+		}
+		return CommandResult.SUCCESS;
+	}
+	
+	private File getFilePath(Member member, Message.Attachment attachment){
+		return trombinoscopeFolder.resolve(member.getId())
+				.resolve(String.format("%d-%s.%s", attachment.getIdLong(), attachment.getFileName(), attachment.getFileExtension()))
+				.toFile();
+	}
+	
+	private boolean checkFile(Message.Attachment attachment, File savedFile){
+		return Objects.isNull(savedFile) || savedFile.length() == attachment.getSize();
+	}
+	
+	@NonNull
+	@Override
+	public String getName(){
+		return "Add picture";
+	}
+	
+	@NonNull
+	@Override
+	public List<String> getCommandStrings(){
+		return List.of("add", "a");
+	}
+	
+	@NonNull
+	@Override
+	public String getDescription(){
+		return "Adds a picture to the trombinoscope";
+	}
+}
