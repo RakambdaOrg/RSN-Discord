@@ -18,6 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
 
 /**
  * Actions to do with JDA, logging them.
@@ -69,6 +70,23 @@ public class Actions{
 	 */
 	@NonNull
 	public static CompletableFuture<Message> sendMessage(@NonNull final TextChannel channel, @NonNull final CharSequence message, MessageEmbed embed, boolean allowSplitting){
+		return sendMessage(channel, message, embed, allowSplitting, messageAction -> messageAction);
+	}
+	
+	/**
+	 * Send a message to a channel.
+	 * If the message is too long (greater than {@link Message#MAX_CONTENT_LENGTH}) and that allowSplitting is true, it'll be split into several messages and only the last future will be returned.
+	 *
+	 * @param channel               The channel to send the message to.
+	 * @param message               The message to send.
+	 * @param embed                 The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
+	 * @param allowSplitting        Tell if the message can be split when too long.
+	 * @param messageActionFunction A function to add more elements to the message.
+	 *
+	 * @return A completable future of a message (see {@link RestAction#submit()}).
+	 */
+	@NonNull
+	public static CompletableFuture<Message> sendMessage(@NonNull final TextChannel channel, @NonNull final CharSequence message, MessageEmbed embed, boolean allowSplitting, Function<MessageAction, MessageAction> messageActionFunction){
 		Log.getLogger(channel.getGuild()).info("Sending message to {} : {}", channel, message);
 		var buildUnique = false;
 		final var actionsToSend = new ArrayList<MessageAction>();
@@ -106,7 +124,11 @@ public class Actions{
 			actionsToSend.add(new MessageBuilder().sendTo(channel).append(message).embed(embed));
 		}
 		var lastSent = new CompletableFuture<Message>();
-		for(var action : actionsToSend){
+		for(int i = 0; i < actionsToSend.size(); i++){
+			var action = actionsToSend.get(i);
+			if(i == actionsToSend.size() - 1){
+				action = messageActionFunction.apply(action);
+			}
 			lastSent = action.submit();
 		}
 		return lastSent;
