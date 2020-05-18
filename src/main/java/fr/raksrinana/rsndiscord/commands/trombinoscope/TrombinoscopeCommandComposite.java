@@ -18,11 +18,6 @@ public class TrombinoscopeCommandComposite extends CommandComposite{
 		this.addSubCommand(new StatsCommand(this));
 	}
 	
-	@Override
-	public @NonNull AccessLevel getAccessLevel(){
-		return AccessLevel.MODERATOR;
-	}
-	
 	@NonNull
 	@Override
 	public String getName(){
