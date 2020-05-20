@@ -16,7 +16,6 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.awt.Color;
-import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -96,14 +95,7 @@ public class AddMusicCommand extends BasicCommand{
 						Actions.reply(event, "", embed.build());
 					}
 				};
-				final Consumer<List<AudioTrack>> onPlaylistAdded = playlist -> {
-					if(playlist.size() < 10){
-						playlist.forEach(onTrackAdded);
-					}
-					else{
-						Actions.reply(event, MessageFormat.format("Added {0} songs from a playlist", playlist.size()), null);
-					}
-				};
+				final Consumer<List<AudioTrack>> onPlaylistAdded = playlist -> playlist.forEach(onTrackAdded);
 				RSNAudioManager.play(event.getAuthor(), voiceChannel, null, onTrackAdded, onPlaylistAdded, error -> Actions.reply(event, error, null), skipCount, maxTracks, identifier);
 			});
 		}
