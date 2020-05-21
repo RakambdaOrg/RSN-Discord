@@ -87,7 +87,7 @@ class AddCommand extends BasicCommand{
 					.ifPresent(role -> Actions.giveRole(target, role));
 			trombinoscope.getPicturesChannel()
 					.flatMap(ChannelConfiguration::getChannel)
-					.ifPresent(channel -> Actions.sendMessage(channel, target.getAsMention() + " added pictures to the trombinoscope", null));
+					.ifPresent(channel -> Actions.sendMessage(channel, target.getAsMention() + " added pictures to the trombinoscope (total: " + trombinoscope.getPictures(target.getUser()).size() + ")", null));
 		}
 		return CommandResult.SUCCESS;
 	}
