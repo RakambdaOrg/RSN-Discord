@@ -74,7 +74,7 @@ public class NicknameCommand extends BasicCommand{
 				builder.addField("Reason", "Nickname is the same as the current one", false);
 				Actions.reply(event, "", builder.build());
 			}
-			else if(Objects.nonNull(newName) && !Utilities.isTeam(event.getMember()) && lastChange.map(date -> date.plus(delay)).map(date -> date.isAfter(ZonedDateTime.now())).orElse(true)){
+			else if(Objects.nonNull(newName) && !Utilities.isTeam(event.getMember()) && lastChange.map(date -> date.plus(delay)).map(date -> date.isAfter(ZonedDateTime.now())).orElse(false)){
 				builder.setColor(Color.RED);
 				builder.addField("Old nickname", oldName.orElse("*NONE*"), true);
 				builder.addField("User", member.getAsMention(), true);
