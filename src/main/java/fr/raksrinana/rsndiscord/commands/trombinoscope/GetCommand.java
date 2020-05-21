@@ -98,7 +98,7 @@ class GetCommand extends BasicCommand{
 				.findFirst()
 				.ifPresentOrElse(picture -> trombinoscope.getPicturesChannel()
 						.flatMap(ChannelConfiguration::getChannel)
-						.ifPresent(picturesChannel -> Actions.sendMessage(picturesChannel, event.getAuthor() + " requested a picture of " + target.getAsMention() + " (ID: `" + picture.getUuid() + "`)", null, false, message -> message.addFile(picture.getPath().toFile()))), () -> Actions.reply(event, "Picture not found", null));
+						.ifPresent(picturesChannel -> Actions.sendMessage(picturesChannel, event.getAuthor().getAsMention() + " requested a picture of " + target.getAsMention() + " (ID: `" + picture.getUuid() + "`)", null, false, message -> message.addFile(picture.getPath().toFile()))), () -> Actions.reply(event, "Picture not found", null));
 		return CommandResult.SUCCESS;
 	}
 	
