@@ -70,6 +70,9 @@ class AddCommand extends BasicCommand{
 				}
 				else{
 					failed = true;
+					if(Objects.nonNull(savedFile) && savedFile.exists()){
+						savedFile.delete();
+					}
 				}
 			}
 		}
@@ -94,13 +97,13 @@ class AddCommand extends BasicCommand{
 	
 	private File getFilePath(Member member, Message.Attachment attachment) throws IOException{
 		var path = trombinoscopeFolder.resolve(member.getId())
-				.resolve(String.format("%d-%s.%s", attachment.getIdLong(), attachment.getFileName(), attachment.getFileExtension()));
+				.resolve(String.format("%d-%s", attachment.getIdLong(), attachment.getFileName()));
 		Files.createDirectories(path.getParent());
 		return path.toFile();
 	}
 	
 	private boolean checkFile(Message.Attachment attachment, File savedFile){
-		return Objects.isNull(savedFile) || savedFile.length() == attachment.getSize();
+		return Objects.nonNull(savedFile) && savedFile.length() == attachment.getSize() && attachment.getSize() != 0;
 	}
 	
 	@NonNull
