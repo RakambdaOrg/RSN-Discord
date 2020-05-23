@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Getter
@@ -57,10 +58,15 @@ public class CommandsMessageListener extends ListenerAdapter{
 		try{
 			if(isCommand(event.getGuild(), event.getMessage().getContentRaw())){
 				if(!event.getAuthor().isBot()){
+					var messageDeleted = new AtomicBoolean(false);
 					Log.getLogger(event.getGuild()).debug("Processing potential command from {}: {}", event.getAuthor(), event.getMessage().getContentRaw());
 					final var args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
 					final var cmdText = args.pop().substring(Settings.get(event.getGuild()).getPrefix().orElse(defaultPrefix).length());
 					this.getCommand(cmdText).ifPresentOrElse(command -> {
+						if(command.deleteCommandMessageImmediately()){
+							Actions.deleteMessage(event.getMessage());
+							messageDeleted.set(true);
+						}
 						try{
 							Log.getLogger(event.getGuild()).info("Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(), event.getAuthor(), args);
 							final var executionResult = command.execute(event, args);
@@ -99,7 +105,9 @@ public class CommandsMessageListener extends ListenerAdapter{
 						builder.addField("Command", cmdText, false);
 						Actions.reply(event, "", builder.build()).thenAccept(message -> ScheduleUtils.addSchedule(new DeleteMessageScheduleConfiguration(event.getAuthor(), ZonedDateTime.now().plusMinutes(2), message), event.getGuild()));
 					});
-					Actions.deleteMessage(event.getMessage());
+					if(!messageDeleted.get()){
+						Actions.deleteMessage(event.getMessage());
+					}
 				}
 			}
 			else if(Settings.get(event.getGuild()).getReactionsConfiguration().getAutoTodoChannels().stream().anyMatch(channelConfiguration -> Objects.equals(channelConfiguration.getChannelId(), event.getChannel().getIdLong()))){

@@ -116,6 +116,11 @@ class AddCommand extends BasicCommand{
 		return false;
 	}
 	
+	@Override
+	public boolean deleteCommandMessageImmediately(){
+		return false;
+	}
+	
 	@NonNull
 	@Override
 	public String getName(){

@@ -48,6 +48,10 @@ public interface Command extends Comparable<Command>{
 		return Utilities.isCreator(member.getUser());
 	}
 	
+	default boolean deleteCommandMessageImmediately(){
+		return true;
+	}
+	
 	/**
 	 * Get the level required to execute this command.
 	 *
