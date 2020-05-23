@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-class WallCommand extends BasicCommand{
+class GlobalCommand extends BasicCommand{
 	private static final int PICTURE_PIXELS = 2000;
 	
 	/**
@@ -32,7 +32,7 @@ class WallCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	WallCommand(final Command parent){
+	GlobalCommand(final Command parent){
 		super(parent);
 	}
 	
@@ -105,7 +105,7 @@ class WallCommand extends BasicCommand{
 	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("global", "g");
+		return List.of("global", "gl");
 	}
 	
 	@NonNull
