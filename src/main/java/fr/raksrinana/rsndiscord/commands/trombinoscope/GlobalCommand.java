@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class GlobalCommand extends BasicCommand{
@@ -39,7 +40,7 @@ class GlobalCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Mode", "Determines how the picture is created: [STRETCH, KEEP_ASPECT_RATIO]", false);
+		builder.addField("Mode", "Determines how the picture is created: [STRETCH (default), KEEP_ASPECT_RATIO]", false);
 	}
 	
 	@NonNull
@@ -56,7 +57,7 @@ class GlobalCommand extends BasicCommand{
 		var currentIndex = new AtomicInteger(0);
 		trombinoscopeConfiguration.getPictures().entrySet().stream().parallel().forEach(entry -> {
 			var userIndex = currentIndex.getAndIncrement();
-			entry.getValue().stream().skip(0).findFirst().ifPresent(picture -> {
+			entry.getValue().stream().skip(ThreadLocalRandom.current().nextInt(entry.getValue().size())).findFirst().ifPresent(picture -> {
 				int x = userIndex / squareCountPerSide;
 				int y = userIndex % squareCountPerSide;
 				drawImage(g2d, picture, squarePixels * x, squarePixels * y, squarePixels, mode);
