@@ -30,9 +30,9 @@ public class TrombinoscopeConfiguration implements CompositeConfiguration{
 	@Setter
 	private RoleConfiguration posterRole;
 	@JsonProperty("pictures")
-	private Map<Long, Set<Picture>> pictures = new HashMap<>();
+	private final Map<Long, Set<Picture>> pictures = new HashMap<>();
 	@JsonProperty("bannedUsers")
-	private Set<UserConfiguration> bannedUsers = new HashSet<>();
+	private final Set<UserConfiguration> bannedUsers = new HashSet<>();
 	
 	public void registerPicture(@NonNull User user, @NonNull File file){
 		pictures.computeIfAbsent(user.getIdLong(), key -> new HashSet<>())
@@ -79,6 +79,10 @@ public class TrombinoscopeConfiguration implements CompositeConfiguration{
 	
 	public boolean isUserBanned(@NonNull User user){
 		return this.bannedUsers.contains(new UserConfiguration(user));
+	}
+	
+	public int getUserCount(){
+		return getPictures().size();
 	}
 	
 	@NonNull

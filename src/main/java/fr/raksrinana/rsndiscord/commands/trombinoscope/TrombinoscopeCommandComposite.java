@@ -20,6 +20,7 @@ public class TrombinoscopeCommandComposite extends CommandComposite{
 		this.addSubCommand(new StatsCommand(this));
 		this.addSubCommand(new BanCommand(this));
 		this.addSubCommand(new UnbanCommand(this));
+		this.addSubCommand(new WallCommand(this));
 	}
 	
 	@Override
