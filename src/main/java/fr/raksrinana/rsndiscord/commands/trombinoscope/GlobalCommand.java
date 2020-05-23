@@ -11,6 +11,7 @@ import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.imgscalr.Scalr;
 import javax.imageio.ImageIO;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
+import static fr.raksrinana.rsndiscord.utils.TrombinoscopeUtils.isRegistered;
 
 class GlobalCommand extends BasicCommand{
 	private static final int PICTURE_PIXELS = 2000;
@@ -81,6 +83,14 @@ class GlobalCommand extends BasicCommand{
 	@Override
 	public @NonNull String getCommandUsage(){
 		return super.getCommandUsage() + " [mode]";
+	}
+	
+	@Override
+	public boolean isAllowed(Member member){
+		if(super.isAllowed(member)){
+			return isRegistered(member);
+		}
+		return false;
 	}
 	
 	private void drawImage(Graphics2D g2d, Picture picture, int x, int y, int dim, PictureMode mode){

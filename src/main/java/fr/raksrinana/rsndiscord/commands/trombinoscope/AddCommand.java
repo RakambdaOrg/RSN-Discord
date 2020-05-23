@@ -25,7 +25,9 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import static fr.raksrinana.rsndiscord.utils.TrombinoscopeUtils.isRegistered;
 import static fr.raksrinana.rsndiscord.utils.Utilities.isModerator;
+import static fr.raksrinana.rsndiscord.utils.Utilities.isTeam;
 
 class AddCommand extends BasicCommand{
 	private static final Path trombinoscopeFolder = Paths.get("trombinoscope");
@@ -104,6 +106,14 @@ class AddCommand extends BasicCommand{
 	
 	private boolean checkFile(Message.Attachment attachment, File savedFile){
 		return Objects.nonNull(savedFile) && savedFile.length() == attachment.getSize() && attachment.getSize() != 0;
+	}
+	
+	@Override
+	public boolean isAllowed(Member member){
+		if(super.isAllowed(member)){
+			return isRegistered(member) || isTeam(member);
+		}
+		return false;
 	}
 	
 	@NonNull
