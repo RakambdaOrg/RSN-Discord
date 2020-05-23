@@ -9,9 +9,9 @@ import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.imgscalr.Scalr;
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -73,11 +73,8 @@ class WallCommand extends BasicCommand{
 	private void drawImage(Graphics2D g2d, Picture picture, int x, int y, int dim){
 		try{
 			var image = ImageIO.read(picture.getPath().toFile());
-			double scaleX = (double) dim / image.getWidth();
-			double scaleY = (double) dim / image.getHeight();
-			double scale = Math.min(scaleX, scaleY);
-			var scaledImage = image.getScaledInstance((int) (image.getWidth() * scale), (int) (image.getHeight() * scale), Image.SCALE_SMOOTH);
-			g2d.drawImage(scaledImage, x, y, dim, dim, null);
+			image = Scalr.resize(image, dim);
+			g2d.drawImage(image, x, y, dim, dim, null);
 		}
 		catch(IOException e){
 			Log.getLogger(null).error("Failed to read trombinoscope picture {}", picture.getPath(), e);

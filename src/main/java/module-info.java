@@ -19,4 +19,5 @@ open module fr.raksrinana.rsndiscord {
 	requires static lombok;
 	requires com.google.gson;
 	requires emoji.java;
+	requires imgscalr.lib;
 }
