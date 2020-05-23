@@ -5,7 +5,6 @@ import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.trombinoscope.Picture;
-import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
@@ -19,6 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class WallCommand extends BasicCommand{
@@ -57,7 +57,8 @@ class WallCommand extends BasicCommand{
 		try{
 			if(ImageIO.write(bufferedImage, "jpeg", imgOutputStream)){
 				try(var imgInputStream = new ByteArrayInputStream(imgOutputStream.toByteArray())){
-					trombinoscopeConfiguration.getPicturesChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> {
+					// trombinoscopeConfiguration.getPicturesChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> {
+					Optional.ofNullable(event.getGuild().getTextChannelById(436492330602594304L)).ifPresent(channel -> {
 						Actions.sendMessage(channel, "", null, false, action -> action.addFile(imgInputStream, System.currentTimeMillis() + ".jpg"));
 					});
 				}
