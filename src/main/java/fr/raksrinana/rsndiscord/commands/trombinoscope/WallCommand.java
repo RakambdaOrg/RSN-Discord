@@ -74,7 +74,7 @@ class WallCommand extends BasicCommand{
 		try{
 			var image = ImageIO.read(picture.getPath().toFile());
 			image = Scalr.resize(image, dim);
-			g2d.drawImage(image, x, y, dim, dim, null);
+			g2d.drawImage(image, x + (dim - image.getWidth()) / 2, y + (dim - image.getHeight()) / 2, image.getWidth(), image.getHeight(), null);
 		}
 		catch(IOException e){
 			Log.getLogger(null).error("Failed to read trombinoscope picture {}", picture.getPath(), e);
