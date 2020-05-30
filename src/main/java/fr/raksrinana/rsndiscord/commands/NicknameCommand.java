@@ -80,6 +80,7 @@ public class NicknameCommand extends BasicCommand{
 				builder.addField("User", member.getAsMention(), true);
 				builder.addField("Reason", "You can change your nickname once every " + delay.toString().replace("PT", ""), true);
 				builder.addField("Last change", lastChange.map(date -> date.format(DF)).orElse("<NONE>"), true);
+				builder.addField("Next change", lastChange.map(date -> date.plus(delay)).map(date -> date.format(DF)).orElse("<NONE>"), true);
 				builder.setTimestamp(ZonedDateTime.now());
 				Actions.reply(event, "", builder.build());
 			}
