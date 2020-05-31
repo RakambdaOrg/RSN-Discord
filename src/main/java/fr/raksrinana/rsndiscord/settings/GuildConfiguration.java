@@ -19,7 +19,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
@@ -67,7 +66,7 @@ public class GuildConfiguration implements CompositeConfiguration{
 	private Set<ChannelConfiguration> autoReactionsChannels = new HashSet<>();
 	@JsonProperty("guildId")
 	@Getter
-	private final long guildId;
+	private long guildId;
 	@JsonProperty("announceStartChannel")
 	@Setter
 	private ChannelConfiguration announceStartChannel;
