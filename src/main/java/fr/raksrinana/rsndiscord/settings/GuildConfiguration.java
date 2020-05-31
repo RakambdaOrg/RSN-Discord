@@ -19,51 +19,52 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("schedules")
 	@JsonAlias({"reminders"})
-	private final List<ScheduleConfiguration> schedules = new ArrayList<>();
+	private List<ScheduleConfiguration> schedules = new ArrayList<>();
 	@JsonProperty("aniList")
 	@Getter
-	private final AniListConfiguration aniListConfiguration = new AniListConfiguration();
+	private AniListConfiguration aniListConfiguration = new AniListConfiguration();
 	@JsonProperty("trakt")
 	@Getter
-	private final TraktConfiguration traktConfiguration = new TraktConfiguration();
+	private TraktConfiguration traktConfiguration = new TraktConfiguration();
 	@JsonProperty("nickname")
 	@Getter
-	private final NicknameConfiguration nicknameConfiguration = new NicknameConfiguration();
+	private NicknameConfiguration nicknameConfiguration = new NicknameConfiguration();
 	@JsonProperty("addBackRoles")
 	@Getter
-	private final Set<UserRoleConfiguration> addBackRoles = new HashSet<>();
+	private Set<UserRoleConfiguration> addBackRoles = new HashSet<>();
 	@JsonProperty("twitchConfiguration")
 	@Getter
-	private final TwitchConfiguration twitchConfiguration = new TwitchConfiguration();
+	private TwitchConfiguration twitchConfiguration = new TwitchConfiguration();
 	@JsonProperty("hermitcraft")
 	@Getter
-	private final HermitcraftConfiguration hermitcraftConfiguration = new HermitcraftConfiguration();
+	private HermitcraftConfiguration hermitcraftConfiguration = new HermitcraftConfiguration();
 	@JsonProperty("prefix")
 	@Setter
 	private String prefix;
 	@JsonProperty("autoRoles")
 	@Getter
 	@Setter
-	private final Set<RoleConfiguration> autoRoles = new HashSet<>();
+	private Set<RoleConfiguration> autoRoles = new HashSet<>();
 	@JsonProperty("moderatorRoles")
 	@Getter
 	@Setter
-	private final Set<RoleConfiguration> moderatorRoles = new HashSet<>();
+	private Set<RoleConfiguration> moderatorRoles = new HashSet<>();
 	@JsonProperty("autoThumbChannels")
 	@JsonAlias("ideaChannels")
 	@Getter
 	@Setter
-	private final Set<ChannelConfiguration> autoThumbsChannels = new HashSet<>();
+	private Set<ChannelConfiguration> autoThumbsChannels = new HashSet<>();
 	@JsonProperty("autoReactionsChannels")
 	@Getter
 	@Setter
-	private final Set<ChannelConfiguration> autoReactionsChannels = new HashSet<>();
+	private Set<ChannelConfiguration> autoReactionsChannels = new HashSet<>();
 	@JsonProperty("guildId")
 	@Getter
 	private final long guildId;
@@ -73,26 +74,26 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("musicVolume")
 	@Getter
 	@Setter
-	private final int musicVolume = 100;
+	private int musicVolume = 100;
 	@JsonProperty("archiveCategory")
 	@Setter
 	private CategoryConfiguration archiveCategory;
 	@JsonProperty("messagesAwaitingReaction")
 	@Setter
-	private final Set<WaitingReactionMessageConfiguration> messagesAwaitingReaction = new HashSet<>();
+	private Set<WaitingReactionMessageConfiguration> messagesAwaitingReaction = new HashSet<>();
 	@JsonProperty("reactions")
 	@Getter
 	@Setter
-	private final ReactionsConfiguration reactionsConfiguration = new ReactionsConfiguration();
+	private ReactionsConfiguration reactionsConfiguration = new ReactionsConfiguration();
 	@JsonProperty("participation")
 	@Getter
-	private final ParticipationConfiguration participationConfiguration = new ParticipationConfiguration();
+	private ParticipationConfiguration participationConfiguration = new ParticipationConfiguration();
 	@JsonProperty("trombinoscope")
 	@Getter
-	private final TrombinoscopeConfiguration trombinoscope = new TrombinoscopeConfiguration();
+	private TrombinoscopeConfiguration trombinoscope = new TrombinoscopeConfiguration();
 	@JsonProperty("externalTodos")
 	@Getter
-	private final ExternalTodosConfiguration externalTodos = new ExternalTodosConfiguration();
+	private ExternalTodosConfiguration externalTodos = new ExternalTodosConfiguration();
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
