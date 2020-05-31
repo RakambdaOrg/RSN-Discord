@@ -25,71 +25,74 @@ import java.util.stream.Stream;
 public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("schedules")
 	@JsonAlias({"reminders"})
-	private List<ScheduleConfiguration> schedules = new ArrayList<>();
+	private final List<ScheduleConfiguration> schedules = new ArrayList<>();
 	@JsonProperty("aniList")
 	@Getter
-	private AniListConfiguration aniListConfiguration = new AniListConfiguration();
+	private final AniListConfiguration aniListConfiguration = new AniListConfiguration();
 	@JsonProperty("trakt")
 	@Getter
-	private TraktConfiguration traktConfiguration = new TraktConfiguration();
+	private final TraktConfiguration traktConfiguration = new TraktConfiguration();
 	@JsonProperty("nickname")
 	@Getter
-	private NicknameConfiguration nicknameConfiguration = new NicknameConfiguration();
+	private final NicknameConfiguration nicknameConfiguration = new NicknameConfiguration();
 	@JsonProperty("addBackRoles")
 	@Getter
-	private Set<UserRoleConfiguration> addBackRoles = new HashSet<>();
+	private final Set<UserRoleConfiguration> addBackRoles = new HashSet<>();
 	@JsonProperty("twitchConfiguration")
 	@Getter
-	private TwitchConfiguration twitchConfiguration = new TwitchConfiguration();
+	private final TwitchConfiguration twitchConfiguration = new TwitchConfiguration();
 	@JsonProperty("hermitcraft")
 	@Getter
-	private HermitcraftConfiguration hermitcraftConfiguration = new HermitcraftConfiguration();
+	private final HermitcraftConfiguration hermitcraftConfiguration = new HermitcraftConfiguration();
 	@JsonProperty("prefix")
 	@Setter
 	private String prefix;
 	@JsonProperty("autoRoles")
 	@Getter
 	@Setter
-	private Set<RoleConfiguration> autoRoles = new HashSet<>();
+	private final Set<RoleConfiguration> autoRoles = new HashSet<>();
 	@JsonProperty("moderatorRoles")
 	@Getter
 	@Setter
-	private Set<RoleConfiguration> moderatorRoles = new HashSet<>();
+	private final Set<RoleConfiguration> moderatorRoles = new HashSet<>();
 	@JsonProperty("autoThumbChannels")
 	@JsonAlias("ideaChannels")
 	@Getter
 	@Setter
-	private Set<ChannelConfiguration> autoThumbsChannels = new HashSet<>();
+	private final Set<ChannelConfiguration> autoThumbsChannels = new HashSet<>();
 	@JsonProperty("autoReactionsChannels")
 	@Getter
 	@Setter
-	private Set<ChannelConfiguration> autoReactionsChannels = new HashSet<>();
+	private final Set<ChannelConfiguration> autoReactionsChannels = new HashSet<>();
 	@JsonProperty("guildId")
 	@Getter
-	private long guildId;
+	private final long guildId;
 	@JsonProperty("announceStartChannel")
 	@Setter
 	private ChannelConfiguration announceStartChannel;
 	@JsonProperty("musicVolume")
 	@Getter
 	@Setter
-	private int musicVolume = 100;
+	private final int musicVolume = 100;
 	@JsonProperty("archiveCategory")
 	@Setter
 	private CategoryConfiguration archiveCategory;
 	@JsonProperty("messagesAwaitingReaction")
 	@Setter
-	private Set<WaitingReactionMessageConfiguration> messagesAwaitingReaction = new HashSet<>();
+	private final Set<WaitingReactionMessageConfiguration> messagesAwaitingReaction = new HashSet<>();
 	@JsonProperty("reactions")
 	@Getter
 	@Setter
-	private ReactionsConfiguration reactionsConfiguration = new ReactionsConfiguration();
+	private final ReactionsConfiguration reactionsConfiguration = new ReactionsConfiguration();
 	@JsonProperty("participation")
 	@Getter
-	private ParticipationConfiguration participationConfiguration = new ParticipationConfiguration();
+	private final ParticipationConfiguration participationConfiguration = new ParticipationConfiguration();
 	@JsonProperty("trombinoscope")
 	@Getter
-	private TrombinoscopeConfiguration trombinoscope = new TrombinoscopeConfiguration();
+	private final TrombinoscopeConfiguration trombinoscope = new TrombinoscopeConfiguration();
+	@JsonProperty("externalTodos")
+	@Getter
+	private final ExternalTodosConfiguration externalTodos = new ExternalTodosConfiguration();
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
@@ -140,5 +143,9 @@ public class GuildConfiguration implements CompositeConfiguration{
 	
 	public List<ScheduleConfiguration> getSchedules(){
 		return new LinkedList<>(this.schedules);
+	}
+	
+	public ExternalTodosConfiguration getExternalTodos(){
+		return this.externalTodos; //TODO: Remove
 	}
 }
