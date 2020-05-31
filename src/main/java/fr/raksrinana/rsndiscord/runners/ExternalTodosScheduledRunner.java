@@ -24,6 +24,22 @@ public class ExternalTodosScheduledRunner implements ScheduledRunner{
 	}
 	
 	@Override
+	public long getDelay(){
+		return 2;
+	}
+	
+	@Override
+	public long getPeriod(){
+		return 30;
+	}
+	
+	@NonNull
+	@Override
+	public TimeUnit getPeriodUnit(){
+		return TimeUnit.MINUTES;
+	}
+	
+	@Override
 	public void execute(){
 		this.jda.getGuilds().forEach(guild -> {
 			final var configuration = Settings.get(guild).getExternalTodos();
@@ -46,25 +62,9 @@ public class ExternalTodosScheduledRunner implements ScheduledRunner{
 		});
 	}
 	
-	@Override
-	public long getDelay(){
-		return 2;
-	}
-	
 	@NonNull
 	@Override
 	public String getName(){
 		return "External todos fetcher";
-	}
-	
-	@Override
-	public long getPeriod(){
-		return 30;
-	}
-	
-	@NonNull
-	@Override
-	public TimeUnit getPeriodUnit(){
-		return TimeUnit.MINUTES;
 	}
 }

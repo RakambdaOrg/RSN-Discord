@@ -144,8 +144,4 @@ public class GuildConfiguration implements CompositeConfiguration{
 	public List<ScheduleConfiguration> getSchedules(){
 		return new LinkedList<>(this.schedules);
 	}
-	
-	public ExternalTodosConfiguration getExternalTodos(){
-		return this.externalTodos; //TODO: Remove
-	}
 }
