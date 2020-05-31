@@ -50,7 +50,7 @@ public class ExternalTodosScheduledRunner implements ScheduledRunner{
 					response.ifPresent(todos -> todos.getTodos().forEach(todo -> {
 						Actions.sendMessage(channel, "`" + todo.getKind().name() + "` => " + todo.getDescription(), null).thenAccept(message -> {
 							Actions.addReaction(message, BasicEmotes.CHECK_OK.getValue());
-							if(todo.isCanBeDropped()){
+							if(todo.getKind().isCancellable()){
 								Actions.addReaction(message, BasicEmotes.CROSS_NO.getValue());
 							}
 							Settings.get(guild).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, ReactionTag.EXTERNAL_TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(false))));
