@@ -121,6 +121,10 @@ public class CommandsMessageListener extends ListenerAdapter{
 					Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(event.getMessage(), ReactionTag.TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
 				}
 			}
+			else if(Settings.get(event.getGuild()).getExternalTodos().getNotificationChannel().map(channelConfiguration -> Objects.equals(channelConfiguration.getChannelId(), event.getChannel().getIdLong())).orElse(false)){
+				Actions.addReaction(event.getMessage(), BasicEmotes.CHECK_OK.getValue());
+				Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(event.getMessage(), ReactionTag.EXTERNAL_TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(false))));
+			}
 		}
 		catch(final Exception e){
 			Log.getLogger(event.getGuild()).error("Error handling message", e);
