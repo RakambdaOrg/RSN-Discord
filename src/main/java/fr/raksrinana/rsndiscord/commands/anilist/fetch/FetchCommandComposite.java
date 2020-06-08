@@ -3,7 +3,9 @@ package fr.raksrinana.rsndiscord.commands.anilist.fetch;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
 import lombok.NonNull;
+import net.dv8tion.jda.api.entities.Guild;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class FetchCommandComposite extends CommandComposite{
 	/**
@@ -26,8 +28,8 @@ public class FetchCommandComposite extends CommandComposite{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "AniList fetcher";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.anilist.fetch.name");
 	}
 	
 	@NonNull
@@ -38,7 +40,7 @@ public class FetchCommandComposite extends CommandComposite{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Fetch data";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.anilist.fetch.description");
 	}
 }

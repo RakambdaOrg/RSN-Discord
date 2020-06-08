@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 class RegisterCommand extends BasicCommand{
 	/**
@@ -28,7 +29,7 @@ class RegisterCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Code", "API code obtained from: " + AniListUtils.getCODE_LINK(), false);
+		builder.addField("Code", translate(guild, "command.anilist.register.help.code", AniListUtils.getCODE_LINK()), false);
 	}
 	
 	@NonNull
@@ -40,15 +41,15 @@ class RegisterCommand extends BasicCommand{
 		}
 		try{
 			AniListUtils.requestToken(event.getMember(), args.pop());
-			Actions.reply(event, "API code saved", null);
+			Actions.reply(event, translate(event.getGuild(), "command.anilist.register.execution.saved"), null);
 		}
 		catch(final IllegalArgumentException e){
-			Actions.reply(event, "Provided API code isn't valid", null);
+			Actions.reply(event, translate(event.getGuild(), "command.anilist.register.execution.invalid"), null);
 			return CommandResult.NOT_HANDLED;
 		}
 		catch(final InvalidResponseException e){
 			Log.getLogger(event.getGuild()).error("Error getting AniList access token", e);
-			Actions.reply(event, "Error while saving API code", null);
+			Actions.reply(event, translate(event.getGuild(), "command.anilist.register.execution.error"), null);
 			Utilities.reportException(e);
 			return CommandResult.FAILED;
 		}
@@ -63,8 +64,8 @@ class RegisterCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "AniList registering";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.anilist.register.name");
 	}
 	
 	@NonNull
@@ -75,7 +76,7 @@ class RegisterCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Register your AniList account";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.anilist.register.description");
 	}
 }

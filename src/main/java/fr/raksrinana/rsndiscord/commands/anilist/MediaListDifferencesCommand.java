@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 class MediaListDifferencesCommand extends BasicCommand{
 	/**
@@ -24,9 +25,9 @@ class MediaListDifferencesCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder embedBuilder){
 		super.addHelp(guild, embedBuilder);
-		embedBuilder.addField("filter", "What kind of media to get the differences (MANGA|ANIME)", false);
-		embedBuilder.addField("user1", "Mention of the first user to compare", false);
-		embedBuilder.addField("user2", "Mention of the second user to compare", false);
+		embedBuilder.addField("filter", translate(guild, "command.anilist.media-list-differences.help.filter"), false);
+		embedBuilder.addField("user1", translate(guild, "command.anilist.media-list-differences.help.user1"), false);
+		embedBuilder.addField("user2", translate(guild, "command.anilist.media-list-differences.help.user2"), false);
 	}
 	
 	@NonNull
@@ -50,8 +51,8 @@ class MediaListDifferencesCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "AniList fetch media user list differences";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.anilist.media-list-differences.name");
 	}
 	
 	@NonNull
@@ -62,7 +63,7 @@ class MediaListDifferencesCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Fetch media user list differences";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.anilist.media-list-differences.description");
 	}
 }

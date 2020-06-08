@@ -23,6 +23,10 @@ import java.util.stream.Stream;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 public class GuildConfiguration implements CompositeConfiguration{
+	@JsonProperty("locale")
+	@Setter
+	@Getter
+	private Locale locale = Locale.ENGLISH;
 	@JsonProperty("schedules")
 	@JsonAlias({"reminders"})
 	private List<ScheduleConfiguration> schedules = new ArrayList<>();

@@ -5,9 +5,11 @@ import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.runners.anilist.AniListMediaListScheduledRunner;
 import lombok.NonNull;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 class MediaListCommand extends BasicCommand{
 	/**
@@ -29,8 +31,8 @@ class MediaListCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "AniList fetch media user list";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.anilist.fetch.media-list.name");
 	}
 	
 	@NonNull
@@ -41,7 +43,7 @@ class MediaListCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Fetch media list changes";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.anilist.fetch.media-list.description");
 	}
 }

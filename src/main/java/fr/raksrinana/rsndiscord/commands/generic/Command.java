@@ -76,7 +76,7 @@ public interface Command extends Comparable<Command>{
 	
 	@Override
 	default int compareTo(@NonNull final Command otherCommand){
-		return this.getName().compareTo(otherCommand.getName());
+		return this.getCommandStrings().get(0).compareTo(otherCommand.getCommandStrings().get(0));
 	}
 	
 	/**
@@ -84,7 +84,7 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return The name.
 	 */
-	@NonNull String getName();
+	@NonNull String getName(@NonNull Guild guild);
 	
 	/**
 	 * Get the command (what's after the prefix).
@@ -105,7 +105,7 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return The description.
 	 */
-	@NonNull String getDescription();
+	@NonNull String getDescription(@NonNull Guild guild);
 	
 	/**
 	 * Get the parent command.

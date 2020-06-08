@@ -5,9 +5,11 @@ import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.runners.anilist.AniListActivityScheduledRunner;
 import lombok.NonNull;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class ActivityCommand extends BasicCommand{
 	/**
@@ -29,8 +31,8 @@ public class ActivityCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "AniList fetch activity";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.anilist.fetch.activity.name");
 	}
 	
 	@NonNull
@@ -41,7 +43,7 @@ public class ActivityCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Fetch user's activity";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.anilist.fetch.activity.description");
 	}
 }

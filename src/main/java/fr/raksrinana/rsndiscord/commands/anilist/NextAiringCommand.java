@@ -17,6 +17,7 @@ import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @Slf4j
 class NextAiringCommand extends BasicCommand{
@@ -32,7 +33,7 @@ class NextAiringCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder embedBuilder){
 		super.addHelp(guild, embedBuilder);
-		embedBuilder.addField("id", "The id of the media on AniList", false);
+		embedBuilder.addField("id", translate(guild, "command.anilist.next-airing.help.id"), false);
 	}
 	
 	@NonNull
@@ -56,7 +57,7 @@ class NextAiringCommand extends BasicCommand{
 				final var builder = new EmbedBuilder();
 				schedule.fillEmbed(builder);
 				ScheduleUtils.addScheduleAndNotify(new AnilistAiringScheduleConfiguration(event.getAuthor(), event.getChannel(), schedule.getDate(), schedule), event.getChannel());
-			}, () -> Actions.reply(event, "No information on the next airing for media", null));
+			}, () -> Actions.reply(event, translate(event.getGuild(), "command.anilist.next-airing.execution.not-found"), null));
 		}
 		catch(Exception e){
 			log.error("Failed to get airing schedule", e);
@@ -73,8 +74,8 @@ class NextAiringCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Next airing";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.anilist.next-airing.name");
 	}
 	
 	@NonNull
@@ -85,7 +86,7 @@ class NextAiringCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Sets a reminder for the next aired media";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.anilist.next-airing.description");
 	}
 }
