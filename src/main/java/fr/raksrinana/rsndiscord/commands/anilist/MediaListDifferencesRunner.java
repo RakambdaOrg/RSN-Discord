@@ -72,7 +72,12 @@ class MediaListDifferencesRunner implements AniListRunner<MediaList, MediaListPa
 	public void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<MediaList>> userMedias){
 		if(userMedias.containsKey(this.member1.getUser()) && userMedias.containsKey(this.member2.getUser())){
 			final var user2Medias = userMedias.get(this.member2.getUser());
-			userMedias.get(this.member1.getUser()).stream().filter(user1Media -> user1Media.getMedia().getType().equals(this.type)).filter(user2Medias::contains).sorted().map(commonMedia -> this.buildMessage(null, commonMedia)).forEach(message -> Actions.sendMessage(this.channel, "", message));
+			userMedias.get(this.member1.getUser()).stream()
+					.filter(user1Media -> user1Media.getMedia().getType().equals(this.type))
+					.filter(user2Medias::contains)
+					.sorted()
+					.map(commonMedia -> this.buildMessage(null, commonMedia))
+					.forEach(message -> Actions.sendMessage(this.channel, "", message));
 		}
 	}
 	

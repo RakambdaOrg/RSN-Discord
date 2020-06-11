@@ -10,9 +10,9 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class VolumeMusicCommand extends BasicCommand{
 	/**
@@ -27,7 +27,7 @@ public class VolumeMusicCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Volume", "The volume to set, between 0 and 100", false);
+		builder.addField("Volume", translate(guild, "command.music.volume.help.volume"), false);
 	}
 	
 	@NonNull
@@ -42,10 +42,10 @@ public class VolumeMusicCommand extends BasicCommand{
 				final var volume = Math.min(100, Math.max(0, Integer.parseInt(args.pop())));
 				Settings.get(event.getGuild()).setMusicVolume(volume);
 				RSNAudioManager.getFor(event.getGuild()).ifPresent(g -> g.setVolume(volume));
-				Actions.reply(event, MessageFormat.format("Volume set to {0}%", volume), null);
+				Actions.reply(event, translate(event.getGuild(), "music.volume-set", volume), null);
 			}
 			catch(NumberFormatException e){
-				Actions.reply(event, "Please give the volume as an integer", null);
+				Actions.reply(event, translate(event.getGuild(), "music.invalid-format"), null);
 			}
 		}
 		return CommandResult.SUCCESS;
@@ -64,8 +64,8 @@ public class VolumeMusicCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Volume";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.music.volume.name");
 	}
 	
 	@NonNull
@@ -76,7 +76,7 @@ public class VolumeMusicCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Sets the bot's volume";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.music.volume.description");
 	}
 }

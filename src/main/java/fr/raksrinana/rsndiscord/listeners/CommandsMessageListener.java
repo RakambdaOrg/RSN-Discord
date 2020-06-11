@@ -68,7 +68,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 							messageDeleted.set(true);
 						}
 						try{
-							Log.getLogger(event.getGuild()).info("Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(), event.getAuthor(), args);
+							Log.getLogger(event.getGuild()).info("Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(event.getGuild()), event.getAuthor(), args);
 							final var executionResult = command.execute(event, args);
 							if(executionResult == CommandResult.FAILED){
 								Actions.replyPrivate(event.getGuild(), event.getAuthor(), "An error occurred", null);

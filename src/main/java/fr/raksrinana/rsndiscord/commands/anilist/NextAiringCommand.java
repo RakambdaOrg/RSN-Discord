@@ -53,11 +53,13 @@ class NextAiringCommand extends BasicCommand{
 		try{
 			final var now = ZonedDateTime.now();
 			final var schedules = new AiringSchedulePagedQuery(mediaId).getResult(event.getMember());
-			schedules.stream().filter(schedule -> now.isBefore(schedule.getAiringAt())).min(Comparator.comparingInt(AiringSchedule::getTimeUntilAiring)).ifPresentOrElse(schedule -> {
-				final var builder = new EmbedBuilder();
-				schedule.fillEmbed(builder);
-				ScheduleUtils.addScheduleAndNotify(new AnilistAiringScheduleConfiguration(event.getAuthor(), event.getChannel(), schedule.getDate(), schedule), event.getChannel());
-			}, () -> Actions.reply(event, translate(event.getGuild(), "command.anilist.next-airing.execution.not-found"), null));
+			schedules.stream().filter(schedule -> now.isBefore(schedule.getAiringAt()))
+					.min(Comparator.comparingInt(AiringSchedule::getTimeUntilAiring))
+					.ifPresentOrElse(schedule -> {
+						final var builder = new EmbedBuilder();
+						schedule.fillEmbed(builder);
+						ScheduleUtils.addScheduleAndNotify(new AnilistAiringScheduleConfiguration(event.getAuthor(), event.getChannel(), schedule.getDate(), schedule), event.getChannel());
+					}, () -> Actions.reply(event, translate(event.getGuild(), "anilist.airing-schedule-not-found"), null));
 		}
 		catch(Exception e){
 			log.error("Failed to get airing schedule", e);

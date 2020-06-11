@@ -48,7 +48,7 @@ class InfoCommand extends BasicCommand{
 		try{
 			final var medias = new MediaPagedQuery(mediaId).getResult(event.getMember());
 			if(medias.isEmpty()){
-				Actions.reply(event, translate(event.getGuild(), "command.anilist.info.execution.not-found"), null);
+				Actions.reply(event, translate(event.getGuild(), "anilist.media-not-found"), null);
 			}
 			else{
 				medias.forEach(media -> {

@@ -41,15 +41,15 @@ class RegisterCommand extends BasicCommand{
 		}
 		try{
 			AniListUtils.requestToken(event.getMember(), args.pop());
-			Actions.reply(event, translate(event.getGuild(), "command.anilist.register.execution.saved"), null);
+			Actions.reply(event, translate(event.getGuild(), "anilist.api-code.saved"), null);
 		}
 		catch(final IllegalArgumentException e){
-			Actions.reply(event, translate(event.getGuild(), "command.anilist.register.execution.invalid"), null);
+			Actions.reply(event, translate(event.getGuild(), "anilist.api-code.invalid"), null);
 			return CommandResult.NOT_HANDLED;
 		}
 		catch(final InvalidResponseException e){
 			Log.getLogger(event.getGuild()).error("Error getting AniList access token", e);
-			Actions.reply(event, translate(event.getGuild(), "command.anilist.register.execution.error"), null);
+			Actions.reply(event, translate(event.getGuild(), "anilist.api-code.save-error"), null);
 			Utilities.reportException(e);
 			return CommandResult.FAILED;
 		}

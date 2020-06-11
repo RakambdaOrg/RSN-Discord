@@ -68,8 +68,8 @@ public abstract class ValueConfigurationCommand<T> extends BaseConfigurationComm
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return super.getDescription() + " [" + this.getValueName().toLowerCase() + "]";
+	public String getDescription(@NonNull Guild guild){
+		return super.getDescription(guild) + " [" + this.getValueName().toLowerCase() + "]";
 	}
 	
 	@NonNull

@@ -10,7 +10,6 @@ import fr.raksrinana.rsndiscord.utils.music.trackfields.ReplayTrackDataField;
 import fr.raksrinana.rsndiscord.utils.music.trackfields.RequesterTrackDataField;
 import fr.raksrinana.rsndiscord.utils.music.trackfields.TrackUserFields;
 import lombok.NonNull;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -18,6 +17,7 @@ import java.awt.Color;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class NowPlayingMusicCommand extends BasicCommand{
 	/**
@@ -29,26 +29,27 @@ public class NowPlayingMusicCommand extends BasicCommand{
 		super(parent);
 	}
 	
-	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
-		super.addHelp(guild, builder);
-	}
-	
 	@NonNull
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, "Currently playing", null);
+		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, translate(event.getGuild(), "music.currently-playing"), null);
 		RSNAudioManager.currentTrack(event.getGuild()).ifPresentOrElse(track -> {
-			builder.setTitle("Currently playing", track.getInfo().uri);
+			builder.setTitle(translate(event.getGuild(), "music.currently-playing"), track.getInfo().uri);
 			final var userData = track.getUserData(TrackUserFields.class);
 			builder.setDescription(track.getInfo().title);
-			builder.addField("Requester", userData.get(new RequesterTrackDataField()).map(User::getAsMention).orElse("Unknown"), true);
-			builder.addField("Repeating", userData.get(new ReplayTrackDataField()).map(Object::toString).orElse("False"), true);
-			builder.addField("Position", String.format("%s %s / %s", NowPlayingMusicCommand.buildBar(track.getPosition(), track.getDuration()), getDuration(track.getPosition()), getDuration(track.getDuration())), true);
+			builder.addField(translate(event.getGuild(), "music.requester"), userData.get(new RequesterTrackDataField())
+					.map(User::getAsMention)
+					.orElseGet(() -> translate(event.getGuild(), "music.unknown-requester")),
+					true);
+			builder.addField(translate(event.getGuild(), "music.repeating"), userData.get(new ReplayTrackDataField())
+					.map(Object::toString)
+					.orElse("False"),
+					true);
+			builder.addField(translate(event.getGuild(), "music.position"), String.format("%s %s / %s", NowPlayingMusicCommand.buildBar(track.getPosition(), track.getDuration()), getDuration(track.getPosition()), getDuration(track.getDuration())), true);
 		}, () -> {
 			builder.setColor(Color.RED);
-			builder.setDescription("No music are currently playing");
+			builder.setDescription(translate(event.getGuild(), "music.nothing-playing"));
 		});
 		Actions.reply(event, "", builder.build());
 		return CommandResult.SUCCESS;
@@ -84,8 +85,8 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Now playing";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.music.now-playing.name");
 	}
 	
 	@NonNull
@@ -96,7 +97,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Get information about the current music";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.music.now-playing.description");
 	}
 }

@@ -9,9 +9,9 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class StopMusicCommand extends BasicCommand{
 	/**
@@ -33,8 +33,8 @@ public class StopMusicCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		switch(RSNAudioManager.leave(event.getGuild())){
-			case NO_MUSIC -> Actions.reply(event, MessageFormat.format("{0}, no music currently playing", event.getAuthor().getAsMention()), null);
-			case OK -> Actions.reply(event, MessageFormat.format("{0} stopped the music", event.getAuthor().getAsMention()), null);
+			case NO_MUSIC -> Actions.reply(event, translate(event.getGuild(), "music.nothing-playing"), null);
+			case OK -> Actions.reply(event, translate(event.getGuild(), "music.stopped", event.getAuthor().getAsMention()), null);
 		}
 		return CommandResult.SUCCESS;
 	}
@@ -46,8 +46,8 @@ public class StopMusicCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Stop";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.music.stop.name");
 	}
 	
 	@NonNull
@@ -58,7 +58,7 @@ public class StopMusicCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Stops the music";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.music.stop.description");
 	}
 }

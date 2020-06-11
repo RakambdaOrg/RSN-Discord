@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public abstract class CommandComposite extends BasicCommand{
 	private final LinkedHashSet<Command> subCommands;
@@ -44,7 +45,9 @@ public abstract class CommandComposite extends BasicCommand{
 	 * @param command The command to add.
 	 */
 	protected void addSubCommand(@NonNull final Command command){
-		if(this.subCommands.stream().flatMap(c -> c.getCommandStrings().stream()).anyMatch(commandStr -> command.getCommandStrings().contains(commandStr))){
+		if(this.subCommands.stream()
+				.flatMap(c -> c.getCommandStrings().stream())
+				.anyMatch(commandStr -> command.getCommandStrings().contains(commandStr))){
 			throw new IllegalStateException(MessageFormat.format("Duplicate command found when adding {0} with inputs {1}", command.getClass(), command.getCommandStrings()));
 		}
 		this.subCommands.add(command);
@@ -64,7 +67,10 @@ public abstract class CommandComposite extends BasicCommand{
 	
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder embedBuilder){
-		embedBuilder.addField("Sub-command", this.subCommands.stream().flatMap(command -> command.getCommandStrings().stream()).collect(Collectors.joining(", ")), false);
+		var subCommands = this.subCommands.stream()
+				.flatMap(command -> command.getCommandStrings().stream())
+				.collect(Collectors.joining(", "));
+		embedBuilder.addField("sub-command", subCommands, false);
 	}
 	
 	@NonNull
@@ -75,7 +81,13 @@ public abstract class CommandComposite extends BasicCommand{
 		}
 		final var switchStr = args.poll();
 		if(Objects.isNull(switchStr)){
-			Actions.reply(event, "", Utilities.buildEmbed(event.getAuthor(), Color.RED, "Error while executing command", null).addField("Command", this.getName(), false).addField("Reason", this.getCommandUsage(), false).addField("Arguments available", this.subCommands.stream().flatMap(command -> command.getCommandStrings().stream()).collect(Collectors.joining(", ")), false).build());
+			Actions.reply(event, "", Utilities.buildEmbed(event.getAuthor(), Color.RED, translate(event.getGuild(), "commands.error.title"), null)
+					.addField(translate(event.getGuild(), "commands.error.command"), this.getName(event.getGuild()), false)
+					.addField(translate(event.getGuild(), "commands.error.reason"), translate(event.getGuild(), "commands.error.required-argument"), false)
+					.addField(translate(event.getGuild(), "commands.error.sub-commands"), this.subCommands.stream()
+							.flatMap(command -> command.getCommandStrings().stream())
+							.collect(Collectors.joining(", ")), false)
+					.build());
 		}
 		else{
 			final var toExecute = this.subCommands.stream().filter(command -> command.getCommandStrings().contains(switchStr)).findFirst();
@@ -83,7 +95,14 @@ public abstract class CommandComposite extends BasicCommand{
 				return toExecute.get().execute(event, args);
 			}
 			else{
-				Actions.reply(event, "", Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, "Error while executing command", null).addField("Command", this.getName(), false).addField("Reason", "Invalid argument `" + switchStr + "`", false).addField("Arguments available", this.subCommands.stream().flatMap(command -> command.getCommandStrings().stream()).collect(Collectors.joining(", ")), false).build()).thenAccept(message -> ScheduleUtils.addSchedule(new DeleteMessageScheduleConfiguration(message.getAuthor(), ZonedDateTime.now().plusMinutes(2), message), message.getGuild()));
+				Actions.reply(event, "", Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, translate(event.getGuild(), "commands.error.title"), null)
+						.addField(translate(event.getGuild(), "commands.error.command"), this.getName(event.getGuild()), false)
+						.addField(translate(event.getGuild(), "commands.error.reason"), translate(event.getGuild(), "commands.error.invalid-argument", switchStr), false)
+						.addField(translate(event.getGuild(), "commands.error.sub-commands"), this.subCommands.stream()
+								.flatMap(command -> command.getCommandStrings().stream())
+								.collect(Collectors.joining(", ")), false)
+						.build()
+				).thenAccept(message -> ScheduleUtils.addSchedule(new DeleteMessageScheduleConfiguration(message.getAuthor(), ZonedDateTime.now().plusMinutes(2), message), message.getGuild()));
 			}
 		}
 		return CommandResult.SUCCESS;

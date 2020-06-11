@@ -6,12 +6,11 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.music.RSNAudioManager;
 import lombok.NonNull;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class ResumeMusicCommand extends BasicCommand{
 	/**
@@ -23,18 +22,13 @@ public class ResumeMusicCommand extends BasicCommand{
 		super(parent);
 	}
 	
-	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
-		super.addHelp(guild, builder);
-	}
-	
 	@NonNull
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		switch(RSNAudioManager.resume(event.getGuild())){
-			case NO_MUSIC -> Actions.reply(event, MessageFormat.format("{0}, no music is currently playing", event.getAuthor().getAsMention()), null);
-			case OK -> Actions.reply(event, MessageFormat.format("{0} resumed the music", event.getAuthor().getAsMention()), null);
+			case NO_MUSIC -> Actions.reply(event, translate(event.getGuild(), "music.nothing-playing"), null);
+			case OK -> Actions.reply(event, translate(event.getGuild(), "music.resumed", event.getAuthor().getAsMention()), null);
 		}
 		return CommandResult.SUCCESS;
 	}
@@ -46,8 +40,8 @@ public class ResumeMusicCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Resume";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.music.resume.name");
 	}
 	
 	@NonNull
@@ -58,7 +52,7 @@ public class ResumeMusicCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Resumes la music";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.music.resume.description");
 	}
 }

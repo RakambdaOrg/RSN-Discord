@@ -17,7 +17,9 @@ public abstract class CategoryConfigurationCommand extends ValueConfigurationCom
 		if(args.isEmpty()){
 			throw new IllegalArgumentException("Please mention the role");
 		}
-		return Optional.ofNullable(event.getGuild().getCategoryById(args.pop())).map(CategoryConfiguration::new).orElseThrow(() -> new IllegalArgumentException("Invalid category id"));
+		return Optional.ofNullable(event.getGuild().getCategoryById(args.pop()))
+				.map(CategoryConfiguration::new)
+				.orElseThrow(() -> new IllegalArgumentException("Invalid category id"));
 	}
 	
 	@Override

@@ -53,7 +53,11 @@ public abstract class MapConfigurationCommand<K, V> extends BaseConfigurationCom
 	
 	@Override
 	protected void onShow(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
-		final var values = this.getConfig(event.getGuild()).stream().map(Map::entrySet).flatMap(Set::stream).map(Objects::toString).collect(Collectors.joining(", "));
+		final var values = this.getConfig(event.getGuild()).stream()
+				.map(Map::entrySet)
+				.flatMap(Set::stream)
+				.map(Objects::toString)
+				.collect(Collectors.joining(", "));
 		final var builder = this.getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
 		builder.addField("Values", values, false);
 		Actions.reply(event, "", builder.build());
