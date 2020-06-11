@@ -22,7 +22,7 @@ import static java.time.ZoneOffset.UTC;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class MessageParticipation implements AtomicConfiguration{
+public class ChatParticipation implements AtomicConfiguration{
 	@JsonProperty("day")
 	@JsonDeserialize(using = ISO8601LocalDateDeserializer.class)
 	@JsonSerialize(using = ISO8601LocalDateSerializer.class)
@@ -30,7 +30,7 @@ public class MessageParticipation implements AtomicConfiguration{
 	@JsonProperty("userCounts")
 	private Map<Long, Long> userCounts = new HashMap<>();
 	
-	public MessageParticipation(LocalDate day){
+	public ChatParticipation(LocalDate day){
 		this.day = day;
 	}
 	

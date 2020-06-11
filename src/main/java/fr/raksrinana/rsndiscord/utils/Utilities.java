@@ -116,7 +116,16 @@ public class Utilities{
 	
 	@NonNull
 	public static String durationToString(final Duration duration){
-		return String.format("%dd %dh%02dm%02ds", duration.toDaysPart(), duration.toHoursPart(), duration.toMinutesPart(), duration.toSecondsPart());
+		if(duration.toDaysPart() > 0){
+			return String.format("%dd %dh%02dm%02ds", duration.toDaysPart(), duration.toHoursPart(), duration.toMinutesPart(), duration.toSecondsPart());
+		}
+		if(duration.toHoursPart() > 0){
+			return String.format("%dh%02dm%02ds", duration.toHoursPart(), duration.toMinutesPart(), duration.toSecondsPart());
+		}
+		if(duration.toMinutesPart() > 0){
+			return String.format("%02dm%02ds", duration.toMinutesPart(), duration.toSecondsPart());
+		}
+		return String.format("%02ds", duration.toSecondsPart());
 	}
 	
 	/**
