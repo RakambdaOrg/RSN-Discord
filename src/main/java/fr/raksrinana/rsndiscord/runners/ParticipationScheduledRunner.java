@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.runners;
 
-import fr.raksrinana.rsndiscord.commands.MessageParticipationCommand;
+import fr.raksrinana.rsndiscord.commands.ParticipationCommand;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.log.Log;
@@ -27,10 +27,11 @@ public class ParticipationScheduledRunner implements ScheduledRunner{
 				Log.getLogger(guild).info("Day {} has already been reported", day);
 			}
 			else{
-				participationConfiguration.getDay(day).ifPresent(messageParticipation -> participationConfiguration.getReportChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(reportChannel -> {
-					MessageParticipationCommand.sendReport(15, day, messageParticipation, this.jda.getSelfUser(), reportChannel);
+				participationConfiguration.getReportChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(reportChannel -> {
+					participationConfiguration.getChatDay(day).ifPresent(chatParticipation -> ParticipationCommand.sendMessagesReport(15, day, chatParticipation, this.jda.getSelfUser(), reportChannel));
+					participationConfiguration.getVoiceDay(day).ifPresent(voiceParticipation -> ParticipationCommand.sendVoiceReport(15, day, voiceParticipation, this.jda.getSelfUser(), reportChannel));
 					participationConfiguration.getReportedDays().add(day);
-				}));
+				});
 			}
 		});
 	}
