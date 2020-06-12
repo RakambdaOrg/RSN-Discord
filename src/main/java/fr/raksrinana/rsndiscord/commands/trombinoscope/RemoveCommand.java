@@ -14,6 +14,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static fr.raksrinana.rsndiscord.utils.Utilities.isModerator;
 
 class RemoveCommand extends BasicCommand{
@@ -29,7 +31,7 @@ class RemoveCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("id", "The id of the picture to remove", true);
+		builder.addField("id", translate(guild, "command.trombinoscope.remove.help.id"), true);
 	}
 	
 	@NonNull
@@ -46,7 +48,7 @@ class RemoveCommand extends BasicCommand{
 			trombinoscope.getUserIdOfPicture(uuid).ifPresentOrElse(userId -> {
 				if(Objects.equals(userId, event.getAuthor().getIdLong()) || isModerator(event.getMember())){
 					trombinoscope.removePicture(userId, uuid);
-					Actions.reply(event, "Picture removed", null);
+					Actions.reply(event, translate(event.getGuild(), "trombinoscope.picture-removed"), null);
 					if(!trombinoscope.isUserPresent(userId)){
 						event.getGuild().retrieveMemberById(userId).submit()
 								.thenAccept(target -> trombinoscope.getPosterRole()
@@ -55,12 +57,12 @@ class RemoveCommand extends BasicCommand{
 					}
 				}
 				else{
-					Actions.reply(event, "You can't delete picture of others", null);
+					Actions.reply(event, translate(event.getGuild(), "trombinoscope.error.remove-other"), null);
 				}
-			}, () -> Actions.reply(event, "Picture not found", null));
+			}, () -> Actions.reply(event, translate(event.getGuild(), "trombinoscope.error.unknown"), null));
 		}
 		catch(IllegalArgumentException e){
-			Actions.reply(event, "Invalid id provided", null);
+			Actions.reply(event, translate(event.getGuild(), "trombinoscope.error.invalid-id"), null);
 		}
 		return CommandResult.SUCCESS;
 	}
@@ -72,8 +74,8 @@ class RemoveCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Remove";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.trombinoscope.remove.name");
 	}
 	
 	@NonNull
@@ -84,7 +86,7 @@ class RemoveCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Removes a picture";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.trombinoscope.remove.description");
 	}
 }

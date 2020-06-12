@@ -5,9 +5,12 @@ import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.runners.trakt.TraktUserHistoryScheduledRunner;
 import lombok.NonNull;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 class HistoryCommand extends BasicCommand{
 	/**
@@ -29,8 +32,8 @@ class HistoryCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Trakt history";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.trakt.history.name");
 	}
 	
 	@NonNull
@@ -41,7 +44,7 @@ class HistoryCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Fetches the user history";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.trakt.history.description");
 	}
 }

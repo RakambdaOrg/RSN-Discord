@@ -22,6 +22,8 @@ import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+
 public class ChannelCommand extends BasicCommand{
 	public ChannelCommand(final Command parent){
 		super(parent);
@@ -30,7 +32,7 @@ public class ChannelCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("channel", "The channel to delete. If empty, the current channel will be the target.", false);
+		builder.addField("channel", translate(guild, "command.schedule.delete.channel.help.channel"), false);
 	}
 	
 	@NonNull
@@ -48,7 +50,7 @@ public class ChannelCommand extends BasicCommand{
 	}
 	
 	public static void scheduleDeletion(ZonedDateTime date, TextChannel channel, User author){
-		ScheduleUtils.addScheduleAndNotify(new SimpleScheduleConfiguration(author, channel, date, "Deleting this channel", ScheduleTag.DELETE_CHANNEL), channel, builder -> builder.addField("Info", "React " + BasicEmotes.CROSS_NO.getValue() + " to cancel the deletion", false)).thenAccept(message -> {
+		ScheduleUtils.addScheduleAndNotify(new SimpleScheduleConfiguration(author, channel, date, translate(channel.getGuild(), "schedule.delete.channel.message"), ScheduleTag.DELETE_CHANNEL), channel, builder -> builder.addField(translate(channel.getGuild(), "schedule.info"), translate(channel.getGuild(), "schedule.react-to-cancel", BasicEmotes.CROSS_NO.getValue()), false)).thenAccept(message -> {
 			Actions.addReaction(message, BasicEmotes.CROSS_NO.getValue());
 			Settings.get(channel.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, ReactionTag.SCHEDULED_DELETE_CHANNEL));
 		});
@@ -61,8 +63,8 @@ public class ChannelCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Delete channel";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.schedule.delete.channel.name");
 	}
 	
 	@NonNull
@@ -73,7 +75,7 @@ public class ChannelCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Schedule the deletion of a channel";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.schedule.delete.channel.description");
 	}
 }

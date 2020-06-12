@@ -13,6 +13,8 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
 
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+
 class BanCommand extends BasicCommand{
 	/**
 	 * Constructor.
@@ -26,7 +28,7 @@ class BanCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("user", "The user to ban", true);
+		builder.addField("user", translate(guild, "command.trombinoscope.ban.help.user"), true);
 	}
 	
 	@NonNull
@@ -43,7 +45,7 @@ class BanCommand extends BasicCommand{
 		trombinoscope.getPosterRole()
 				.flatMap(RoleConfiguration::getRole)
 				.ifPresent(role -> Actions.removeRole(target, role));
-		Actions.reply(event, target.getAsMention() + " is now banned from using the trombinoscope", null);
+		Actions.reply(event, translate(event.getGuild(), "trombinoscope.banned", target.getAsMention()), null);
 		return CommandResult.SUCCESS;
 	}
 	
@@ -59,8 +61,8 @@ class BanCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Ban";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.trombinoscope.ban.name");
 	}
 	
 	@NonNull
@@ -71,7 +73,7 @@ class BanCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Ban a user from the trombinoscope";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.trombinoscope.ban.description");
 	}
 }

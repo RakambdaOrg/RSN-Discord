@@ -19,6 +19,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static fr.raksrinana.rsndiscord.utils.TrombinoscopeUtils.isRegistered;
 
 class GetCommand extends BasicCommand{
@@ -43,8 +45,8 @@ class GetCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Get picture";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.trombinoscope.get.name");
 	}
 	
 	@NonNull
@@ -55,15 +57,15 @@ class GetCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Get a picture of the trombinoscope";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.trombinoscope.get.description");
 	}
 	
 	@Override
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("user", "The user to get the picture", true);
-		builder.addField("index", "The index of the picture to get", true);
+		builder.addField("user", translate(guild, "command.trombinoscope.get.help.user"), true);
+		builder.addField("index", translate(guild, "command.trombinoscope.get.help.index"), true);
 	}
 	
 	@NonNull
@@ -78,7 +80,7 @@ class GetCommand extends BasicCommand{
 		var target = event.getMessage().getMentionedUsers().get(0);
 		var pictureCount = trombinoscope.getPictures(target).size();
 		if(pictureCount < 1){
-			Actions.reply(event, "This user doesn't have any pictures", null);
+			Actions.reply(event, translate(event.getGuild(), "trombinoscope.user.no-picture"), null);
 			return CommandResult.SUCCESS;
 		}
 		var pictureIndex = Optional.ofNullable(args.poll())
@@ -98,7 +100,7 @@ class GetCommand extends BasicCommand{
 				.findFirst()
 				.ifPresentOrElse(picture -> trombinoscope.getPicturesChannel()
 						.flatMap(ChannelConfiguration::getChannel)
-						.ifPresent(picturesChannel -> Actions.sendMessage(picturesChannel, event.getAuthor().getAsMention() + " requested a picture of " + target.getAsMention() + " (ID: `" + picture.getUuid() + "`)", null, false, message -> message.addFile(picture.getPath().toFile()))), () -> Actions.reply(event, "Picture not found", null));
+						.ifPresent(picturesChannel -> Actions.sendMessage(picturesChannel, translate(event.getGuild(), "trombinoscope.user.picture", event.getAuthor().getAsMention(), target.getAsMention(), picture.getUuid()), null, false, message -> message.addFile(picture.getPath().toFile()))), () -> Actions.reply(event, translate(event.getGuild(), "trombinoscope.error.unknown"), null));
 		return CommandResult.SUCCESS;
 	}
 	

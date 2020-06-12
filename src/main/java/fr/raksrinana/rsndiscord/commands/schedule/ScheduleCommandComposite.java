@@ -16,6 +16,8 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+
 @BotCommand
 public class ScheduleCommandComposite extends CommandComposite{
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'!'HH:mm z");
@@ -58,13 +60,13 @@ public class ScheduleCommandComposite extends CommandComposite{
 	@Override
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("delay", "The delay before executing the action in the format `XdXhXm` where Xs are numbers or `yyyy-MM-dd!HH:mmz`", false);
+		builder.addField("delay", translate(guild, "command.schedule.help.delay"), false);
 	}
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Schedule";
+	public String getName(@NonNull  Guild guild){
+		return translate(guild, "command.schedule.name");
 	}
 	
 	@NonNull
@@ -75,7 +77,7 @@ public class ScheduleCommandComposite extends CommandComposite{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Scheduling related commands";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.schedule.description");
 	}
 }

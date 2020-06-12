@@ -3,7 +3,11 @@ package fr.raksrinana.rsndiscord.commands.twitch;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
 import lombok.NonNull;
+import net.dv8tion.jda.api.entities.Guild;
+
 import java.util.List;
+
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class TwitchCommandComposite extends CommandComposite{
@@ -24,8 +28,8 @@ public class TwitchCommandComposite extends CommandComposite{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Twitch";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.twitch.name");
 	}
 	
 	@NonNull
@@ -36,7 +40,7 @@ public class TwitchCommandComposite extends CommandComposite{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Handles twitch interactions";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.twitch.description");
 	}
 }

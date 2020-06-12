@@ -15,6 +15,8 @@ import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+
 class RegisterCommand extends BasicCommand{
 	/**
 	 * Constructor.
@@ -25,21 +27,15 @@ class RegisterCommand extends BasicCommand{
 		super(parent);
 	}
 	
-	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
-		super.addHelp(guild, builder);
-		builder.addField("Code", "The code obtained after doing the first step (run this command without this parameter)", false);
-	}
-	
 	@NonNull
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
-			Settings.get(event.getGuild()).getTraktConfiguration().getAccessToken(event.getAuthor().getIdLong()).ifPresentOrElse(userToken -> Actions.reply(event, "You're already registered", null), () -> {
+			Settings.get(event.getGuild()).getTraktConfiguration().getAccessToken(event.getAuthor().getIdLong()).ifPresentOrElse(userToken -> Actions.reply(event, translate(event.getGuild(), "trakt.register-url"), null), () -> {
 				try{
 					final var deviceCode = TraktUtils.postQuery(null, new DeviceCodePostRequest());
-					Actions.reply(event, MessageFormat.format("Please visit {0} and enter this code: `{1}`.", deviceCode.getVerificationUrl(), deviceCode.getUserCode()), null);
+					Actions.reply(event, translate(event.getGuild(), "trakt.already-registered", deviceCode.getVerificationUrl(), deviceCode.getUserCode()), null);
 					TraktUtils.pollDeviceToken(event, deviceCode);
 				}
 				catch(Exception e){
@@ -53,14 +49,8 @@ class RegisterCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getCommandUsage(){
-		return super.getCommandUsage() + " [code]";
-	}
-	
-	@NonNull
-	@Override
-	public String getName(){
-		return "Trakt registering";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.trakt.register.name");
 	}
 	
 	@NonNull
@@ -71,7 +61,7 @@ class RegisterCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Register your Trakt account";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.trakt.register.description");
 	}
 }
