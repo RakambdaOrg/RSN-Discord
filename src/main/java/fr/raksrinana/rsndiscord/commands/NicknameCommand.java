@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class NicknameCommand extends BasicCommand{
@@ -30,8 +31,8 @@ public class NicknameCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("User", "The targeted user (default: @me)", false);
-		builder.addField("Nickname", "The new surname (if none are provided, the old nickname will be removed)", false);
+		builder.addField("user", translate(guild, "command.nickname.help.user"), false);
+		builder.addField("nickname", translate(guild, "command.nickname.help.nickname"), false);
 	}
 	
 	@NonNull
@@ -48,8 +49,8 @@ public class NicknameCommand extends BasicCommand{
 			if(memberOptional.isPresent() && !Objects.equals(event.getAuthor(), memberOptional.get().getUser()) && !Utilities.isTeam(event.getMember())){
 				final var builder = new EmbedBuilder();
 				builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-				builder.addField("User", memberOptional.get().getAsMention(), true);
-				builder.setTitle("You thought changing the name of another guy?");
+				builder.addField(translate(event.getGuild(), "nickname.user"), memberOptional.get().getAsMention(), true);
+				builder.setTitle(translate(event.getGuild(), "nickname.error.permission-other"));
 				builder.setColor(Color.RED);
 				Actions.reply(event, "", builder.build());
 				return CommandResult.SUCCESS;
@@ -70,43 +71,43 @@ public class NicknameCommand extends BasicCommand{
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			if(Objects.equals(newName, oldName.orElse(null))){
 				builder.setColor(Color.ORANGE);
-				builder.setTitle("No changes");
-				builder.addField("Reason", "Nickname is the same as the current one", false);
+				builder.setTitle(translate(event.getGuild(), "nickname.no-changes"));
+				builder.addField(translate(event.getGuild(), "nickname.reason"), translate(event.getGuild(), "nickname.same-nickname"), false);
 				Actions.reply(event, "", builder.build());
 			}
 			else if(Objects.nonNull(newName) && !Utilities.isTeam(event.getMember()) && lastChange.map(date -> date.plus(delay)).map(date -> date.isAfter(ZonedDateTime.now())).orElse(false)){
 				builder.setColor(Color.RED);
-				builder.addField("Old nickname", oldName.orElse("*NONE*"), true);
-				builder.addField("User", member.getAsMention(), true);
-				builder.addField("Reason", "You can change your nickname once every " + delay.toString().replace("PT", ""), true);
-				builder.addField("Last change", lastChange.map(date -> date.format(DF)).orElse("<NONE>"), true);
-				builder.addField("Next change", lastChange.map(date -> date.plus(delay)).map(date -> date.format(DF)).orElse("<NONE>"), true);
+				builder.addField(translate(event.getGuild(), "nickname.old-nick"), oldName.orElseGet(() -> translate(event.getGuild(), "nickname.unknown")), true);
+				builder.addField(translate(event.getGuild(), "nickname.user"), member.getAsMention(), true);
+				builder.addField(translate(event.getGuild(), "nickname.reason"), translate(event.getGuild(), "nickname.cooldown", Utilities.durationToString(delay)), true);
+				builder.addField(translate(event.getGuild(), "nickname.last-change"), lastChange.map(date -> date.format(DF)).orElseGet(() -> translate(event.getGuild(), "nickname.unknown")), true);
+				builder.addField(translate(event.getGuild(), "nickname.next-allowed"), lastChange.map(date -> date.plus(delay)).map(date -> date.format(DF)).orElseGet(() -> translate(event.getGuild(), "nickname.unknown")), true);
 				builder.setTimestamp(ZonedDateTime.now());
 				Actions.reply(event, "", builder.build());
 			}
 			else{
-				builder.addField("Old nickname", oldName.orElse("*NONE*"), true);
-				builder.addField("New nickname", Objects.isNull(newName) ? "*NONE*" : newName, true);
-				builder.addField("User", member.getAsMention(), true);
+				builder.addField(translate(event.getGuild(), "nickname.old-nick"), oldName.orElseGet(() -> translate(event.getGuild(), "nickname.unknown")), true);
+				builder.addField(translate(event.getGuild(), "nickname.new-nick"), Objects.isNull(newName) ? translate(event.getGuild(), "nickname.unknown") : newName, true);
+				builder.addField(translate(event.getGuild(), "nickname.user"), member.getAsMention(), true);
 				try{
 					Actions.changeNickname(member, newName);
 					builder.setColor(Color.GREEN);
 					Settings.get(event.getGuild()).getNicknameConfiguration().setLastChange(member.getUser(), Objects.isNull(newName) ? null : ZonedDateTime.now());
-					Settings.get(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser()).map(d -> d.plus(delay)).filter(d -> d.isAfter(ZonedDateTime.now())).ifPresent(d -> builder.addField("Next allowed change", d.format(DF), false));
+					Settings.get(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser()).map(d -> d.plus(delay)).filter(d -> d.isAfter(ZonedDateTime.now())).ifPresent(d -> builder.addField(translate(event.getGuild(), "nickname.next-allowed"), d.format(DF), false));
 					Log.getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", event.getAuthor(), member.getUser(), oldName, newName);
 				}
 				catch(final HierarchyException e){
 					builder.setColor(Color.RED);
-					builder.setTitle("You thought I can change the nickname of someone higher than me?!");
+					builder.setTitle(translate(event.getGuild(), "nickname.target-error"));
 				}
 				catch(final ErrorResponseException e){
 					builder.setColor(Color.RED);
-					builder.setTitle("Invalid nickname");
-					builder.addField("Reason", e.getMeaning(), false);
+					builder.setTitle(translate(event.getGuild(), "nickname.invalid"));
+					builder.addField(translate(event.getGuild(), "nickname.reason"), e.getMeaning(), false);
 				}
 				Actions.reply(event, "", builder.build());
 			}
-		}, () -> Actions.reply(event, "Member not found", null));
+		}, () -> Actions.reply(event, translate(event.getGuild(), "nickname.target-not-found"), null));
 		return CommandResult.SUCCESS;
 	}
 	
@@ -118,8 +119,8 @@ public class NicknameCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Nickname";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.nickname.name");
 	}
 	
 	@NonNull
@@ -130,7 +131,7 @@ public class NicknameCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Change the nickname of a user";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.nickname.description");
 	}
 }

@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.commands.config.guild.twitch.TwitchChannelConfig
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
 import lombok.NonNull;
+import net.dv8tion.jda.api.entities.Guild;
 import java.util.List;
 
 public class TwitchConfigurationCommandComposite extends CommandComposite{
@@ -24,7 +25,7 @@ public class TwitchConfigurationCommandComposite extends CommandComposite{
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Twitch";
 	}
 	
@@ -36,7 +37,7 @@ public class TwitchConfigurationCommandComposite extends CommandComposite{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
+	public String getDescription(@NonNull Guild guild){
 		return "Twitch configurations";
 	}
 }

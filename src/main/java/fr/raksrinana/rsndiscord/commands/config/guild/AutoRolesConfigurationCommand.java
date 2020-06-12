@@ -56,7 +56,7 @@ public class AutoRolesConfigurationCommand extends SetConfigurationCommand<RoleC
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Auto roles";
 	}
 	

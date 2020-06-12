@@ -56,7 +56,7 @@ public class IgnoredChannelsConfigurationCommand extends SetConfigurationCommand
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Ignored channels";
 	}
 	

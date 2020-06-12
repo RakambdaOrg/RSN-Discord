@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.time.ZoneOffset.UTC;
 
 @BotCommand
@@ -32,7 +33,7 @@ public class ParticipationCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Date", "The date of the data to get in the format YYYY-MM-DD (YYYY is the year, MM the month, DD the day).", false);
+		builder.addField("date", translate(guild, "command.participation.help.date"), false);
 	}
 	
 	@NonNull
@@ -42,16 +43,16 @@ public class ParticipationCommand extends BasicCommand{
 		final var maxUserCount = 25;
 		final var day = Optional.ofNullable(args.poll()).map(arg -> LocalDate.parse(arg, DATE_FORMATTER)).orElse(LocalDate.now(UTC));
 		var participationConfiguration = Settings.get(event.getGuild()).getParticipationConfiguration();
-		participationConfiguration.getChatDay(day).ifPresentOrElse(chatParticipation -> sendMessagesReport(maxUserCount, day, chatParticipation, event.getAuthor(), event.getChannel()), () -> Actions.reply(event, "No message data found for this day", null));
-		participationConfiguration.getVoiceDay(day).ifPresentOrElse(voiceParticipation -> sendVoiceReport(maxUserCount, day, voiceParticipation, event.getAuthor(), event.getChannel()), () -> Actions.reply(event, "No voice data found for this day", null));
+		participationConfiguration.getChatDay(day).ifPresentOrElse(chatParticipation -> sendMessagesReport(maxUserCount, day, chatParticipation, event.getAuthor(), event.getChannel()), () -> Actions.reply(event, translate(event.getGuild(), "participation.chat.no-data"), null));
+		participationConfiguration.getVoiceDay(day).ifPresentOrElse(voiceParticipation -> sendVoiceReport(maxUserCount, day, voiceParticipation, event.getAuthor(), event.getChannel()), () -> Actions.reply(event, translate(event.getGuild(), "participation.voice.no-data"), null));
 		return CommandResult.SUCCESS;
 	}
 	
 	public static void sendMessagesReport(int maxUserCount, LocalDate day, ChatParticipation chatParticipation, User author, TextChannel channel){
 		channel.getGuild().retrieveMembers().thenAccept(empty -> {
 			final var position = new AtomicInteger(0);
-			final var embed = Utilities.buildEmbed(author, Color.GREEN, "Chat participation for the " + day.format(DATE_FORMATTER) + " (UTC)", null);
-			chatParticipation.getUserCounts().entrySet().stream().sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue())).limit(maxUserCount).forEachOrdered(entry -> embed.addField("#" + position.incrementAndGet() + " : " + entry.getValue() + " messages", Optional.ofNullable(channel.getGuild().getMemberById(entry.getKey())).map(Member::getAsMention).orElse(Long.toString(entry.getKey())), false));
+			final var embed = Utilities.buildEmbed(author, Color.GREEN, translate(channel.getGuild(), "participation.chat.title", day.format(DATE_FORMATTER)), null);
+			chatParticipation.getUserCounts().entrySet().stream().sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue())).limit(maxUserCount).forEachOrdered(entry -> embed.addField(translate(channel.getGuild(), "participation.chat.entry", position.incrementAndGet(), entry.getValue()), Optional.ofNullable(channel.getGuild().getMemberById(entry.getKey())).map(Member::getAsMention).orElse(Long.toString(entry.getKey())), false));
 			Actions.sendMessage(channel, "", embed.build());
 		});
 	}
@@ -59,8 +60,8 @@ public class ParticipationCommand extends BasicCommand{
 	public static void sendVoiceReport(int maxUserCount, LocalDate day, VoiceParticipation voiceParticipation, User author, TextChannel channel){
 		channel.getGuild().retrieveMembers().thenAccept(empty -> {
 			final var position = new AtomicInteger(0);
-			final var embed = Utilities.buildEmbed(author, Color.GREEN, "Voice participation for the " + day.format(DATE_FORMATTER) + " (UTC)", null);
-			voiceParticipation.getUserCounts().entrySet().stream().sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue())).limit(maxUserCount).forEachOrdered(entry -> embed.addField("#" + position.incrementAndGet() + " : " + Utilities.durationToString(Duration.ofMinutes(entry.getValue())) + " in vocal", Optional.ofNullable(channel.getGuild().getMemberById(entry.getKey())).map(Member::getAsMention).orElse(Long.toString(entry.getKey())), false));
+			final var embed = Utilities.buildEmbed(author, Color.GREEN, translate(channel.getGuild(), "participation.voice.title", day.format(DATE_FORMATTER)), null);
+			voiceParticipation.getUserCounts().entrySet().stream().sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue())).limit(maxUserCount).forEachOrdered(entry -> embed.addField(translate(channel.getGuild(), "participation.voice.entry", position.incrementAndGet(), Utilities.durationToString(Duration.ofMinutes(entry.getValue()))), Optional.ofNullable(channel.getGuild().getMemberById(entry.getKey())).map(Member::getAsMention).orElse(Long.toString(entry.getKey())), false));
 			Actions.sendMessage(channel, "", embed.build());
 		});
 	}
@@ -73,8 +74,8 @@ public class ParticipationCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Participation";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.participation.name");
 	}
 	
 	@NonNull
@@ -85,7 +86,7 @@ public class ParticipationCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Get the community participation of a day";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.participation.description");
 	}
 }

@@ -31,7 +31,7 @@ public class TokenConfigurationCommand extends StringConfigurationCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Token";
 	}
 	

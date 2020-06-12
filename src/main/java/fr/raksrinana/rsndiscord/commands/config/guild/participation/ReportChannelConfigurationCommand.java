@@ -32,7 +32,7 @@ public class ReportChannelConfigurationCommand extends ChannelConfigurationComma
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Report channel";
 	}
 	

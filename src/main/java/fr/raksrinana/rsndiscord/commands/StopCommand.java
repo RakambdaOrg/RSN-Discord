@@ -8,9 +8,11 @@ import fr.raksrinana.rsndiscord.commands.generic.NotAllowedException;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class StopCommand extends BasicCommand{
@@ -36,8 +38,8 @@ public class StopCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Stop";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.stop.name");
 	}
 	
 	@NonNull
@@ -48,7 +50,7 @@ public class StopCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Stops the bot";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.stop.description");
 	}
 }

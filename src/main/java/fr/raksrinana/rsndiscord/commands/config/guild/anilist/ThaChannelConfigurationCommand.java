@@ -32,7 +32,7 @@ public class ThaChannelConfigurationCommand extends ChannelConfigurationCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "AniList Tha notification channel";
 	}
 	

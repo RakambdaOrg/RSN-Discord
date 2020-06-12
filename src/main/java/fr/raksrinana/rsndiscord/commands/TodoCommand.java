@@ -17,13 +17,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class TodoCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Message", "The message of the todo", false);
+		builder.addField("message", translate(guild, "command.todo.help.message"), false);
 	}
 	
 	@NonNull
@@ -57,8 +58,8 @@ public class TodoCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "TODO";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.todo.name");
 	}
 	
 	@NonNull
@@ -69,7 +70,7 @@ public class TodoCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Put a todo in the chat";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.todo.description");
 	}
 }

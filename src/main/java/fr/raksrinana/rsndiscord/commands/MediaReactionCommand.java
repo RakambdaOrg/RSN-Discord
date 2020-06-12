@@ -11,12 +11,14 @@ import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
 import lombok.NonNull;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class MediaReactionCommand extends BasicCommand{
@@ -66,7 +68,7 @@ public class MediaReactionCommand extends BasicCommand{
 					}).collect(Collectors.joining("\n"));
 				}
 				if(askArchive){
-					newText += "\n\nClicking the " + BasicEmotes.PACKAGE.getValue() + " reaction will archive the channel. Use it if you don't wanna watch this media or if there's nothing more to say.";
+					newText += "\n\n" + translate(event.getGuild(), "media-reaction.archive", BasicEmotes.PACKAGE.getValue());
 				}
 				final var restMessage = Actions.sendMessage(event.getChannel(), newText, null, true);
 				if(askArchive){
@@ -81,7 +83,7 @@ public class MediaReactionCommand extends BasicCommand{
 		}
 		catch(Exception e){
 			Log.getLogger(event.getGuild()).error("Failed to parse anime reaction", e);
-			Actions.reply(event, "Failed to parse text", null);
+			Actions.reply(event, translate(event.getGuild(), "media-reaction.parse-error"), null);
 		}
 		return CommandResult.FAILED;
 	}
@@ -120,8 +122,8 @@ public class MediaReactionCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Media reaction";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.media-reaction.name");
 	}
 	
 	@NonNull
@@ -132,7 +134,7 @@ public class MediaReactionCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Formats media reactions";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.media-reaction.description");
 	}
 }

@@ -53,7 +53,7 @@ public class LocaleConfigurationCommand extends ValueConfigurationCommand<Locale
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Locale";
 	}
 }

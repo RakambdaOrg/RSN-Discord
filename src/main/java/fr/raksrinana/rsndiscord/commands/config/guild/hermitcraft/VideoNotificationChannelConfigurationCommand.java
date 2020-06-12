@@ -32,7 +32,7 @@ public class VideoNotificationChannelConfigurationCommand extends ChannelConfigu
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Video notification channel";
 	}
 	

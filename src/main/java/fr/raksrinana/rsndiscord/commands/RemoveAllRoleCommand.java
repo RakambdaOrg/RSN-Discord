@@ -5,10 +5,11 @@ import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class RemoveAllRoleCommand extends BasicCommand{
@@ -18,11 +19,11 @@ public class RemoveAllRoleCommand extends BasicCommand{
 		super.execute(event, args);
 		if(!event.getMessage().getMentionedRoles().isEmpty()){
 			event.getMessage().getMentionedRoles().stream().findFirst().ifPresent(r -> {
-				Actions.reply(event, "Retrieving all members", null);
+				Actions.reply(event, translate(event.getGuild(), "remove-role.retrieving"), null);
 				event.getGuild().retrieveMembers().thenAccept(empty -> {
-					Actions.reply(event, "Getting members with role", null);
+					Actions.reply(event, translate(event.getGuild(), "remove-role.retrieving-with-role"), null);
 					final var members = event.getGuild().getMembersWithRoles(r);
-					Actions.reply(event, MessageFormat.format("Will remove the role of {0} people, this may take a while", members.size()), null);
+					Actions.reply(event, translate(event.getGuild(), "remove-role.removing", members.size()), null);
 					members.forEach(m -> Actions.removeRole(m, r));
 				});
 			});
@@ -41,8 +42,8 @@ public class RemoveAllRoleCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Remove role from users";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.remove-role.name");
 	}
 	
 	@NonNull
@@ -53,7 +54,7 @@ public class RemoveAllRoleCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Remove all users from a role";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.remove-role.description");
 	}
 }

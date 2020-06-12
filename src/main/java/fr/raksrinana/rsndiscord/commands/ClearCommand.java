@@ -14,14 +14,15 @@ import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class ClearCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("count", "The number of messages to delete (default: 100, max: 1000)", false);
-		builder.addField("channel", "The channel to clear (default is the current channel)", false);
+		builder.addField("count", translate(guild, "command.clear.help.count", 100, 1000), false);
+		builder.addField("channel", translate(guild, "command.clear.help.channel"), false);
 	}
 	
 	@NonNull
@@ -37,7 +38,7 @@ public class ClearCommand extends BasicCommand{
 			return null;
 		}).orElse(100);
 		final var channel = event.getMessage().getMentionedChannels().stream().findFirst().orElse(event.getChannel());
-		Actions.reply(event, "Removing " + messageCount + " from channel " + channel.getAsMention(), null).thenAccept(message -> ScheduleUtils.addSchedule(new DeleteMessageScheduleConfiguration(event.getAuthor(), ZonedDateTime.now().plusMinutes(2), message), event.getGuild()));
+		Actions.reply(event, translate(event.getGuild(), "clear.removing", messageCount, channel.getAsMention()), null).thenAccept(message -> ScheduleUtils.addSchedule(new DeleteMessageScheduleConfiguration(event.getAuthor(), ZonedDateTime.now().plusMinutes(2), message), event.getGuild()));
 		channel.getIterableHistory().takeAsync(messageCount).thenAccept(messages -> messages.forEach(Actions::deleteMessage));
 		return CommandResult.SUCCESS;
 	}
@@ -56,8 +57,8 @@ public class ClearCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Clear";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.clear.name");
 	}
 	
 	@NonNull
@@ -68,7 +69,7 @@ public class ClearCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Clear messages in a channel";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.clear.description");
 	}
 }

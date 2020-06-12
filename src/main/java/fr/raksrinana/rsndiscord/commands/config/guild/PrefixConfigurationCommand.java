@@ -46,7 +46,7 @@ public class PrefixConfigurationCommand extends ValueConfigurationCommand<String
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Prefix";
 	}
 	

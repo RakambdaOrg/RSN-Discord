@@ -32,7 +32,7 @@ public class MediaChangeChannelConfigurationCommand extends ChannelConfiguration
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Trakt media change channel";
 	}
 	
