@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
@@ -56,5 +57,16 @@ public class RemoveAllRoleCommand extends BasicCommand{
 	@Override
 	public String getDescription(@NonNull Guild guild){
 		return translate(guild, "command.remove-role.description");
+	}
+	
+	@Override
+	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField("role", translate(guild, "command.remove-role.help.role"), false);
+	}
+	
+	@Override
+	public @NonNull String getCommandUsage(){
+		return super.getCommandUsage() + "<@role>";
 	}
 }
