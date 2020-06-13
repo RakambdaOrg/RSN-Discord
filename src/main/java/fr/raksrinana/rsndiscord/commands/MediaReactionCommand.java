@@ -11,6 +11,7 @@ import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
 import lombok.NonNull;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.Arrays;
@@ -136,5 +137,17 @@ public class MediaReactionCommand extends BasicCommand{
 	@Override
 	public String getDescription(@NonNull Guild guild){
 		return translate(guild, "command.media-reaction.description");
+	}
+	
+	@Override
+	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField("option", translate(guild, "command.media-reaction.help.option"), false);
+		builder.addField("text", translate(guild, "command.media-reaction.help.text"), false);
+	}
+	
+	@Override
+	public @NonNull String getCommandUsage(){
+		return super.getCommandUsage() + "[o<option>] <text>";
 	}
 }
