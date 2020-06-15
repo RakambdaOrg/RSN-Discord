@@ -15,12 +15,11 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class ScheduleCommandComposite extends CommandComposite{
-	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'!'HH:mm z");
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
 	private static final Pattern PERIOD_PATTERN = Pattern.compile("([0-9]+)([mhd])");
 	
 	public ScheduleCommandComposite(){
