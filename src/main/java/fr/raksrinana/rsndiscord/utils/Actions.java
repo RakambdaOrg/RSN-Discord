@@ -455,4 +455,16 @@ public class Actions{
 		Log.getLogger(channel.getGuild()).info("Sending message to {} : {}", channel, action);
 		return action.submit();
 	}
+	
+	/**
+	 * Kicks a member from its server.
+	 *
+	 * @param member The member to kick.
+	 * @param reason The reason of the kick.
+	 *
+	 * @return A completable future.
+	 */
+	public static CompletableFuture<Void> kick(@NonNull Member member, @NonNull String reason){
+		return member.kick(reason).submit();
+	}
 }
