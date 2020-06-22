@@ -11,13 +11,14 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class RandomKick extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("reason", "The kick reason", false);
+		builder.addField("reason", translate(guild, "command.random-kick.help.reason"), false);
 	}
 	
 	@NonNull
@@ -30,12 +31,13 @@ public class RandomKick extends BasicCommand{
 		event.getGuild().retrieveMembers().thenAccept(empty -> {
 			var members = event.getGuild().getMembers();
 			if(members.isEmpty()){
-				Actions.reply(event, "No member found", null);
-			}else{
+				Actions.reply(event, translate(event.getGuild(), "command.random-kick.no-member"), null);
+			}
+			else{
 				var member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
 				var reason = String.join(" ", args);
 				Actions.kick(member, reason)
-						.thenAccept(empty2 -> Actions.reply(event, "Kicked " + member.getAsMention() + " with reason `" + reason + "`", null));
+						.thenAccept(empty2 -> Actions.reply(event, translate(event.getGuild(), "command.random-kick.kicked", member.getAsMention(), reason), null));
 			}
 		});
 		return CommandResult.SUCCESS;
@@ -53,8 +55,8 @@ public class RandomKick extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Random kick";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.random-kick.name");
 	}
 	
 	@NonNull
@@ -65,7 +67,7 @@ public class RandomKick extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Kick a random member";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.random-kick.description");
 	}
 }
