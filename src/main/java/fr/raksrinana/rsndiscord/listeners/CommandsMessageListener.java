@@ -153,6 +153,6 @@ public class CommandsMessageListener extends ListenerAdapter{
 	 */
 	@NonNull
 	private Optional<Command> getCommand(@NonNull final String commandText){
-		return this.commands.stream().filter(command -> command.getCommandStrings().contains(commandText.toLowerCase())).findFirst();
+		return this.commands.stream().filter(command -> command.getCommandStrings().contains(commandText)).findFirst();
 	}
 }
