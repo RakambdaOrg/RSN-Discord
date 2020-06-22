@@ -36,9 +36,8 @@ public class RandomKick extends BasicCommand{
 			else{
 				var member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
 				var reason = String.join(" ", args);
-				Actions.reply(event, "Kick " + member.getAsMention(), null);
-				// Actions.kick(member, reason)
-				// 		.thenAccept(empty2 -> Actions.reply(event, translate(event.getGuild(), "command.random-kick.kicked", member.getAsMention(), reason), null));
+				Actions.kick(member, reason)
+						.thenAccept(empty2 -> Actions.reply(event, translate(event.getGuild(), "command.random-kick.kicked", member.getAsMention(), reason), null));
 			}
 		});
 		return CommandResult.SUCCESS;
