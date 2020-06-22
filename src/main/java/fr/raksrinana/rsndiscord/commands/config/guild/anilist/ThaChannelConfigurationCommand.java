@@ -8,6 +8,7 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import java.util.List;
 import java.util.Optional;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class ThaChannelConfigurationCommand extends ChannelConfigurationCommand{
 	public ThaChannelConfigurationCommand(final Command parent){
@@ -33,7 +34,7 @@ public class ThaChannelConfigurationCommand extends ChannelConfigurationCommand{
 	@NonNull
 	@Override
 	public String getName(@NonNull Guild guild){
-		return "AniList Tha notification channel";
+		return translate(guild, "command.config.guild.anilist.tha-channel.name");
 	}
 	
 	@NonNull

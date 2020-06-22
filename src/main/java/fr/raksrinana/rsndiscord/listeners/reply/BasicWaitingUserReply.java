@@ -10,9 +10,9 @@ import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public abstract class BasicWaitingUserReply implements WaitingUserReply{
 	private static final int DEFAULT_DELAY = 30;
@@ -91,7 +91,7 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 	
 	@Override
 	public boolean onExpire(){
-		Actions.sendMessage(this.getWaitChannel(), MessageFormat.format("{0} you didn't reply in time", this.getUser().getAsMention()), null);
+		Actions.sendMessage(this.getWaitChannel(), translate(getWaitChannel().getGuild(), "", "listeners.reply.expire", this.getUser().getAsMention()), null);
 		this.infoMessages.forEach(Actions::deleteMessage);
 		return true;
 	}

@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class FetchHermitcraftStreamsScheduledRunner implements ScheduledRunner{
 	private final JDA jda;
@@ -66,8 +67,8 @@ public class FetchHermitcraftStreamsScheduledRunner implements ScheduledRunner{
 	}
 	
 	private void sendStream(Hermit hermit, TextChannel channel){
-		EmbedBuilder embed = Utilities.buildEmbed(this.jda.getSelfUser(), Color.GREEN, hermit.getDisplayName() + " is live", hermit.getLiveUrl().map(URL::toString).orElse(null));
-		embed.addField("Hermit", hermit.getDisplayName(), true);
+		EmbedBuilder embed = Utilities.buildEmbed(this.jda.getSelfUser(), Color.GREEN, translate(channel.getGuild(), "runners.hermitcraft.live", hermit.getDisplayName()), hermit.getLiveUrl().map(URL::toString).orElse(null));
+		embed.addField(translate(channel.getGuild(), "runners.hermitcraft.hermit"), hermit.getDisplayName(), true);
 		embed.setThumbnail(hermit.getProfilePicture().toString());
 		Actions.sendMessage(channel, "", embed.build());
 	}
