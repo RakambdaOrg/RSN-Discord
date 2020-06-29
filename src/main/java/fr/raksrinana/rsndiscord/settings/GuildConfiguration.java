@@ -97,6 +97,9 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("externalTodos")
 	@Getter
 	private ExternalTodosConfiguration externalTodos = new ExternalTodosConfiguration();
+	@JsonProperty("leavingRoles")
+	@Getter
+	private LeavingRolesConfiguration leavingRolesConfiguration = new LeavingRolesConfiguration();
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;

@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
@@ -35,8 +36,11 @@ public class RandomKick extends BasicCommand{
 			}
 			else{
 				var member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
+				translate(event.getGuild(), "command.random-kick.kicking", member.getAsMention());
 				var reason = String.join(" ", args);
-				Actions.kick(member, reason)
+				member.kick(reason)
+						.delay(15, TimeUnit.SECONDS)
+						.submit()
 						.thenAccept(empty2 -> Actions.reply(event, translate(event.getGuild(), "command.random-kick.kicked", member.getAsMention(), reason), null));
 			}
 		});

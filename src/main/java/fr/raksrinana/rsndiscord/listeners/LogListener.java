@@ -1,12 +1,16 @@
 package fr.raksrinana.rsndiscord.listeners;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.guild.leavingroles.LeaverRoles;
+import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.music.RSNAudioManager;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildMuteEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
@@ -146,5 +150,27 @@ public class LogListener extends ListenerAdapter{
 			Actions.mute(event.getMember(), false);
 			Actions.deafen(event.getMember(), false);
 		}
+	}
+	
+	@Override
+	public void onGuildMemberRemove(@NonNull GuildMemberRemoveEvent event){
+		super.onGuildMemberRemove(event);
+		Optional.ofNullable(event.getMember()).ifPresent(member -> {
+			var leavingRolesConfiguration = Settings.get(event.getGuild()).getLeavingRolesConfiguration();
+			leavingRolesConfiguration.addLeaver(new LeaverRoles(event.getUser(), member.getRoles()));
+		});
+	}
+	
+	@Override
+	public void onGuildMemberJoin(@NonNull GuildMemberJoinEvent event){
+		super.onGuildMemberJoin(event);
+		var leavingRolesConfiguration = Settings.get(event.getGuild()).getLeavingRolesConfiguration();
+		leavingRolesConfiguration.getLeaver(event.getUser()).ifPresent(leaverRoles -> {
+			leaverRoles.getRoles().stream()
+					.map(RoleConfiguration::getRole)
+					.map(Optional::get)
+					.forEach(role -> Actions.giveRole(event.getMember(), role));
+			leavingRolesConfiguration.removeUser(event.getUser());
+		});
 	}
 }
