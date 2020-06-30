@@ -4,6 +4,7 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -27,16 +28,19 @@ public class RandomKick extends BasicCommand{
 		if(args.isEmpty()){
 			return CommandResult.BAD_ARGUMENTS;
 		}
-		event.getGuild().retrieveMembers().thenAccept(empty -> {
-			var members = event.getGuild().getMembers();
+		event.getGuild().loadMembers().onSuccess(members -> {
 			if(members.isEmpty()){
 				Actions.reply(event, "No member found", null);
-			}else{
+			}
+			else{
 				var member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
 				var reason = String.join(" ", args);
 				Actions.kick(member, reason)
 						.thenAccept(empty2 -> Actions.reply(event, "Kicked " + member.getAsMention() + " with reason `" + reason + "`", null));
 			}
+		}).onError(e -> {
+			Log.getLogger(event.getGuild()).error("Failed to load members", e);
+			Actions.reply(event, "Failed to get members", null);
 		});
 		return CommandResult.SUCCESS;
 	}

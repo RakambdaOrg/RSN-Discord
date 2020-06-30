@@ -4,6 +4,7 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Member;
@@ -26,12 +27,12 @@ public class ListJoinsCommand extends BasicCommand{
 		super.execute(event, args);
 		int limit = Optional.ofNullable(args.poll()).filter(val -> val.chars().allMatch(Character::isDigit)).map(Integer::parseInt).orElse(50);
 		final var joinPos = new AtomicInteger(0);
-		event.getGuild().retrieveMembers().thenApply(empty -> event.getGuild().getMemberCache()).thenAccept(members -> {
+		event.getGuild().loadMembers().onSuccess(members -> {
 			Actions.sendMessage(event.getChannel(), "Will process " + members.size() + " members, are they all here?", null);
 			members.stream().sorted(Comparator.comparing(Member::getTimeJoined)).limit(limit).forEachOrdered(member -> Actions.sendMessage(event.getChannel(), "#" + joinPos.incrementAndGet() + " joined at " + member.getTimeJoined().format(DF) + " is " + member.getAsMention(), null));
-		}).thenRun(() -> event.getGuild().pruneMemberCache()).exceptionally(e -> {
-			log.error("Error retrieving members", e);
-			return null;
+		}).onError(e -> {
+			Log.getLogger(event.getGuild()).error("Failed to load members", e);
+			Actions.reply(event, "Failed to get members", null);
 		});
 		return CommandResult.SUCCESS;
 	}
