@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
@@ -31,20 +32,20 @@ public class RandomKick extends BasicCommand{
 		}
 		event.getGuild().loadMembers().onSuccess(members -> {
 			if(members.isEmpty()){
-				Actions.reply(event, translate(event.getGuild(), "command.random-kick.no-member"), null);
+				Actions.reply(event, translate(event.getGuild(), "random-kick.no-member"), null);
 			}
 			else{
 				var member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
-				translate(event.getGuild(), "command.random-kick.kicking", member.getAsMention());
+				translate(event.getGuild(), "random-kick.kicking", member.getAsMention());
 				var reason = String.join(" ", args);
 				member.kick(reason)
 						.delay(15, TimeUnit.SECONDS)
 						.submit()
-						.thenAccept(empty2 -> Actions.reply(event, translate(event.getGuild(), "command.random-kick.kicked", member.getAsMention(), reason), null));
+						.thenAccept(empty2 -> Actions.reply(event, translate(event.getGuild(), "random-kick.kicked", member.getAsMention(), reason), null));
 			}
 		}).onError(e -> {
 			Log.getLogger(event.getGuild()).error("Failed to load members", e);
-			Actions.reply(event, "Failed to get members", null);
+			Actions.reply(event, translate(event.getGuild(), "random-kick.error-members"), null);
 		});
 		return CommandResult.SUCCESS;
 	}

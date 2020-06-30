@@ -29,11 +29,17 @@ public class ListJoinsCommand extends BasicCommand{
 		super.execute(event, args);
 		int limit = Optional.ofNullable(args.poll()).filter(val -> val.chars().allMatch(Character::isDigit)).map(Integer::parseInt).orElse(50);
 		final var joinPos = new AtomicInteger(0);
-		event.getGuild().loadMembers().onSuccess(members -> {
-			members.stream().sorted(Comparator.comparing(Member::getTimeJoined)).limit(limit).forEachOrdered(member -> Actions.sendMessage(event.getChannel(), translate(event.getGuild(), "list-joins.user-joined", joinPos.incrementAndGet(), member.getTimeJoined().format(DF), member.getAsMention()), null));
-		}).onError(e -> {
+		event.getGuild().loadMembers().onSuccess(members -> members.stream()
+				.sorted(Comparator.comparing(Member::getTimeJoined))
+				.limit(limit)
+				.forEachOrdered(member -> Actions.sendMessage(event.getChannel(), translate(event.getGuild(),
+						"list-joins.user-joined",
+						joinPos.incrementAndGet(),
+						member.getTimeJoined().format(DF),
+						member.getAsMention()), null))
+		).onError(e -> {
 			Log.getLogger(event.getGuild()).error("Failed to load members", e);
-			Actions.reply(event, "Failed to get members", null);
+			Actions.reply(event, translate(event.getGuild(), "list-joins.error-members"), null);
 		});
 		return CommandResult.SUCCESS;
 	}

@@ -27,7 +27,7 @@ public class RemoveAllRoleCommand extends BasicCommand{
 					members.forEach(m -> Actions.removeRole(m, r));
 				}).onError(e -> {
 					Log.getLogger(event.getGuild()).error("Failed to load members", e);
-					Actions.reply(event, "Failed to get members", null);
+					Actions.reply(event, translate(event.getGuild(), "remove-role.error-members"), null);
 				});
 			});
 		}
