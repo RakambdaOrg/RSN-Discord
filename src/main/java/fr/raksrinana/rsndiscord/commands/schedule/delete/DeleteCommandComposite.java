@@ -4,9 +4,7 @@ import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
-
 import java.util.List;
-
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class DeleteCommandComposite extends CommandComposite{
@@ -31,5 +29,10 @@ public class DeleteCommandComposite extends CommandComposite{
 	@Override
 	public String getDescription(@NonNull Guild guild){
 		return translate(guild, "command.schedule.delete.description");
+	}
+	
+	@Override
+	public @NonNull AccessLevel getAccessLevel(){
+		return AccessLevel.MODERATOR;
 	}
 }

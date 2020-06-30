@@ -21,7 +21,6 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
-
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class ChannelCommand extends BasicCommand{
@@ -77,5 +76,10 @@ public class ChannelCommand extends BasicCommand{
 	@Override
 	public String getDescription(@NonNull Guild guild){
 		return translate(guild, "command.schedule.delete.channel.description");
+	}
+	
+	@Override
+	public @NonNull AccessLevel getAccessLevel(){
+		return AccessLevel.MODERATOR;
 	}
 }

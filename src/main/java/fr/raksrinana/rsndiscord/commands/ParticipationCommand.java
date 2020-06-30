@@ -89,4 +89,9 @@ public class ParticipationCommand extends BasicCommand{
 	public String getDescription(@NonNull Guild guild){
 		return translate(guild, "command.participation.description");
 	}
+	
+	@Override
+	public @NonNull AccessLevel getAccessLevel(){
+		return AccessLevel.MODERATOR;
+	}
 }
