@@ -4,6 +4,7 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -20,12 +21,13 @@ public class RemoveAllRoleCommand extends BasicCommand{
 		super.execute(event, args);
 		if(!event.getMessage().getMentionedRoles().isEmpty()){
 			event.getMessage().getMentionedRoles().stream().findFirst().ifPresent(r -> {
-				Actions.reply(event, translate(event.getGuild(), "remove-role.retrieving"), null);
-				event.getGuild().retrieveMembers().thenAccept(empty -> {
-					Actions.reply(event, translate(event.getGuild(), "remove-role.retrieving-with-role"), null);
-					final var members = event.getGuild().getMembersWithRoles(r);
+				Actions.reply(event, translate(event.getGuild(), "remove-role.retrieving-with-role"), null);
+				event.getGuild().findMembers(member -> member.getRoles().contains(r)).onSuccess(members -> {
 					Actions.reply(event, translate(event.getGuild(), "remove-role.removing", members.size()), null);
 					members.forEach(m -> Actions.removeRole(m, r));
+				}).onError(e -> {
+					Log.getLogger(event.getGuild()).error("Failed to load members", e);
+					Actions.reply(event, "Failed to get members", null);
 				});
 			});
 		}
