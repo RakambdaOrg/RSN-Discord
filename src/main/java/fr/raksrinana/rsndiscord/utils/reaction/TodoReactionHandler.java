@@ -8,13 +8,13 @@ import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
-import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import static fr.raksrinana.rsndiscord.utils.BasicEmotes.*;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @Slf4j
 public class TodoReactionHandler implements ReactionHandler{
@@ -51,7 +51,7 @@ public class TodoReactionHandler implements ReactionHandler{
 					return false;
 				}).orElse(false);
 				if(!forwarded){
-					Actions.replyPrivate(event.getGuild(), event.getUser(), "The saved channel isn't configured yet for this channel, please contact and admin.", null);
+					Actions.replyPrivate(event.getGuild(), event.getUser(), translate(event.getGuild(), "reaction.not-configured"), null);
 					Actions.removeReaction(event.getReaction(), event.getUser());
 					return ReactionHandlerResult.PROCESSED;
 				}
@@ -59,9 +59,10 @@ public class TodoReactionHandler implements ReactionHandler{
 			if(emote == RIGHT_ARROW_CURVING_LEFT){
 				event.getGuild().createTextChannel("reply-" + event.getMessageIdLong()).submit().thenAccept(forwardChannel -> {
 					Optional.ofNullable(message.getTextChannel().getParent()).ifPresent(category -> Actions.setCategoryAndSync(forwardChannel, category));
-					Actions.sendMessage(forwardChannel, MessageFormat.format("Original message from {0}", message.getAuthor().getAsMention()), null);
+					
+					Actions.sendMessage(forwardChannel, translate(event.getGuild(), "reaction.original-from", event.getMember().getAsMention()), null);
 					Actions.forwardMessage(message, forwardChannel);
-					Actions.sendMessage(forwardChannel, event.getUser().getAsMention() + " is replying to this message. React with " + CROSS_NO.getValue() + " to delete this channel when done", null).thenAccept(message1 -> {
+					Actions.sendMessage(forwardChannel, translate(event.getGuild(), "reaction.react-archive", event.getMember().getAsMention(), CROSS_NO.getValue()), null).thenAccept(message1 -> {
 						Actions.addReaction(message1, CROSS_NO.getValue());
 						Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message1, ReactionTag.DELETE_CHANNEL));
 					});
