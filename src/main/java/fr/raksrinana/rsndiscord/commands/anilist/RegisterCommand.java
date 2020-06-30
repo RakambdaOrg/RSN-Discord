@@ -50,7 +50,7 @@ class RegisterCommand extends BasicCommand{
 		catch(final InvalidResponseException e){
 			Log.getLogger(event.getGuild()).error("Error getting AniList access token", e);
 			Actions.reply(event, translate(event.getGuild(), "anilist.api-code.save-error"), null);
-			Utilities.reportException(e);
+			Utilities.reportException("Error getting AniList Token", e);
 			return CommandResult.FAILED;
 		}
 		return CommandResult.SUCCESS;

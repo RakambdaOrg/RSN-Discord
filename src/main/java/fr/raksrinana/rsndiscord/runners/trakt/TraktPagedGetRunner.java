@@ -17,10 +17,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import java.awt.Color;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPagedGetRequest<T>> extends ScheduledRunner{
@@ -70,19 +67,30 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 		if(this.isSortedByUser()){
 			for(final var entry : userElements.entrySet()){
 				final var user = entry.getKey();
-				entry.getValue().stream().sorted().map(change -> {
-					final var builder = new EmbedBuilder();
-					this.buildMessage(builder, user, change);
-					return builder.build();
-				}).forEach(embed -> channels.stream().filter(channel -> this.sendToChannel(channel, user)).forEach(channel -> Actions.sendMessage(channel, "", embed)));
+				entry.getValue().stream()
+						.sorted()
+						.forEach(change -> channels.stream()
+								.filter(channel -> this.sendToChannel(channel, user))
+								.forEach(channel -> {
+									var locale = Settings.get(channel.getGuild()).getLocale();
+									final var builder = new EmbedBuilder();
+									this.buildMessage(locale, builder, user, change);
+									Actions.sendMessage(channel, "", builder.build());
+								}));
 			}
 		}
 		else{
-			userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Map.Entry.comparingByValue()).map(change -> {
-				final var builder = new EmbedBuilder();
-				this.buildMessage(builder, change.getKey(), change.getValue());
-				return Map.entry(change.getKey(), builder.build());
-			}).forEach(infos -> channels.stream().filter(chan -> this.sendToChannel(chan, infos.getKey())).forEach(chan -> Actions.sendMessage(chan, "", infos.getValue())));
+			userElements.entrySet().stream()
+					.flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val)))
+					.sorted(Map.Entry.comparingByValue())
+					.forEach(change -> channels.stream()
+							.filter(channel -> this.sendToChannel(channel, change.getKey()))
+							.forEach(channel -> {
+								var locale = Settings.get(channel.getGuild()).getLocale();
+								final var builder = new EmbedBuilder();
+								this.buildMessage(locale, builder, change.getKey(), change.getValue());
+								Actions.sendMessage(channel, "", builder.build());
+							}));
 		}
 	}
 	
@@ -98,7 +106,7 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 		return false;
 	}
 	
-	default void buildMessage(final EmbedBuilder builder, final User user, @NonNull final T change){
+	default void buildMessage(@NonNull Locale locale, final EmbedBuilder builder, final User user, @NonNull final T change){
 		try{
 			if(Objects.isNull(user)){
 				builder.setAuthor(this.getJda().getSelfUser().getName(), null, this.getJda().getSelfUser().getAvatarUrl());
@@ -106,7 +114,7 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 			else{
 				builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 			}
-			change.fillEmbed(builder);
+			change.fillEmbed(locale, builder);
 		}
 		catch(final Exception e){
 			Log.getLogger(null).error("Error building message for {}", this.getName(), e);

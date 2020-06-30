@@ -36,6 +36,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class Main{
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
@@ -140,7 +141,7 @@ public class Main{
 	 * @see GuildConfiguration#getAnnounceStartChannel()
 	 */
 	private static void announceStart(){
-		Main.jda.getGuilds().stream().map(Settings::get).map(GuildConfiguration::getAnnounceStartChannel).flatMap(Optional::stream).map(ChannelConfiguration::getChannel).flatMap(Optional::stream).forEach(channel -> Actions.sendMessage(channel, "Bot started :)", null));
+		Main.jda.getGuilds().stream().map(Settings::get).map(GuildConfiguration::getAnnounceStartChannel).flatMap(Optional::stream).map(ChannelConfiguration::getChannel).flatMap(Optional::stream).forEach(channel -> Actions.sendMessage(channel, translate(channel.getGuild(), "started"), null));
 	}
 	
 	/**

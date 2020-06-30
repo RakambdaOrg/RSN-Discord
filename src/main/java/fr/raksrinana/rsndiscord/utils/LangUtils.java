@@ -25,7 +25,7 @@ public class LangUtils{
 			return MessageFormat.format(message, args);
 		}
 		catch(Exception e){
-			Utilities.reportException(e);
+			Utilities.reportException("Failed to translate message " + key, e);
 		}
 		return "<<UNKNOWN MESSAGE>>";
 	}

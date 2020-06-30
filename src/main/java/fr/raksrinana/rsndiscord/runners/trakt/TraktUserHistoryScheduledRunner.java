@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import java.time.ZonedDateTime;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -66,14 +67,14 @@ public class TraktUserHistoryScheduledRunner implements TraktPagedGetRunner<User
 	}
 	
 	@Override
-	public void buildMessage(EmbedBuilder builder, User user, @NonNull UserHistory change){
+	public void buildMessage(@NonNull Locale locale, EmbedBuilder builder, User user, @NonNull UserHistory change){
 		if(Objects.isNull(user)){
 			builder.setAuthor(this.getJda().getSelfUser().getName(), null, this.getJda().getSelfUser().getAvatarUrl());
 		}
 		else{
 			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 		}
-		getTMDBInfos(change).ifPresentOrElse(mediaDetails -> change.fillEmbed(builder, mediaDetails), () -> change.fillEmbed(builder));
+		getTMDBInfos(change).ifPresentOrElse(mediaDetails -> change.fillEmbed(locale, builder, mediaDetails), () -> change.fillEmbed(locale, builder));
 	}
 	
 	@Override

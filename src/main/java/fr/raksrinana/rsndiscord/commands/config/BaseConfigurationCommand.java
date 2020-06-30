@@ -64,7 +64,7 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 		catch(final RuntimeException e){
 			Log.getLogger(event.getGuild()).warn("Failed to update configuration", e);
 			Actions.reply(event, translate(event.getGuild(), "configuration.update-failed", e.getMessage()), null);
-			Utilities.reportException(e);
+			Utilities.reportException("Error updating configuration", e);
 			return CommandResult.FAILED;
 		}
 		return CommandResult.SUCCESS;

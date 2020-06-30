@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public abstract class SetConfigurationCommand<T> extends BaseConfigurationCommand{
 	protected SetConfigurationCommand(final Command parent){
@@ -31,7 +32,7 @@ public abstract class SetConfigurationCommand<T> extends BaseConfigurationComman
 			final var value = this.extractValue(event, args);
 			this.getConfig(event.getGuild()).ifPresentOrElse(config -> config.add(value), () -> this.createConfig(event.getGuild(), value));
 			final var builder = this.getConfigEmbed(event, ConfigurationOperation.SET.name(), Color.GREEN);
-			builder.addField("Value added", value.toString(), false);
+			builder.addField(translate(event.getGuild(), "command.config.helpers.value-added"), value.toString(), false);
 			Actions.reply(event, "", builder.build());
 		}
 		catch(final IllegalArgumentException e){
@@ -45,7 +46,7 @@ public abstract class SetConfigurationCommand<T> extends BaseConfigurationComman
 			final var value = this.extractValue(event, args);
 			this.removeConfig(event.getGuild(), value);
 			final var builder = this.getConfigEmbed(event, ConfigurationOperation.REMOVE.name(), Color.GREEN);
-			builder.addField("Value removed", value.toString(), false);
+			builder.addField(translate(event.getGuild(), "command.config.helpers.value-removed"), value.toString(), false);
 			Actions.reply(event, "", builder.build());
 		}
 		catch(final IllegalArgumentException e){
@@ -60,7 +61,7 @@ public abstract class SetConfigurationCommand<T> extends BaseConfigurationComman
 				.map(Objects::toString)
 				.collect(Collectors.joining(", "));
 		final var builder = this.getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
-		builder.addField("Values", values, false);
+		builder.addField(translate(event.getGuild(), "command.config.helpers.values"), values, false);
 		Actions.reply(event, "", builder.build());
 	}
 	

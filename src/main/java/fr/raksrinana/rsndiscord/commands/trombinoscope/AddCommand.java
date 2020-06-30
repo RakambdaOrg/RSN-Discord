@@ -14,7 +14,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,7 +26,6 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static fr.raksrinana.rsndiscord.utils.TrombinoscopeUtils.isRegistered;
 import static fr.raksrinana.rsndiscord.utils.Utilities.isModerator;
@@ -67,7 +65,7 @@ class AddCommand extends BasicCommand {
                 var savedFile = attachment.downloadToFile(getFilePath(target, attachment))
                         .exceptionally(e -> {
                             Log.getLogger(event.getGuild()).error("Failed to save file", e);
-                            Utilities.reportException(e);
+                            Utilities.reportException("Failed to save trombinoscope file", e);
                             return null;
                         })
                         .get(30, TimeUnit.SECONDS);
@@ -83,7 +81,7 @@ class AddCommand extends BasicCommand {
         } catch (InterruptedException | ExecutionException | TimeoutException | IOException e) {
             failed = true;
             Log.getLogger(event.getGuild()).error("Failed to save file", e);
-            Utilities.reportException(e);
+            Utilities.reportException("Failed to save trombinoscope file", e);
         }
         if (failed) {
             Actions.replyPrivate(event.getGuild(), event.getAuthor(), translate(event.getGuild(), "trombinoscope.error.save-error"), null);

@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.awt.Color;
 import java.util.*;
 import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public abstract class MapConfigurationCommand<K, V> extends BaseConfigurationCommand{
 	protected MapConfigurationCommand(final Command parent){
@@ -29,7 +30,7 @@ public abstract class MapConfigurationCommand<K, V> extends BaseConfigurationCom
 			final var value = this.extractValue(event, args);
 			this.getConfig(event.getGuild()).ifPresentOrElse(config -> config.put(key, value), () -> this.createConfig(event.getGuild(), key, value));
 			final var builder = this.getConfigEmbed(event, ConfigurationOperation.SET.name(), Color.GREEN);
-			builder.addField("Value added", key.toString() + "=" + value.toString(), false);
+			builder.addField(translate(event.getGuild(), "command.config.helpers.value-added"), key.toString() + "=" + value.toString(), false);
 			Actions.reply(event, "", builder.build());
 		}
 		catch(final IllegalArgumentException e){
@@ -43,7 +44,7 @@ public abstract class MapConfigurationCommand<K, V> extends BaseConfigurationCom
 			final var key = this.extractKey(event, args);
 			this.removeConfig(event.getGuild(), key);
 			final var builder = this.getConfigEmbed(event, ConfigurationOperation.REMOVE.name(), Color.GREEN);
-			builder.addField("Value removed", key.toString(), false);
+			builder.addField(translate(event.getGuild(), "command.config.helpers.value-removed"), key.toString(), false);
 			Actions.reply(event, "", builder.build());
 		}
 		catch(final IllegalArgumentException e){
@@ -59,7 +60,7 @@ public abstract class MapConfigurationCommand<K, V> extends BaseConfigurationCom
 				.map(Objects::toString)
 				.collect(Collectors.joining(", "));
 		final var builder = this.getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
-		builder.addField("Values", values, false);
+		builder.addField(translate(event.getGuild(), "command.config.helpers.values"), values, false);
 		Actions.reply(event, "", builder.build());
 	}
 	
