@@ -36,7 +36,7 @@ public class RandomKick extends BasicCommand{
 			}
 			else{
 				var member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
-				translate(event.getGuild(), "random-kick.kicking", member.getAsMention());
+				Actions.reply(event, translate(event.getGuild(), "random-kick.kicking", member.getAsMention()), null);
 				var reason = String.join(" ", args);
 				member.kick(reason)
 						.delay(15, TimeUnit.SECONDS)
