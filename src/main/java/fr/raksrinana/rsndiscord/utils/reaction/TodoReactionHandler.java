@@ -60,7 +60,7 @@ public class TodoReactionHandler implements ReactionHandler{
 				event.getGuild().createTextChannel("reply-" + event.getMessageIdLong()).submit().thenAccept(forwardChannel -> {
 					Optional.ofNullable(message.getTextChannel().getParent()).ifPresent(category -> Actions.setCategoryAndSync(forwardChannel, category));
 					
-					Actions.sendMessage(forwardChannel, translate(event.getGuild(), "reaction.original-from", event.getMember().getAsMention()), null);
+					Actions.sendMessage(forwardChannel, translate(event.getGuild(), "reaction.original-from", message.getAuthor().getAsMention()), null);
 					Actions.forwardMessage(message, forwardChannel);
 					Actions.sendMessage(forwardChannel, translate(event.getGuild(), "reaction.react-archive", event.getMember().getAsMention(), CROSS_NO.getValue()), null).thenAccept(message1 -> {
 						Actions.addReaction(message1, CROSS_NO.getValue());
