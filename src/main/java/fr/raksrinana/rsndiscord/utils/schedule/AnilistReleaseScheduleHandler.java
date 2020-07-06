@@ -7,9 +7,9 @@ import fr.raksrinana.rsndiscord.utils.anilist.queries.MediaPagedQuery;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
-import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.Optional;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class AnilistReleaseScheduleHandler implements ScheduleHandler{
 	public static final String MEDIA_ID_KEY = "mediaId";
@@ -28,7 +28,7 @@ public class AnilistReleaseScheduleHandler implements ScheduleHandler{
 					return new MediaPagedQuery(Integer.parseInt(data.get(MEDIA_ID_KEY))).getResult(member).stream().findFirst().map(media -> {
 						final var builder = new EmbedBuilder();
 						media.fillEmbed(builder);
-						Actions.sendMessage(channel, MessageFormat.format("Reminder for {0}: {1}", user.getAsMention(), reminder.getMessage()), builder.build());
+						Actions.sendMessage(channel, translate(channel.getGuild(), "schedule.reminder-added", user.getAsMention(), reminder.getMessage()), builder.build());
 						Optional.ofNullable(reminder.getReminderCountdownMessage()).flatMap(MessageConfiguration::getMessage).ifPresent(Actions::deleteMessage);
 						return true;
 					}).orElse(false);
