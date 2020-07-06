@@ -139,7 +139,7 @@ public class Utilities{
 	 */
 	@NonNull
 	public static CompletableFuture<Message> reportException(@NonNull String message, @NonNull Throwable throwable){
-		return Actions.sendPrivateMessage(RAKSRINANA_ACCOUNT, MessageFormat.format("RSN got an exception: {0}\n", message), throwableToEmbed(throwable).build());
+		return Actions.sendPrivateMessage(null, RAKSRINANA_ACCOUNT, MessageFormat.format("RSN got an exception: {0}\n", message), throwableToEmbed(throwable).build());
 	}
 	
 	/**

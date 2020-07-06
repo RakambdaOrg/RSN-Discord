@@ -51,7 +51,7 @@ public class TodoReactionHandler implements ReactionHandler{
 					return false;
 				}).orElse(false);
 				if(!forwarded){
-					Actions.replyPrivate(event.getGuild(), event.getUser(), translate(event.getGuild(), "reaction.not-configured"), null);
+					Actions.sendPrivateMessage(event.getGuild(), event.getUser(), translate(event.getGuild(), "reaction.not-configured"), null);
 					Actions.removeReaction(event.getReaction(), event.getUser());
 					return ReactionHandlerResult.PROCESSED;
 				}

@@ -92,7 +92,7 @@ public class AniListUtils{
 		Log.getLogger(member.getGuild()).debug("Sending query to AniList for user {}", member.getUser());
 		final var token = AniListUtils.getAccessToken(member).orElseThrow(() -> {
 			Settings.get(member.getGuild()).getAniListConfiguration().removeUser(member.getUser());
-			Actions.replyPrivate(member.getGuild(), member.getUser(), translate(member.getGuild(), "anilist.token-expired", member.getGuild().getName(), Settings.get(member.getGuild()).getPrefix().orElse(CommandsMessageListener.defaultPrefix)), null);
+			Actions.sendPrivateMessage(member.getGuild(), member.getUser(), translate(member.getGuild(), "anilist.token-expired", member.getGuild().getName(), Settings.get(member.getGuild()).getPrefix().orElse(CommandsMessageListener.defaultPrefix)), null);
 			return new IllegalStateException("No valid token found, please register again");
 		});
 		return postQuery(token, query, variables);

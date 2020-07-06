@@ -55,7 +55,7 @@ class AddCommand extends BasicCommand {
                 .or(() -> Optional.ofNullable(event.getMember()))
                 .orElseThrow(() -> new IllegalStateException("Failed to get member from event"));
         if (!Objects.equals(target, event.getMember()) && !isModerator(event.getMember())) {
-            Actions.sendPrivateMessage(event.getAuthor(), translate(event.getGuild(), "trombinoscope.error.add-other"), null);
+            Actions.sendPrivateMessage(event.getGuild(), event.getAuthor(), translate(event.getGuild(), "trombinoscope.error.add-other"), null);
             return CommandResult.SUCCESS;
         }
         boolean failed = false;
@@ -84,7 +84,7 @@ class AddCommand extends BasicCommand {
             Utilities.reportException("Failed to save trombinoscope file", e);
         }
         if (failed) {
-            Actions.replyPrivate(event.getGuild(), event.getAuthor(), translate(event.getGuild(), "trombinoscope.error.save-error"), null);
+            Actions.sendPrivateMessage(event.getGuild(), event.getAuthor(), translate(event.getGuild(), "trombinoscope.error.save-error"), null);
         } else {
             trombinoscope.getPosterRole()
                     .flatMap(RoleConfiguration::getRole)

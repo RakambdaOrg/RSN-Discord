@@ -72,10 +72,10 @@ public class CommandsMessageListener extends ListenerAdapter{
 							Log.getLogger(event.getGuild()).info("Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(event.getGuild()), event.getAuthor(), args);
 							final var executionResult = command.execute(event, args);
 							if(executionResult == CommandResult.FAILED){
-								Actions.replyPrivate(event.getGuild(), event.getAuthor(), translate(event.getGuild(), "listeners.commands.error"), null);
+								Actions.sendPrivateMessage(event.getGuild(), event.getAuthor(), translate(event.getGuild(), "listeners.commands.error"), null);
 							}
 							else if(executionResult == CommandResult.BAD_ARGUMENTS){
-								Actions.replyPrivate(event.getGuild(), event.getAuthor(), translate(event.getGuild(), "listeners.commands.invalid-arguments"), null);
+								Actions.sendPrivateMessage(event.getGuild(), event.getAuthor(), translate(event.getGuild(), "listeners.commands.invalid-arguments"), null);
 							}
 						}
 						catch(final NotAllowedException e){

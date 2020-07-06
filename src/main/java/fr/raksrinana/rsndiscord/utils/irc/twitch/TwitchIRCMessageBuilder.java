@@ -61,7 +61,7 @@ class TwitchIRCMessageBuilder implements IIRCMessageBuilder{
 						return Optional.of(new HostTargetIRCMessage(matcher.group(5).trim(), matcher.group(7)));
 				}
 			}
-			Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Unknown IRC message: " + message, null);
+			Actions.sendPrivateMessage(null, Utilities.RAKSRINANA_ACCOUNT, "Unknown IRC message: " + message, null);
 			Log.getLogger(null).warn("Unknown IRC message: {}", message);
 			return Optional.empty();
 		}

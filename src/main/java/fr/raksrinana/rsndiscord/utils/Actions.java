@@ -152,22 +152,6 @@ public class Actions{
 	}
 	
 	/**
-	 * Send a message to a user.
-	 *
-	 * @param guild   The guild that initiated the event.
-	 * @param user    The user to send to.
-	 * @param message The message to send.
-	 *
-	 * @return A completable future of a message.
-	 *
-	 * @see #sendPrivateMessage(Guild, PrivateChannel, CharSequence, MessageEmbed)
-	 */
-	@NonNull
-	public static CompletableFuture<Message> replyPrivate(final Guild guild, @NonNull final User user, @NonNull final CharSequence message, MessageEmbed embed){
-		return user.openPrivateChannel().submit().thenCompose(channel -> sendPrivateMessage(guild, channel, message, embed));
-	}
-	
-	/**
 	 * Send a message to a private channel.
 	 *
 	 * @param guild   The guild that initiated the event.
@@ -412,6 +396,7 @@ public class Actions{
 	/**
 	 * Send a message to a private channel.
 	 *
+	 * @param guild   The guild issuing the request.
 	 * @param userId  The userId to send the message to.
 	 * @param message The message to send.
 	 * @param embed   The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
@@ -420,13 +405,13 @@ public class Actions{
 	 *
 	 * @throws IllegalArgumentException If trying to send a message to another bot.
 	 */
-	public static CompletableFuture<Message> sendPrivateMessage(long userId, String message, MessageEmbed embed){
-		return Main.getJda().retrieveUserById(userId).submit().thenCompose(user -> sendPrivateMessage(user, message, embed));
+	public static CompletableFuture<Message> sendPrivateMessage(Guild guild, long userId, String message, MessageEmbed embed){
+		return Main.getJda().openPrivateChannelById(userId).submit().thenCompose(channel -> sendPrivateMessage(guild, channel, message, embed));
 	}
 	
 	/**
 	 * Send a message to a private channel.
-	 *
+	 * @param guild   The guild issuing the request.
 	 * @param user    The user to send the message to.
 	 * @param message The message to send.
 	 * @param embed   The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
@@ -436,8 +421,8 @@ public class Actions{
 	 * @throws IllegalArgumentException If trying to send a message to another bot.
 	 */
 	@NonNull
-	public static CompletableFuture<Message> sendPrivateMessage(User user, String message, MessageEmbed embed){
-		return user.openPrivateChannel().submit().thenCompose(privateChannel -> sendPrivateMessage(null, privateChannel, message, embed));
+	public static CompletableFuture<Message> sendPrivateMessage(Guild guild, User user, String message, MessageEmbed embed){
+		return user.openPrivateChannel().submit().thenCompose(privateChannel -> sendPrivateMessage(guild, privateChannel, message, embed));
 	}
 	
 	/**

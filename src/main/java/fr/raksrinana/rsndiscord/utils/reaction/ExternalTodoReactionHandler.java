@@ -35,7 +35,7 @@ public class ExternalTodoReactionHandler implements ReactionHandler{
 	
 	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emote, @NonNull WaitingReactionMessageConfiguration todo){
 		return todo.getMessage().getMessage().map(message -> {
-			Actions.sendPrivateMessage(RAKSRINANA_ACCOUNT, event.getMember().getAsMention() + " reacted " + emote.getValue() + " => " + message.getContentRaw(), null)
+			Actions.sendPrivateMessage(event.getGuild(), RAKSRINANA_ACCOUNT, event.getMember().getAsMention() + " reacted " + emote.getValue() + " => " + message.getContentRaw(), null)
 					.thenAccept(messageSent -> Actions.deleteMessage(message));
 			return ReactionHandlerResult.PROCESSED_DELETE;
 		}).orElse(ReactionHandlerResult.PROCESSED);

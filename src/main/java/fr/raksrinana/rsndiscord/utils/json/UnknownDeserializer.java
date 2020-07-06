@@ -15,7 +15,7 @@ public class UnknownDeserializer extends JsonDeserializer<Object>{
 		if(jsonParser.isNaN()){
 			return null;
 		}
-		Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Parsing error: Unknown field isn't null: " + jsonParser.getCurrentName(), null);
+		Actions.sendPrivateMessage(null, Utilities.RAKSRINANA_ACCOUNT, "Parsing error: Unknown field isn't null: " + jsonParser.getCurrentName(), null);
 		Log.getLogger(null).error("Unknown field isn't null: " + jsonParser.getCurrentName());
 		return getNullValue(deserializationContext);
 	}
