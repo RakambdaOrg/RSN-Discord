@@ -8,7 +8,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import java.util.Locale;
 import java.util.Optional;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -25,9 +27,9 @@ public class MangaMedia extends Media{
 	}
 	
 	@Override
-	protected void fillAdditionalEmbed(EmbedBuilder builder){
-		Optional.ofNullable(this.getChapters()).map(Object::toString).ifPresent(val -> builder.addField("Chapters", val, true));
-		Optional.ofNullable(this.getVolumes()).map(Object::toString).ifPresent(val -> builder.addField("Volumes", val, true));
+	protected void fillAdditionalEmbed(@NonNull Locale locale, @NonNull EmbedBuilder builder){
+		Optional.ofNullable(this.getChapters()).map(Object::toString).ifPresent(val -> builder.addField(translate(locale, "anilist.chapters"), val, true));
+		Optional.ofNullable(this.getVolumes()).map(Object::toString).ifPresent(val -> builder.addField(translate(locale, "anilist.volumes"), val, true));
 	}
 	
 	@Override

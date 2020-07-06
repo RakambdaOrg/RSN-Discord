@@ -67,8 +67,8 @@ public class FetchHermitcraftStreamsScheduledRunner implements ScheduledRunner{
 	}
 	
 	private void sendStream(Hermit hermit, TextChannel channel){
-		EmbedBuilder embed = Utilities.buildEmbed(this.jda.getSelfUser(), Color.GREEN, translate(channel.getGuild(), "runners.hermitcraft.live", hermit.getDisplayName()), hermit.getLiveUrl().map(URL::toString).orElse(null));
-		embed.addField(translate(channel.getGuild(), "runners.hermitcraft.hermit"), hermit.getDisplayName(), true);
+		EmbedBuilder embed = Utilities.buildEmbed(this.jda.getSelfUser(), Color.GREEN, translate(channel.getGuild(), "hermitcraft.live", hermit.getDisplayName()), hermit.getLiveUrl().map(URL::toString).orElse(null));
+		embed.addField(translate(channel.getGuild(), "hermitcraft.hermit"), hermit.getDisplayName(), true);
 		embed.setThumbnail(hermit.getProfilePicture().toString());
 		Actions.sendMessage(channel, "", embed.build());
 	}
