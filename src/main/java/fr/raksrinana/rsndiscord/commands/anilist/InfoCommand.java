@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.commands.anilist;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.anilist.queries.MediaPagedQuery;
 import lombok.NonNull;
@@ -53,7 +54,7 @@ class InfoCommand extends BasicCommand{
 			else{
 				medias.forEach(media -> {
 					final var builder = new EmbedBuilder();
-					media.fillEmbed(builder);
+					media.fillEmbed(Settings.get(event.getGuild()).getLocale(), builder);
 					Actions.sendMessage(event.getChannel(), "", builder.build());
 				});
 			}

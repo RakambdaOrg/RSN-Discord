@@ -1,6 +1,7 @@
 package fr.raksrinana.rsndiscord.commands.anilist;
 
 import fr.raksrinana.rsndiscord.runners.anilist.AniListRunner;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
 import fr.raksrinana.rsndiscord.utils.anilist.list.MediaList;
@@ -72,11 +73,12 @@ class MediaListDifferencesRunner implements AniListRunner<MediaList, MediaListPa
 	public void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<MediaList>> userMedias){
 		if(userMedias.containsKey(this.member1.getUser()) && userMedias.containsKey(this.member2.getUser())){
 			final var user2Medias = userMedias.get(this.member2.getUser());
+			var locale = Settings.get(channel.getGuild()).getLocale();
 			userMedias.get(this.member1.getUser()).stream()
 					.filter(user1Media -> user1Media.getMedia().getType().equals(this.type))
 					.filter(user2Medias::contains)
 					.sorted()
-					.map(commonMedia -> this.buildMessage(null, commonMedia))
+					.map(commonMedia -> this.buildMessage(locale, null, commonMedia))
 					.forEach(message -> Actions.sendMessage(this.channel, "", message));
 		}
 	}

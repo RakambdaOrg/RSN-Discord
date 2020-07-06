@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.commands.anilist;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.schedule.AnilistAiringScheduleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.anilist.airing.AiringSchedule;
@@ -57,7 +58,7 @@ class NextAiringCommand extends BasicCommand{
 					.min(Comparator.comparingInt(AiringSchedule::getTimeUntilAiring))
 					.ifPresentOrElse(schedule -> {
 						final var builder = new EmbedBuilder();
-						schedule.fillEmbed(builder);
+						schedule.fillEmbed(Settings.get(event.getGuild()).getLocale(), builder);
 						ScheduleUtils.addScheduleAndNotify(new AnilistAiringScheduleConfiguration(event.getAuthor(), event.getChannel(), schedule.getDate(), schedule), event.getChannel());
 					}, () -> Actions.reply(event, translate(event.getGuild(), "anilist.airing-schedule-not-found"), null));
 		}
