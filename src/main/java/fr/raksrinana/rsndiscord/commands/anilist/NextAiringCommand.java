@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.commands.anilist;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.schedule.AnilistAiringScheduleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.anilist.airing.AiringSchedule;
@@ -17,6 +18,7 @@ import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @Slf4j
 class NextAiringCommand extends BasicCommand{
@@ -32,7 +34,7 @@ class NextAiringCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder embedBuilder){
 		super.addHelp(guild, embedBuilder);
-		embedBuilder.addField("id", "The id of the media on AniList", false);
+		embedBuilder.addField("id", translate(guild, "command.anilist.next-airing.help.id"), false);
 	}
 	
 	@NonNull
@@ -52,11 +54,13 @@ class NextAiringCommand extends BasicCommand{
 		try{
 			final var now = ZonedDateTime.now();
 			final var schedules = new AiringSchedulePagedQuery(mediaId).getResult(event.getMember());
-			schedules.stream().filter(schedule -> now.isBefore(schedule.getAiringAt())).min(Comparator.comparingInt(AiringSchedule::getTimeUntilAiring)).ifPresentOrElse(schedule -> {
-				final var builder = new EmbedBuilder();
-				schedule.fillEmbed(builder);
-				ScheduleUtils.addScheduleAndNotify(new AnilistAiringScheduleConfiguration(event.getAuthor(), event.getChannel(), schedule.getDate(), schedule), event.getChannel());
-			}, () -> Actions.reply(event, "No information on the next airing for media", null));
+			schedules.stream().filter(schedule -> now.isBefore(schedule.getAiringAt()))
+					.min(Comparator.comparingInt(AiringSchedule::getTimeUntilAiring))
+					.ifPresentOrElse(schedule -> {
+						final var builder = new EmbedBuilder();
+						schedule.fillEmbed(Settings.get(event.getGuild()).getLocale(), builder);
+						ScheduleUtils.addScheduleAndNotify(new AnilistAiringScheduleConfiguration(event.getAuthor(), event.getChannel(), schedule.getDate(), schedule), event.getChannel());
+					}, () -> Actions.reply(event, translate(event.getGuild(), "anilist.airing-schedule-not-found"), null));
 		}
 		catch(Exception e){
 			log.error("Failed to get airing schedule", e);
@@ -73,8 +77,8 @@ class NextAiringCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Next airing";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.anilist.next-airing.name");
 	}
 	
 	@NonNull
@@ -85,7 +89,7 @@ class NextAiringCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Sets a reminder for the next aired media";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.anilist.next-airing.description");
 	}
 }

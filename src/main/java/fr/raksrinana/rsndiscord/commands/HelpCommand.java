@@ -14,13 +14,14 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.awt.Color;
 import java.util.*;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class HelpCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Command", "The command to get information for (default: displays the list of the available commands)", false);
+		builder.addField("command", translate(guild, "command.help.help.command"), false);
 	}
 	
 	@NonNull
@@ -33,8 +34,8 @@ public class HelpCommand extends BasicCommand{
 			final var builder = new EmbedBuilder();
 			builder.setColor(Color.GREEN);
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-			builder.setTitle("Available commands");
-			allCommands.stream().filter(command -> command.isAllowed(event.getMember())).map(command -> new MessageEmbed.Field(prefix + command.getCommandStrings().get(0), command.getDescription(), false)).filter(message -> Objects.nonNull(message.getName())).sorted(Comparator.comparing(MessageEmbed.Field::getName)).forEach(builder::addField);
+			builder.setTitle(translate(event.getGuild(), "help.available-commands"));
+			allCommands.stream().filter(command -> command.isAllowed(event.getMember())).map(command -> new MessageEmbed.Field(prefix + command.getCommandStrings().get(0), command.getDescription(event.getGuild()), false)).filter(message -> Objects.nonNull(message.getName())).sorted(Comparator.comparing(MessageEmbed.Field::getName)).forEach(builder::addField);
 			Actions.reply(event, "", builder.build());
 		}
 		else{
@@ -54,18 +55,18 @@ public class HelpCommand extends BasicCommand{
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			if(command.isPresent()){
 				builder.setColor(Color.GREEN);
-				builder.setTitle(this.getName());
-				builder.addField("Name", command.get().getName(), true);
-				builder.addField("Description", command.get().getDescription(), true);
-				builder.addField("Command", String.join(", ", command.get().getCommandStrings()), false);
-				builder.addField("Usage", command.get().getCommandUsage(), false);
+				builder.setTitle(this.getName(event.getGuild()));
+				builder.addField(translate(event.getGuild(), "help.name"), command.get().getName(event.getGuild()), true);
+				builder.addField(translate(event.getGuild(), "help.description"), command.get().getDescription(event.getGuild()), true);
+				builder.addField(translate(event.getGuild(), "help.command"), String.join(", ", command.get().getCommandStrings()), false);
+				builder.addField(translate(event.getGuild(), "help.usage"), command.get().getCommandUsage(), false);
 				builder.addBlankField(true);
-				builder.addField("", "Arguments", false);
+				builder.addField("", translate(event.getGuild(), "help.arguments"), false);
 				command.get().addHelp(event.getGuild(), builder);
 			}
 			else{
 				builder.setColor(Color.ORANGE);
-				builder.addField(prefix + args.poll(), "This command doesn't exist or you don't have access to it", false);
+				builder.addField(prefix + args.poll(), translate(event.getGuild(), "help.not-exist"), false);
 			}
 			Actions.reply(event, "", builder.build());
 		}
@@ -80,8 +81,8 @@ public class HelpCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Help";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.help.name");
 	}
 	
 	@NonNull
@@ -92,7 +93,7 @@ public class HelpCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Gets the help";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.help.description");
 	}
 }

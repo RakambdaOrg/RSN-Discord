@@ -20,6 +20,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class TraktUtils{
 	public static final String API_URL = "https://api.trakt.tv";
@@ -34,7 +35,7 @@ public class TraktUtils{
 		do{
 			final var handler = new ObjectGetRequestSender<>(request.getOutputType(), request.getRequest().headers(headers)).getRequestHandler();
 			handler.getResult().getParsingError().ifPresent(error -> {
-				Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Failed to parse Trakt response", Utilities.throwableToEmbed(error).build());
+				Utilities.reportException("Failed to parse Trakt response", error);
 				Log.getLogger(null).warn("Failed to parse Trakt response", error);
 			});
 			if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
@@ -88,7 +89,7 @@ public class TraktUtils{
 				try{
 					final var deviceToken = postQuery(userToken, deviceTokenQuery);
 					Settings.get(event.getGuild()).getTraktConfiguration().addAccessToken(new TraktAccessTokenConfiguration(event.getAuthor().getIdLong(), ZonedDateTime.now().plusSeconds(deviceToken.getExpiresIn()), deviceToken.getAccessToken(), deviceToken.getRefreshToken()));
-					Actions.reply(event, "Successfully authenticated", null);
+					Actions.reply(event, translate(event.getGuild(), "trakt.authenticated"), null);
 					return;
 				}
 				catch(RequestException e){
@@ -101,7 +102,7 @@ public class TraktUtils{
 					}
 					retry = false;
 				}
-				Actions.reply(event, "Error while authenticating, please try again", null);
+				Actions.reply(event, translate(event.getGuild(), "trakt.authentication-failed"), null);
 			}
 		});
 	}
@@ -137,7 +138,7 @@ public class TraktUtils{
 	public static <T> T getQuery(TraktAccessTokenConfiguration token, @NonNull TraktGetRequest<T> request) throws RequestException{
 		final var handler = new ObjectGetRequestSender<>(request.getOutputType(), request.getRequest().headers(getHeaders(token))).getRequestHandler();
 		handler.getResult().getParsingError().ifPresent(error -> {
-			Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Failed to parse Trakt response", Utilities.throwableToEmbed(error).build());
+			Utilities.reportException("Failed to parse Trakt response", error);
 			Log.getLogger(null).warn("Failed to parse Trakt response", error);
 		});
 		if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){

@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.commands.config.guild.reactions.SavedForwardingC
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
 import lombok.NonNull;
+import net.dv8tion.jda.api.entities.Guild;
 import java.util.List;
 
 public class ReactionsConfigurationCommandComposite extends CommandComposite{
@@ -22,7 +23,7 @@ public class ReactionsConfigurationCommandComposite extends CommandComposite{
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Reactions";
 	}
 	
@@ -34,7 +35,7 @@ public class ReactionsConfigurationCommandComposite extends CommandComposite{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
+	public String getDescription(@NonNull Guild guild){
 		return "Reactions configurations";
 	}
 }

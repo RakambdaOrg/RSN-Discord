@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.commands.music.NowPlayingMusicCommand.getDuration;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class AddMusicCommand extends BasicCommand{
 	/**
@@ -37,10 +38,10 @@ public class AddMusicCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("link", "Music link", false);
-		builder.addField("skip", "The number of tracks to skip before adding them", false);
-		builder.addField("max", "The maximum number of tracks to add", false);
-		builder.addField("repeat", "Either to repeat this track or not (true/false)", false);
+		builder.addField("link", translate(guild, "command.music.add.help.link"), false);
+		builder.addField("skip", translate(guild, "command.music.add.help.skip"), false);
+		builder.addField("max", translate(guild, "command.music.add.help.max"), false);
+		builder.addField("repeat", translate(guild, "command.music.add.help.repeat"), false);
 	}
 	
 	@NonNull
@@ -72,7 +73,7 @@ public class AddMusicCommand extends BasicCommand{
 				final var repeat = Optional.ofNullable(args.poll()).map(Boolean::valueOf).orElse(false);
 				final Consumer<AudioTrack> onTrackAdded = audioTrack -> {
 					if(Objects.isNull(audioTrack)){
-						Actions.reply(event, "Unknown music", null);
+						Actions.reply(event, translate(event.getGuild(), "music.track.unknown"), null);
 					}
 					else{
 						if(repeat){
@@ -82,15 +83,15 @@ public class AddMusicCommand extends BasicCommand{
 						}
 						final var queue = RSNAudioManager.getQueue(event.getGuild());
 						final var before = queue.stream().takeWhile(t -> !Objects.equals(audioTrack, t)).collect(Collectors.toList());
-						final var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Music added", audioTrack.getInfo().uri);
+						final var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, translate(event.getGuild(), "music.track.added"), audioTrack.getInfo().uri);
 						final var isCurrentTrack = RSNAudioManager.currentTrack(event.getGuild()).map(trk -> Objects.equals(trk, audioTrack)).orElse(false);
 						embed.setDescription(audioTrack.getInfo().title);
-						embed.addField("Requester", event.getAuthor().getAsMention(), true);
-						embed.addField("Duration", NowPlayingMusicCommand.getDuration(audioTrack.getDuration()), true);
-						embed.addField("ETA", getDuration(RSNAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + before.stream().mapToLong(AudioTrack::getDuration).sum()), true);
-						embed.addField("Repeating", String.valueOf(repeat), true);
+						embed.addField(translate(event.getGuild(), "music.requester"), event.getAuthor().getAsMention(), true);
+						embed.addField(translate(event.getGuild(), "music.track.duration"), NowPlayingMusicCommand.getDuration(audioTrack.getDuration()), true);
+						embed.addField(translate(event.getGuild(), "music.track.eta"), getDuration(RSNAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).filter(e -> !queue.isEmpty()).orElse(0L) + before.stream().mapToLong(AudioTrack::getDuration).sum()), true);
+						embed.addField(translate(event.getGuild(), "music.repeating"), String.valueOf(repeat), true);
 						if(!isCurrentTrack){
-							embed.addField("Position in queue", String.valueOf(1 + before.size()), true);
+							embed.addField(translate(event.getGuild(), "music.queue.position"), String.valueOf(1 + before.size()), true);
 						}
 						Actions.reply(event, "", embed.build());
 					}
@@ -100,7 +101,7 @@ public class AddMusicCommand extends BasicCommand{
 			});
 		}
 		else{
-			Actions.reply(event, "You must be in a voice channel", null);
+			Actions.reply(event, translate(event.getGuild(), "music.voice-error"), null);
 		}
 		return CommandResult.SUCCESS;
 	}
@@ -113,8 +114,8 @@ public class AddMusicCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Add";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.music.add.name");
 	}
 	
 	@NonNull
@@ -125,7 +126,7 @@ public class AddMusicCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Adds a music to the queue";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.music.add.description");
 	}
 }

@@ -55,7 +55,7 @@ public class AutoConnectUsersConfigurationCommand extends SetConfigurationComman
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Users auto reconnect";
 	}
 	

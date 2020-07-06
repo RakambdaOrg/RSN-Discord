@@ -5,9 +5,12 @@ import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.irc.twitch.TwitchIRC;
 import lombok.NonNull;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class QuitCommand extends BasicCommand{
 	/**
@@ -35,8 +38,8 @@ public class QuitCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Quit";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.twitch.quit.name");
 	}
 	
 	@NonNull
@@ -47,7 +50,7 @@ public class QuitCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Disconnect from all channels";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.twitch.quit.description");
 	}
 }

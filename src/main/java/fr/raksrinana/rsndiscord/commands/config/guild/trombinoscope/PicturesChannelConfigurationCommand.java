@@ -32,7 +32,7 @@ public class PicturesChannelConfigurationCommand extends ChannelConfigurationCom
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Pictures channel";
 	}
 	

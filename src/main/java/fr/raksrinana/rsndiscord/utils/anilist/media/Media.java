@@ -9,10 +9,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -55,28 +53,28 @@ public abstract class Media implements AniListObject{
 	}
 	
 	@Override
-	public void fillEmbed(@NonNull final EmbedBuilder builder){
+	public void fillEmbed(@NonNull Locale locale, @NonNull final EmbedBuilder builder){
 		builder.setDescription(this.getTitle().getRomaji());
 		if(this.getType().isShouldDisplay()){
-			builder.addField("Type", this.getType().toString(), true);
+			builder.addField(translate(locale, "anilist.type"), this.getType().toString(), true);
 		}
-		builder.addField("Format", Optional.ofNullable(this.getFormat()).map(Enum::toString).orElse("UNKNOWN"), true);
-		builder.addField("Status", Optional.ofNullable(this.getStatus()).map(Enum::toString).orElse("UNKNOWN"), true);
+		builder.addField(translate(locale, "anilist.format"), Optional.ofNullable(this.getFormat()).map(Enum::toString).orElse("-"), true);
+		builder.addField(translate(locale, "anilist.status"), Optional.ofNullable(this.getStatus()).map(Enum::toString).orElse("-"), true);
 		if(this.isAdult()){
-			builder.addField("Adult content", "", true);
+			builder.addField(translate(locale, "anilist.adult"), "", true);
 		}
-		fillAdditionalEmbed(builder);
-		this.getStartDate().asDate().ifPresent(startDate -> builder.addField("Started releasing", startDate.format(DF), true));
-		this.getEndDate().asDate().ifPresent(startDate -> builder.addField("Ended releasing", startDate.format(DF), true));
+		fillAdditionalEmbed(locale, builder);
+		this.getStartDate().asDate().ifPresent(startDate -> builder.addField(translate(locale, "anilist.started"), startDate.format(DF), true));
+		this.getEndDate().asDate().ifPresent(startDate -> builder.addField(translate(locale, "anilist.ended"), startDate.format(DF), true));
 		if(!genres.isEmpty()){
-			builder.addField("Genres", String.join(", ", getGenres()), true);
+			builder.addField(translate(locale, "anilist.genres"), String.join(", ", getGenres()), true);
 		}
 		//builder.addField("Link", getUrl(), false);
 		builder.setThumbnail(this.getCoverImage().getLarge().toString());
 		builder.setFooter("ID: " + getId());
 	}
 	
-	protected abstract void fillAdditionalEmbed(EmbedBuilder builder);
+	protected abstract void fillAdditionalEmbed(@NonNull Locale locale, @NonNull EmbedBuilder builder);
 	
 	@NonNull
 	public abstract String getProgressType(final boolean contains);

@@ -15,6 +15,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -37,11 +39,11 @@ public class AiringSchedule implements AnilistDatedObject{
 	private int timeUntilAiring;
 	
 	@Override
-	public void fillEmbed(@NonNull EmbedBuilder builder){
-		builder.addField("episode", Integer.toString(getEpisode()), true);
-		builder.addField("Airs at", getAiringAt().format(DF), true);
+	public void fillEmbed(@NonNull Locale locale,  @NonNull EmbedBuilder builder){
+		builder.addField(translate(locale, "anilist.episode"), Integer.toString(getEpisode()), true);
+		builder.addField(translate(locale, "anilist.air"), getAiringAt().format(DF), true);
 		builder.addBlankField(false);
-		getMedia().fillEmbed(builder);
+		getMedia().fillEmbed(locale, builder);
 	}
 	
 	@Override

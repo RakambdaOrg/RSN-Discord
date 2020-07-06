@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord.utils.externaltodos;
 
-import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.utils.http.requestssenders.get.ObjectGetRequestSender;
@@ -17,7 +16,7 @@ public class ExternalTodosUtils{
 		Optional.ofNullable(token).ifPresent(t -> request.header(HeaderNames.AUTHORIZATION, "Bearer " + t));
 		final var handler = new ObjectGetRequestSender<GetTodoResponse>(new GenericType<>(){}, request).getRequestHandler();
 		handler.getResult().getParsingError().ifPresent(error -> {
-			Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Failed to parse external todos response", Utilities.throwableToEmbed(error).build());
+			Utilities.reportException("Failed to parse external todos response", error);
 			Log.getLogger(null).warn("Failed to parse external todos response", error);
 		});
 		if(handler.getResult().isSuccess() && handler.getRequestResult().getCode() == 200){
@@ -34,7 +33,7 @@ public class ExternalTodosUtils{
 		Optional.ofNullable(token).ifPresent(t -> request.header(HeaderNames.AUTHORIZATION, "Bearer " + t));
 		final var handler = new ObjectPostRequestSender<SetStatusResponse>(new GenericType<>(){}, request).getRequestHandler();
 		handler.getResult().getParsingError().ifPresent(error -> {
-			Actions.sendPrivateMessage(Utilities.RAKSRINANA_ACCOUNT, "Failed to parse external todos response", Utilities.throwableToEmbed(error).build());
+			Utilities.reportException("Failed to parse external todos response", error);
 			Log.getLogger(null).warn("Failed to parse external todos response", error);
 		});
 		if(handler.getResult().isSuccess() && handler.getRequestResult().getCode() == 200){

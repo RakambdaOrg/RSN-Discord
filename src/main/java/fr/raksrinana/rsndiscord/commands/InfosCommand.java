@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.awt.Color;
 import java.time.Duration;
@@ -14,6 +15,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class InfosCommand extends BasicCommand{
@@ -22,19 +24,19 @@ public class InfosCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		final var now = ZonedDateTime.now();
-		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, "Bot infos", null);
-		builder.addField("Bot version", Main.getRSNBotVersion(), false);
-		builder.addField("Current time:", now.format(DateTimeFormatter.ISO_ZONED_DATE_TIME), false);
-		builder.addField("Last start (local time):", Main.bootTime.format(DateTimeFormatter.ISO_ZONED_DATE_TIME), false);
-		builder.addField("Time elapsed", Duration.between(Main.bootTime, now).toString(), false);
+		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, translate(event.getGuild(), "infos.title"), null);
+		builder.addField(translate(event.getGuild(), "infos.version"), Main.getRSNBotVersion(), false);
+		builder.addField(translate(event.getGuild(), "infos.time"), now.format(DateTimeFormatter.ISO_ZONED_DATE_TIME), false);
+		builder.addField(translate(event.getGuild(), "infos.last-boot"), Main.bootTime.format(DateTimeFormatter.ISO_ZONED_DATE_TIME), false);
+		builder.addField(translate(event.getGuild(), "infos.elapsed"), Duration.between(Main.bootTime, now).toString(), false);
 		Actions.reply(event, "", builder.build());
 		return CommandResult.SUCCESS;
 	}
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Bot infos";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.infos.name");
 	}
 	
 	@NonNull
@@ -45,7 +47,7 @@ public class InfosCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Sends infos about the bot";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.infos.description");
 	}
 }

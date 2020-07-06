@@ -17,10 +17,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import java.awt.Color;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>> extends ScheduledRunner{
@@ -33,7 +30,16 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 	Set<TextChannel> getChannels();
 	
 	default void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<T>> userElements){
-		userElements.entrySet().stream().flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val))).sorted(Map.Entry.comparingByValue()).map(change -> Map.entry(change.getKey(), this.buildMessage(change.getKey(), change.getValue()))).forEach(infos -> channels.stream().filter(chan -> this.sendToChannel(chan, infos.getKey())).forEach(chan -> Actions.sendMessage(chan, "", infos.getValue())));
+		userElements.entrySet().stream()
+				.flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val)))
+				.sorted(Map.Entry.comparingByValue())
+				.forEach(change -> channels.stream()
+						.filter(channel -> this.sendToChannel(channel, change.getKey()))
+						.forEach(channel -> {
+							var locale = Settings.get(channel.getGuild()).getLocale();
+							var embed = this.buildMessage(locale, change.getKey(), change.getValue());
+							Actions.sendMessage(channel, "", embed);
+						}));
 	}
 	
 	default void runQuery(@NonNull final Set<Member> members, @NonNull final Set<TextChannel> channels){
@@ -81,7 +87,7 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 	@NonNull JDA getJda();
 	
 	@NonNull
-	default MessageEmbed buildMessage(final User user, @NonNull final T change){
+	default MessageEmbed buildMessage(@NonNull Locale locale, final User user, @NonNull final T change){
 		final var builder = new EmbedBuilder();
 		try{
 			if(Objects.isNull(user)){
@@ -90,7 +96,7 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 			else{
 				builder.setAuthor(user.getName(), change.getUrl().toString(), user.getAvatarUrl());
 			}
-			change.fillEmbed(builder);
+			change.fillEmbed(locale, builder);
 		}
 		catch(final Exception e){
 			Log.getLogger(null).error("Error building message for {}", this.getName(), e);

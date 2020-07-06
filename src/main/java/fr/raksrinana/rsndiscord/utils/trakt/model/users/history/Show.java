@@ -14,9 +14,11 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import java.net.URL;
 import java.time.ZonedDateTime;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -67,18 +69,18 @@ public class Show implements TraktObject{
 	private int airedEpisodes;
 	
 	@Override
-	public void fillEmbed(@NonNull EmbedBuilder builder){
-		fillEmbed(builder, null);
+	public void fillEmbed(@NonNull Locale locale, @NonNull EmbedBuilder builder){
+		fillEmbed(locale, builder, null);
 	}
 	
-	public void fillEmbed(@NonNull EmbedBuilder builder, TVDetails tvDetails){
-		builder.addField("Title", this.getTitle(), true);
-		builder.addField("Year", Integer.toString(this.getYear()), true);
-		Optional.ofNullable(tvDetails).map(TVDetails::getNumberOfSeasons).ifPresent(numberOfSeasons -> builder.addField("Seasons", Integer.toString(numberOfSeasons), true));
-		builder.addField("Episodes", Integer.toString(this.getAiredEpisodes()), true);
-		builder.addField("Status", this.getStatus(), true);
-		builder.addField("Genres", String.join(", ", this.getGenres()), true);
-		builder.addField("Overview", this.getOverview(), false);
+	public void fillEmbed(@NonNull Locale locale, @NonNull EmbedBuilder builder, TVDetails tvDetails){
+		builder.addField(translate(locale, "trakt.title"), this.getTitle(), true);
+		builder.addField(translate(locale, "trakt.year"), Integer.toString(this.getYear()), true);
+		Optional.ofNullable(tvDetails).map(TVDetails::getNumberOfSeasons).ifPresent(numberOfSeasons -> builder.addField(translate(locale, "trakt.seasons"), Integer.toString(numberOfSeasons), true));
+		builder.addField(translate(locale, "trakt.episodes"), Integer.toString(this.getAiredEpisodes()), true);
+		builder.addField(translate(locale, "trakt.status"), this.getStatus(), true);
+		builder.addField(translate(locale, "trakt.genres"), String.join(", ", this.getGenres()), true);
+		builder.addField(translate(locale, "trakt.overview"), this.getOverview(), false);
 	}
 	
 	@Override

@@ -32,7 +32,7 @@ public class ThaUserConfigurationCommand extends UserConfigurationCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Trakt Tha notification channel";
 	}
 	

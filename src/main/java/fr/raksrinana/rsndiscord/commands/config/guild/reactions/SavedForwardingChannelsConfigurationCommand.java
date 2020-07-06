@@ -62,7 +62,7 @@ public class SavedForwardingChannelsConfigurationCommand extends MapConfiguratio
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Saved forwarding channels";
 	}
 	

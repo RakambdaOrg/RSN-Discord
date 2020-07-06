@@ -16,6 +16,7 @@ import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class DogCommand extends BasicCommand{
@@ -25,7 +26,7 @@ public class DogCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		final var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, ":dog: ** | Here's your random dog:**", null);
+		final var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, translate(event.getGuild(), "dog.title"), null);
 		embed.setImage(DogCommand.getDogPictureURL(event.getGuild()));
 		Actions.reply(event, "", embed.build());
 		return CommandResult.SUCCESS;
@@ -47,8 +48,8 @@ public class DogCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Dog";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.dog.name");
 	}
 	
 	@NonNull
@@ -59,7 +60,7 @@ public class DogCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Gets a random picture of a dog";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.dog.description");
 	}
 }

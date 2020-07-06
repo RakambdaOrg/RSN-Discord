@@ -16,8 +16,10 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static fr.raksrinana.rsndiscord.utils.trakt.model.users.history.UserHistory.DATE_FORMAT;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -65,17 +67,17 @@ public class Movie implements TraktObject{
 	private Set<String> genres;
 	
 	@Override
-	public void fillEmbed(@NonNull EmbedBuilder builder){
-		fillEmbed(builder, null);
+	public void fillEmbed(@NonNull Locale locale, @NonNull EmbedBuilder builder){
+		fillEmbed(locale, builder, null);
 	}
 	
-	public void fillEmbed(@NonNull EmbedBuilder builder, MovieDetails movieDetails){
-		builder.addField("Title", getTitle(), true);
-		builder.addField("Year", Integer.toString(this.getYear()), true);
-		builder.addField("Status", this.getStatus(), true);
-		builder.addField("Aired at", this.getReleased().format(DATE_FORMAT), true);
-		builder.addField("Genres", String.join(", ", this.getGenres()), true);
-		builder.addField("Overview", this.getOverview(), false);
+	public void fillEmbed(@NonNull Locale locale, @NonNull EmbedBuilder builder, MovieDetails movieDetails){
+		builder.addField(translate(locale, "trakt.title"), getTitle(), true);
+		builder.addField(translate(locale, "trakt.year"), Integer.toString(this.getYear()), true);
+		builder.addField(translate(locale, "trakt.status"), this.getStatus(), true);
+		builder.addField(translate(locale, "trakt.aired"), this.getReleased().format(DATE_FORMAT), true);
+		builder.addField(translate(locale, "trakt.genres"), String.join(", ", this.getGenres()), true);
+		builder.addField(translate(locale, "trakt.overview"), this.getOverview(), false);
 	}
 	
 	@Override

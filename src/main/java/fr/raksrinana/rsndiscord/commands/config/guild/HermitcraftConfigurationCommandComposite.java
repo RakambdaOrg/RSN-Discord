@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.commands.config.guild.hermitcraft.VideoNotificat
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
 import lombok.NonNull;
+import net.dv8tion.jda.api.entities.Guild;
 import java.util.List;
 
 public class HermitcraftConfigurationCommandComposite extends CommandComposite{
@@ -22,7 +23,7 @@ public class HermitcraftConfigurationCommandComposite extends CommandComposite{
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Hermitcraft";
 	}
 	
@@ -34,7 +35,7 @@ public class HermitcraftConfigurationCommandComposite extends CommandComposite{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
+	public String getDescription(@NonNull Guild guild){
 		return "Hermitcraft configurations";
 	}
 }

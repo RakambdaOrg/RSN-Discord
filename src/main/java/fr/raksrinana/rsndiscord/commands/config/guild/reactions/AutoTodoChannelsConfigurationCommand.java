@@ -56,7 +56,7 @@ public class AutoTodoChannelsConfigurationCommand extends SetConfigurationComman
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Auto todo channels";
 	}
 	

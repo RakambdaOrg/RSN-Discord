@@ -15,6 +15,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+
 public class ConnectCommand extends BasicCommand{
 	/**
 	 * Constructor.
@@ -28,7 +30,7 @@ public class ConnectCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("user", "The twitch user", false);
+		builder.addField("user", translate(guild, "command.twitch.connect.help.user"), false);
 	}
 	
 	@NonNull
@@ -42,7 +44,7 @@ public class ConnectCommand extends BasicCommand{
 			TwitchIRC.connect(event.getGuild(), args.pop());
 		}
 		catch(final NoSuchElementException | IOException e){
-			Actions.reply(event, "Server needs to be configured to use this feature", null);
+			Actions.reply(event, translate(event.getGuild(), "twitch.not-configured"), null);
 			Log.getLogger(event.getGuild()).warn("Missing configuration for IRC", e);
 		}
 		return CommandResult.SUCCESS;
@@ -62,8 +64,8 @@ public class ConnectCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Connect";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.twitch.connect.name");
 	}
 	
 	@NonNull
@@ -74,7 +76,7 @@ public class ConnectCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Joins a twitch chat";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.twitch.connect.description");
 	}
 }

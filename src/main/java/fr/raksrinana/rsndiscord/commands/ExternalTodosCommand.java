@@ -5,9 +5,11 @@ import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.runners.ExternalTodosScheduledRunner;
 import lombok.NonNull;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class ExternalTodosCommand extends BasicCommand{
@@ -27,8 +29,8 @@ public class ExternalTodosCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "External todos";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.external-todo.name");
 	}
 	
 	@NonNull
@@ -39,7 +41,7 @@ public class ExternalTodosCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Fetch external todos";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.external-todo.description");
 	}
 }

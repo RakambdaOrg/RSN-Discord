@@ -9,7 +9,6 @@ import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
 import fr.raksrinana.rsndiscord.utils.themoviedb.TMDBUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.dv8tion.jda.api.EmbedBuilder;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -89,9 +88,6 @@ public class MovieDetails implements MediaDetails{
 		}
 		MovieDetails that = (MovieDetails) o;
 		return getId() == that.getId();
-	}
-	
-	public void fillEmbed(EmbedBuilder builder){
 	}
 	
 	@Override

@@ -15,6 +15,7 @@ import java.awt.Color;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public abstract class BaseConfigurationCommand extends BasicCommand{
 	protected BaseConfigurationCommand(final Command parent){
@@ -46,7 +47,7 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 		try{
 			final var operation = ConfigurationOperation.valueOf(operationStr.toUpperCase());
 			if(!getAllowedOperations().contains(operation)){
-				Actions.reply(event, "The operation isn't supported", null);
+				Actions.reply(event, translate(event.getGuild(), "configuration.operation.not-supported"), null);
 				return CommandResult.NOT_HANDLED;
 			}
 			Log.getLogger(event.getGuild()).info("Executing configuration operation {}", operation);
@@ -58,12 +59,12 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 			}
 		}
 		catch(final IllegalArgumentException e){
-			Actions.reply(event, "Unknown operation", null);
+			Actions.reply(event, translate(event.getGuild(), "configuration.operation.unknown"), null);
 		}
 		catch(final RuntimeException e){
 			Log.getLogger(event.getGuild()).warn("Failed to update configuration", e);
-			Actions.reply(event, "Failed to update configuration: " + e.getMessage(), null);
-			Utilities.reportException(e);
+			Actions.reply(event, translate(event.getGuild(), "configuration.update-failed", e.getMessage()), null);
+			Utilities.reportException("Error updating configuration", e);
 			return CommandResult.FAILED;
 		}
 		return CommandResult.SUCCESS;
@@ -88,14 +89,14 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 		final var builder = new EmbedBuilder();
 		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 		builder.setColor(color);
-		builder.setTitle(this.getName());
+		builder.setTitle(this.getName(event.getGuild()));
 		builder.setDescription(description);
 		return builder;
 	}
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Handles the configuration of " + this.getName();
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.config.generic-description", this.getName(guild));
 	}
 }

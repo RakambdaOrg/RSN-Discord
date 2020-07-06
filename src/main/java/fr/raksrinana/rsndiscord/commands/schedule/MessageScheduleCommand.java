@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class MessageScheduleCommand extends BasicCommand{
 	public MessageScheduleCommand(Command parent){
@@ -20,7 +21,7 @@ public class MessageScheduleCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("message", "The message of the reminder", false);
+		builder.addField("message", translate(guild, "command.schedule.message.help.message"), false);
 	}
 	
 	@NonNull
@@ -43,8 +44,8 @@ public class MessageScheduleCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Adds a reminder message";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.schedule.message.name");
 	}
 	
 	@NonNull
@@ -55,7 +56,12 @@ public class MessageScheduleCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Adds a reminder to be notified later after some delay";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.schedule.message.description");
+	}
+	
+	@Override
+	public @NonNull AccessLevel getAccessLevel(){
+		return AccessLevel.MODERATOR;
 	}
 }

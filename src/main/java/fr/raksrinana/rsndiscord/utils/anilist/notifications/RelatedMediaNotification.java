@@ -12,7 +12,9 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.awt.Color;
 import java.net.URL;
+import java.util.Locale;
 import java.util.Optional;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -29,13 +31,13 @@ public class RelatedMediaNotification extends Notification{
 	}
 	
 	@Override
-	public void fillEmbed(@NonNull final EmbedBuilder builder){
+	public void fillEmbed(@NonNull Locale locale, @NonNull final EmbedBuilder builder){
 		builder.setTimestamp(this.getDate());
 		builder.setColor(Color.PINK);
-		builder.setTitle("New related media", this.getMedia().getUrl().toString());
+		builder.setTitle(translate(locale, "anilist.related"), this.getMedia().getUrl().toString());
 		builder.addBlankField(false);
-		builder.addField("Media:", "", false);
-		this.getMedia().fillEmbed(builder);
+		builder.addField(translate(locale, "anilist.media"), "", false);
+		this.getMedia().fillEmbed(locale, builder);
 	}
 	
 	@Override

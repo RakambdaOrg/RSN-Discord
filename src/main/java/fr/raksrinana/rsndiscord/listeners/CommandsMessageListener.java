@@ -25,6 +25,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @Getter
 public class CommandsMessageListener extends ListenerAdapter{
@@ -68,13 +69,13 @@ public class CommandsMessageListener extends ListenerAdapter{
 							messageDeleted.set(true);
 						}
 						try{
-							Log.getLogger(event.getGuild()).info("Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(), event.getAuthor(), args);
+							Log.getLogger(event.getGuild()).info("Executing command `{}`({}) from {}, args: {}", cmdText, command.getName(event.getGuild()), event.getAuthor(), args);
 							final var executionResult = command.execute(event, args);
 							if(executionResult == CommandResult.FAILED){
-								Actions.replyPrivate(event.getGuild(), event.getAuthor(), "An error occurred", null);
+								Actions.replyPrivate(event.getGuild(), event.getAuthor(), translate(event.getGuild(), "listeners.commands.error"), null);
 							}
 							else if(executionResult == CommandResult.BAD_ARGUMENTS){
-								Actions.replyPrivate(event.getGuild(), event.getAuthor(), "The given arguments aren't valid. Please check the help.", null);
+								Actions.replyPrivate(event.getGuild(), event.getAuthor(), translate(event.getGuild(), "listeners.commands.invalid-arguments"), null);
 							}
 						}
 						catch(final NotAllowedException e){
@@ -82,7 +83,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 							final var builder = new EmbedBuilder();
 							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 							builder.setColor(Color.RED);
-							builder.setTitle("You're not allowed to execute this command");
+							builder.setTitle(translate(event.getGuild(), "listeners.commands.unauthorized"));
 							Actions.reply(event, "", builder.build());
 						}
 						catch(final NotHandledException e){
@@ -93,16 +94,16 @@ public class CommandsMessageListener extends ListenerAdapter{
 							final var builder = new EmbedBuilder();
 							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 							builder.setColor(Color.RED);
-							builder.setTitle("Something exploded");
-							builder.addField("Exception kind", e.getClass().getName(), false);
+							builder.setTitle(translate(event.getGuild(), "listeners.commands.exception.title"));
+							builder.addField(translate(event.getGuild(), "listeners.commands.exception.kind"), e.getClass().getName(), false);
 							Actions.reply(event, "", builder.build());
 						}
 					}, () -> {
 						final var builder = new EmbedBuilder();
 						builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 						builder.setColor(Color.ORANGE);
-						builder.setTitle("Command not found");
-						builder.addField("Command", cmdText, false);
+						builder.setTitle(translate(event.getGuild(), "listeners.commands.not-found.title"));
+						builder.addField(translate(event.getGuild(), "listeners.commands.exception.command"), cmdText, false);
 						Actions.reply(event, "", builder.build()).thenAccept(message -> ScheduleUtils.addSchedule(new DeleteMessageScheduleConfiguration(event.getAuthor(), ZonedDateTime.now().plusMinutes(2), message), event.getGuild()));
 					});
 					if(!messageDeleted.get()){
@@ -152,6 +153,6 @@ public class CommandsMessageListener extends ListenerAdapter{
 	 */
 	@NonNull
 	private Optional<Command> getCommand(@NonNull final String commandText){
-		return this.commands.stream().filter(command -> command.getCommandStrings().contains(commandText.toLowerCase())).findFirst();
+		return this.commands.stream().filter(command -> command.getCommandStrings().contains(commandText)).findFirst();
 	}
 }

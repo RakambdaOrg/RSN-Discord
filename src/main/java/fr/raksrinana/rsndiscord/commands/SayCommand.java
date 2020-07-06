@@ -10,13 +10,14 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class SayCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Message", "The message to say", false);
+		builder.addField("message", translate(guild, "command.say.help.message"), false);
 	}
 	
 	@NonNull
@@ -41,8 +42,8 @@ public class SayCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Say";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.say.name");
 	}
 	
 	@NonNull
@@ -53,7 +54,7 @@ public class SayCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Sends a message as the bot";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.say.description");
 	}
 }

@@ -14,13 +14,13 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Member;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class AniListUtils{
 	private static final String API_URL = "https://anilist.co/api/v2";
@@ -92,7 +92,7 @@ public class AniListUtils{
 		Log.getLogger(member.getGuild()).debug("Sending query to AniList for user {}", member.getUser());
 		final var token = AniListUtils.getAccessToken(member).orElseThrow(() -> {
 			Settings.get(member.getGuild()).getAniListConfiguration().removeUser(member.getUser());
-			Actions.replyPrivate(member.getGuild(), member.getUser(), MessageFormat.format("Your token for AniList on {0} expired. Please use `{1}al r` to register again if you want to continue receiving information", member.getGuild().getName(), Settings.get(member.getGuild()).getPrefix().orElse(CommandsMessageListener.defaultPrefix)), null);
+			Actions.replyPrivate(member.getGuild(), member.getUser(), translate(member.getGuild(), "anilist.token-expired", member.getGuild().getName(), Settings.get(member.getGuild()).getPrefix().orElse(CommandsMessageListener.defaultPrefix)), null);
 			return new IllegalStateException("No valid token found, please register again");
 		});
 		return postQuery(token, query, variables);

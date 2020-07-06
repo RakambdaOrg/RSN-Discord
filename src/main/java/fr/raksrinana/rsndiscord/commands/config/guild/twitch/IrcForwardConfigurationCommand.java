@@ -31,7 +31,7 @@ public class IrcForwardConfigurationCommand extends BooleanConfigurationCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "IRC message forwarding";
 	}
 	

@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.time.format.DateTimeFormatter;
@@ -15,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 @Slf4j
@@ -27,12 +29,17 @@ public class ListJoinsCommand extends BasicCommand{
 		super.execute(event, args);
 		int limit = Optional.ofNullable(args.poll()).filter(val -> val.chars().allMatch(Character::isDigit)).map(Integer::parseInt).orElse(50);
 		final var joinPos = new AtomicInteger(0);
-		event.getGuild().loadMembers().onSuccess(members -> {
-			Actions.sendMessage(event.getChannel(), "Will process " + members.size() + " members, are they all here?", null);
-			members.stream().sorted(Comparator.comparing(Member::getTimeJoined)).limit(limit).forEachOrdered(member -> Actions.sendMessage(event.getChannel(), "#" + joinPos.incrementAndGet() + " joined at " + member.getTimeJoined().format(DF) + " is " + member.getAsMention(), null));
-		}).onError(e -> {
+		event.getGuild().loadMembers().onSuccess(members -> members.stream()
+				.sorted(Comparator.comparing(Member::getTimeJoined))
+				.limit(limit)
+				.forEachOrdered(member -> Actions.sendMessage(event.getChannel(), translate(event.getGuild(),
+						"list-joins.user-joined",
+						joinPos.incrementAndGet(),
+						member.getTimeJoined().format(DF),
+						member.getAsMention()), null))
+		).onError(e -> {
 			Log.getLogger(event.getGuild()).error("Failed to load members", e);
-			Actions.reply(event, "Failed to get members", null);
+			Actions.reply(event, translate(event.getGuild(), "list-joins.error-members"), null);
 		});
 		return CommandResult.SUCCESS;
 	}
@@ -45,8 +52,8 @@ public class ListJoinsCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "List members";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.list-joins.name");
 	}
 	
 	@NonNull
@@ -57,7 +64,7 @@ public class ListJoinsCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "List members by their last join date";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.list-joins.description");
 	}
 }

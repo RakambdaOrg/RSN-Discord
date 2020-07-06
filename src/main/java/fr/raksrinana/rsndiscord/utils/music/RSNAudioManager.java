@@ -27,6 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class RSNAudioManager implements StatusTrackSchedulerListener{
 	private static final HashMap<Guild, RSNAudioManager> managers = new HashMap<>();
@@ -104,7 +105,7 @@ public class RSNAudioManager implements StatusTrackSchedulerListener{
 					Log.getLogger(channel.getGuild()).warn("Player found nothing for channel `{}`", channel.getName());
 					gunterAudioManager.isSearchingTracks = false;
 					gunterAudioManager.getTrackScheduler().foundNothing();
-					onFail.accept("No music found");
+					onFail.accept(translate(channel.getGuild(), "music.not-found"));
 				}
 				
 				@Override
@@ -112,7 +113,7 @@ public class RSNAudioManager implements StatusTrackSchedulerListener{
 					Log.getLogger(channel.getGuild()).warn("Failed to load audio for channel `{}`", channel.getName(), throwable);
 					gunterAudioManager.isSearchingTracks = false;
 					gunterAudioManager.getTrackScheduler().foundNothing();
-					onFail.accept("Error loading music");
+					onFail.accept(translate(channel.getGuild(), "music.load-error"));
 				}
 			});
 		}

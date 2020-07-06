@@ -15,6 +15,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import java.awt.Color;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -39,15 +41,15 @@ public abstract class UserHistory implements TraktDatedObject{
 	private TraktMediaType type;
 	
 	@Override
-	public void fillEmbed(@NonNull EmbedBuilder builder){
-		fillEmbed(builder, null);
+	public void fillEmbed(@NonNull Locale locale, @NonNull EmbedBuilder builder){
+		fillEmbed(locale, builder, null);
 	}
 	
-	public void fillEmbed(@NonNull EmbedBuilder builder, MediaDetails mediaDetails){
+	public void fillEmbed(@NonNull Locale locale, @NonNull EmbedBuilder builder, MediaDetails mediaDetails){
 		builder.setFooter(Long.toString(this.getId()));
 		builder.setColor(Color.GREEN);
 		builder.setTimestamp(this.getWatchedAt());
-		builder.addField("Watched at", watchedAt.format(Utilities.DATE_TIME_MINUTE_FORMATTER), true);
+		builder.addField(translate(locale, "trakt.watched"), watchedAt.format(Utilities.DATE_TIME_MINUTE_FORMATTER), true);
 	}
 	
 	@Override

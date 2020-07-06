@@ -138,8 +138,8 @@ public class Utilities{
 	 * @see Actions#sendPrivateMessage(Guild, PrivateChannel, CharSequence, MessageEmbed)
 	 */
 	@NonNull
-	public static CompletableFuture<Message> reportException(@NonNull Throwable throwable){
-		return Actions.sendPrivateMessage(RAKSRINANA_ACCOUNT, MessageFormat.format("RSN got an exception: {0}\n{1}", ExceptionUtils.getMessage(throwable), ExceptionUtils.getStackTrace(throwable)), null);
+	public static CompletableFuture<Message> reportException(@NonNull String message, @NonNull Throwable throwable){
+		return Actions.sendPrivateMessage(RAKSRINANA_ACCOUNT, MessageFormat.format("RSN got an exception: {0}\n", message), throwableToEmbed(throwable).build());
 	}
 	
 	/**
@@ -158,7 +158,7 @@ public class Utilities{
 		return new Reflections(packageName).getSubTypesOf(klass).stream().filter(c -> !c.isInterface()).sorted(Comparator.comparing(Class::getCanonicalName)).map(createInstance).filter(Objects::nonNull).map(klass::cast).collect(Collectors.toList());
 	}
 	
-	public static EmbedBuilder throwableToEmbed(Throwable throwable){
+	private static EmbedBuilder throwableToEmbed(Throwable throwable){
 		final var embed = new EmbedBuilder();
 		embed.setTitle(throwable.getMessage().substring(0, Math.min(throwable.getMessage().length(), MessageEmbed.TITLE_MAX_LENGTH)));
 		embed.setColor(Color.RED);

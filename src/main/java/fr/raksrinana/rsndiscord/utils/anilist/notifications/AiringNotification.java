@@ -12,8 +12,10 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.awt.Color;
 import java.net.URL;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -32,14 +34,14 @@ public class AiringNotification extends Notification{
 	}
 	
 	@Override
-	public void fillEmbed(@NonNull final EmbedBuilder builder){
+	public void fillEmbed(@NonNull Locale locale, @NonNull final EmbedBuilder builder){
 		builder.setTimestamp(this.getDate());
 		builder.setColor(Color.GREEN);
-		builder.setTitle("New release", this.getMedia().getUrl().toString());
-		builder.addField("Episode", String.valueOf(this.getEpisode()), true);
+		builder.setTitle(translate(locale, "anilist.release"), this.getMedia().getUrl().toString());
+		builder.addField(translate(locale, "anilist.episode"), String.valueOf(this.getEpisode()), true);
 		builder.addBlankField(false);
-		builder.addField("Media:", "", false);
-		this.getMedia().fillEmbed(builder);
+		builder.addField(translate(locale, "anilist.media"), "", false);
+		this.getMedia().fillEmbed(locale, builder);
 	}
 	
 	@Override

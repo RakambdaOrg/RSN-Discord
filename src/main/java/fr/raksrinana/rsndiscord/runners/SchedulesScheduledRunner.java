@@ -38,7 +38,7 @@ public class SchedulesScheduledRunner implements ScheduledRunner{
 					}
 				}
 				else{
-					Optional.ofNullable(schedule.getReminderCountdownMessage()).flatMap(MessageConfiguration::getMessage).ifPresent(message -> Actions.editMessage(message, ScheduleUtils.getEmbedFor(schedule)));
+					Optional.ofNullable(schedule.getReminderCountdownMessage()).flatMap(MessageConfiguration::getMessage).ifPresent(message -> Actions.editMessage(message, ScheduleUtils.getEmbedFor(message.getGuild(), schedule)));
 				}
 			}
 		}

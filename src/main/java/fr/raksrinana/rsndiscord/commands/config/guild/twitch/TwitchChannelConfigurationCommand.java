@@ -32,7 +32,7 @@ public class TwitchChannelConfigurationCommand extends ChannelConfigurationComma
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Twitch channel";
 	}
 	

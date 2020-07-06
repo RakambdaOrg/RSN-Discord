@@ -15,6 +15,7 @@ import java.awt.Color;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class FetchHermitcraftVideosScheduledRunner implements ScheduledRunner{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
@@ -52,11 +53,11 @@ public class FetchHermitcraftVideosScheduledRunner implements ScheduledRunner{
 	}
 	
 	private void sendVideo(HermitcraftVideo video, TextChannel channel){
-		EmbedBuilder embed = Utilities.buildEmbed(this.jda.getSelfUser(), Color.GREEN, video.getUploader().getDisplayName() + " posted a video", "https://youtu.be/" + video.getId());
+		EmbedBuilder embed = Utilities.buildEmbed(this.jda.getSelfUser(), Color.GREEN, translate(channel.getGuild(), "hermitcraft.uploaded", video.getUploader().getDisplayName()), "https://youtu.be/" + video.getId());
 		embed.setDescription(video.getTitle());
-		embed.addField("Uploader", video.getUploader().getDisplayName(), true);
-		embed.addField("Uploaded date", video.getUploaded().format(DF), true);
-		embed.addField("Duration", video.getFriendlyDuration(), true);
+		embed.addField(translate(channel.getGuild(), "hermitcraft.uploader"), video.getUploader().getDisplayName(), true);
+		embed.addField(translate(channel.getGuild(), "hermitcraft.upload-date"), video.getUploaded().format(DF), true);
+		embed.addField(translate(channel.getGuild(), "hermitcraft.duration"), video.getFriendlyDuration(), true);
 		embed.setFooter(video.getId());
 		embed.setThumbnail(video.getUploader().getProfilePicture().toString());
 		embed.setImage(String.format("https://i.ytimg.com/vi/%s/mqdefault.jpg", video.getId()));

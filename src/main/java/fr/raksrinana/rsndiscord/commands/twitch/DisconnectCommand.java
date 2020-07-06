@@ -11,6 +11,8 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
 
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+
 public class DisconnectCommand extends BasicCommand{
 	/**
 	 * Constructor.
@@ -24,7 +26,7 @@ public class DisconnectCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("user", "The twitch user", false);
+		builder.addField("user", translate(guild, "command.twitch.disconnect.help.user"), false);
 	}
 	
 	@NonNull
@@ -52,8 +54,8 @@ public class DisconnectCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Disconnect";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.twitch.disconnect.name");
 	}
 	
 	@NonNull
@@ -64,7 +66,7 @@ public class DisconnectCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Leaves a twitch chat";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.twitch.disconnect.description");
 	}
 }

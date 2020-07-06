@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static fr.raksrinana.rsndiscord.utils.TrombinoscopeUtils.isRegistered;
 
 class GlobalCommand extends BasicCommand{
@@ -42,7 +44,7 @@ class GlobalCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Mode", "Determines how the picture is created: [STRETCH (default), KEEP_ASPECT_RATIO]", false);
+		builder.addField("mode", translate(guild, "command.trombinoscope.global.help.mode"), false);
 	}
 	
 	@NonNull
@@ -70,12 +72,12 @@ class GlobalCommand extends BasicCommand{
 		try{
 			if(ImageIO.write(bufferedImage, "jpeg", imgOutputStream)){
 				try(var imgInputStream = new ByteArrayInputStream(imgOutputStream.toByteArray())){
-					trombinoscopeConfiguration.getPicturesChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> Actions.sendMessage(channel, "Full trombinoscope with " + userCount + " users. (Requested by " + event.getAuthor().getAsMention() + ")", null, false, action -> action.addFile(imgInputStream, System.currentTimeMillis() + ".jpg")));
+					trombinoscopeConfiguration.getPicturesChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> Actions.sendMessage(channel, translate(event.getGuild(), "trombinoscope.global", userCount, event.getAuthor().getAsMention()), null, false, action -> action.addFile(imgInputStream, System.currentTimeMillis() + ".jpg")));
 				}
 			}
 		}
 		catch(IOException e){
-			Actions.reply(event, "Failed to create picture", null);
+			Actions.reply(event, translate(event.getGuild(), "trombinoscope.error.create-fail"), null);
 		}
 		return CommandResult.SUCCESS;
 	}
@@ -109,8 +111,8 @@ class GlobalCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Wall";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.trombinoscope.global.name");
 	}
 	
 	@NonNull
@@ -121,7 +123,7 @@ class GlobalCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Creates a wall of all the users of the trombinoscope";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.trombinoscope.global.description");
 	}
 }

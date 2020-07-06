@@ -23,6 +23,10 @@ import java.util.stream.Stream;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 public class GuildConfiguration implements CompositeConfiguration{
+	@JsonProperty("locale")
+	@Setter
+	@Getter
+	private Locale locale = Locale.ENGLISH;
 	@JsonProperty("schedules")
 	@JsonAlias({"reminders"})
 	private List<ScheduleConfiguration> schedules = new ArrayList<>();
@@ -93,6 +97,9 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("externalTodos")
 	@Getter
 	private ExternalTodosConfiguration externalTodos = new ExternalTodosConfiguration();
+	@JsonProperty("leavingRoles")
+	@Getter
+	private LeavingRolesConfiguration leavingRolesConfiguration = new LeavingRolesConfiguration();
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;

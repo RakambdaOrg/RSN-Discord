@@ -56,7 +56,7 @@ public class ModeratorRolesConfigurationCommand extends SetConfigurationCommand<
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Moderator roles";
 	}
 	

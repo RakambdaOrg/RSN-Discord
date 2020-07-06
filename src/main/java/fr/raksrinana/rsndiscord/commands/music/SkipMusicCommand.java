@@ -11,10 +11,10 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class SkipMusicCommand extends BasicCommand{
 	/**
@@ -36,8 +36,8 @@ public class SkipMusicCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		switch(RSNAudioManager.skip(event.getGuild())){
-			case NO_MUSIC -> Actions.reply(event, MessageFormat.format("{0}, no music currently playing", event.getAuthor().getAsMention()), null);
-			case OK -> Actions.reply(event, MessageFormat.format("{0} skipped the music", event.getAuthor().getAsMention()), null);
+			case NO_MUSIC -> Actions.reply(event, translate(event.getGuild(), "music.nothing-playing"), null);
+			case OK -> Actions.reply(event, translate(event.getGuild(), "music.skipped", event.getAuthor().getAsMention()), null);
 		}
 		return CommandResult.SUCCESS;
 	}
@@ -49,8 +49,8 @@ public class SkipMusicCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Skip";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.music.skip.name");
 	}
 	
 	@NonNull
@@ -61,7 +61,7 @@ public class SkipMusicCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Skips the current music";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.music.skip.description");
 	}
 }

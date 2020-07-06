@@ -8,9 +8,9 @@ import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
-import java.text.MessageFormat;
 import java.time.ZonedDateTime;
 import java.util.Objects;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class ChannelDeletionReactionHandler extends TodoReactionHandler{
 	@Override
@@ -26,7 +26,7 @@ public class ChannelDeletionReactionHandler extends TodoReactionHandler{
 	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emote, @NonNull WaitingReactionMessageConfiguration todo){
 		return todo.getMessage().getMessage().map(message -> {
 			Settings.get(event.getGuild()).getArchiveCategory().flatMap(CategoryConfiguration::getCategory).ifPresentOrElse(archiveCategory -> {
-				Actions.setCategoryAndSync(message.getTextChannel(), archiveCategory).thenAccept(future -> Actions.sendMessage(message.getTextChannel(), MessageFormat.format("{0} archived this channel.", event.getMember().getAsMention()), null));
+				Actions.setCategoryAndSync(message.getTextChannel(), archiveCategory).thenAccept(future -> Actions.sendMessage(message.getTextChannel(), translate(event.getGuild(), "reaction.archived", event.getMember().getAsMention()), null));
 				ChannelCommand.scheduleDeletion(ZonedDateTime.now().plusDays(4), message.getTextChannel(), event.getUser());
 			}, () -> Actions.deleteChannel(message.getTextChannel()));
 			return ReactionHandlerResult.PROCESSED_DELETE;

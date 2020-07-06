@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.commands.anilist;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.anilist.queries.MediaPagedQuery;
 import lombok.NonNull;
@@ -12,6 +13,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @Slf4j
 class InfoCommand extends BasicCommand{
@@ -27,7 +29,7 @@ class InfoCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder embedBuilder){
 		super.addHelp(guild, embedBuilder);
-		embedBuilder.addField("id", "The id of the media on AniList", false);
+		embedBuilder.addField("id", translate(guild, "command.anilist.info.help.id"), false);
 	}
 	
 	@NonNull
@@ -47,12 +49,12 @@ class InfoCommand extends BasicCommand{
 		try{
 			final var medias = new MediaPagedQuery(mediaId).getResult(event.getMember());
 			if(medias.isEmpty()){
-				Actions.reply(event, "No information on the next airing for media", null);
+				Actions.reply(event, translate(event.getGuild(), "anilist.media-not-found"), null);
 			}
 			else{
 				medias.forEach(media -> {
 					final var builder = new EmbedBuilder();
-					media.fillEmbed(builder);
+					media.fillEmbed(Settings.get(event.getGuild()).getLocale(), builder);
 					Actions.sendMessage(event.getChannel(), "", builder.build());
 				});
 			}
@@ -72,8 +74,8 @@ class InfoCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Info";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.anilist.info.name");
 	}
 	
 	@NonNull
@@ -84,7 +86,7 @@ class InfoCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Gets info about a media";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.anilist.info.description");
 	}
 }

@@ -22,7 +22,7 @@ public class CancelChannelDeletionReactionHandler extends TodoReactionHandler{
 	
 	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emote, @NonNull WaitingReactionMessageConfiguration todo){
 		return todo.getMessage().getMessage().map(message -> {
-			Settings.get(message.getGuild()).getSchedules().stream().filter(schedule -> schedule.getTag() == ScheduleTag.DELETE_CHANNEL && schedule.getChannel().getChannel().map(chan -> Objects.equals(chan, message.getChannel())).orElse(false)).forEach(schedule -> Settings.get(message.getGuild()).removeSchedule(schedule));
+			Settings.get(message.getGuild()).getSchedules().stream().filter(schedule -> schedule.getTag() == ScheduleTag.DELETE_CHANNEL && schedule.getChannel().getChannel().map(channel -> Objects.equals(channel, message.getChannel())).orElse(false)).forEach(schedule -> Settings.get(message.getGuild()).removeSchedule(schedule));
 			Actions.deleteMessage(message);
 			return ReactionHandlerResult.PROCESSED_DELETE;
 		}).orElse(ReactionHandlerResult.PROCESSED);

@@ -18,6 +18,7 @@ import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Set;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class TwitchIRCListener extends AbstractTwitchIRCListener implements EventListener{
 	private static final Set<TwitchMessageId> ACCEPTED_NOTICES = Set.of(TwitchMessageId.FOLLOWERS_OFF, TwitchMessageId.FOLLOWERS_ON, TwitchMessageId.FOLLOWERS_ONZERO, TwitchMessageId.MSG_BANNED, TwitchMessageId.MSG_BAD_CHARACTERS, TwitchMessageId.MSG_CHANNEL_BLOCKED, TwitchMessageId.MSG_CHANNEL_SUSPENDED, TwitchMessageId.MSG_DUPLICATE, TwitchMessageId.MSG_FOLLOWERSONLY, TwitchMessageId.MSG_FOLLOWERSONLY_ZERO, TwitchMessageId.MSG_R9K, TwitchMessageId.MSG_RATELIMIT, TwitchMessageId.MSG_REJECTED, TwitchMessageId.MSG_REJECTED_MANDATORY, TwitchMessageId.MSG_ROOM_NOT_FOUND, TwitchMessageId.MSG_SLOWMODE, TwitchMessageId.MSG_SUBSONLY, TwitchMessageId.MSG_SUSPENDED, TwitchMessageId.MSG_TIMEDOUT, TwitchMessageId.R9K_OFF, TwitchMessageId.R9K_ON, TwitchMessageId.SLOW_OFF, TwitchMessageId.SLOW_ON, TwitchMessageId.SUBS_OFF, TwitchMessageId.SUBS_ON, TwitchMessageId.TOS_BAN, TwitchMessageId.WHISPER_BANNED, TwitchMessageId.WHISPER_BANNED_RECIPIENT, TwitchMessageId.WHISPER_LIMIT_PER_MIN, TwitchMessageId.WHISPER_LIMIT_PER_SEC, TwitchMessageId.WHISPER_RESTRICTED, TwitchMessageId.WHISPER_RESTRICTED_RECIPIENT);
@@ -90,14 +91,14 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 	@Override
 	protected void onUserNotice(final UserNoticeIRCMessage event){
 		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
-			Actions.sendMessage(this.channel, MessageFormat.format("__NOTICE__: {0}", event.getTags().stream().filter(t -> Objects.equals("system-msg", t.getKey())).map(IRCTag::getValue).map(v -> v.replace("\\s", " ").trim()).findFirst().orElse("UNKNOWN")), null);
+			Actions.sendMessage(this.channel, translate(channel.getGuild(), "irc.notice", event.getTags().stream().filter(t -> Objects.equals("system-msg", t.getKey())).map(IRCTag::getValue).map(v -> v.replace("\\s", " ").trim()).findFirst().orElse("UNKNOWN")), null);
 		}
 	}
 	
 	@Override
 	protected void onClearChat(final ClearChatIRCMessage event){
 		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
-			Actions.sendMessage(this.channel, MessageFormat.format("__NOTICE__: {0} banned for {1}", event.getUser(), event.getTags().stream().filter(t -> Objects.equals("ban-duration", t.getKey())).map(IRCTag::getValue).map(Integer::parseInt).map(Duration::ofSeconds).map(Utilities::durationToString).findFirst().orElse("UNKNOWN")), null);
+			Actions.sendMessage(this.channel, translate(channel.getGuild(), "irc.banned", event.getUser(), event.getTags().stream().filter(t -> Objects.equals("ban-duration", t.getKey())).map(IRCTag::getValue).map(Integer::parseInt).map(Duration::ofSeconds).map(Utilities::durationToString).findFirst().orElse("UNKNOWN")), null);
 		}
 	}
 	
@@ -112,7 +113,7 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 	protected void onNotice(final NoticeIRCMessage event){
 		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
 			if(ACCEPTED_NOTICES.contains(event.getMessageId().orElse(TwitchMessageId.UNKNOWN))){
-				Actions.sendMessage(this.channel, MessageFormat.format("__NOTICE__: {0}", event.getMessage()), null);
+				Actions.sendMessage(this.channel, translate(channel.getGuild(), "irc.notice", event.getMessage()), null);
 			}
 			else{
 				Log.getLogger(this.getGuild()).debug("Unhandled notice: {}", event.getMessage());

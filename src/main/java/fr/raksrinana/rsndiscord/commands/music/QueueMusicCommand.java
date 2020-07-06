@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class QueueMusicCommand extends BasicCommand{
 	/**
@@ -35,7 +36,7 @@ public class QueueMusicCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("<page>", "The page to display", false);
+		builder.addField("<page>", translate(guild, "command.music.queue.help.page"), false);
 	}
 	
 	@NonNull
@@ -53,14 +54,33 @@ public class QueueMusicCommand extends BasicCommand{
 		}).orElse(1) - 1;
 		final var position = new AtomicInteger(perPage * page);
 		final var queue = RSNAudioManager.getQueue(event.getGuild());
-		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, "Music queue (Page " + (page + 1) + "/" + ((int) Math.ceil(queue.size() / (double) perPage)) + " - 10 max)", null);
-		builder.setDescription(String.format("%d musics queued", queue.size()));
-		final var beforeDuration = new AtomicLong(RSNAudioManager.currentTrack(event.getGuild()).map(t -> t.getDuration() - t.getPosition()).orElse(0L) + queue.stream().limit(perPage * page).mapToLong(AudioTrack::getDuration).sum());
-		queue.stream().skip(perPage * page).limit(perPage).forEachOrdered(track -> {
-			final var userData = track.getUserData(TrackUserFields.class);
-			builder.addField("Position " + position.addAndGet(1), track.getInfo().title + "\nRequester: " + userData.get(new RequesterTrackDataField()).map(User::getAsMention).orElse("Unknown") + "\nRepeating: " + userData.get(new ReplayTrackDataField()).map(Object::toString).orElse("False") + "\nLength: " + NowPlayingMusicCommand.getDuration(track.getDuration()) + "\nETA: " + NowPlayingMusicCommand.getDuration(beforeDuration.get()), false);
-			beforeDuration.addAndGet(track.getDuration());
-		});
+		var maxPageNumber = (int) Math.ceil(queue.size() / (double) perPage);
+		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, translate(event.getGuild(), "music.queue.page", page + 1, maxPageNumber), null);
+		builder.setDescription(translate(event.getGuild(), "music.queue.size", queue.size()));
+		final var beforeDuration = new AtomicLong(RSNAudioManager.currentTrack(event.getGuild())
+				.map(t -> t.getDuration() - t.getPosition())
+				.orElse(0L)
+				+ queue.stream().limit(perPage * page)
+				.mapToLong(AudioTrack::getDuration)
+				.sum());
+		queue.stream()
+				.skip(perPage * page)
+				.limit(perPage)
+				.forEachOrdered(track -> {
+					final var userData = track.getUserData(TrackUserFields.class);
+					builder.addField("Position " + position.addAndGet(1),
+							track.getInfo().title +
+									"\n" + translate(event.getGuild(), "music.requester") + ": " + userData.get(new RequesterTrackDataField())
+									.map(User::getAsMention)
+									.orElseGet(() -> translate(event.getGuild(), "music.unknown-requester")) +
+									"\n" + translate(event.getGuild(), "music.repeating") + ": " + userData.get(new ReplayTrackDataField())
+									.map(Object::toString)
+									.orElse("False") +
+									"\n" + translate(event.getGuild(), "music.track.duration") + ": " + NowPlayingMusicCommand.getDuration(track.getDuration()) +
+									"\n" + translate(event.getGuild(), "music.track.eta") + ": " + NowPlayingMusicCommand.getDuration(beforeDuration.get()),
+							false);
+					beforeDuration.addAndGet(track.getDuration());
+				});
 		Actions.reply(event, "", builder.build());
 		return CommandResult.SUCCESS;
 	}
@@ -73,8 +93,8 @@ public class QueueMusicCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Queue";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.music.queue.name");
 	}
 	
 	@NonNull
@@ -85,7 +105,7 @@ public class QueueMusicCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Prints the music queue";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.music.queue.description");
 	}
 }

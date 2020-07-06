@@ -50,7 +50,7 @@ public class ChangeDelayConfigurationCommand extends ValueConfigurationCommand<L
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Nickname change delay";
 	}
 	

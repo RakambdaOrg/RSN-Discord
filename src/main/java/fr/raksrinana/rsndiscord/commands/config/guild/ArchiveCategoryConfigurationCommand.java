@@ -32,7 +32,7 @@ public class ArchiveCategoryConfigurationCommand extends CategoryConfigurationCo
 	
 	@NonNull
 	@Override
-	public String getName(){
+	public String getName(@NonNull Guild guild){
 		return "Archive category";
 	}
 	

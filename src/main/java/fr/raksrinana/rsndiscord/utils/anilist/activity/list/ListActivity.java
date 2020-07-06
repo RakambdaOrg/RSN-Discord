@@ -14,7 +14,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.awt.Color;
 import java.net.URL;
 import java.time.ZonedDateTime;
+import java.util.Locale;
 import java.util.Objects;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -40,18 +42,18 @@ public abstract class ListActivity implements AnilistDatedObject{
 	private int id;
 	
 	@Override
-	public void fillEmbed(@NonNull final EmbedBuilder builder){
+	public void fillEmbed(@NonNull Locale locale, @NonNull final EmbedBuilder builder){
 		builder.setColor(getColor());
 		builder.setTimestamp(getDate());
 		if(Objects.isNull(getProgress())){
-			builder.setDescription("Added to list");
+			builder.setDescription(translate(locale, "anilist.list-added"));
 		}
 		else{
 			builder.setDescription(StringUtils.capitalize(getMedia().getProgressType(getProgress().contains("-"))) + " " + getProgress());
 		}
 		builder.addBlankField(false);
-		builder.addField("Media:", "", false);
-		getMedia().fillEmbed(builder);
+		builder.addField(translate(locale, "anilist.media"), "", false);
+		getMedia().fillEmbed(locale, builder);
 	}
 	
 	@NonNull

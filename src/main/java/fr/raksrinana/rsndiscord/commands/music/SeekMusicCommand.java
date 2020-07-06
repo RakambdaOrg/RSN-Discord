@@ -12,11 +12,11 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class SeekMusicCommand extends BasicCommand{
 	private static final Pattern TIME_PATTERN = Pattern.compile("((\\d{1,2}):)?((\\d{1,2}):)?(\\d{1,2})");
@@ -35,7 +35,7 @@ public class SeekMusicCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Time", "The time to seek, must be in the format hh:mm:ss ou mm:ss or ss", false);
+		builder.addField("Time", translate(guild, "command.music.seek.help.time"), false);
 	}
 	
 	@NonNull
@@ -48,13 +48,13 @@ public class SeekMusicCommand extends BasicCommand{
 		else{
 			final var time = SeekMusicCommand.parseTime(event.getGuild(), args.pop());
 			if(time < 0){
-				Actions.reply(event, "Invalid format", null);
+				Actions.reply(event, translate(event.getGuild(), "music.invalid-format"), null);
 			}
 			else{
 				switch(RSNAudioManager.seek(event.getGuild(), time)){
-					case NO_MUSIC -> Actions.reply(event, MessageFormat.format("{0}, No music currently playing", event.getAuthor().getAsMention()), null);
-					case OK -> Actions.reply(event, MessageFormat.format("{0} seeked the music to {1}", event.getAuthor().getAsMention(), NowPlayingMusicCommand.getDuration(time)), null);
-					case IMPOSSIBLE -> Actions.reply(event, MessageFormat.format("{0}, the time of this music cannot be changed", event.getAuthor().getAsMention()), null);
+					case NO_MUSIC -> Actions.reply(event, translate(event.getGuild(), "music.nothing-playing"), null);
+					case OK -> Actions.reply(event, translate(event.getGuild(), "music.seeked", event.getAuthor().getAsMention(), NowPlayingMusicCommand.getDuration(time)), null);
+					case IMPOSSIBLE -> Actions.reply(event, translate(event.getGuild(), "music.seek-error"), null);
 				}
 			}
 		}
@@ -81,7 +81,7 @@ public class SeekMusicCommand extends BasicCommand{
 			return Integer.parseInt(str);
 		}
 		catch(final Exception e){
-			Log.getLogger(guild).error("Error paring {} into int", str, e);
+			Log.getLogger(guild).error("Error parsing {} into int", str, e);
 		}
 		return 0;
 	}
@@ -99,8 +99,8 @@ public class SeekMusicCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getName(){
-		return "Seek";
+	public String getName(@NonNull Guild guild){
+		return translate(guild, "command.music.seek.name");
 	}
 	
 	@NonNull
@@ -111,7 +111,7 @@ public class SeekMusicCommand extends BasicCommand{
 	
 	@NonNull
 	@Override
-	public String getDescription(){
-		return "Seek a time into the music";
+	public String getDescription(@NonNull Guild guild){
+		return translate(guild, "command.music.seek.description");
 	}
 }

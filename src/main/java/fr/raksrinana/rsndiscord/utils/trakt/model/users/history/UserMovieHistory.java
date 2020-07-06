@@ -12,8 +12,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import java.net.URL;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -25,12 +27,12 @@ public class UserMovieHistory extends UserHistory{
 	private Movie movie;
 	
 	@Override
-	public void fillEmbed(@NonNull EmbedBuilder builder, MediaDetails mediaDetails){
-		builder.setTitle("Movie watched", Optional.of(getUrl()).map(Object::toString).orElse(null));
+	public void fillEmbed(@NonNull Locale locale, @NonNull EmbedBuilder builder, MediaDetails mediaDetails){
+		builder.setTitle(translate(locale, "trakt.watched.movie"), Optional.of(getUrl()).map(Object::toString).orElse(null));
 		Optional.ofNullable(mediaDetails).flatMap(MediaDetails::getPosterURL).ifPresent(posterUrl -> builder.setThumbnail(posterUrl.toString()));
-		this.getMovie().fillEmbed(builder, mediaDetails instanceof MovieDetails ? (MovieDetails) mediaDetails : null);
+		this.getMovie().fillEmbed(locale, builder, mediaDetails instanceof MovieDetails ? (MovieDetails) mediaDetails : null);
 		builder.addBlankField(false);
-		super.fillEmbed(builder, mediaDetails);
+		super.fillEmbed(locale, builder, mediaDetails);
 	}
 	
 	@Override

@@ -46,17 +46,20 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 		AniListRunner.super.sendMessages(channels, userElements);
 		final var thaChannels = this.getJda().getGuilds().stream().map(Settings::get).map(GuildConfiguration::getAniListConfiguration).map(AniListConfiguration::getThaChannel).flatMap(Optional::stream).map(ChannelConfiguration::getChannel).flatMap(Optional::stream).collect(Collectors.toSet());
 		final var mediaListsToSend = userElements.values().stream().flatMap(Set::stream).filter(mediaList -> mediaList.getCustomLists().entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).anyMatch(acceptedThaLists::contains)).collect(Collectors.toList());
-		thaChannels.forEach(channelToSend -> Settings.get(channelToSend.getGuild()).getAniListConfiguration().getThaUser().flatMap(UserConfiguration::getUser).map(channelToSend.getGuild()::retrieveMember).map(RestAction::complete).ifPresent(memberToSend -> mediaListsToSend.forEach(mediaListToSend -> {
-			final var similarWaitingReactions = getSimilarWaitingReactions(channelToSend, mediaListToSend.getMedia());
-			Actions.sendMessage(channelToSend, memberToSend.getAsMention(), this.buildMessage(memberToSend.getUser(), mediaListToSend)).thenAccept(sentMessage -> {
-				Actions.addReaction(sentMessage, BasicEmotes.CHECK_OK.getValue());
-				similarWaitingReactions.forEach(reaction -> Utilities.getMessageById(channelToSend, reaction.getMessage().getMessageId()).thenAccept(message -> {
-					Actions.deleteMessage(message);
-					Settings.get(channelToSend.getGuild()).removeMessagesAwaitingReaction(reaction);
-				}));
-				Settings.get(channelToSend.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(sentMessage, ReactionTag.ANILIST_TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
-			});
-		})));
+		thaChannels.forEach(channelToSend -> {
+			var locale = Settings.get(channelToSend.getGuild()).getLocale();
+			Settings.get(channelToSend.getGuild()).getAniListConfiguration().getThaUser().flatMap(UserConfiguration::getUser).map(channelToSend.getGuild()::retrieveMember).map(RestAction::complete).ifPresent(memberToSend -> mediaListsToSend.forEach(mediaListToSend -> {
+				final var similarWaitingReactions = getSimilarWaitingReactions(channelToSend, mediaListToSend.getMedia());
+				Actions.sendMessage(channelToSend, memberToSend.getAsMention(), this.buildMessage(locale, memberToSend.getUser(), mediaListToSend)).thenAccept(sentMessage -> {
+					Actions.addReaction(sentMessage, BasicEmotes.CHECK_OK.getValue());
+					similarWaitingReactions.forEach(reaction -> Utilities.getMessageById(channelToSend, reaction.getMessage().getMessageId()).thenAccept(message -> {
+						Actions.deleteMessage(message);
+						Settings.get(channelToSend.getGuild()).removeMessagesAwaitingReaction(reaction);
+					}));
+					Settings.get(channelToSend.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(sentMessage, ReactionTag.ANILIST_TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
+				});
+			}));
+		});
 	}
 	
 	private static Collection<WaitingReactionMessageConfiguration> getSimilarWaitingReactions(@NonNull final TextChannel channel, @NonNull final Media media){
