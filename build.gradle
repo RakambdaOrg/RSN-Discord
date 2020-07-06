@@ -43,6 +43,7 @@ dependencies {
     }
     implementation("com.sedmelluq:lavaplayer:${project.lavaplayer_version}")
     implementation("com.github.natanbc:lavaplayer-arm-natives:${project.lavaplayer_arm_version}")
+    implementation("de.sciss:jump3r:${project.jump3r_version}")
 
     implementation("org.slf4j:slf4j-api:${project.slf4j_version}")
     implementation("ch.qos.logback:logback-classic:${project.logback_version}") {

@@ -20,4 +20,5 @@ open module fr.raksrinana.rsndiscord {
 	requires com.google.gson;
 	requires emoji.java;
 	requires imgscalr.lib;
+	requires jump3r;
 }
