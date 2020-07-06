@@ -6,7 +6,6 @@ plugins {
     id 'java'
     id 'application'
     id 'io.freefair.lombok' version '5.1.0'
-    id 'pl.allegro.tech.build.axion-release' version '1.11.0'
 }
 
 def secretsFile = new File(".", "secrets.properties")
@@ -32,7 +31,6 @@ buildProperties {
 
 group = 'fr.raksrinana'
 description = 'RSNDiscord'
-version = scmVersion.version
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_14
 
 mainClassName = project.mainClass
@@ -114,10 +112,6 @@ shadowJar {
     archivesBaseName = project.name
     classifier = 'shaded'
     archiveVersion = ''
-}
-
-scmVersion {
-    versionIncrementer 'incrementPatch'
 }
 
 tasks.withType(JavaCompile) {
