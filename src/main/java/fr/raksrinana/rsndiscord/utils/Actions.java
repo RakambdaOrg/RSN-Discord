@@ -100,7 +100,7 @@ public class Actions{
 					currentMessage.append(lines.pop()).append(newLine);
 				}
 				if(currentMessage.length() > 0){
-					final var messageBuilder = new MessageBuilder().sendTo(channel).append(currentMessage);
+					final var messageBuilder = channel.sendMessage(currentMessage);
 					if(lines.isEmpty()){
 						actionsToSend.add(messageBuilder.embed(embed));
 					}
@@ -121,7 +121,7 @@ public class Actions{
 			buildUnique = true;
 		}
 		if(buildUnique || actionsToSend.isEmpty()){
-			actionsToSend.add(new MessageBuilder().sendTo(channel).append(message).embed(embed));
+			actionsToSend.add(channel.sendMessage(message).embed(embed));
 		}
 		var lastSent = new CompletableFuture<Message>();
 		for(int i = 0; i < actionsToSend.size(); i++){
@@ -137,8 +137,7 @@ public class Actions{
 	@NonNull
 	public static CompletableFuture<Message> forwardMessage(Message source, TextChannel toChannel){
 		Log.getLogger(toChannel.getGuild()).info("Forwarding message {} to channel {}", source, toChannel);
-		final var builder = new MessageBuilder(source);
-		var action = builder.sendTo(toChannel);
+		var action = toChannel.sendMessage(new MessageBuilder(source).build());
 		for(Message.Attachment attachment : source.getAttachments()){
 			final var finalAction = action;
 			try{
@@ -186,7 +185,7 @@ public class Actions{
 			throw new IllegalArgumentException(MessageFormat.format("Cannot send private message to other bot {0} : {1}", channel, message));
 		}
 		Log.getLogger(guild).info("Sending private message to {} : {}", channel, message);
-		return new MessageBuilder().sendTo(channel).append(message).embed(embed).submit();
+		return channel.sendMessage(message).embed(embed).submit();
 	}
 	
 	/**
@@ -240,7 +239,7 @@ public class Actions{
 	@NonNull
 	public static CompletableFuture<Message> sendFile(final TextChannel channel, final Path path){
 		Log.getLogger(channel.getGuild()).debug("Sending file {} to {}", path, channel);
-		return new MessageBuilder().sendTo(channel).addFile(path.toFile()).submit();
+		return channel.sendMessage(new MessageBuilder().build()).addFile(path.toFile()).submit();
 	}
 	
 	/**
@@ -451,7 +450,7 @@ public class Actions{
 	 */
 	@NonNull
 	public static CompletableFuture<Message> sendMessage(@NonNull final TextChannel channel, @NonNull MessageBuilder messageBuilder){
-		final var action = messageBuilder.sendTo(channel);
+		final var action = channel.sendMessage(messageBuilder.build());
 		Log.getLogger(channel.getGuild()).info("Sending message to {} : {}", channel, action);
 		return action.submit();
 	}
