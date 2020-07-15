@@ -68,6 +68,7 @@ public class Main{
 			jdaBuilder.addEventListeners(new AutoReactionsChannelMessageListener());
 			jdaBuilder.addEventListeners(new ReactionListener());
 			jdaBuilder.addEventListeners(new ReplyMessageListener());
+			jdaBuilder.addEventListeners(new OnlyMediaChannelListener());
 			jdaBuilder.setAutoReconnect(true);
 			jda = jdaBuilder.build();
 			jda.awaitReady();

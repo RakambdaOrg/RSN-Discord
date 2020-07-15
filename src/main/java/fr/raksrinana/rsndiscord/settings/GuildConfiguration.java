@@ -100,6 +100,10 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("leavingRoles")
 	@Getter
 	private LeavingRolesConfiguration leavingRolesConfiguration = new LeavingRolesConfiguration();
+	@JsonProperty("onlyMediaChannels")
+	@Getter
+	@Setter
+	private Set<ChannelConfiguration> onlyMediaChannels = new HashSet<>();
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
