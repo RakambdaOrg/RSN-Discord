@@ -51,7 +51,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 			builder.setColor(Color.RED);
 			builder.setDescription(translate(event.getGuild(), "music.nothing-playing"));
 		});
-		Actions.reply(event, "", builder.build());
+		Actions.sendEmbed(event.getChannel(), builder.build());
 		return CommandResult.SUCCESS;
 	}
 	

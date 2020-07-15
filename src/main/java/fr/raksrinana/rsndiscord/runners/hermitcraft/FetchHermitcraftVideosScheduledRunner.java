@@ -61,7 +61,7 @@ public class FetchHermitcraftVideosScheduledRunner implements ScheduledRunner{
 		embed.setFooter(video.getId());
 		embed.setThumbnail(video.getUploader().getProfilePicture().toString());
 		embed.setImage(String.format("https://i.ytimg.com/vi/%s/mqdefault.jpg", video.getId()));
-		Actions.sendMessage(channel, "", embed.build());
+		Actions.sendEmbed(channel, embed.build());
 	}
 	
 	@NonNull

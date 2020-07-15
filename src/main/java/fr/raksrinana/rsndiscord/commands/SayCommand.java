@@ -24,6 +24,9 @@ public class SayCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
+		if(args.isEmpty()){
+			return CommandResult.BAD_ARGUMENTS;
+		}
 		Actions.reply(event, String.join(" ", args), null);
 		return CommandResult.SUCCESS;
 	}

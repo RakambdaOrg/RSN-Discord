@@ -77,7 +77,7 @@ public class MoveMusicCommand extends BasicCommand{
 				.map(Object::toString)
 				.orElse("False"),
 				true);
-		Actions.reply(event, "", builder.build());
+		Actions.sendEmbed(event.getChannel(), builder.build());
 		return CommandResult.SUCCESS;
 	}
 	

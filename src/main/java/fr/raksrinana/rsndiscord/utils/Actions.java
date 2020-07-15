@@ -134,6 +134,20 @@ public class Actions{
 		return lastSent;
 	}
 	
+	/**
+	 * Send an embed to a channel.
+	 *
+	 * @param channel               The channel to send the message to.
+	 * @param embed                 The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
+	 *
+	 * @return A completable future of a message (see {@link RestAction#submit()}).
+	 */
+	@NonNull
+	public static CompletableFuture<Message> sendEmbed(@NonNull final TextChannel channel, @NonNull MessageEmbed embed){
+		Log.getLogger(channel.getGuild()).info("Sending embed to {} : {}", channel, embed);
+		return channel.sendMessage(embed).submit();
+	}
+	
 	@NonNull
 	public static CompletableFuture<Message> forwardMessage(Message source, TextChannel toChannel){
 		Log.getLogger(toChannel.getGuild()).info("Forwarding message {} to channel {}", source, toChannel);

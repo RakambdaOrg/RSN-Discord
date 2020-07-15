@@ -29,7 +29,7 @@ public class InfosCommand extends BasicCommand{
 		builder.addField(translate(event.getGuild(), "infos.time"), now.format(DateTimeFormatter.ISO_ZONED_DATE_TIME), false);
 		builder.addField(translate(event.getGuild(), "infos.last-boot"), Main.bootTime.format(DateTimeFormatter.ISO_ZONED_DATE_TIME), false);
 		builder.addField(translate(event.getGuild(), "infos.elapsed"), Duration.between(Main.bootTime, now).toString(), false);
-		Actions.reply(event, "", builder.build());
+		Actions.sendEmbed(event.getChannel(), builder.build());
 		return CommandResult.SUCCESS;
 	}
 	

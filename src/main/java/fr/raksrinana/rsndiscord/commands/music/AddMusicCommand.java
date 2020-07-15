@@ -93,7 +93,7 @@ public class AddMusicCommand extends BasicCommand{
 						if(!isCurrentTrack){
 							embed.addField(translate(event.getGuild(), "music.queue.position"), String.valueOf(1 + before.size()), true);
 						}
-						Actions.reply(event, "", embed.build());
+						Actions.sendEmbed(event.getChannel(), embed.build());
 					}
 				};
 				final Consumer<List<AudioTrack>> onPlaylistAdded = playlist -> playlist.forEach(onTrackAdded);

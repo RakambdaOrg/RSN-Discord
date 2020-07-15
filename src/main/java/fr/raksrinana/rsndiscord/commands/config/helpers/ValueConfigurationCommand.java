@@ -38,7 +38,7 @@ public abstract class ValueConfigurationCommand<T> extends BaseConfigurationComm
 			this.setConfig(event.getGuild(), value);
 			final var builder = this.getConfigEmbed(event, ConfigurationOperation.SET.name(), Color.GREEN);
 			builder.addField(this.getValueName(), value.toString(), false);
-			Actions.reply(event, "", builder.build());
+			Actions.sendEmbed(event.getChannel(), builder.build());
 		}
 		catch(final IllegalArgumentException e){
 			Actions.reply(event, e.getMessage(), null);
@@ -54,7 +54,7 @@ public abstract class ValueConfigurationCommand<T> extends BaseConfigurationComm
 		this.removeConfig(event.getGuild());
 		final var builder = this.getConfigEmbed(event, ConfigurationOperation.REMOVE.name(), Color.GREEN);
 		builder.addField(this.getValueName(), "<<EMPTY>>", false);
-		Actions.reply(event, "", builder.build());
+		Actions.sendEmbed(event.getChannel(), builder.build());
 	}
 	
 	protected abstract void removeConfig(@NonNull Guild guild);
@@ -63,7 +63,7 @@ public abstract class ValueConfigurationCommand<T> extends BaseConfigurationComm
 	protected void onShow(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		final var builder = this.getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
 		builder.addField(this.getValueName(), this.getConfig(event.getGuild()).map(Objects::toString).orElse("<<EMPTY>>"), false);
-		Actions.reply(event, "", builder.build());
+		Actions.sendEmbed(event.getChannel(), builder.build());
 	}
 	
 	@NonNull

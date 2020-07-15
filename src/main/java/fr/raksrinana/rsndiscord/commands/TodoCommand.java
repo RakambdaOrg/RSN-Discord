@@ -41,6 +41,9 @@ public class TodoCommand extends BasicCommand{
 				args.pop();
 				data.put(ReactionUtils.DELETE_KEY, Boolean.toString(false));
 			}
+			if(args.isEmpty()){
+				return CommandResult.BAD_ARGUMENTS;
+			}
 			Actions.reply(event, String.join(" ", args), null).thenAccept(message -> {
 				Actions.addReaction(message, BasicEmotes.CHECK_OK.getValue());
 				Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, ReactionTag.TODO, data));

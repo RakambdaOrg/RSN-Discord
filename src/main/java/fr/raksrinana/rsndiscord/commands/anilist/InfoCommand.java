@@ -55,7 +55,7 @@ class InfoCommand extends BasicCommand{
 				medias.forEach(media -> {
 					final var builder = new EmbedBuilder();
 					media.fillEmbed(Settings.get(event.getGuild()).getLocale(), builder);
-					Actions.sendMessage(event.getChannel(), "", builder.build());
+					Actions.sendEmbed(event.getChannel(), builder.build());
 				});
 			}
 		}

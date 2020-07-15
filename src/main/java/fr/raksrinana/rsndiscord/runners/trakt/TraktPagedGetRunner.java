@@ -75,7 +75,7 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 									var locale = Settings.get(channel.getGuild()).getLocale();
 									final var builder = new EmbedBuilder();
 									this.buildMessage(locale, builder, user, change);
-									Actions.sendMessage(channel, "", builder.build());
+									Actions.sendEmbed(channel, builder.build());
 								}));
 			}
 		}
@@ -89,7 +89,7 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 								var locale = Settings.get(channel.getGuild()).getLocale();
 								final var builder = new EmbedBuilder();
 								this.buildMessage(locale, builder, change.getKey(), change.getValue());
-								Actions.sendMessage(channel, "", builder.build());
+								Actions.sendEmbed(channel, builder.build());
 							}));
 		}
 	}

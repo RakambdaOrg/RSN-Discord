@@ -52,7 +52,7 @@ public class NicknameCommand extends BasicCommand{
 				builder.addField(translate(event.getGuild(), "nickname.user"), memberOptional.get().getAsMention(), true);
 				builder.setTitle(translate(event.getGuild(), "nickname.error.permission-other"));
 				builder.setColor(Color.RED);
-				Actions.reply(event, "", builder.build());
+				Actions.sendEmbed(event.getChannel(), builder.build());
 				return CommandResult.SUCCESS;
 			}
 		}
@@ -73,7 +73,7 @@ public class NicknameCommand extends BasicCommand{
 				builder.setColor(Color.ORANGE);
 				builder.setTitle(translate(event.getGuild(), "nickname.no-changes"));
 				builder.addField(translate(event.getGuild(), "nickname.reason"), translate(event.getGuild(), "nickname.same-nickname"), false);
-				Actions.reply(event, "", builder.build());
+				Actions.sendEmbed(event.getChannel(), builder.build());
 			}
 			else if(Objects.nonNull(newName) && !Utilities.isTeam(event.getMember()) && lastChange.map(date -> date.plus(delay)).map(date -> date.isAfter(ZonedDateTime.now())).orElse(false)){
 				builder.setColor(Color.RED);
@@ -83,7 +83,7 @@ public class NicknameCommand extends BasicCommand{
 				builder.addField(translate(event.getGuild(), "nickname.last-change"), lastChange.map(date -> date.format(DF)).orElseGet(() -> translate(event.getGuild(), "nickname.unknown")), true);
 				builder.addField(translate(event.getGuild(), "nickname.next-allowed"), lastChange.map(date -> date.plus(delay)).map(date -> date.format(DF)).orElseGet(() -> translate(event.getGuild(), "nickname.unknown")), true);
 				builder.setTimestamp(ZonedDateTime.now());
-				Actions.reply(event, "", builder.build());
+				Actions.sendEmbed(event.getChannel(), builder.build());
 			}
 			else{
 				builder.addField(translate(event.getGuild(), "nickname.old-nick"), oldName.orElseGet(() -> translate(event.getGuild(), "nickname.unknown")), true);
@@ -105,7 +105,7 @@ public class NicknameCommand extends BasicCommand{
 					builder.setTitle(translate(event.getGuild(), "nickname.invalid"));
 					builder.addField(translate(event.getGuild(), "nickname.reason"), e.getMeaning(), false);
 				}
-				Actions.reply(event, "", builder.build());
+				Actions.sendEmbed(event.getChannel(), builder.build());
 			}
 		}, () -> Actions.reply(event, translate(event.getGuild(), "nickname.target-not-found"), null));
 		return CommandResult.SUCCESS;

@@ -28,7 +28,7 @@ public class DogCommand extends BasicCommand{
 		super.execute(event, args);
 		final var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, translate(event.getGuild(), "dog.title"), null);
 		embed.setImage(DogCommand.getDogPictureURL(event.getGuild()));
-		Actions.reply(event, "", embed.build());
+		Actions.sendEmbed(event.getChannel(), embed.build());
 		return CommandResult.SUCCESS;
 	}
 	

@@ -91,7 +91,7 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 	
 	@Override
 	public boolean onExpire(){
-		Actions.sendMessage(this.getWaitChannel(), translate(getWaitChannel().getGuild(), "", "listeners.reply.expire", this.getUser().getAsMention()), null);
+		Actions.sendMessage(this.getWaitChannel(), translate(getWaitChannel().getGuild(), "listeners.reply.expire", this.getUser().getAsMention()), null);
 		this.infoMessages.forEach(Actions::deleteMessage);
 		return true;
 	}

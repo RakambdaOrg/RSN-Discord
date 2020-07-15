@@ -70,6 +70,6 @@ public class FetchHermitcraftStreamsScheduledRunner implements ScheduledRunner{
 		EmbedBuilder embed = Utilities.buildEmbed(this.jda.getSelfUser(), Color.GREEN, translate(channel.getGuild(), "hermitcraft.live", hermit.getDisplayName()), hermit.getLiveUrl().map(URL::toString).orElse(null));
 		embed.addField(translate(channel.getGuild(), "hermitcraft.hermit"), hermit.getDisplayName(), true);
 		embed.setThumbnail(hermit.getProfilePicture().toString());
-		Actions.sendMessage(channel, "", embed.build());
+		Actions.sendEmbed(channel, embed.build());
 	}
 }

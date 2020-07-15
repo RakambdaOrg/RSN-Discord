@@ -79,7 +79,7 @@ class MediaListDifferencesRunner implements AniListRunner<MediaList, MediaListPa
 					.filter(user2Medias::contains)
 					.sorted()
 					.map(commonMedia -> this.buildMessage(locale, null, commonMedia))
-					.forEach(message -> Actions.sendMessage(this.channel, "", message));
+					.forEach(message -> Actions.sendEmbed(this.channel, message));
 		}
 	}
 	

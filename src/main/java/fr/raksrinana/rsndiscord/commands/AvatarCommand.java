@@ -33,7 +33,7 @@ public class AvatarCommand extends BasicCommand{
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, translate(event.getGuild(), "avatar.title"), user.getAvatarUrl());
 		builder.addField(translate(event.getGuild(), "avatar.link"), user.getAvatarUrl(), true);
 		builder.setImage(user.getAvatarUrl());
-		Actions.reply(event, "", builder.build());
+		Actions.sendEmbed(event.getChannel(), builder.build());
 		return CommandResult.SUCCESS;
 	}
 	

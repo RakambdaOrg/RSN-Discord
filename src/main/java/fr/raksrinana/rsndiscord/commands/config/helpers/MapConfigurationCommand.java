@@ -31,7 +31,7 @@ public abstract class MapConfigurationCommand<K, V> extends BaseConfigurationCom
 			this.getConfig(event.getGuild()).ifPresentOrElse(config -> config.put(key, value), () -> this.createConfig(event.getGuild(), key, value));
 			final var builder = this.getConfigEmbed(event, ConfigurationOperation.SET.name(), Color.GREEN);
 			builder.addField(translate(event.getGuild(), "command.config.helpers.value-added"), key.toString() + "=" + value.toString(), false);
-			Actions.reply(event, "", builder.build());
+			Actions.sendEmbed(event.getChannel(), builder.build());
 		}
 		catch(final IllegalArgumentException e){
 			Actions.reply(event, e.getMessage(), null);
@@ -45,7 +45,7 @@ public abstract class MapConfigurationCommand<K, V> extends BaseConfigurationCom
 			this.removeConfig(event.getGuild(), key);
 			final var builder = this.getConfigEmbed(event, ConfigurationOperation.REMOVE.name(), Color.GREEN);
 			builder.addField(translate(event.getGuild(), "command.config.helpers.value-removed"), key.toString(), false);
-			Actions.reply(event, "", builder.build());
+			Actions.sendEmbed(event.getChannel(), builder.build());
 		}
 		catch(final IllegalArgumentException e){
 			Actions.reply(event, e.getMessage(), null);
@@ -61,7 +61,7 @@ public abstract class MapConfigurationCommand<K, V> extends BaseConfigurationCom
 				.collect(Collectors.joining(", "));
 		final var builder = this.getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
 		builder.addField(translate(event.getGuild(), "command.config.helpers.values"), values, false);
-		Actions.reply(event, "", builder.build());
+		Actions.sendEmbed(event.getChannel(), builder.build());
 	}
 	
 	protected abstract void removeConfig(@NonNull Guild guild, @NonNull K key);

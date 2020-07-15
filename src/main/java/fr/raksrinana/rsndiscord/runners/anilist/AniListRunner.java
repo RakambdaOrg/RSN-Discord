@@ -38,7 +38,7 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 						.forEach(channel -> {
 							var locale = Settings.get(channel.getGuild()).getLocale();
 							var embed = this.buildMessage(locale, change.getKey(), change.getValue());
-							Actions.sendMessage(channel, "", embed);
+							Actions.sendEmbed(channel, embed);
 						}));
 	}
 	

@@ -81,7 +81,7 @@ public abstract class CommandComposite extends BasicCommand{
 		}
 		final var switchStr = args.poll();
 		if(Objects.isNull(switchStr)){
-			Actions.reply(event, "", Utilities.buildEmbed(event.getAuthor(), Color.RED, translate(event.getGuild(), "commands.error.title"), null)
+			Actions.sendEmbed(event.getChannel(), Utilities.buildEmbed(event.getAuthor(), Color.RED, translate(event.getGuild(), "commands.error.title"), null)
 					.addField(translate(event.getGuild(), "commands.error.command"), this.getName(event.getGuild()), false)
 					.addField(translate(event.getGuild(), "commands.error.reason"), translate(event.getGuild(), "commands.error.required-argument"), false)
 					.addField(translate(event.getGuild(), "commands.error.sub-commands"), this.subCommands.stream()
@@ -95,7 +95,7 @@ public abstract class CommandComposite extends BasicCommand{
 				return toExecute.get().execute(event, args);
 			}
 			else{
-				Actions.reply(event, "", Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, translate(event.getGuild(), "commands.error.title"), null)
+				Actions.sendEmbed(event.getChannel(),Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, translate(event.getGuild(), "commands.error.title"), null)
 						.addField(translate(event.getGuild(), "commands.error.command"), this.getName(event.getGuild()), false)
 						.addField(translate(event.getGuild(), "commands.error.reason"), translate(event.getGuild(), "commands.error.invalid-argument", switchStr), false)
 						.addField(translate(event.getGuild(), "commands.error.sub-commands"), this.subCommands.stream()

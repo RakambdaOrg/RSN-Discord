@@ -81,7 +81,7 @@ public class QueueMusicCommand extends BasicCommand{
 							false);
 					beforeDuration.addAndGet(track.getDuration());
 				});
-		Actions.reply(event, "", builder.build());
+		Actions.sendEmbed(event.getChannel(), builder.build());
 		return CommandResult.SUCCESS;
 	}
 	

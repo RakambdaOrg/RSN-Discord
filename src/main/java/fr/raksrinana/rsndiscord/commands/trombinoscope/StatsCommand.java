@@ -11,13 +11,11 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-
-import java.awt.*;
+import java.awt.Color;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 class StatsCommand extends BasicCommand {
@@ -55,7 +53,7 @@ class StatsCommand extends BasicCommand {
                 .map(Picture::getDate)
                 .map(DF::format)
                 .orElseGet(() -> translate(event.getGuild(), "trombinoscope.stats.date-unknown")), true);
-        Actions.reply(event, "", embed.build());
+        Actions.sendEmbed(event.getChannel(), embed.build());
         return CommandResult.SUCCESS;
     }
 

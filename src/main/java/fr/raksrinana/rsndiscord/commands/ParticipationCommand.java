@@ -56,7 +56,7 @@ public class ParticipationCommand extends BasicCommand{
 					.sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue()))
 					.limit(maxUserCount)
 					.forEachOrdered(entry -> embed.addField(translate(channel.getGuild(), "participation.chat.entry", position.incrementAndGet(), entry.getValue()), Optional.ofNullable(channel.getGuild().getMemberById(entry.getKey())).map(Member::getAsMention).orElse(Long.toString(entry.getKey())), false));
-			Actions.sendMessage(channel, "", embed.build());
+			Actions.sendEmbed(channel, embed.build());
 		});
 	}
 	
@@ -65,7 +65,7 @@ public class ParticipationCommand extends BasicCommand{
 			final var position = new AtomicInteger(0);
 			final var embed = Utilities.buildEmbed(author, Color.GREEN, translate(channel.getGuild(), "participation.voice.title", day.format(DATE_FORMATTER)), null);
 			voiceParticipation.getUserCounts().entrySet().stream().sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue())).limit(maxUserCount).forEachOrdered(entry -> embed.addField(translate(channel.getGuild(), "participation.voice.entry", position.incrementAndGet(), Utilities.durationToString(Duration.ofMinutes(entry.getValue()))), Optional.ofNullable(channel.getGuild().getMemberById(entry.getKey())).map(Member::getAsMention).orElse(Long.toString(entry.getKey())), false));
-			Actions.sendMessage(channel, "", embed.build());
+			Actions.sendEmbed(channel, embed.build());
 		});
 	}
 	

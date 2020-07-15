@@ -84,7 +84,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 							builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 							builder.setColor(Color.RED);
 							builder.setTitle(translate(event.getGuild(), "listeners.commands.unauthorized"));
-							Actions.reply(event, "", builder.build());
+							Actions.sendEmbed(event.getChannel(), builder.build());
 						}
 						catch(final NotHandledException e){
 							Log.getLogger(event.getGuild()).warn("Command {} isn't handled for {} ({})", command, event.getAuthor(), e.getMessage());
@@ -96,7 +96,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 							builder.setColor(Color.RED);
 							builder.setTitle(translate(event.getGuild(), "listeners.commands.exception.title"));
 							builder.addField(translate(event.getGuild(), "listeners.commands.exception.kind"), e.getClass().getName(), false);
-							Actions.reply(event, "", builder.build());
+							Actions.sendEmbed(event.getChannel(), builder.build());
 						}
 					}, () -> {
 						final var builder = new EmbedBuilder();
@@ -104,7 +104,7 @@ public class CommandsMessageListener extends ListenerAdapter{
 						builder.setColor(Color.ORANGE);
 						builder.setTitle(translate(event.getGuild(), "listeners.commands.not-found.title"));
 						builder.addField(translate(event.getGuild(), "listeners.commands.exception.command"), cmdText, false);
-						Actions.reply(event, "", builder.build()).thenAccept(message -> ScheduleUtils.addSchedule(new DeleteMessageScheduleConfiguration(event.getAuthor(), ZonedDateTime.now().plusMinutes(2), message), event.getGuild()));
+						Actions.sendEmbed(event.getChannel(), builder.build()).thenAccept(message -> ScheduleUtils.addSchedule(new DeleteMessageScheduleConfiguration(event.getAuthor(), ZonedDateTime.now().plusMinutes(2), message), event.getGuild()));
 					});
 					if(!messageDeleted.get()){
 						Actions.deleteMessage(event.getMessage());

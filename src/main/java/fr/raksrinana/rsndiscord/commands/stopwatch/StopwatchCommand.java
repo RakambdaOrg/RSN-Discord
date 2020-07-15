@@ -12,11 +12,9 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-
-import java.awt.*;
+import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
-
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
@@ -26,7 +24,7 @@ public class StopwatchCommand extends BasicCommand {
     public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args) {
         super.execute(event, args);
         var embed = buildEmbed(event.getGuild(), event.getAuthor(), "");
-        Actions.sendMessage(event.getChannel(), "", embed).thenAccept(message -> {
+        Actions.sendEmbed(event.getChannel(), embed).thenAccept(message -> {
             Actions.addReaction(message, BasicEmotes.P.getValue());
             Actions.addReaction(message, BasicEmotes.S.getValue());
             ReplyMessageListener.handleReply(new StopwatchWaitingUserReply(event, message));

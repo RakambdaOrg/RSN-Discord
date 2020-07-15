@@ -36,7 +36,7 @@ public class HelpCommand extends BasicCommand{
 			builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
 			builder.setTitle(translate(event.getGuild(), "help.available-commands"));
 			allCommands.stream().filter(command -> command.isAllowed(event.getMember())).map(command -> new MessageEmbed.Field(prefix + command.getCommandStrings().get(0), command.getDescription(event.getGuild()), false)).filter(message -> Objects.nonNull(message.getName())).sorted(Comparator.comparing(MessageEmbed.Field::getName)).forEach(builder::addField);
-			Actions.reply(event, "", builder.build());
+			Actions.sendEmbed(event.getChannel(), builder.build());
 		}
 		else{
 			var command = allCommands.stream().filter(command1 -> command1.getCommandStrings().contains(args.get(0).toLowerCase())).filter(command1 -> command1.isAllowed(event.getMember())).findAny();
@@ -68,7 +68,7 @@ public class HelpCommand extends BasicCommand{
 				builder.setColor(Color.ORANGE);
 				builder.addField(prefix + args.poll(), translate(event.getGuild(), "help.not-exist"), false);
 			}
-			Actions.reply(event, "", builder.build());
+			Actions.sendEmbed(event.getChannel(), builder.build());
 		}
 		return CommandResult.SUCCESS;
 	}
