@@ -41,12 +41,15 @@ public class RandomKick extends BasicCommand{
 					}
 					else{
 						var member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
-						Actions.reply(event, translate(event.getGuild(), "random-kick.kicking", member.getAsMention()), null);
 						var reason = String.join(" ", args);
+						Actions.reply(event, translate(event.getGuild(), "random-kick.kicking", member.getAsMention()), null);
 						member.kick(reason)
-								.delay(15, TimeUnit.SECONDS)
-								.submit()
-								.thenAccept(empty2 -> Actions.reply(event, translate(event.getGuild(), "random-kick.kicked", member.getAsMention(), reason), null));
+								.submitAfter(30, TimeUnit.SECONDS)
+								.thenAccept(empty2 -> Actions.reply(event, translate(event.getGuild(), "random-kick.kicked", member.getAsMention(), reason), null))
+								.exceptionally(exception -> {
+									Actions.reply(event, translate(event.getGuild(), "random-kick.error", exception.getMessage()), null);
+									return null;
+								});
 					}
 				}).onError(e -> {
 			Log.getLogger(event.getGuild()).error("Failed to load members", e);
