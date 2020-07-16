@@ -30,20 +30,25 @@ public class RandomKick extends BasicCommand{
 		if(args.isEmpty()){
 			return CommandResult.BAD_ARGUMENTS;
 		}
-		event.getGuild().loadMembers().onSuccess(members -> {
-			if(members.isEmpty()){
-				Actions.reply(event, translate(event.getGuild(), "random-kick.no-member"), null);
-			}
-			else{
-				var member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
-				Actions.reply(event, translate(event.getGuild(), "random-kick.kicking", member.getAsMention()), null);
-				var reason = String.join(" ", args);
-				member.kick(reason)
-						.delay(15, TimeUnit.SECONDS)
-						.submit()
-						.thenAccept(empty2 -> Actions.reply(event, translate(event.getGuild(), "random-kick.kicked", member.getAsMention(), reason), null));
-			}
-		}).onError(e -> {
+		
+		var targetRole = event.getMessage().getMentionedRoles().stream().findFirst();
+		
+		event.getGuild()
+				.findMembers(member -> targetRole.map(role -> member.getRoles().contains(role)).orElse(false))
+				.onSuccess(members -> {
+					if(members.isEmpty()){
+						Actions.reply(event, translate(event.getGuild(), "random-kick.no-member"), null);
+					}
+					else{
+						var member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
+						Actions.reply(event, translate(event.getGuild(), "random-kick.kicking", member.getAsMention()), null);
+						var reason = String.join(" ", args);
+						member.kick(reason)
+								.delay(15, TimeUnit.SECONDS)
+								.submit()
+								.thenAccept(empty2 -> Actions.reply(event, translate(event.getGuild(), "random-kick.kicked", member.getAsMention(), reason), null));
+					}
+				}).onError(e -> {
 			Log.getLogger(event.getGuild()).error("Failed to load members", e);
 			Actions.reply(event, translate(event.getGuild(), "random-kick.error-members"), null);
 		});
@@ -52,7 +57,7 @@ public class RandomKick extends BasicCommand{
 	
 	@Override
 	public @NonNull String getCommandUsage(){
-		return super.getCommandUsage() + " <reason>";
+		return super.getCommandUsage() + "[@role] <reason>";
 	}
 	
 	@Override
