@@ -391,9 +391,6 @@ public class Actions{
 	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
 	public static CompletableFuture<Void> changeNickname(@NonNull Member member, String nickname){
-		if(nickname.length() > 32){
-			throw new IllegalArgumentException("Max nickname length is 32");
-		}
 		return member.getGuild().modifyNickname(member, nickname).submit();
 	}
 	
