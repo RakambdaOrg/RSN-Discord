@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 import java.awt.Color;
 import java.time.Duration;
@@ -89,25 +88,23 @@ public class NicknameCommand extends BasicCommand{
 				builder.addField(translate(event.getGuild(), "nickname.old-nick"), oldName.orElseGet(() -> translate(event.getGuild(), "nickname.unknown")), true);
 				builder.addField(translate(event.getGuild(), "nickname.new-nick"), Objects.isNull(newName) ? translate(event.getGuild(), "nickname.unknown") : newName, true);
 				builder.addField(translate(event.getGuild(), "nickname.user"), member.getAsMention(), true);
-				Actions.changeNickname(member, newName)
-						.thenAccept(empty -> {
-							builder.setColor(Color.GREEN);
-							Settings.get(event.getGuild()).getNicknameConfiguration().setLastChange(member.getUser(), Objects.isNull(newName) ? null : ZonedDateTime.now());
-							Settings.get(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser()).map(d -> d.plus(delay)).filter(d -> d.isAfter(ZonedDateTime.now())).ifPresent(d -> builder.addField(translate(event.getGuild(), "nickname.next-allowed"), d.format(DF), false));
-							Log.getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", event.getAuthor(), member.getUser(), oldName, newName);
-						})
-						.exceptionally(exception -> {
-							if(exception instanceof HierarchyException){
-								builder.setColor(Color.RED);
-								builder.setTitle(translate(event.getGuild(), "nickname.target-error"));
-							}
-							else if(exception instanceof ErrorResponseException){
-								builder.setColor(Color.RED);
-								builder.setTitle(translate(event.getGuild(), "nickname.invalid"));
-								builder.addField(translate(event.getGuild(), "nickname.reason"), ((ErrorResponseException) exception).getMeaning(), false);
-							}
-							return null;
-						}).thenAccept(empty -> Actions.sendEmbed(event.getChannel(), builder.build()));
+				try{
+					Actions.changeNickname(member, newName);
+					builder.setColor(Color.GREEN);
+					Settings.get(event.getGuild()).getNicknameConfiguration().setLastChange(member.getUser(), Objects.isNull(newName) ? null : ZonedDateTime.now());
+					Settings.get(event.getGuild()).getNicknameConfiguration().getLastChange(member.getUser()).map(d -> d.plus(delay)).filter(d -> d.isAfter(ZonedDateTime.now())).ifPresent(d -> builder.addField(translate(event.getGuild(), "nickname.next-allowed"), d.format(DF), false));
+					Log.getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", event.getAuthor(), member.getUser(), oldName, newName);
+				}
+				catch(final HierarchyException e){
+					builder.setColor(Color.RED);
+					builder.setTitle(translate(event.getGuild(), "nickname.target-error"));
+				}
+				catch(final IllegalArgumentException e){
+					builder.setColor(Color.RED);
+					builder.setTitle(translate(event.getGuild(), "nickname.invalid"));
+					builder.addField(translate(event.getGuild(), "nickname.reason"), e.getMessage(), false);
+				}
+				Actions.sendEmbed(event.getChannel(), builder.build());
 			}
 		}, () -> Actions.reply(event, translate(event.getGuild(), "nickname.target-not-found"), null));
 		return CommandResult.SUCCESS;
