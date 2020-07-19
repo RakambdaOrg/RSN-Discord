@@ -109,7 +109,7 @@ public class NicknameCommand extends BasicCommand{
 		}
 		catch(final HierarchyException e){
 			builder.setColor(Color.RED);
-			builder.setTitle(translate(event.getGuild(), "nickname.target-error"));
+			builder.addField(translate(event.getGuild(), "nickname.reason"), translate(event.getGuild(), "nickname.target-error"), false);
 			Actions.sendEmbed(event.getChannel(), builder.build());
 		}
 		return CommandResult.SUCCESS;

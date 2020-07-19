@@ -45,6 +45,6 @@ public class LeaverRoles implements AtomicConfiguration{
 	
 	@Override
 	public boolean shouldBeRemoved(){
-		return leaveDate.plus(1, ChronoUnit.MONTHS).isBefore(ZonedDateTime.now());
+		return false;
 	}
 }
