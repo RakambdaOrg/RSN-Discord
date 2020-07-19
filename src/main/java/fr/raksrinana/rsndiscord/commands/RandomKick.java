@@ -43,7 +43,7 @@ public class RandomKick extends BasicCommand{
 	
 	public static void randomKick(@NonNull TextChannel channel, Role targetRole, String reason){
 		var guild = channel.getGuild();
-		guild.findMembers(member -> Optional.ofNullable(targetRole).map(role -> member.getRoles().contains(role)).orElse(false))
+		guild.findMembers(member -> Optional.ofNullable(targetRole).map(role -> member.getRoles().contains(role)).orElse(true))
 				.onSuccess(members -> {
 					if(members.isEmpty()){
 						Actions.sendMessage(channel, translate(guild, "random-kick.no-member"), null);

@@ -5,10 +5,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 @Slf4j
 public class LangUtils{
@@ -20,8 +17,18 @@ public class LangUtils{
 	
 	public static String translate(@NonNull Locale locale, @NonNull String key, Object... args){
 		try{
-			var bundle = bundles.computeIfAbsent(locale, mapKey -> ResourceBundle.getBundle("lang/rsn", locale));
-			var message = bundle.getString(key).replace("'", "’");
+			var bundle = Optional.ofNullable(bundles.computeIfAbsent(locale, mapKey -> {
+				try{
+					return ResourceBundle.getBundle("lang/rsn", locale);
+				}
+				catch(Exception e){
+					Utilities.reportException("Failed to get resource bundle for language " + locale, e);
+					return null;
+				}
+			}));
+			var message = bundle.map(b -> b.getString(key))
+					.map(m -> m.replace("'", "’"))
+					.orElse(key);
 			return MessageFormat.format(message, args);
 		}
 		catch(Exception e){

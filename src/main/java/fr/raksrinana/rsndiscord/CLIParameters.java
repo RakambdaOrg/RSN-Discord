@@ -1,10 +1,9 @@
 package fr.raksrinana.rsndiscord;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.converters.PathConverter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import picocli.CommandLine;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -14,17 +13,20 @@ import java.nio.file.Paths;
 @SuppressWarnings("FieldMayBeFinal")
 @NoArgsConstructor
 @Getter
+@CommandLine.Command(name = "rsndiscord", mixinStandardHelpOptions = true)
 public class CLIParameters{
-	@Parameter(names = {
+	@CommandLine.Option(names = {
 			"-s",
-			"--settings "
-	}, description = "The guild settings folder to use", converter = PathConverter.class)
+			"--settings"
+	},
+			description = "The guild settings folder to use")
 	@NonNull
 	private Path settingsPath = Paths.get("config/settings");
-	@Parameter(names = {
+	@CommandLine.Option(names = {
 			"-c",
 			"--config"
-	}, description = "The configuration file", converter = PathConverter.class)
+	},
+			description = "The configuration file")
 	@NonNull
 	private Path configurationFile = Paths.get("config/config.properties");
 }

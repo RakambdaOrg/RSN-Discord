@@ -1,7 +1,5 @@
 package fr.raksrinana.rsndiscord;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParameterException;
 import fr.raksrinana.rsndiscord.listeners.*;
 import fr.raksrinana.rsndiscord.listeners.reply.ReplyMessageListener;
 import fr.raksrinana.rsndiscord.runners.ScheduledRunner;
@@ -27,10 +25,13 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import picocli.CommandLine;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.Properties;
@@ -102,15 +103,19 @@ public class Main{
 		if(DEVELOPMENT){
 			Log.getLogger(null).warn("Developer mode activated, shouldn't be used in production!");
 		}
+		
 		final var parameters = new CLIParameters();
+		var cli = new CommandLine(parameters);
+		cli.registerConverter(Path.class, Paths::get);
+		cli.setStopAtUnmatched(true);
 		try{
-			JCommander.newBuilder().addObject(parameters).build().parse(args);
+			cli.parseArgs(args);
 		}
-		catch(final ParameterException e){
+		catch(final CommandLine.ParameterException e){
 			Log.getLogger(null).error("Failed to parse arguments", e);
-			e.usage();
 			return null;
 		}
+		
 		final var prop = new Properties();
 		try(final var is = Files.newInputStream(parameters.getConfigurationFile())){
 			prop.load(is);
