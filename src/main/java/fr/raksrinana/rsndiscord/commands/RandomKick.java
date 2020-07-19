@@ -53,7 +53,7 @@ public class RandomKick extends BasicCommand{
 						Actions.sendMessage(channel, translate(guild, "random-kick.kicking", member.getAsMention()), null);
 						member.kick(reason)
 								.submitAfter(30, TimeUnit.SECONDS)
-								.thenAccept(empty2 -> Actions.sendMessage(channel, translate(guild, "random-kick.kicked", member.getAsMention(), reason), null))
+								.thenAccept(empty2 -> Actions.sendMessage(channel, translate(guild, "random-kick.kicked", member.getAsMention(), reason), null, false, action -> action.mentionUsers(member.getIdLong())))
 								.exceptionally(exception -> {
 									Actions.sendMessage(channel, translate(guild, "random-kick.error", exception.getMessage()), null);
 									return null;
