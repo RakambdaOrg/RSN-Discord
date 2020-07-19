@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.Member;
+import java.nio.channels.Channel;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -104,6 +105,13 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Setter
 	private Set<ChannelConfiguration> onlyMediaChannels = new HashSet<>();
+	@JsonProperty("generalChannel")
+	@Setter
+	private ChannelConfiguration generalChannel;
+	@JsonProperty("randomKickRolesPing")
+	@Getter
+	@Setter
+	private Set<RoleConfiguration> randomKickRolesPing = new HashSet<>();
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
@@ -132,6 +140,10 @@ public class GuildConfiguration implements CompositeConfiguration{
 	
 	public void addSchedule(@NonNull ScheduleConfiguration schedule){
 		this.schedules.add(schedule);
+	}
+	
+	public Optional<ChannelConfiguration> getGeneralChannel(){
+		return Optional.of(generalChannel);
 	}
 	
 	@NonNull

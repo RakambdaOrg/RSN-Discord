@@ -31,6 +31,8 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new ExternalTodosConfigurationCommandComposite(this));
 		this.addSubCommand(new LocaleConfigurationCommand(this));
 		this.addSubCommand(new OnlyMediaChannelsConfigurationCommand(this));
+		this.addSubCommand(new GeneralChannelConfigurationCommand(this));
+		this.addSubCommand(new RandomKickRolesPingRolesConfigurationCommand(this));
 	}
 	
 	@NonNull

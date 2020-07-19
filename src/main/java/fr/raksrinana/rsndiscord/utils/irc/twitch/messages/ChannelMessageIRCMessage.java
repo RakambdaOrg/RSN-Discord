@@ -5,6 +5,8 @@ import fr.raksrinana.rsndiscord.utils.irc.twitch.IRCTag;
 import fr.raksrinana.rsndiscord.utils.irc.twitch.IRCUser;
 import lombok.Getter;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Getter
 public class ChannelMessageIRCMessage implements IRCMessage{
@@ -18,5 +20,12 @@ public class ChannelMessageIRCMessage implements IRCMessage{
 		this.user = user;
 		this.channel = channel;
 		this.message = message;
+	}
+	
+	public Optional<String> getCustomRewardId(){
+		return getTags().stream()
+				.filter(tag -> Objects.equals(tag.getKey(), "custom-reward-id"))
+				.map(IRCTag::getValue)
+				.findFirst();
 	}
 }

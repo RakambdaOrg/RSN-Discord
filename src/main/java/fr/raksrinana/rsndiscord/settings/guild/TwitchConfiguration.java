@@ -31,6 +31,13 @@ public class TwitchConfiguration implements CompositeConfiguration{
 	@Getter
 	@Setter
 	private boolean ircForward = false;
+	@JsonProperty("randomKickRewardId")
+	@Setter
+	private String randomKickRewardId;
+	
+	public Optional<String> getRandomKickRewardId(){
+		return Optional.ofNullable(randomKickRewardId);
+	}
 	
 	@NonNull
 	public Optional<ChannelConfiguration> getTwitchChannel(){

@@ -41,6 +41,7 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 public class Main{
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
 	public static final boolean DEVELOPMENT = Boolean.parseBoolean(System.getProperty("rsndev", "false"));
+	@Getter
 	private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
 	@Getter
 	private static CLIParameters parameters;

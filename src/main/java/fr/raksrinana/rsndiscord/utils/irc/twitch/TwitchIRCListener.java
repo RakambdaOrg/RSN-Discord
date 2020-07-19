@@ -1,6 +1,9 @@
 package fr.raksrinana.rsndiscord.utils.irc.twitch;
 
+import fr.raksrinana.rsndiscord.Main;
+import fr.raksrinana.rsndiscord.commands.RandomKick;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.irc.messages.*;
@@ -9,6 +12,7 @@ import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -18,6 +22,8 @@ import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class TwitchIRCListener extends AbstractTwitchIRCListener implements EventListener{
@@ -76,6 +82,23 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 				role.append("(partner)");
 			}
 			Actions.sendMessage(this.channel, MessageFormat.format("**`{0}`{1}** {2}", displayName, role, message), null);
+			event.getCustomRewardId().flatMap(rewardId -> Settings.get(getGuild())
+					.getTwitchConfiguration()
+					.getRandomKickRewardId()
+					.filter(expectedId -> Objects.equals(rewardId, expectedId)))
+					.flatMap(expectedId -> Settings.get(getGuild()).getGeneralChannel()
+							.flatMap(ChannelConfiguration::getChannel))
+					.ifPresent(channel -> {
+						var pings = Settings.get(getGuild()).getRandomKickRolesPing()
+								.stream()
+								.flatMap(pingRole -> pingRole.getRole().stream())
+								.map(Role::getAsMention)
+								.collect(Collectors.joining(" "));
+						Actions.sendMessage(channel, translate(getGuild(), "random-kick.bought", event.getUser().getNick()) + " " + pings, null)
+								.thenAcceptAsync(message1 -> Main.getExecutorService().schedule(() -> RandomKick.randomKick(channel,
+										null,
+										translate(getGuild(), "random-kick.bought-reason", event.getUser().getNick(), getUser(), event.getMessage())), 30, TimeUnit.SECONDS));
+					});
 		}
 	}
 	

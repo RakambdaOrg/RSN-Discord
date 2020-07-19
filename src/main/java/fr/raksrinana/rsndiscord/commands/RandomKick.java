@@ -8,9 +8,12 @@ import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
@@ -31,31 +34,35 @@ public class RandomKick extends BasicCommand{
 			return CommandResult.BAD_ARGUMENTS;
 		}
 		
-		var targetRole = event.getMessage().getMentionedRoles().stream().findFirst();
+		var targetRole = event.getMessage().getMentionedRoles().stream().findFirst().orElse(null);
+		var reason = String.join(" ", args);
 		
-		event.getGuild()
-				.findMembers(member -> targetRole.map(role -> member.getRoles().contains(role)).orElse(false))
+		randomKick(event.getChannel(), targetRole, reason);
+		return CommandResult.SUCCESS;
+	}
+	
+	public static void randomKick(@NonNull TextChannel channel, Role targetRole, String reason){
+		var guild = channel.getGuild();
+		guild.findMembers(member -> Optional.ofNullable(targetRole).map(role -> member.getRoles().contains(role)).orElse(false))
 				.onSuccess(members -> {
 					if(members.isEmpty()){
-						Actions.reply(event, translate(event.getGuild(), "random-kick.no-member"), null);
+						Actions.sendMessage(channel, translate(guild, "random-kick.no-member"), null);
 					}
 					else{
 						var member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
-						var reason = String.join(" ", args);
-						Actions.reply(event, translate(event.getGuild(), "random-kick.kicking", member.getAsMention()), null);
+						Actions.sendMessage(channel, translate(guild, "random-kick.kicking", member.getAsMention()), null);
 						member.kick(reason)
 								.submitAfter(30, TimeUnit.SECONDS)
-								.thenAccept(empty2 -> Actions.reply(event, translate(event.getGuild(), "random-kick.kicked", member.getAsMention(), reason), null))
+								.thenAccept(empty2 -> Actions.sendMessage(channel, translate(guild, "random-kick.kicked", member.getAsMention(), reason), null))
 								.exceptionally(exception -> {
-									Actions.reply(event, translate(event.getGuild(), "random-kick.error", exception.getMessage()), null);
+									Actions.sendMessage(channel, translate(guild, "random-kick.error", exception.getMessage()), null);
 									return null;
 								});
 					}
 				}).onError(e -> {
-			Log.getLogger(event.getGuild()).error("Failed to load members", e);
-			Actions.reply(event, translate(event.getGuild(), "random-kick.error-members"), null);
+			Log.getLogger(guild).error("Failed to load members", e);
+			Actions.sendMessage(channel, translate(guild, "random-kick.error-members"), null);
 		});
-		return CommandResult.SUCCESS;
 	}
 	
 	@Override
