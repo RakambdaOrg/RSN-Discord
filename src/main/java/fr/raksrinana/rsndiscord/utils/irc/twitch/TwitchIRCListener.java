@@ -89,7 +89,8 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 					.flatMap(expectedId -> Settings.get(getGuild()).getGeneralChannel()
 							.flatMap(ChannelConfiguration::getChannel))
 					.ifPresent(channel -> {
-						var pings = Settings.get(getGuild()).getRandomKickRolesPing()
+						var pings = Settings.get(getGuild()).getRandomKick()
+								.getRandomKickRolesPing()
 								.stream()
 								.flatMap(pingRole -> pingRole.getRole().stream())
 								.map(Role::getAsMention)

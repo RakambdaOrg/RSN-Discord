@@ -3,6 +3,8 @@ package fr.raksrinana.rsndiscord.commands;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
+import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
@@ -50,6 +52,10 @@ public class RandomKick extends BasicCommand{
 					}
 					else{
 						var member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
+						Settings.get(guild).getRandomKick()
+								.getKickedRole()
+								.flatMap(RoleConfiguration::getRole)
+								.ifPresent(kickedRole -> Actions.giveRole(member, kickedRole));
 						Actions.sendMessage(channel, translate(guild, "random-kick.kicking", member.getAsMention()), null);
 						member.kick(reason)
 								.submitAfter(30, TimeUnit.SECONDS)

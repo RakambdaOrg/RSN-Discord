@@ -84,6 +84,10 @@ public class Main{
 			Log.getLogger(null).info("Started");
 			announceStart();
 			restartTwitchIRCConnections();
+			jda.getGuilds().forEach(guild -> {
+				var settings = Settings.get(guild);
+				settings.getRandomKick().getRandomKickRolesPing().addAll(settings.getRandomKickRolesPing());
+			});
 		}
 		catch(final LoginException | InterruptedException e){
 			Log.getLogger(null).error("Couldn't start bot", e);

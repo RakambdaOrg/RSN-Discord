@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.Member;
-import java.nio.channels.Channel;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -108,9 +107,12 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("generalChannel")
 	@Setter
 	private ChannelConfiguration generalChannel;
+	@JsonProperty("randomKick")
+	@Getter
+	private RandomKickConfiguration randomKick = new RandomKickConfiguration();
 	@JsonProperty("randomKickRolesPing")
 	@Getter
-	@Setter
+	@Deprecated
 	private Set<RoleConfiguration> randomKickRolesPing = new HashSet<>();
 	
 	GuildConfiguration(final long guildId){

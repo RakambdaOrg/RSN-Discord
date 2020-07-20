@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.commands.config.guild;
+package fr.raksrinana.rsndiscord.commands.config.guild.randomkick;
 
 import fr.raksrinana.rsndiscord.commands.config.helpers.SetConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
@@ -18,7 +18,7 @@ public class RandomKickRolesPingRolesConfigurationCommand extends SetConfigurati
 	@NonNull
 	@Override
 	protected Optional<Set<RoleConfiguration>> getConfig(@NonNull final Guild guild){
-		return Optional.of(Settings.get(guild).getRandomKickRolesPing());
+		return Optional.of(Settings.get(guild).getRandomKick().getRandomKickRolesPing());
 	}
 	
 	@NonNull
@@ -32,14 +32,14 @@ public class RandomKickRolesPingRolesConfigurationCommand extends SetConfigurati
 	
 	@Override
 	protected void removeConfig(@NonNull final Guild guild, @NonNull final RoleConfiguration value){
-		Settings.get(guild).getRandomKickRolesPing().remove(value);
+		Settings.get(guild).getRandomKick().getRandomKickRolesPing().remove(value);
 	}
 	
 	@Override
 	protected void createConfig(@NonNull final Guild guild, @NonNull final RoleConfiguration value){
 		final var set = new HashSet<RoleConfiguration>();
 		set.add(value);
-		Settings.get(guild).setRandomKickRolesPing(set);
+		Settings.get(guild).getRandomKick().setRandomKickRolesPing(set);
 	}
 	
 	@Override
