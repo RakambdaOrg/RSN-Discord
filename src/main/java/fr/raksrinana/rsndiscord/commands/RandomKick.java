@@ -58,11 +58,15 @@ public class RandomKick extends BasicCommand{
 								.getKickedRole()
 								.flatMap(RoleConfiguration::getRole)
 								.ifPresent(kickedRole -> Actions.giveRole(member, kickedRole));
-						Actions.sendMessage(channel, translate(guild, "random-kick.kicking", member.getAsMention()), null);
+						Actions.sendMessage(channel, translate(guild, "random-kick.kicking", member.getAsMention()), null, false, action -> action.tts(true));
 						
 						Main.getExecutorService().schedule(() -> {
 							Actions.kick(author, member, reason)
-									.thenAccept(empty2 -> Actions.sendMessage(channel, translate(guild, "random-kick.kicked", member.getAsMention(), reason), null, false, action -> action.mentionUsers(member.getIdLong())))
+									.thenAccept(empty2 -> Actions.sendMessage(channel,
+											translate(guild, "random-kick.kicked", member.getAsMention(), reason),
+											null,
+											false,
+											action -> action.mentionUsers(member.getIdLong()).tts(true)))
 									.exceptionally(exception -> {
 										Actions.sendMessage(channel, translate(guild, "random-kick.error", exception.getMessage()), null);
 										return null;
