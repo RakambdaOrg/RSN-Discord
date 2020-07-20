@@ -33,6 +33,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new OnlyMediaChannelsConfigurationCommand(this));
 		this.addSubCommand(new GeneralChannelConfigurationCommand(this));
 		this.addSubCommand(new RandomKickConfigurationCommandComposite(this));
+		this.addSubCommand(new LogChannelConfigurationCommand(this));
 	}
 	
 	@NonNull

@@ -107,6 +107,9 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("generalChannel")
 	@Setter
 	private ChannelConfiguration generalChannel;
+	@JsonProperty("logChannel")
+	@Setter
+	private ChannelConfiguration logChannel;
 	@JsonProperty("randomKick")
 	@Getter
 	private RandomKickConfiguration randomKick = new RandomKickConfiguration();
@@ -142,6 +145,10 @@ public class GuildConfiguration implements CompositeConfiguration{
 	
 	public void addSchedule(@NonNull ScheduleConfiguration schedule){
 		this.schedules.add(schedule);
+	}
+	
+	public Optional<ChannelConfiguration> getLogChannel(){
+		return Optional.ofNullable(this.logChannel);
 	}
 	
 	public Optional<ChannelConfiguration> getGeneralChannel(){

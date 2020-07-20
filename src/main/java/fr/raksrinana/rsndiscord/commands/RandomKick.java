@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.commands;
 
+import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
@@ -12,6 +13,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,11 +41,11 @@ public class RandomKick extends BasicCommand{
 		var targetRole = event.getMessage().getMentionedRoles().stream().findFirst().orElse(null);
 		var reason = String.join(" ", args);
 		
-		randomKick(event.getChannel(), targetRole, reason);
+		randomKick(event.getAuthor(), event.getChannel(), targetRole, reason);
 		return CommandResult.SUCCESS;
 	}
 	
-	public static void randomKick(@NonNull TextChannel channel, Role targetRole, String reason){
+	public static void randomKick(@NonNull User author, @NonNull TextChannel channel, Role targetRole, String reason){
 		var guild = channel.getGuild();
 		guild.findMembers(member -> Optional.ofNullable(targetRole).map(role -> member.getRoles().contains(role)).orElse(true))
 				.onSuccess(members -> {
@@ -57,13 +59,15 @@ public class RandomKick extends BasicCommand{
 								.flatMap(RoleConfiguration::getRole)
 								.ifPresent(kickedRole -> Actions.giveRole(member, kickedRole));
 						Actions.sendMessage(channel, translate(guild, "random-kick.kicking", member.getAsMention()), null);
-						member.kick(reason)
-								.submitAfter(30, TimeUnit.SECONDS)
-								.thenAccept(empty2 -> Actions.sendMessage(channel, translate(guild, "random-kick.kicked", member.getAsMention(), reason), null, false, action -> action.mentionUsers(member.getIdLong())))
-								.exceptionally(exception -> {
-									Actions.sendMessage(channel, translate(guild, "random-kick.error", exception.getMessage()), null);
-									return null;
-								});
+						
+						Main.getExecutorService().schedule(() -> {
+							Actions.kick(author, member, reason)
+									.thenAccept(empty2 -> Actions.sendMessage(channel, translate(guild, "random-kick.kicked", member.getAsMention(), reason), null, false, action -> action.mentionUsers(member.getIdLong())))
+									.exceptionally(exception -> {
+										Actions.sendMessage(channel, translate(guild, "random-kick.error", exception.getMessage()), null);
+										return null;
+									});
+						}, 30, TimeUnit.SECONDS);
 					}
 				}).onError(e -> {
 			Log.getLogger(guild).error("Failed to load members", e);

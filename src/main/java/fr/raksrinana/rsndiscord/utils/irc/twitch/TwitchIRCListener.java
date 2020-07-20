@@ -96,7 +96,8 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 								.map(Role::getAsMention)
 								.collect(Collectors.joining(" "));
 						Actions.sendMessage(channel, translate(getGuild(), "random-kick.bought", event.getUser().getNick()) + " " + pings, null)
-								.thenAcceptAsync(message1 -> Main.getExecutorService().schedule(() -> RandomKick.randomKick(channel,
+								.thenAcceptAsync(message1 -> Main.getExecutorService().schedule(() -> RandomKick.randomKick(getGuild().getJDA().getSelfUser(),
+										channel,
 										null,
 										translate(getGuild(), "random-kick.bought-reason", event.getUser().getNick(), getUser(), event.getMessage())), 30, TimeUnit.SECONDS));
 					});

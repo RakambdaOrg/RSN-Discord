@@ -173,4 +173,6 @@ public class LogListener extends ListenerAdapter{
 			leavingRolesConfiguration.removeUser(event.getUser());
 		});
 	}
+	
+	
 }

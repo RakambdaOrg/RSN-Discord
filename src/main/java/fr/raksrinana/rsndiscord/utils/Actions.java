@@ -1,6 +1,8 @@
 package fr.raksrinana.rsndiscord.utils;
 
 import fr.raksrinana.rsndiscord.Main;
+import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -9,16 +11,19 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
+import java.awt.Color;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 /**
  * Actions to do with JDA, logging them.
@@ -137,8 +142,8 @@ public class Actions{
 	/**
 	 * Send an embed to a channel.
 	 *
-	 * @param channel               The channel to send the message to.
-	 * @param embed                 The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
+	 * @param channel The channel to send the message to.
+	 * @param embed   The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
 	 *
 	 * @return A completable future of a message (see {@link RestAction#submit()}).
 	 */
@@ -425,6 +430,7 @@ public class Actions{
 	
 	/**
 	 * Send a message to a private channel.
+	 *
 	 * @param guild   The guild issuing the request.
 	 * @param user    The user to send the message to.
 	 * @param message The message to send.
@@ -457,12 +463,34 @@ public class Actions{
 	/**
 	 * Kicks a member from its server.
 	 *
+	 * @param author The author of the kick.
 	 * @param member The member to kick.
 	 * @param reason The reason of the kick.
 	 *
 	 * @return A completable future.
 	 */
-	public static CompletableFuture<Void> kick(@NonNull Member member, @NonNull String reason){
+	@NonNull
+	public static CompletableFuture<Void> kick(@NonNull User author, @NonNull Member member, @NonNull String reason){
+		logAction(member.getGuild(), author, "Random kick", member.getUser(), reason);
 		return member.kick(reason).submit();
+	}
+	
+	@NonNull
+	public static Optional<CompletableFuture<Message>> logAction(@NonNull Guild guild, User author, String title, User target, String reason){
+		return Settings.get(guild)
+				.getLogChannel()
+				.flatMap(ChannelConfiguration::getChannel)
+				.map(textChannel -> {
+					var user = Optional.ofNullable(target).orElse(guild.getJDA().getSelfUser());
+					var builder = Utilities.buildEmbed(user,
+							Color.RED,
+							title,
+							user.getAvatarUrl());
+					Optional.ofNullable(target).ifPresent(t -> builder.addField(translate(guild, "log-action.user"), user.getAsTag(), true));
+					Optional.ofNullable(author).ifPresent(a -> builder.addField(translate(guild, "log-action.moderator"), a.getAsMention(), true));
+					Optional.ofNullable(reason).ifPresent(r -> builder.addField(translate(guild, "log-action.reason"), r, true));
+					
+					return Actions.sendEmbed(textChannel, builder.build());
+				});
 	}
 }
