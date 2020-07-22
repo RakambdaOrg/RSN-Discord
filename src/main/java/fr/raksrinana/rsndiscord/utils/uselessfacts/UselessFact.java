@@ -35,4 +35,9 @@ public class UselessFact{
 		builder.setFooter(getId());
 		builder.addField("Fact", getText(), true);
 	}
+	
+	@Override
+	public String toString(){
+		return "id: " + getId() + " / " + getText();
+	}
 }

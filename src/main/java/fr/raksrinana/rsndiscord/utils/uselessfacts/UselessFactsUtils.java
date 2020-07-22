@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public class UselessFactsUtils{
 	public static Optional<UselessFact> getFact(){
+		Log.getLogger(null).debug("Requesting random fact");
 		final var handler = new ObjectGetRequestSender<>(new GenericType<UselessFact>(){}, Unirest.get("https://uselessfacts.jsph.pl/random.json").queryString("language", "en")).getRequestHandler();
 		handler.getResult().getParsingError().ifPresent(error -> {
 			Utilities.reportException("Failed to parse UselessFacts response", error);

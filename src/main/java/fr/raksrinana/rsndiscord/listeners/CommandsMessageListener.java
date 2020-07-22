@@ -142,7 +142,9 @@ public class CommandsMessageListener extends ListenerAdapter{
 			if(event.getAuthor().equals(event.getJDA().getSelfUser())){
 				return;
 			}
+			Log.getLogger(null).info("Received private message from {}: {}", event.getAuthor(), event.getMessage());
 			UselessFactsUtils.getFact().ifPresentOrElse(fact -> {
+				Log.getLogger(null).debug("Sending random fact: {}", fact);
 				var builder = Utilities.buildEmbed(event.getJDA().getSelfUser(), Color.GREEN, "Random fact", null);
 				fact.fillEmbed(builder);
 				Actions.sendPrivateMessage(null, event.getChannel(), "I don't really know what to answer, but here's a random fact for you", builder.build());
