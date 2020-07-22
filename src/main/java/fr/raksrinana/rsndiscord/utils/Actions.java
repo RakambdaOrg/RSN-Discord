@@ -485,7 +485,7 @@ public class Actions{
 					var builder = Utilities.buildEmbed(user,
 							Color.RED,
 							title,
-							user.getAvatarUrl());
+							null);
 					Optional.ofNullable(target).ifPresent(t -> builder.addField(translate(guild, "log-action.user"), user.getAsTag(), true));
 					Optional.ofNullable(author).ifPresent(a -> builder.addField(translate(guild, "log-action.moderator"), a.getAsMention(), true));
 					Optional.ofNullable(reason).ifPresent(r -> builder.addField(translate(guild, "log-action.reason"), r, true));

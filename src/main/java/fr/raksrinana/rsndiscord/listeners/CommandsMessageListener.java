@@ -7,16 +7,19 @@ import fr.raksrinana.rsndiscord.settings.guild.WaitingReactionMessageConfigurati
 import fr.raksrinana.rsndiscord.settings.guild.schedule.DeleteMessageScheduleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
+import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
 import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
+import fr.raksrinana.rsndiscord.utils.uselessfacts.UselessFactsUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.reflections.Reflections;
 import java.awt.Color;
@@ -129,6 +132,24 @@ public class CommandsMessageListener extends ListenerAdapter{
 		}
 		catch(final Exception e){
 			Log.getLogger(event.getGuild()).error("Error handling message", e);
+		}
+	}
+	
+	@Override
+	public void onPrivateMessageReceived(@NonNull PrivateMessageReceivedEvent event){
+		super.onPrivateMessageReceived(event);
+		try{
+			if(event.getAuthor().equals(event.getJDA().getSelfUser())){
+				return;
+			}
+			UselessFactsUtils.getFact().ifPresentOrElse(fact -> {
+				var builder = Utilities.buildEmbed(event.getJDA().getSelfUser(), Color.GREEN, "Random fact", null);
+				fact.fillEmbed(builder);
+				Actions.sendPrivateMessage(null, event.getChannel(), "I don't really know what to answer, but here's a random fact for you", builder.build());
+			}, () -> Actions.sendPrivateMessage(null, event.getChannel(), "I just farted", null));
+		}
+		catch(final Exception e){
+			Log.getLogger(null).error("Error private message from {}", event.getAuthor(), e);
 		}
 	}
 	
