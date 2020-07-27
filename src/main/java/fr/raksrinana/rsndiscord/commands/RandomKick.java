@@ -68,7 +68,7 @@ public class RandomKick extends BasicCommand{
 											translate(guild, "random-kick.kicked", member.getAsMention(), reason),
 											null,
 											false,
-											action -> action.mentionUsers(member.getIdLong()).tts(true)))
+											action -> action.mentionUsers(member.getIdLong())))
 									.exceptionally(exception -> {
 										Actions.sendMessage(channel, translate(guild, "random-kick.error", exception.getMessage()), null);
 										return null;

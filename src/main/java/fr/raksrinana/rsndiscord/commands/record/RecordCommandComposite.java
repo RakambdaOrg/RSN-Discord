@@ -31,4 +31,9 @@ public class RecordCommandComposite extends CommandComposite{
 	public String getDescription(@NonNull Guild guild){
 		return translate(guild, "command.record.description");
 	}
+	
+	@Override
+	public @NonNull AccessLevel getAccessLevel(){
+		return AccessLevel.CREATOR;
+	}
 }
