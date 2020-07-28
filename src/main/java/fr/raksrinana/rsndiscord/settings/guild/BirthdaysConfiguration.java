@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.settings.CompositeConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateSerializer;
 import fr.raksrinana.rsndiscord.utils.json.UserConfigurationKeyDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.UserConfigurationKeySerializer;
 import lombok.Getter;
@@ -24,8 +26,8 @@ import java.util.Optional;
 @NoArgsConstructor
 public class BirthdaysConfiguration implements CompositeConfiguration{
 	@JsonProperty("dates")
-	@JsonSerialize(keyUsing = UserConfigurationKeySerializer.class)
-	@JsonDeserialize(keyUsing = UserConfigurationKeyDeserializer.class)
+	@JsonSerialize(keyUsing = UserConfigurationKeySerializer.class, contentUsing = ISO8601LocalDateSerializer.class)
+	@JsonDeserialize(keyUsing = UserConfigurationKeyDeserializer.class, contentUsing = ISO8601LocalDateDeserializer.class)
 	@Getter
 	@Setter
 	private Map<UserConfiguration, LocalDate> dates = new HashMap<>();
