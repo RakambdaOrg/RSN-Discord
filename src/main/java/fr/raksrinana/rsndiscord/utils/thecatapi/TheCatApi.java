@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.utils.thecatapi;
 import fr.raksrinana.rsndiscord.utils.RequestException;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.utils.thecatapi.data.Cat;
 import fr.raksrinana.utils.http.requestssenders.get.ObjectGetRequestSender;
 import kong.unirest.GenericType;
 import kong.unirest.Unirest;

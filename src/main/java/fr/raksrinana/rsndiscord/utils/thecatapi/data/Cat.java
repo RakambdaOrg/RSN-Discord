@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.utils.thecatapi;
+package fr.raksrinana.rsndiscord.utils.thecatapi.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -16,9 +16,9 @@ import java.util.Set;
 @NoArgsConstructor
 public class Cat{
 	@JsonProperty("breeds")
-	private Set<String> breeds;
+	private Set<Breed> breeds;
 	@JsonProperty("categories")
-	private Set<String> categories;
+	private Set<Category> categories;
 	@JsonProperty("id")
 	private String id;
 	@JsonProperty("url")
