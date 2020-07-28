@@ -91,7 +91,7 @@ public class NicknameCommand extends BasicCommand{
 			Actions.changeNickname(target, newNickname)
 					.thenAccept(empty -> {
 						builder.setColor(Color.GREEN);
-						nicknameConfiguration.setLastChange(target.getUser(), Objects.isNull(newNickname) ? null : ZonedDateTime.now());
+						nicknameConfiguration.setLastChange(target.getUser(), ZonedDateTime.now());
 						nicknameConfiguration.getLastChange(target.getUser())
 								.map(d -> d.plus(delay))
 								.filter(d -> d.isAfter(ZonedDateTime.now()))

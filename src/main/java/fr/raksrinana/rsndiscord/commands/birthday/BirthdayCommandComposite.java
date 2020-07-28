@@ -36,6 +36,6 @@ public class BirthdayCommandComposite extends CommandComposite{
 	
 	@Override
 	public @NonNull AccessLevel getAccessLevel(){
-		return AccessLevel.ADMIN;
+		return AccessLevel.MODERATOR;
 	}
 }
