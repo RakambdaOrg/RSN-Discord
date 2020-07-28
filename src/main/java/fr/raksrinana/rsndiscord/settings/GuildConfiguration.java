@@ -117,6 +117,10 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Deprecated
 	private Set<RoleConfiguration> randomKickRolesPing = new HashSet<>();
+	@JsonProperty("birthdays")
+	@Getter
+	@Setter
+	private BirthdaysConfiguration birthdays = new BirthdaysConfiguration();
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
