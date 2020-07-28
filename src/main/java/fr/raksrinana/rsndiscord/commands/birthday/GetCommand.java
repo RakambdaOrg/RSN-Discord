@@ -5,21 +5,20 @@ import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
-public class AddCommand extends BasicCommand{
+public class GetCommand extends BasicCommand{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ISO_LOCAL_DATE;
 	
-	public AddCommand(Command parent){
+	public GetCommand(Command parent){
 		super(parent);
 	}
 	
@@ -30,57 +29,38 @@ public class AddCommand extends BasicCommand{
 		if(event.getMessage().getMentionedUsers().isEmpty()){
 			return CommandResult.BAD_ARGUMENTS;
 		}
-		event.getMessage().getMentionedUsers().stream().findFirst()
-				.ifPresent(user -> {
-					args.poll();
-					parseDate(event.getGuild(), args.poll()).ifPresentOrElse(date -> {
-						Settings.get(event.getGuild()).getBirthdays().setDate(user, date);
-						Actions.reply(event, translate(event.getGuild(), "birthday.saved"), null);
-					}, () -> Actions.reply(event, translate(event.getGuild(), "birthday.bad-date"), null));
-				});
+		var user = event.getMessage().getMentionedUsers().stream().findFirst().orElseThrow();
+		Settings.get(event.getGuild()).getBirthdays().getDate(user)
+				.ifPresentOrElse(date -> Actions.reply(event, translate(event.getGuild(), "birthday.birthday", user.getAsMention(), date.format(DF), date.until(LocalDate.now()).normalized().getYears()), null), () -> Actions.reply(event, translate(event.getGuild(), "birthday.unknown-date"), null));
 		return CommandResult.SUCCESS;
-	}
-	
-	private Optional<LocalDate> parseDate(Guild guild, String string){
-		if(Objects.isNull(string)){
-			return Optional.empty();
-		}
-		try{
-			return Optional.ofNullable(LocalDate.parse(string, DF));
-		}
-		catch(DateTimeParseException e){
-			Log.getLogger(guild).error("Failed to parse date {}", string, e);
-		}
-		return Optional.empty();
 	}
 	
 	@NonNull
 	@Override
 	public String getName(@NonNull Guild guild){
-		return translate(guild, "command.birthday.add.name");
+		return translate(guild, "command.birthday.get.name");
 	}
 	
 	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("add");
+		return List.of("get");
 	}
 	
 	@NonNull
 	@Override
 	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.birthday.add.description");
+		return translate(guild, "command.birthday.get.description");
 	}
 	
 	@Override
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("user", translate(guild, "command.birthday.add.help.user"), false);
-		builder.addField("date", translate(guild, "command.birthday.add.help.date", "YYYY-MM-DD"), false);
+		builder.addField("user", translate(guild, "command.birthday.get.help.user"), false);
 	}
 	
 	@Override
 	public @NonNull String getCommandUsage(){
-		return super.getCommandUsage() + " <@user> <date>";
+		return super.getCommandUsage() + " <@user>";
 	}
 }

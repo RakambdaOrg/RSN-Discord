@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.entities.User;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -35,5 +36,9 @@ public class BirthdaysConfiguration implements CompositeConfiguration{
 	
 	public void removeDate(User user){
 		this.dates.remove(new UserConfiguration(user));
+	}
+	
+	public Optional<LocalDate> getDate(User user){
+		return Optional.ofNullable(dates.get(new UserConfiguration(user)));
 	}
 }

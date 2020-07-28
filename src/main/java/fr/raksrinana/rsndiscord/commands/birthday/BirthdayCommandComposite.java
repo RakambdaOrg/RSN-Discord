@@ -11,6 +11,7 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 public class BirthdayCommandComposite extends CommandComposite{
 	public BirthdayCommandComposite(){
 		this.addSubCommand(new AddCommand(this));
+		this.addSubCommand(new GetCommand(this));
 		this.addSubCommand(new RemoveCommand(this));
 	}
 	
