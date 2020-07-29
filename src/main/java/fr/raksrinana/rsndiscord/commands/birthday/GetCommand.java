@@ -4,6 +4,7 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.guild.birthday.Birthday;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -30,7 +31,7 @@ public class GetCommand extends BasicCommand{
 			return CommandResult.BAD_ARGUMENTS;
 		}
 		var user = event.getMessage().getMentionedUsers().stream().findFirst().orElseThrow();
-		Settings.get(event.getGuild()).getBirthdays().getDate(user)
+		Settings.get(event.getGuild()).getBirthdays().getBirthday(user).map(Birthday::getDate)
 				.ifPresentOrElse(date -> Actions.reply(event, translate(event.getGuild(), "birthday.birthday", user.getAsMention(), date.format(DF), date.until(LocalDate.now()).normalized().getYears()), null), () -> Actions.reply(event, translate(event.getGuild(), "birthday.unknown-date"), null));
 		return CommandResult.SUCCESS;
 	}

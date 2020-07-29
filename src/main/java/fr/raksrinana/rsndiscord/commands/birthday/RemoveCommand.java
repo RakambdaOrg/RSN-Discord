@@ -28,7 +28,7 @@ public class RemoveCommand extends BasicCommand{
 		event.getMessage().getMentionedUsers().stream().findFirst()
 				.ifPresent(user -> {
 					args.poll();
-					Settings.get(event.getGuild()).getBirthdays().removeDate(user);
+					Settings.get(event.getGuild()).getBirthdays().removeBirthday(user);
 					Actions.reply(event, translate(event.getGuild(), "birthday.removed"), null);
 				});
 		return CommandResult.SUCCESS;

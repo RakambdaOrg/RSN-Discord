@@ -34,6 +34,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new GeneralChannelConfigurationCommand(this));
 		this.addSubCommand(new RandomKickConfigurationCommandComposite(this));
 		this.addSubCommand(new LogChannelConfigurationCommand(this));
+		this.addSubCommand(new BirthdayConfigurationCommandComposite(this));
 	}
 	
 	@NonNull

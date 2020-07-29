@@ -34,7 +34,7 @@ public class AddCommand extends BasicCommand{
 				.ifPresent(user -> {
 					args.poll();
 					parseDate(event.getGuild(), args.poll()).ifPresentOrElse(date -> {
-						Settings.get(event.getGuild()).getBirthdays().setDate(user, date);
+						Settings.get(event.getGuild()).getBirthdays().setBirthday(user, date);
 						Actions.reply(event, translate(event.getGuild(), "birthday.saved"), null);
 					}, () -> Actions.reply(event, translate(event.getGuild(), "birthday.bad-date"), null));
 				});

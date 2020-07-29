@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.settings.CompositeConfiguration;
+import fr.raksrinana.rsndiscord.settings.guild.birthday.Birthday;
+import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateSerializer;
@@ -25,22 +27,34 @@ import java.util.Optional;
 @Getter
 @NoArgsConstructor
 public class BirthdaysConfiguration implements CompositeConfiguration{
+	@JsonProperty("birthdays")
+	@JsonSerialize(keyUsing = UserConfigurationKeySerializer.class)
+	@JsonDeserialize(keyUsing = UserConfigurationKeyDeserializer.class)
+	@Getter
+	@Setter
+	private Map<UserConfiguration, Birthday> birthdays = new HashMap<>();
+	@JsonProperty("notificationChannel")
+	@Setter
+	private ChannelConfiguration notificationChannel;
+	@Deprecated
 	@JsonProperty("dates")
 	@JsonSerialize(keyUsing = UserConfigurationKeySerializer.class, contentUsing = ISO8601LocalDateSerializer.class)
 	@JsonDeserialize(keyUsing = UserConfigurationKeyDeserializer.class, contentUsing = ISO8601LocalDateDeserializer.class)
-	@Getter
-	@Setter
 	private Map<UserConfiguration, LocalDate> dates = new HashMap<>();
 	
-	public void setDate(User user, LocalDate date){
-		this.dates.put(new UserConfiguration(user), date);
+	public void setBirthday(User user, LocalDate date){
+		this.birthdays.put(new UserConfiguration(user), new Birthday(date));
 	}
 	
-	public void removeDate(User user){
-		this.dates.remove(new UserConfiguration(user));
+	public void removeBirthday(User user){
+		this.birthdays.remove(new UserConfiguration(user));
 	}
 	
-	public Optional<LocalDate> getDate(User user){
-		return Optional.ofNullable(dates.get(new UserConfiguration(user)));
+	public Optional<Birthday> getBirthday(User user){
+		return Optional.ofNullable(birthdays.get(new UserConfiguration(user)));
+	}
+	
+	public Optional<ChannelConfiguration> getNotificationChannel(){
+		return Optional.ofNullable(notificationChannel);
 	}
 }

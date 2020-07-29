@@ -113,10 +113,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("randomKick")
 	@Getter
 	private RandomKickConfiguration randomKick = new RandomKickConfiguration();
-	@JsonProperty("randomKickRolesPing")
-	@Getter
-	@Deprecated
-	private Set<RoleConfiguration> randomKickRolesPing = new HashSet<>();
 	@JsonProperty("birthdays")
 	@Getter
 	@Setter
