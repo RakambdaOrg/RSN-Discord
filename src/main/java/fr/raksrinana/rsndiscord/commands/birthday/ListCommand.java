@@ -25,9 +25,9 @@ public class ListCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		Settings.get(event.getGuild()).getBirthdays().getDates()
-				.forEach((key, date) -> key.getUser()
-						.ifPresent(user -> Actions.reply(event, translate(event.getGuild(), "birthday.birthday", user.getAsMention(), date.format(DF), date.until(LocalDate.now()).normalized().getYears()), null)));
+		Settings.get(event.getGuild()).getBirthdays().getBirthdays()
+				.forEach((key, birthday) -> key.getUser()
+						.ifPresent(user -> Actions.reply(event, translate(event.getGuild(), "birthday.birthday", user.getAsMention(), birthday.getDate().format(DF), birthday.getDate().until(LocalDate.now()).normalized().getYears()), null)));
 		return CommandResult.SUCCESS;
 	}
 	

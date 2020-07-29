@@ -7,7 +7,6 @@ import fr.raksrinana.rsndiscord.runners.ScheduledRunnerRunnable;
 import fr.raksrinana.rsndiscord.runners.anilist.AniListActivityScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.guild.birthday.Birthday;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
@@ -85,12 +84,6 @@ public class Main{
 			Log.getLogger(null).info("Started");
 			announceStart();
 			restartTwitchIRCConnections();
-			jda.getGuilds().forEach(guild -> {
-				var settings = Settings.get(guild);
-				var b = settings.getBirthdays();
-				b.getDates().forEach((user, date) -> b.getBirthdays().put(user, new Birthday(date)));
-				b.getDates().clear();
-			});
 		}
 		catch(final LoginException | InterruptedException e){
 			Log.getLogger(null).error("Couldn't start bot", e);
