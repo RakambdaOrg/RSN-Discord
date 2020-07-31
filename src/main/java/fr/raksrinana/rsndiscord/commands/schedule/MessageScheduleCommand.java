@@ -59,9 +59,4 @@ public class MessageScheduleCommand extends BasicCommand{
 	public String getDescription(@NonNull Guild guild){
 		return translate(guild, "command.schedule.message.description");
 	}
-	
-	@Override
-	public @NonNull AccessLevel getAccessLevel(){
-		return AccessLevel.MODERATOR;
-	}
 }
