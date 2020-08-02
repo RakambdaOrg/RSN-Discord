@@ -13,8 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.User;
-import java.io.File;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -34,9 +33,9 @@ public class TrombinoscopeConfiguration implements CompositeConfiguration{
 	@JsonProperty("bannedUsers")
 	private final Set<UserConfiguration> bannedUsers = new HashSet<>();
 	
-	public void registerPicture(@NonNull User user, @NonNull File file){
+	public void registerPicture(@NonNull User user, @NonNull Path file){
 		pictures.computeIfAbsent(user.getIdLong(), key -> new HashSet<>())
-				.add(new Picture(Paths.get(file.toURI()), ZonedDateTime.now()));
+				.add(new Picture(file, ZonedDateTime.now()));
 	}
 	
 	@NonNull
