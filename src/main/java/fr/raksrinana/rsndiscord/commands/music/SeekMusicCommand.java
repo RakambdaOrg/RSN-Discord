@@ -20,8 +20,8 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class SeekMusicCommand extends BasicCommand{
 	private static final Pattern TIME_PATTERN = Pattern.compile("((\\d{1,2}):)?((\\d{1,2}):)?(\\d{1,2})");
-	private static final int SECOND_PER_MINUTE = 60;
-	private static final int SECOND_PER_HOUR = 3600;
+	private static final long SECOND_PER_MINUTE = 60;
+	private static final long SECOND_PER_HOUR = 3600;
 	
 	/**
 	 * Constructor.
@@ -67,21 +67,21 @@ public class SeekMusicCommand extends BasicCommand{
 			return -1;
 		}
 		var duration = 0L;
-		duration += SeekMusicCommand.getAsInt(guild, matcher.group(2)) * SECOND_PER_HOUR;
-		duration += SeekMusicCommand.getAsInt(guild, matcher.group(4)) * SECOND_PER_MINUTE;
-		duration += SeekMusicCommand.getAsInt(guild, matcher.group(5));
+		duration += SeekMusicCommand.getAsLong(guild, matcher.group(2)) * SECOND_PER_HOUR;
+		duration += SeekMusicCommand.getAsLong(guild, matcher.group(4)) * SECOND_PER_MINUTE;
+		duration += SeekMusicCommand.getAsLong(guild, matcher.group(5));
 		return duration * 1000;
 	}
 	
-	private static int getAsInt(final Guild guild, final String str){
+	private static long getAsLong(final Guild guild, final String str){
 		if(Objects.isNull(str) || str.isBlank()){
 			return 0;
 		}
 		try{
-			return Integer.parseInt(str);
+			return Long.parseLong(str);
 		}
 		catch(final Exception e){
-			Log.getLogger(guild).error("Error parsing {} into int", str, e);
+			Log.getLogger(guild).error("Error parsing {} into long", str, e);
 		}
 		return 0;
 	}

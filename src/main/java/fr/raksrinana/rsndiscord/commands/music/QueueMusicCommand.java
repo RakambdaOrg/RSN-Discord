@@ -19,7 +19,6 @@ import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
@@ -43,16 +42,16 @@ public class QueueMusicCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		final var perPage = 10;
+		final var perPage = 10L;
 		final var page = Optional.ofNullable(args.poll()).map(pageStr -> {
 			try{
-				return Integer.parseInt(pageStr);
+				return Long.parseLong(pageStr);
 			}
 			catch(final Exception ignored){
 			}
 			return null;
-		}).orElse(1) - 1;
-		final var position = new AtomicInteger(perPage * page);
+		}).orElse(1L) - 1;
+		final var position = new AtomicLong(perPage * page);
 		final var queue = RSNAudioManager.getQueue(event.getGuild());
 		var maxPageNumber = (int) Math.ceil(queue.size() / (double) perPage);
 		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, translate(event.getGuild(), "music.queue.page", page + 1, maxPageNumber), null);
