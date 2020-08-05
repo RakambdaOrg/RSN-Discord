@@ -8,16 +8,13 @@ import fr.raksrinana.rsndiscord.settings.guild.*;
 import fr.raksrinana.rsndiscord.settings.types.CategoryConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
-import fr.raksrinana.rsndiscord.settings.types.UserRoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import net.dv8tion.jda.api.entities.Member;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -39,9 +36,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("nickname")
 	@Getter
 	private NicknameConfiguration nicknameConfiguration = new NicknameConfiguration();
-	@JsonProperty("addBackRoles")
-	@Getter
-	private Set<UserRoleConfiguration> addBackRoles = new HashSet<>();
 	@JsonProperty("twitchConfiguration")
 	@Getter
 	private TwitchConfiguration twitchConfiguration = new TwitchConfiguration();
@@ -136,11 +130,6 @@ public class GuildConfiguration implements CompositeConfiguration{
 	
 	public void removeSchedule(ScheduleConfiguration schedule){
 		this.schedules.remove(schedule);
-	}
-	
-	@NonNull
-	public List<RoleConfiguration> getAutoRolesAndAddBackRoles(@NonNull final Member member){
-		return Stream.concat(this.getAutoRoles().stream(), this.getAddBackRoles().stream().filter(c -> Objects.equals(c.getUser().getUserId(), member.getIdLong())).map(UserRoleConfiguration::getRole)).collect(Collectors.toList());
 	}
 	
 	public void addSchedule(@NonNull ScheduleConfiguration schedule){
