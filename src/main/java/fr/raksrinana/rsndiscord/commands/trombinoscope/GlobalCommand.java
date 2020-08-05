@@ -9,6 +9,7 @@ import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
+import net.coobird.thumbnailator.Thumbnails;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -117,12 +118,13 @@ class GlobalCommand extends BasicCommand{
 	
 	private void drawImage(Graphics2D g2d, Picture picture, int x, int y, int dim, PictureMode mode){
 		try{
-			var image = ImageIO.read(picture.getPath().toFile());
+			var image = Thumbnails.of(picture.getPath().toFile())
+					.size(dim, dim)
+					.keepAspectRatio(mode == PictureMode.KEEP_ASPECT_RATIO)
+					.useExifOrientation(true)
+					.asBufferedImage();
 			image = Scalr.resize(image, dim);
-			switch(mode){
-				case STRETCH -> g2d.drawImage(image, x, y, dim, dim, null);
-				case KEEP_ASPECT_RATIO -> g2d.drawImage(image, x + (dim - image.getWidth()) / 2, y + (dim - image.getHeight()) / 2, image.getWidth(), image.getHeight(), null);
-			}
+			g2d.drawImage(image, x, y, null);
 		}
 		catch(IOException e){
 			Log.getLogger(null).error("Failed to read trombinoscope picture {}", picture.getPath(), e);

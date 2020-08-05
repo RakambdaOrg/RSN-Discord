@@ -21,4 +21,5 @@ open module fr.raksrinana.rsndiscord {
 	requires emoji.java;
 	requires imgscalr.lib;
 	requires jump3r;
+	requires thumbnailator;
 }

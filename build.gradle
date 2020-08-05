@@ -58,6 +58,7 @@ dependencies {
     implementation("org.reflections:reflections:${project.reflections_version}")
     implementation("com.vdurmont:emoji-java:${project.emoji_java_version}")
     implementation("org.imgscalr:imgscalr-lib:${project.imgscalr_version}")
+    implementation("net.coobird:thumbnailator:${project.thumbnailator_version}")
 }
 
 repositories {
