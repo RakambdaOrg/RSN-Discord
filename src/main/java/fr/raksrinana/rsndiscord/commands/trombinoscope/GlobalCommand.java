@@ -65,8 +65,8 @@ class GlobalCommand extends BasicCommand{
 		trombinoscopeConfiguration.getPictures().entrySet().stream().parallel().forEach(entry -> {
 			var userIndex = currentIndex.getAndIncrement();
 			entry.getValue().stream().skip(ThreadLocalRandom.current().nextInt(entry.getValue().size())).findFirst().ifPresent(picture -> {
-				int x = userIndex / dimensions.getLeft();
-				int y = userIndex % dimensions.getLeft();
+				int x = userIndex % dimensions.getLeft();
+				int y = userIndex / dimensions.getLeft();
 				drawImage(g2d, picture, PICTURE_PIXELS * x, PICTURE_PIXELS * y, PICTURE_PIXELS, mode);
 			});
 		});
@@ -91,7 +91,7 @@ class GlobalCommand extends BasicCommand{
 				.mapToObj(i -> Pair.of(i, count / i))
 				.collect(Collectors.toSet());
 		return divisors.stream()
-				.max(Comparator.comparingInt(GlobalCommand::getDimsDiff))
+				.min(Comparator.comparingInt(GlobalCommand::getDimsDiff))
 				.orElseGet(() -> {
 					var side = (int) Math.ceil(Math.sqrt(count));
 					return Pair.of(side, side);

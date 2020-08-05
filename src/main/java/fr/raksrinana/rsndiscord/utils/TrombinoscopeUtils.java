@@ -17,6 +17,9 @@ public class TrombinoscopeUtils{
 				.getPosterRole()
 				.flatMap(RoleConfiguration::getRole)
 				.map(role -> member.getRoles().contains(role))
-				.orElse(false);
+				.orElse(false)
+				|| Utilities.isModerator(member)
+				|| Utilities.isAdmin(member)
+				|| Utilities.isCreator(member.getUser());
 	}
 }
