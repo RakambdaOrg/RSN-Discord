@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.apache.commons.lang3.tuple.Pair;
 import org.imgscalr.Scalr;
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
@@ -20,17 +21,19 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
-
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static fr.raksrinana.rsndiscord.utils.TrombinoscopeUtils.isRegistered;
 
 class GlobalCommand extends BasicCommand{
-	private static final int PICTURE_PIXELS = 2000;
+	private static final int PICTURE_PIXELS = 500;
 	
 	/**
 	 * Constructor.
@@ -54,17 +57,17 @@ class GlobalCommand extends BasicCommand{
 		var mode = Optional.ofNullable(args.poll()).flatMap(PictureMode::fromString).orElse(PictureMode.STRETCH);
 		var trombinoscopeConfiguration = Settings.get(event.getGuild()).getTrombinoscope();
 		var userCount = trombinoscopeConfiguration.getUserCount();
-		var squareCountPerSide = (int) Math.ceil(Math.sqrt(userCount));
-		var squarePixels = PICTURE_PIXELS / squareCountPerSide;
-		var bufferedImage = new BufferedImage(squarePixels * squareCountPerSide, squarePixels * squareCountPerSide, BufferedImage.TYPE_INT_RGB);
+		var dimensions = getDims(userCount);
+		
+		var bufferedImage = new BufferedImage(PICTURE_PIXELS * dimensions.getLeft(), PICTURE_PIXELS * dimensions.getRight(), BufferedImage.TYPE_INT_RGB);
 		var g2d = bufferedImage.createGraphics();
 		var currentIndex = new AtomicInteger(0);
 		trombinoscopeConfiguration.getPictures().entrySet().stream().parallel().forEach(entry -> {
 			var userIndex = currentIndex.getAndIncrement();
 			entry.getValue().stream().skip(ThreadLocalRandom.current().nextInt(entry.getValue().size())).findFirst().ifPresent(picture -> {
-				int x = userIndex / squareCountPerSide;
-				int y = userIndex % squareCountPerSide;
-				drawImage(g2d, picture, squarePixels * x, squarePixels * y, squarePixels, mode);
+				int x = userIndex / dimensions.getLeft();
+				int y = userIndex % dimensions.getLeft();
+				drawImage(g2d, picture, PICTURE_PIXELS * x, PICTURE_PIXELS * y, PICTURE_PIXELS, mode);
 			});
 		});
 		g2d.dispose();
@@ -80,6 +83,23 @@ class GlobalCommand extends BasicCommand{
 			Actions.reply(event, translate(event.getGuild(), "trombinoscope.error.create-fail"), null);
 		}
 		return CommandResult.SUCCESS;
+	}
+	
+	private static Pair<Integer, Integer> getDims(int count){
+		var divisors = IntStream.rangeClosed(1, (int) Math.floor(Math.sqrt(count)))
+				.filter(i -> count % i == 0)
+				.mapToObj(i -> Pair.of(i, count / i))
+				.collect(Collectors.toSet());
+		return divisors.stream()
+				.max(Comparator.comparingInt(GlobalCommand::getDimsDiff))
+				.orElseGet(() -> {
+					var side = (int) Math.ceil(Math.sqrt(count));
+					return Pair.of(side, side);
+				});
+	}
+	
+	private static int getDimsDiff(Pair<Integer, Integer> dimensions){
+		return Math.abs(dimensions.getLeft() - dimensions.getRight());
 	}
 	
 	@Override
