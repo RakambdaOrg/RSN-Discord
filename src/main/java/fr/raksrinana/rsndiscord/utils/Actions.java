@@ -156,15 +156,21 @@ public class Actions{
 	@NonNull
 	public static CompletableFuture<Message> forwardMessage(Message source, TextChannel toChannel){
 		Log.getLogger(toChannel.getGuild()).info("Forwarding message {} to channel {}", source, toChannel);
-		var action = toChannel.sendMessage(new MessageBuilder(source).build());
+		var action = toChannel.sendMessage(source);
 		for(Message.Attachment attachment : source.getAttachments()){
 			final var finalAction = action;
 			try{
-				action = attachment.retrieveInputStream().thenApply(is -> finalAction.addFile(is, attachment.getFileName())).get(30, TimeUnit.SECONDS);
+				action = attachment.retrieveInputStream()
+						.thenApply(is -> finalAction.addFile(is, attachment.getFileName()))
+						.get(30, TimeUnit.SECONDS);
 			}
 			catch(InterruptedException | ExecutionException | TimeoutException e){
 				Log.getLogger(toChannel.getGuild()).error("Failed to forward attachment {}", attachment, e);
-				action = action.append("\n<Attachment ").append(attachment.getFileName()).append(".").append(attachment.getFileExtension() == null ? "" : attachment.getFileExtension()).append(">");
+				action = action.append("\n<Attachment ")
+						.append(attachment.getFileName())
+						.append(".")
+						.append(attachment.getFileExtension() == null ? "" : attachment.getFileExtension())
+						.append(">");
 			}
 		}
 		return action.submit();

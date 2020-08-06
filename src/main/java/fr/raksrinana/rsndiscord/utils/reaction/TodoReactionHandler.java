@@ -41,15 +41,23 @@ public class TodoReactionHandler implements ReactionHandler{
 	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emote, @NonNull WaitingReactionMessageConfiguration todo){
 		return todo.getMessage().getMessage().map(message -> {
 			if(emote == PAPERCLIP){
-				final var forwarded = Optional.ofNullable(Settings.get(event.getGuild()).getReactionsConfiguration().getSavedForwarding().get(new ChannelConfiguration(event.getChannel()))).flatMap(ChannelConfiguration::getChannel).map(forwardChannel -> {
-					try{
-						return Actions.forwardMessage(message, forwardChannel).thenApply(forwardedMessage -> true).exceptionally(e -> false).get(30, TimeUnit.SECONDS);
-					}
-					catch(InterruptedException | ExecutionException | TimeoutException e){
-						log.error("Failed to forward message", e);
-					}
-					return false;
-				}).orElse(false);
+				final var forwarded = Optional.ofNullable(Settings.get(event.getGuild())
+						.getReactionsConfiguration()
+						.getSavedForwarding()
+						.get(new ChannelConfiguration(event.getChannel())))
+						.flatMap(ChannelConfiguration::getChannel)
+						.map(forwardChannel -> {
+							try{
+								return Actions.forwardMessage(message, forwardChannel)
+										.thenApply(forwardedMessage -> true)
+										.exceptionally(e -> false)
+										.get(30, TimeUnit.SECONDS);
+							}
+							catch(InterruptedException | ExecutionException | TimeoutException e){
+								log.error("Failed to forward message", e);
+							}
+							return false;
+						}).orElse(false);
 				if(!forwarded){
 					Actions.sendPrivateMessage(event.getGuild(), event.getUser(), translate(event.getGuild(), "reaction.not-configured"), null);
 					Actions.removeReaction(event.getReaction(), event.getUser());
