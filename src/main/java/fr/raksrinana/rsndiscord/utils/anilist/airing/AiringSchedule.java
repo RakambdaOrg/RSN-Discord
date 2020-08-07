@@ -12,10 +12,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -39,11 +39,11 @@ public class AiringSchedule implements AnilistDatedObject{
 	private int timeUntilAiring;
 	
 	@Override
-	public void fillEmbed(@NonNull Locale locale,  @NonNull EmbedBuilder builder){
-		builder.addField(translate(locale, "anilist.episode"), Integer.toString(getEpisode()), true);
-		builder.addField(translate(locale, "anilist.air"), getAiringAt().format(DF), true);
+	public void fillEmbed(@NonNull Guild guild,  @NonNull EmbedBuilder builder){
+		builder.addField(translate(guild, "anilist.episode"), Integer.toString(getEpisode()), true);
+		builder.addField(translate(guild, "anilist.air"), getAiringAt().format(DF), true);
 		builder.addBlankField(false);
-		getMedia().fillEmbed(locale, builder);
+		getMedia().fillEmbed(guild, builder);
 	}
 	
 	@Override

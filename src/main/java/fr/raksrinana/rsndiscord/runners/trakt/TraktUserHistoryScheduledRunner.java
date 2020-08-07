@@ -18,6 +18,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -67,14 +68,14 @@ public class TraktUserHistoryScheduledRunner implements TraktPagedGetRunner<User
 	}
 	
 	@Override
-	public void buildMessage(@NonNull Locale locale, EmbedBuilder builder, User user, @NonNull UserHistory change){
+	public void buildMessage(@NonNull Guild guild, EmbedBuilder builder, User user, @NonNull UserHistory change){
 		if(Objects.isNull(user)){
 			builder.setAuthor(this.getJda().getSelfUser().getName(), null, this.getJda().getSelfUser().getAvatarUrl());
 		}
 		else{
 			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 		}
-		getTMDBInfos(change).ifPresentOrElse(mediaDetails -> change.fillEmbed(locale, builder, mediaDetails), () -> change.fillEmbed(locale, builder));
+		getTMDBInfos(change).ifPresentOrElse(mediaDetails -> change.fillEmbed(guild, builder, mediaDetails), () -> change.fillEmbed(guild, builder));
 	}
 	
 	@Override

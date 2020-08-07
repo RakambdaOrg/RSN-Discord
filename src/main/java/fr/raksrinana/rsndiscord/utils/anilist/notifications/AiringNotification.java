@@ -9,10 +9,10 @@ import fr.raksrinana.rsndiscord.utils.anilist.media.Media;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.awt.Color;
 import java.net.URL;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
@@ -34,14 +34,14 @@ public class AiringNotification extends Notification{
 	}
 	
 	@Override
-	public void fillEmbed(@NonNull Locale locale, @NonNull final EmbedBuilder builder){
+	public void fillEmbed(@NonNull Guild guild, @NonNull final EmbedBuilder builder){
 		builder.setTimestamp(this.getDate());
 		builder.setColor(Color.GREEN);
-		builder.setTitle(translate(locale, "anilist.release"), this.getMedia().getUrl().toString());
-		builder.addField(translate(locale, "anilist.episode"), String.valueOf(this.getEpisode()), true);
+		builder.setTitle(translate(guild, "anilist.release"), this.getMedia().getUrl().toString());
+		builder.addField(translate(guild, "anilist.episode"), String.valueOf(this.getEpisode()), true);
 		builder.addBlankField(false);
-		builder.addField(translate(locale, "anilist.media"), "", false);
-		this.getMedia().fillEmbed(locale, builder);
+		builder.addField(translate(guild, "anilist.media"), "", false);
+		this.getMedia().fillEmbed(guild, builder);
 	}
 	
 	@Override

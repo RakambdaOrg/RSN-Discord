@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.utils.anilist.FuzzyDate;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
@@ -53,28 +54,28 @@ public abstract class Media implements AniListObject{
 	}
 	
 	@Override
-	public void fillEmbed(@NonNull Locale locale, @NonNull final EmbedBuilder builder){
+	public void fillEmbed(@NonNull Guild guild, @NonNull final EmbedBuilder builder){
 		builder.setDescription(this.getTitle().getRomaji());
 		if(this.getType().isShouldDisplay()){
-			builder.addField(translate(locale, "anilist.type"), this.getType().toString(), true);
+			builder.addField(translate(guild, "anilist.type"), this.getType().toString(), true);
 		}
-		builder.addField(translate(locale, "anilist.format"), Optional.ofNullable(this.getFormat()).map(Enum::toString).orElse("-"), true);
-		builder.addField(translate(locale, "anilist.status"), Optional.ofNullable(this.getStatus()).map(Enum::toString).orElse("-"), true);
+		builder.addField(translate(guild, "anilist.format"), Optional.ofNullable(this.getFormat()).map(Enum::toString).orElse("-"), true);
+		builder.addField(translate(guild, "anilist.status"), Optional.ofNullable(this.getStatus()).map(Enum::toString).orElse("-"), true);
 		if(this.isAdult()){
-			builder.addField(translate(locale, "anilist.adult"), "", true);
+			builder.addField(translate(guild, "anilist.adult"), "", true);
 		}
-		fillAdditionalEmbed(locale, builder);
-		this.getStartDate().asDate().ifPresent(startDate -> builder.addField(translate(locale, "anilist.started"), startDate.format(DF), true));
-		this.getEndDate().asDate().ifPresent(startDate -> builder.addField(translate(locale, "anilist.ended"), startDate.format(DF), true));
+		fillAdditionalEmbed(guild, builder);
+		this.getStartDate().asDate().ifPresent(startDate -> builder.addField(translate(guild, "anilist.started"), startDate.format(DF), true));
+		this.getEndDate().asDate().ifPresent(startDate -> builder.addField(translate(guild, "anilist.ended"), startDate.format(DF), true));
 		if(!genres.isEmpty()){
-			builder.addField(translate(locale, "anilist.genres"), String.join(", ", getGenres()), true);
+			builder.addField(translate(guild, "anilist.genres"), String.join(", ", getGenres()), true);
 		}
 		//builder.addField("Link", getUrl(), false);
 		builder.setThumbnail(this.getCoverImage().getLarge().toString());
 		builder.setFooter("ID: " + getId());
 	}
 	
-	protected abstract void fillAdditionalEmbed(@NonNull Locale locale, @NonNull EmbedBuilder builder);
+	protected abstract void fillAdditionalEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder);
 	
 	@NonNull
 	public abstract String getProgressType(final boolean contains);

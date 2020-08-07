@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import java.util.Locale;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
@@ -27,9 +27,9 @@ public class MangaMedia extends Media{
 	}
 	
 	@Override
-	protected void fillAdditionalEmbed(@NonNull Locale locale, @NonNull EmbedBuilder builder){
-		Optional.ofNullable(this.getChapters()).map(Object::toString).ifPresent(val -> builder.addField(translate(locale, "anilist.chapters"), val, true));
-		Optional.ofNullable(this.getVolumes()).map(Object::toString).ifPresent(val -> builder.addField(translate(locale, "anilist.volumes"), val, true));
+	protected void fillAdditionalEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder){
+		Optional.ofNullable(this.getChapters()).map(Object::toString).ifPresent(val -> builder.addField(translate(guild, "anilist.chapters"), val, true));
+		Optional.ofNullable(this.getVolumes()).map(Object::toString).ifPresent(val -> builder.addField(translate(guild, "anilist.volumes"), val, true));
 	}
 	
 	@Override

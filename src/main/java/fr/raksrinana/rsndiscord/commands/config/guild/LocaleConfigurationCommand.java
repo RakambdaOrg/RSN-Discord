@@ -31,13 +31,13 @@ public class LocaleConfigurationCommand extends ValueConfigurationCommand<Locale
 	
 	@Override
 	protected void removeConfig(@NonNull final Guild guild){
-		Settings.get(guild).setLocale(Locale.ENGLISH);
+		Settings.get(guild).setLocale(null);
 	}
 	
 	@NonNull
 	@Override
 	protected Optional<Locale> getConfig(@NonNull final Guild guild){
-		return Optional.ofNullable(Settings.get(guild).getLocale());
+		return Settings.get(guild).getLocale();
 	}
 	
 	@Override

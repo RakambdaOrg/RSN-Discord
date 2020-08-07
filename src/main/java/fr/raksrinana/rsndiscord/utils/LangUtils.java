@@ -12,7 +12,7 @@ public class LangUtils{
 	private static final Map<Locale, ResourceBundle> bundles = new HashMap<>();
 	
 	public static String translate(@NonNull Guild guild, @NonNull String key, Object... args){
-		return translate(Settings.get(guild).getLocale(), key, args);
+		return translate(Settings.get(guild).getLocale().orElseGet(guild::getLocale), key, args);
 	}
 	
 	public static String translate(@NonNull Locale locale, @NonNull String key, Object... args){

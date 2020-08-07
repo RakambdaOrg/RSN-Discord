@@ -22,8 +22,7 @@ import java.util.stream.Collectors;
 public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("locale")
 	@Setter
-	@Getter
-	private Locale locale = Locale.ENGLISH;
+	private Locale locale;
 	@JsonProperty("schedules")
 	@JsonAlias({"reminders"})
 	private List<ScheduleConfiguration> schedules = new ArrayList<>();
@@ -164,5 +163,9 @@ public class GuildConfiguration implements CompositeConfiguration{
 	
 	public List<ScheduleConfiguration> getSchedules(){
 		return new LinkedList<>(this.schedules);
+	}
+	
+	public Optional<Locale> getLocale(){
+		return Optional.ofNullable(this.locale);
 	}
 }

@@ -11,13 +11,13 @@ import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import java.awt.Color;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>> extends ScheduledRunner{
@@ -36,8 +36,7 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 				.forEach(change -> channels.stream()
 						.filter(channel -> this.sendToChannel(channel, change.getKey()))
 						.forEach(channel -> {
-							var locale = Settings.get(channel.getGuild()).getLocale();
-							var embed = this.buildMessage(locale, change.getKey(), change.getValue());
+							var embed = this.buildMessage(channel.getGuild(), change.getKey(), change.getValue());
 							Actions.sendEmbed(channel, embed);
 						}));
 	}
@@ -87,7 +86,7 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 	@NonNull JDA getJda();
 	
 	@NonNull
-	default MessageEmbed buildMessage(@NonNull Locale locale, final User user, @NonNull final T change){
+	default MessageEmbed buildMessage(@NonNull Guild guild, final User user, @NonNull final T change){
 		final var builder = new EmbedBuilder();
 		try{
 			if(Objects.isNull(user)){
@@ -96,7 +95,7 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 			else{
 				builder.setAuthor(user.getName(), change.getUrl().toString(), user.getAvatarUrl());
 			}
-			change.fillEmbed(locale, builder);
+			change.fillEmbed(guild, builder);
 		}
 		catch(final Exception e){
 			Log.getLogger(null).error("Error building message for {}", this.getName(), e);

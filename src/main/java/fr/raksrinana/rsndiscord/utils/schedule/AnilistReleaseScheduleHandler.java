@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord.utils.schedule;
 
-import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.ScheduleConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
@@ -30,9 +29,8 @@ public class AnilistReleaseScheduleHandler implements ScheduleHandler{
 									.map(member -> {
 										try{
 											return new MediaPagedQuery(Integer.parseInt(data.get(MEDIA_ID_KEY))).getResult(member).stream().findFirst().map(media -> {
-												var locale = Settings.get(member.getGuild()).getLocale();
 												final var builder = new EmbedBuilder();
-												media.fillEmbed(locale, builder);
+												media.fillEmbed(member.getGuild(), builder);
 												Actions.sendMessage(channel, translate(channel.getGuild(), "schedule.reminder-added", user.getAsMention(), reminder.getMessage()), builder.build());
 												Optional.ofNullable(reminder.getReminderCountdownMessage()).flatMap(MessageConfiguration::getMessage).ifPresent(Actions::deleteMessage);
 												return true;

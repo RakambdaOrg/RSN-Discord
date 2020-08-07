@@ -9,12 +9,12 @@ import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.awt.Color;
 import java.net.URL;
 import java.time.ZonedDateTime;
-import java.util.Locale;
 import java.util.Objects;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
@@ -42,18 +42,18 @@ public abstract class ListActivity implements AnilistDatedObject{
 	private int id;
 	
 	@Override
-	public void fillEmbed(@NonNull Locale locale, @NonNull final EmbedBuilder builder){
+	public void fillEmbed(@NonNull Guild guild, @NonNull final EmbedBuilder builder){
 		builder.setColor(getColor());
 		builder.setTimestamp(getDate());
 		if(Objects.isNull(getProgress())){
-			builder.setDescription(translate(locale, "anilist.list-added"));
+			builder.setDescription(translate(guild, "anilist.list-added"));
 		}
 		else{
 			builder.setDescription(StringUtils.capitalize(getMedia().getProgressType(getProgress().contains("-"))) + " " + getProgress());
 		}
 		builder.addBlankField(false);
-		builder.addField(translate(locale, "anilist.media"), "", false);
-		getMedia().fillEmbed(locale, builder);
+		builder.addField(translate(guild, "anilist.media"), "", false);
+		getMedia().fillEmbed(guild, builder);
 	}
 	
 	@NonNull

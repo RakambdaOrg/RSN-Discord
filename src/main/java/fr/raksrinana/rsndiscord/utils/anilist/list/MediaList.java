@@ -13,6 +13,7 @@ import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.net.URL;
 import java.time.ZonedDateTime;
@@ -63,38 +64,38 @@ public class MediaList implements AnilistDatedObject{
 	private String notes;
 	
 	@Override
-	public void fillEmbed(@NonNull Locale locale, @NonNull final EmbedBuilder builder){
+	public void fillEmbed(@NonNull Guild guild, @NonNull final EmbedBuilder builder){
 		builder.setTimestamp(getDate());
 		builder.setColor(getStatus().getColor());
-		builder.setTitle(translate(locale, "anilist.list-info"), getMedia().getUrl().toString());
-		builder.addField(translate(locale, "anilist.list-status"), this.getStatus().toString(), true);
+		builder.setTitle(translate(guild, "anilist.list-info"), getMedia().getUrl().toString());
+		builder.addField(translate(guild, "anilist.list-status"), this.getStatus().toString(), true);
 		if(Objects.nonNull(getScore())){
-			builder.addField(translate(locale, "anilist.list-score"), this.getScore() + "/100", true);
+			builder.addField(translate(guild, "anilist.list-score"), this.getScore() + "/100", true);
 		}
 		if(Objects.equals(isPrivateItem(), Boolean.TRUE)){
-			builder.addField(translate(locale, "anilist.list-private"), "Yes", true);
+			builder.addField(translate(guild, "anilist.list-private"), "Yes", true);
 		}
-		getStartedAt().asDate().ifPresent(date -> builder.addField(translate(locale, "anilist.list-started"), date.format(DF), true));
+		getStartedAt().asDate().ifPresent(date -> builder.addField(translate(guild, "anilist.list-started"), date.format(DF), true));
 		getCompletedAt().asDate().ifPresent(date -> {
-			builder.addField(translate(locale, "anilist.list-complete"), date.format(DF), true);
-			getStartedAt().durationTo(date).ifPresent(duration -> builder.addField(translate(locale, "anilist.list-time"), String.format("%d days", duration.get(DAYS)), true));
+			builder.addField(translate(guild, "anilist.list-complete"), date.format(DF), true);
+			getStartedAt().durationTo(date).ifPresent(duration -> builder.addField(translate(guild, "anilist.list-time"), String.format("%d days", duration.get(DAYS)), true));
 		});
-		builder.addField(translate(locale, "anilist.list-progress"), getProgress() + "/" + Optional.ofNullable(getMedia().getItemCount()).map(Object::toString).orElse("?"), true);
+		builder.addField(translate(guild, "anilist.list-progress"), getProgress() + "/" + Optional.ofNullable(getMedia().getItemCount()).map(Object::toString).orElse("?"), true);
 		if(Objects.nonNull(getProgressVolumes()) && getMedia() instanceof MangaMedia){
-			builder.addField(translate(locale, "anilist.list-volumes"), getProgressVolumes() + "/" + Optional.ofNullable(((MangaMedia) getMedia()).getVolumes()).map(Object::toString).orElse("?"), true);
+			builder.addField(translate(guild, "anilist.list-volumes"), getProgressVolumes() + "/" + Optional.ofNullable(((MangaMedia) getMedia()).getVolumes()).map(Object::toString).orElse("?"), true);
 		}
 		if(Objects.nonNull(getRepeat()) && getRepeat() > 0){
-			builder.addField(translate(locale, "anilist.list-repeat"), Integer.toString(this.getRepeat()), true);
+			builder.addField(translate(guild, "anilist.list-repeat"), Integer.toString(this.getRepeat()), true);
 		}
 		final var lists = Optional.ofNullable(this.customLists).orElse(new HashMap<>()).entrySet().stream().filter(k -> Objects.nonNull(k.getValue()) && k.getValue()).map(Map.Entry::getKey).collect(Collectors.joining(", "));
 		if(!lists.isBlank()){
-			builder.addField(translate(locale, "anilist.list-custom"), lists, true);
+			builder.addField(translate(guild, "anilist.list-custom"), lists, true);
 		}
 		if(Objects.nonNull(getNotes()) && !getNotes().isBlank()){
-			builder.addField(translate(locale, "anilist.list-notes"), getNotes(), false);
+			builder.addField(translate(guild, "anilist.list-notes"), getNotes(), false);
 		}
 		builder.addBlankField(false);
-		getMedia().fillEmbed(locale, builder);
+		getMedia().fillEmbed(guild, builder);
 	}
 	
 	@Override

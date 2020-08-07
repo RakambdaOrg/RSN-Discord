@@ -40,10 +40,9 @@ public class AniListNotificationScheduledRunner implements AniListRunner<Notific
 			}
 		}
 		notifications.entrySet().stream().sorted(Comparator.comparing(e -> e.getKey().getDate())).forEachOrdered(e -> channels.forEach(channel -> {
-			var locale = Settings.get(channel.getGuild()).getLocale();
 			final var mentions = e.getValue().stream().filter(u -> this.sendToChannel(channel, u)).distinct().map(User::getAsMention).collect(Collectors.toList());
 			if(!mentions.isEmpty()){
-				Actions.sendMessage(channel, String.join("\n", mentions), this.buildMessage(locale, null, e.getKey()));
+				Actions.sendMessage(channel, String.join("\n", mentions), this.buildMessage(channel.getGuild(), null, e.getKey()));
 			}
 		}));
 	}

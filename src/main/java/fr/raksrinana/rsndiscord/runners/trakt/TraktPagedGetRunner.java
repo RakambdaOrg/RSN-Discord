@@ -12,6 +12,7 @@ import fr.raksrinana.rsndiscord.utils.trakt.TraktUtils;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -72,9 +73,8 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 						.forEach(change -> channels.stream()
 								.filter(channel -> this.sendToChannel(channel, user))
 								.forEach(channel -> {
-									var locale = Settings.get(channel.getGuild()).getLocale();
 									final var builder = new EmbedBuilder();
-									this.buildMessage(locale, builder, user, change);
+									this.buildMessage(channel.getGuild(), builder, user, change);
 									Actions.sendEmbed(channel, builder.build());
 								}));
 			}
@@ -86,9 +86,8 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 					.forEach(change -> channels.stream()
 							.filter(channel -> this.sendToChannel(channel, change.getKey()))
 							.forEach(channel -> {
-								var locale = Settings.get(channel.getGuild()).getLocale();
 								final var builder = new EmbedBuilder();
-								this.buildMessage(locale, builder, change.getKey(), change.getValue());
+								this.buildMessage(channel.getGuild(), builder, change.getKey(), change.getValue());
 								Actions.sendEmbed(channel, builder.build());
 							}));
 		}
@@ -106,7 +105,7 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 		return false;
 	}
 	
-	default void buildMessage(@NonNull Locale locale, final EmbedBuilder builder, final User user, @NonNull final T change){
+	default void buildMessage(@NonNull Guild guild, final EmbedBuilder builder, final User user, @NonNull final T change){
 		try{
 			if(Objects.isNull(user)){
 				builder.setAuthor(this.getJda().getSelfUser().getName(), null, this.getJda().getSelfUser().getAvatarUrl());
@@ -114,7 +113,7 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 			else{
 				builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 			}
-			change.fillEmbed(locale, builder);
+			change.fillEmbed(guild, builder);
 		}
 		catch(final Exception e){
 			Log.getLogger(null).error("Error building message for {}", this.getName(), e);

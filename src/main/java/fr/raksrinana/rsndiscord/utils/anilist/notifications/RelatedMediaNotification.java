@@ -9,10 +9,10 @@ import fr.raksrinana.rsndiscord.utils.anilist.media.Media;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.awt.Color;
 import java.net.URL;
-import java.util.Locale;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
@@ -31,13 +31,13 @@ public class RelatedMediaNotification extends Notification{
 	}
 	
 	@Override
-	public void fillEmbed(@NonNull Locale locale, @NonNull final EmbedBuilder builder){
+	public void fillEmbed(@NonNull Guild guild, @NonNull final EmbedBuilder builder){
 		builder.setTimestamp(this.getDate());
 		builder.setColor(Color.PINK);
-		builder.setTitle(translate(locale, "anilist.related"), this.getMedia().getUrl().toString());
+		builder.setTitle(translate(guild, "anilist.related"), this.getMedia().getUrl().toString());
 		builder.addBlankField(false);
-		builder.addField(translate(locale, "anilist.media"), "", false);
-		this.getMedia().fillEmbed(locale, builder);
+		builder.addField(translate(guild, "anilist.media"), "", false);
+		this.getMedia().fillEmbed(guild, builder);
 	}
 	
 	@Override
