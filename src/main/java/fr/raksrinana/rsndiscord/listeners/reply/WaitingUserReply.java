@@ -7,6 +7,8 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import java.io.Closeable;
 import java.util.LinkedList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 interface WaitingUserReply extends Closeable{
 	boolean execute(@NonNull GuildMessageReceivedEvent event, @NonNull LinkedList<String> args);
@@ -17,7 +19,7 @@ interface WaitingUserReply extends Closeable{
 	
 	boolean handleEvent(GuildMessageReceivedEvent event);
 	
-	boolean handleEvent(GuildMessageReactionAddEvent event);
+	boolean handleEvent(GuildMessageReactionAddEvent event) throws InterruptedException, ExecutionException, TimeoutException;
 	
 	long getEmoteMessageId();
 	

@@ -11,7 +11,9 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public abstract class BasicWaitingUserReply implements WaitingUserReply{
@@ -102,8 +104,12 @@ public abstract class BasicWaitingUserReply implements WaitingUserReply{
 	}
 	
 	@Override
-	public boolean handleEvent(final GuildMessageReactionAddEvent event){
-		return Objects.equals(this.getUser(), event.getUser()) && Objects.equals(this.getWaitChannel(), event.getChannel()) && Objects.equals(this.getEmoteMessageId(), event.getMessageIdLong());
+	public boolean handleEvent(final GuildMessageReactionAddEvent event) throws InterruptedException, ExecutionException, TimeoutException{
+		return event.retrieveUser().submit()
+				.thenApply(user -> Objects.equals(this.getUser(), event.getUser())
+						&& Objects.equals(this.getWaitChannel(), event.getChannel())
+						&& Objects.equals(this.getEmoteMessageId(), event.getMessageIdLong()))
+				.get(30, TimeUnit.SECONDS);
 	}
 	
 	@Override

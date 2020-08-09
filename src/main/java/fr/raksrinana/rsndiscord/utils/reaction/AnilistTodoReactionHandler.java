@@ -7,6 +7,8 @@ import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 public class AnilistTodoReactionHandler extends TodoReactionHandler{
 	@Override
@@ -15,8 +17,11 @@ public class AnilistTodoReactionHandler extends TodoReactionHandler{
 	}
 	
 	@Override
-	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emotes, @NonNull WaitingReactionMessageConfiguration todo){
-		todo.getMessage().getMessage().ifPresent(message -> message.getEmbeds().forEach(embed -> Actions.sendPrivateMessage(message.getGuild(), Utilities.RAKSRINANA_ACCOUNT, event.getMember().getUser().getAsMention() + " completed", embed)));
+	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emotes, @NonNull WaitingReactionMessageConfiguration todo) throws InterruptedException, ExecutionException, TimeoutException{
+		event.retrieveUser().submit().thenAccept(user -> todo.getMessage()
+				.getMessage()
+				.ifPresent(message -> message.getEmbeds()
+						.forEach(embed -> Actions.sendPrivateMessage(message.getGuild(), Utilities.RAKSRINANA_ACCOUNT, user.getAsMention() + " completed", embed))));
 		return super.processTodoCompleted(event, emotes, todo);
 	}
 	

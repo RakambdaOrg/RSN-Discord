@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.listeners.reply;
 
+import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.Getter;
 import lombok.NonNull;
@@ -11,8 +12,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 public class ReplyMessageListener extends ListenerAdapter{
@@ -51,7 +54,16 @@ public class ReplyMessageListener extends ListenerAdapter{
 	public void onGuildMessageReactionAdd(@NonNull final GuildMessageReactionAddEvent event){
 		super.onGuildMessageReactionAdd(event);
 		try{
-			replies.removeIf(reply -> reply.isHandled() || (reply.handleEvent(event) && reply.execute(event)));
+			replies.removeIf(reply -> {
+				try{
+					return reply.isHandled() || (reply.handleEvent(event) && reply.execute(event));
+				}
+				catch(InterruptedException | ExecutionException | TimeoutException e){
+					Utilities.reportException("Failed to handle reaction", e);
+					Log.getLogger(event.getGuild()).error("Failed to handle reaction");
+				}
+				return false;
+			});
 		}
 		catch(final Exception e){
 			Log.getLogger(event.getGuild()).error("Failed to handle user reply", e);
