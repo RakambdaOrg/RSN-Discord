@@ -7,7 +7,10 @@ import net.dv8tion.jda.api.JDA;
 import java.util.concurrent.TimeUnit;
 
 public class CleanConfigScheduledRunner implements ScheduledRunner{
+	private final JDA jda;
+	
 	public CleanConfigScheduledRunner(JDA jda){
+		this.jda = jda;
 	}
 	
 	@Override
@@ -28,7 +31,7 @@ public class CleanConfigScheduledRunner implements ScheduledRunner{
 	
 	@Override
 	public void execute(){
-		Settings.clean();
+		Settings.clean(jda);
 	}
 	
 	@NonNull

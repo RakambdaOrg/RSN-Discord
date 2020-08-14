@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,7 +25,9 @@ public class Settings{
 	
 	@NonNull
 	public static GuildConfiguration get(@NonNull final Guild guild){
-		return configurations.computeIfAbsent(guild.getIdLong(), guildId -> loadConfiguration(guild).orElseThrow(() -> new RuntimeException("Failed to load configuration for guild " + guild)));
+		return configurations.computeIfAbsent(guild.getIdLong(),
+				guildId -> loadConfiguration(guild)
+						.orElseThrow(() -> new RuntimeException("Failed to load configuration for guild " + guild)));
 	}
 	
 	@NonNull
@@ -68,11 +71,12 @@ public class Settings{
 		}
 	}
 	
-	public static void clean(){
+	public static void clean(@NonNull JDA jda){
 		Log.getLogger(null).info("Cleaning settings");
-		configurations.values().forEach(guildConfiguration -> {
+		configurations.entrySet().forEach(entry -> {
 			try{
-				guildConfiguration.cleanFields("[root]");
+				var guild = jda.getGuildById(entry.getKey());
+				entry.getValue().cleanFields(guild, "[root]");
 			}
 			catch(Exception e){
 				Log.getLogger(null).error("Failed to clean guild configuration", e);

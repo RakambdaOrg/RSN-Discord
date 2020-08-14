@@ -15,6 +15,8 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -57,7 +59,10 @@ public class MessageConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public String toString(){
-		return "Message(" + this.getMessageId() + '/' + this.getChannel() + ')';
+		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+				.append("channel", channel)
+				.append("messageId", messageId)
+				.toString();
 	}
 	
 	@Override

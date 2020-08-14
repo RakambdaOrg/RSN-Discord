@@ -1,16 +1,18 @@
 package fr.raksrinana.rsndiscord.settings;
 
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import lombok.NonNull;
+import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public interface CompositeConfiguration{
-	default void cleanFields(String fieldName) throws Exception{
+	default void cleanFields(@NonNull Guild guild, String fieldName) throws Exception{
 		for(final var field : this.getClass().getDeclaredFields()){
 			final var fieldValue = FieldUtils.readField(field, this, true);
-			if(cleanObject(fieldValue, fieldName + "." + field.getName())){
-				Log.getLogger(null).debug("Setting field {}.{} to null", fieldName, field);
+			if(cleanObject(guild, fieldValue, fieldName + "." + field.getName())){
+				Log.getLogger(guild).debug("Setting field {}.{} to null", fieldName, field);
 				field.set(this, null);
 			}
 		}
@@ -20,27 +22,27 @@ public interface CompositeConfiguration{
 		return object instanceof AtomicConfiguration && ((AtomicConfiguration) object).shouldBeRemoved();
 	}
 	
-	default boolean cleanObject(Object fieldValue, String fieldName) throws Exception{
+	default boolean cleanObject(@NonNull Guild guild, Object fieldValue, String fieldName) throws Exception{
 		if(fieldValue instanceof AtomicConfiguration){
 			return ((AtomicConfiguration) fieldValue).shouldBeRemoved();
 		}
 		else if(fieldValue instanceof CompositeConfiguration){
-			((CompositeConfiguration) fieldValue).cleanFields(fieldName);
+			((CompositeConfiguration) fieldValue).cleanFields(guild, fieldName);
 			return false;
 		}
 		else if(fieldValue instanceof Collection){
 			final var collection = (Collection<?>) fieldValue;
 			final var toRemove = List.copyOf(collection).stream().filter(this::atomicShouldBeRemoved).collect(Collectors.toList());
 			if(!toRemove.isEmpty()){
-				Log.getLogger(null).debug("Removing values {} from collection {}", toRemove, fieldName);
+				Log.getLogger(guild).debug("Removing values {} from collection {}", toRemove, fieldName);
 			}
 			collection.removeAll(toRemove);
 			collection.forEach(elem -> {
 				try{
-					cleanObject(elem, fieldName);
+					cleanObject(guild, elem, fieldName);
 				}
 				catch(Exception e){
-					Log.getLogger(null).error("Failed to clean settings object {}", this.getClass(), e);
+					Log.getLogger(guild).error("Failed to clean settings object {}", this.getClass(), e);
 				}
 			});
 			return false;
@@ -49,15 +51,15 @@ public interface CompositeConfiguration{
 			final var map = (Map<?, ?>) fieldValue;
 			final var toRemove = new HashMap<>(map).entrySet().stream().filter(entry -> Objects.isNull(entry.getValue()) || atomicShouldBeRemoved(entry.getKey()) || atomicShouldBeRemoved(entry.getValue())).map(Map.Entry::getKey).collect(Collectors.toSet());
 			if(!toRemove.isEmpty()){
-				Log.getLogger(null).debug("Removing keys {} from map {}", toRemove, fieldName);
+				Log.getLogger(guild).debug("Removing keys {} from map {}", toRemove, fieldName);
 			}
 			toRemove.forEach(map::remove);
 			map.values().forEach(elem -> {
 				try{
-					cleanObject(elem, fieldName);
+					cleanObject(guild, elem, fieldName);
 				}
 				catch(Exception e){
-					Log.getLogger(null).error("Failed to clean settings object {}", this.getClass(), e);
+					Log.getLogger(guild).error("Failed to clean settings object {}", this.getClass(), e);
 				}
 			});
 			return false;

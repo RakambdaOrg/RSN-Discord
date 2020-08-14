@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Message;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -60,5 +62,14 @@ public class WaitingReactionMessageConfiguration implements AtomicConfiguration{
 	@Override
 	public boolean shouldBeRemoved(){
 		return getMessage().shouldBeRemoved();
+	}
+	
+	@Override
+	public String toString(){
+		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+				.append("message", message)
+				.append("tag", tag)
+				.append("data", data)
+				.toString();
 	}
 }

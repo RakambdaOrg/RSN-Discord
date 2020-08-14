@@ -12,6 +12,8 @@ import lombok.Setter;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -50,7 +52,9 @@ public class ChannelConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public String toString(){
-		return "Channel(" + this.getChannelId() + ')';
+		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+				.append("channelId", channelId)
+				.toString();
 	}
 	
 	@Override
