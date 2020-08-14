@@ -107,12 +107,13 @@ public class Main{
 		final var parameters = new CLIParameters();
 		var cli = new CommandLine(parameters);
 		cli.registerConverter(Path.class, Paths::get);
-		cli.setStopAtUnmatched(true);
+		cli.setUnmatchedArgumentsAllowed(true);
 		try{
 			cli.parseArgs(args);
 		}
 		catch(final CommandLine.ParameterException e){
 			Log.getLogger(null).error("Failed to parse arguments", e);
+			cli.usage(System.out);
 			return null;
 		}
 		

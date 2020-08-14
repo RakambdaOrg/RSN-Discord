@@ -5,13 +5,13 @@
         </encoder>
     </appender>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/@project_name@.log</file>
+        <file>\${HOME:-\${USERPROFILE}}/logs/${project.name}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/@project_name@.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>\${HOME:-\${USERPROFILE}}/logs/${project.name}.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>10</maxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%date{ISO8601} %level [%thread] - %logger %class{15}.%method:%line - %message%n</pattern>
+            <pattern>%date{ISO8601} %level [%thread] - %logger{15}.%method:%line - %message%n</pattern>
         </encoder>
     </appender>
 

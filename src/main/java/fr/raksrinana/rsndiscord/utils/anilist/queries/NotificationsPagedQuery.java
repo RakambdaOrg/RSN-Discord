@@ -9,7 +9,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 public class NotificationsPagedQuery implements PagedQuery<Notification>{
-	private static final String QUERY = PagedQuery.pagedQuery("$type_in: [NotificationType]", Notification.getQuery());
+	private static final String QUERY = PagedQuery.pagedQuery(", $type_in: [NotificationType]", Notification.getQuery());
 	private final JSONObject variables;
 	private final ZonedDateTime date;
 	private int nextPage = 0;

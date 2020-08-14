@@ -77,13 +77,8 @@ repositories {
     }
 }
 
-import org.apache.tools.ant.filters.ReplaceTokens
-
 processResources {
-    doFirst {
-        from 'src/main/resources'
-        filter(ReplaceTokens, tokens: [project_version: project.version, project_name: project.name])
-    }
+    expand project.properties
 }
 
 compileJava {

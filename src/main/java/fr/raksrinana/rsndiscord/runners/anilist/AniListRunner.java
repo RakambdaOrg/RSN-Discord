@@ -65,12 +65,23 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 		Log.getLogger(member.getGuild()).debug("Fetching user {}", member);
 		var elementList = this.initQuery(member).getResult(member);
 		if(this.isKeepOnlyNew()){
-			final var baseDate = Settings.get(member.getGuild()).getAniListConfiguration().getLastAccess(this.getFetcherID(), member.getUser().getIdLong()).map(UserDateConfiguration::getDate).orElse(ZonedDateTime.now());
-			elementList = elementList.stream().filter(e -> e instanceof AnilistDatedObject).filter(e -> ((AnilistDatedObject) e).getDate().isAfter(baseDate)).collect(Collectors.toSet());
-			elementList.stream().filter(e -> e instanceof AnilistDatedObject).map(e -> (AnilistDatedObject) e).map(AnilistDatedObject::getDate).max(ZonedDateTime::compareTo).ifPresent(val -> {
-				Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {} (last was {})", member, this.getFetcherID(), val, baseDate);
-				Settings.get(member.getGuild()).getAniListConfiguration().setLastAccess(member.getUser(), this.getFetcherID(), val);
-			});
+			final var baseDate = Settings.get(member.getGuild())
+					.getAniListConfiguration()
+					.getLastAccess(this.getFetcherID(), member.getUser().getIdLong())
+					.map(UserDateConfiguration::getDate)
+					.orElse(ZonedDateTime.now());
+			elementList = elementList.stream()
+					.filter(e -> e instanceof AnilistDatedObject)
+					.filter(e -> ((AnilistDatedObject) e).getDate().isAfter(baseDate))
+					.collect(Collectors.toSet());
+			elementList.stream().filter(e -> e instanceof AnilistDatedObject)
+					.map(e -> (AnilistDatedObject) e)
+					.map(AnilistDatedObject::getDate)
+					.max(ZonedDateTime::compareTo)
+					.ifPresent(val -> {
+						Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {} (last was {})", member, this.getFetcherID(), val, baseDate);
+						Settings.get(member.getGuild()).getAniListConfiguration().setLastAccess(member.getUser(), this.getFetcherID(), val);
+					});
 		}
 		return elementList;
 	}
