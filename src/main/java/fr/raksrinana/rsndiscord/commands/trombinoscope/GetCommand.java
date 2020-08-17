@@ -12,6 +12,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.internal.entities.UserById;
+import org.apache.commons.lang3.math.NumberUtils;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
@@ -19,7 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
-
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static fr.raksrinana.rsndiscord.utils.TrombinoscopeUtils.isRegistered;
 
@@ -72,13 +73,27 @@ class GetCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		if(event.getMessage().getMentionedUsers().isEmpty()){
+		var target = event.getMessage().getMentionedUsers()
+				.stream()
+				.findFirst()
+				.stream()
+				.peek(user -> args.poll())
+				.findFirst()
+				.or(() -> {
+					try{
+						return Optional.ofNullable(args.poll())
+								.map(NumberUtils::createLong)
+								.map(UserById::new);
+					}
+					catch(Exception e){
+						return Optional.empty();
+					}
+				});
+		if(target.isEmpty()){
 			return CommandResult.BAD_ARGUMENTS;
 		}
-		args.pop();
 		var trombinoscope = Settings.get(event.getGuild()).getTrombinoscope();
-		var target = event.getMessage().getMentionedUsers().get(0);
-		var pictureCount = trombinoscope.getPictures(target).size();
+		var pictureCount = trombinoscope.getPictures(target.get()).size();
 		if(pictureCount < 1){
 			Actions.reply(event, translate(event.getGuild(), "trombinoscope.user.no-picture"), null);
 			return CommandResult.SUCCESS;
@@ -94,13 +109,13 @@ class GetCommand extends BasicCommand{
 				}).filter(arg -> arg > 0 && arg <= pictureCount)
 				.map(arg -> arg - 1)
 				.orElseGet(() -> ThreadLocalRandom.current().nextInt(pictureCount));
-		trombinoscope.getPictures(target).stream()
+		trombinoscope.getPictures(target.get()).stream()
 				.sorted(Comparator.comparing(Picture::getDate))
 				.skip(pictureIndex)
 				.findFirst()
 				.ifPresentOrElse(picture -> trombinoscope.getPicturesChannel()
 						.flatMap(ChannelConfiguration::getChannel)
-						.ifPresent(picturesChannel -> Actions.sendMessage(picturesChannel, translate(event.getGuild(), "trombinoscope.user.picture", event.getAuthor().getAsMention(), target.getAsMention(), picture.getUuid()), null, false, message -> message.addFile(picture.getPath().toFile()))), () -> Actions.reply(event, translate(event.getGuild(), "trombinoscope.error.unknown"), null));
+						.ifPresent(picturesChannel -> Actions.sendMessage(picturesChannel, translate(event.getGuild(), "trombinoscope.user.picture", event.getAuthor().getAsMention(), target.get().getAsMention(), picture.getUuid()), null, false, message -> message.addFile(picture.getPath().toFile()))), () -> Actions.reply(event, translate(event.getGuild(), "trombinoscope.error.unknown"), null));
 		return CommandResult.SUCCESS;
 	}
 	
