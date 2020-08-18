@@ -45,6 +45,10 @@ public class TraktUtils{
 				request = Optional.ofNullable(handler.getHeaders().getFirst("X-Pagination-Page")).map(Integer::parseInt).map(page -> page + 1).map(finalRequest::getForPage).orElseThrow(() -> new RequestException("No page in header", handler.getStatus()));
 			}
 			else{
+				if(handler.getStatus() == 503){
+					Log.getLogger(null).warn("Trakt replied with 503 status");
+					return Set.of();
+				}
 				throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult() + "(" + handler.getResult().getParsingError() + ")", handler.getStatus());
 			}
 		}
