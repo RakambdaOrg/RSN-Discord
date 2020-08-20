@@ -31,20 +31,24 @@ public interface CompositeConfiguration{
 			return false;
 		}
 		else if(fieldValue instanceof Collection){
-			final var collection = (Collection<?>) fieldValue;
-			final var toRemove = List.copyOf(collection).stream().filter(this::atomicShouldBeRemoved).collect(Collectors.toList());
-			if(!toRemove.isEmpty()){
-				Log.getLogger(guild).debug("Removing values {} from collection {}", toRemove, fieldName);
+			try{
+				final var collection = (Collection<?>) fieldValue;
+				final var toRemove = List.copyOf(collection).stream().filter(this::atomicShouldBeRemoved).collect(Collectors.toList());
+				if(!toRemove.isEmpty()){
+					Log.getLogger(guild).debug("Removing values {} from collection {}", toRemove, fieldName);
+				}
+				collection.removeAll(toRemove);
+				collection.forEach(elem -> {
+					try{
+						cleanObject(guild, elem, fieldName);
+					}
+					catch(Exception e){
+						Log.getLogger(guild).error("Failed to clean settings object {}", this.getClass(), e);
+					}
+				});
+			}catch(Exception e){
+				throw new RuntimeException("Failed to clean field " + fieldName, e);
 			}
-			collection.removeAll(toRemove);
-			collection.forEach(elem -> {
-				try{
-					cleanObject(guild, elem, fieldName);
-				}
-				catch(Exception e){
-					Log.getLogger(guild).error("Failed to clean settings object {}", this.getClass(), e);
-				}
-			});
 			return false;
 		}
 		else if(fieldValue instanceof Map){

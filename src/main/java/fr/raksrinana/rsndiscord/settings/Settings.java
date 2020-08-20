@@ -74,12 +74,12 @@ public class Settings{
 	public static void clean(@NonNull JDA jda){
 		Log.getLogger(null).info("Cleaning settings");
 		configurations.entrySet().forEach(entry -> {
+			var guild = jda.getGuildById(entry.getKey());
 			try{
-				var guild = jda.getGuildById(entry.getKey());
 				entry.getValue().cleanFields(guild, "[root]");
 			}
 			catch(Exception e){
-				Log.getLogger(null).error("Failed to clean guild configuration", e);
+				Log.getLogger(guild).error("Failed to clean guild configuration", e);
 			}
 		});
 		Log.getLogger(null).info("Done cleaning settings");
