@@ -2,7 +2,9 @@ package fr.raksrinana.rsndiscord;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import net.dv8tion.jda.api.entities.Activity;
 import java.util.*;
+import static net.dv8tion.jda.api.entities.Activity.ActivityType.CUSTOM_STATUS;
 
 /**
  * Handles commands sent in the standard input.
@@ -71,6 +73,22 @@ class ConsoleHandler extends Thread{
 						else{
 							final var guildId = args.poll();
 							Optional.ofNullable(Main.getJda().getGuildById(guildId)).ifPresentOrElse(guild -> Log.getLogger(guild).info("Members of {}: {}", guild, guild.getMembers()), () -> Log.getLogger(null).warn("Guild with id {} not found", guildId));
+						}
+					}
+					else if("listGuilds".equalsIgnoreCase(command)){
+						Main.getJda().getGuilds()
+								.forEach(guild -> Log.getLogger(guild).info("Guild ID:{}, name: {}, members:{}, owner:{}",
+										guild.getId(),
+										guild.getName(),
+										guild.loadMembers().get().size(),
+										guild.retrieveOwner().complete()));
+					}
+					else if("game".equalsIgnoreCase(command)){
+						if(args.isEmpty()){
+							Log.getLogger(null).warn("Please pass the game");
+						}
+						else{
+							Main.getJda().getPresence().setActivity(Activity.of(CUSTOM_STATUS, args.poll()));
 						}
 					}
 					else if("save".equalsIgnoreCase(command)){

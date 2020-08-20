@@ -22,6 +22,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
@@ -38,6 +39,7 @@ import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static net.dv8tion.jda.api.entities.Activity.ActivityType.CUSTOM_STATUS;
 
 public class Main{
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
@@ -74,7 +76,7 @@ public class Main{
 			jdaBuilder.setAutoReconnect(true);
 			jda = jdaBuilder.build();
 			jda.awaitReady();
-			jda.getPresence().setActivity(Activity.playing(CommandsMessageListener.defaultPrefix + "help for the help"));
+			jda.getPresence().setPresence(OnlineStatus.ONLINE, Activity.of(CUSTOM_STATUS, CommandsMessageListener.defaultPrefix + "help for the help"));
 			Log.getLogger(null).info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
 			Log.getLogger(null).info("Adding handlers");
 			ReactionUtils.registerAllHandlers();
