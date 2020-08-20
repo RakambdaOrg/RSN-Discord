@@ -87,7 +87,7 @@ class ConsoleHandler extends Thread{
 							Log.getLogger(null).warn("Please pass the game");
 						}
 						else{
-							Main.getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.DEFAULT, args.poll()));
+							Main.getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.DEFAULT, String.join(" ", args)));
 						}
 					}
 					else if("save".equalsIgnoreCase(command)){
