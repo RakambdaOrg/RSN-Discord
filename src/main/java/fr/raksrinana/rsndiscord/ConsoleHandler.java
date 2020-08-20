@@ -4,7 +4,6 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import net.dv8tion.jda.api.entities.Activity;
 import java.util.*;
-import static net.dv8tion.jda.api.entities.Activity.ActivityType.CUSTOM_STATUS;
 
 /**
  * Handles commands sent in the standard input.
@@ -88,7 +87,7 @@ class ConsoleHandler extends Thread{
 							Log.getLogger(null).warn("Please pass the game");
 						}
 						else{
-							Main.getJda().getPresence().setActivity(Activity.of(CUSTOM_STATUS, args.poll()));
+							Main.getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.DEFAULT, args.poll()));
 						}
 					}
 					else if("save".equalsIgnoreCase(command)){
