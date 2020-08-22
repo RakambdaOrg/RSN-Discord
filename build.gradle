@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        jda_version = '4.2.0_191'
+        jda_version = '4.2.0_195'
         lavaplayer_version = '1.3.50'
         lavaplayer_arm_version = '1.3.10'
 
