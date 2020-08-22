@@ -86,18 +86,14 @@ dependencies {
 
 repositories {
     maven {
-        url = 'https://repo.maven.apache.org/maven2'
-    }
-    maven {
-        url = 'https://jcenter.bintray.com'
-    }
-    maven {
         url = 'https://maven.pkg.github.com/RakSrinaNa/JavaUtils/'
         credentials {
             username buildProperties.secrets['GITHUB_USER'].string
             password buildProperties.secrets['GITHUB_TOKEN'].string
         }
     }
+    jcenter()
+    mavenCentral()
 }
 
 processResources {
