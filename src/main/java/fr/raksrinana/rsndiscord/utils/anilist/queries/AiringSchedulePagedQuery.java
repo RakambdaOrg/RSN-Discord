@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.raksrinana.rsndiscord.utils.anilist.airing.AiringSchedule;
 import kong.unirest.json.JSONObject;
 import lombok.NonNull;
-import java.time.ZonedDateTime;
 
 public class AiringSchedulePagedQuery implements PagedQuery<AiringSchedule>{
 	private static final String QUERY = PagedQuery.pagedQuery(", $mediaID: Int", AiringSchedule.getQUERY());
@@ -45,10 +44,5 @@ public class AiringSchedulePagedQuery implements PagedQuery<AiringSchedule>{
 	@NonNull
 	public AiringSchedule buildChange(@NonNull final JSONObject change) throws Exception{
 		return new ObjectMapper().readerFor(AiringSchedule.class).readValue(change.toString());
-	}
-	
-	@Override
-	public ZonedDateTime getBaseDate(){
-		return null;
 	}
 }

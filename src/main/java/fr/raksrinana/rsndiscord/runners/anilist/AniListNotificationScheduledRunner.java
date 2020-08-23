@@ -2,9 +2,7 @@ package fr.raksrinana.rsndiscord.runners.anilist;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
-import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
 import fr.raksrinana.rsndiscord.utils.anilist.notifications.Notification;
 import fr.raksrinana.rsndiscord.utils.anilist.queries.NotificationsPagedQuery;
 import lombok.Getter;
@@ -64,13 +62,7 @@ public class AniListNotificationScheduledRunner implements AniListRunner<Notific
 	@NonNull
 	@Override
 	public NotificationsPagedQuery initQuery(@NonNull final Member member){
-		return new NotificationsPagedQuery(AniListUtils.getUserId(member).orElseThrow(), Settings.get(member.getGuild())
-				.getAniListConfiguration()
-				.getLastAccess(this.getFetcherID()).stream()
-				.filter(c -> Objects.equals(c.getUser().getUserId(), member.getUser().getIdLong()))
-				.map(UserDateConfiguration::getDate)
-				.findAny()
-				.orElse(AniListUtils.getDefaultDate()));
+		return new NotificationsPagedQuery();
 	}
 	
 	@Override

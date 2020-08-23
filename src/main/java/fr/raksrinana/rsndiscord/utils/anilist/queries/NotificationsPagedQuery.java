@@ -5,17 +5,14 @@ import fr.raksrinana.rsndiscord.utils.anilist.notifications.Notification;
 import fr.raksrinana.rsndiscord.utils.anilist.notifications.NotificationType;
 import kong.unirest.json.JSONObject;
 import lombok.NonNull;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 public class NotificationsPagedQuery implements PagedQuery<Notification>{
 	private static final String QUERY = PagedQuery.pagedQuery(", $type_in: [NotificationType]", Notification.getQuery());
 	private final JSONObject variables;
-	private final ZonedDateTime date;
 	private int nextPage = 0;
 	
-	public NotificationsPagedQuery(final int userId, final ZonedDateTime date){
-		this.date = date;
+	public NotificationsPagedQuery(){
 		this.variables = new JSONObject();
 		this.variables.put("page", 1);
 		this.variables.put("perPage", PER_PAGE);
@@ -49,10 +46,5 @@ public class NotificationsPagedQuery implements PagedQuery<Notification>{
 	@NonNull
 	public Notification buildChange(@NonNull final JSONObject change) throws Exception{
 		return new ObjectMapper().readerFor(Notification.class).readValue(change.toString());
-	}
-	
-	@Override
-	public ZonedDateTime getBaseDate(){
-		return this.date;
 	}
 }

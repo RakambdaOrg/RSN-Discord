@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.raksrinana.rsndiscord.utils.anilist.media.Media;
 import kong.unirest.json.JSONObject;
 import lombok.NonNull;
-import java.time.ZonedDateTime;
 
 public class MediaPagedQuery implements PagedQuery<Media>{
 	private static final String QUERY = PagedQuery.pagedQuery(", $mediaId: Int", Media.getQueryWithId());
@@ -45,10 +44,5 @@ public class MediaPagedQuery implements PagedQuery<Media>{
 	@NonNull
 	public Media buildChange(@NonNull final JSONObject change) throws Exception{
 		return new ObjectMapper().readerFor(Media.class).readValue(change.toString());
-	}
-	
-	@Override
-	public ZonedDateTime getBaseDate(){
-		return null;
 	}
 }

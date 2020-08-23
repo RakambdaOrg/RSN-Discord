@@ -1,12 +1,10 @@
 package fr.raksrinana.rsndiscord.utils.anilist.queries;
 
 import fr.raksrinana.rsndiscord.utils.anilist.AniListUtils;
-import fr.raksrinana.rsndiscord.utils.anilist.AnilistDatedObject;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import kong.unirest.json.JSONObject;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Member;
-import java.time.ZonedDateTime;
 import java.util.*;
 
 public interface PagedQuery<T>{
@@ -41,16 +39,7 @@ public interface PagedQuery<T>{
 			try{
 				final var changeJSONObj = (JSONObject) change;
 				if(!changeJSONObj.isEmpty()){
-					Optional.ofNullable(this.buildChange(changeJSONObj)).ifPresent(changeObj -> {
-						if(Objects.nonNull(this.getBaseDate()) && changeObj instanceof AnilistDatedObject){
-							if(((AnilistDatedObject) changeObj).getDate().isAfter(this.getBaseDate())){
-								changes.add(changeObj);
-							}
-						}
-						else{
-							changes.add(changeObj);
-						}
-					});
+					Optional.ofNullable(this.buildChange(changeJSONObj)).ifPresent(changes::add);
 				}
 				else{
 					Log.getLogger(null).trace("Skipped AniList object, json: {}", change);
@@ -66,6 +55,4 @@ public interface PagedQuery<T>{
 	@NonNull String getPageElementName();
 	
 	T buildChange(@NonNull final JSONObject change) throws Exception;
-	
-	ZonedDateTime getBaseDate();
 }

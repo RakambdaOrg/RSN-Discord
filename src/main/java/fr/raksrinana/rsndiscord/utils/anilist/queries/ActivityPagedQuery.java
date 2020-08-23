@@ -48,9 +48,4 @@ public class ActivityPagedQuery implements PagedQuery<ListActivity>{
 	public ListActivity buildChange(@NonNull final JSONObject change) throws Exception{
 		return new ObjectMapper().readerFor(ListActivity.class).readValue(change.toString());
 	}
-	
-	@Override
-	public ZonedDateTime getBaseDate(){
-		return null;
-	}
 }
