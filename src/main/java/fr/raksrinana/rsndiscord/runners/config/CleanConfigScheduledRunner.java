@@ -37,6 +37,6 @@ public class CleanConfigScheduledRunner implements ScheduledRunner{
 	@NonNull
 	@Override
 	public String getName(){
-		return "config cleaner";
+		return "Config cleaner";
 	}
 }

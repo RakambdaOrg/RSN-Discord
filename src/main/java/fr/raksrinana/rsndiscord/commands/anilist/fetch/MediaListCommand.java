@@ -25,7 +25,7 @@ class MediaListCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		new AniListMediaListScheduledRunner(event.getJDA()).runQueryOnDefaultUsersChannels();
+		new AniListMediaListScheduledRunner(event.getJDA()).execute();
 		return CommandResult.SUCCESS;
 	}
 	

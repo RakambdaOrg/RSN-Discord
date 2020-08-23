@@ -44,7 +44,7 @@ public class ParticipationScheduledRunner implements ScheduledRunner{
 	@NonNull
 	@Override
 	public String getName(){
-		return "participation";
+		return "Participation";
 	}
 	
 	@Override

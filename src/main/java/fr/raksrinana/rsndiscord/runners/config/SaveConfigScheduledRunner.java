@@ -34,6 +34,6 @@ public class SaveConfigScheduledRunner implements ScheduledRunner{
 	@NonNull
 	@Override
 	public String getName(){
-		return "config saver";
+		return "Config saver";
 	}
 }

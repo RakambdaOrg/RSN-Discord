@@ -25,7 +25,7 @@ public class ActivityCommand extends BasicCommand{
 	@NonNull
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		new AniListActivityScheduledRunner(event.getJDA()).runQueryOnDefaultUsersChannels();
+		new AniListActivityScheduledRunner(event.getJDA()).execute();
 		return CommandResult.SUCCESS;
 	}
 	

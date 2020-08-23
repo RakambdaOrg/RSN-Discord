@@ -11,7 +11,7 @@
             <maxHistory>10</maxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%date{ISO8601} %level [%thread] - %logger{15}.%method:%line - %message%n</pattern>
+            <pattern>%date{ISO8601} %level [%thread] - %logger - %class{15}.%method:%line - %message%n</pattern>
         </encoder>
     </appender>
 
