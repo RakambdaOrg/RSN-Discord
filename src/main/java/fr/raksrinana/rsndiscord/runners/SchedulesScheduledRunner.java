@@ -52,7 +52,7 @@ public class SchedulesScheduledRunner implements ScheduledRunner{
 	@NonNull
 	@Override
 	public String getName(){
-		return "schedules refresher";
+		return "Schedules refresher";
 	}
 	
 	@Override
