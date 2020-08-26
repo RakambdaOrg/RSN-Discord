@@ -21,7 +21,7 @@ public class AnilistTodoReactionHandler extends TodoReactionHandler{
 		event.retrieveUser().submit().thenAccept(user -> todo.getMessage()
 				.getMessage()
 				.ifPresent(message -> message.getEmbeds()
-						.forEach(embed -> Actions.sendPrivateMessage(message.getGuild(), Utilities.RAKSRINANA_ACCOUNT, user.getAsMention() + " completed", embed))));
+						.forEach(embed -> Actions.sendPrivateMessage(message.getGuild(), Utilities.MAIN_RAKSRINANA_ACCOUNT, user.getAsMention() + " completed", embed))));
 		return super.processTodoCompleted(event, emotes, todo);
 	}
 	

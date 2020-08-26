@@ -9,6 +9,8 @@ import fr.raksrinana.rsndiscord.utils.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.utils.music.trackfields.ReplayTrackDataField;
 import fr.raksrinana.rsndiscord.utils.music.trackfields.RequesterTrackDataField;
 import fr.raksrinana.rsndiscord.utils.music.trackfields.TrackUserFields;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
@@ -27,6 +29,11 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	 */
 	NowPlayingMusicCommand(final Command parent){
 		super(parent);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.music.currently-playing", true);
 	}
 	
 	@NonNull

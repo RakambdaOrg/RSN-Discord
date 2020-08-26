@@ -2,6 +2,8 @@ package fr.raksrinana.rsndiscord.commands.action;
 
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.utils.giphy.requests.RandomGifRequest;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import java.util.List;
@@ -21,6 +23,11 @@ public class SlapActionCommand extends GenericActionCommand{
 	@Override
 	protected Action getAction(){
 		return SLAP;
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.action.slap", false);
 	}
 	
 	@Override

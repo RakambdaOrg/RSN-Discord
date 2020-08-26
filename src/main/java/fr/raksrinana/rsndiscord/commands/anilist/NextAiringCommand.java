@@ -7,6 +7,8 @@ import fr.raksrinana.rsndiscord.settings.guild.schedule.AnilistAiringScheduleCon
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.anilist.airing.AiringSchedule;
 import fr.raksrinana.rsndiscord.utils.anilist.queries.AiringSchedulePagedQuery;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,11 @@ class NextAiringCommand extends BasicCommand{
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder embedBuilder){
 		super.addHelp(guild, embedBuilder);
 		embedBuilder.addField("id", translate(guild, "command.anilist.next-airing.help.id"), false);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.anilist.next-airing", true);
 	}
 	
 	@NonNull

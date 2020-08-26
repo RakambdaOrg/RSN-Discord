@@ -5,6 +5,8 @@ import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.utils.thecatapi.TheCatApi;
 import fr.raksrinana.rsndiscord.utils.thecatapi.data.Breed;
 import lombok.NonNull;
@@ -18,6 +20,11 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class CatCommand extends BasicCommand{
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.cat", true);
+	}
+	
 	@NonNull
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){

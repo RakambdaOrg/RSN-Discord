@@ -4,15 +4,22 @@ import fr.raksrinana.rsndiscord.commands.config.helpers.UserConfigurationCommand
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import java.util.List;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static fr.raksrinana.rsndiscord.utils.permission.PermissionUtils.ALLOW;
 
 public class ThaUserConfigurationCommand extends UserConfigurationCommand{
 	public ThaUserConfigurationCommand(final Command parent){
 		super(parent);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return ALLOW;
 	}
 	
 	@Override

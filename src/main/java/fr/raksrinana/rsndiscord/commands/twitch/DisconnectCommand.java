@@ -4,13 +4,14 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.irc.twitch.TwitchIRC;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
-
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class DisconnectCommand extends BasicCommand{
@@ -29,6 +30,11 @@ public class DisconnectCommand extends BasicCommand{
 		builder.addField("user", translate(guild, "command.twitch.disconnect.help.user"), false);
 	}
 	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.twitch.disconnect", false);
+	}
+	
 	@NonNull
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
@@ -44,12 +50,6 @@ public class DisconnectCommand extends BasicCommand{
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <user>";
-	}
-	
-	@NonNull
-	@Override
-	public AccessLevel getAccessLevel(){
-		return AccessLevel.ADMIN;
 	}
 	
 	@NonNull

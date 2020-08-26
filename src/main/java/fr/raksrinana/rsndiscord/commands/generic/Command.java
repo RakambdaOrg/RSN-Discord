@@ -1,6 +1,7 @@
 package fr.raksrinana.rsndiscord.commands.generic;
 
-import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.PermissionUtils;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -8,15 +9,8 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
-import static fr.raksrinana.rsndiscord.commands.generic.Command.AccessLevel.*;
 
 public interface Command extends Comparable<Command>{
-	/**
-	 * The level required to access a command.
-	 */
-	enum AccessLevel{ADMIN, MODERATOR, ALL, CREATOR}
-	
 	/**
 	 * Add entries into the help menu.
 	 *
@@ -32,20 +26,8 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return True if allowed, false otherwise.
 	 */
-	default boolean isAllowed(final Member member){
-		if(Objects.isNull(member)){
-			return false;
-		}
-		if(this.getAccessLevel() == ALL){
-			return true;
-		}
-		if(this.getAccessLevel() == MODERATOR && Utilities.isModerator(member)){
-			return true;
-		}
-		if(this.getAccessLevel() == ADMIN && Utilities.isAdmin(member)){
-			return true;
-		}
-		return Utilities.isCreator(member.getUser());
+	default boolean isAllowed(@NonNull final Member member){
+		return PermissionUtils.isUserAllowed(member, getPermission());
 	}
 	
 	default boolean deleteCommandMessageImmediately(){
@@ -53,14 +35,12 @@ public interface Command extends Comparable<Command>{
 	}
 	
 	/**
-	 * Get the level required to execute this command.
+	 * Get the permission required to execute this command.
 	 *
-	 * @return The access level.
+	 * @return The permission.
 	 */
 	@NonNull
-	default AccessLevel getAccessLevel(){
-		return ALL;
-	}
+	Permission getPermission();
 	
 	/**
 	 * Handle the command.

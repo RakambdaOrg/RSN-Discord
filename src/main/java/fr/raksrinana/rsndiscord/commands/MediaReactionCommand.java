@@ -8,6 +8,8 @@ import fr.raksrinana.rsndiscord.settings.guild.WaitingReactionMessageConfigurati
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
 import lombok.NonNull;
@@ -24,6 +26,11 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 @BotCommand
 public class MediaReactionCommand extends BasicCommand{
 	private static final String COMMENT_STR = "--";
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.media-reaction", false);
+	}
 	
 	@NonNull
 	@Override
@@ -113,12 +120,6 @@ public class MediaReactionCommand extends BasicCommand{
 		catch(Exception e){
 			throw new IllegalArgumentException("Failed to parse " + originalStr, e);
 		}
-	}
-	
-	@NonNull
-	@Override
-	public AccessLevel getAccessLevel(){
-		return AccessLevel.ADMIN;
 	}
 	
 	@NonNull

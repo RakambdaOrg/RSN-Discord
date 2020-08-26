@@ -7,6 +7,8 @@ import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.rsndiscord.utils.music.RSNAudioManager;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -33,9 +35,13 @@ public class SeekMusicCommand extends BasicCommand{
 	}
 	
 	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
-		super.addHelp(guild, builder);
-		builder.addField("Time", translate(guild, "command.music.seek.help.time"), false);
+	public boolean isAllowed(final @NonNull Member member){
+		return RSNAudioManager.isRequester(member.getGuild(), member.getUser()) || Utilities.isModerator(member);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.music.seek", false);
 	}
 	
 	@NonNull
@@ -93,8 +99,9 @@ public class SeekMusicCommand extends BasicCommand{
 	}
 	
 	@Override
-	public boolean isAllowed(final Member member){
-		return Objects.nonNull(member) && (Utilities.isTeam(member) || RSNAudioManager.isRequester(member.getGuild(), member.getUser()));
+	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField("Time", translate(guild, "command.music.seek.help.time"), false);
 	}
 	
 	@NonNull

@@ -36,7 +36,7 @@ public abstract class BasicCommand implements Command{
 		if(event.isWebhookMessage()){
 			throw new NotHandledException("This message is from a webhook");
 		}
-		if(!this.isAllowed(event.getMember())){
+		if(!this.isAllowed(Objects.requireNonNull(event.getMember()))){
 			throw new NotAllowedException("You're not allowed to execute this command");
 		}
 		return CommandResult.SUCCESS;

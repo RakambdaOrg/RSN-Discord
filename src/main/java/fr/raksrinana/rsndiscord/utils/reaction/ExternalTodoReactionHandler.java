@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import static fr.raksrinana.rsndiscord.utils.BasicEmotes.CHECK_OK;
 import static fr.raksrinana.rsndiscord.utils.BasicEmotes.CROSS_NO;
-import static fr.raksrinana.rsndiscord.utils.Utilities.RAKSRINANA_ACCOUNT;
+import static fr.raksrinana.rsndiscord.utils.Utilities.MAIN_RAKSRINANA_ACCOUNT;
 
 @Slf4j
 public class ExternalTodoReactionHandler implements ReactionHandler{
@@ -50,7 +50,7 @@ public class ExternalTodoReactionHandler implements ReactionHandler{
 				.thenApply(user -> todo.getMessage()
 						.getMessage()
 						.map(message -> {
-							Actions.sendPrivateMessage(event.getGuild(), RAKSRINANA_ACCOUNT, user.getAsMention() + " reacted " + emote.getValue() + " => " + message.getContentRaw(), null)
+							Actions.sendPrivateMessage(event.getGuild(), MAIN_RAKSRINANA_ACCOUNT, user.getAsMention() + " reacted " + emote.getValue() + " => " + message.getContentRaw(), null)
 									.thenAccept(messageSent -> Actions.deleteMessage(message));
 							return ReactionHandlerResult.PROCESSED_DELETE;
 						}).orElse(ReactionHandlerResult.PROCESSED))

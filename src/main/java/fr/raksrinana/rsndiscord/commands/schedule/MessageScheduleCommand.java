@@ -4,6 +4,8 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.settings.guild.schedule.SimpleScheduleConfiguration;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -22,6 +24,11 @@ public class MessageScheduleCommand extends BasicCommand{
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("message", translate(guild, "command.schedule.message.help.message"), false);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.schedule.message", false);
 	}
 	
 	@NonNull

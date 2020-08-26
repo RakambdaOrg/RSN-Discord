@@ -7,6 +7,8 @@ import fr.raksrinana.rsndiscord.listeners.reply.ReplyMessageListener;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -21,7 +23,7 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 public class StopwatchCommand extends BasicCommand {
     @NonNull
     @Override
-    public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args) {
+    public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
         super.execute(event, args);
         var embed = buildEmbed(event.getGuild(), event.getAuthor(), "");
         Actions.sendEmbed(event.getChannel(), embed).thenAccept(message -> {
@@ -31,9 +33,9 @@ public class StopwatchCommand extends BasicCommand {
         });
         return CommandResult.SUCCESS;
     }
-
+    
     @NonNull
-    public static MessageEmbed buildEmbed(@NonNull Guild guild, @NonNull User user, @NonNull String time) {
+    public static MessageEmbed buildEmbed(@NonNull Guild guild, @NonNull User user, @NonNull String time){
         final var builder = Utilities.buildEmbed(user, Color.GREEN, translate(guild, "stopwatch.name"), null);
         builder.addField(translate(guild, "stopwatch.time"), time, false);
         builder.addField(BasicEmotes.P.getValue(), translate(guild, "stopwatch.pause"), true);
@@ -41,11 +43,10 @@ public class StopwatchCommand extends BasicCommand {
         builder.addField(BasicEmotes.S.getValue(), translate(guild, "stopwatch.stop"), true);
         return builder.build();
     }
-
-    @NonNull
+    
     @Override
-    public AccessLevel getAccessLevel() {
-        return AccessLevel.MODERATOR;
+    public @NonNull Permission getPermission(){
+        return new SimplePermission("command.stopwatch", false);
     }
 
     @NonNull

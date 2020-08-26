@@ -4,15 +4,22 @@ import fr.raksrinana.rsndiscord.commands.config.helpers.SetConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.*;
+import static fr.raksrinana.rsndiscord.utils.permission.PermissionUtils.ALLOW;
 
 public class AutoThumbsChannelsConfigurationCommand extends SetConfigurationCommand<ChannelConfiguration>{
 	public AutoThumbsChannelsConfigurationCommand(final Command parent){
 		super(parent);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return ALLOW;
 	}
 	
 	@Override

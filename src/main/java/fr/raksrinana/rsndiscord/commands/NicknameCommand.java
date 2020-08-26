@@ -7,6 +7,8 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -33,7 +35,6 @@ public class NicknameCommand extends BasicCommand{
 		builder.addField("user", translate(guild, "command.nickname.help.user"), false);
 		builder.addField("nickname", translate(guild, "command.nickname.help.nickname"), false);
 	}
-	
 	@NonNull
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
@@ -48,7 +49,7 @@ public class NicknameCommand extends BasicCommand{
 				})
 				.orElse(event.getMember());
 		
-		boolean isBypass = Utilities.isTeam(event.getMember());
+		boolean isBypass = Utilities.isModerator(event.getMember());
 		final var oldNickname = target.getNickname();
 		final var newNickname = args.isEmpty() ? null : String.join(" ", args);
 		
@@ -113,6 +114,11 @@ public class NicknameCommand extends BasicCommand{
 			Actions.sendEmbed(event.getChannel(), builder.build());
 		}
 		return CommandResult.SUCCESS;
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.nickname", true);
 	}
 	
 	@NonNull

@@ -4,6 +4,8 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.anilist.media.MediaType;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -28,6 +30,11 @@ class MediaListDifferencesCommand extends BasicCommand{
 		embedBuilder.addField("filter", translate(guild, "command.anilist.media-list-differences.help.filter"), false);
 		embedBuilder.addField("user1", translate(guild, "command.anilist.media-list-differences.help.user1"), false);
 		embedBuilder.addField("user2", translate(guild, "command.anilist.media-list-differences.help.user2"), false);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.anilist.media-list-differences", false);
 	}
 	
 	@NonNull

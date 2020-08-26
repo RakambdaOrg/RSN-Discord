@@ -5,9 +5,6 @@ import lombok.NonNull;
 public class NotAllowedException extends RuntimeException{
 	private static final long serialVersionUID = -647603631725613643L;
 	
-	/**
-	 * Constructor.
-	 */
 	public NotAllowedException(@NonNull final String message){
 		super(message);
 	}

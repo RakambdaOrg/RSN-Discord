@@ -7,6 +7,8 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.commands.generic.NotAllowedException;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -20,7 +22,7 @@ public class StopCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		if(Utilities.isCreator(event.getAuthor())){
+		if(Utilities.isCreator(event.getMember())){
 			Main.close();
 			Log.getLogger(event.getGuild()).info("BOT STOPPING");
 		}
@@ -30,10 +32,9 @@ public class StopCommand extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
-	@NonNull
 	@Override
-	public AccessLevel getAccessLevel(){
-		return AccessLevel.ADMIN;
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.stop", false);
 	}
 	
 	@NonNull

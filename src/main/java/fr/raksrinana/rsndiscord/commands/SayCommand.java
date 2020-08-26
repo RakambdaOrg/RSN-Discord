@@ -4,6 +4,8 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -18,6 +20,11 @@ public class SayCommand extends BasicCommand{
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("message", translate(guild, "command.say.help.message"), false);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.say", false);
 	}
 	
 	@NonNull
@@ -35,12 +42,6 @@ public class SayCommand extends BasicCommand{
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <message...>";
-	}
-	
-	@NonNull
-	@Override
-	public AccessLevel getAccessLevel(){
-		return AccessLevel.ADMIN;
 	}
 	
 	@NonNull
