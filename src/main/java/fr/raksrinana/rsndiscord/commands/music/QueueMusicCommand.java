@@ -10,6 +10,8 @@ import fr.raksrinana.rsndiscord.utils.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.utils.music.trackfields.ReplayTrackDataField;
 import fr.raksrinana.rsndiscord.utils.music.trackfields.RequesterTrackDataField;
 import fr.raksrinana.rsndiscord.utils.music.trackfields.TrackUserFields;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -36,6 +38,11 @@ public class QueueMusicCommand extends BasicCommand{
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("<page>", translate(guild, "command.music.queue.help.page"), false);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.music.queue", true);
 	}
 	
 	@NonNull

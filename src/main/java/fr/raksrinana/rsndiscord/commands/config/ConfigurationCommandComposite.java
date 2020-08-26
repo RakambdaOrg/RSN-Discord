@@ -4,6 +4,8 @@ import fr.raksrinana.rsndiscord.commands.config.guild.*;
 import fr.raksrinana.rsndiscord.commands.config.guild.reactions.AutoTodoChannelsConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import java.util.List;
@@ -37,10 +39,9 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new BirthdayConfigurationCommandComposite(this));
 	}
 	
-	@NonNull
 	@Override
-	public AccessLevel getAccessLevel(){
-		return AccessLevel.ADMIN;
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.configuration", false);
 	}
 	
 	@NonNull

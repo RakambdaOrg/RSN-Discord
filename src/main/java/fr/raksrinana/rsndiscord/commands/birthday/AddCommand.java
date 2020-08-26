@@ -6,6 +6,8 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -13,7 +15,10 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class AddCommand extends BasicCommand{
@@ -21,6 +26,11 @@ public class AddCommand extends BasicCommand{
 	
 	public AddCommand(Command parent){
 		super(parent);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.birthday.add", false);
 	}
 	
 	@NonNull

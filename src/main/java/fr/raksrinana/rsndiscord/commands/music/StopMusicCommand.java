@@ -5,6 +5,8 @@ import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.music.RSNAudioManager;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -28,6 +30,11 @@ public class StopMusicCommand extends BasicCommand{
 		super.addHelp(guild, builder);
 	}
 	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.music.stop", false);
+	}
+	
 	@NonNull
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
@@ -37,11 +44,6 @@ public class StopMusicCommand extends BasicCommand{
 			case OK -> Actions.reply(event, translate(event.getGuild(), "music.stopped", event.getAuthor().getAsMention()), null);
 		}
 		return CommandResult.SUCCESS;
-	}
-	
-	@Override
-	public @NonNull AccessLevel getAccessLevel(){
-		return AccessLevel.MODERATOR;
 	}
 	
 	@NonNull

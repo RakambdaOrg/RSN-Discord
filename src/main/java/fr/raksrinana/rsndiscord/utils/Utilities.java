@@ -14,29 +14,15 @@ import java.awt.Color;
 import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Utilities{
-	public static final long RAKSRINANA_ACCOUNT = 170119951498084352L;
+	public static final long MAIN_RAKSRINANA_ACCOUNT = 170119951498084352L;
+	public static final Set<Long> RAKSRINANA_ACCOUNTS = Set.of(MAIN_RAKSRINANA_ACCOUNT, 432628353024131085L);
 	public static final DateTimeFormatter DATE_TIME_MINUTE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
-	private static final long LOPINETTE_ACCOUNT = 432628353024131085L;
-	
-	/**
-	 * Tell if a member is part of the team (admin or moderator).
-	 *
-	 * @param member The member to test.
-	 *
-	 * @return True if part of the team, false otherwise.
-	 */
-	public static boolean isTeam(@NonNull final Member member){
-		return isModerator(member) || isAdmin(member);
-	}
 	
 	/**
 	 * Tell if the member is a moderator.
@@ -57,18 +43,19 @@ public class Utilities{
 	 * @return True if admin, false otherwise.
 	 */
 	public static boolean isAdmin(@NonNull final Member member){
-		return member.getRoles().stream().anyMatch(role -> role.hasPermission(Permission.ADMINISTRATOR)) || isCreator(member.getUser());
+		return member.getRoles().stream().anyMatch(role -> role.hasPermission(Permission.ADMINISTRATOR)) || isCreator(member);
 	}
 	
 	/**
-	 * Tell if a user is this bot created.
+	 * Tell if a user is this bot creator.
 	 *
-	 * @param user The member to test.
+	 * @param member The member to test.
 	 *
 	 * @return True if the creator, false otherwise.
 	 */
-	public static boolean isCreator(@NonNull final User user){
-		return Objects.equals(user.getIdLong(), RAKSRINANA_ACCOUNT) || Objects.equals(user.getIdLong(), LOPINETTE_ACCOUNT);
+	public static boolean isCreator(@NonNull final Member member){
+		return RAKSRINANA_ACCOUNTS.stream()
+				.anyMatch(id -> Objects.equals(member.getIdLong(), id));
 	}
 	
 	/**
@@ -139,7 +126,7 @@ public class Utilities{
 	 */
 	@NonNull
 	public static CompletableFuture<Message> reportException(@NonNull String message, @NonNull Throwable throwable){
-		return Actions.sendPrivateMessage(null, RAKSRINANA_ACCOUNT, MessageFormat.format("RSN got an exception: {0}\n", message), throwableToEmbed(throwable).build());
+		return Actions.sendPrivateMessage(null, MAIN_RAKSRINANA_ACCOUNT, MessageFormat.format("RSN got an exception: {0}\n", message), throwableToEmbed(throwable).build());
 	}
 	
 	/**

@@ -8,6 +8,8 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -28,6 +30,11 @@ public class RandomKick extends BasicCommand{
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("reason", translate(guild, "command.random-kick.help.reason"), false);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.random-kick", false);
 	}
 	
 	@NonNull
@@ -84,11 +91,6 @@ public class RandomKick extends BasicCommand{
 	@Override
 	public @NonNull String getCommandUsage(){
 		return super.getCommandUsage() + "[@role] <reason>";
-	}
-	
-	@Override
-	public @NonNull AccessLevel getAccessLevel(){
-		return AccessLevel.MODERATOR;
 	}
 	
 	@NonNull

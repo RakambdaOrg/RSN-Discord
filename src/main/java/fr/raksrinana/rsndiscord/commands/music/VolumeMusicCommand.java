@@ -6,6 +6,8 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.music.RSNAudioManager;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -30,6 +32,11 @@ public class VolumeMusicCommand extends BasicCommand{
 		builder.addField("Volume", translate(guild, "command.music.volume.help.volume"), false);
 	}
 	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.music.volume", false);
+	}
+	
 	@NonNull
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
@@ -49,11 +56,6 @@ public class VolumeMusicCommand extends BasicCommand{
 			}
 		}
 		return CommandResult.SUCCESS;
-	}
-	
-	@Override
-	public @NonNull AccessLevel getAccessLevel(){
-		return AccessLevel.MODERATOR;
 	}
 	
 	@NonNull

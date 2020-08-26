@@ -7,7 +7,6 @@ import fr.raksrinana.rsndiscord.settings.CompositeConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.trombinoscope.Picture;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
-import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -30,8 +29,6 @@ public class TrombinoscopeConfiguration implements CompositeConfiguration{
 	private RoleConfiguration posterRole;
 	@JsonProperty("pictures")
 	private final Map<Long, Set<Picture>> pictures = new HashMap<>();
-	@JsonProperty("bannedUsers")
-	private final Set<UserConfiguration> bannedUsers = new HashSet<>();
 	
 	public void registerPicture(@NonNull User user, @NonNull Path file){
 		pictures.computeIfAbsent(user.getIdLong(), key -> new HashSet<>())
@@ -66,18 +63,6 @@ public class TrombinoscopeConfiguration implements CompositeConfiguration{
 	
 	public void removeUser(@NonNull User user){
 		this.pictures.remove(user.getIdLong());
-	}
-	
-	public void banUser(@NonNull User user){
-		this.bannedUsers.add(new UserConfiguration(user));
-	}
-	
-	public void unbanUser(@NonNull User user){
-		this.bannedUsers.remove(new UserConfiguration(user));
-	}
-	
-	public boolean isUserBanned(@NonNull User user){
-		return this.bannedUsers.contains(new UserConfiguration(user));
 	}
 	
 	public int getUserCount(){

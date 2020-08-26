@@ -9,6 +9,8 @@ import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -26,9 +28,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
-import static fr.raksrinana.rsndiscord.utils.TrombinoscopeUtils.isRegistered;
 import static fr.raksrinana.rsndiscord.utils.Utilities.isModerator;
-import static fr.raksrinana.rsndiscord.utils.Utilities.isTeam;
 
 class AddCommand extends BasicCommand{
 	private static final Path trombinoscopeFolder = Paths.get("trombinoscope");
@@ -40,6 +40,11 @@ class AddCommand extends BasicCommand{
 	 */
 	AddCommand(final Command parent){
 		super(parent);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.trombinoscope.add", true);
 	}
 	
 	@NonNull
@@ -119,14 +124,6 @@ class AddCommand extends BasicCommand{
 	
 	private boolean checkFile(Message.Attachment attachment, Path savedFile) throws IOException{
 		return Objects.nonNull(savedFile) && Files.size(savedFile) == attachment.getSize() && attachment.getSize() != 0;
-	}
-	
-	@Override
-	public boolean isAllowed(Member member){
-		if(super.isAllowed(member)){
-			return isRegistered(member) || isTeam(member);
-		}
-		return false;
 	}
 	
 	@Override

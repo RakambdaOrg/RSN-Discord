@@ -4,6 +4,8 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.runners.anilist.AniListNotificationScheduledRunner;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -19,6 +21,11 @@ class NotificationCommand extends BasicCommand{
 	 */
 	NotificationCommand(final Command parent){
 		super(parent);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.anilist.fetch.notification", false);
 	}
 	
 	@NonNull

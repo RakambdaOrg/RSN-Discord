@@ -3,6 +3,8 @@ package fr.raksrinana.rsndiscord.commands.schedule;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
 import fr.raksrinana.rsndiscord.commands.schedule.delete.DeleteCommandComposite;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -25,6 +27,11 @@ public class ScheduleCommandComposite extends CommandComposite{
 	public ScheduleCommandComposite(){
 		this.addSubCommand(new MessageScheduleCommand(this));
 		this.addSubCommand(new DeleteCommandComposite(this));
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.schedule", false);
 	}
 	
 	public static Optional<ZonedDateTime> getReminderDate(@NonNull String string){
@@ -64,7 +71,7 @@ public class ScheduleCommandComposite extends CommandComposite{
 	
 	@NonNull
 	@Override
-	public String getName(@NonNull  Guild guild){
+	public String getName(@NonNull Guild guild){
 		return translate(guild, "command.schedule.name");
 	}
 	

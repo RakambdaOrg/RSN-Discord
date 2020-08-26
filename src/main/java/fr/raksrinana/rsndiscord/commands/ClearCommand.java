@@ -5,6 +5,8 @@ import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.settings.guild.schedule.DeleteMessageScheduleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -23,6 +25,11 @@ public class ClearCommand extends BasicCommand{
 		super.addHelp(guild, builder);
 		builder.addField("count", translate(guild, "command.clear.help.count", 100, 1000), false);
 		builder.addField("channel", translate(guild, "command.clear.help.channel"), false);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.clear", false);
 	}
 	
 	@NonNull
@@ -47,12 +54,6 @@ public class ClearCommand extends BasicCommand{
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [count] [#channel]";
-	}
-	
-	@NonNull
-	@Override
-	public AccessLevel getAccessLevel(){
-		return AccessLevel.MODERATOR;
 	}
 	
 	@NonNull

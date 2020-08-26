@@ -3,6 +3,8 @@ package fr.raksrinana.rsndiscord.commands.anilist;
 import fr.raksrinana.rsndiscord.commands.anilist.fetch.FetchCommandComposite;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import java.util.List;
@@ -20,6 +22,11 @@ public class AniListCommandComposite extends CommandComposite{
 		this.addSubCommand(new MediaListDifferencesCommand(this));
 		this.addSubCommand(new NextAiringCommand(this));
 		this.addSubCommand(new InfoCommand(this));
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.anilist", true);
 	}
 	
 	@NonNull

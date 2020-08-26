@@ -4,6 +4,8 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.runners.anilist.AniListMediaListScheduledRunner;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -27,6 +29,11 @@ class MediaListCommand extends BasicCommand{
 		super.execute(event, args);
 		new AniListMediaListScheduledRunner(event.getJDA()).execute();
 		return CommandResult.SUCCESS;
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.anilist.fetch.media-list", false);
 	}
 	
 	@NonNull

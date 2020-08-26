@@ -7,6 +7,8 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
 import lombok.NonNull;
@@ -25,6 +27,11 @@ public class TodoCommand extends BasicCommand{
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("message", translate(guild, "command.todo.help.message"), false);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.todo", true);
 	}
 	
 	@NonNull

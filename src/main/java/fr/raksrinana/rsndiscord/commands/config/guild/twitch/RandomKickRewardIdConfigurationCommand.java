@@ -3,15 +3,22 @@ package fr.raksrinana.rsndiscord.commands.config.guild.twitch;
 import fr.raksrinana.rsndiscord.commands.config.helpers.StringConfigurationCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import java.util.List;
 import java.util.Optional;
+import static fr.raksrinana.rsndiscord.utils.permission.PermissionUtils.ALLOW;
 
 public class RandomKickRewardIdConfigurationCommand extends StringConfigurationCommand{
 	public RandomKickRewardIdConfigurationCommand(final Command parent){
 		super(parent);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return ALLOW;
 	}
 	
 	@NonNull

@@ -3,9 +3,10 @@ package fr.raksrinana.rsndiscord.commands.anilist;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.anilist.queries.MediaPagedQuery;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -30,6 +31,11 @@ class InfoCommand extends BasicCommand{
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder embedBuilder){
 		super.addHelp(guild, embedBuilder);
 		embedBuilder.addField("id", translate(guild, "command.anilist.info.help.id"), false);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.anilist.info", true);
 	}
 	
 	@NonNull

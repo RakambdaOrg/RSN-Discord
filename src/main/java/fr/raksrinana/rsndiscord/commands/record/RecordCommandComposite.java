@@ -2,6 +2,8 @@ package fr.raksrinana.rsndiscord.commands.record;
 
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import java.util.List;
@@ -14,9 +16,14 @@ public class RecordCommandComposite extends CommandComposite{
 		this.addSubCommand(new StopCommand(this));
 	}
 	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.record", false);
+	}
+	
 	@NonNull
 	@Override
-	public String getName(@NonNull  Guild guild){
+	public String getName(@NonNull Guild guild){
 		return translate(guild, "command.record.name");
 	}
 	
@@ -30,10 +37,5 @@ public class RecordCommandComposite extends CommandComposite{
 	@Override
 	public String getDescription(@NonNull Guild guild){
 		return translate(guild, "command.record.description");
-	}
-	
-	@Override
-	public @NonNull AccessLevel getAccessLevel(){
-		return AccessLevel.CREATOR;
 	}
 }

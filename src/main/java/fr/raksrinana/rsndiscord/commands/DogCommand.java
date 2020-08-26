@@ -7,6 +7,8 @@ import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import fr.raksrinana.utils.http.requestssenders.get.JSONGetRequestSender;
 import kong.unirest.Unirest;
 import lombok.NonNull;
@@ -21,6 +23,11 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 @BotCommand
 public class DogCommand extends BasicCommand{
 	private static final int HTTP_OK = 200;
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.dog", true);
+	}
 	
 	@NonNull
 	@Override

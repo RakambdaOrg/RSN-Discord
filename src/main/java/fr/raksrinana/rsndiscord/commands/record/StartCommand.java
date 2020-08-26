@@ -4,6 +4,8 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -16,6 +18,11 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 public class StartCommand extends BasicCommand{
 	public StartCommand(Command parent){
 		super(parent);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.record.start", true);
 	}
 	
 	@NonNull
@@ -60,11 +67,6 @@ public class StartCommand extends BasicCommand{
 	@Override
 	public String getDescription(@NonNull Guild guild){
 		return translate(guild, "command.record.start.description");
-	}
-	
-	@Override
-	public @NonNull AccessLevel getAccessLevel(){
-		return AccessLevel.CREATOR;
 	}
 	
 	@Override

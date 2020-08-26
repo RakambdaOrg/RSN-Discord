@@ -8,6 +8,8 @@ import fr.raksrinana.rsndiscord.settings.guild.participation.ChatParticipation;
 import fr.raksrinana.rsndiscord.settings.guild.participation.VoiceParticipation;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -34,6 +36,11 @@ public class ParticipationCommand extends BasicCommand{
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("date", translate(guild, "command.participation.help.date"), false);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.participation", false);
 	}
 	
 	@NonNull
@@ -91,10 +98,5 @@ public class ParticipationCommand extends BasicCommand{
 	@Override
 	public String getDescription(@NonNull Guild guild){
 		return translate(guild, "command.participation.description");
-	}
-	
-	@Override
-	public @NonNull AccessLevel getAccessLevel(){
-		return AccessLevel.MODERATOR;
 	}
 }

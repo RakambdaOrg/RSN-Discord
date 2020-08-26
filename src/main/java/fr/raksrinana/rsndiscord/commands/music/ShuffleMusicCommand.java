@@ -5,6 +5,8 @@ import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.music.RSNAudioManager;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -22,6 +24,11 @@ public class ShuffleMusicCommand extends BasicCommand{
 		super(parent);
 	}
 	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.music.shuffle", false);
+	}
+	
 	@NonNull
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
@@ -29,11 +36,6 @@ public class ShuffleMusicCommand extends BasicCommand{
 		RSNAudioManager.shuffle(event.getGuild());
 		Actions.reply(event, translate(event.getGuild(), "music.queue.shuffled", event.getAuthor().getAsMention()), null);
 		return CommandResult.SUCCESS;
-	}
-	
-	@Override
-	public @NonNull AccessLevel getAccessLevel(){
-		return AccessLevel.MODERATOR;
 	}
 	
 	@NonNull

@@ -9,6 +9,8 @@ import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.utils.music.trackfields.ReplayTrackDataField;
 import fr.raksrinana.rsndiscord.utils.music.trackfields.TrackUserFields;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -42,6 +44,11 @@ public class AddMusicCommand extends BasicCommand{
 		builder.addField("skip", translate(guild, "command.music.add.help.skip"), false);
 		builder.addField("max", translate(guild, "command.music.add.help.max"), false);
 		builder.addField("repeat", translate(guild, "command.music.add.help.repeat"), false);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.music.add", false);
 	}
 	
 	@NonNull

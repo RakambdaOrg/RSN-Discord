@@ -9,6 +9,8 @@ import fr.raksrinana.rsndiscord.utils.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.utils.music.trackfields.ReplayTrackDataField;
 import fr.raksrinana.rsndiscord.utils.music.trackfields.RequesterTrackDataField;
 import fr.raksrinana.rsndiscord.utils.music.trackfields.TrackUserFields;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -36,6 +38,11 @@ public class MoveMusicCommand extends BasicCommand{
 		super.addHelp(guild, builder);
 		builder.addField("from", translate(guild, "command.music.move.help.from"), false);
 		builder.addField("to", translate(guild, "command.music.move.help.to"), false);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.music.move", false);
 	}
 	
 	@SuppressWarnings("DuplicatedCode")
@@ -85,12 +92,6 @@ public class MoveMusicCommand extends BasicCommand{
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <from> [to]";
-	}
-	
-	@NonNull
-	@Override
-	public AccessLevel getAccessLevel(){
-		return AccessLevel.MODERATOR;
 	}
 	
 	@NonNull

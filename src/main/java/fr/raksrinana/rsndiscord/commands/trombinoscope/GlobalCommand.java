@@ -8,11 +8,12 @@ import fr.raksrinana.rsndiscord.settings.guild.trombinoscope.Picture;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.coobird.thumbnailator.Thumbnails;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.imgscalr.Scalr;
@@ -31,7 +32,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
-import static fr.raksrinana.rsndiscord.utils.TrombinoscopeUtils.isRegistered;
 
 class GlobalCommand extends BasicCommand{
 	private static final int PICTURE_PIXELS = 500;
@@ -49,6 +49,11 @@ class GlobalCommand extends BasicCommand{
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("mode", translate(guild, "command.trombinoscope.global.help.mode"), false);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.trombinoscope.global", true);
 	}
 	
 	@NonNull
@@ -106,14 +111,6 @@ class GlobalCommand extends BasicCommand{
 	@Override
 	public @NonNull String getCommandUsage(){
 		return super.getCommandUsage() + " [mode]";
-	}
-	
-	@Override
-	public boolean isAllowed(Member member){
-		if(super.isAllowed(member)){
-			return isRegistered(member);
-		}
-		return false;
 	}
 	
 	private void drawImage(Graphics2D g2d, Picture picture, int x, int y, int dim, PictureMode mode){

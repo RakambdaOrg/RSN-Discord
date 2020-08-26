@@ -4,11 +4,13 @@ import fr.raksrinana.rsndiscord.commands.config.helpers.ChannelConfigurationComm
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import java.util.List;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static fr.raksrinana.rsndiscord.utils.permission.PermissionUtils.ALLOW;
 
 public class MediaChangeChannelConfigurationCommand extends ChannelConfigurationCommand{
 	public MediaChangeChannelConfigurationCommand(final Command parent){
@@ -29,6 +31,11 @@ public class MediaChangeChannelConfigurationCommand extends ChannelConfiguration
 	@Override
 	protected Optional<ChannelConfiguration> getConfig(@NonNull final Guild guild){
 		return Settings.get(guild).getAniListConfiguration().getMediaChangeChannel();
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return ALLOW;
 	}
 	
 	@NonNull

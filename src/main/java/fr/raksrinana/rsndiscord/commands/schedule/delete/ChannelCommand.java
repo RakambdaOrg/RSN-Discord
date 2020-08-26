@@ -9,6 +9,8 @@ import fr.raksrinana.rsndiscord.settings.guild.WaitingReactionMessageConfigurati
 import fr.raksrinana.rsndiscord.settings.guild.schedule.SimpleScheduleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.utils.schedule.ScheduleTag;
 import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
@@ -32,6 +34,11 @@ public class ChannelCommand extends BasicCommand{
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("channel", translate(guild, "command.schedule.delete.channel.help.channel"), false);
+	}
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.schedule.delete.channel", false);
 	}
 	
 	@NonNull
@@ -76,10 +83,5 @@ public class ChannelCommand extends BasicCommand{
 	@Override
 	public String getDescription(@NonNull Guild guild){
 		return translate(guild, "command.schedule.delete.channel.description");
-	}
-	
-	@Override
-	public @NonNull AccessLevel getAccessLevel(){
-		return AccessLevel.MODERATOR;
 	}
 }

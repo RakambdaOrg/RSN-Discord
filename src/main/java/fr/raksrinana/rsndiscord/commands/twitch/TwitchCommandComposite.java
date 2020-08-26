@@ -2,11 +2,11 @@ package fr.raksrinana.rsndiscord.commands.twitch;
 
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
-
 import java.util.List;
-
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
@@ -20,10 +20,9 @@ public class TwitchCommandComposite extends CommandComposite{
 		this.addSubCommand(new QuitCommand(this));
 	}
 	
-	@NonNull
 	@Override
-	public AccessLevel getAccessLevel(){
-		return AccessLevel.ADMIN;
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.twitch", false);
 	}
 	
 	@NonNull

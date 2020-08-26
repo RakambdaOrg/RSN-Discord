@@ -5,6 +5,8 @@ import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.utils.permission.Permission;
+import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
@@ -22,6 +24,11 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 @Slf4j
 public class ListJoinsCommand extends BasicCommand{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ISO_ZONED_DATE_TIME;
+	
+	@Override
+	public @NonNull Permission getPermission(){
+		return new SimplePermission("command.list-joins", false);
+	}
 	
 	@NonNull
 	@Override
@@ -42,12 +49,6 @@ public class ListJoinsCommand extends BasicCommand{
 			Actions.reply(event, translate(event.getGuild(), "list-joins.error-members"), null);
 		});
 		return CommandResult.SUCCESS;
-	}
-	
-	@Override
-	@NonNull
-	public AccessLevel getAccessLevel(){
-		return AccessLevel.CREATOR;
 	}
 	
 	@NonNull

@@ -110,6 +110,10 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Setter
 	private BirthdaysConfiguration birthdays = new BirthdaysConfiguration();
+	@JsonProperty("permissions")
+	@Getter
+	@Setter
+	private PermissionsConfiguration permissionsConfiguration = new PermissionsConfiguration();
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
