@@ -22,4 +22,19 @@ public class EntityPermissions{
 		this.granted.addAll(entityPermissions.getGranted());
 		this.denied.addAll(entityPermissions.getDenied());
 	}
+	
+	public void grant(String permissionId){
+		denied.remove(permissionId);
+		granted.add(permissionId);
+	}
+	
+	public void deny(String permissionId){
+		granted.remove(permissionId);
+		denied.add(permissionId);
+	}
+	
+	public void reset(String permissionId){
+		granted.remove(permissionId);
+		denied.remove(permissionId);
+	}
 }

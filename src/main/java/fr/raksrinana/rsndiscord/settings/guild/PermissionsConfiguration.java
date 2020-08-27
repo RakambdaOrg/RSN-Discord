@@ -11,9 +11,9 @@ import lombok.Setter;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -24,11 +24,11 @@ public class PermissionsConfiguration{
 	@JsonProperty("userPermissions")
 	@Getter
 	@Setter
-	private Map<Long, EntityPermissions> usersPermissions = new HashMap<>();
+	private Map<Long, EntityPermissions> usersPermissions = new ConcurrentHashMap<>();
 	@JsonProperty("rolesPermissions")
 	@Getter
 	@Setter
-	private Map<Long, EntityPermissions> rolesPermissions = new HashMap<>();
+	private Map<Long, EntityPermissions> rolesPermissions = new ConcurrentHashMap<>();
 	
 	public EntityPermissions getAggregatedPermissions(@NonNull Member member){
 		return Stream.concat(
@@ -43,5 +43,35 @@ public class PermissionsConfiguration{
 	
 	public Optional<EntityPermissions> getRolePermissions(@NonNull Role role){
 		return Optional.of(getRolesPermissions().get(role.getIdLong()));
+	}
+	
+	public void grant(User user, String permissionId){
+		usersPermissions.computeIfAbsent(user.getIdLong(), key -> new EntityPermissions())
+				.grant(permissionId);
+	}
+	
+	public void grant(Role role, String permissionId){
+		rolesPermissions.computeIfAbsent(role.getIdLong(), key -> new EntityPermissions())
+				.grant(permissionId);
+	}
+	
+	public void deny(User user, String permissionId){
+		Optional.ofNullable(usersPermissions.get(user.getIdLong()))
+				.ifPresent(entityPermissions -> entityPermissions.deny(permissionId));
+	}
+	
+	public void deny(Role role, String permissionId){
+		Optional.ofNullable(rolesPermissions.get(role.getIdLong()))
+				.ifPresent(entityPermissions -> entityPermissions.deny(permissionId));
+	}
+	
+	public void reset(User user, String permissionId){
+		Optional.ofNullable(usersPermissions.get(user.getIdLong()))
+				.ifPresent(entityPermissions -> entityPermissions.reset(permissionId));
+	}
+	
+	public void reset(Role role, String permissionId){
+		Optional.ofNullable(rolesPermissions.get(role.getIdLong()))
+				.ifPresent(entityPermissions -> entityPermissions.reset(permissionId));
 	}
 }
