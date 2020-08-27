@@ -23,6 +23,6 @@ public class PermissionUtils{
 	}
 	
 	private static boolean isPermissionInList(Permission permission, Collection<String> permissions){
-		return permissions.stream().anyMatch(perm -> permission.getId().matches(perm));
+		return permissions.stream().anyMatch(permission::matches);
 	}
 }
