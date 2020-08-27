@@ -38,11 +38,11 @@ public class PermissionsConfiguration{
 	}
 	
 	public Optional<EntityPermissions> getUserPermissions(@NonNull User user){
-		return Optional.of(getUsersPermissions().get(user.getIdLong()));
+		return Optional.ofNullable(getUsersPermissions().get(user.getIdLong()));
 	}
 	
 	public Optional<EntityPermissions> getRolePermissions(@NonNull Role role){
-		return Optional.of(getRolesPermissions().get(role.getIdLong()));
+		return Optional.ofNullable(getRolesPermissions().get(role.getIdLong()));
 	}
 	
 	public void grant(User user, String permissionId){
