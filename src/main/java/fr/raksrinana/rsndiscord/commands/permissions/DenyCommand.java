@@ -61,7 +61,7 @@ public class DenyCommand extends BasicCommand{
 	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("revoke", "r");
+		return List.of("deny", "d");
 	}
 	
 	@NonNull

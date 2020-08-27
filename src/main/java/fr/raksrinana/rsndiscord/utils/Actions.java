@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
+import net.dv8tion.jda.internal.entities.UserById;
 import java.awt.Color;
 import java.nio.file.Path;
 import java.text.MessageFormat;
@@ -481,8 +482,22 @@ public class Actions{
 	 */
 	@NonNull
 	public static CompletableFuture<Void> kick(@NonNull User author, @NonNull Member member, @NonNull String reason){
-		logAction(member.getGuild(), author, "Random kick", member.getUser(), reason);
+		var guild = member.getGuild();
+		var builder = Utilities.buildEmbed(member.getUser(), Color.ORANGE, "Random kick", null);
+		builder.addField(translate(guild, "log-action.user"), member.getUser().getAsTag(), true);
+		builder.addField(translate(guild, "log-action.moderator"), author.getAsMention(), true);
+		builder.addField(translate(guild, "log-action.reason"), reason, true);
+		logAction(guild, builder.build());
+		
 		return member.kick(reason).submit();
+	}
+	
+	@NonNull
+	public static Optional<CompletableFuture<Message>> logAction(@NonNull Guild guild, MessageEmbed embed){
+		return Settings.get(guild)
+				.getLogChannel()
+				.flatMap(ChannelConfiguration::getChannel)
+				.map(textChannel -> Actions.sendEmbed(textChannel, embed));
 	}
 	
 	/**
@@ -496,32 +511,32 @@ public class Actions{
 	 */
 	@NonNull
 	public static CompletableFuture<Void> softBan(@NonNull TextChannel textChannel, @NonNull User author, @NonNull Member member, @NonNull String reason, @NonNull Duration duration){
-		logAction(member.getGuild(), author, "Soft ban", member.getUser(), reason);
-		ScheduleUtils.addSchedule(new UnbanScheduleConfiguration(member.getUser(), textChannel, ZonedDateTime.now().plus(duration), "Banned for: " + reason, member.getId()), member.getGuild());
+		var guild = member.getGuild();
+		var builder = Utilities.buildEmbed(member.getUser(), Color.RED, "Soft ban", null);
+		builder.addField(translate(guild, "log-action.user"), member.getUser().getAsTag(), true);
+		builder.addField(translate(guild, "log-action.moderator"), author.getAsMention(), true);
+		builder.addField(translate(guild, "log-action.reason"), reason, true);
+		builder.addField(translate(guild, "log-action.length"), Utilities.durationToString(duration), true);
+		logAction(guild, builder.build());
+		
+		ScheduleUtils.addSchedule(new UnbanScheduleConfiguration(member.getUser(), textChannel, ZonedDateTime.now().plus(duration), "Banned for: " + reason, member.getId()), guild);
 		return member.ban(0, reason).submit();
 	}
 	
-	@NonNull
-	public static Optional<CompletableFuture<Message>> logAction(@NonNull Guild guild, User author, String title, User target, String reason){
-		return Settings.get(guild)
-				.getLogChannel()
-				.flatMap(ChannelConfiguration::getChannel)
-				.map(textChannel -> {
-					var user = Optional.ofNullable(target).orElse(guild.getJDA().getSelfUser());
-					var builder = Utilities.buildEmbed(user,
-							Color.RED,
-							title,
-							null);
-					Optional.ofNullable(target).ifPresent(t -> builder.addField(translate(guild, "log-action.user"), user.getAsTag(), true));
-					Optional.ofNullable(author).ifPresent(a -> builder.addField(translate(guild, "log-action.moderator"), a.getAsMention(), true));
-					Optional.ofNullable(reason).ifPresent(r -> builder.addField(translate(guild, "log-action.reason"), r, true));
-					
-					return Actions.sendEmbed(textChannel, builder.build());
-				});
-	}
-	
+	/**
+	 * Unbans a member from its server.
+	 *
+	 * @param guild  The guild to unban the user from.
+	 * @param userId The user to unban.
+	 *
+	 * @return A completable future.
+	 */
 	public static CompletableFuture<Void> unban(@NonNull Guild guild, String userId){
-		logAction(guild, guild.getJDA().getSelfUser(), "Unban", null, "Auto for " + userId);
+		var builder = Utilities.buildEmbed(guild.getJDA().getSelfUser(), Color.GREEN, "Unban", null);
+		builder.addField(translate(guild, "log-action.user"), new UserById(Long.parseLong(userId)).getAsMention(), true);
+		builder.addField(translate(guild, "log-action.reason"), "Auto", true);
+		logAction(guild, builder.build());
+		
 		return guild.unban(userId).submit();
 	}
 }
