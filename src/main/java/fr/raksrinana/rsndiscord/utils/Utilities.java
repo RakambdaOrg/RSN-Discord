@@ -17,12 +17,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Utilities{
 	public static final long MAIN_RAKSRINANA_ACCOUNT = 170119951498084352L;
 	public static final Set<Long> RAKSRINANA_ACCOUNTS = Set.of(MAIN_RAKSRINANA_ACCOUNT, 432628353024131085L);
 	public static final DateTimeFormatter DATE_TIME_MINUTE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
+	private static final Pattern PERIOD_PATTERN = Pattern.compile("([0-9]+)([mhd])");
 	
 	/**
 	 * Tell if the member is a moderator.
@@ -113,6 +116,23 @@ public class Utilities{
 			return String.format("%02dm%02ds", duration.toMinutesPart(), duration.toSecondsPart());
 		}
 		return String.format("%02ds", duration.toSecondsPart());
+	}
+	
+	@NonNull
+	public static Duration parseDuration(@NonNull String period){
+		period = period.toLowerCase(Locale.ENGLISH);
+		Matcher matcher = PERIOD_PATTERN.matcher(period);
+		Duration duration = Duration.ZERO;
+		while(matcher.find()){
+			int amount = Integer.parseInt(matcher.group(1));
+			String type = matcher.group(2);
+			switch(type){
+				case "m" -> duration = duration.plus(Duration.ofMinutes(amount));
+				case "h" -> duration = duration.plus(Duration.ofHours(amount));
+				case "d" -> duration = duration.plus(Duration.ofDays(amount));
+			}
+		}
+		return duration;
 	}
 	
 	/**

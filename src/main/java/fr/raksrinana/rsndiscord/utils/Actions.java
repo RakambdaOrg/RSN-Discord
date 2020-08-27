@@ -2,8 +2,10 @@ package fr.raksrinana.rsndiscord.utils;
 
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.guild.schedule.UnbanScheduleConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -14,6 +16,8 @@ import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import java.awt.Color;
 import java.nio.file.Path;
 import java.text.MessageFormat;
+import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -481,6 +485,22 @@ public class Actions{
 		return member.kick(reason).submit();
 	}
 	
+	/**
+	 * Soft bans a member from its server.
+	 *
+	 * @param author The author of the ban.
+	 * @param member The member to ban.
+	 * @param reason The reason of the ban.
+	 *
+	 * @return A completable future.
+	 */
+	@NonNull
+	public static CompletableFuture<Void> softBan(@NonNull TextChannel textChannel, @NonNull User author, @NonNull Member member, @NonNull String reason, @NonNull Duration duration){
+		logAction(member.getGuild(), author, "Soft ban", member.getUser(), reason);
+		ScheduleUtils.addSchedule(new UnbanScheduleConfiguration(member.getUser(), textChannel, ZonedDateTime.now().plus(duration), "Banned for: " + reason, member.getId()), member.getGuild());
+		return member.ban(0, reason).submit();
+	}
+	
 	@NonNull
 	public static Optional<CompletableFuture<Message>> logAction(@NonNull Guild guild, User author, String title, User target, String reason){
 		return Settings.get(guild)
@@ -498,5 +518,10 @@ public class Actions{
 					
 					return Actions.sendEmbed(textChannel, builder.build());
 				});
+	}
+	
+	public static CompletableFuture<Void> unban(@NonNull Guild guild, String userId){
+		logAction(guild, guild.getJDA().getSelfUser(), "Unban", null, "Auto for " + userId);
+		return guild.unban(userId).submit();
 	}
 }

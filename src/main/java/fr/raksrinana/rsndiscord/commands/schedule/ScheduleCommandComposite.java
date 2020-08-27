@@ -3,26 +3,22 @@ package fr.raksrinana.rsndiscord.commands.schedule;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
 import fr.raksrinana.rsndiscord.commands.schedule.delete.DeleteCommandComposite;
+import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.permission.Permission;
 import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class ScheduleCommandComposite extends CommandComposite{
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
-	private static final Pattern PERIOD_PATTERN = Pattern.compile("([0-9]+)([mhd])");
 	
 	public ScheduleCommandComposite(){
 		this.addSubCommand(new MessageScheduleCommand(this));
@@ -36,7 +32,7 @@ public class ScheduleCommandComposite extends CommandComposite{
 	
 	public static Optional<ZonedDateTime> getReminderDate(@NonNull String string){
 		try{
-			final var duration = parsePeriod(string);
+			final var duration = Utilities.parseDuration(string);
 			if(!duration.isZero()){
 				return Optional.of(ZonedDateTime.now().plus(duration));
 			}
@@ -45,22 +41,6 @@ public class ScheduleCommandComposite extends CommandComposite{
 		catch(DateTimeParseException ignored){
 		}
 		return Optional.empty();
-	}
-	
-	private static Duration parsePeriod(@NonNull String period){
-		period = period.toLowerCase(Locale.ENGLISH);
-		Matcher matcher = PERIOD_PATTERN.matcher(period);
-		Duration duration = Duration.ZERO;
-		while(matcher.find()){
-			int amount = Integer.parseInt(matcher.group(1));
-			String type = matcher.group(2);
-			switch(type){
-				case "m" -> duration = duration.plus(Duration.ofMinutes(amount));
-				case "h" -> duration = duration.plus(Duration.ofHours(amount));
-				case "d" -> duration = duration.plus(Duration.ofDays(amount));
-			}
-		}
-		return duration;
 	}
 	
 	@Override
