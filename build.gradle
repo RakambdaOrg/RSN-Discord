@@ -139,7 +139,7 @@ java {
 
 shadowJar {
     archivesBaseName = project.name
-    classifier = 'shaded'
+    archiveClassifier = 'shaded'
     archiveVersion = ''
 }
 
