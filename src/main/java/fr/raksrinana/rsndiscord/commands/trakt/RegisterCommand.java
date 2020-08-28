@@ -38,11 +38,11 @@ class RegisterCommand extends BasicCommand{
 		if(args.isEmpty()){
 			Settings.getGeneral().getTrakt()
 					.getAccessToken(event.getAuthor().getIdLong())
-					.ifPresentOrElse(userToken -> Actions.reply(event, translate(event.getGuild(), "trakt.register-url"), null),
+					.ifPresentOrElse(userToken -> Actions.reply(event, translate(event.getGuild(), "trakt.already-registered"), null),
 							() -> {
 								try{
 									final var deviceCode = TraktUtils.postQuery(null, new DeviceCodePostRequest());
-									Actions.reply(event, translate(event.getGuild(), "trakt.already-registered", deviceCode.getVerificationUrl(), deviceCode.getUserCode()), null);
+									Actions.reply(event, translate(event.getGuild(), "trakt.register-url", deviceCode.getVerificationUrl(), deviceCode.getUserCode()), null);
 									TraktUtils.pollDeviceToken(event, deviceCode);
 								}
 								catch(Exception e){
