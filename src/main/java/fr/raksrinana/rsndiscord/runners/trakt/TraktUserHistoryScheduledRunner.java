@@ -101,12 +101,12 @@ public class TraktUserHistoryScheduledRunner implements TraktPagedGetRunner<User
 	
 	@Override
 	public long getPeriod(){
-		return 30;
+		return 1;
 	}
 	
 	@Override
 	public @NonNull TimeUnit getPeriodUnit(){
-		return TimeUnit.MINUTES;
+		return TimeUnit.HOURS;
 	}
 	
 	@Override

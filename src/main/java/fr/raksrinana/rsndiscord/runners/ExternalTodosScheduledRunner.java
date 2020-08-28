@@ -30,7 +30,7 @@ public class ExternalTodosScheduledRunner implements ScheduledRunner{
 	
 	@Override
 	public long getPeriod(){
-		return 30;
+		return 15;
 	}
 	
 	@NonNull

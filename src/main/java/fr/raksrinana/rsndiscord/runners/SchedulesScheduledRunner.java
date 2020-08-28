@@ -57,7 +57,7 @@ public class SchedulesScheduledRunner implements ScheduledRunner{
 	
 	@Override
 	public long getPeriod(){
-		return 5;
+		return 2;
 	}
 	
 	@NonNull

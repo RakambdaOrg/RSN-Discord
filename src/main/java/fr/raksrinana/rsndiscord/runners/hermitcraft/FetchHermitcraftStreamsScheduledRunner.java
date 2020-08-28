@@ -57,7 +57,7 @@ public class FetchHermitcraftStreamsScheduledRunner implements ScheduledRunner{
 	
 	@Override
 	public long getPeriod(){
-		return 7;
+		return 5;
 	}
 	
 	@NonNull

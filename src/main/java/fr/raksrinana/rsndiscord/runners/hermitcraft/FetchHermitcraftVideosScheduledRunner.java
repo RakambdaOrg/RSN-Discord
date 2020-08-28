@@ -37,7 +37,7 @@ public class FetchHermitcraftVideosScheduledRunner implements ScheduledRunner{
 	
 	@Override
 	public long getPeriod(){
-		return 30;
+		return 20;
 	}
 	
 	@NonNull
