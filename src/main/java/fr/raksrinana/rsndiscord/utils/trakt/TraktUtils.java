@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.utils.trakt;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.guild.trakt.TraktAccessTokenConfiguration;
+import fr.raksrinana.rsndiscord.settings.general.trakt.TraktAccessTokenConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import fr.raksrinana.rsndiscord.utils.RequestException;
@@ -76,7 +76,7 @@ public class TraktUtils{
 	}
 	
 	public static void pollDeviceToken(@NonNull GuildMessageReceivedEvent event, @NonNull DeviceCode deviceCode){
-		final var userToken = Settings.get(event.getGuild()).getTraktConfiguration().getAccessToken(event.getAuthor().getIdLong()).orElse(null);
+		final var userToken = Settings.getGeneral().getTrakt().getAccessToken(event.getAuthor().getIdLong()).orElse(null);
 		final var expireDate = ZonedDateTime.now().plusSeconds(deviceCode.getExpiresIn());
 		final var sleepTime = deviceCode.getInterval() * 1000L;
 		executor.submit(() -> {
@@ -92,7 +92,7 @@ public class TraktUtils{
 				}
 				try{
 					final var deviceToken = postQuery(userToken, deviceTokenQuery);
-					Settings.get(event.getGuild()).getTraktConfiguration().addAccessToken(new TraktAccessTokenConfiguration(event.getAuthor().getIdLong(), ZonedDateTime.now().plusSeconds(deviceToken.getExpiresIn()), deviceToken.getAccessToken(), deviceToken.getRefreshToken()));
+					Settings.getGeneral().getTrakt().addAccessToken(new TraktAccessTokenConfiguration(event.getAuthor().getIdLong(), ZonedDateTime.now().plusSeconds(deviceToken.getExpiresIn()), deviceToken.getAccessToken(), deviceToken.getRefreshToken()));
 					Actions.reply(event, translate(event.getGuild(), "trakt.authenticated"), null);
 					return;
 				}
@@ -123,7 +123,7 @@ public class TraktUtils{
 	}
 	
 	public static Optional<String> getUsername(@NonNull Member member){
-		final var traktConfig = Settings.get(member.getGuild()).getTraktConfiguration();
+		final var traktConfig = Settings.getGeneral().getTrakt();
 		return traktConfig.getUserUsername(member.getIdLong()).or(() -> getAccessToken(member).map(token -> {
 			try{
 				final var userSettingsQuery = new UserSettingsGetRequest();
@@ -154,7 +154,7 @@ public class TraktUtils{
 	@NonNull
 	private static Optional<TraktAccessTokenConfiguration> getAccessToken(@NonNull final Member member){
 		Log.getLogger(member.getGuild()).debug("Getting previous access token for {}", member);
-		final var traktConfig = Settings.get(member.getGuild()).getTraktConfiguration();
+		final var traktConfig = Settings.getGeneral().getTrakt();
 		final var accessTokenOptional = traktConfig.getAccessToken(member.getUser().getIdLong());
 		if(accessTokenOptional.isPresent()){
 			Log.getLogger(member.getGuild()).debug("Found previous access token for {}", member);
@@ -177,7 +177,7 @@ public class TraktUtils{
 		try{
 			final var accessToken = postQuery(null, renewTokenQuery);
 			final var newToken = new TraktAccessTokenConfiguration(member.getIdLong(), ZonedDateTime.now().plusSeconds(accessToken.getExpiresIn()), accessToken.getAccessToken(), accessToken.getRefreshToken());
-			Settings.get(member.getGuild()).getTraktConfiguration().addAccessToken(newToken);
+			Settings.getGeneral().getTrakt().addAccessToken(newToken);
 			return Optional.of(newToken);
 		}
 		catch(RequestException e){

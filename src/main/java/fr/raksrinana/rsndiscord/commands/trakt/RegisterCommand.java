@@ -36,16 +36,19 @@ class RegisterCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
-			Settings.get(event.getGuild()).getTraktConfiguration().getAccessToken(event.getAuthor().getIdLong()).ifPresentOrElse(userToken -> Actions.reply(event, translate(event.getGuild(), "trakt.register-url"), null), () -> {
-				try{
-					final var deviceCode = TraktUtils.postQuery(null, new DeviceCodePostRequest());
-					Actions.reply(event, translate(event.getGuild(), "trakt.already-registered", deviceCode.getVerificationUrl(), deviceCode.getUserCode()), null);
-					TraktUtils.pollDeviceToken(event, deviceCode);
-				}
-				catch(Exception e){
-					throw new RuntimeException("Failed to get an authentication device code", e);
-				}
-			});
+			Settings.getGeneral().getTrakt()
+					.getAccessToken(event.getAuthor().getIdLong())
+					.ifPresentOrElse(userToken -> Actions.reply(event, translate(event.getGuild(), "trakt.register-url"), null),
+							() -> {
+								try{
+									final var deviceCode = TraktUtils.postQuery(null, new DeviceCodePostRequest());
+									Actions.reply(event, translate(event.getGuild(), "trakt.already-registered", deviceCode.getVerificationUrl(), deviceCode.getUserCode()), null);
+									TraktUtils.pollDeviceToken(event, deviceCode);
+								}
+								catch(Exception e){
+									throw new RuntimeException("Failed to get an authentication device code", e);
+								}
+							});
 			return CommandResult.SUCCESS;
 		}
 		return CommandResult.FAILED;

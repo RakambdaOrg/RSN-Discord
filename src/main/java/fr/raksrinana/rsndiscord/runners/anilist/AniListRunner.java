@@ -31,7 +31,7 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 	
 	default void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<T>> userElements){
 		userElements.entrySet().stream()
-				.flatMap(es -> es.getValue().stream().map(val -> Map.entry(es.getKey(), val)))
+				.flatMap(entry -> entry.getValue().stream().map(val -> Map.entry(entry.getKey(), val)))
 				.sorted(Map.Entry.comparingByValue())
 				.forEach(change -> channels.stream()
 						.filter(channel -> this.sendToChannel(channel, change.getKey()))
@@ -60,14 +60,17 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 	
 	@NonNull String getFetcherID();
 	
+	default boolean sendToChannel(final TextChannel channel, final User user){
+		return Settings.getGeneral().getAniList().isRegisteredOn(channel.getGuild(), user);
+	}
+	
 	@NonNull
 	default Set<T> getElements(@NonNull final Member member) throws Exception{
 		Log.getLogger(member.getGuild()).debug("Fetching user {}", member);
 		var elementList = this.initQuery(member).getResult(member);
 		if(this.isKeepOnlyNew()){
-			final var baseDate = Settings.get(member.getGuild())
-					.getAniListConfiguration()
-					.getLastAccess(this.getFetcherID(), member.getUser().getIdLong())
+			var aniListGeneral = Settings.getGeneral().getAniList();
+			final var baseDate = aniListGeneral.getLastAccess(this.getFetcherID(), member.getUser().getIdLong())
 					.map(UserDateConfiguration::getDate)
 					.orElse(ZonedDateTime.now());
 			elementList = elementList.stream()
@@ -80,14 +83,10 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 					.max(ZonedDateTime::compareTo)
 					.ifPresent(val -> {
 						Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {} (last was {})", member, this.getFetcherID(), val, baseDate);
-						Settings.get(member.getGuild()).getAniListConfiguration().setLastAccess(member.getUser(), this.getFetcherID(), val);
+						aniListGeneral.setLastAccess(member.getUser(), this.getFetcherID(), val);
 					});
 		}
 		return elementList;
-	}
-	
-	default Set<Member> getMembers(){
-		return this.getJda().getGuilds().stream().flatMap(guild -> Settings.get(guild).getAniListConfiguration().getRegisteredMembers(guild).stream()).collect(Collectors.toSet());
 	}
 	
 	@NonNull U initQuery(@NonNull Member member);
@@ -116,7 +115,9 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 		return builder.build();
 	}
 	
-	default boolean sendToChannel(final TextChannel channel, final User user){
-		return Settings.get(channel.getGuild()).getAniListConfiguration().getAccessToken(user.getIdLong()).isPresent();
+	default Set<Member> getMembers(){
+		return this.getJda().getGuilds().stream()
+				.flatMap(guild -> Settings.getGeneral().getAniList().getRegisteredMembers(guild).stream())
+				.collect(Collectors.toSet());
 	}
 }

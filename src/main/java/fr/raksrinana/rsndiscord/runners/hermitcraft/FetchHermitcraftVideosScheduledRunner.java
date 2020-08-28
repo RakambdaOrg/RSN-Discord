@@ -1,7 +1,9 @@
 package fr.raksrinana.rsndiscord.runners.hermitcraft;
 
 import fr.raksrinana.rsndiscord.runners.ScheduledRunner;
+import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.guild.HermitcraftConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
@@ -14,7 +16,10 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import java.awt.Color;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class FetchHermitcraftVideosScheduledRunner implements ScheduledRunner{
@@ -43,13 +48,24 @@ public class FetchHermitcraftVideosScheduledRunner implements ScheduledRunner{
 	
 	@Override
 	public void execute(){
-		HermitcraftUtils.getVideos().ifPresent(videos -> this.jda.getGuilds().forEach(guild -> {
-			final var config = Settings.get(guild).getHermitcraftConfiguration();
-			config.getVideoNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> videos.stream().sorted(Comparator.comparing(HermitcraftVideo::getUploaded)).filter(video -> !config.isVideoNotified(video.getId())).forEach(video -> {
-				sendVideo(video, channel);
-				config.setVideoNotified(video.getId());
-			}));
-		}));
+		var hermitcraftGeneral = Settings.getGeneral().getHermitcraft();
+		var channels = jda.getGuilds().stream()
+				.map(Settings::get)
+				.map(GuildConfiguration::getHermitcraftConfiguration)
+				.map(HermitcraftConfiguration::getVideoNotificationChannel)
+				.flatMap(Optional::stream)
+				.map(ChannelConfiguration::getChannel)
+				.flatMap(Optional::stream)
+				.collect(Collectors.toList());
+		
+		HermitcraftUtils.getVideos().stream()
+				.flatMap(List::stream)
+				.filter(video -> !hermitcraftGeneral.isVideoNotified(video.getId()))
+				.sorted(Comparator.comparing(HermitcraftVideo::getUploaded))
+				.forEach(video -> {
+					channels.forEach(channel -> sendVideo(video, channel));
+					hermitcraftGeneral.setVideoNotified(video.getId());
+				});
 	}
 	
 	private void sendVideo(HermitcraftVideo video, TextChannel channel){

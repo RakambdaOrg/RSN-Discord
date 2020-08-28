@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.utils.trakt.requests.oauth;
 
-import fr.raksrinana.rsndiscord.settings.guild.trakt.TraktAccessTokenConfiguration;
+import fr.raksrinana.rsndiscord.settings.general.trakt.TraktAccessTokenConfiguration;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktPostRequest;
 import fr.raksrinana.rsndiscord.utils.trakt.TraktUtils;
 import fr.raksrinana.rsndiscord.utils.trakt.model.auth.AccessToken;

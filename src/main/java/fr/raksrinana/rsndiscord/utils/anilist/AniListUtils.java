@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.utils.anilist;
 
 import fr.raksrinana.rsndiscord.listeners.CommandsMessageListener;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.guild.anilist.AnilistAccessTokenConfiguration;
+import fr.raksrinana.rsndiscord.settings.general.anilist.AniListAccessTokenConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import fr.raksrinana.rsndiscord.utils.log.Log;
@@ -56,14 +56,17 @@ public class AniListUtils{
 		if(json.has("error") || !json.has("access_token") || !json.has("refresh_token")){
 			throw new IllegalArgumentException("Getting token failed with error: " + json.getString("error"));
 		}
-		Settings.get(member.getGuild()).getAniListConfiguration().setRefreshToken(member.getUser().getIdLong(), json.getString("refresh_token"));
-		Settings.get(member.getGuild()).getAniListConfiguration().addAccessToken(new AnilistAccessTokenConfiguration(member.getUser().getIdLong(), ZonedDateTime.now().plusSeconds(json.getInt("expires_in")), json.getString("access_token")));
+		var aniListGeneral = Settings.getGeneral().getAniList();
+		aniListGeneral.setRefreshToken(member.getUser().getIdLong(), json.getString("refresh_token"));
+		aniListGeneral.addAccessToken(new AniListAccessTokenConfiguration(member.getUser().getIdLong(),
+				ZonedDateTime.now().plusSeconds(json.getInt("expires_in")),
+				json.getString("access_token")));
 	}
 	
 	@NonNull
-	private static Optional<AnilistAccessTokenConfiguration> getAccessToken(@NonNull final Member member){
+	private static Optional<AniListAccessTokenConfiguration> getAccessToken(@NonNull final Member member){
 		Log.getLogger(member.getGuild()).trace("Getting previous access token for {}", member);
-		final var accessToken = Settings.get(member.getGuild()).getAniListConfiguration().getAccessToken(member.getUser().getIdLong());
+		final var accessToken = Settings.getGeneral().getAniList().getAccessToken(member.getUser().getIdLong());
 		if(accessToken.isPresent()){
 			Log.getLogger(member.getGuild()).trace("Found previous access token for {}", member);
 			return accessToken;
@@ -73,11 +76,11 @@ public class AniListUtils{
 	}
 	
 	public static Optional<Integer> getUserId(@NonNull final Member member){
-		return Settings.get(member.getGuild()).getAniListConfiguration().getUserId(member.getUser().getIdLong()).map(Optional::of).orElseGet(() -> {
+		return Settings.getGeneral().getAniList().getUserId(member.getUser().getIdLong()).map(Optional::of).orElseGet(() -> {
 			try{
 				final var userInfos = AniListUtils.postQuery(member, USER_INFO_QUERY, new JSONObject());
 				final var userId = userInfos.getJSONObject("data").getJSONObject("Viewer").getInt("id");
-				Settings.get(member.getGuild()).getAniListConfiguration().setUserId(member.getUser().getIdLong(), userId);
+				Settings.getGeneral().getAniList().setUserId(member.getUser().getIdLong(), userId);
 				return Optional.of(userId);
 			}
 			catch(final Exception e){
@@ -91,7 +94,7 @@ public class AniListUtils{
 	public static JSONObject postQuery(@NonNull final Member member, @NonNull final String query, @NonNull final JSONObject variables) throws Exception{
 		Log.getLogger(member.getGuild()).debug("Sending query to AniList for user {}", member.getUser());
 		final var token = AniListUtils.getAccessToken(member).orElseThrow(() -> {
-			Settings.get(member.getGuild()).getAniListConfiguration().removeUser(member.getUser());
+			Settings.getGeneral().getAniList().removeUser(member.getUser());
 			Actions.sendPrivateMessage(member.getGuild(), member.getUser(), translate(member.getGuild(), "anilist.token-expired", member.getGuild().getName(), Settings.get(member.getGuild()).getPrefix().orElse(CommandsMessageListener.defaultPrefix)), null);
 			return new IllegalStateException("No valid token found, please register again");
 		});
@@ -99,7 +102,7 @@ public class AniListUtils{
 	}
 	
 	@NonNull
-	private static JSONObject postQuery(@NonNull final AnilistAccessTokenConfiguration token, @NonNull final String query, @NonNull final JSONObject variables) throws Exception{
+	private static JSONObject postQuery(@NonNull final AniListAccessTokenConfiguration token, @NonNull final String query, @NonNull final JSONObject variables) throws Exception{
 		final var headers = new HashMap<String, String>();
 		headers.put("Authorization", "Bearer " + token.getToken());
 		headers.put("Content-Type", "application/json");

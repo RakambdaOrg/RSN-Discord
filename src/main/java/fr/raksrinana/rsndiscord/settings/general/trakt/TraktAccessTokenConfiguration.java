@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.settings.guild.anilist;
+package fr.raksrinana.rsndiscord.settings.general.trakt;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -19,7 +19,7 @@ import java.time.ZonedDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 @Getter
-public class AnilistAccessTokenConfiguration implements AtomicConfiguration{
+public class TraktAccessTokenConfiguration implements AtomicConfiguration{
 	@JsonProperty("userId")
 	private long userId;
 	@JsonProperty("expireDate")
@@ -28,11 +28,14 @@ public class AnilistAccessTokenConfiguration implements AtomicConfiguration{
 	private ZonedDateTime expireDate;
 	@JsonProperty("token")
 	private String token;
+	@JsonProperty("refreshToken")
+	private String refreshToken;
 	
-	public AnilistAccessTokenConfiguration(final long userId, @NonNull final ZonedDateTime expireDate, @NonNull final String token){
+	public TraktAccessTokenConfiguration(final long userId, @NonNull final ZonedDateTime expireDate, @NonNull final String token, @NonNull final String refreshToken){
 		this.userId = userId;
 		this.expireDate = expireDate;
 		this.token = token;
+		this.refreshToken = refreshToken;
 	}
 	
 	@Override
@@ -45,15 +48,19 @@ public class AnilistAccessTokenConfiguration implements AtomicConfiguration{
 		if(this == o){
 			return true;
 		}
-		if(!(o instanceof AnilistAccessTokenConfiguration)){
+		if(!(o instanceof TraktAccessTokenConfiguration)){
 			return false;
 		}
-		final var that = (AnilistAccessTokenConfiguration) o;
+		final var that = (TraktAccessTokenConfiguration) o;
 		return new EqualsBuilder().append(this.getToken(), that.getToken()).isEquals();
 	}
 	
 	@Override
 	public boolean shouldBeRemoved(){
-		return ZonedDateTime.now().isAfter(this.getExpireDate());
+		return false;
+	}
+	
+	public boolean isExpired(){
+		return ZonedDateTime.now().minusMinutes(1).isAfter(this.getExpireDate());
 	}
 }

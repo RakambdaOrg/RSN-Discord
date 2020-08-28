@@ -1,14 +1,13 @@
 package fr.raksrinana.rsndiscord.settings;
 
 import fr.raksrinana.rsndiscord.utils.log.Log;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public interface CompositeConfiguration{
-	default void cleanFields(@NonNull Guild guild, String fieldName) throws Exception{
+	default void cleanFields(Guild guild, String fieldName) throws Exception{
 		for(final var field : this.getClass().getDeclaredFields()){
 			final var fieldValue = FieldUtils.readField(field, this, true);
 			if(cleanObject(guild, fieldValue, fieldName + "." + field.getName())){
@@ -22,7 +21,7 @@ public interface CompositeConfiguration{
 		return object instanceof AtomicConfiguration && ((AtomicConfiguration) object).shouldBeRemoved();
 	}
 	
-	default boolean cleanObject(@NonNull Guild guild, Object fieldValue, String fieldName) throws Exception{
+	default boolean cleanObject(Guild guild, Object fieldValue, String fieldName) throws Exception{
 		if(fieldValue instanceof AtomicConfiguration){
 			return ((AtomicConfiguration) fieldValue).shouldBeRemoved();
 		}
@@ -46,7 +45,8 @@ public interface CompositeConfiguration{
 						Log.getLogger(guild).error("Failed to clean settings object {}", this.getClass(), e);
 					}
 				});
-			}catch(Exception e){
+			}
+			catch(Exception e){
 				throw new RuntimeException("Failed to clean field " + fieldName, e);
 			}
 			return false;

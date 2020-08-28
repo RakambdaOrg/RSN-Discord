@@ -23,7 +23,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import java.time.ZonedDateTime;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -45,7 +44,13 @@ public class TraktUserHistoryScheduledRunner implements TraktPagedGetRunner<User
 	@NonNull
 	@Override
 	public UserHistoryPagedGetRequest initQuery(@NonNull Member member){
-		return new UserHistoryPagedGetRequest(TraktUtils.getUsername(member).orElseThrow(() -> new RuntimeException("Failed to get username for member " + member)), 1, Settings.get(member.getGuild()).getTraktConfiguration().getLastAccess(getFetcherID(), member.getIdLong()).map(UserDateConfiguration::getDate).map(date -> date.plusNanos(1000L)).orElse(ZonedDateTime.now()));
+		return new UserHistoryPagedGetRequest(TraktUtils.getUsername(member).orElseThrow(() -> new RuntimeException("Failed to get username for member " + member)),
+				1,
+				Settings.getGeneral().getTrakt()
+						.getLastAccess(getFetcherID(), member.getIdLong())
+						.map(UserDateConfiguration::getDate)
+						.map(date -> date.plusNanos(1000L))
+						.orElse(ZonedDateTime.now()));
 	}
 	
 	@Override
