@@ -114,6 +114,9 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@Getter
 	@Setter
 	private PermissionsConfiguration permissionsConfiguration = new PermissionsConfiguration();
+	@JsonProperty("eventWinnerRole")
+	@Setter
+	private RoleConfiguration eventWinnerRole;
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
@@ -137,6 +140,10 @@ public class GuildConfiguration implements CompositeConfiguration{
 	
 	public void addSchedule(@NonNull ScheduleConfiguration schedule){
 		this.schedules.add(schedule);
+	}
+	
+	public Optional<RoleConfiguration> getEventWinnerRole(){
+		return Optional.ofNullable(this.eventWinnerRole);
 	}
 	
 	public Optional<ChannelConfiguration> getLogChannel(){
