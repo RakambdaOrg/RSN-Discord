@@ -29,7 +29,7 @@ public class DiscordStatusScheduledRunner implements ScheduledRunner{
 	
 	@Override
 	public void execute(){
-		DiscordStatus.getUnresolvedIncidents().ifPresent(unresolvedIncidents -> {
+		DiscordStatus.getIncidents().ifPresent(unresolvedIncidents -> {
 			if(!unresolvedIncidents.getIncidents().isEmpty()){
 				var embeds = unresolvedIncidents.getIncidents().stream()
 						.filter(incident -> incident.getUpdatedAt().isAfter(lastData))

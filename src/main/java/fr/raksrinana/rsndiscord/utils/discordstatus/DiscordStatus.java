@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.utils.discordstatus;
 
 import fr.raksrinana.rsndiscord.utils.discordstatus.data.status.StatusResponse;
-import fr.raksrinana.rsndiscord.utils.discordstatus.data.unresolvedincidents.UnresolvedIncidentsReponse;
+import fr.raksrinana.rsndiscord.utils.discordstatus.data.unresolvedincidents.IncidentsReponse;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import fr.raksrinana.utils.http.requestssenders.get.ObjectGetRequestSender;
 import kong.unirest.GenericType;
@@ -21,9 +21,9 @@ public class DiscordStatus{
 		return Optional.empty();
 	}
 	
-	public static Optional<UnresolvedIncidentsReponse> getUnresolvedIncidents(){
+	public static Optional<IncidentsReponse> getIncidents(){
 		Log.getLogger(null).info("Requesting discord incidents");
-		var request = new ObjectGetRequestSender<>(new GenericType<UnresolvedIncidentsReponse>(){}, Unirest.get(ENDPOINT + "/incidents/unresolved.json")).getRequestHandler();
+		var request = new ObjectGetRequestSender<>(new GenericType<IncidentsReponse>(){}, Unirest.get(ENDPOINT + "/incidents.json")).getRequestHandler();
 		if(request.getResult().isSuccess()){
 			return Optional.ofNullable(request.getRequestResult());
 		}
