@@ -117,6 +117,9 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("eventWinnerRole")
 	@Setter
 	private RoleConfiguration eventWinnerRole;
+	@JsonProperty("discordIncidentsChannel")
+	@Setter
+	private ChannelConfiguration discordIncidentsChannel;
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
@@ -178,5 +181,9 @@ public class GuildConfiguration implements CompositeConfiguration{
 	
 	public Optional<Locale> getLocale(){
 		return Optional.ofNullable(this.locale);
+	}
+	
+	public Optional<ChannelConfiguration> getDiscordIncidentsChannel(){
+		return Optional.ofNullable(this.discordIncidentsChannel);
 	}
 }
