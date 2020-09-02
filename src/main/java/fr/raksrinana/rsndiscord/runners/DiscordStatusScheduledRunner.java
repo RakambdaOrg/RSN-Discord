@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -32,7 +33,8 @@ public class DiscordStatusScheduledRunner implements ScheduledRunner{
 		DiscordStatus.getIncidents().ifPresent(unresolvedIncidents -> {
 			if(!unresolvedIncidents.getIncidents().isEmpty()){
 				var embeds = unresolvedIncidents.getIncidents().stream()
-						.filter(incident -> incident.getUpdatedAt().isAfter(lastData))
+						.filter(incident -> incident.getIncidentUpdates().stream()
+								.anyMatch(update -> update.getUpdatedAt().isAfter(lastData)))
 						.map(this::buildEmbed)
 						.collect(Collectors.toList());
 				if(!embeds.isEmpty()){
@@ -44,7 +46,9 @@ public class DiscordStatusScheduledRunner implements ScheduledRunner{
 							.forEach(channel -> embeds.forEach(embed -> Actions.sendEmbed(channel, embed)));
 					
 					lastData = unresolvedIncidents.getIncidents().stream()
-							.map(Incident::getUpdatedAt)
+							.map(Incident::getIncidentUpdates)
+							.flatMap(Set::stream)
+							.map(IncidentUpdate::getUpdatedAt)
 							.max(ZonedDateTime::compareTo)
 							.orElse(lastData);
 				}
