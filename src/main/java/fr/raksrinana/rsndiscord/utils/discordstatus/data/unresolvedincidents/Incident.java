@@ -7,8 +7,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.discordstatus.data.Indicator;
 import fr.raksrinana.rsndiscord.utils.discordstatus.data.Status;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601ZonedDateTimeDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
@@ -37,4 +39,10 @@ public class Incident{
 	@JsonProperty("updated_at")
 	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
 	private ZonedDateTime updatedAt;
+	@JsonProperty("resolved_at")
+	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
+	private ZonedDateTime resolvedAt;
+	@JsonProperty("shortlink")
+	@JsonDeserialize(using = URLDeserializer.class)
+	private URL shortLink;
 }

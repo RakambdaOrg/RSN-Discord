@@ -11,6 +11,7 @@ import fr.raksrinana.rsndiscord.utils.discordstatus.data.unresolvedincidents.Inc
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.Optional;
@@ -57,7 +58,12 @@ public class DiscordStatusScheduledRunner implements ScheduledRunner{
 	}
 	
 	private MessageEmbed buildEmbed(Incident incident){
-		var builder = Utilities.buildEmbed(this.jda.getSelfUser(), incident.getImpact().getColor(), "Discord incident", null);
+		var builder = Utilities.buildEmbed(this.jda.getSelfUser(),
+				incident.getImpact().getColor(),
+				"Discord incident",
+				Optional.ofNullable(incident.getShortLink())
+						.map(URL::toString)
+						.orElse(null));
 		builder.setDescription(incident.getName());
 		builder.setFooter(incident.getId());
 		builder.setTimestamp(incident.getUpdatedAt());
