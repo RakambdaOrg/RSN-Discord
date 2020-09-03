@@ -33,3 +33,10 @@ jobs:
         env:
           GITHUB_USER: RakSrinaNa
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Docker
+        run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+          docker build . --pull --tag ghcr.io/RakSrinaNa/RSNDiscord:$GITHUB_SHA --cache-from ghcr.io/RakSrinaNa/RSNDiscord:latest
+          docker push ghcr.io/RakSrinaNa/RSNDiscord:$GITHUB_SHA
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
