@@ -36,7 +36,7 @@ jobs:
       - name: Docker
         run: |
           echo ${{ secrets.DOCKER_PAT }} | docker login ghcr.io -u RakSrinaNa --password-stdin
-          docker build . --pull --tag ghcr.io/raksrinana/rsndiscord:$GITHUB_SHA --cache-from ghcr.io/raksrinana/rsndiscord:latest
-          docker push ghcr.io/raksrinana/rsndiscord:$GITHUB_SHA
+          docker build . --pull --tag ghcr.io/raksrinana/rsndiscord:latest --cache-from ghcr.io/raksrinana/rsndiscord:latest
+          docker push ghcr.io/raksrinana/rsndiscord:latest
         env:
           GITHUB_TOKEN: ${{ secrets.DOCKER_PAT }}
