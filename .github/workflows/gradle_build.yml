@@ -33,6 +33,11 @@ jobs:
         env:
           GITHUB_USER: RakSrinaNa
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Shadow project
+        run: ./gradlew shadowJar
+        env:
+          GITHUB_USER: RakSrinaNa
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Docker
         run: |
           echo ${{ secrets.DOCKER_PAT }} | docker login ghcr.io -u RakSrinaNa --password-stdin
