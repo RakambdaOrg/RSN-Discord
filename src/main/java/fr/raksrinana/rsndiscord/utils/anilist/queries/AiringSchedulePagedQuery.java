@@ -8,7 +8,7 @@ import lombok.NonNull;
 public class AiringSchedulePagedQuery implements PagedQuery<AiringSchedule>{
 	private static final String QUERY = PagedQuery.pagedQuery(", $mediaID: Int", AiringSchedule.getQUERY());
 	private final JSONObject variables;
-	private int nextPage = 0;
+	private int currentPage = 0;
 	
 	public AiringSchedulePagedQuery(final int mediaId){
 		this.variables = new JSONObject();
@@ -32,7 +32,7 @@ public class AiringSchedulePagedQuery implements PagedQuery<AiringSchedule>{
 	
 	@Override
 	public int getNextPage(){
-		return ++this.nextPage;
+		return ++this.currentPage;
 	}
 	
 	@NonNull

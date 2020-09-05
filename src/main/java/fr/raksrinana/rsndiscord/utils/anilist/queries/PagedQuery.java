@@ -18,12 +18,16 @@ public interface PagedQuery<T>{
 	default Set<T> getResult(@NonNull final Member member) throws Exception{
 		final var elements = new HashSet<T>();
 		var hasNext = true;
-		while(hasNext){
+		while(hasNext && isFetchNextPage()){
 			final var json = AniListUtils.postQuery(member, this.getQuery(), this.getParameters(this.getNextPage()));
 			hasNext = json.getJSONObject("data").getJSONObject("Page").getJSONObject("pageInfo").getBoolean("hasNextPage");
 			elements.addAll(this.parseResult(json));
 		}
 		return elements;
+	}
+	
+	default boolean isFetchNextPage(){
+		return true;
 	}
 	
 	@NonNull String getQuery();

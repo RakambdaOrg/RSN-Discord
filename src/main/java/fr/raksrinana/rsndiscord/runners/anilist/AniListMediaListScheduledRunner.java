@@ -73,25 +73,26 @@ public class AniListMediaListScheduledRunner implements AniListRunner<MediaList,
 				.flatMap(UserConfiguration::getUser)
 				.map(channelToSend.getGuild()::retrieveMember)
 				.map(RestAction::complete)
-				.ifPresent(memberToSend -> mediaListsToSend.forEach(mediaListToSend -> {
-					final var similarWaitingReactions = getSimilarWaitingReactions(channelToSend, mediaListToSend.getMedia());
-					Actions.sendMessage(channelToSend, memberToSend.getAsMention(), this.buildMessage(channelToSend.getGuild(), memberToSend.getUser(), mediaListToSend))
-							.thenAccept(sentMessage -> {
-								Actions.addReaction(sentMessage, BasicEmotes.CHECK_OK.getValue());
-								similarWaitingReactions.forEach(reaction -> Utilities.getMessageById(channelToSend, reaction.getMessage().getMessageId())
-										.thenAccept(message -> {
-											Actions.deleteMessage(message);
-											Settings.get(channelToSend.getGuild()).removeMessagesAwaitingReaction(reaction);
-										}));
-								Settings.get(channelToSend.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(sentMessage, ReactionTag.ANILIST_TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
-							});
-				})));
+				.ifPresent(memberToSend -> mediaListsToSend.stream()
+						.sorted()
+						.forEach(mediaListToSend -> {
+							final var similarWaitingReactions = getSimilarWaitingReactions(channelToSend, mediaListToSend.getMedia());
+							Actions.sendMessage(channelToSend, memberToSend.getAsMention(), this.buildMessage(channelToSend.getGuild(), memberToSend.getUser(), mediaListToSend))
+									.thenAccept(sentMessage -> {
+										Actions.addReaction(sentMessage, BasicEmotes.CHECK_OK.getValue());
+										similarWaitingReactions.forEach(reaction -> Utilities.getMessageById(channelToSend, reaction.getMessage().getMessageId())
+												.thenAccept(message -> {
+													Actions.deleteMessage(message);
+													Settings.get(channelToSend.getGuild()).removeMessagesAwaitingReaction(reaction);
+												}));
+										Settings.get(channelToSend.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(sentMessage, ReactionTag.ANILIST_TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
+									});
+						})));
 	}
 	
 	private static Collection<WaitingReactionMessageConfiguration> getSimilarWaitingReactions(@NonNull final TextChannel channel, @NonNull final Media media){
 		final var mediaIdStr = Integer.toString(media.getId());
 		return Settings.get(channel.getGuild()).getMessagesAwaitingReaction(ReactionTag.ANILIST_TODO).stream()
-				.filter(reaction -> Objects.equals(reaction.getTag(), ReactionTag.ANILIST_TODO))
 				.filter(reaction -> {
 					if(Objects.equals(reaction.getMessage().getChannel().getChannelId(), channel.getIdLong())){
 						return reaction.getMessage().getMessage().map(message -> {

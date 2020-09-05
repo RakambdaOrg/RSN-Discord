@@ -8,7 +8,7 @@ import lombok.NonNull;
 public class MediaPagedQuery implements PagedQuery<Media>{
 	private static final String QUERY = PagedQuery.pagedQuery(", $mediaId: Int", Media.getQueryWithId());
 	private final JSONObject variables;
-	private int nextPage = 0;
+	private int currentPage = 0;
 	
 	public MediaPagedQuery(final int mediaId){
 		this.variables = new JSONObject();
@@ -32,7 +32,7 @@ public class MediaPagedQuery implements PagedQuery<Media>{
 	
 	@Override
 	public int getNextPage(){
-		return ++this.nextPage;
+		return ++this.currentPage;
 	}
 	
 	@NonNull

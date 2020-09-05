@@ -9,7 +9,7 @@ import java.time.ZonedDateTime;
 public class ActivityPagedQuery implements PagedQuery<ListActivity>{
 	private static final String QUERY = PagedQuery.pagedQuery(", $userID: Int, $date: Int", "activities(userId: $userID, createdAt_greater: $date){\n" + "... on " + ListActivity.getQUERY() + "\n}");
 	private final JSONObject variables;
-	private int nextPage = 0;
+	private int currentPage = 0;
 	
 	public ActivityPagedQuery(final int userId, final ZonedDateTime date){
 		this.variables = new JSONObject();
@@ -35,7 +35,7 @@ public class ActivityPagedQuery implements PagedQuery<ListActivity>{
 	
 	@Override
 	public int getNextPage(){
-		return ++this.nextPage;
+		return ++this.currentPage;
 	}
 	
 	@NonNull

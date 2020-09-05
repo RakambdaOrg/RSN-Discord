@@ -134,7 +134,9 @@ public class GuildConfiguration implements CompositeConfiguration{
 	}
 	
 	public Collection<WaitingReactionMessageConfiguration> getMessagesAwaitingReaction(@NonNull ReactionTag tag){
-		return new HashSet<>(this.messagesAwaitingReaction).stream().filter(reaction -> Objects.equals(reaction.getTag(), tag)).collect(Collectors.toSet());
+		return new HashSet<>(this.messagesAwaitingReaction).stream()
+				.filter(reaction -> Objects.equals(reaction.getTag(), tag))
+				.collect(Collectors.toSet());
 	}
 	
 	public void removeSchedule(ScheduleConfiguration schedule){

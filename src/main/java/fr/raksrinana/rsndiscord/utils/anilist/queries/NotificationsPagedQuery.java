@@ -10,7 +10,7 @@ import java.util.List;
 public class NotificationsPagedQuery implements PagedQuery<Notification>{
 	private static final String QUERY = PagedQuery.pagedQuery(", $type_in: [NotificationType]", Notification.getQuery());
 	private final JSONObject variables;
-	private int nextPage = 0;
+	private int currentPage = 0;
 	
 	public NotificationsPagedQuery(){
 		this.variables = new JSONObject();
@@ -33,8 +33,8 @@ public class NotificationsPagedQuery implements PagedQuery<Notification>{
 	}
 	
 	@Override
-	public int getNextPage(){
-		return ++this.nextPage;
+	public boolean isFetchNextPage(){
+		return currentPage < 1;
 	}
 	
 	@NonNull
@@ -46,5 +46,10 @@ public class NotificationsPagedQuery implements PagedQuery<Notification>{
 	@NonNull
 	public Notification buildChange(@NonNull final JSONObject change) throws Exception{
 		return new ObjectMapper().readerFor(Notification.class).readValue(change.toString());
+	}
+	
+	@Override
+	public int getNextPage(){
+		return ++this.currentPage;
 	}
 }
