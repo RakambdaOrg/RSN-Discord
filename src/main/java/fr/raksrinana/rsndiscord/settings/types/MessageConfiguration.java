@@ -88,10 +88,11 @@ public class MessageConfiguration implements AtomicConfiguration{
 	@NonNull
 	public Optional<Message> getMessage(){
 		return this.getChannel().getChannel()
-				.map(channel -> Utilities.getMessageById(channel, this.getMessageId()))
+				.map(channel -> Utilities.getMessageById(channel, this.getMessageId())
+						.exceptionally(throwable -> null))
 				.flatMap(future -> {
 					try{
-						return Optional.of(future.get());
+						return Optional.ofNullable(future.get());
 					}
 					catch(InterruptedException | ExecutionException e){
 						Log.getLogger(null).error("Failed to get message from configuration", e);
