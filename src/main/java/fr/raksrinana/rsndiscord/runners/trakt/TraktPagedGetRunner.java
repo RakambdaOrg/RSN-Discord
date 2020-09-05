@@ -60,26 +60,26 @@ public interface TraktPagedGetRunner<T extends TraktObject, U extends TraktPaged
 						.getAccessToken(member.getIdLong())
 						.orElse(null),
 				this.initQuery(member));
-		if(this.isKeepOnlyNew()){
-			final var baseDate = Settings.getGeneral()
-					.getTrakt()
-					.getLastAccess(this.getFetcherID(), member.getUser().getIdLong())
-					.map(UserDateConfiguration::getDate)
-					.orElse(ZonedDateTime.now());
-			elementList = elementList.stream()
-					.filter(e -> e instanceof TraktDatedObject)
-					.filter(e -> ((TraktDatedObject) e).getDate().isAfter(baseDate))
-					.collect(Collectors.toSet());
-			elementList.stream()
-					.filter(e -> e instanceof TraktDatedObject)
-					.map(e -> (TraktDatedObject) e)
-					.map(TraktDatedObject::getDate)
-					.max(ZonedDateTime::compareTo)
-					.ifPresent(val -> {
-						Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {} (last was {})", member, this.getFetcherID(), val, baseDate);
-						Settings.getGeneral().getTrakt().setLastAccess(member.getUser(), this.getFetcherID(), val);
-					});
+		if(!this.isKeepOnlyNew()){
+			return elementList;
 		}
+		final var baseDate = Settings.getGeneral()
+				.getTrakt()
+				.getLastAccess(this.getFetcherID(), member.getUser().getIdLong())
+				.map(UserDateConfiguration::getDate);
+		elementList = elementList.stream()
+				.filter(e -> e instanceof TraktDatedObject)
+				.filter(e -> baseDate.map(date -> ((TraktDatedObject) e).getDate().isAfter(date)).orElse(true))
+				.collect(Collectors.toSet());
+		elementList.stream()
+				.filter(e -> e instanceof TraktDatedObject)
+				.map(e -> (TraktDatedObject) e)
+				.map(TraktDatedObject::getDate)
+				.max(ZonedDateTime::compareTo)
+				.ifPresent(val -> {
+					Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {} (last was {})", member, this.getFetcherID(), val, baseDate);
+					Settings.getGeneral().getTrakt().setLastAccess(member.getUser(), this.getFetcherID(), val);
+				});
 		return elementList;
 	}
 	

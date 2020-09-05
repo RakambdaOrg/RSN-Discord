@@ -68,24 +68,24 @@ public interface AniListRunner<T extends AniListObject, U extends PagedQuery<T>>
 	default Set<T> getElements(@NonNull final Member member) throws Exception{
 		Log.getLogger(member.getGuild()).debug("Fetching user {}", member);
 		var elementList = this.initQuery(member).getResult(member);
-		if(this.isKeepOnlyNew()){
-			var aniListGeneral = Settings.getGeneral().getAniList();
-			final var baseDate = aniListGeneral.getLastAccess(this.getFetcherID(), member.getUser().getIdLong())
-					.map(UserDateConfiguration::getDate)
-					.orElse(ZonedDateTime.now());
-			elementList = elementList.stream()
-					.filter(e -> e instanceof AnilistDatedObject)
-					.filter(e -> ((AnilistDatedObject) e).getDate().isAfter(baseDate))
-					.collect(Collectors.toSet());
-			elementList.stream().filter(e -> e instanceof AnilistDatedObject)
-					.map(e -> (AnilistDatedObject) e)
-					.map(AnilistDatedObject::getDate)
-					.max(ZonedDateTime::compareTo)
-					.ifPresent(val -> {
-						Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {} (last was {})", member, this.getFetcherID(), val, baseDate);
-						aniListGeneral.setLastAccess(member.getUser(), this.getFetcherID(), val);
-					});
+		if(!this.isKeepOnlyNew()){
+			return elementList;
 		}
+		var aniListGeneral = Settings.getGeneral().getAniList();
+		final var baseDate = aniListGeneral.getLastAccess(this.getFetcherID(), member.getUser().getIdLong())
+				.map(UserDateConfiguration::getDate);
+		elementList = elementList.stream()
+				.filter(e -> e instanceof AnilistDatedObject)
+				.filter(e -> baseDate.map(date -> ((AnilistDatedObject) e).getDate().isAfter(date)).orElse(true))
+				.collect(Collectors.toSet());
+		elementList.stream().filter(e -> e instanceof AnilistDatedObject)
+				.map(e -> (AnilistDatedObject) e)
+				.map(AnilistDatedObject::getDate)
+				.max(ZonedDateTime::compareTo)
+				.ifPresent(val -> {
+					Log.getLogger(member.getGuild()).debug("New last fetched date for {} on section {}: {} (last was {})", member, this.getFetcherID(), val, baseDate);
+					aniListGeneral.setLastAccess(member.getUser(), this.getFetcherID(), val);
+				});
 		return elementList;
 	}
 	
