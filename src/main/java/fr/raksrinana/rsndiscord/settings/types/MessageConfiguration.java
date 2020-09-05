@@ -67,28 +67,37 @@ public class MessageConfiguration implements AtomicConfiguration{
 	
 	@Override
 	public boolean shouldBeRemoved(){
-		return this.getChannel().shouldBeRemoved() || this.getChannel().getChannel().map(channel -> channel.retrieveMessageById(getMessageId()).submit().thenApply(m -> false).exceptionally(throwable -> throwable instanceof ErrorResponseException && ((ErrorResponseException) throwable).getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE)).map(future -> {
-			try{
-				return future.get();
-			}
-			catch(InterruptedException | ExecutionException e){
-				Log.getLogger(null).error("Failed to get message", e);
-			}
-			return null;
-		}).orElse(false);
+		return this.getChannel().shouldBeRemoved() ||
+				this.getChannel().getChannel()
+						.map(channel -> channel.retrieveMessageById(getMessageId())
+								.submit()
+								.thenApply(m -> false)
+								.exceptionally(throwable -> throwable instanceof ErrorResponseException
+										&& ((ErrorResponseException) throwable).getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE))
+						.map(future -> {
+							try{
+								return future.get();
+							}
+							catch(InterruptedException | ExecutionException e){
+								Log.getLogger(null).error("Failed to get message", e);
+							}
+							return null;
+						}).orElse(false);
 	}
 	
 	@NonNull
 	public Optional<Message> getMessage(){
-		return this.getChannel().getChannel().map(channel -> Utilities.getMessageById(channel, this.getMessageId())).flatMap(future -> {
-			try{
-				return Optional.of(future.get());
-			}
-			catch(InterruptedException | ExecutionException e){
-				Log.getLogger(null).error("Failed to get message from configuration", e);
-			}
-			return Optional.empty();
-		});
+		return this.getChannel().getChannel()
+				.map(channel -> Utilities.getMessageById(channel, this.getMessageId()))
+				.flatMap(future -> {
+					try{
+						return Optional.of(future.get());
+					}
+					catch(InterruptedException | ExecutionException e){
+						Log.getLogger(null).error("Failed to get message from configuration", e);
+					}
+					return Optional.empty();
+				});
 	}
 	
 	public void setMessage(@NonNull final Message message){

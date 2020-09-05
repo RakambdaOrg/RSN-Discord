@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Settings{
 	public static final String GENERAL_CONF_NAME = "general";
+	private static final Object cleaningLock = new Object();
 	private static final ObjectReader guildConfigurationReader;
 	private static final ObjectWriter guildConfigurationWriter;
 	private static final ObjectReader generalConfigurationReader;
@@ -93,25 +94,27 @@ public class Settings{
 	}
 	
 	public static void clean(@NonNull JDA jda){
-		Log.getLogger(null).info("Cleaning settings");
-		configurations.entrySet().forEach(entry -> {
-			var guild = jda.getGuildById(entry.getKey());
-			try{
-				entry.getValue().cleanFields(guild, "[root]");
+		synchronized(cleaningLock){
+			Log.getLogger(null).info("Cleaning settings");
+			configurations.forEach((guildId, configuration) -> {
+				var guild = jda.getGuildById(guildId);
+				try{
+					configuration.cleanFields(guild, "[root]");
+				}
+				catch(Exception e){
+					Log.getLogger(guild).error("Failed to clean guild configuration", e);
+				}
+			});
+			if(Objects.nonNull(generalConfiguration)){
+				try{
+					generalConfiguration.cleanFields(null, "[root]");
+				}
+				catch(Exception e){
+					Log.getLogger(null).error("Failed to clean guild configuration", e);
+				}
 			}
-			catch(Exception e){
-				Log.getLogger(guild).error("Failed to clean guild configuration", e);
-			}
-		});
-		if(Objects.nonNull(generalConfiguration)){
-			try{
-				generalConfiguration.cleanFields(null, "[root]");
-			}
-			catch(Exception e){
-				Log.getLogger(null).error("Failed to clean guild configuration", e);
-			}
+			Log.getLogger(null).info("Done cleaning settings");
 		}
-		Log.getLogger(null).info("Done cleaning settings");
 	}
 	
 	@NonNull
