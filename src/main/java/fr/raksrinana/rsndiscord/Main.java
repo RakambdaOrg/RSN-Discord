@@ -39,7 +39,6 @@ import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
-import static net.dv8tion.jda.api.entities.Activity.ActivityType.CUSTOM_STATUS;
 
 public class Main{
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
@@ -60,6 +59,7 @@ public class Main{
 	public static void main(@NonNull final String[] args){
 		parameters = Optional.ofNullable(loadEnv(args)).orElseThrow(() -> new IllegalStateException("Failed to load environment"));
 		Unirest.config().setObjectMapper(new JacksonObjectMapper()).connectTimeout(30000).socketTimeout(30000).enableCookieManagement(true).verifySsl(true);
+		consoleHandler = new ConsoleHandler();
 		try{
 			Log.getLogger(null).info("Building JDA");
 			final var jdaBuilder = JDABuilder.createDefault(System.getProperty("RSN_TOKEN"))
@@ -86,18 +86,22 @@ public class Main{
 			Log.getLogger(null).info("Started");
 			announceStart();
 			restartTwitchIRCConnections();
+			
+			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				Log.getLogger(null).info("Shutdown hook triggered");
+				Settings.close();
+			}));
+			Log.getLogger(null).info("Shutdown hook registered");
+			consoleHandler.start();
 		}
 		catch(final LoginException | InterruptedException e){
 			Log.getLogger(null).error("Couldn't start bot", e);
-			System.exit(1);
+			close();
 		}
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			Log.getLogger(null).info("Shutdown hook triggered");
-			Settings.close();
-		}));
-		Log.getLogger(null).info("Shutdown hook registered");
-		consoleHandler = new ConsoleHandler();
-		consoleHandler.start();
+		catch(final Exception e){
+			Log.getLogger(null).error("Bot error", e);
+			close();
+		}
 	}
 	
 	static CLIParameters loadEnv(@NonNull String[] args){
