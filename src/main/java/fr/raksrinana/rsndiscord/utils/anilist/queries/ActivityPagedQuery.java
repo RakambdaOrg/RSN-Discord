@@ -7,7 +7,10 @@ import lombok.NonNull;
 import java.time.ZonedDateTime;
 
 public class ActivityPagedQuery implements PagedQuery<ListActivity>{
-	private static final String QUERY = PagedQuery.pagedQuery(", $userID: Int, $date: Int", "activities(userId: $userID, createdAt_greater: $date){\n" + "... on " + ListActivity.getQUERY() + "\n}");
+	private static final String QUERY = PagedQuery.pagedQuery(", $userID: Int, $date: Int", """
+			activities(userId: $userID, createdAt_greater: $date){
+			    ... on %s
+			}""".formatted(ListActivity.getQUERY()));
 	private final JSONObject variables;
 	private int currentPage = 0;
 	

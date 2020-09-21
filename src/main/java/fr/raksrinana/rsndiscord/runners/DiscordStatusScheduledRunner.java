@@ -74,11 +74,9 @@ public class DiscordStatusScheduledRunner implements ScheduledRunner{
 		var counter = new AtomicInteger(0);
 		incident.getIncidentUpdates().stream()
 				.sorted(Comparator.comparing(IncidentUpdate::getUpdatedAt))
-				.forEach(update -> {
-					builder.addField("Update #" + counter.incrementAndGet(),
-							update.getCreatedAt().format(Utilities.DATE_TIME_MINUTE_FORMATTER) + " [" + update.getStatus().name() + "] : " + update.getBody(),
-							false);
-				});
+				.forEach(update -> builder.addField("Update #" + counter.incrementAndGet(),
+						update.getCreatedAt().format(Utilities.DATE_TIME_MINUTE_FORMATTER) + " [" + update.getStatus().name() + "] : " + update.getBody(),
+						false));
 		
 		return builder.build();
 	}

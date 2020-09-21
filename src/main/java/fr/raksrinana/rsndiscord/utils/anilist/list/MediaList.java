@@ -18,7 +18,10 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -29,7 +32,28 @@ import static java.time.temporal.ChronoUnit.DAYS;
 public class MediaList implements AnilistDatedObject{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	@Getter
-	private static final String QUERY = "mediaList(userId: $userID) {\n" + "id\n" + "private\n" + "progress\n" + "progressVolumes\n" + "priority\n" + "customLists\n" + "score(format: POINT_100)\n" + FuzzyDate.getQuery("completedAt") + "\n" + FuzzyDate.getQuery("startedAt") + "\n" + "status\n" + "updatedAt\n" + "createdAt\n" + "repeat\n" + "notes\n" + Media.getQUERY() + "\n}";
+	private static final String QUERY = """
+			mediaList(userId: $userID) {
+			    id
+			    private
+			    progress
+			    progressVolumes
+			    priority
+			    customLists
+			    score(format: POINT_100)
+			    status
+			    updatedAt
+			    createdAt
+			    repeat
+			    notes
+			    %s
+			    %s
+			    %s
+			}""".formatted(
+			FuzzyDate.getQuery("startedAt"),
+			FuzzyDate.getQuery("completedAt"),
+			Media.getQUERY()
+	);
 	@JsonProperty("status")
 	private MediaListStatus status = MediaListStatus.UNKNOWN;
 	@JsonProperty("private")

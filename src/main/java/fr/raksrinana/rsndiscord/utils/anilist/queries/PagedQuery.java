@@ -11,7 +11,22 @@ public interface PagedQuery<T>{
 	int PER_PAGE = 150;
 	
 	static String pagedQuery(final String additionalParams, final String query){
-		return "query($page: Int, $perPage: Int" + additionalParams + "){\n" + "  Page (page: $page, perPage: $perPage) {\n" + "    pageInfo {\n" + "      total\n" + "      currentPage\n" + "      lastPage\n" + "      hasNextPage\n" + "      perPage\n" + "    }\n" + query + "  }\n" + "}";
+		return """
+				query($page: Int, $perPage: Int%s){
+				    Page (page: $page, perPage: $perPage) {
+				        pageInfo {
+				            total
+				            currentPage
+				            lastPage
+				            hasNextPage
+				            perPage
+				        }
+				        %s
+				    }
+				}""".formatted(
+				additionalParams,
+				query
+		);
 	}
 	
 	@NonNull

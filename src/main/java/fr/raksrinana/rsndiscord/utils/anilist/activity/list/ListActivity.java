@@ -28,7 +28,16 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 @Getter
 public abstract class ListActivity implements AnilistDatedObject{
 	@Getter
-	private static final String QUERY = "ListActivity{\n" + "id\n" + "userId\n" + "type\n" + "createdAt\n" + "progress\n" + "siteUrl\n" + Media.getQUERY() + "\n}";
+	private static final String QUERY = """
+			ListActivity {
+			    id
+			    userId
+			    type
+			    createdAt
+			    progress
+			    siteUrl
+			    %s
+			}""".formatted(Media.getQUERY());
 	@JsonProperty("createdAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
 	private ZonedDateTime createdAt;

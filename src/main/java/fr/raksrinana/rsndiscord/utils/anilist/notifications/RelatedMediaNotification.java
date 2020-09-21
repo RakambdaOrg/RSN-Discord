@@ -22,7 +22,14 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 @Getter
 public class RelatedMediaNotification extends Notification{
 	@Getter
-	private static final String QUERY = "RelatedMediaAdditionNotification {\n" + "id\n" + "type\n" + "createdAt\n" + Media.getQUERY() + "\n}";
+	private static final String QUERY = """
+			RelatedMediaAdditionNotification {
+			    id
+			    type
+			    createdAt
+			    %s
+			}
+			""".formatted(Media.getQUERY());
 	@JsonProperty("media")
 	private Media media;
 	

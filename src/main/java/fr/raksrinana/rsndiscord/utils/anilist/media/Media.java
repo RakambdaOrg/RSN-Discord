@@ -10,7 +10,10 @@ import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -24,7 +27,30 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 public abstract class Media implements AniListObject{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	@Getter
-	private static final String QUERY = "media {\n" + "id\n" + MediaTitle.getQUERY() + "\n" + "season\n" + "type\n" + "format\n" + "status\n" + "episodes\n" + "chapters\n" + "volumes\n" + FuzzyDate.getQuery("startDate") + "\n" + FuzzyDate.getQuery("endDate") + "\n" + "genres\n" + "isAdult\n" + MediaCoverImage.getQUERY() + "\n" + "siteUrl" + "}";
+	private static final String QUERY = """
+			media {
+			    id
+			    season
+			    type
+			    format
+			    status
+			    episodes
+			    chapters
+			    volumes
+			    genres
+			    isAdult
+			    siteUrl
+			    %s
+			    %s
+			    %s
+			    %s
+			}
+			""".formatted(
+			MediaTitle.getQUERY(),
+			FuzzyDate.getQuery("startDate"),
+			FuzzyDate.getQuery("endDate"),
+			MediaCoverImage.getQUERY()
+	);
 	private final MediaType type;
 	@JsonProperty("startDate")
 	private FuzzyDate startDate = new FuzzyDate();

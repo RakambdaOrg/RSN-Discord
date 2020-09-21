@@ -11,7 +11,13 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Getter
 public class MediaTitle{
 	@Getter
-	private static final String QUERY = "title {\n" + "userPreferred\n" + "romaji\n" + "english\n" + "native\n" + "}";
+	private static final String QUERY = """
+			title {
+				userPreferred
+				romaji
+				english
+				native
+			}""";
 	@JsonProperty("userPreferred")
 	private String userPreferred;
 	@JsonProperty("romaji")

@@ -11,7 +11,10 @@ import java.net.URL;
 @Getter
 class MediaCoverImage{
 	@Getter
-	private static final String QUERY = "coverImage{\n" + "large\n" + "}";
+	private static final String QUERY = """
+			coverImage {
+				large
+			}""";
 	@JsonProperty("large")
 	private URL large;
 }

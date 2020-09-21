@@ -47,16 +47,15 @@ public class ExternalTodosScheduledRunner implements ScheduledRunner{
 				final var token = configuration.getToken().orElse(null);
 				configuration.getNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> {
 					final var response = ExternalTodosUtils.getTodos(endpoint, token);
-					response.ifPresent(todos -> todos.getTodos().forEach(todo -> {
-						Actions.sendMessage(channel, "`" + todo.getKind().name() + "` => " + todo.getDescription(), null).thenAccept(message -> {
-							Actions.addReaction(message, BasicEmotes.CHECK_OK.getValue());
-							if(todo.getKind().isCancellable()){
-								Actions.addReaction(message, BasicEmotes.CROSS_NO.getValue());
-							}
-							Settings.get(guild).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, ReactionTag.EXTERNAL_TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(false))));
-							ExternalTodosUtils.setStatus(endpoint, token, todo, Status.EXTERNAL);
-						});
-					}));
+					response.ifPresent(todos -> todos.getTodos().forEach(todo ->
+							Actions.sendMessage(channel, "`" + todo.getKind().name() + "` => " + todo.getDescription(), null).thenAccept(message -> {
+								Actions.addReaction(message, BasicEmotes.CHECK_OK.getValue());
+								if(todo.getKind().isCancellable()){
+									Actions.addReaction(message, BasicEmotes.CROSS_NO.getValue());
+								}
+								Settings.get(guild).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, ReactionTag.EXTERNAL_TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(false))));
+								ExternalTodosUtils.setStatus(endpoint, token, todo, Status.EXTERNAL);
+							})));
 				});
 			});
 		});

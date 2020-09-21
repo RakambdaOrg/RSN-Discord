@@ -23,7 +23,15 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 @Getter
 public class AiringNotification extends Notification{
 	@Getter
-	private static final String QUERY = "AiringNotification {\n" + "id\n" + "type\n" + "episode\n" + "createdAt\n" + Media.getQUERY() + "\n}";
+	private static final String QUERY = """
+			AiringNotification {
+			    id
+			    type
+			    episode
+			    createdAt
+			    %s
+			}
+			""".formatted(Media.getQUERY());
 	@JsonProperty("episode")
 	private int episode;
 	@JsonProperty("media")

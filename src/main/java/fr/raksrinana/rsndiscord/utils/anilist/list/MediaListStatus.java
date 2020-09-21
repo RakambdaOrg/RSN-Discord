@@ -11,7 +11,13 @@ import java.awt.Color;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 public enum MediaListStatus{
-	CURRENT(Color.GREEN, "Current"), PLANNING(Color.WHITE, "Planning"), COMPLETED(Color.BLACK, "Completed"), DROPPED(Color.RED, "Dropped"), PAUSED(Color.ORANGE, "Paused"), REPEATING(Color.YELLOW, "Repeating"), UNKNOWN(Color.MAGENTA, "Unknown");
+	COMPLETED(Color.BLACK, "Completed"),
+	CURRENT(Color.GREEN, "Current"),
+	DROPPED(Color.RED, "Dropped"),
+	PAUSED(Color.ORANGE, "Paused"),
+	PLANNING(Color.WHITE, "Planning"),
+	REPEATING(Color.YELLOW, "Repeating"),
+	UNKNOWN(Color.MAGENTA, "Unknown");
 	private final Color color;
 	private final String display;
 	

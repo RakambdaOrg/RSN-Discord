@@ -2,7 +2,6 @@ package fr.raksrinana.rsndiscord.runners;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
-import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
@@ -24,16 +23,13 @@ public class BirthdayScheduledRunner implements ScheduledRunner{
 		this.jda.getGuilds().forEach(guild -> {
 			Log.getLogger(guild).info("Processing guild {}", guild);
 			var birthdaysConfiguration = Settings.get(guild).getBirthdays();
-			birthdaysConfiguration.getNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(textChannel -> {
-				birthdaysConfiguration.getBirthdays().forEach((userConfiguration, birthday) -> {
-					if(birthday.isAt(day) && !birthday.isNotified(day)){
-						birthday.setNotified(day);
-						userConfiguration.getUser().ifPresent(user -> {
-							Actions.sendMessage(textChannel, translate(guild, "birthday.today", user.getAsMention(), birthday.getDate().until(day).normalized().getYears()), null);
-						});
-					}
-				});
-			});
+			birthdaysConfiguration.getNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(textChannel ->
+					birthdaysConfiguration.getBirthdays().forEach((userConfiguration, birthday) -> {
+						if(birthday.isAt(day) && !birthday.isNotified(day)){
+							birthday.setNotified(day);
+							userConfiguration.getUser().ifPresent(user -> Actions.sendMessage(textChannel, translate(guild, "birthday.today", user.getAsMention(), birthday.getDate().until(day).normalized().getYears()), null));
+						}
+					}));
 		});
 	}
 	

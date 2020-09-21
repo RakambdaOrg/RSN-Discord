@@ -25,7 +25,14 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 public class AiringSchedule implements AnilistDatedObject{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
 	@Getter
-	private static final String QUERY = "airingSchedules(mediaId: $mediaID) {\n" + "id\n" + "airingAt\n" + "episode\n" + "timeUntilAiring\n" + Media.getQUERY() + "\n}";
+	private static final String QUERY = """
+			airingSchedules(mediaId: $mediaID) {
+			    id
+			    airingAt
+			    episode
+			    timeUntilAiring
+			    %s
+			}""".formatted(Media.getQUERY());
 	@JsonProperty("id")
 	private int id;
 	@JsonProperty("airingAt")
@@ -39,7 +46,7 @@ public class AiringSchedule implements AnilistDatedObject{
 	private int timeUntilAiring;
 	
 	@Override
-	public void fillEmbed(@NonNull Guild guild,  @NonNull EmbedBuilder builder){
+	public void fillEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		builder.addField(translate(guild, "anilist.episode"), Integer.toString(getEpisode()), true);
 		builder.addField(translate(guild, "anilist.air"), getAiringAt().format(DF), true);
 		builder.addBlankField(false);
