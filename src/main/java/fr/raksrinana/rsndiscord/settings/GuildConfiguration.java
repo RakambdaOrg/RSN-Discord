@@ -4,15 +4,20 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.settings.guild.*;
 import fr.raksrinana.rsndiscord.settings.types.CategoryConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
+import fr.raksrinana.rsndiscord.utils.json.DurationDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.DurationSerializer;
 import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -120,6 +125,11 @@ public class GuildConfiguration implements CompositeConfiguration{
 	@JsonProperty("discordIncidentsChannel")
 	@Setter
 	private ChannelConfiguration discordIncidentsChannel;
+	@JsonProperty("leaveServerBanDuration")
+	@Setter
+	@JsonDeserialize(using = DurationDeserializer.class)
+	@JsonSerialize(using = DurationSerializer.class)
+	private Duration leaveServerBanDuration;
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
@@ -145,6 +155,10 @@ public class GuildConfiguration implements CompositeConfiguration{
 	
 	public void addSchedule(@NonNull ScheduleConfiguration schedule){
 		this.schedules.add(schedule);
+	}
+	
+	public Optional<Duration> getLeaveServerBanDuration(){
+		return Optional.ofNullable(leaveServerBanDuration);
 	}
 	
 	public Optional<RoleConfiguration> getEventWinnerRole(){

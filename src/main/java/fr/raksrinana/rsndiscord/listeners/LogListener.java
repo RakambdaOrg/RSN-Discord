@@ -158,6 +158,19 @@ public class LogListener extends ListenerAdapter{
 		Optional.ofNullable(event.getMember()).ifPresent(member -> {
 			var leavingRolesConfiguration = Settings.get(event.getGuild()).getLeavingRolesConfiguration();
 			leavingRolesConfiguration.addLeaver(new LeaverRoles(event.getUser(), member.getRoles()));
+			
+			Settings.get(event.getGuild())
+					.getLeaveServerBanDuration()
+					.ifPresent(banDuration -> event.getGuild()
+							.retrieveBan(member.getUser())
+							.submit()
+							.thenApply(ban -> true)
+							.exceptionally(exception -> false)
+							.thenAccept(isBanned -> {
+								if(!isBanned){
+									Actions.softBan(event.getGuild().getDefaultChannel(), event.getJDA().getSelfUser(), member, "Left server", Duration.ofHours(1));
+								}
+							}));
 		});
 	}
 	
@@ -173,6 +186,4 @@ public class LogListener extends ListenerAdapter{
 			leavingRolesConfiguration.removeUser(event.getUser());
 		});
 	}
-	
-	
 }

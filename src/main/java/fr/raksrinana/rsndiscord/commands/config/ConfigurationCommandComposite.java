@@ -39,6 +39,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new BirthdayConfigurationCommandComposite(this));
 		this.addSubCommand(new EventWinnerRoleConfigurationCommand(this));
 		this.addSubCommand(new DiscordIncidentsChannelChannelConfigurationCommand(this));
+		this.addSubCommand(new LeaveServerBanDurationConfigurationCommand(this));
 	}
 	
 	@Override
