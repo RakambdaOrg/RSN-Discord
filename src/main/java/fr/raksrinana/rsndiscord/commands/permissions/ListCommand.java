@@ -33,7 +33,7 @@ public class ListCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		if(args.isEmpty() || args.size() == event.getMessage().getMentions().size()){
+		if(event.getMessage().getMentions().isEmpty()){
 			return CommandResult.BAD_ARGUMENTS;
 		}
 		event.getMessage().getMentionedMembers().forEach(member -> {
