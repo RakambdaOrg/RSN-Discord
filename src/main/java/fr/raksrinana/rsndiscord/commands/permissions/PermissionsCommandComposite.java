@@ -18,6 +18,7 @@ public class PermissionsCommandComposite extends CommandComposite{
 		this.addSubCommand(new GrantCommand(this));
 		this.addSubCommand(new DenyCommand(this));
 		this.addSubCommand(new ResetCommand(this));
+		this.addSubCommand(new ListCommand(this));
 	}
 	
 	@Override
