@@ -23,7 +23,8 @@ import java.util.stream.Collectors;
 
 public class Utilities{
 	public static final long MAIN_RAKSRINANA_ACCOUNT = 170119951498084352L;
-	public static final Set<Long> RAKSRINANA_ACCOUNTS = Set.of(MAIN_RAKSRINANA_ACCOUNT, 432628353024131085L);
+	public static final long SECOND_RAKSRINANA_ACCOUNT = 432628353024131085L;
+	public static final Set<Long> RAKSRINANA_ACCOUNTS = Set.of(MAIN_RAKSRINANA_ACCOUNT, SECOND_RAKSRINANA_ACCOUNT);
 	public static final DateTimeFormatter DATE_TIME_MINUTE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
 	private static final Pattern PERIOD_PATTERN = Pattern.compile("([0-9]+)([mhd])");
 	

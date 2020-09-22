@@ -65,9 +65,9 @@ public class ListCommand extends BasicCommand{
 	private String buildPermString(EntityPermissions perms){
 		var sb = new StringBuilder();
 		sb.append("GRANTED:\n");
-		perms.getGranted().forEach(grant -> sb.append("\t").append(grant).append("\n"));
+		perms.getGranted().stream().sorted().forEach(grant -> sb.append("\t").append(grant).append("\n"));
 		sb.append("DENIED:\n");
-		perms.getDenied().forEach(deny -> sb.append("\t").append(deny).append("\n"));
+		perms.getDenied().stream().sorted().forEach(deny -> sb.append("\t").append(deny).append("\n"));
 		return sb.toString();
 	}
 	

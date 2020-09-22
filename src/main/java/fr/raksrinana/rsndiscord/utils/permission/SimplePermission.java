@@ -13,9 +13,12 @@ public class SimplePermission implements Permission{
 	
 	@Override
 	public boolean matches(@NonNull String permissionId){
-		if(getId().contains("*")){
-			var beginning = getId().substring(0, getId().indexOf("*"));
-			return permissionId.startsWith(beginning);
+		if(permissionId.contains("*")){
+			var beginning = permissionId.substring(0, permissionId.indexOf("*"));
+			if(beginning.endsWith(".")){
+				beginning = beginning.substring(0, beginning.length() - 1);
+			}
+			return getId().startsWith(beginning);
 		}
 		return getId().equals(permissionId);
 	}
