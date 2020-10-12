@@ -34,10 +34,6 @@ public class TraktUtils{
 		var pageCount = 1;
 		do{
 			final var handler = new ObjectGetRequestSender<>(request.getOutputType(), request.getRequest().headers(headers)).getRequestHandler();
-			handler.getResult().getParsingError().ifPresent(error -> {
-				Utilities.reportException("Failed to parse Trakt response", error);
-				Log.getLogger(null).warn("Failed to parse Trakt response", error);
-			});
 			if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
 				results.addAll(handler.getRequestResult());
 				pageCount = Optional.ofNullable(handler.getHeaders().getFirst("X-Pagination-Page-Count")).map(Integer::parseInt).orElseThrow(() -> new RequestException("No page count in header", handler.getStatus()));
@@ -49,6 +45,10 @@ public class TraktUtils{
 					Log.getLogger(null).warn("Trakt replied with 503 status");
 					return Set.of();
 				}
+				handler.getResult().getParsingError().ifPresent(error -> {
+					Utilities.reportException("Failed to parse Trakt response, http status " + handler.getStatus(), error);
+					Log.getLogger(null).warn("Failed to parse Trakt response", error);
+				});
 				throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult() + "(" + handler.getResult().getParsingError() + ")", handler.getStatus());
 			}
 		}
@@ -127,7 +127,7 @@ public class TraktUtils{
 		return traktConfig.getUserUsername(member.getIdLong()).or(() -> getAccessToken(member).map(token -> {
 			try{
 				final var userSettingsQuery = new UserSettingsGetRequest();
-				final var userSettings = getQuery(token, userSettingsQuery);
+				final var userSettings = getQuery(token, userSettingsQuery).orElseThrow(() -> new RequestException("No user found", 0));
 				final var username = userSettings.getUser().getIds().getSlug();
 				traktConfig.setUsername(member.getIdLong(), username);
 				return username;
@@ -139,15 +139,19 @@ public class TraktUtils{
 		}));
 	}
 	
-	public static <T> T getQuery(TraktAccessTokenConfiguration token, @NonNull TraktGetRequest<T> request) throws RequestException{
+	public static <T> Optional<T> getQuery(TraktAccessTokenConfiguration token, @NonNull TraktGetRequest<T> request) throws RequestException{
 		final var handler = new ObjectGetRequestSender<>(request.getOutputType(), request.getRequest().headers(getHeaders(token))).getRequestHandler();
+		if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
+			return Optional.ofNullable(handler.getRequestResult());
+		}
+		if(handler.getStatus() == 503){
+			Log.getLogger(null).warn("Trakt replied with 503 status");
+			return Optional.empty();
+		}
 		handler.getResult().getParsingError().ifPresent(error -> {
-			Utilities.reportException("Failed to parse Trakt response", error);
+			Utilities.reportException("Failed to parse Trakt response, http status " + handler.getStatus(), error);
 			Log.getLogger(null).warn("Failed to parse Trakt response", error);
 		});
-		if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
-			return handler.getRequestResult();
-		}
 		throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString(), handler.getStatus());
 	}
 	
