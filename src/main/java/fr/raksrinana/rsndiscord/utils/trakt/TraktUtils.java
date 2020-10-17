@@ -41,8 +41,8 @@ public class TraktUtils{
 				request = Optional.ofNullable(handler.getHeaders().getFirst("X-Pagination-Page")).map(Integer::parseInt).map(page -> page + 1).map(finalRequest::getForPage).orElseThrow(() -> new RequestException("No page in header", handler.getStatus()));
 			}
 			else{
-				if(handler.getStatus() == 503){
-					Log.getLogger(null).warn("Trakt replied with 503 status");
+				if(handler.getStatus() == 503 || handler.getStatus() == 521){
+					Log.getLogger(null).warn("Trakt replied with {} status", handler.getStatus());
 					return Set.of();
 				}
 				handler.getResult().getParsingError().ifPresent(error -> {
@@ -144,8 +144,8 @@ public class TraktUtils{
 		if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
 			return Optional.ofNullable(handler.getRequestResult());
 		}
-		if(handler.getStatus() == 503){
-			Log.getLogger(null).warn("Trakt replied with 503 status");
+		if(handler.getStatus() == 503 || handler.getStatus() == 521){
+			Log.getLogger(null).warn("Trakt replied with {} status", handler.getStatus());
 			return Optional.empty();
 		}
 		handler.getResult().getParsingError().ifPresent(error -> {
