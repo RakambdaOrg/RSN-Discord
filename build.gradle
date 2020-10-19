@@ -17,7 +17,7 @@ buildscript {
         jump3r_version = '1.0.5'
         emoji_java_version = '5.1.1'
         imgscalr_version = '4.2'
-        thumbnailator_version = '0.4.12'
+        thumbnailator_version = '0.4.13'
     }
 }
 
