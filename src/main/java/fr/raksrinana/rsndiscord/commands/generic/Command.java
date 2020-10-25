@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.commands.generic;
 
-import fr.raksrinana.rsndiscord.utils.permission.Permission;
-import fr.raksrinana.rsndiscord.utils.permission.PermissionUtils;
+import fr.raksrinana.rsndiscord.modules.permission.IPermission;
+import fr.raksrinana.rsndiscord.modules.permission.PermissionUtils;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -40,7 +40,7 @@ public interface Command extends Comparable<Command>{
 	 * @return The permission.
 	 */
 	@NonNull
-	Permission getPermission();
+	IPermission getPermission();
 	
 	/**
 	 * Handle the command.

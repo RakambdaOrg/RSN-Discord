@@ -3,10 +3,10 @@ package fr.raksrinana.rsndiscord.commands;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
+import fr.raksrinana.rsndiscord.log.Log;
+import fr.raksrinana.rsndiscord.modules.permission.IPermission;
+import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.log.Log;
-import fr.raksrinana.rsndiscord.utils.permission.Permission;
-import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
@@ -26,7 +26,7 @@ public class ListJoinsCommand extends BasicCommand{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ISO_ZONED_DATE_TIME;
 	
 	@Override
-	public @NonNull Permission getPermission(){
+	public @NonNull IPermission getPermission(){
 		return new SimplePermission("command.list-joins", false);
 	}
 	

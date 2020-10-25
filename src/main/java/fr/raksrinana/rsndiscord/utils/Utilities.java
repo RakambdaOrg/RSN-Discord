@@ -1,8 +1,9 @@
 package fr.raksrinana.rsndiscord.utils;
 
 import fr.raksrinana.rsndiscord.Main;
-import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
+import fr.raksrinana.rsndiscord.log.Log;
+import fr.raksrinana.rsndiscord.modules.settings.Settings;
+import fr.raksrinana.rsndiscord.modules.settings.types.RoleConfiguration;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -11,6 +12,8 @@ import net.dv8tion.jda.api.requests.RestAction;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.reflections.Reflections;
 import java.awt.Color;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
@@ -20,6 +23,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Utilities{
 	public static final long MAIN_RAKSRINANA_ACCOUNT = 170119951498084352L;
@@ -177,5 +181,29 @@ public class Utilities{
 	
 	public static Optional<Role> getRoleById(long id){
 		return Optional.ofNullable(Main.getJda().getRoleById(id));
+	}
+	
+	public static <T> Stream<T> getAllAnnotatedWith(Class<? extends Annotation> annotationClazz, ClassInstantiator<T> instantiator){
+		return new Reflections(Main.class.getPackage().getName())
+				.getTypesAnnotatedWith(annotationClazz).stream()
+				.map(clazz -> {
+					try{
+						return instantiator.apply(clazz);
+					}
+					catch(InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e){
+						Log.getLogger(null).error("Failed to create instance of {}", annotationClazz.getName(), e);
+					}
+					return null;
+				})
+				.filter(Objects::nonNull);
+	}
+	
+	@FunctionalInterface
+	public interface ClassInstantiator<T>{
+		T apply(Class<?> clazz) throws
+				InstantiationException,
+				NoSuchMethodException,
+				InvocationTargetException,
+				IllegalAccessException;
 	}
 }

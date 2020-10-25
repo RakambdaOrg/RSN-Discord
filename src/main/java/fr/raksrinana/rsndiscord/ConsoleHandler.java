@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord;
 
-import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.log.Log;
+import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import net.dv8tion.jda.api.entities.Activity;
 import java.util.*;
 

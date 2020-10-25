@@ -3,9 +3,9 @@ package fr.raksrinana.rsndiscord.utils.json;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import fr.raksrinana.rsndiscord.utils.log.Log;
 import lombok.NonNull;
 import java.io.IOException;
 

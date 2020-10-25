@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.utils.json;
 
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.KeyDeserializer;
-import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
+import fr.raksrinana.rsndiscord.modules.settings.types.UserConfiguration;
 
 public class UserConfigurationKeyDeserializer extends KeyDeserializer{
 	@Override

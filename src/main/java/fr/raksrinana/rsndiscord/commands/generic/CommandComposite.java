@@ -1,9 +1,9 @@
 package fr.raksrinana.rsndiscord.commands.generic;
 
-import fr.raksrinana.rsndiscord.settings.guild.schedule.DeleteMessageScheduleConfiguration;
+import fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils;
+import fr.raksrinana.rsndiscord.modules.schedule.config.DeleteMessageScheduleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;

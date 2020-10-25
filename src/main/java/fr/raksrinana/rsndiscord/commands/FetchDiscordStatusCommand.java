@@ -3,9 +3,9 @@ package fr.raksrinana.rsndiscord.commands;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.runners.DiscordStatusScheduledRunner;
-import fr.raksrinana.rsndiscord.utils.permission.Permission;
-import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.modules.discordstatus.runner.DiscordStatusRunner;
+import fr.raksrinana.rsndiscord.modules.permission.IPermission;
+import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -19,12 +19,12 @@ public class FetchDiscordStatusCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		new DiscordStatusScheduledRunner(event.getJDA()).execute();
+		new DiscordStatusRunner(event.getJDA()).execute();
 		return CommandResult.SUCCESS;
 	}
 	
 	@Override
-	public @NonNull Permission getPermission(){
+	public @NonNull IPermission getPermission(){
 		return new SimplePermission("command.fetchdiscordstatus", true);
 	}
 	

@@ -1,11 +1,11 @@
 package fr.raksrinana.rsndiscord.utils;
 
 import fr.raksrinana.rsndiscord.Main;
-import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.guild.schedule.UnbanScheduleConfiguration;
-import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
-import fr.raksrinana.rsndiscord.utils.log.Log;
-import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
+import fr.raksrinana.rsndiscord.log.Log;
+import fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils;
+import fr.raksrinana.rsndiscord.modules.schedule.config.UnbanScheduleConfiguration;
+import fr.raksrinana.rsndiscord.modules.settings.Settings;
+import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.MessageBuilder;

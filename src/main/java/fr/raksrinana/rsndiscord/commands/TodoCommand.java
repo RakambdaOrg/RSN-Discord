@@ -3,14 +3,14 @@ package fr.raksrinana.rsndiscord.commands;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.guild.WaitingReactionMessageConfiguration;
+import fr.raksrinana.rsndiscord.modules.permission.IPermission;
+import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.modules.reaction.ReactionTag;
+import fr.raksrinana.rsndiscord.modules.reaction.ReactionUtils;
+import fr.raksrinana.rsndiscord.modules.reaction.config.WaitingReactionMessageConfiguration;
+import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
-import fr.raksrinana.rsndiscord.utils.permission.Permission;
-import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
-import fr.raksrinana.rsndiscord.utils.reaction.ReactionTag;
-import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -30,7 +30,7 @@ public class TodoCommand extends BasicCommand{
 	}
 	
 	@Override
-	public @NonNull Permission getPermission(){
+	public @NonNull IPermission getPermission(){
 		return new SimplePermission("command.todo", true);
 	}
 	

@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord;
 
-import fr.raksrinana.rsndiscord.utils.log.Log;
+import fr.raksrinana.rsndiscord.log.Log;
 
 /**
  * Thread used to force the shutdown of the application after a delay.

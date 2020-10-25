@@ -1,21 +1,21 @@
 package fr.raksrinana.rsndiscord;
 
-import fr.raksrinana.rsndiscord.listeners.*;
-import fr.raksrinana.rsndiscord.listeners.reply.ReplyMessageListener;
-import fr.raksrinana.rsndiscord.runners.ScheduledRunner;
-import fr.raksrinana.rsndiscord.runners.ScheduledRunnerRunnable;
-import fr.raksrinana.rsndiscord.runners.anilist.AniListActivityScheduledRunner;
-import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
-import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.listeners.CommandsEventListener;
+import fr.raksrinana.rsndiscord.listeners.EventListener;
+import fr.raksrinana.rsndiscord.log.Log;
+import fr.raksrinana.rsndiscord.modules.irc.config.TwitchConfiguration;
+import fr.raksrinana.rsndiscord.modules.irc.twitch.TwitchIRC;
+import fr.raksrinana.rsndiscord.modules.music.RSNAudioManager;
+import fr.raksrinana.rsndiscord.modules.reaction.ReactionUtils;
+import fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils;
+import fr.raksrinana.rsndiscord.modules.series.trakt.TraktUtils;
+import fr.raksrinana.rsndiscord.modules.settings.GuildConfiguration;
+import fr.raksrinana.rsndiscord.modules.settings.Settings;
+import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.modules.stopwatch.reply.StopwatchWaitingUserReplyEventListener;
+import fr.raksrinana.rsndiscord.runner.RunnerUtils;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import fr.raksrinana.rsndiscord.utils.irc.twitch.TwitchIRC;
-import fr.raksrinana.rsndiscord.utils.log.Log;
-import fr.raksrinana.rsndiscord.utils.music.RSNAudioManager;
-import fr.raksrinana.rsndiscord.utils.reaction.ReactionUtils;
-import fr.raksrinana.rsndiscord.utils.schedule.ScheduleUtils;
-import fr.raksrinana.rsndiscord.utils.trakt.TraktUtils;
 import fr.raksrinana.utils.http.JacksonObjectMapper;
 import kong.unirest.Unirest;
 import lombok.Getter;
@@ -24,12 +24,12 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import picocli.CommandLine;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -57,32 +57,31 @@ public class Main{
 	 * @param args Not used.
 	 */
 	public static void main(@NonNull final String[] args){
-		parameters = Optional.ofNullable(loadEnv(args)).orElseThrow(() -> new IllegalStateException("Failed to load environment"));
-		Unirest.config().setObjectMapper(new JacksonObjectMapper()).connectTimeout(30000).socketTimeout(30000).enableCookieManagement(true).verifySsl(true);
+		parameters = Optional.ofNullable(loadEnv(args))
+				.orElseThrow(() -> new IllegalStateException("Failed to load environment"));
+		Unirest.config()
+				.setObjectMapper(new JacksonObjectMapper())
+				.connectTimeout(30000)
+				.socketTimeout(30000)
+				.enableCookieManagement(true)
+				.verifySsl(true);
 		consoleHandler = new ConsoleHandler();
 		try{
 			Log.getLogger(null).info("Building JDA");
 			final var jdaBuilder = JDABuilder.createDefault(System.getProperty("RSN_TOKEN"))
 					.enableIntents(GatewayIntent.GUILD_MEMBERS)
 					.setMemberCachePolicy(MemberCachePolicy.ALL);
-			jdaBuilder.addEventListeners(new CommandsMessageListener());
-			jdaBuilder.addEventListeners(new ShutdownListener());
-			jdaBuilder.addEventListeners(new LogListener());
-			jdaBuilder.addEventListeners(new AutoRolesListener());
-			jdaBuilder.addEventListeners(new AutoReactionsChannelMessageListener());
-			jdaBuilder.addEventListeners(new ReactionListener());
-			jdaBuilder.addEventListeners(new ReplyMessageListener());
-			jdaBuilder.addEventListeners(new OnlyMediaChannelListener());
+			registerAllEventListeners(jdaBuilder);
 			jdaBuilder.setAutoReconnect(true);
 			jda = jdaBuilder.build();
 			jda.awaitReady();
-			jda.getPresence().setPresence(OnlineStatus.ONLINE, Activity.of(Activity.ActivityType.DEFAULT, CommandsMessageListener.defaultPrefix + "help for the help"));
+			jda.getPresence().setPresence(OnlineStatus.ONLINE, Activity.of(Activity.ActivityType.DEFAULT, CommandsEventListener.defaultPrefix + "help for the help"));
 			Log.getLogger(null).info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
 			Log.getLogger(null).info("Adding handlers");
 			ReactionUtils.registerAllHandlers();
 			ScheduleUtils.registerAllHandlers();
 			Log.getLogger(null).info("Creating runners");
-			registerAllScheduledRunners(jda);
+			RunnerUtils.registerAllScheduledRunners();
 			Log.getLogger(null).info("Started");
 			announceStart();
 			restartTwitchIRCConnections();
@@ -102,6 +101,11 @@ public class Main{
 			Log.getLogger(null).error("Bot error", e);
 			close();
 		}
+	}
+	
+	private static void registerAllEventListeners(JDABuilder jdaBuilder){
+		Utilities.getAllAnnotatedWith(EventListener.class, clazz -> (ListenerAdapter) clazz.getConstructor().newInstance())
+				.forEach(jdaBuilder::addEventListeners);
 	}
 	
 	static CLIParameters loadEnv(@NonNull String[] args){
@@ -135,43 +139,39 @@ public class Main{
 		return parameters;
 	}
 	
-	private static void registerAllScheduledRunners(@NonNull JDA jda){
-		Utilities.getAllInstancesOf(ScheduledRunner.class, Main.class.getPackage().getName() + ".runners", c -> {
-			try{
-				if(!c.equals(AniListActivityScheduledRunner.class)){
-					return c.getConstructor(JDA.class).newInstance(jda);
-				}
-			}
-			catch(InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e){
-				Log.getLogger(null).error("Failed to create instance of {}", c.getName(), e);
-			}
-			return null;
-		}).stream().peek(c -> Log.getLogger(null).info("Loaded scheduled runner {}", c.getClass().getName())).forEach(scheduledRunner -> executorService.scheduleAtFixedRate(new ScheduledRunnerRunnable(scheduledRunner), scheduledRunner.getDelay(), scheduledRunner.getPeriod(), scheduledRunner.getPeriodUnit()));
-	}
-	
 	/**
 	 * Announce the bot started in channels defined in the configuration.
 	 *
 	 * @see GuildConfiguration#getAnnounceStartChannel()
 	 */
 	private static void announceStart(){
-		Main.jda.getGuilds().stream().map(Settings::get).map(GuildConfiguration::getAnnounceStartChannel).flatMap(Optional::stream).map(ChannelConfiguration::getChannel).flatMap(Optional::stream).forEach(channel -> Actions.sendMessage(channel, translate(channel.getGuild(), "started"), null));
+		Main.jda.getGuilds().stream()
+				.map(Settings::get)
+				.map(GuildConfiguration::getAnnounceStartChannel)
+				.flatMap(Optional::stream)
+				.map(ChannelConfiguration::getChannel)
+				.flatMap(Optional::stream)
+				.forEach(channel -> Actions.sendMessage(channel, translate(channel.getGuild(), "started"), null));
 	}
 	
 	/**
 	 * Connects to IRC channels defined in the configuration.
 	 *
-	 * @see fr.raksrinana.rsndiscord.settings.guild.TwitchConfiguration#getTwitchAutoConnectUsers()
+	 * @see TwitchConfiguration#getTwitchAutoConnectUsers()
 	 */
 	private static void restartTwitchIRCConnections(){
-		Main.getJda().getGuilds().forEach(guild -> Settings.get(guild).getTwitchConfiguration().getTwitchAutoConnectUsers().forEach(user -> {
-			try{
-				TwitchIRC.connect(guild, user);
-			}
-			catch(Exception e){
-				Log.getLogger(guild).error("Failed to automatically connect to twitch user {}", user, e);
-			}
-		}));
+		Main.getJda().getGuilds()
+				.forEach(guild -> Settings.get(guild)
+						.getTwitchConfiguration()
+						.getTwitchAutoConnectUsers()
+						.forEach(user -> {
+							try{
+								TwitchIRC.connect(guild, user);
+							}
+							catch(Exception e){
+								Log.getLogger(guild).error("Failed to automatically connect to twitch user {}", user, e);
+							}
+						}));
 	}
 	
 	/**
@@ -196,7 +196,7 @@ public class Main{
 	 */
 	public static void close(){
 		TraktUtils.stopAll();
-		ReplyMessageListener.stopAll();
+		StopwatchWaitingUserReplyEventListener.stopAll();
 		RSNAudioManager.stopAll();
 		TwitchIRC.close();
 		executorService.shutdownNow();

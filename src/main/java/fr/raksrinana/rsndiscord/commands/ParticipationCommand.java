@@ -3,13 +3,13 @@ package fr.raksrinana.rsndiscord.commands;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.guild.participation.ChatParticipation;
-import fr.raksrinana.rsndiscord.settings.guild.participation.VoiceParticipation;
+import fr.raksrinana.rsndiscord.modules.participation.config.ChatParticipation;
+import fr.raksrinana.rsndiscord.modules.participation.config.VoiceParticipation;
+import fr.raksrinana.rsndiscord.modules.permission.IPermission;
+import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import fr.raksrinana.rsndiscord.utils.permission.Permission;
-import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -39,7 +39,7 @@ public class ParticipationCommand extends BasicCommand{
 	}
 	
 	@Override
-	public @NonNull Permission getPermission(){
+	public @NonNull IPermission getPermission(){
 		return new SimplePermission("command.participation", false);
 	}
 	

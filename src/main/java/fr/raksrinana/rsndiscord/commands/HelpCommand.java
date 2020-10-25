@@ -4,11 +4,11 @@ import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandComposite;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.listeners.CommandsMessageListener;
-import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.listeners.CommandsEventListener;
+import fr.raksrinana.rsndiscord.modules.permission.IPermission;
+import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.permission.Permission;
-import fr.raksrinana.rsndiscord.utils.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -27,7 +27,7 @@ public class HelpCommand extends BasicCommand{
 	}
 	
 	@Override
-	public @NonNull Permission getPermission(){
+	public @NonNull IPermission getPermission(){
 		return new SimplePermission("command.help", true);
 	}
 	
@@ -35,8 +35,8 @@ public class HelpCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		final var prefix = Settings.get(event.getGuild()).getPrefix().orElse(CommandsMessageListener.defaultPrefix);
-		final var allCommands = event.getJDA().getRegisteredListeners().stream().filter(l -> l instanceof CommandsMessageListener).findFirst().map(CommandsMessageListener.class::cast).map(CommandsMessageListener::getCommands).orElseGet(Set::of);
+		final var prefix = Settings.get(event.getGuild()).getPrefix().orElse(CommandsEventListener.defaultPrefix);
+		final var allCommands = event.getJDA().getRegisteredListeners().stream().filter(l -> l instanceof CommandsEventListener).findFirst().map(CommandsEventListener.class::cast).map(CommandsEventListener::getCommands).orElseGet(Set::of);
 		if(args.isEmpty()){
 			final var builder = new EmbedBuilder();
 			builder.setColor(Color.GREEN);
