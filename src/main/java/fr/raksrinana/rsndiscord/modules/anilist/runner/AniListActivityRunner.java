@@ -6,19 +6,18 @@ import fr.raksrinana.rsndiscord.modules.anilist.query.ActivityPagedQuery;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.modules.settings.types.UserDateConfiguration;
-import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-@ScheduledRunner
 public class AniListActivityRunner implements IAniListRunner<IListActivity, ActivityPagedQuery>{
 	@Getter
 	private final JDA jda;
