@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.modules.mediareaction;
+package fr.raksrinana.rsndiscord.modules.mediareaction.command;
 
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
