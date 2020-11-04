@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.requests.RestAction;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -38,19 +39,26 @@ public class RandomKick extends BasicCommand {
                         Actions.sendMessage(channel, translate(guild, "random-kick.no-member"), null);
                     } else {
                         var member = members.get(ThreadLocalRandom.current().nextInt(members.size()));
+                        var kickMessage = translate(guild, "random-kick.kicked", member.getAsMention(), reason);
+
                         Settings.get(guild).getRandomKick()
                                 .getKickedRole()
                                 .flatMap(RoleConfiguration::getRole)
                                 .ifPresent(kickedRole -> Actions.giveRole(member, kickedRole));
                         Actions.sendMessage(channel, translate(guild, "random-kick.kicking", member.getAsMention()), null, false, action -> action.tts(true));
+                        Actions.sendPrivateMessage(guild, member.getUser(), kickMessage, null);
+
+                        Optional.ofNullable(guild.getDefaultChannel())
+                                .map(TextChannel::createInvite)
+                                .map(invite -> invite
+                                        .setMaxAge(30L, TimeUnit.DAYS)
+                                        .setMaxUses(1))
+                                .map(RestAction::submit)
+                                .ifPresent(invite -> invite.thenAccept(inv -> Actions.sendPrivateMessage(guild, member.getUser(), inv.getUrl(), null)));
 
                         Main.getExecutorService().schedule(() -> {
                             Actions.kick(author, member, reason)
-                                    .thenAccept(empty2 -> Actions.sendMessage(channel,
-                                            translate(guild, "random-kick.kicked", member.getAsMention(), reason),
-                                            null,
-                                            false,
-                                            action -> action.mentionUsers(member.getIdLong())))
+                                    .thenAccept(empty2 -> Actions.sendMessage(channel, kickMessage, null, false, action -> action.mentionUsers(member.getIdLong())))
                                     .exceptionally(exception -> {
                                         Actions.sendMessage(channel, translate(guild, "random-kick.error", exception.getMessage()), null);
                                         return null;
