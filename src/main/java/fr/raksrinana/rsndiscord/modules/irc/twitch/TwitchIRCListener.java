@@ -134,7 +134,7 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
                                 .collect(Collectors.joining(" "));
                         var targetRole = RandomKick.getRandomRole(getGuild());
                         Actions.sendMessage(channel,
-                                pings + " => " + translate(getGuild(), "random-kick.bought", event.getUser().getNick(), targetRole.map(Role::getAsMention).orElse("@everyone")),
+                                pingsStr + " => " + translate(getGuild(), "random-kick.bought", event.getUser().getNick(), targetRole.map(Role::getAsMention).orElse("@everyone")),
                                 null,
                                 false,
                                 messageAction -> messageAction.mentionRoles(pings.stream().mapToLong(Role::getIdLong).toArray())
