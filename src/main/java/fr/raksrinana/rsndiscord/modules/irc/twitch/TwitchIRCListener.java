@@ -141,7 +141,8 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
                         ).thenAcceptAsync(message1 -> Main.getExecutorService().schedule(() -> RandomKick.randomKick(getGuild().getJDA().getSelfUser(),
                                 channel,
                                 targetRole.orElse(null),
-                                translate(getGuild(), "random-kick.bought-reason", event.getUser().getNick(), getUser(), event.getMessage())), 30, TimeUnit.SECONDS));
+                                translate(getGuild(), "random-kick.bought-reason", event.getUser().getNick(), getUser(), event.getMessage()),
+                                false), 30, TimeUnit.SECONDS));
                     });
         }
     }

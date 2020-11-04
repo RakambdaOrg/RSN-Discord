@@ -29,11 +29,15 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class RandomKick extends BasicCommand {
-    public static void randomKick(@NonNull User author, @NonNull TextChannel channel, Role targetRole, String reason) {
+    public static void randomKick(@NonNull User author, @NonNull TextChannel channel, Role targetRole, String reason, boolean allowReKick) {
         var guild = channel.getGuild();
         var botMember = guild.getSelfMember();
+        var kickRole = Settings.get(guild).getRandomKick()
+                .getKickedRole()
+                .flatMap(RoleConfiguration::getRole);
         guild.findMembers(member -> botMember.canInteract(member)
-                && Optional.ofNullable(targetRole).map(role -> member.getRoles().contains(role)).orElse(true))
+                && Optional.ofNullable(targetRole).map(role -> member.getRoles().contains(role)).orElse(true)
+                && (allowReKick || !kickRole.map(r -> member.getRoles().contains(r)).orElse(false)))
                 .onSuccess(members -> {
                     if (members.isEmpty()) {
                         Actions.sendMessage(channel, translate(guild, "random-kick.no-member"), null);
@@ -103,7 +107,7 @@ public class RandomKick extends BasicCommand {
         var targetRole = event.getMessage().getMentionedRoles().stream().findFirst().orElse(null);
         var reason = String.join(" ", args);
 
-        randomKick(event.getAuthor(), event.getChannel(), targetRole, reason);
+        randomKick(event.getAuthor(), event.getChannel(), targetRole, reason, true);
         return CommandResult.SUCCESS;
     }
 
