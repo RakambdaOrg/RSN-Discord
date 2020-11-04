@@ -129,14 +129,19 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
                                 .getRandomKickRolesPing()
                                 .stream()
                                 .flatMap(pingRole -> pingRole.getRole().stream())
-                                .map(Role::getAsMention)
+                                .collect(Collectors.toSet());
+                        var pingsStr = pings.stream().map(Role::getAsMention)
                                 .collect(Collectors.joining(" "));
                         var targetRole = RandomKick.getRandomRole(getGuild());
-                        Actions.sendMessage(channel, pings + " => " + translate(getGuild(), "random-kick.bought", event.getUser().getNick(), targetRole.map(Role::getAsMention).orElse("@everyone")), null)
-                                .thenAcceptAsync(message1 -> Main.getExecutorService().schedule(() -> RandomKick.randomKick(getGuild().getJDA().getSelfUser(),
-                                        channel,
-                                        targetRole.orElse(null),
-                                        translate(getGuild(), "random-kick.bought-reason", event.getUser().getNick(), getUser(), event.getMessage())), 30, TimeUnit.SECONDS));
+                        Actions.sendMessage(channel,
+                                pings + " => " + translate(getGuild(), "random-kick.bought", event.getUser().getNick(), targetRole.map(Role::getAsMention).orElse("@everyone")),
+                                null,
+                                false,
+                                messageAction -> messageAction.mentionRoles(pings.stream().mapToLong(Role::getIdLong).toArray())
+                        ).thenAcceptAsync(message1 -> Main.getExecutorService().schedule(() -> RandomKick.randomKick(getGuild().getJDA().getSelfUser(),
+                                channel,
+                                targetRole.orElse(null),
+                                translate(getGuild(), "random-kick.bought-reason", event.getUser().getNick(), getUser(), event.getMessage())), 30, TimeUnit.SECONDS));
                     });
         }
     }
