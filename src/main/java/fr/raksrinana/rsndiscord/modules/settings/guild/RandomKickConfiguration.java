@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.modules.settings.types.RoleConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -16,16 +17,24 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class RandomKickConfiguration implements ICompositeConfiguration{
-	@JsonProperty("randomKickRolesPing")
-	@Getter
-	@Setter
-	private Set<RoleConfiguration> randomKickRolesPing = new HashSet<>();
-	@JsonProperty("kickedRole")
-	@Setter
-	private RoleConfiguration kickedRole;
-	
-	public Optional<RoleConfiguration> getKickedRole(){
-		return Optional.ofNullable(kickedRole);
-	}
+public class RandomKickConfiguration implements ICompositeConfiguration {
+    @JsonProperty("randomKickRolesPing")
+    @Getter
+    @Setter
+    private Set<RoleConfiguration> randomKickRolesPing = new HashSet<>();
+    @JsonProperty("kickedRole")
+    @Setter
+    private RoleConfiguration kickedRole;
+    @JsonProperty("kickableRoles")
+    @Getter
+    @Setter
+    private Set<RoleConfiguration> kickableRoles = new HashSet<>();
+    @JsonProperty("kickRoleProbability")
+    @Getter
+    @Setter
+    private double kickRoleProbability = 0.25;
+
+    public Optional<RoleConfiguration> getKickedRole() {
+        return Optional.ofNullable(kickedRole);
+    }
 }
