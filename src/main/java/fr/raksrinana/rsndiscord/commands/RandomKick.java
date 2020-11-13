@@ -92,7 +92,7 @@ public class RandomKick extends BasicCommand{
 						Optional.ofNullable(guild.getDefaultChannel())
 								.map(TextChannel::createInvite)
 								.map(invite -> invite
-										.setMaxAge(30L, TimeUnit.DAYS)
+										.setMaxAge(24L, TimeUnit.HOURS)
 										.setMaxUses(1))
 								.map(RestAction::submit)
 								.ifPresent(invite -> invite.thenAccept(inv -> Actions.sendPrivateMessage(guild, member.getUser(), inv.getUrl(), null)));
