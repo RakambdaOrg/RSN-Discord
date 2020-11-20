@@ -25,6 +25,7 @@ import fr.raksrinana.rsndiscord.modules.settings.types.CategoryConfiguration;
 import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.modules.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.modules.trombinoscope.config.TrombinoscopeConfiguration;
+import fr.raksrinana.rsndiscord.modules.twitter.config.TwitterConfiguration;
 import fr.raksrinana.rsndiscord.utils.json.DurationDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.DurationSerializer;
 import lombok.Getter;
@@ -144,6 +145,10 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@JsonDeserialize(using = DurationDeserializer.class)
 	@JsonSerialize(using = DurationSerializer.class)
 	private Duration leaveServerBanDuration;
+	@JsonProperty("twitter")
+	@Getter
+	@Setter
+	private TwitterConfiguration twitterConfiguration = new TwitterConfiguration();
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;

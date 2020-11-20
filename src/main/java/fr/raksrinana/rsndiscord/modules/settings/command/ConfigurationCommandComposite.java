@@ -40,6 +40,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new EventWinnerRoleConfigurationCommand(this));
 		this.addSubCommand(new DiscordIncidentsChannelChannelConfigurationCommand(this));
 		this.addSubCommand(new LeaveServerBanDurationConfigurationCommand(this));
+		this.addSubCommand(new TwitterConfigurationCommandComposite(this));
 	}
 	
 	@Override
