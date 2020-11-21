@@ -21,17 +21,17 @@ public class TwitterConfiguration implements ICompositeConfiguration{
 	@JsonProperty("userIds")
 	@Getter
 	@Setter
-	private Set<String> userIds = new HashSet<>();
+	private Set<Long> userIds = new HashSet<>();
 	@JsonProperty("lastTweet")
 	@Getter
 	@Setter
-	private Map<String, String> lastTweet = new HashMap<>();
+	private Map<Long, Long> lastTweet = new HashMap<>();
 	
-	public Optional<String> getLastTweet(String userId){
+	public Optional<Long> getLastTweet(long userId){
 		return Optional.ofNullable(lastTweet.get(userId));
 	}
 	
-	public void setLastTweet(String userId, String tweetId){
+	public void setLastTweet(long userId, long tweetId){
 		lastTweet.put(userId, tweetId);
 	}
 	

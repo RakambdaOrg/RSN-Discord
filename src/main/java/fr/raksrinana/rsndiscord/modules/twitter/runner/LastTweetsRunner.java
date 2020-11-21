@@ -1,6 +1,7 @@
 package fr.raksrinana.rsndiscord.modules.twitter.runner;
 
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
+import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.modules.twitter.TwitterUtils;
 import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
@@ -21,7 +22,7 @@ public class LastTweetsRunner implements IScheduledRunner{
 	public void execute(){
 		jda.getGuilds().forEach(guild -> {
 			var conf = Settings.get(guild).getTwitterConfiguration();
-			conf.getChannel().getChannel().ifPresent(channel ->
+			conf.getChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel ->
 					conf.getUserIds().forEach(userId -> conf.getLastTweet(userId)
 							.map(lastTweet -> TwitterUtils.getUserLastTweets(userId, lastTweet))
 							.orElseGet(() -> TwitterUtils.getUserLastTweets(userId))
