@@ -8,6 +8,8 @@ import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
+import twitter4j.Status;
+import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
 
 @ScheduledRunner
@@ -27,7 +29,7 @@ public class LastTweetsRunner implements IScheduledRunner{
 							.map(lastTweet -> TwitterUtils.getUserLastTweets(userId, lastTweet))
 							.orElseGet(() -> TwitterUtils.getUserLastTweets(userId))
 							.stream()
-							.sorted((t1, t2) -> t2.getCreatedAt().compareTo(t1.getCreatedAt()))
+							.sorted(Comparator.comparing(Status::getCreatedAt))
 							.forEach(tweet -> {
 								Actions.sendMessage(channel, String.format("https://twitter.com/%s/status/%s", tweet.getUser().getName(), tweet.getId()), null);
 								conf.setLastTweet(userId, tweet.getId());
