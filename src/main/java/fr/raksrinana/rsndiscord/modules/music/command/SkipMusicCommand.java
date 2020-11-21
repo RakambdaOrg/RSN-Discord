@@ -73,7 +73,7 @@ public class SkipMusicCommand extends BasicCommand{
 		builder.addField(translate(event.getGuild(), "music.skip.votes-required"), "" + requiredVote, true);
 		Actions.sendEmbed(event.getChannel(), builder.build()).thenAccept(message -> {
 			Actions.addReaction(message, BasicEmotes.CHECK_OK.getValue());
-			UserReplyEventListener.handleReply(new SkipMusicReply(event, message, requiredVote));
+			UserReplyEventListener.handleReply(new SkipMusicReply(event, message, requiredVote, track.get()));
 		});
 		
 		return CommandResult.SUCCESS;

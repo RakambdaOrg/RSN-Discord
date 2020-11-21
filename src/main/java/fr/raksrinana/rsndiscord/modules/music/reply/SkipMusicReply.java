@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.modules.music.reply;
 
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.raksrinana.rsndiscord.modules.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.reply.BasicWaitingUserReply;
 import fr.raksrinana.rsndiscord.utils.Actions;
@@ -17,10 +18,12 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class SkipMusicReply extends BasicWaitingUserReply{
 	private int votesRequired;
+	private final AudioTrack audioTrack;
 	
-	public SkipMusicReply(final GuildMessageReceivedEvent event, final Message message, int votesRequired){
+	public SkipMusicReply(final GuildMessageReceivedEvent event, final Message message, int votesRequired, AudioTrack audioTrack){
 		super(event, event.getAuthor(), event.getChannel(), 20, TimeUnit.SECONDS, message);
 		this.votesRequired = votesRequired;
+		this.audioTrack = audioTrack;
 	}
 	
 	@Override
@@ -30,8 +33,11 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 			if(Objects.nonNull(replyEmote)){
 				if(replyEmote == BasicEmotes.CHECK_OK){
 					if(count(event)){
-						RSNAudioManager.skip(event.getGuild());
-						Actions.sendMessage(event.getChannel(), translate(event.getGuild(), "music.skipped", "@everyone"), null, false, action -> action.allowedMentions(List.of()));
+						if(RSNAudioManager.currentTrack(event.getGuild()).map(t -> Objects.equals(t, audioTrack)).orElse(false)){
+							RSNAudioManager.skip(event.getGuild());
+							Actions.sendMessage(event.getChannel(), translate(event.getGuild(), "music.skipped", "@everyone"), null, false,
+									action -> action.allowedMentions(List.of()));
+						}
 						return true;
 					}
 					return false;
