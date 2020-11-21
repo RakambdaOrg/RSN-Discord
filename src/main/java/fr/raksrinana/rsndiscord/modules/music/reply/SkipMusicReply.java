@@ -75,7 +75,7 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 		var channel = this.getWaitChannel();
 		Log.getLogger(channel.getGuild()).info("Vote note successful, music not skipped");
 		Actions.sendMessage(channel, translate(channel.getGuild(), "music.skip.timeout"), null);
-		ScheduleUtils.addSchedule(new DeleteMessageScheduleConfiguration(channel.getJDA().getSelfUser(), ZonedDateTime.now().plusMinutes(5), channel, getOriginalMessageId()), channel.getGuild());
+		ScheduleUtils.addSchedule(channel.getGuild(), new DeleteMessageScheduleConfiguration(channel.getJDA().getSelfUser(), ZonedDateTime.now().plusMinutes(5), channel, getOriginalMessageId()));
 	}
 	
 	@Override

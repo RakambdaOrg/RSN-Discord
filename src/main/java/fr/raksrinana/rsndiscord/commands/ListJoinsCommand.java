@@ -6,7 +6,6 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
@@ -16,8 +15,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
@@ -34,21 +34,28 @@ public class ListJoinsCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		int limit = Optional.ofNullable(args.poll()).filter(val -> val.chars().allMatch(Character::isDigit)).map(Integer::parseInt).orElse(50);
-		final var joinPos = new AtomicInteger(0);
-		event.getGuild().loadMembers().onSuccess(members -> members.stream()
-				.sorted(Comparator.comparing(Member::getTimeJoined))
-				.limit(limit)
-				.forEachOrdered(member -> Actions.sendMessage(event.getChannel(), translate(event.getGuild(),
-						"list-joins.user-joined",
-						joinPos.incrementAndGet(),
-						member.getTimeJoined().format(DF),
-						member.getAsMention()), null))
-		).onError(e -> {
-			Log.getLogger(event.getGuild()).error("Failed to load members", e);
-			Actions.reply(event, translate(event.getGuild(), "list-joins.error-members"), null);
-		});
-		return CommandResult.SUCCESS;
+		
+		var guild = event.getGuild();
+		var channel = event.getChannel();
+		var limit = getArgumentAsInteger(args).orElse(50);
+		var joinPos = new AtomicInteger(0);
+		
+		guild.loadMembers()
+				.onSuccess(members -> members.stream()
+						.sorted(Comparator.comparing(Member::getTimeJoined))
+						.limit(limit)
+						.forEachOrdered(member -> channel
+								.sendMessage(translate(guild, "list-joins.user-joined",
+										joinPos.incrementAndGet(),
+										member.getTimeJoined().format(DF),
+										member.getAsMention()))
+								.submit()))
+				.onError(error -> {
+					Log.getLogger(guild).error("Failed to load members", error);
+					channel.sendMessage(translate(guild, "list-joins.error-members")).submit()
+							.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
+				});
+		return SUCCESS;
 	}
 	
 	@NonNull

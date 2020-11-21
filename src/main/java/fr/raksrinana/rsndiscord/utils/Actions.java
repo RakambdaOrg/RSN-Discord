@@ -15,7 +15,6 @@ import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import net.dv8tion.jda.internal.entities.UserById;
 import java.awt.Color;
-import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -47,6 +46,7 @@ public class Actions{
 	 * @see #sendMessage(TextChannel, CharSequence, MessageEmbed)
 	 */
 	@NonNull
+	@Deprecated
 	public static CompletableFuture<Message> reply(@NonNull final GenericGuildMessageEvent event, @NonNull final CharSequence message, MessageEmbed embed){
 		return sendMessage(event.getChannel(), message, embed);
 	}
@@ -63,6 +63,7 @@ public class Actions{
 	 * @see #sendMessage(TextChannel, CharSequence, MessageEmbed, boolean)
 	 */
 	@NonNull
+	@Deprecated
 	public static CompletableFuture<Message> sendMessage(@NonNull final TextChannel channel, @NonNull final CharSequence message, MessageEmbed embed){
 		return sendMessage(channel, message, embed, false);
 	}
@@ -79,6 +80,7 @@ public class Actions{
 	 * @return A completable future of a message (see {@link RestAction#submit()}).
 	 */
 	@NonNull
+	@Deprecated
 	public static CompletableFuture<Message> sendMessage(@NonNull final TextChannel channel, @NonNull final CharSequence message, MessageEmbed embed, boolean allowSplitting){
 		return sendMessage(channel, message, embed, allowSplitting, messageAction -> messageAction);
 	}
@@ -96,6 +98,7 @@ public class Actions{
 	 * @return A completable future of a message (see {@link RestAction#submit()}).
 	 */
 	@NonNull
+	@Deprecated
 	public static CompletableFuture<Message> sendMessage(@NonNull final TextChannel channel, @NonNull final CharSequence message, MessageEmbed embed, boolean allowSplitting, Function<MessageAction, MessageAction> messageActionFunction){
 		Log.getLogger(channel.getGuild()).info("Sending message to {} : {}", channel, message);
 		var buildUnique = false;
@@ -144,21 +147,8 @@ public class Actions{
 		return lastSent;
 	}
 	
-	/**
-	 * Send an embed to a channel.
-	 *
-	 * @param channel The channel to send the message to.
-	 * @param embed   The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
-	 *
-	 * @return A completable future of a message (see {@link RestAction#submit()}).
-	 */
 	@NonNull
-	public static CompletableFuture<Message> sendEmbed(@NonNull final TextChannel channel, @NonNull MessageEmbed embed){
-		Log.getLogger(channel.getGuild()).info("Sending embed to {} : {}", channel, embed);
-		return channel.sendMessage(embed).submit();
-	}
-	
-	@NonNull
+	@Deprecated
 	public static CompletableFuture<Message> forwardMessage(Message source, TextChannel toChannel){
 		Log.getLogger(toChannel.getGuild()).info("Forwarding message {} to channel {}", source, toChannel);
 		var action = toChannel.sendMessage(source);
@@ -182,27 +172,6 @@ public class Actions{
 	}
 	
 	/**
-	 * Send a message to a private channel.
-	 *
-	 * @param guild   The guild that initiated the event.
-	 * @param channel The channel to send to.
-	 * @param message The message to send.
-	 * @param embed   The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
-	 *
-	 * @return A completable future of a message (see {@link RestAction#submit()}).
-	 *
-	 * @throws IllegalArgumentException If trying to send a message to another bot.
-	 */
-	@NonNull
-	public static CompletableFuture<Message> sendPrivateMessage(final Guild guild, @NonNull final PrivateChannel channel, @NonNull final CharSequence message, MessageEmbed embed) throws IllegalArgumentException{
-		if(channel.getUser().isBot()){
-			throw new IllegalArgumentException(MessageFormat.format("Cannot send private message to other bot {0} : {1}", channel, message));
-		}
-		Log.getLogger(guild).info("Sending private message to {} : {}", channel, message);
-		return channel.sendMessage(message).embed(embed).submit();
-	}
-	
-	/**
 	 * Remove a role from a user.
 	 *
 	 * @param member The user to remove the role from.
@@ -211,6 +180,7 @@ public class Actions{
 	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
 	@NonNull
+	@Deprecated
 	public static CompletableFuture<Void> removeRole(@NonNull final Member member, @NonNull final Role role){
 		Log.getLogger(member.getGuild()).info("Removing role {} from {}", role, member);
 		return member.getGuild().removeRoleFromMember(member, role).submit();
@@ -224,6 +194,7 @@ public class Actions{
 	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
 	@NonNull
+	@Deprecated
 	public static CompletableFuture<Void> deleteMessage(@NonNull final Message message){
 		Log.getLogger(message.getGuild()).info("Deleting message {}", message);
 		return message.delete().submit();
@@ -237,23 +208,10 @@ public class Actions{
 	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
 	@NonNull
+	@Deprecated
 	public static CompletableFuture<Void> deleteChannel(@NonNull final GuildChannel channel){
 		Log.getLogger(channel.getGuild()).info("Deleting channel {}", channel);
 		return channel.delete().submit();
-	}
-	
-	/**
-	 * Send a file to a channel.
-	 *
-	 * @param channel The channel to send to.
-	 * @param path    The file to send.
-	 *
-	 * @return A completable future of a message.
-	 */
-	@NonNull
-	public static CompletableFuture<Message> sendFile(final TextChannel channel, final Path path){
-		Log.getLogger(channel.getGuild()).debug("Sending file {} to {}", path, channel);
-		return channel.sendMessage(new MessageBuilder().build()).addFile(path.toFile()).submit();
 	}
 	
 	/**
@@ -265,36 +223,10 @@ public class Actions{
 	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
 	@NonNull
+	@Deprecated
 	public static CompletableFuture<Void> giveRole(@NonNull final Member member, @NonNull final Role role){
 		Log.getLogger(member.getGuild()).info("Adding role {} to {}", role, member);
 		return member.getGuild().addRoleToMember(member, role).submit();
-	}
-	
-	/**
-	 * Set the deaf status of a member.
-	 *
-	 * @param member The member to set the deaf status.
-	 * @param status True if deaf, false is not deaf.
-	 *
-	 * @return A completable future (see {@link RestAction#submit()}).
-	 */
-	@NonNull
-	public static CompletableFuture<Void> deafen(@NonNull final Member member, final boolean status){
-		Log.getLogger(member.getGuild()).info("Setting deaf status to {} for {}", status, member);
-		return member.getGuild().deafen(member, status).submit();
-	}
-	
-	/**
-	 * Set the mute status of a member.
-	 *
-	 * @param member The member to set the mute status.
-	 * @param status True if muted, false is not muted.
-	 *
-	 * @return A completable future (see {@link RestAction#submit()}).
-	 */
-	public static CompletableFuture<Void> mute(@NonNull Member member, boolean status){
-		Log.getLogger(member.getGuild()).info("Setting muted status to {} for {}", status, member);
-		return member.getGuild().mute(member, status).submit();
 	}
 	
 	/**
@@ -305,6 +237,7 @@ public class Actions{
 	 *
 	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
+	@Deprecated
 	public static CompletableFuture<Void> addReaction(@NonNull Message message, @NonNull String emote){
 		Log.getLogger(message.getGuild()).info("Adding reaction {} to {}", emote, message);
 		return message.addReaction(emote).submit();
@@ -318,6 +251,7 @@ public class Actions{
 	 *
 	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
+	@Deprecated
 	public static CompletableFuture<Void> addReaction(@NonNull Message message, @NonNull Emote emote){
 		Log.getLogger(message.getGuild()).info("Adding reaction {} to {}", emote, message);
 		return message.addReaction(emote).submit();
@@ -331,6 +265,7 @@ public class Actions{
 	 *
 	 * @return A completable future of a message (see {@link RestAction#submit()}).
 	 */
+	@Deprecated
 	public static CompletableFuture<Message> editMessage(@NonNull Message message, @NonNull String newMessage){
 		Log.getLogger(message.getGuild()).info("Editing message {} with {}", message, newMessage);
 		return message.editMessage(newMessage).submit();
@@ -344,6 +279,7 @@ public class Actions{
 	 *
 	 * @return A completable future of a message (see {@link RestAction#submit()}).
 	 */
+	@Deprecated
 	public static CompletableFuture<Message> editMessage(@NonNull Message message, @NonNull MessageEmbed newEmbed){
 		Log.getLogger(message.getGuild()).info("Editing message {} with {}", message, newEmbed);
 		return message.editMessage(newEmbed).submit();
@@ -356,6 +292,7 @@ public class Actions{
 	 *
 	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
+	@Deprecated
 	public static CompletableFuture<Void> clearReactions(@NonNull Message message){
 		Log.getLogger(message.getGuild()).info("Clearing reactions on {}", message);
 		return message.clearReactions().submit();
@@ -368,6 +305,7 @@ public class Actions{
 	 *
 	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
+	@Deprecated
 	public static CompletableFuture<Void> unpin(@NonNull Message message){
 		Log.getLogger(message.getGuild()).info("Unpinning {}", message);
 		return message.unpin().submit();
@@ -381,33 +319,10 @@ public class Actions{
 	 *
 	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
+	@Deprecated
 	public static CompletableFuture<Void> removeReaction(@NonNull MessageReaction reaction, @NonNull User user){
 		Log.getLogger(reaction.getGuild()).info("Removing reaction {} from {}", reaction.getReactionEmote().getName(), user);
 		return reaction.removeReaction(user).submit();
-	}
-	
-	/**
-	 * Pin a message.
-	 *
-	 * @param message The message to pin.
-	 *
-	 * @return A completable future (see {@link RestAction#submit()}).
-	 */
-	public static CompletableFuture<Void> pin(Message message){
-		Log.getLogger(message.getGuild()).info("Pinning {}", message);
-		return message.pin().submit();
-	}
-	
-	/**
-	 * Change the username of a member.
-	 *
-	 * @param member   The member to change the nickname.
-	 * @param nickname The name to set (null to reset).
-	 *
-	 * @return A completable future (see {@link RestAction#submit()}).
-	 */
-	public static CompletableFuture<Void> changeNickname(@NonNull Member member, String nickname){
-		return member.getGuild().modifyNickname(member, nickname).submit();
 	}
 	
 	/**
@@ -418,6 +333,7 @@ public class Actions{
 	 *
 	 * @return A completable future (see {@link RestAction#submit()}).
 	 */
+	@Deprecated
 	public static CompletableFuture<Void> setCategoryAndSync(@NonNull GuildChannel channel, @NonNull Category category){
 		Log.getLogger(channel.getGuild()).info("Archiving channel {} to {} and syncing it", channel, category);
 		return channel.getManager().setParent(category).sync(category).submit();
@@ -435,8 +351,31 @@ public class Actions{
 	 *
 	 * @throws IllegalArgumentException If trying to send a message to another bot.
 	 */
+	@Deprecated
 	public static CompletableFuture<Message> sendPrivateMessage(Guild guild, long userId, String message, MessageEmbed embed){
 		return Main.getJda().openPrivateChannelById(userId).submit().thenCompose(channel -> sendPrivateMessage(guild, channel, message, embed));
+	}
+	
+	/**
+	 * Send a message to a private channel.
+	 *
+	 * @param guild   The guild that initiated the event.
+	 * @param channel The channel to send to.
+	 * @param message The message to send.
+	 * @param embed   The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
+	 *
+	 * @return A completable future of a message (see {@link RestAction#submit()}).
+	 *
+	 * @throws IllegalArgumentException If trying to send a message to another bot.
+	 */
+	@NonNull
+	@Deprecated
+	public static CompletableFuture<Message> sendPrivateMessage(final Guild guild, @NonNull final PrivateChannel channel, @NonNull final CharSequence message, MessageEmbed embed) throws IllegalArgumentException{
+		if(channel.getUser().isBot()){
+			throw new IllegalArgumentException(MessageFormat.format("Cannot send private message to other bot {0} : {1}", channel, message));
+		}
+		Log.getLogger(guild).info("Sending private message to {} : {}", channel, message);
+		return channel.sendMessage(message).embed(embed).submit();
 	}
 	
 	/**
@@ -452,6 +391,7 @@ public class Actions{
 	 * @throws IllegalArgumentException If trying to send a message to another bot.
 	 */
 	@NonNull
+	@Deprecated
 	public static CompletableFuture<Message> sendPrivateMessage(Guild guild, User user, String message, MessageEmbed embed){
 		return user.openPrivateChannel().submit().thenCompose(privateChannel -> sendPrivateMessage(guild, privateChannel, message, embed));
 	}
@@ -465,39 +405,11 @@ public class Actions{
 	 * @return A completable future of a message (see {@link RestAction#submit()}).
 	 */
 	@NonNull
+	@Deprecated
 	public static CompletableFuture<Message> sendMessage(@NonNull final TextChannel channel, @NonNull MessageBuilder messageBuilder){
 		final var action = channel.sendMessage(messageBuilder.build());
 		Log.getLogger(channel.getGuild()).info("Sending message to {} : {}", channel, action);
 		return action.submit();
-	}
-	
-	/**
-	 * Kicks a member from its server.
-	 *
-	 * @param author The author of the kick.
-	 * @param member The member to kick.
-	 * @param reason The reason of the kick.
-	 *
-	 * @return A completable future.
-	 */
-	@NonNull
-	public static CompletableFuture<Void> kick(@NonNull User author, @NonNull Member member, @NonNull String reason){
-		var guild = member.getGuild();
-		var builder = Utilities.buildEmbed(member.getUser(), Color.ORANGE, "Random kick", null);
-		builder.addField(translate(guild, "log-action.user"), member.getUser().getAsTag(), true);
-		builder.addField(translate(guild, "log-action.moderator"), author.getAsMention(), true);
-		builder.addField(translate(guild, "log-action.reason"), reason, true);
-		logAction(guild, builder.build());
-		
-		return member.kick(reason).submit();
-	}
-	
-	@NonNull
-	public static Optional<CompletableFuture<Message>> logAction(@NonNull Guild guild, MessageEmbed embed){
-		return Settings.get(guild)
-				.getLogChannel()
-				.flatMap(ChannelConfiguration::getChannel)
-				.map(textChannel -> Actions.sendEmbed(textChannel, embed));
 	}
 	
 	/**
@@ -510,6 +422,7 @@ public class Actions{
 	 * @return A completable future.
 	 */
 	@NonNull
+	@Deprecated
 	public static CompletableFuture<Void> softBan(@NonNull TextChannel textChannel, @NonNull User author, @NonNull Member member, @NonNull String reason, @NonNull Duration duration){
 		var guild = member.getGuild();
 		var builder = Utilities.buildEmbed(member.getUser(), Color.RED, "Soft ban", null);
@@ -519,8 +432,32 @@ public class Actions{
 		builder.addField(translate(guild, "log-action.length"), Utilities.durationToString(duration), true);
 		logAction(guild, builder.build());
 		
-		ScheduleUtils.addSchedule(new UnbanScheduleConfiguration(member.getUser(), textChannel, ZonedDateTime.now().plus(duration), "Banned for: " + reason, member.getId()), guild);
+		ScheduleUtils.addSchedule(guild, new UnbanScheduleConfiguration(member.getUser(), textChannel, ZonedDateTime.now().plus(duration), "Banned for: " + reason, member.getId()));
 		return member.ban(0, reason).submit();
+	}
+	
+	@NonNull
+	@Deprecated
+	public static Optional<CompletableFuture<Message>> logAction(@NonNull Guild guild, MessageEmbed embed){
+		return Settings.get(guild)
+				.getLogChannel()
+				.flatMap(ChannelConfiguration::getChannel)
+				.map(textChannel -> Actions.sendEmbed(textChannel, embed));
+	}
+	
+	/**
+	 * Send an embed to a channel.
+	 *
+	 * @param channel The channel to send the message to.
+	 * @param embed   The embed to attach along the message (see {@link net.dv8tion.jda.api.requests.restaction.MessageAction#embed(MessageEmbed)}).
+	 *
+	 * @return A completable future of a message (see {@link RestAction#submit()}).
+	 */
+	@NonNull
+	@Deprecated
+	public static CompletableFuture<Message> sendEmbed(@NonNull final TextChannel channel, @NonNull MessageEmbed embed){
+		Log.getLogger(channel.getGuild()).info("Sending embed to {} : {}", channel, embed);
+		return channel.sendMessage(embed).submit();
 	}
 	
 	/**
@@ -531,6 +468,7 @@ public class Actions{
 	 *
 	 * @return A completable future.
 	 */
+	@Deprecated
 	public static CompletableFuture<Void> unban(@NonNull Guild guild, @NonNull String userId){
 		var builder = Utilities.buildEmbed(guild.getJDA().getSelfUser(), Color.GREEN, "Unban", null);
 		builder.addField(translate(guild, "log-action.user"), new UserById(Long.parseLong(userId)).getAsMention(), true);
@@ -548,6 +486,7 @@ public class Actions{
 	 *
 	 * @return A completable future.
 	 */
+	@Deprecated
 	public static CompletableFuture<Void> deleteMessage(@NonNull TextChannel channel, long messageId){
 		Log.getLogger(channel.getGuild()).info("Deleting message with id {} in channel {}", messageId, channel);
 		

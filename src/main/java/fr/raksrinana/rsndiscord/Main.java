@@ -75,7 +75,7 @@ public class Main{
 			jdaBuilder.setAutoReconnect(true);
 			jda = jdaBuilder.build();
 			jda.awaitReady();
-			jda.getPresence().setPresence(OnlineStatus.ONLINE, Activity.of(Activity.ActivityType.DEFAULT, CommandsEventListener.defaultPrefix + "help for the help"));
+			jda.getPresence().setPresence(OnlineStatus.ONLINE, Activity.of(Activity.ActivityType.DEFAULT, CommandsEventListener.DEFAULT_PREFIX + "help for the help"));
 			Log.getLogger(null).info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
 			Log.getLogger(null).info("Adding handlers");
 			ReactionUtils.registerAllHandlers();

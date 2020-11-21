@@ -46,7 +46,7 @@ public class ScheduleUtils{
 	 * @param channel  The channel to send the message to.
 	 */
 	public static CompletableFuture<Message> addScheduleAndNotify(@NonNull ScheduleConfiguration schedule, @NonNull TextChannel channel, Consumer<EmbedBuilder> embedBuilderConsumer){
-		addSchedule(schedule, channel.getGuild());
+		addSchedule(channel.getGuild(), schedule);
 		return Actions.sendMessage(channel, translate(channel.getGuild(), "schedule.scheduled", schedule.getScheduleDate().format(Utilities.DATE_TIME_MINUTE_FORMATTER)), getEmbedFor(channel.getGuild(), schedule, embedBuilderConsumer))
 				.thenApply(message -> {
 					schedule.setReminderCountdownMessage(new MessageConfiguration(message));
@@ -57,10 +57,10 @@ public class ScheduleUtils{
 	/**
 	 * Add a schedule into the configuration.
 	 *
-	 * @param schedule The schedule to add.
 	 * @param guild    The guild where it is from.
+	 * @param schedule The schedule to add.
 	 */
-	public static void addSchedule(@NonNull ScheduleConfiguration schedule, @NonNull Guild guild){
+	public static void addSchedule(@NonNull Guild guild, @NonNull ScheduleConfiguration schedule){
 		Settings.get(guild).addSchedule(schedule);
 	}
 	
@@ -94,11 +94,15 @@ public class ScheduleUtils{
 		return handlers;
 	}
 	
+	public static Consumer<Message> deleteMessage(Function<ZonedDateTime, ZonedDateTime> applyDelay){
+		return message -> deleteMessage(message, applyDelay);
+	}
+	
 	public static void deleteMessage(Message message, Function<ZonedDateTime, ZonedDateTime> applyDelay){
-		addSchedule(new DeleteMessageScheduleConfiguration(
+		addSchedule(message.getGuild(), new DeleteMessageScheduleConfiguration(
 				message.getAuthor(),
 				applyDelay.apply(ZonedDateTime.now()),
 				message
-		), message.getGuild());
+		));
 	}
 }

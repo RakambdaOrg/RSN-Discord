@@ -138,8 +138,7 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 								false,
 								messageAction -> messageAction.allowedMentions(List.of(Message.MentionType.ROLE))
 										.mention(pings)
-						).thenAcceptAsync(message1 -> Main.getExecutorService().schedule(() -> RandomKick.randomKick(getGuild().getJDA().getSelfUser(),
-								channel,
+						).thenAcceptAsync(message1 -> Main.getExecutorService().schedule(() -> RandomKick.randomKick(channel,
 								targetRole.orElse(null),
 								translate(getGuild(), "random-kick.bought-reason", event.getUser().getNick(), getUser(), event.getMessage()),
 								false), 30, TimeUnit.SECONDS));

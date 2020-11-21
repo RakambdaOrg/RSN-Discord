@@ -27,7 +27,7 @@ public class LangUtils{
 				}
 			}));
 			var message = bundle.map(b -> b.getString(key))
-					.map(m -> m.replace("'", "’"))
+					.map(value -> value.replace("'", "’"))
 					.orElse(key);
 			return MessageFormat.format(message, args);
 		}

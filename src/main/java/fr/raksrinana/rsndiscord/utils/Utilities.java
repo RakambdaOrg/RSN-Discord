@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.utils;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
+import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.modules.settings.types.RoleConfiguration;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -19,10 +20,8 @@ import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Utilities{
@@ -40,7 +39,10 @@ public class Utilities{
 	 * @return True if moderator, false otherwise.
 	 */
 	public static boolean isModerator(@NonNull final Member member){
-		return isAdmin(member) || Settings.get(member.getGuild()).getModeratorRoles().stream().map(RoleConfiguration::getRole).flatMap(Optional::stream).anyMatch(role -> member.getRoles().contains(role));
+		return isAdmin(member) || Settings.get(member.getGuild()).getModeratorRoles().stream()
+				.map(RoleConfiguration::getRole)
+				.flatMap(Optional::stream)
+				.anyMatch(role -> member.getRoles().contains(role));
 	}
 	
 	/**
@@ -51,7 +53,8 @@ public class Utilities{
 	 * @return True if admin, false otherwise.
 	 */
 	public static boolean isAdmin(@NonNull final Member member){
-		return member.getRoles().stream().anyMatch(role -> role.hasPermission(Permission.ADMINISTRATOR)) || isCreator(member);
+		return member.getRoles().stream()
+				.anyMatch(role -> role.hasPermission(Permission.ADMINISTRATOR)) || isCreator(member);
 	}
 	
 	/**
@@ -67,24 +70,6 @@ public class Utilities{
 	}
 	
 	/**
-	 * Copy an embed message.
-	 *
-	 * @param embed The embed message to copy.
-	 *
-	 * @return An embed builder based on the given embed.
-	 */
-	@NonNull
-	public static EmbedBuilder copyEmbed(final MessageEmbed embed){
-		final var builder = buildEmbed(null, embed.getColor(), embed.getTitle(), null);
-		if(Objects.nonNull(embed.getAuthor())){
-			builder.setAuthor(embed.getAuthor().getName(), embed.getAuthor().getUrl(), embed.getAuthor().getIconUrl());
-		}
-		builder.setDescription(embed.getDescription());
-		embed.getFields().forEach(builder::addField);
-		return builder;
-	}
-	
-	/**
 	 * Build a basic embed with an author, title and color.
 	 *
 	 * @param author   The author (if none, set to {@code null}).
@@ -97,6 +82,7 @@ public class Utilities{
 	 * @see EmbedBuilder
 	 */
 	@NonNull
+	@Deprecated
 	public static EmbedBuilder buildEmbed(final User author, final Color color, final String title, final String titleURL){
 		final var builder = new EmbedBuilder();
 		if(Objects.nonNull(author)){
@@ -151,7 +137,12 @@ public class Utilities{
 	 */
 	@NonNull
 	public static CompletableFuture<Message> reportException(@NonNull String message, @NonNull Throwable throwable){
-		return Actions.sendPrivateMessage(null, MAIN_RAKSRINANA_ACCOUNT, MessageFormat.format("RSN got an exception: {0}\n", message), throwableToEmbed(throwable).build());
+		return Optional.ofNullable(Main.getJda().getUserById(MAIN_RAKSRINANA_ACCOUNT))
+				.map(user -> user.openPrivateChannel().submit()
+						.thenCompose(privateChannel -> privateChannel.sendMessage(MessageFormat.format("RSN got an exception: {0}\n", message))
+								.embed(throwableToEmbed(throwable).build())
+								.submit()))
+				.orElse(CompletableFuture.failedFuture(new RuntimeException("User not found")));
 	}
 	
 	/**
@@ -162,12 +153,9 @@ public class Utilities{
 	 *
 	 * @return An completable future of an optional message (see {@link RestAction#submit()}).
 	 */
+	@Deprecated
 	public static CompletableFuture<Message> getMessageById(@NonNull TextChannel channel, long messageId){
 		return channel.retrieveMessageById(messageId).submit();
-	}
-	
-	public static <T> Collection<? extends T> getAllInstancesOf(Class<T> klass, @NonNull String packageName, Function<Class<? extends T>, ? extends T> createInstance){
-		return new Reflections(packageName).getSubTypesOf(klass).stream().filter(c -> !c.isInterface()).sorted(Comparator.comparing(Class::getCanonicalName)).map(createInstance).filter(Objects::nonNull).map(klass::cast).collect(Collectors.toList());
 	}
 	
 	private static EmbedBuilder throwableToEmbed(Throwable throwable){
@@ -177,10 +165,6 @@ public class Utilities{
 		final var trace = ExceptionUtils.getStackTrace(throwable);
 		embed.addField("Trace", trace.substring(0, Math.min(trace.length(), MessageEmbed.VALUE_MAX_LENGTH)), false);
 		return embed;
-	}
-	
-	public static Optional<Role> getRoleById(long id){
-		return Optional.ofNullable(Main.getJda().getRoleById(id));
 	}
 	
 	public static <T> Stream<T> getAllAnnotatedWith(Class<? extends Annotation> annotationClazz, ClassInstantiator<T> instantiator){
@@ -205,5 +189,9 @@ public class Utilities{
 				NoSuchMethodException,
 				InvocationTargetException,
 				IllegalAccessException;
+	}
+	
+	public static boolean containsChannel(Collection<ChannelConfiguration> channels, TextChannel channel){
+		return channels.stream().anyMatch(c -> Objects.equals(c.getChannelId(), channel.getIdLong()));
 	}
 }

@@ -4,6 +4,7 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import net.dv8tion.jda.api.entities.Activity;
 import java.util.*;
+import static net.dv8tion.jda.api.entities.Activity.ActivityType.DEFAULT;
 
 /**
  * Handles commands sent in the standard input.
@@ -51,7 +52,7 @@ class ConsoleHandler extends Thread{
 						else{
 							final var guildId = args.poll();
 							Optional.ofNullable(Main.getJda().getGuildById(guildId)).ifPresentOrElse(guild -> {
-								guild.leave().queue();
+								guild.leave().submit();
 								Log.getLogger(guild).info("Guild {} left", guild);
 							}, () -> Log.getLogger(null).warn("Guild with id {} not found", guildId));
 						}
@@ -71,7 +72,9 @@ class ConsoleHandler extends Thread{
 						}
 						else{
 							final var guildId = args.poll();
-							Optional.ofNullable(Main.getJda().getGuildById(guildId)).ifPresentOrElse(guild -> Log.getLogger(guild).info("Members of {}: {}", guild, guild.getMembers()), () -> Log.getLogger(null).warn("Guild with id {} not found", guildId));
+							Optional.ofNullable(Main.getJda().getGuildById(guildId))
+									.ifPresentOrElse(guild -> Log.getLogger(guild).info("Members of {}: {}", guild, guild.getMembers()),
+											() -> Log.getLogger(null).warn("Guild with id {} not found", guildId));
 						}
 					}
 					else if("listGuilds".equalsIgnoreCase(command)){
@@ -87,7 +90,7 @@ class ConsoleHandler extends Thread{
 							Log.getLogger(null).warn("Please pass the game");
 						}
 						else{
-							Main.getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.DEFAULT, String.join(" ", args)));
+							Main.getJda().getPresence().setActivity(Activity.of(DEFAULT, String.join(" ", args)));
 						}
 					}
 					else if("save".equalsIgnoreCase(command)){

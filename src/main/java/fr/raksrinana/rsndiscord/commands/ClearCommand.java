@@ -5,17 +5,14 @@ import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
-import fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils;
-import fr.raksrinana.rsndiscord.modules.schedule.config.DeleteMessageScheduleConfiguration;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
@@ -36,18 +33,18 @@ public class ClearCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		final var messageCount = Optional.ofNullable(args.poll()).map(arg -> {
-			try{
-				return Integer.parseInt(arg);
-			}
-			catch(NumberFormatException ignored){
-			}
-			return null;
-		}).orElse(100);
-		final var channel = event.getMessage().getMentionedChannels().stream().findFirst().orElse(event.getChannel());
-		Actions.reply(event, translate(event.getGuild(), "clear.removing", messageCount, channel.getAsMention()), null).thenAccept(message -> ScheduleUtils.addSchedule(new DeleteMessageScheduleConfiguration(event.getAuthor(), ZonedDateTime.now().plusMinutes(2), message), event.getGuild()));
-		channel.getIterableHistory().takeAsync(messageCount).thenAccept(messages -> messages.forEach(Actions::deleteMessage));
-		return CommandResult.SUCCESS;
+		var channel = event.getChannel();
+		
+		var messageCount = getArgumentAsInteger(args).orElse(100);
+		var targetChannel = getFirstChannelMentioned(event).orElse(channel);
+		
+		channel.sendMessage(translate(event.getGuild(), "clear.removing", messageCount, targetChannel.getAsMention())).submit()
+				.thenAccept(deleteMessage(date -> date.plusMinutes(2)));
+		
+		targetChannel.getIterableHistory()
+				.takeAsync(messageCount)
+				.thenAccept(messages -> messages.forEach(message -> message.delete().submit()));
+		return SUCCESS;
 	}
 	
 	@NonNull

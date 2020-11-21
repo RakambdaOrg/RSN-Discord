@@ -8,14 +8,14 @@ import lombok.NonNull;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Objects;
+import static java.util.Objects.nonNull;
 
 public class URLDeserializer extends JsonDeserializer<URL>{
 	@Override
 	public URL deserialize(@NonNull final JsonParser jsonParser, @NonNull final DeserializationContext deserializationContext) throws IOException{
 		try{
 			final var value = jsonParser.getValueAsString();
-			if(Objects.nonNull(value) && !value.isBlank() && !value.equals(".")){
+			if(nonNull(value) && !value.isBlank() && !value.equals(".")){
 				return new URL(value);
 			}
 		}

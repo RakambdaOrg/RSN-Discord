@@ -6,11 +6,8 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.modules.reaction.ReactionTag;
-import fr.raksrinana.rsndiscord.modules.reaction.ReactionUtils;
 import fr.raksrinana.rsndiscord.modules.reaction.config.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
-import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -19,6 +16,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.modules.reaction.ReactionUtils.DELETE_KEY;
+import static fr.raksrinana.rsndiscord.utils.BasicEmotes.CHECK_OK;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
@@ -39,25 +40,26 @@ public class TodoCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+			return BAD_ARGUMENTS;
 		}
-		else{
-			final var data = new HashMap<String, String>();
-			data.put(ReactionUtils.DELETE_KEY, Boolean.toString(true));
-			if(Objects.equals(args.peek(), "false")){
-				args.pop();
-				data.put(ReactionUtils.DELETE_KEY, Boolean.toString(false));
-			}
-			if(args.isEmpty()){
-				return CommandResult.BAD_ARGUMENTS;
-			}
-			Actions.reply(event, String.join(" ", args), null).thenAccept(message -> {
-				Actions.addReaction(message, BasicEmotes.CHECK_OK.getValue());
-				Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, ReactionTag.TODO, data));
-				Actions.pin(message);
-			});
+		
+		final var data = new HashMap<String, String>();
+		data.put(DELETE_KEY, Boolean.toString(true));
+		if(Objects.equals(args.peek(), "false")){
+			args.pop();
+			data.put(DELETE_KEY, Boolean.toString(false));
 		}
-		return CommandResult.SUCCESS;
+		if(args.isEmpty()){
+			return BAD_ARGUMENTS;
+		}
+		
+		event.getChannel().sendMessage(String.join(" ", args)).submit()
+				.thenAccept(message -> {
+					Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, ReactionTag.TODO, data));
+					message.addReaction(CHECK_OK.getValue()).submit();
+					message.pin().submit();
+				});
+		return SUCCESS;
 	}
 	
 	@NonNull

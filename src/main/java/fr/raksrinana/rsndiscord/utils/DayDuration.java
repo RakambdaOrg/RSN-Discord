@@ -14,11 +14,8 @@ import static java.time.temporal.ChronoUnit.*;
  * Wraps a {@link Duration} and allow to perform a {@link Duration#get(TemporalUnit)} with {@link java.time.temporal.ChronoUnit#DAYS}.
  */
 public class DayDuration implements TemporalAmount, Comparable<DayDuration>{
+	static final List<TemporalUnit> UNITS = List.of(SECONDS, NANOS, DAYS);
 	private final Duration duration;
-	
-	private static class DurationUnits{
-		static final List<TemporalUnit> UNITS = List.of(SECONDS, NANOS, DAYS);
-	}
 	
 	/**
 	 * Create a day duration from a duration.
@@ -50,7 +47,7 @@ public class DayDuration implements TemporalAmount, Comparable<DayDuration>{
 	@Override
 	@NonNull
 	public List<TemporalUnit> getUnits(){
-		return DurationUnits.UNITS;
+		return UNITS;
 	}
 	
 	@Override

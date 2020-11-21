@@ -6,18 +6,19 @@ import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
-import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.awt.Color;
-import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static fr.raksrinana.rsndiscord.utils.Utilities.durationToString;
+import static java.awt.Color.GREEN;
+import static java.time.Duration.between;
+import static java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME;
 
 @BotCommand
 public class InfosCommand extends BasicCommand{
@@ -30,14 +31,20 @@ public class InfosCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		final var now = ZonedDateTime.now();
-		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, translate(event.getGuild(), "infos.title"), null);
-		builder.addField(translate(event.getGuild(), "infos.version"), Main.getRSNBotVersion(), false);
-		builder.addField(translate(event.getGuild(), "infos.time"), now.format(DateTimeFormatter.ISO_ZONED_DATE_TIME), false);
-		builder.addField(translate(event.getGuild(), "infos.last-boot"), Main.bootTime.format(DateTimeFormatter.ISO_ZONED_DATE_TIME), false);
-		builder.addField(translate(event.getGuild(), "infos.elapsed"), Duration.between(Main.bootTime, now).toString(), false);
-		Actions.sendEmbed(event.getChannel(), builder.build());
-		return CommandResult.SUCCESS;
+		var guild = event.getGuild();
+		var author = event.getAuthor();
+		var now = ZonedDateTime.now();
+		
+		var embed = new EmbedBuilder().setAuthor(author.getName(), null, author.getAvatarUrl())
+				.setColor(GREEN)
+				.addField(translate(guild, "infos.version"), Main.getRSNBotVersion(), false)
+				.addField(translate(guild, "infos.time"), now.format(ISO_ZONED_DATE_TIME), false)
+				.addField(translate(guild, "infos.last-boot"), Main.bootTime.format(ISO_ZONED_DATE_TIME), false)
+				.addField(translate(guild, "infos.elapsed"), durationToString(between(Main.bootTime, now)), false)
+				.build();
+		
+		event.getChannel().sendMessage(embed).submit();
+		return SUCCESS;
 	}
 	
 	@NonNull
