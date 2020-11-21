@@ -2,6 +2,7 @@ package fr.raksrinana.rsndiscord.modules.twitter;
 
 import fr.raksrinana.rsndiscord.log.Log;
 import twitter4j.*;
+import twitter4j.conf.ConfigurationBuilder;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,14 +21,14 @@ public class TwitterUtils{
 	
 	private static Twitter getClient(){
 		if(Objects.isNull(client)){
-			client = TwitterFactory.getSingleton();
-			client.setOAuthConsumer(System.getProperty("TWITTER_API"), System.getProperty("TWITTER_API_SECRET"));
-			// client = new TwitterClient(TwitterCredentials.builder()
-			// 		.accessToken(System.getProperty("TWITTER_TOKEN"))
-			// 		.accessTokenSecret(System.getProperty("TWITTER_TOKEN_SECRET"))
-			// 		.apiKey(System.getProperty("TWITTER_API"))
-			// 		.apiSecretKey(System.getProperty("TWITTER_API_SECRET"))
-			// 		.build());
+			var configurationBuilder = new ConfigurationBuilder()
+					.setDebugEnabled(true)
+					.setOAuthConsumerKey(System.getProperty("TWITTER_API"))
+					.setOAuthConsumerSecret(System.getProperty("TWITTER_API_SECRET"))
+					.setOAuthAccessToken(System.getProperty("TWITTER_TOKEN"))
+					.setOAuthAccessTokenSecret(System.getProperty("TWITTER_TOKEN_SECRET"));
+			
+			client = new TwitterFactory(configurationBuilder.build()).getInstance();
 		}
 		return client;
 	}
