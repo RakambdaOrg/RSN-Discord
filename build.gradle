@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        jda_version = '4.2.0_218'
+        jda_version = '4.2.0_220'
         lavaplayer_version = '1.3.61'
         lavaplayer_arm_version = '1.3.10'
 
@@ -8,7 +8,7 @@ buildscript {
         logback_version = '1.3.0-alpha4'
 
         picocli_version = '4.5.2'
-        raksrinana_utils_version = '14.0.15'
+        raksrinana_utils_version = '15.0.1'
         jackson_version = '2.11.3'
         httpclient_version = '4.5.13'
         lang3_version = '3.11'

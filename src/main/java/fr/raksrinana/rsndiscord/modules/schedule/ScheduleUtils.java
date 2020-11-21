@@ -1,6 +1,7 @@
 package fr.raksrinana.rsndiscord.modules.schedule;
 
 import fr.raksrinana.rsndiscord.log.Log;
+import fr.raksrinana.rsndiscord.modules.schedule.config.DeleteMessageScheduleConfiguration;
 import fr.raksrinana.rsndiscord.modules.schedule.config.ScheduleConfiguration;
 import fr.raksrinana.rsndiscord.modules.schedule.handler.IScheduleHandler;
 import fr.raksrinana.rsndiscord.modules.schedule.handler.ScheduleHandler;
@@ -22,6 +23,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class ScheduleUtils{
@@ -90,5 +92,13 @@ public class ScheduleUtils{
 	
 	public static Collection<IScheduleHandler> getHandlers(){
 		return handlers;
+	}
+	
+	public static void deleteMessage(Message message, Function<ZonedDateTime, ZonedDateTime> applyDelay){
+		addSchedule(new DeleteMessageScheduleConfiguration(
+				message.getAuthor(),
+				applyDelay.apply(ZonedDateTime.now()),
+				message
+		), message.getGuild());
 	}
 }

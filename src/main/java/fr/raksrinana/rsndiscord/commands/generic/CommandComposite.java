@@ -1,8 +1,6 @@
 package fr.raksrinana.rsndiscord.commands.generic;
 
 import fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils;
-import fr.raksrinana.rsndiscord.modules.schedule.config.DeleteMessageScheduleConfiguration;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -10,7 +8,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.awt.Color;
 import java.text.MessageFormat;
-import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -81,13 +78,15 @@ public abstract class CommandComposite extends BasicCommand{
 		}
 		final var switchStr = args.poll();
 		if(Objects.isNull(switchStr)){
-			Actions.sendEmbed(event.getChannel(), Utilities.buildEmbed(event.getAuthor(), Color.RED, translate(event.getGuild(), "commands.error.title"), null)
+			var embed = Utilities.buildEmbed(event.getAuthor(), Color.RED, translate(event.getGuild(), "commands.error.title"), null)
 					.addField(translate(event.getGuild(), "commands.error.command"), this.getName(event.getGuild()), false)
 					.addField(translate(event.getGuild(), "commands.error.reason"), translate(event.getGuild(), "commands.error.required-argument"), false)
 					.addField(translate(event.getGuild(), "commands.error.sub-commands"), this.subCommands.stream()
 							.flatMap(command -> command.getCommandStrings().stream())
 							.collect(Collectors.joining(", ")), false)
-					.build());
+					.build();
+			event.getChannel().sendMessage(embed).submit()
+					.thenAccept(message -> ScheduleUtils.deleteMessage(message, date -> date.plusMinutes(2)));
 		}
 		else{
 			final var toExecute = this.subCommands.stream().filter(command -> command.getCommandStrings().contains(switchStr)).findFirst();
@@ -95,14 +94,15 @@ public abstract class CommandComposite extends BasicCommand{
 				return toExecute.get().execute(event, args);
 			}
 			else{
-				Actions.sendEmbed(event.getChannel(),Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, translate(event.getGuild(), "commands.error.title"), null)
+				var embed = Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, translate(event.getGuild(), "commands.error.title"), null)
 						.addField(translate(event.getGuild(), "commands.error.command"), this.getName(event.getGuild()), false)
 						.addField(translate(event.getGuild(), "commands.error.reason"), translate(event.getGuild(), "commands.error.invalid-argument", switchStr), false)
 						.addField(translate(event.getGuild(), "commands.error.sub-commands"), this.subCommands.stream()
 								.flatMap(command -> command.getCommandStrings().stream())
 								.collect(Collectors.joining(", ")), false)
-						.build()
-				).thenAccept(message -> ScheduleUtils.addSchedule(new DeleteMessageScheduleConfiguration(message.getAuthor(), ZonedDateTime.now().plusMinutes(2), message), message.getGuild()));
+						.build();
+				event.getChannel().sendMessage(embed).submit()
+						.thenAccept(message -> ScheduleUtils.deleteMessage(message, date -> date.plusMinutes(2)));
 			}
 		}
 		return CommandResult.SUCCESS;

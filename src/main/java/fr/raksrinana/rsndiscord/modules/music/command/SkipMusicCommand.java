@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.modules.music.command;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
+import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.modules.music.reply.SkipMusicReply;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
@@ -68,6 +69,8 @@ public class SkipMusicCommand extends BasicCommand{
 				.map(count -> count - 1)
 				.map(count -> (int) Math.ceil(count / 2.0))
 				.orElse(1);
+		
+		Log.getLogger(event.getGuild()).info("Will start vote to skip music, will require {} votes", requiredVote);
 		
 		var builder = Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, translate(event.getGuild(), "music.skip.title"), null);
 		builder.addField(translate(event.getGuild(), "music.skip.votes-required"), "" + requiredVote, true);

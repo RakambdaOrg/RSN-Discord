@@ -69,7 +69,7 @@ public class RandomKick extends BasicCommand{
 				&& Optional.ofNullable(targetRole).map(role -> member.getRoles().contains(role)).orElse(true))
 				.onSuccess(members -> {
 					if(members.isEmpty()){
-						Actions.sendMessage(channel, translate(guild, "random-kick.no-member"), null);
+						channel.sendMessage(translate(guild, "random-kick.no-member")).submit();
 					}
 					else{
 						if(!allowReKick){
@@ -86,9 +86,7 @@ public class RandomKick extends BasicCommand{
 								.getKickedRole()
 								.flatMap(RoleConfiguration::getRole)
 								.ifPresent(kickedRole -> Actions.giveRole(member, kickedRole));
-						Actions.sendMessage(channel, translate(guild, "random-kick.kicking", member.getAsMention()), null, false, action -> action.tts(true));
 						Actions.sendPrivateMessage(guild, member.getUser(), kickMessage, null);
-						
 						Optional.ofNullable(guild.getDefaultChannel())
 								.map(TextChannel::createInvite)
 								.map(invite -> invite
@@ -97,14 +95,16 @@ public class RandomKick extends BasicCommand{
 								.map(RestAction::submit)
 								.ifPresent(invite -> invite.thenAccept(inv -> Actions.sendPrivateMessage(guild, member.getUser(), inv.getUrl(), null)));
 						
-						Main.getExecutorService().schedule(() -> {
-							Actions.kick(author, member, reason)
-									.thenAccept(empty2 -> Actions.sendMessage(channel, kickMessage, null, false, action -> action.mentionUsers(member.getIdLong())))
-									.exceptionally(exception -> {
-										Actions.sendMessage(channel, translate(guild, "random-kick.error", exception.getMessage()), null);
-										return null;
-									});
-						}, 30, TimeUnit.SECONDS);
+						Actions.sendMessage(channel, translate(guild, "random-kick.kicking", member.getAsMention()), null, false, action -> action.tts(true)).thenAccept(kickStartMessage -> {
+							Main.getExecutorService().schedule(() -> {
+								Actions.kick(author, member, reason)
+										.thenAccept(empty2 -> Actions.sendMessage(channel, kickMessage, null, false, action -> action.mentionUsers(member.getIdLong())))
+										.exceptionally(exception -> {
+											Actions.sendMessage(channel, translate(guild, "random-kick.error", exception.getMessage()), null);
+											return null;
+										});
+							}, 30, TimeUnit.SECONDS);
+						});
 					}
 				}).onError(e -> {
 			Log.getLogger(guild).error("Failed to load members", e);

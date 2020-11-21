@@ -531,12 +531,26 @@ public class Actions{
 	 *
 	 * @return A completable future.
 	 */
-	public static CompletableFuture<Void> unban(@NonNull Guild guild, String userId){
+	public static CompletableFuture<Void> unban(@NonNull Guild guild, @NonNull String userId){
 		var builder = Utilities.buildEmbed(guild.getJDA().getSelfUser(), Color.GREEN, "Unban", null);
 		builder.addField(translate(guild, "log-action.user"), new UserById(Long.parseLong(userId)).getAsMention(), true);
 		builder.addField(translate(guild, "log-action.reason"), "Auto", true);
 		logAction(guild, builder.build());
 		
 		return guild.unban(userId).submit();
+	}
+	
+	/**
+	 * Deletes a message.
+	 *
+	 * @param channel   The channel the message is in.
+	 * @param messageId The id of the message to delete.
+	 *
+	 * @return A completable future.
+	 */
+	public static CompletableFuture<Void> deleteMessage(@NonNull TextChannel channel, long messageId){
+		Log.getLogger(channel.getGuild()).info("Deleting message with id {} in channel {}", messageId, channel);
+		
+		return channel.deleteMessageById(messageId).submit();
 	}
 }
