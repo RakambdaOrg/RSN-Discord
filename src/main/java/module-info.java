@@ -22,5 +22,5 @@ open module fr.raksrinana.rsndiscord {
 	requires imgscalr.lib;
 	requires jump3r;
 	requires thumbnailator;
-	requires twittered;
+	requires org.twitter4j.core;
 }

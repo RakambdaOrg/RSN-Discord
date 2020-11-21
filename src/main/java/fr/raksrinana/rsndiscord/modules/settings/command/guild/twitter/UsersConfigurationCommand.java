@@ -11,34 +11,34 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.*;
 import static fr.raksrinana.rsndiscord.modules.permission.PermissionUtils.ALLOW;
 
-public class UsersConfigurationCommand extends SetConfigurationCommand<String>{
+public class UsersConfigurationCommand extends SetConfigurationCommand<Long>{
 	public UsersConfigurationCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
-	protected void removeConfig(@NonNull final Guild guild, @NonNull final String value){
+	protected void removeConfig(@NonNull final Guild guild, @NonNull final Long value){
 		Settings.get(guild).getTwitterConfiguration().getUserIds().remove(value);
 	}
 	
 	@NonNull
 	@Override
-	protected String extractValue(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args) throws IllegalArgumentException{
+	protected Long extractValue(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args) throws IllegalArgumentException{
 		if(args.isEmpty()){
 			throw new IllegalArgumentException("Please mention a user");
 		}
-		return args.pop();
+		return Long.parseLong(args.pop());
 	}
 	
 	@NonNull
 	@Override
-	protected Optional<Set<String>> getConfig(@NonNull final Guild guild){
+	protected Optional<Set<Long>> getConfig(@NonNull final Guild guild){
 		return Optional.of(Settings.get(guild).getTwitterConfiguration().getUserIds());
 	}
 	
 	@Override
-	protected void createConfig(@NonNull final Guild guild, @NonNull final String value){
-		final var set = new HashSet<String>();
+	protected void createConfig(@NonNull final Guild guild, @NonNull final Long value){
+		final var set = new HashSet<Long>();
 		set.add(value);
 		Settings.get(guild).getTwitterConfiguration().setUserIds(set);
 	}
