@@ -12,7 +12,7 @@ import fr.raksrinana.rsndiscord.modules.series.trakt.TraktUtils;
 import fr.raksrinana.rsndiscord.modules.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
-import fr.raksrinana.rsndiscord.modules.stopwatch.reply.StopwatchWaitingUserReplyEventListener;
+import fr.raksrinana.rsndiscord.reply.UserReplyEventListener;
 import fr.raksrinana.rsndiscord.runner.RunnerUtils;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
@@ -196,7 +196,7 @@ public class Main{
 	 */
 	public static void close(){
 		TraktUtils.stopAll();
-		StopwatchWaitingUserReplyEventListener.stopAll();
+		UserReplyEventListener.stopAll();
 		RSNAudioManager.stopAll();
 		TwitchIRC.close();
 		executorService.shutdownNow();

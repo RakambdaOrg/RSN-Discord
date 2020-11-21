@@ -1,8 +1,7 @@
-package fr.raksrinana.rsndiscord.modules.stopwatch.reply;
+package fr.raksrinana.rsndiscord.reply;
 
 import fr.raksrinana.rsndiscord.listeners.EventListener;
 import fr.raksrinana.rsndiscord.log.Log;
-import fr.raksrinana.rsndiscord.reply.IWaitingUserReply;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.Getter;
 import lombok.NonNull;
@@ -21,7 +20,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 @EventListener
-public class StopwatchWaitingUserReplyEventListener extends ListenerAdapter{
+public class UserReplyEventListener extends ListenerAdapter{
 	@Getter
 	private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	private static final List<IWaitingUserReply> replies = new ArrayList<>();
@@ -46,7 +45,9 @@ public class StopwatchWaitingUserReplyEventListener extends ListenerAdapter{
 	public void onGuildMessageReceived(@NonNull final GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
-			replies.removeIf(reply -> reply.isHandled() || (reply.handleEvent(event) && reply.execute(event, Arrays.stream(event.getMessage().getContentRaw().split(" ")).collect(Collectors.toCollection(LinkedList::new)))));
+			replies.removeIf(reply -> reply.isHandled()
+					|| (reply.handleEvent(event) && reply.execute(event, Arrays.stream(event.getMessage().getContentRaw().split(" "))
+					.collect(Collectors.toCollection(LinkedList::new)))));
 		}
 		catch(final Exception e){
 			Log.getLogger(event.getGuild()).error("Failed to handle user reply", e);

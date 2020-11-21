@@ -6,7 +6,7 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.modules.stopwatch.reply.StopwatchReply;
-import fr.raksrinana.rsndiscord.modules.stopwatch.reply.StopwatchWaitingUserReplyEventListener;
+import fr.raksrinana.rsndiscord.reply.UserReplyEventListener;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.Utilities;
@@ -30,7 +30,7 @@ public class StopwatchCommand extends BasicCommand {
         Actions.sendEmbed(event.getChannel(), embed).thenAccept(message -> {
             Actions.addReaction(message, BasicEmotes.P.getValue());
             Actions.addReaction(message, BasicEmotes.S.getValue());
-            StopwatchWaitingUserReplyEventListener.handleReply(new StopwatchReply(event, message));
+            UserReplyEventListener.handleReply(new StopwatchReply(event, message));
         });
         return CommandResult.SUCCESS;
     }

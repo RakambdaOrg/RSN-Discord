@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord.reply;
 
-import fr.raksrinana.rsndiscord.modules.stopwatch.reply.StopwatchWaitingUserReplyEventListener;
 import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.Getter;
 import lombok.NonNull;
@@ -47,7 +46,7 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 		this.handled = false;
 		this.infoMessages = new ArrayList<>();
 		this.infoMessages.addAll(Arrays.asList(infoMessages));
-		StopwatchWaitingUserReplyEventListener.getExecutor().schedule(() -> {
+		UserReplyEventListener.getExecutor().schedule(() -> {
 			synchronized(this.lock){
 				if(!this.isHandled()){
 					this.handled = this.onExpire();
