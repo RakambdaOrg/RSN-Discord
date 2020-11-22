@@ -36,7 +36,7 @@ public class TwitterUtils{
 	public static List<Status> getUserLastTweets(long userId, long maxId){
 		try{
 			var page = new Paging();
-			page.setMaxId(maxId);
+			page.setSinceId(maxId);
 			return getClient().getUserTimeline(userId, page);
 		}
 		catch(TwitterException e){

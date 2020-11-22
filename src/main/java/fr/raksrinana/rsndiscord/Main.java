@@ -69,9 +69,9 @@ public class Main{
 			Log.getLogger(null).info("Building JDA");
 			var jdaBuilder = JDABuilder.createDefault(System.getProperty("RSN_TOKEN"))
 					.enableIntents(GatewayIntent.GUILD_MEMBERS)
-					.setMemberCachePolicy(MemberCachePolicy.ALL);
+					.setMemberCachePolicy(MemberCachePolicy.ALL)
+					.setAutoReconnect(true);
 			registerAllEventListeners(jdaBuilder);
-			jdaBuilder.setAutoReconnect(true);
 			jda = jdaBuilder.build();
 			jda.awaitReady();
 			jda.getPresence().setPresence(ONLINE, Activity.of(Activity.ActivityType.DEFAULT, DEFAULT_PREFIX + "help for the help"));
