@@ -8,7 +8,10 @@ import fr.raksrinana.rsndiscord.modules.settings.types.RoleConfiguration;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.reflections.Reflections;
@@ -69,32 +72,6 @@ public class Utilities{
 				.anyMatch(id -> Objects.equals(member.getIdLong(), id));
 	}
 	
-	/**
-	 * Build a basic embed with an author, title and color.
-	 *
-	 * @param author   The author (if none, set to {@code null}).
-	 * @param color    The color (if use default, set to {@code null}).
-	 * @param title    The title.
-	 * @param titleURL The url of the title (if none, set to {@code null}).
-	 *
-	 * @return An embed builder based on the parameters.
-	 *
-	 * @see EmbedBuilder
-	 */
-	@NonNull
-	@Deprecated
-	public static EmbedBuilder buildEmbed(final User author, final Color color, final String title, final String titleURL){
-		final var builder = new EmbedBuilder();
-		if(Objects.nonNull(author)){
-			builder.setAuthor(author.getName(), null, author.getAvatarUrl());
-		}
-		if(Objects.nonNull(title) && !title.isBlank()){
-			builder.setTitle(title, titleURL);
-		}
-		builder.setColor(color);
-		return builder;
-	}
-	
 	@NonNull
 	public static String durationToString(final Duration duration){
 		if(duration.toDaysPart() > 0){
@@ -132,8 +109,6 @@ public class Utilities{
 	 * @param throwable The exception to send.
 	 *
 	 * @return A completable future of a message (see {@link RestAction#submit()}).
-	 *
-	 * @see Actions#sendPrivateMessage(Guild, PrivateChannel, CharSequence, MessageEmbed)
 	 */
 	@NonNull
 	public static CompletableFuture<Message> reportException(@NonNull String message, @NonNull Throwable throwable){
@@ -143,19 +118,6 @@ public class Utilities{
 								.embed(throwableToEmbed(throwable).build())
 								.submit()))
 				.orElse(CompletableFuture.failedFuture(new RuntimeException("User not found")));
-	}
-	
-	/**
-	 * Get a message by its id.
-	 *
-	 * @param channel   The channel to search the message in.
-	 * @param messageId The id of the message.
-	 *
-	 * @return An completable future of an optional message (see {@link RestAction#submit()}).
-	 */
-	@Deprecated
-	public static CompletableFuture<Message> getMessageById(@NonNull TextChannel channel, long messageId){
-		return channel.retrieveMessageById(messageId).submit();
 	}
 	
 	private static EmbedBuilder throwableToEmbed(Throwable throwable){
