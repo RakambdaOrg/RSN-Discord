@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.NonNull;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.awt.Color;
+import static java.awt.Color.PINK;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -18,7 +19,7 @@ public class MangaListActivity extends IListActivity{
 	@NonNull
 	@Override
 	protected Color getColor(){
-		return Color.PINK;
+		return PINK;
 	}
 	
 	@Override

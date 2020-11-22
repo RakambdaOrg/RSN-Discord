@@ -5,16 +5,16 @@ import fr.raksrinana.rsndiscord.commands.generic.BotCommand;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
-import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.awt.Color.GREEN;
 
 @BotCommand
 public class AvatarCommand extends BasicCommand{
@@ -33,15 +33,23 @@ public class AvatarCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		if(event.getMessage().getMentionedUsers().isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+		if(noUserIsMentioned(event)){
+			return BAD_ARGUMENTS;
 		}
-		final var user = event.getMessage().getMentionedUsers().get(0);
-		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, translate(event.getGuild(), "avatar.title"), user.getAvatarUrl());
-		builder.addField(translate(event.getGuild(), "avatar.link"), user.getAvatarUrl(), true);
-		builder.setImage(user.getAvatarUrl());
-		Actions.sendEmbed(event.getChannel(), builder.build());
-		return CommandResult.SUCCESS;
+		
+		var guild = event.getGuild();
+		var author = event.getAuthor();
+		
+		var target = getFirstUserMentioned(event).orElseThrow();
+		
+		var embed = new EmbedBuilder().setAuthor(author.getName(), null, author.getAvatarUrl())
+				.setColor(GREEN)
+				.setTitle(translate(guild, "avatar.title"))
+				.addField(translate(guild, "avatar.link"), target.getAvatarUrl(), true)
+				.setImage(target.getAvatarUrl())
+				.build();
+		event.getChannel().sendMessage(embed).submit();
+		return SUCCESS;
 	}
 	
 	@NonNull

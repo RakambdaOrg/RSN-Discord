@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 public interface ICompositeConfiguration{
 	default void cleanFields(Guild guild, String fieldName) throws Exception{
-		for(final var field : this.getClass().getDeclaredFields()){
-			final var fieldValue = FieldUtils.readField(field, this, true);
+		for(var field : this.getClass().getDeclaredFields()){
+			var fieldValue = FieldUtils.readField(field, this, true);
 			if(cleanObject(guild, fieldValue, fieldName + "." + field.getName())){
 				Log.getLogger(guild).debug("Setting field {}.{} to null", fieldName, field);
 				field.set(this, null);
@@ -31,8 +31,10 @@ public interface ICompositeConfiguration{
 		}
 		else if(fieldValue instanceof Collection){
 			try{
-				final var collection = (Collection<?>) fieldValue;
-				final var toRemove = List.copyOf(collection).stream().filter(this::atomicShouldBeRemoved).collect(Collectors.toList());
+				var collection = (Collection<?>) fieldValue;
+				var toRemove = List.copyOf(collection).stream()
+						.filter(this::atomicShouldBeRemoved)
+						.collect(Collectors.toList());
 				if(!toRemove.isEmpty()){
 					Log.getLogger(guild).debug("Removing values {} from collection {}", toRemove, fieldName);
 				}
@@ -52,8 +54,13 @@ public interface ICompositeConfiguration{
 			return false;
 		}
 		else if(fieldValue instanceof Map){
-			final var map = (Map<?, ?>) fieldValue;
-			final var toRemove = new HashMap<>(map).entrySet().stream().filter(entry -> Objects.isNull(entry.getValue()) || atomicShouldBeRemoved(entry.getKey()) || atomicShouldBeRemoved(entry.getValue())).map(Map.Entry::getKey).collect(Collectors.toSet());
+			var map = (Map<?, ?>) fieldValue;
+			var toRemove = new HashMap<>(map).entrySet().stream()
+					.filter(entry -> Objects.isNull(entry.getValue())
+							|| atomicShouldBeRemoved(entry.getKey())
+							|| atomicShouldBeRemoved(entry.getValue()))
+					.map(Map.Entry::getKey)
+					.collect(Collectors.toSet());
 			if(!toRemove.isEmpty()){
 				Log.getLogger(guild).debug("Removing keys {} from map {}", toRemove, fieldName);
 			}

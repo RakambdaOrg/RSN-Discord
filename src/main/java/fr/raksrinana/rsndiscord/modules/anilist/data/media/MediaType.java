@@ -10,7 +10,8 @@ import lombok.NonNull;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 public enum MediaType{
-	ANIME(true, "Anime"), MANGA(false, "Manga");
+	ANIME(true, "Anime"),
+	MANGA(false, "Manga");
 	private final boolean shouldDisplay;
 	private final String display;
 	

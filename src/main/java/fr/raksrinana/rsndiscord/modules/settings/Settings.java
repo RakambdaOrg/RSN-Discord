@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
 
 public class Settings{
 	public static final String GENERAL_CONF_NAME = "general";
@@ -31,17 +33,16 @@ public class Settings{
 	
 	@NonNull
 	public static GuildConfiguration get(@NonNull final Guild guild){
-		return configurations.computeIfAbsent(guild.getIdLong(),
-				guildId -> loadGuildConfiguration(guild)
-						.orElseThrow(() -> new RuntimeException("Failed to load configuration for guild " + guild)));
+		return configurations.computeIfAbsent(guild.getIdLong(), guildId -> loadGuildConfiguration(guild)
+				.orElseThrow(() -> new RuntimeException("Failed to load configuration for guild " + guild)));
 	}
 	
 	@NonNull
 	private static Optional<GuildConfiguration> loadGuildConfiguration(@NonNull final Guild guild){
-		final var guildConfPath = getConfigPath(guild.getId());
+		var guildConfPath = getConfigPath(guild.getId());
 		if(guildConfPath.toFile().exists()){
-			try(final var fis = new FileInputStream(guildConfPath.toFile())){
-				return Optional.ofNullable(guildConfigurationReader.readValue(fis));
+			try(var fis = new FileInputStream(guildConfPath.toFile())){
+				return ofNullable(guildConfigurationReader.readValue(fis));
 			}
 			catch(final IOException e){
 				Log.getLogger(guild).error("Failed to read settings in {}", guildConfPath, e);
@@ -58,13 +59,13 @@ public class Settings{
 	
 	public static void save(){
 		configurations.forEach(Settings::saveGuildConfiguration);
-		if(Objects.nonNull(generalConfiguration)){
+		if(nonNull(generalConfiguration)){
 			saveGeneralConfiguration(generalConfiguration);
 		}
 	}
 	
 	private static void saveGuildConfiguration(final long guildId, @NonNull final GuildConfiguration value){
-		final var guildConfPath = getConfigPath(Long.toString(guildId));
+		var guildConfPath = getConfigPath(Long.toString(guildId));
 		try{
 			Files.createDirectories(guildConfPath.getParent());
 			guildConfigurationWriter.writeValueAsString(value);
@@ -105,7 +106,7 @@ public class Settings{
 					Log.getLogger(guild).error("Failed to clean guild configuration", e);
 				}
 			});
-			if(Objects.nonNull(generalConfiguration)){
+			if(nonNull(generalConfiguration)){
 				try{
 					generalConfiguration.cleanFields(null, "[root]");
 				}
@@ -131,7 +132,7 @@ public class Settings{
 		final var generalConfPath = getConfigPath(GENERAL_CONF_NAME);
 		if(generalConfPath.toFile().exists()){
 			try(final var fis = new FileInputStream(generalConfPath.toFile())){
-				return Optional.ofNullable(generalConfigurationReader.readValue(fis));
+				return ofNullable(generalConfigurationReader.readValue(fis));
 			}
 			catch(final IOException e){
 				Log.getLogger(null).error("Failed to read settings in {}", generalConfPath, e);
@@ -142,8 +143,13 @@ public class Settings{
 	}
 	
 	static{
-		final var mapper = new ObjectMapper();
-		mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker().withFieldVisibility(JsonAutoDetect.Visibility.ANY).withGetterVisibility(JsonAutoDetect.Visibility.NONE).withSetterVisibility(JsonAutoDetect.Visibility.NONE).withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
+		var mapper = new ObjectMapper();
+		mapper.setVisibility(mapper.getSerializationConfig()
+				.getDefaultVisibilityChecker()
+				.withFieldVisibility(JsonAutoDetect.Visibility.ANY)
+				.withGetterVisibility(JsonAutoDetect.Visibility.NONE)
+				.withSetterVisibility(JsonAutoDetect.Visibility.NONE)
+				.withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
 		mapper.enable(SerializationFeature.INDENT_OUTPUT);
 		guildConfigurationReader = mapper.readerFor(GuildConfiguration.class);
 		guildConfigurationWriter = mapper.writerFor(GuildConfiguration.class);

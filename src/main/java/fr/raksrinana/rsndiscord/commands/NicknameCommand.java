@@ -7,15 +7,12 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
-import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
-import java.awt.Color;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,7 +20,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static fr.raksrinana.rsndiscord.utils.Utilities.durationToString;
+import static fr.raksrinana.rsndiscord.utils.Utilities.isModerator;
+import static java.awt.Color.*;
 
 @BotCommand
 public class NicknameCommand extends BasicCommand{
@@ -32,88 +34,106 @@ public class NicknameCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("user", translate(guild, "command.nickname.help.user"), false);
-		builder.addField("nickname", translate(guild, "command.nickname.help.nickname"), false);
+		builder.addField("user", translate(guild, "command.nickname.help.user"), false)
+				.addField("nickname", translate(guild, "command.nickname.help.nickname"), false);
 	}
+	
 	@NonNull
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		final var target = event.getMessage()
-				.getMentionedMembers()
-				.stream()
-				.findFirst()
+		
+		var guild = event.getGuild();
+		var channel = event.getChannel();
+		var author = event.getAuthor();
+		var target = getFirstMemberMentioned(event)
 				.map(member -> {
 					args.poll();
 					return member;
 				})
 				.orElse(event.getMember());
+		boolean bypass = isModerator(event.getMember());
 		
-		boolean isBypass = Utilities.isModerator(event.getMember());
-		final var oldNickname = target.getNickname();
-		final var newNickname = args.isEmpty() ? null : String.join(" ", args);
+		final var oldNickname = Optional.ofNullable(target.getNickname());
+		final var newNickname = args.isEmpty() ? Optional.<String> empty() : Optional.of(String.join(" ", args));
 		
-		final var builder = new EmbedBuilder();
-		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-		builder.addField(translate(event.getGuild(), "nickname.user"), target.getAsMention(), true);
-		builder.addField(translate(event.getGuild(), "nickname.old-nick"), Optional.ofNullable(oldNickname).orElseGet(() -> translate(event.getGuild(), "nickname.unknown")), true);
-		builder.addField(translate(event.getGuild(), "nickname.new-nick"), Optional.ofNullable(newNickname).orElseGet(() -> translate(event.getGuild(), "nickname.unknown")), true);
-		builder.setTimestamp(ZonedDateTime.now());
+		final var builder = new EmbedBuilder()
+				.setAuthor(author.getName(), null, author.getAvatarUrl())
+				.addField(translate(guild, "nickname.user"), target.getAsMention(), true)
+				.addField(translate(guild, "nickname.old-nick"), oldNickname.orElseGet(() -> translate(guild, "nickname.unknown")), true)
+				.addField(translate(guild, "nickname.new-nick"), newNickname.orElseGet(() -> translate(guild, "nickname.unknown")), true)
+				.setTimestamp(ZonedDateTime.now());
 		
-		if(!isBypass && !Objects.equals(target.getIdLong(), event.getAuthor().getIdLong())){
-			builder.setTitle(translate(event.getGuild(), "nickname.error.permission-other"));
-			builder.setColor(Color.RED);
-			Actions.sendEmbed(event.getChannel(), builder.build());
-			return CommandResult.SUCCESS;
+		if(!bypass && !Objects.equals(target.getIdLong(), author.getIdLong())){
+			builder.setTitle(translate(guild, "nickname.error.permission-other"))
+					.setColor(RED);
+			channel.sendMessage(builder.build()).submit()
+					.thenAccept(deleteMessage(date -> date.plusDays(1)));
+			return SUCCESS;
 		}
 		
-		final var nicknameConfiguration = Settings.get(event.getGuild()).getNicknameConfiguration();
-		final var lastChange = nicknameConfiguration.getLastChange(target.getUser());
-		final var delay = Duration.ofSeconds(nicknameConfiguration.getChangeDelay());
+		var nicknameConfiguration = Settings.get(guild).getNicknameConfiguration();
+		var lastChange = nicknameConfiguration.getLastChange(target.getUser());
+		var delay = Duration.ofSeconds(nicknameConfiguration.getChangeDelay());
 		
-		if(Objects.equals(newNickname, oldNickname)){
-			builder.setColor(Color.ORANGE);
-			builder.setTitle(translate(event.getGuild(), "nickname.no-changes"));
-			builder.addField(translate(event.getGuild(), "nickname.reason"), translate(event.getGuild(), "nickname.same-nickname"), false);
-			Actions.sendEmbed(event.getChannel(), builder.build());
-			return CommandResult.SUCCESS;
+		if(newNickname.equals(oldNickname)){
+			builder.setColor(ORANGE)
+					.setTitle(translate(guild, "nickname.no-changes"))
+					.addField(translate(guild, "nickname.reason"), translate(guild, "nickname.same-nickname"), false);
+			channel.sendMessage(builder.build()).submit()
+					.thenAccept(deleteMessage(date -> date.plusMinutes(10)));
+			return SUCCESS;
 		}
 		
-		if(Objects.nonNull(newNickname) && !isBypass && lastChange.map(date -> date.plus(delay)).map(date -> date.isAfter(ZonedDateTime.now())).orElse(false)){
-			builder.setColor(Color.RED);
-			builder.addField(translate(event.getGuild(), "nickname.reason"), translate(event.getGuild(), "nickname.cooldown", Utilities.durationToString(delay)), true);
-			builder.addField(translate(event.getGuild(), "nickname.last-change"), lastChange.map(date -> date.format(DF)).orElseGet(() -> translate(event.getGuild(), "nickname.unknown")), true);
-			builder.addField(translate(event.getGuild(), "nickname.next-allowed"), lastChange.map(date -> date.plus(delay)).map(date -> date.format(DF)).orElseGet(() -> translate(event.getGuild(), "nickname.unknown")), true);
-			Actions.sendEmbed(event.getChannel(), builder.build());
-			return CommandResult.SUCCESS;
+		var isDelayDone = lastChange.map(date -> date.plus(delay))
+				.map(date -> date.isAfter(ZonedDateTime.now()))
+				.orElse(false);
+		if(newNickname.isPresent() && !bypass && isDelayDone){
+			var lastChangeStr = lastChange.map(date -> date.format(DF))
+					.orElseGet(() -> translate(guild, "nickname.unknown"));
+			var nextChange = lastChange.map(date -> date.plus(delay))
+					.map(date -> date.format(DF))
+					.orElseGet(() -> translate(guild, "nickname.unknown"));
+			
+			builder.setColor(RED)
+					.addField(translate(guild, "nickname.reason"), translate(guild, "nickname.cooldown", durationToString(delay)), true)
+					.addField(translate(guild, "nickname.last-change"), lastChangeStr, true)
+					.addField(translate(guild, "nickname.next-allowed"), nextChange, true);
+			channel.sendMessage(builder.build()).submit()
+					.thenAccept(deleteMessage(date -> date.plusMinutes(10)));
+			return SUCCESS;
 		}
 		
 		try{
-			Actions.changeNickname(target, newNickname)
+			target.modifyNickname(newNickname.orElse(null)).submit()
 					.thenAccept(empty -> {
-						builder.setColor(Color.GREEN);
-						nicknameConfiguration.setLastChange(target.getUser(), ZonedDateTime.now());
-						nicknameConfiguration.getLastChange(target.getUser())
-								.map(d -> d.plus(delay))
-								.filter(d -> d.isAfter(ZonedDateTime.now()))
-								.ifPresent(d -> builder.addField(translate(event.getGuild(), "nickname.next-allowed"), d.format(DF), false));
-						Actions.sendEmbed(event.getChannel(), builder.build());
-						Log.getLogger(event.getGuild()).info("{} renamed {} from `{}` to `{}`", event.getAuthor(), target.getUser(), oldNickname, newNickname);
+						Log.getLogger(guild).info("{} renamed {} from `{}` to `{}`", author, target.getUser(), oldNickname, newNickname);
+						
+						var newLastChange = ZonedDateTime.now();
+						nicknameConfiguration.setLastChange(target.getUser(), newLastChange);
+						
+						builder.setColor(GREEN)
+								.addField(translate(guild, "nickname.next-allowed"), newLastChange.plus(delay).format(DF), false);
+						
+						channel.sendMessage(builder.build()).submit();
 					})
-					.exceptionally(e -> {
-						builder.setColor(Color.RED);
-						builder.setTitle(translate(event.getGuild(), "nickname.invalid"));
-						builder.addField(translate(event.getGuild(), "nickname.reason"), e instanceof ErrorResponseException ? ((ErrorResponseException) e).getMeaning() : e.getMessage(), false);
-						Actions.sendEmbed(event.getChannel(), builder.build());
+					.exceptionally(error -> {
+						var errorMessage = error instanceof ErrorResponseException ? ((ErrorResponseException) error).getMeaning() : error.getMessage();
+						builder.setColor(RED)
+								.setTitle(translate(guild, "nickname.invalid"))
+								.addField(translate(guild, "nickname.reason"), errorMessage, false);
+						channel.sendMessage(builder.build()).submit()
+								.thenAccept(deleteMessage(date -> date.plusMinutes(10)));
 						return null;
 					});
 		}
 		catch(final HierarchyException e){
-			builder.setColor(Color.RED);
-			builder.addField(translate(event.getGuild(), "nickname.reason"), translate(event.getGuild(), "nickname.target-error"), false);
-			Actions.sendEmbed(event.getChannel(), builder.build());
+			builder.setColor(RED)
+					.addField(translate(guild, "nickname.reason"), translate(guild, "nickname.target-error"), false);
+			channel.sendMessage(builder.build()).submit()
+					.thenAccept(deleteMessage(date -> date.plusMinutes(10)));
 		}
-		return CommandResult.SUCCESS;
+		return SUCCESS;
 	}
 	
 	@Override

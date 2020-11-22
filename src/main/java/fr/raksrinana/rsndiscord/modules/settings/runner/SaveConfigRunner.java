@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import java.util.concurrent.TimeUnit;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 @ScheduledRunner
 public class SaveConfigRunner implements IScheduledRunner{
@@ -25,7 +26,7 @@ public class SaveConfigRunner implements IScheduledRunner{
 	@NonNull
 	@Override
 	public TimeUnit getPeriodUnit(){
-		return TimeUnit.MINUTES;
+		return MINUTES;
 	}
 	
 	@Override

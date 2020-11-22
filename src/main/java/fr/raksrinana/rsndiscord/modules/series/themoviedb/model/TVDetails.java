@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -109,6 +110,6 @@ public class TVDetails implements MediaDetails{
 	
 	@Override
 	public Optional<URL> getPosterURL(){
-		return Optional.ofNullable(getPosterPath()).map(path -> TMDBUtils.getImageURL(path, "original"));
+		return ofNullable(getPosterPath()).map(path -> TMDBUtils.getImageURL(path, "original"));
 	}
 }

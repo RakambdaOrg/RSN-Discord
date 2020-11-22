@@ -5,7 +5,9 @@ import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import lombok.NonNull;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 import java.nio.ByteBuffer;
-import java.util.Objects;
+import static java.nio.ByteBuffer.wrap;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 class AudioPlayerSendHandler implements AudioSendHandler{
 	private static final int DEFAULT_VOLUME = 75;
@@ -22,22 +24,22 @@ class AudioPlayerSendHandler implements AudioSendHandler{
 	
 	@Override
 	public boolean canProvide(){
-		if(Objects.isNull(this.lastFrame)){
+		if(isNull(this.lastFrame)){
 			this.lastFrame = this.audioPlayer.provide();
 		}
-		return Objects.nonNull(this.lastFrame);
+		return nonNull(this.lastFrame);
 	}
 	
 	@Override
 	public ByteBuffer provide20MsAudio(){
-		if(Objects.isNull(this.lastFrame)){
+		if(isNull(this.lastFrame)){
 			this.lastFrame = this.audioPlayer.provide();
 		}
-		if(Objects.nonNull(this.lastFrame)){
+		if(nonNull(this.lastFrame)){
 			final var data = this.lastFrame.getData();
 			this.lastFrame = null;
-			if(Objects.nonNull(data)){
-				return ByteBuffer.wrap(data);
+			if(nonNull(data)){
+				return wrap(data);
 			}
 		}
 		return null;

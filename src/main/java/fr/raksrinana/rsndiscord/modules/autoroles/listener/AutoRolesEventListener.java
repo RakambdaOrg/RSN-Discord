@@ -3,59 +3,73 @@ package fr.raksrinana.rsndiscord.modules.autoroles.listener;
 import fr.raksrinana.rsndiscord.listeners.EventListener;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.autoroles.config.LeaverRoles;
+import fr.raksrinana.rsndiscord.modules.schedule.config.UnbanScheduleConfiguration;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.RoleConfiguration;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.Optional;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.addSchedule;
+import static java.util.Optional.ofNullable;
 
 @EventListener
 public class AutoRolesEventListener extends ListenerAdapter{
 	@Override
-	public void onGuildMemberJoin(@NonNull final GuildMemberJoinEvent event){
-		super.onGuildMemberJoin(event);
-		try{
-			Settings.get(event.getGuild()).getAutoRoles().stream()
-					.flatMap(roleConfiguration -> roleConfiguration.getRole().stream())
-					.forEach(role -> Actions.giveRole(event.getMember(), role));
-			
-			var leavingRolesConfiguration = Settings.get(event.getGuild()).getLeavingRolesConfiguration();
-			leavingRolesConfiguration.getLeaver(event.getUser()).ifPresent(leaverRoles -> {
-				leaverRoles.getRoles().stream()
-						.map(RoleConfiguration::getRole)
-						.map(Optional::get)
-						.forEach(role -> Actions.giveRole(event.getMember(), role));
-				leavingRolesConfiguration.removeUser(event.getUser());
-			});
-		}
-		catch(final Exception e){
-			Log.getLogger(event.getGuild()).error("Error on user join", e);
-		}
-	}
-	
-	@Override
 	public void onGuildMemberRemove(@NonNull GuildMemberRemoveEvent event){
 		super.onGuildMemberRemove(event);
-		Optional.ofNullable(event.getMember()).ifPresent(member -> {
-			var leavingRolesConfiguration = Settings.get(event.getGuild()).getLeavingRolesConfiguration();
-			leavingRolesConfiguration.addLeaver(new LeaverRoles(event.getUser(), member.getRoles()));
+		
+		var guild = event.getGuild();
+		var user = event.getUser();
+		ofNullable(event.getMember()).ifPresent(member -> {
+			var leavingRolesConfiguration = Settings.get(guild).getLeavingRolesConfiguration();
+			leavingRolesConfiguration.addLeaver(new LeaverRoles(user, member.getRoles()));
 			
-			Settings.get(event.getGuild())
-					.getLeaveServerBanDuration()
-					.ifPresent(banDuration -> event.getGuild()
-							.retrieveBan(member.getUser())
-							.submit()
+			Settings.get(guild).getLeaveServerBanDuration()
+					.ifPresent(banDuration -> guild.retrieveBan(user).submit()
 							.thenApply(ban -> true)
 							.exceptionally(exception -> false)
 							.thenAccept(isBanned -> {
 								if(!isBanned){
-									Actions.softBan(event.getGuild().getDefaultChannel(), event.getJDA().getSelfUser(), member, "Left server", Duration.ofHours(1));
+									var unbanScheduleConfiguration = new UnbanScheduleConfiguration(event.getJDA().getSelfUser(),
+											guild.getDefaultChannel(),
+											ZonedDateTime.now().plus(banDuration),
+											"Banned for: " + "Left server",
+											member.getId());
+									addSchedule(guild, unbanScheduleConfiguration);
+									
+									member.ban(0, "Left server").submit();
 								}
 							}));
 		});
+	}
+	
+	@Override
+	public void onGuildMemberJoin(@NonNull final GuildMemberJoinEvent event){
+		super.onGuildMemberJoin(event);
+		
+		var guild = event.getGuild();
+		try{
+			var member = event.getMember();
+			var user = event.getUser();
+			
+			Settings.get(guild).getAutoRoles().stream()
+					.flatMap(roleConfiguration -> roleConfiguration.getRole().stream())
+					.forEach(role -> guild.addRoleToMember(member, role).submit());
+			
+			var leavingRolesConfiguration = Settings.get(guild).getLeavingRolesConfiguration();
+			leavingRolesConfiguration.getLeaver(user).ifPresent(leaverRoles -> {
+				leaverRoles.getRoles().stream()
+						.map(RoleConfiguration::getRole)
+						.flatMap(Optional::stream)
+						.forEach(role -> guild.addRoleToMember(member, role).submit());
+				leavingRolesConfiguration.removeUser(user);
+			});
+		}
+		catch(final Exception e){
+			Log.getLogger(guild).error("Error on user join", e);
+		}
 	}
 }

@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.entities.User;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.*;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -41,7 +42,7 @@ public class TrombinoscopeConfiguration implements ICompositeConfiguration{
 	
 	@NonNull
 	public Optional<Set<Picture>> getPictures(long userId){
-		return Optional.ofNullable(pictures.get(userId));
+		return ofNullable(pictures.get(userId));
 	}
 	
 	@NonNull
@@ -70,11 +71,11 @@ public class TrombinoscopeConfiguration implements ICompositeConfiguration{
 	
 	@NonNull
 	public Optional<ChannelConfiguration> getPicturesChannel(){
-		return Optional.ofNullable(this.picturesChannel);
+		return ofNullable(this.picturesChannel);
 	}
 	
 	@NonNull
 	public Optional<RoleConfiguration> getPosterRole(){
-		return Optional.ofNullable(this.posterRole);
+		return ofNullable(this.posterRole);
 	}
 }

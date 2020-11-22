@@ -13,10 +13,10 @@ public class Log{
 	private static final Logger NO_GUILD = LoggerFactory.getLogger("No Guild");
 	
 	@NonNull
-	public static Logger getLogger(final Guild g){
-		if(Objects.isNull(g)){
+	public static Logger getLogger(final Guild guild){
+		if(Objects.isNull(guild)){
 			return NO_GUILD;
 		}
-		return LOGGERS.computeIfAbsent(g, g2 -> LoggerFactory.getLogger(g2.getName()));
+		return LOGGERS.computeIfAbsent(guild, key -> LoggerFactory.getLogger(key.getName()));
 	}
 }

@@ -2,8 +2,8 @@ package fr.raksrinana.rsndiscord.modules.anilist.data.notifications;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fr.raksrinana.rsndiscord.modules.anilist.data.IAniListDatedObject;
 import fr.raksrinana.rsndiscord.modules.anilist.data.IAniListObject;
-import fr.raksrinana.rsndiscord.modules.anilist.data.IAnilistDatedObject;
 import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
 import lombok.Getter;
 import lombok.NonNull;
@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
 		@JsonSubTypes.Type(value = RelatedMediaNotification.class, name = "RELATED_MEDIA_ADDITION")
 })
 @Getter
-public abstract class INotification implements IAnilistDatedObject{
+public abstract class INotification implements IAniListDatedObject{
 	private final NotificationType type;
 	@JsonProperty("createdAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
@@ -29,8 +29,8 @@ public abstract class INotification implements IAnilistDatedObject{
 	
 	@Override
 	public int compareTo(@NonNull IAniListObject o){
-		if(o instanceof IAnilistDatedObject){
-			return this.getDate().compareTo(((IAnilistDatedObject) o).getDate());
+		if(o instanceof IAniListDatedObject){
+			return this.getDate().compareTo(((IAniListDatedObject) o).getDate());
 		}
 		return Integer.compare(this.getId(), o.getId());
 	}
@@ -42,6 +42,10 @@ public abstract class INotification implements IAnilistDatedObject{
 	}
 	
 	public static String getQuery(){
-		return "notifications(type_in: $type_in){\n" + "... on " + AiringNotification.getQUERY() + "\n" + "... on " + RelatedMediaNotification.getQUERY() + "\n" + "}\n";
+		return """
+				notifications(type_in: $type_in){
+					... on %s
+					... on %s
+				}""".formatted(AiringNotification.getQUERY(), RelatedMediaNotification.getQUERY());
 	}
 }

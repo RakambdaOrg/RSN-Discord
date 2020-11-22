@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord;
 
-import fr.raksrinana.rsndiscord.listeners.CommandsEventListener;
 import fr.raksrinana.rsndiscord.listeners.EventListener;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.irc.config.TwitchConfiguration;
@@ -14,7 +13,6 @@ import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.reply.UserReplyEventListener;
 import fr.raksrinana.rsndiscord.runner.RunnerUtils;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.utils.http.JacksonObjectMapper;
 import kong.unirest.Unirest;
@@ -22,7 +20,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -38,7 +35,9 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import static fr.raksrinana.rsndiscord.listeners.CommandsEventListener.DEFAULT_PREFIX;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static net.dv8tion.jda.api.OnlineStatus.ONLINE;
 
 public class Main{
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
@@ -68,14 +67,14 @@ public class Main{
 		consoleHandler = new ConsoleHandler();
 		try{
 			Log.getLogger(null).info("Building JDA");
-			final var jdaBuilder = JDABuilder.createDefault(System.getProperty("RSN_TOKEN"))
+			var jdaBuilder = JDABuilder.createDefault(System.getProperty("RSN_TOKEN"))
 					.enableIntents(GatewayIntent.GUILD_MEMBERS)
-					.setMemberCachePolicy(MemberCachePolicy.ALL);
+					.setMemberCachePolicy(MemberCachePolicy.ALL)
+					.setAutoReconnect(true);
 			registerAllEventListeners(jdaBuilder);
-			jdaBuilder.setAutoReconnect(true);
 			jda = jdaBuilder.build();
 			jda.awaitReady();
-			jda.getPresence().setPresence(OnlineStatus.ONLINE, Activity.of(Activity.ActivityType.DEFAULT, CommandsEventListener.defaultPrefix + "help for the help"));
+			jda.getPresence().setPresence(ONLINE, Activity.of(Activity.ActivityType.DEFAULT, DEFAULT_PREFIX + "help for the help"));
 			Log.getLogger(null).info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
 			Log.getLogger(null).info("Adding handlers");
 			ReactionUtils.registerAllHandlers();
@@ -114,7 +113,7 @@ public class Main{
 			Log.getLogger(null).warn("Developer mode activated, shouldn't be used in production!");
 		}
 		
-		final var parameters = new CLIParameters();
+		var parameters = new CLIParameters();
 		var cli = new CommandLine(parameters);
 		cli.registerConverter(Path.class, Paths::get);
 		cli.setUnmatchedArgumentsAllowed(true);
@@ -128,7 +127,7 @@ public class Main{
 		}
 		
 		final var prop = new Properties();
-		try(final var is = Files.newInputStream(parameters.getConfigurationFile())){
+		try(var is = Files.newInputStream(parameters.getConfigurationFile())){
 			prop.load(is);
 		}
 		catch(final IOException e){
@@ -151,7 +150,7 @@ public class Main{
 				.flatMap(Optional::stream)
 				.map(ChannelConfiguration::getChannel)
 				.flatMap(Optional::stream)
-				.forEach(channel -> Actions.sendMessage(channel, translate(channel.getGuild(), "started"), null));
+				.forEach(channel -> channel.sendMessage(translate(channel.getGuild(), "started")).submit());
 	}
 	
 	/**
@@ -203,7 +202,8 @@ public class Main{
 		consoleHandler.close();
 		Settings.close();
 		Main.getJda().shutdown();
-		final var client = Main.getJda().getHttpClient();
+		
+		var client = Main.getJda().getHttpClient();
 		client.connectionPool().evictAll();
 		client.dispatcher().executorService().shutdown();
 	}

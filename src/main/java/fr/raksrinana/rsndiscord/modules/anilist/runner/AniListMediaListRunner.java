@@ -5,28 +5,26 @@ import fr.raksrinana.rsndiscord.modules.anilist.config.AniListConfiguration;
 import fr.raksrinana.rsndiscord.modules.anilist.data.list.MediaList;
 import fr.raksrinana.rsndiscord.modules.anilist.data.media.IMedia;
 import fr.raksrinana.rsndiscord.modules.anilist.query.MediaListPagedQuery;
-import fr.raksrinana.rsndiscord.modules.reaction.ReactionTag;
-import fr.raksrinana.rsndiscord.modules.reaction.ReactionUtils;
 import fr.raksrinana.rsndiscord.modules.reaction.config.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.modules.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.modules.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
-import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.BasicEmotes;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.requests.RestAction;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.modules.reaction.ReactionTag.ANILIST_TODO;
+import static fr.raksrinana.rsndiscord.modules.reaction.ReactionUtils.DELETE_KEY;
+import static fr.raksrinana.rsndiscord.utils.BasicEmotes.CHECK_OK;
+import static java.util.Optional.ofNullable;
+import static java.util.concurrent.TimeUnit.HOURS;
+import static java.util.stream.Collectors.toList;
 
 @ScheduledRunner
 public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaListPagedQuery>{
@@ -40,13 +38,11 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 	
 	@Override
 	public Set<TextChannel> getChannels(){
-		return this.getJda().getGuilds().stream()
-				.map(g -> Settings.get(g).getAniListConfiguration()
+		return getJda().getGuilds().stream()
+				.flatMap(g -> Settings.get(g).getAniListConfiguration()
 						.getMediaChangeChannel()
-						.map(ChannelConfiguration::getChannel)
-						.filter(Optional::isPresent)
-						.map(Optional::get)
-						.orElse(null))
+						.flatMap(ChannelConfiguration::getChannel)
+						.stream())
 				.filter(Objects::nonNull)
 				.collect(Collectors.toSet());
 	}
@@ -54,7 +50,7 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 	@Override
 	public void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<MediaList>> userElements){
 		IAniListRunner.super.sendMessages(channels, userElements);
-		final var thaChannels = this.getJda().getGuilds().stream()
+		var thaChannels = getJda().getGuilds().stream()
 				.map(Settings::get)
 				.map(GuildConfiguration::getAniListConfiguration)
 				.map(AniListConfiguration::getThaChannel)
@@ -62,13 +58,13 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 				.map(ChannelConfiguration::getChannel)
 				.flatMap(Optional::stream)
 				.collect(Collectors.toSet());
-		final var mediaListsToSend = userElements.values().stream().flatMap(Set::stream)
+		var mediaListsToSend = userElements.values().stream().flatMap(Set::stream)
 				.filter(mediaList -> mediaList.getCustomLists()
 						.entrySet().stream()
 						.filter(Map.Entry::getValue)
 						.map(Map.Entry::getKey)
 						.anyMatch(acceptedThaLists::contains))
-				.collect(Collectors.toList());
+				.collect(toList());
 		thaChannels.forEach(channelToSend -> Settings.get(channelToSend.getGuild())
 				.getAniListConfiguration()
 				.getThaUser()
@@ -77,35 +73,49 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 				.map(RestAction::complete)
 				.ifPresent(memberToSend -> mediaListsToSend.stream()
 						.sorted()
-						.forEach(mediaListToSend -> {
-							final var similarWaitingReactions = getSimilarWaitingReactions(channelToSend, mediaListToSend.getMedia());
-							Actions.sendMessage(channelToSend, memberToSend.getAsMention(), this.buildMessage(channelToSend.getGuild(), memberToSend.getUser(), mediaListToSend))
-									.thenAccept(sentMessage -> {
-										Actions.addReaction(sentMessage, BasicEmotes.CHECK_OK.getValue());
-										similarWaitingReactions.forEach(reaction -> Utilities.getMessageById(channelToSend, reaction.getMessage().getMessageId())
-												.thenAccept(message -> {
-													Actions.deleteMessage(message);
-													Settings.get(channelToSend.getGuild()).removeMessagesAwaitingReaction(reaction);
-												}));
-										Settings.get(channelToSend.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(sentMessage, ReactionTag.ANILIST_TODO, Map.of(ReactionUtils.DELETE_KEY, Boolean.toString(true))));
-									});
-						})));
+						.forEach(mediaListToSend -> sendMediaList(channelToSend, memberToSend, mediaListToSend))));
+	}
+	
+	private void sendMediaList(TextChannel channel, Member member, MediaList mediaList){
+		
+		channel.sendMessage(member.getAsMention()).embed(buildMessage(channel.getGuild(), member.getUser(), mediaList)).submit()
+				.thenAccept(message -> {
+					message.addReaction(CHECK_OK.getValue()).submit();
+					
+					deleteSimilarPendingMedia(channel, mediaList);
+					
+					var reactionMessageConfiguration = new WaitingReactionMessageConfiguration(message, ANILIST_TODO,
+							Map.of(DELETE_KEY, Boolean.toString(true)));
+					Settings.get(channel.getGuild()).addMessagesAwaitingReaction(reactionMessageConfiguration);
+				});
+	}
+	
+	private void deleteSimilarPendingMedia(TextChannel channel, MediaList mediaList){
+		getSimilarWaitingReactions(channel, mediaList.getMedia())
+				.forEach(reaction -> channel.deleteMessageById(reaction.getMessage().getMessageId()).submit()
+						.thenAccept(empty -> Settings.get(channel.getGuild()).removeMessagesAwaitingReaction(reaction)));
 	}
 	
 	private static Collection<WaitingReactionMessageConfiguration> getSimilarWaitingReactions(@NonNull final TextChannel channel, @NonNull final IMedia media){
-		final var mediaIdStr = Integer.toString(media.getId());
-		return Settings.get(channel.getGuild()).getMessagesAwaitingReaction(ReactionTag.ANILIST_TODO).stream()
+		var mediaIdStr = Integer.toString(media.getId());
+		return Settings.get(channel.getGuild()).getMessagesAwaitingReaction(ANILIST_TODO).stream()
 				.filter(reaction -> {
 					if(Objects.equals(reaction.getMessage().getChannel().getChannelId(), channel.getIdLong())){
-						return reaction.getMessage().getMessage().map(message -> {
-							final var isSameMedia = message.getEmbeds().stream()
-									.anyMatch(embed -> Objects.equals(embed.getTitle(), "User list information")
-											&& (Objects.equals(Optional.ofNullable(embed.getFooter()).map(MessageEmbed.Footer::getText).orElse(null), mediaIdStr)));
-							return isSameMedia && Optional.ofNullable(reaction.getData().get(ReactionUtils.DELETE_KEY)).map(Boolean::parseBoolean).orElse(false);
-						}).orElse(false);
+						return reaction.getMessage().getMessage()
+								.map(message -> isSameMedia(mediaIdStr, reaction, message))
+								.orElse(false);
 					}
 					return false;
-				}).collect(Collectors.toList());
+				}).collect(toList());
+	}
+	
+	@NonNull
+	private static Boolean isSameMedia(String mediaId, WaitingReactionMessageConfiguration reaction, Message message){
+		var isDeleteMode = ofNullable(reaction.getData().get(DELETE_KEY)).map(Boolean::parseBoolean).orElse(false);
+		var isSameMedia = message.getEmbeds().stream()
+				.anyMatch(embed -> Objects.equals(embed.getTitle(), "User list information")
+						&& (Objects.equals(ofNullable(embed.getFooter()).map(MessageEmbed.Footer::getText).orElse(null), mediaId)));
+		return isSameMedia && isDeleteMode;
 	}
 	
 	@NonNull
@@ -139,7 +149,7 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 	@NonNull
 	@Override
 	public TimeUnit getPeriodUnit(){
-		return TimeUnit.HOURS;
+		return HOURS;
 	}
 	
 	@Override

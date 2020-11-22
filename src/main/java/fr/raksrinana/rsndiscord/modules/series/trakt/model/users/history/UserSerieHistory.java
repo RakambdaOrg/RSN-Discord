@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -31,11 +32,16 @@ public class UserSerieHistory extends UserHistory{
 	@Override
 	public void fillEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder, MediaDetails mediaDetails){
 		builder.setTitle(translate(guild, "trakt.watched.episode"), Optional.of(getUrl()).map(Object::toString).orElse(null));
-		Optional.ofNullable(mediaDetails).flatMap(details -> details.getPosterURL(getEpisode().getSeason()).or(details::getPosterURL)).ifPresent(posterUrl -> builder.setThumbnail(posterUrl.toString()));
-		this.getEpisode().fillEmbed(guild, builder, mediaDetails instanceof TVDetails ? (TVDetails) mediaDetails : null);
+		ofNullable(mediaDetails).flatMap(details -> details.getPosterURL(getEpisode().getSeason())
+				.or(details::getPosterURL))
+				.ifPresent(posterUrl -> builder.setThumbnail(posterUrl.toString()));
+		
+		getEpisode().fillEmbed(guild, builder, mediaDetails instanceof TVDetails ? (TVDetails) mediaDetails : null);
 		builder.addBlankField(false);
-		this.getShow().fillEmbed(guild, builder, mediaDetails instanceof TVDetails ? (TVDetails) mediaDetails : null);
+		
+		getShow().fillEmbed(guild, builder, mediaDetails instanceof TVDetails ? (TVDetails) mediaDetails : null);
 		builder.addBlankField(false);
+		
 		super.fillEmbed(guild, builder, mediaDetails);
 	}
 	

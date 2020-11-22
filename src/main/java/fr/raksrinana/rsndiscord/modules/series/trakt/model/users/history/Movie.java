@@ -72,12 +72,12 @@ public class Movie implements ITraktObject{
 	}
 	
 	public void fillEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder, MovieDetails movieDetails){
-		builder.addField(translate(guild, "trakt.title"), getTitle(), true);
-		builder.addField(translate(guild, "trakt.year"), Integer.toString(this.getYear()), true);
-		builder.addField(translate(guild, "trakt.status"), this.getStatus(), true);
-		builder.addField(translate(guild, "trakt.aired"), this.getReleased().format(DATE_FORMAT), true);
-		builder.addField(translate(guild, "trakt.genres"), String.join(", ", this.getGenres()), true);
-		builder.addField(translate(guild, "trakt.overview"), this.getOverview(), false);
+		builder.addField(translate(guild, "trakt.title"), getTitle(), true)
+				.addField(translate(guild, "trakt.year"), Integer.toString(getYear()), true)
+				.addField(translate(guild, "trakt.status"), getStatus(), true)
+				.addField(translate(guild, "trakt.aired"), getReleased().format(DATE_FORMAT), true)
+				.addField(translate(guild, "trakt.genres"), String.join(", ", getGenres()), true)
+				.addField(translate(guild, "trakt.overview"), getOverview(), false);
 	}
 	
 	@Override

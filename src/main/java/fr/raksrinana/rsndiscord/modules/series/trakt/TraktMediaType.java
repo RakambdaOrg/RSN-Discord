@@ -11,7 +11,13 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 public enum TraktMediaType{
-	MOVIES("movies"), SHOWS("shows"), SEASONS("seasons"), EPISODES("episodes"), EPISODE("episode"), MOVIE("movie"), UNKNOWN("unknown");
+	EPISODE("episode"),
+	EPISODES("episodes"),
+	MOVIE("movie"),
+	MOVIES("movies"),
+	SEASONS("seasons"),
+	SHOWS("shows"),
+	UNKNOWN("unknown");
 	private final String value;
 	
 	TraktMediaType(String value){

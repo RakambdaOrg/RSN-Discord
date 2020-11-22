@@ -34,7 +34,8 @@ import lombok.NonNull;
 import lombok.Setter;
 import java.time.Duration;
 import java.util.*;
-import java.util.stream.Collectors;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toSet;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -165,7 +166,7 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	public Collection<WaitingReactionMessageConfiguration> getMessagesAwaitingReaction(@NonNull ReactionTag tag){
 		return new HashSet<>(this.messagesAwaitingReaction).stream()
 				.filter(reaction -> Objects.equals(reaction.getTag(), tag))
-				.collect(Collectors.toSet());
+				.collect(toSet());
 	}
 	
 	public void removeSchedule(ScheduleConfiguration schedule){
@@ -176,49 +177,49 @@ public class GuildConfiguration implements ICompositeConfiguration{
 		this.schedules.add(schedule);
 	}
 	
-	public Optional<Duration> getLeaveServerBanDuration(){
-		return Optional.ofNullable(leaveServerBanDuration);
+	@NonNull
+	public Optional<ChannelConfiguration> getAnnounceStartChannel(){
+		return ofNullable(this.announceStartChannel);
+	}
+	
+	public Optional<CategoryConfiguration> getArchiveCategory(){
+		return ofNullable(archiveCategory);
+	}
+	
+	public Optional<ChannelConfiguration> getDiscordIncidentsChannel(){
+		return ofNullable(this.discordIncidentsChannel);
 	}
 	
 	public Optional<RoleConfiguration> getEventWinnerRole(){
-		return Optional.ofNullable(this.eventWinnerRole);
-	}
-	
-	public Optional<ChannelConfiguration> getLogChannel(){
-		return Optional.ofNullable(this.logChannel);
+		return ofNullable(this.eventWinnerRole);
 	}
 	
 	public Optional<ChannelConfiguration> getGeneralChannel(){
 		return Optional.of(generalChannel);
 	}
 	
-	@NonNull
-	public Optional<ChannelConfiguration> getAnnounceStartChannel(){
-		return Optional.ofNullable(this.announceStartChannel);
-	}
-	
-	public Optional<CategoryConfiguration> getArchiveCategory(){
-		return Optional.ofNullable(archiveCategory);
+	public Optional<Duration> getLeaveServerBanDuration(){
+		return ofNullable(leaveServerBanDuration);
 	}
 	
 	public Iterator<WaitingReactionMessageConfiguration> getMessagesAwaitingReaction(){
 		return this.messagesAwaitingReaction.iterator();
 	}
 	
+	public Optional<Locale> getLocale(){
+		return ofNullable(this.locale);
+	}
+	
+	public Optional<ChannelConfiguration> getLogChannel(){
+		return ofNullable(this.logChannel);
+	}
+	
 	@NonNull
 	public Optional<String> getPrefix(){
-		return Optional.ofNullable(this.prefix);
+		return ofNullable(this.prefix);
 	}
 	
 	public List<ScheduleConfiguration> getSchedules(){
 		return new LinkedList<>(this.schedules);
-	}
-	
-	public Optional<Locale> getLocale(){
-		return Optional.ofNullable(this.locale);
-	}
-	
-	public Optional<ChannelConfiguration> getDiscordIncidentsChannel(){
-		return Optional.ofNullable(this.discordIncidentsChannel);
 	}
 }

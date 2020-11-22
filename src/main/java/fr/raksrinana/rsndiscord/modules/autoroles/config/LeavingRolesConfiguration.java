@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.User;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -21,7 +22,7 @@ public class LeavingRolesConfiguration implements ICompositeConfiguration{
 	private final Map<Long, LeaverRoles> leavers = new HashMap<>();
 	
 	public Optional<LeaverRoles> getLeaver(@NonNull User user){
-		return Optional.ofNullable(leavers.get(user.getIdLong()));
+		return ofNullable(leavers.get(user.getIdLong()));
 	}
 	
 	public void removeUser(@NonNull User user){

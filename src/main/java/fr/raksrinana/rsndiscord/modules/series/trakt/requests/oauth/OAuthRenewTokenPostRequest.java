@@ -37,7 +37,7 @@ public class OAuthRenewTokenPostRequest implements ITraktPostRequest<AccessToken
 		data.put("client_secret", TraktUtils.getClientSecret());
 		data.put("grant_type", "refresh_token");
 		data.put("redirect_uri", "urn:ietf:wg:oauth:2.0:oob");
-		data.put("refresh_token", this.refreshToken);
+		data.put("refresh_token", refreshToken);
 		return data;
 	}
 }

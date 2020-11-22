@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord.reply;
 
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Message;
@@ -15,6 +14,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 	private static final int DEFAULT_DELAY = 30;
@@ -29,14 +29,6 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 	private final Object lock;
 	@Getter
 	private boolean handled;
-	
-	protected BasicWaitingUserReply(@NonNull final GenericGuildMessageEvent event, @NonNull final User author, final Message... infoMessages){
-		this(event, author, event.getChannel(), infoMessages);
-	}
-	
-	private BasicWaitingUserReply(@NonNull final GenericGuildMessageEvent event, @NonNull final User author, @NonNull final TextChannel waitChannel, final Message... infoMessages){
-		this(event, author, waitChannel, DEFAULT_DELAY, TimeUnit.SECONDS, infoMessages);
-	}
 	
 	protected BasicWaitingUserReply(@NonNull final GenericGuildMessageEvent event, @NonNull final User author, @NonNull final TextChannel waitChannel, final int delay, @NonNull final TimeUnit unit, final Message... infoMessages){
 		this.lock = new Object();
@@ -55,10 +47,6 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 		}, delay, unit);
 	}
 	
-	public void addMessage(@NonNull final Message message){
-		this.infoMessages.add(message);
-	}
-	
 	@Override
 	public void close() throws IOException{
 	}
@@ -69,7 +57,7 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 			if(!this.isHandled()){
 				this.handled = this.onExecute(event, args);
 				if(this.isHandled()){
-					this.infoMessages.forEach(Actions::deleteMessage);
+					this.infoMessages.forEach(message -> message.delete().submit());
 				}
 			}
 		}
@@ -82,7 +70,7 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 			if(!this.isHandled()){
 				this.handled = this.onExecute(event);
 				if(this.isHandled()){
-					this.infoMessages.forEach(Actions::deleteMessage);
+					this.infoMessages.forEach(message -> message.delete().submit());
 				}
 			}
 		}
@@ -93,23 +81,23 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 	
 	@Override
 	public boolean onExpire(){
-		Actions.sendMessage(this.getWaitChannel(), translate(getWaitChannel().getGuild(), "listeners.reply.expire", this.getUser().getAsMention()), null);
-		this.infoMessages.forEach(Actions::deleteMessage);
+		this.getWaitChannel().sendMessage(translate(getWaitChannel().getGuild(), "listeners.reply.expire", getUser().getAsMention())).submit();
+		this.infoMessages.forEach(message -> message.delete().submit());
 		return true;
 	}
 	
 	@Override
 	public boolean handleEvent(final GuildMessageReceivedEvent event){
-		return Objects.equals(this.getUser(), event.getAuthor()) && Objects.equals(this.getWaitChannel(), event.getChannel());
+		return Objects.equals(getUser(), event.getAuthor()) && Objects.equals(getWaitChannel(), event.getChannel());
 	}
 	
 	@Override
 	public boolean handleEvent(final GuildMessageReactionAddEvent event) throws InterruptedException, ExecutionException, TimeoutException{
 		return event.retrieveUser().submit()
-				.thenApply(user -> Objects.equals(this.getUser(), event.getUser())
-						&& Objects.equals(this.getWaitChannel(), event.getChannel())
-						&& Objects.equals(this.getEmoteMessageId(), event.getMessageIdLong()))
-				.get(30, TimeUnit.SECONDS);
+				.thenApply(user -> Objects.equals(getUser(), event.getUser())
+						&& Objects.equals(getWaitChannel(), event.getChannel())
+						&& Objects.equals(getEmoteMessageId(), event.getMessageIdLong()))
+				.get(30, SECONDS);
 	}
 	
 	@Override

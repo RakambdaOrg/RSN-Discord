@@ -7,13 +7,14 @@ import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.RoleConfiguration;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class WinnerCommand extends BasicCommand{
@@ -31,20 +32,21 @@ public class WinnerCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		if(event.getMessage().getMentionedMembers().isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+		if(noMemberIsMentioned(event)){
+			return BAD_ARGUMENTS;
 		}
-		Settings.get(event.getGuild()).getEventWinnerRole()
+		
+		var guild = event.getGuild();
+		var members = event.getMessage().getMentionedMembers();
+		
+		Settings.get(guild).getEventWinnerRole()
 				.flatMap(RoleConfiguration::getRole)
 				.ifPresent(winnerRole -> {
-					event.getGuild()
-							.findMembers(member -> member.getRoles().contains(winnerRole) && !event.getMessage().getMentionedMembers().contains(member))
-							.onSuccess(members -> members.forEach(member -> Actions.removeRole(member, winnerRole)));
-					event.getMessage()
-							.getMentionedMembers()
-							.forEach(member -> Actions.giveRole(member, winnerRole));
+					guild.findMembers(member -> member.getRoles().contains(winnerRole) && !members.contains(member))
+							.onSuccess(previousWinners -> previousWinners.forEach(member -> guild.removeRoleFromMember(member, winnerRole).submit()));
+					members.forEach(member -> guild.addRoleToMember(member, winnerRole).submit());
 				});
-		return CommandResult.SUCCESS;
+		return SUCCESS;
 	}
 	
 	@Override

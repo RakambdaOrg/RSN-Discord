@@ -1,12 +1,10 @@
 package fr.raksrinana.rsndiscord.modules.anilist;
 
-import fr.raksrinana.rsndiscord.listeners.CommandsEventListener;
 import fr.raksrinana.rsndiscord.log.Log;
+import fr.raksrinana.rsndiscord.modules.anilist.data.TokenRequest;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.general.anilist.AniListAccessTokenConfiguration;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
-import fr.raksrinana.utils.http.requestssenders.post.JSONPostRequestSender;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
 import lombok.Getter;
@@ -20,7 +18,10 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
+import static fr.raksrinana.rsndiscord.listeners.CommandsEventListener.DEFAULT_PREFIX;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 public class AniListUtils{
 	private static final String API_URL = "https://anilist.co/api/v2";
@@ -35,57 +36,64 @@ public class AniListUtils{
 	
 	public static void requestToken(@NonNull final Member member, @NonNull final String code) throws InvalidResponseException{
 		Log.getLogger(member.getGuild()).debug("Getting access token for {}", member);
-		final var accessToken = getAccessToken(member);
+		
+		var accessToken = getAccessToken(member);
 		if(accessToken.isPresent()){
 			return;
 		}
-		final var headers = new HashMap<String, String>();
+		var headers = new HashMap<String, String>();
 		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "application/json");
-		final var body = new JSONObject();
+		var body = new JSONObject();
 		body.put("grant_type", "authorization_code");
 		body.put("client_id", "" + APP_ID);
 		body.put("client_secret", System.getProperty("ANILIST_SECRET"));
 		body.put("redirect_uri", REDIRECT_URI);
 		body.put("code", code);
-		final var result = new JSONPostRequestSender(Unirest.post(API_URL + "/oauth/token").headers(headers).body(body)).getRequestHandler();
-		if(!result.getResult().isSuccess()){
-			throw new InvalidResponseException("Getting token failed HTTP code " + result.getStatus());
+		
+		var request = Unirest.post(API_URL + "/oauth/token").headers(headers).body(body).asObject(TokenRequest.class);
+		if(!request.isSuccess()){
+			throw new InvalidResponseException("Getting token failed HTTP code " + request.getStatus());
 		}
-		final var json = result.getRequestResult().getObject();
-		if(json.has("error") || !json.has("access_token") || !json.has("refresh_token")){
-			throw new IllegalArgumentException("Getting token failed with error: " + json.getString("error"));
+		var response = request.getBody();
+		if(nonNull(response.getError()) || isNull(response.getAccessToken()) || isNull(response.getRefreshToken())){
+			throw new IllegalArgumentException("Getting token failed with error: " + response.getError());
 		}
+		
 		var aniListGeneral = Settings.getGeneral().getAniList();
-		aniListGeneral.setRefreshToken(member.getUser().getIdLong(), json.getString("refresh_token"));
+		aniListGeneral.setRefreshToken(member.getUser().getIdLong(), response.getRefreshToken());
 		aniListGeneral.addAccessToken(new AniListAccessTokenConfiguration(member.getUser().getIdLong(),
-				ZonedDateTime.now().plusSeconds(json.getInt("expires_in")),
-				json.getString("access_token")));
+				ZonedDateTime.now().plusSeconds(response.getExpiresIn()),
+				response.getAccessToken()));
 	}
 	
 	@NonNull
 	private static Optional<AniListAccessTokenConfiguration> getAccessToken(@NonNull final Member member){
-		Log.getLogger(member.getGuild()).trace("Getting previous access token for {}", member);
-		final var accessToken = Settings.getGeneral()
+		var guild = member.getGuild();
+		Log.getLogger(guild).trace("Getting previous access token for {}", member);
+		
+		var accessToken = Settings.getGeneral()
 				.getAniList()
 				.getAccessToken(member.getUser().getIdLong());
 		if(accessToken.isPresent()){
-			Log.getLogger(member.getGuild()).trace("Found previous access token for {}", member);
+			Log.getLogger(guild).trace("Found previous access token for {}", member);
 			return accessToken;
 		}
-		Log.getLogger(member.getGuild()).debug("No access token found for {}", member);
+		Log.getLogger(guild).debug("No access token found for {}", member);
 		return Optional.empty();
 	}
 	
 	public static Optional<Integer> getUserId(@NonNull final Member member){
+		var user = member.getUser();
 		return Settings.getGeneral().getAniList()
-				.getUserId(member.getUser().getIdLong())
-				.map(Optional::of)
-				.orElseGet(() -> {
+				.getUserId(user.getIdLong())
+				.or(() -> {
 					try{
-						final var userInfos = AniListUtils.postQuery(member, USER_INFO_QUERY, new JSONObject());
-						final var userId = userInfos.getJSONObject("data").getJSONObject("Viewer").getInt("id");
-						Settings.getGeneral().getAniList().setUserId(member.getUser().getIdLong(), userId);
+						var userInfos = AniListUtils.postQuery(member, USER_INFO_QUERY, new JSONObject());
+						var userId = userInfos.getJSONObject("data")
+								.getJSONObject("Viewer")
+								.getInt("id");
+						Settings.getGeneral().getAniList().setUserId(user.getIdLong(), userId);
 						return Optional.of(userId);
 					}
 					catch(final Exception e){
@@ -97,10 +105,15 @@ public class AniListUtils{
 	
 	@NonNull
 	public static JSONObject postQuery(@NonNull final Member member, @NonNull final String query, @NonNull final JSONObject variables) throws Exception{
-		Log.getLogger(member.getGuild()).debug("Sending query to AniList for user {}", member.getUser());
-		final var token = AniListUtils.getAccessToken(member).orElseThrow(() -> {
-			Settings.getGeneral().getAniList().removeUser(member.getUser());
-			Actions.sendPrivateMessage(member.getGuild(), member.getUser(), translate(member.getGuild(), "anilist.token-expired", member.getGuild().getName(), Settings.get(member.getGuild()).getPrefix().orElse(CommandsEventListener.defaultPrefix)), null);
+		var guild = member.getGuild();
+		var user = member.getUser();
+		Log.getLogger(guild).debug("Sending query to AniList for user {}", user);
+		
+		var token = AniListUtils.getAccessToken(member).orElseThrow(() -> {
+			Settings.getGeneral().getAniList().removeUser(user);
+			var message = translate(guild, "anilist.token-expired", guild.getName(), Settings.get(guild).getPrefix().orElse(DEFAULT_PREFIX));
+			user.openPrivateChannel().submit()
+					.thenAccept(privateChannel -> privateChannel.sendMessage(message).submit());
 			return new IllegalStateException("No valid token found, please register again");
 		});
 		return postQuery(token, query, variables);
@@ -108,31 +121,34 @@ public class AniListUtils{
 	
 	@NonNull
 	private static JSONObject postQuery(@NonNull final AniListAccessTokenConfiguration token, @NonNull final String query, @NonNull final JSONObject variables) throws Exception{
-		final var headers = new HashMap<String, String>();
+		var headers = new HashMap<String, String>();
 		headers.put("Authorization", "Bearer " + token.getToken());
 		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "application/json");
-		final var body = new JSONObject();
+		var body = new JSONObject();
 		body.put("query", query);
 		body.put("variables", variables);
-		final var handler = new JSONPostRequestSender(Unirest.post("https://graphql.anilist.co").headers(headers).body(body)).getRequestHandler();
-		if(handler.getResult().isSuccess()){
-			return handler.getRequestResult().getObject();
+		
+		var request = Unirest.post("https://graphql.anilist.co").headers(headers).body(body).asJson();
+		if(request.isSuccess()){
+			return request.getBody().getObject();
 		}
-		if(Objects.equals(handler.getStatus(), HTTP_ERROR) || Objects.equals(handler.getStatus(), HTTP_TOO_MANY_REQUESTS)){
+		
+		var requestStatus = request.getStatus();
+		if(Objects.equals(requestStatus, HTTP_ERROR) || Objects.equals(requestStatus, HTTP_TOO_MANY_REQUESTS)){
 			try{
-				final var result = handler.getRequestResult().getObject();
+				var result = request.getBody().getObject();
 				if(result.has("errors")){
-					final var errors = result.getJSONArray("errors");
+					var errors = result.getJSONArray("errors");
 					if(!errors.isEmpty()){
-						throw new AnilistException(handler.getStatus(), errors.getJSONObject(0).getString("message"));
+						throw new AniListException(requestStatus, errors.getJSONObject(0).getString("message"));
 					}
 				}
 			}
 			catch(final Exception ignored){
 			}
 		}
-		throw new Exception("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString() + " | query was " + query);
+		throw new Exception("Error sending API request, HTTP code " + requestStatus + " => " + request.getBody() + " | query was " + query);
 	}
 	
 	public static ZonedDateTime getDefaultDate(){

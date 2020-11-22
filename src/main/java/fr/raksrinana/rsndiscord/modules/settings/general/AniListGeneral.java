@@ -14,7 +14,9 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.RestAction;
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
+import static java.util.Comparator.comparing;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toSet;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -33,7 +35,7 @@ public class AniListGeneral{
 	
 	@NonNull
 	public Optional<String> getRefreshToken(final long userId){
-		return Optional.ofNullable(this.refreshTokens.getOrDefault(userId, null));
+		return ofNullable(this.refreshTokens.getOrDefault(userId, null));
 	}
 	
 	public void setRefreshToken(final long userId, @NonNull final String refreshToken){
@@ -55,15 +57,15 @@ public class AniListGeneral{
 	
 	@NonNull
 	public Set<UserDateConfiguration> getLastAccess(@NonNull final String section){
-		return Optional.ofNullable(this.lastAccess.get(section)).orElse(Set.of());
+		return ofNullable(this.lastAccess.get(section)).orElse(Set.of());
 	}
 	
 	@NonNull
 	public Optional<AniListAccessTokenConfiguration> getAccessToken(final long userId){
-		final var now = ZonedDateTime.now();
+		var now = ZonedDateTime.now();
 		return this.tokens.stream().filter(t -> Objects.equals(t.getUserId(), userId))
 				.filter(t -> t.getExpireDate().isAfter(now))
-				.sorted(Comparator.comparing(AniListAccessTokenConfiguration::getExpireDate).reversed())
+				.sorted(comparing(AniListAccessTokenConfiguration::getExpireDate).reversed())
 				.findAny();
 	}
 	
@@ -72,7 +74,7 @@ public class AniListGeneral{
 	}
 	
 	public Optional<Integer> getUserId(final long userId){
-		return Optional.ofNullable(this.userIds.get(userId));
+		return ofNullable(this.userIds.get(userId));
 	}
 	
 	public void addAccessToken(@NonNull final AniListAccessTokenConfiguration value){
@@ -90,7 +92,7 @@ public class AniListGeneral{
 		return this.tokens.stream().map(token -> guild.retrieveMemberById(token.getUserId()))
 				.map(RestAction::complete)
 				.filter(Objects::nonNull)
-				.collect(Collectors.toSet());
+				.collect(toSet());
 	}
 	
 	public boolean isRegisteredOn(@NonNull Guild guild, @NonNull User user){

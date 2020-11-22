@@ -19,6 +19,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import java.time.LocalDate;
 import java.util.*;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -47,11 +48,11 @@ public class ParticipationConfiguration implements ICompositeConfiguration{
 	private Set<LocalDate> reportedDays = new HashSet<>();
 	
 	public Optional<ChatParticipation> getChatDay(LocalDate date){
-		return Optional.ofNullable(this.chatParticipation.get(date));
+		return ofNullable(this.chatParticipation.get(date));
 	}
 	
 	public Optional<VoiceParticipation> getVoiceDay(LocalDate date){
-		return Optional.ofNullable(this.voiceParticipation.get(date));
+		return ofNullable(this.voiceParticipation.get(date));
 	}
 	
 	public ChatParticipation getOrCreateChatDay(LocalDate date){
@@ -71,6 +72,6 @@ public class ParticipationConfiguration implements ICompositeConfiguration{
 	}
 	
 	public Optional<ChannelConfiguration> getReportChannel(){
-		return Optional.ofNullable(this.reportChannel);
+		return ofNullable(this.reportChannel);
 	}
 }

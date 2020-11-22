@@ -1,7 +1,10 @@
 package fr.raksrinana.rsndiscord.modules.reaction.handler;
 
 public enum ReactionHandlerResult{
-	PROCESSED(true), PROCESSED_DELETE(true), PASS(false), FAIL(true);
+	FAIL(true),
+	PASS(false),
+	PROCESSED(true),
+	PROCESSED_DELETE(true);
 	private final boolean terminal;
 	
 	ReactionHandlerResult(boolean terminal){this.terminal = terminal;}

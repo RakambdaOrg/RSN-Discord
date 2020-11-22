@@ -3,17 +3,17 @@ package fr.raksrinana.rsndiscord.modules.settings.command.helpers;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.modules.settings.ConfigurationOperation;
 import fr.raksrinana.rsndiscord.modules.settings.command.BaseConfigurationCommand;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.awt.Color;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.modules.settings.ConfigurationOperation.*;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.awt.Color.GREEN;
 
 public abstract class SetConfigurationCommand<T> extends BaseConfigurationCommand{
 	protected SetConfigurationCommand(final Command parent){
@@ -23,46 +23,55 @@ public abstract class SetConfigurationCommand<T> extends BaseConfigurationComman
 	@NonNull
 	@Override
 	protected Set<ConfigurationOperation> getAllowedOperations(){
-		return Set.of(ConfigurationOperation.ADD, ConfigurationOperation.REMOVE, ConfigurationOperation.SHOW);
+		return Set.of(ADD, REMOVE, SHOW);
 	}
 	
 	@Override
 	protected void onAdd(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+		var guild = event.getGuild();
+		var channel = event.getChannel();
+		
 		try{
-			final var value = this.extractValue(event, args);
-			this.getConfig(event.getGuild()).ifPresentOrElse(config -> config.add(value), () -> this.createConfig(event.getGuild(), value));
-			final var builder = this.getConfigEmbed(event, ConfigurationOperation.SET.name(), Color.GREEN);
-			builder.addField(translate(event.getGuild(), "command.config.helpers.value-added"), value.toString(), false);
-			Actions.sendEmbed(event.getChannel(), builder.build());
+			var value = this.extractValue(event, args);
+			this.getConfig(guild).ifPresentOrElse(config -> config.add(value), () -> this.createConfig(guild, value));
+			var embed = this.getConfigEmbed(event, SET.name(), GREEN)
+					.addField(translate(guild, "command.config.helpers.value-added"), value.toString(), false)
+					.build();
+			channel.sendMessage(embed).submit();
 		}
 		catch(final IllegalArgumentException e){
-			Actions.reply(event, e.getMessage(), null);
+			channel.sendMessage(e.getMessage()).submit();
 		}
 	}
 	
 	@Override
 	protected void onRemove(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+		var guild = event.getGuild();
+		var channel = event.getChannel();
+		
 		try{
-			final var value = this.extractValue(event, args);
-			this.removeConfig(event.getGuild(), value);
-			final var builder = this.getConfigEmbed(event, ConfigurationOperation.REMOVE.name(), Color.GREEN);
-			builder.addField(translate(event.getGuild(), "command.config.helpers.value-removed"), value.toString(), false);
-			Actions.sendEmbed(event.getChannel(), builder.build());
+			var value = this.extractValue(event, args);
+			this.removeConfig(guild, value);
+			var embed = this.getConfigEmbed(event, REMOVE.name(), GREEN)
+					.addField(translate(guild, "command.config.helpers.value-removed"), value.toString(), false)
+					.build();
+			channel.sendMessage(embed).submit();
 		}
 		catch(final IllegalArgumentException e){
-			Actions.reply(event, e.getMessage(), null);
+			channel.sendMessage(e.getMessage()).submit();
 		}
 	}
 	
 	@Override
 	protected void onShow(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
-		final var values = this.getConfig(event.getGuild()).stream()
+		var values = this.getConfig(event.getGuild()).stream()
 				.flatMap(Set::stream)
 				.map(Objects::toString)
 				.collect(Collectors.joining(", "));
-		final var builder = this.getConfigEmbed(event, ConfigurationOperation.SHOW.name(), Color.GREEN);
-		builder.addField(translate(event.getGuild(), "command.config.helpers.values"), values, false);
-		Actions.sendEmbed(event.getChannel(), builder.build());
+		var embed = this.getConfigEmbed(event, SHOW.name(), GREEN)
+				.addField(translate(event.getGuild(), "command.config.helpers.values"), values, false)
+				.build();
+		event.getChannel().sendMessage(embed).submit();
 	}
 	
 	protected abstract void removeConfig(@NonNull Guild guild, @NonNull T value);

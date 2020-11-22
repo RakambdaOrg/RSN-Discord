@@ -4,15 +4,13 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import java.io.IOException;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import static java.time.ZoneId.systemDefault;
+import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 
 public class ISO8601ZonedDateTimeDeserializer extends JsonDeserializer<ZonedDateTime>{
-	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
-	
 	@Override
 	public ZonedDateTime deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException{
-		return ZonedDateTime.parse(jsonParser.getValueAsString(), FORMATTER).withZoneSameInstant(ZoneId.systemDefault());
+		return ZonedDateTime.parse(jsonParser.getValueAsString(), ISO_DATE_TIME).withZoneSameInstant(systemDefault());
 	}
 }

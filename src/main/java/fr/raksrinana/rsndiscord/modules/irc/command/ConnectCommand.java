@@ -7,7 +7,6 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.irc.twitch.TwitchIRC;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -16,6 +15,9 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class ConnectCommand extends BasicCommand{
@@ -44,16 +46,17 @@ public class ConnectCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+			return BAD_ARGUMENTS;
 		}
 		try{
 			TwitchIRC.connect(event.getGuild(), args.pop());
 		}
 		catch(final NoSuchElementException | IOException e){
-			Actions.reply(event, translate(event.getGuild(), "twitch.not-configured"), null);
+			event.getChannel().sendMessage(translate(event.getGuild(), "twitch.not-configured")).submit()
+					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 			Log.getLogger(event.getGuild()).warn("Missing configuration for IRC", e);
 		}
-		return CommandResult.SUCCESS;
+		return SUCCESS;
 	}
 	
 	@NonNull

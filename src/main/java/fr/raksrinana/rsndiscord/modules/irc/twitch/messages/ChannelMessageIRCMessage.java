@@ -28,4 +28,8 @@ public class ChannelMessageIRCMessage implements IIRCMessage{
 				.map(IRCTag::getValue)
 				.findFirst();
 	}
+	
+	public Optional<IRCTag> getTag(String name){
+		return getTags().stream().filter(t -> Objects.equals(name, t.getKey())).findFirst();
+	}
 }

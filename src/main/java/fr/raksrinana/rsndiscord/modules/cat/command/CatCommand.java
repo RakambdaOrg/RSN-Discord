@@ -7,16 +7,16 @@ import fr.raksrinana.rsndiscord.modules.cat.TheCatApi;
 import fr.raksrinana.rsndiscord.modules.cat.data.Breed;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
-import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.awt.Color.GREEN;
 
 @BotCommand
 public class CatCommand extends BasicCommand{
@@ -29,15 +29,25 @@ public class CatCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
+		
+		var guild = event.getGuild();
+		var author = event.getAuthor();
+		var channel = event.getChannel();
+		
 		TheCatApi.getRandomCat().ifPresentOrElse(cat -> {
-			final var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, translate(event.getGuild(), "cat.title"), null);
+			var embed = new EmbedBuilder()
+					.setAuthor(author.getName(), null, author.getAvatarUrl())
+					.setColor(GREEN)
+					.setTitle(translate(guild, "cat.title"));
 			if(!cat.getBreeds().isEmpty()){
 				embed.setDescription(cat.getBreeds().stream().map(Breed::getName).collect(Collectors.joining(" ")));
 			}
-			embed.setImage(cat.getUrl().toString());
-			embed.setFooter(cat.getId());
-			Actions.sendEmbed(event.getChannel(), embed.build());
-		}, () -> Actions.reply(event, translate(event.getGuild(), "cat.error"), null));
+			embed.setImage(cat.getUrl().toString())
+					.setFooter(cat.getId());
+			
+			channel.sendMessage(embed.build()).submit();
+		}, () -> channel.sendMessage(translate(guild, "cat.error")).submit()
+				.thenAccept(deleteMessage(date -> date.plusMinutes(5))));
 		return CommandResult.SUCCESS;
 	}
 	

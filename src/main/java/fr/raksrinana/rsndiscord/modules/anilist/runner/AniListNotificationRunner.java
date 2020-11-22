@@ -5,7 +5,6 @@ import fr.raksrinana.rsndiscord.modules.anilist.query.NotificationsPagedQuery;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
@@ -14,7 +13,10 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import static java.util.Comparator.comparing;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @ScheduledRunner
 public class AniListNotificationRunner implements IAniListRunner<INotification, NotificationsPagedQuery>{
@@ -28,35 +30,36 @@ public class AniListNotificationRunner implements IAniListRunner<INotification, 
 	@Override
 	public Set<TextChannel> getChannels(){
 		return this.getJda().getGuilds().stream()
-				.map(g -> Settings.get(g).getAniListConfiguration()
+				.flatMap(g -> Settings.get(g).getAniListConfiguration()
 						.getNotificationsChannel()
 						.map(ChannelConfiguration::getChannel)
-						.filter(Optional::isPresent)
 						.map(Optional::get)
-						.orElse(null))
+						.stream())
 				.filter(Objects::nonNull)
-				.collect(Collectors.toSet());
+				.collect(toSet());
 	}
 	
 	@Override
 	public void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<INotification>> userElements){
-		final var notifications = new HashMap<INotification, List<User>>();
-		for(final var entry : userElements.entrySet()){
-			for(final var notification : entry.getValue()){
+		var notifications = new HashMap<INotification, List<User>>();
+		for(var entry : userElements.entrySet()){
+			for(var notification : entry.getValue()){
 				notifications.putIfAbsent(notification, new LinkedList<>());
 				notifications.get(notification).add(entry.getKey());
 			}
 		}
 		notifications.entrySet().stream()
-				.sorted(Comparator.comparing(e -> e.getKey().getDate()))
+				.sorted(comparing(e -> e.getKey().getDate()))
 				.forEachOrdered(e -> channels.forEach(channel -> {
-					final var mentions = e.getValue().stream()
-							.filter(u -> this.sendToChannel(channel, u))
+					var mentions = e.getValue().stream()
+							.filter(user -> this.shouldSendTo(channel, user))
 							.distinct()
 							.map(User::getAsMention)
-							.collect(Collectors.toList());
+							.collect(toList());
 					if(!mentions.isEmpty()){
-						Actions.sendMessage(channel, String.join("\n", mentions), this.buildMessage(channel.getGuild(), null, e.getKey()));
+						channel.sendMessage(String.join("\n", mentions))
+								.embed(this.buildMessage(channel.getGuild(), null, e.getKey()))
+								.submit();
 					}
 				}));
 	}
@@ -91,7 +94,7 @@ public class AniListNotificationRunner implements IAniListRunner<INotification, 
 	@NonNull
 	@Override
 	public TimeUnit getPeriodUnit(){
-		return TimeUnit.MINUTES;
+		return MINUTES;
 	}
 	
 	@NonNull

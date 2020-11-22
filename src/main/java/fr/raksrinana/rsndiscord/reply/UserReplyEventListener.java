@@ -2,7 +2,6 @@ package fr.raksrinana.rsndiscord.reply;
 
 import fr.raksrinana.rsndiscord.listeners.EventListener;
 import fr.raksrinana.rsndiscord.log.Log;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -18,6 +17,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.utils.Utilities.reportException;
 
 @EventListener
 public class UserReplyEventListener extends ListenerAdapter{
@@ -31,9 +31,9 @@ public class UserReplyEventListener extends ListenerAdapter{
 	
 	public static void stopAll(){
 		executor.shutdown();
-		replies.forEach(r -> {
+		replies.forEach(reply -> {
 			try{
-				r.close();
+				reply.close();
 			}
 			catch(final IOException e){
 				Log.getLogger(null).error("Failed to close reply handler", e);
@@ -63,7 +63,7 @@ public class UserReplyEventListener extends ListenerAdapter{
 					return reply.isHandled() || (reply.handleEvent(event) && reply.execute(event));
 				}
 				catch(InterruptedException | ExecutionException | TimeoutException e){
-					Utilities.reportException("Failed to handle reaction", e);
+					reportException("Failed to handle reaction", e);
 					Log.getLogger(event.getGuild()).error("Failed to handle reaction");
 				}
 				return false;

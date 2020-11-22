@@ -8,19 +8,20 @@ import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
-import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import java.net.URL;
 import java.time.ZonedDateTime;
-import java.util.Comparator;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.utils.Utilities.DATE_TIME_MINUTE_FORMATTER;
+import static java.util.Comparator.comparing;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.stream.Collectors.toList;
 
 @ScheduledRunner
 public class DiscordStatusRunner implements IScheduledRunner{
@@ -40,14 +41,16 @@ public class DiscordStatusRunner implements IScheduledRunner{
 						.filter(incident -> incident.getIncidentUpdates().stream()
 								.anyMatch(update -> update.getUpdatedAt().isAfter(lastData)))
 						.map(this::buildEmbed)
-						.collect(Collectors.toList());
+						.collect(toList());
+				
 				if(!embeds.isEmpty()){
-					this.jda.getGuilds().stream().map(Settings::get)
+					this.jda.getGuilds().stream()
+							.map(Settings::get)
 							.map(GuildConfiguration::getDiscordIncidentsChannel)
 							.flatMap(Optional::stream)
 							.map(ChannelConfiguration::getChannel)
 							.flatMap(Optional::stream)
-							.forEach(channel -> embeds.forEach(embed -> Actions.sendEmbed(channel, embed)));
+							.forEach(channel -> embeds.forEach(embed -> channel.sendMessage(embed).submit()));
 					
 					lastData = unresolvedIncidents.getIncidents().stream()
 							.map(Incident::getIncidentUpdates)
@@ -61,25 +64,29 @@ public class DiscordStatusRunner implements IScheduledRunner{
 	}
 	
 	private MessageEmbed buildEmbed(Incident incident){
-		var builder = Utilities.buildEmbed(this.jda.getSelfUser(),
-				incident.getImpact().getColor(),
-				"Discord incident",
-				Optional.ofNullable(incident.getShortLink())
-						.map(URL::toString)
-						.orElse(null));
-		builder.setDescription(incident.getName());
-		builder.setFooter(incident.getId());
-		builder.setTimestamp(incident.getUpdatedAt());
+		var selfUser = jda.getSelfUser();
+		var link = Optional.ofNullable(incident.getShortLink())
+				.map(URL::toString)
+				.orElse(null);
 		
-		builder.addField("Created at", incident.getCreatedAt().format(Utilities.DATE_TIME_MINUTE_FORMATTER), true);
-		builder.addField("Impact", incident.getImpact().name(), true);
+		var builder = new EmbedBuilder()
+				.setAuthor(selfUser.getName(), link, selfUser.getAvatarUrl())
+				.setColor(incident.getImpact().getColor())
+				.setTitle("Discord incident")
+				.setDescription(incident.getName())
+				.addField("Created at", incident.getCreatedAt().format(DATE_TIME_MINUTE_FORMATTER), true)
+				.addField("Impact", incident.getImpact().name(), true)
+				.setFooter(incident.getId())
+				.setTimestamp(incident.getUpdatedAt());
 		
 		var counter = new AtomicInteger(0);
 		incident.getIncidentUpdates().stream()
-				.sorted(Comparator.comparing(IncidentUpdate::getUpdatedAt))
-				.forEach(update -> builder.addField("Update #" + counter.incrementAndGet(),
-						update.getCreatedAt().format(Utilities.DATE_TIME_MINUTE_FORMATTER) + " [" + update.getStatus().name() + "] : " + update.getBody(),
-						false));
+				.sorted(comparing(IncidentUpdate::getUpdatedAt))
+				.forEach(update -> {
+					var title = "Update #" + counter.incrementAndGet();
+					var message = update.getCreatedAt().format(DATE_TIME_MINUTE_FORMATTER) + " [" + update.getStatus().name() + "] : " + update.getBody();
+					builder.addField(title, message, false);
+				});
 		
 		return builder.build();
 	}
@@ -103,6 +110,6 @@ public class DiscordStatusRunner implements IScheduledRunner{
 	@NonNull
 	@Override
 	public TimeUnit getPeriodUnit(){
-		return TimeUnit.MINUTES;
+		return MINUTES;
 	}
 }

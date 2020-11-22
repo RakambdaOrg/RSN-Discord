@@ -4,29 +4,28 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.series.themoviedb.requests.ITMDBGetRequest;
 import fr.raksrinana.rsndiscord.utils.RequestException;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import fr.raksrinana.utils.http.requestssenders.get.ObjectGetRequestSender;
 import lombok.NonNull;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+import static java.util.Objects.isNull;
 
 public class TMDBUtils{
 	public static final String API_URL = "https://api.themoviedb.org/3";
 	private static String accessToken;
 	
-	public static <T> T getQuery(@NonNull ITMDBGetRequest<T> request) throws RequestException{
-		final var handler = new ObjectGetRequestSender<>(request.getOutputType(), request.getRequest().headers(getHeaders())).getRequestHandler();
-		handler.getResult().getParsingError().ifPresent(error -> {
+	public static <T> T getQuery(@NonNull ITMDBGetRequest<T> tmdbGetRequest) throws RequestException{
+		final var request = tmdbGetRequest.getRequest().headers(getHeaders()).asObject(tmdbGetRequest.getOutputType());
+		request.getParsingError().ifPresent(error -> {
 			Utilities.reportException("Failed to parse TMDB response", error);
 			Log.getLogger(null).warn("Failed to parse TMDB response", error);
 		});
-		if(request.isValidResult(handler.getStatus())){
-			return handler.getRequestResult();
+		if(tmdbGetRequest.isValidResult(request.getStatus())){
+			return request.getBody();
 		}
-		throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString(), handler.getStatus());
+		throw new RequestException("Error sending API request, HTTP code " + request.getStatus() + " => " + request.getBody(), request.getStatus());
 	}
 	
 	private static Map<String, String> getHeaders(){
@@ -37,7 +36,7 @@ public class TMDBUtils{
 	}
 	
 	public static String getAccessToken(){
-		if(Objects.isNull(accessToken)){
+		if(isNull(accessToken)){
 			accessToken = System.getProperty("TMDB_ACCESS_TOKEN");
 		}
 		return accessToken;

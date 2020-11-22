@@ -9,19 +9,20 @@ import fr.raksrinana.rsndiscord.modules.music.reply.SkipMusicReply;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.reply.UserReplyEventListener;
-import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.BasicEmotes;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
+import static fr.raksrinana.rsndiscord.utils.BasicEmotes.CHECK_OK;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static fr.raksrinana.rsndiscord.utils.Utilities.isModerator;
+import static java.awt.Color.ORANGE;
+import static java.util.Optional.ofNullable;
 
 public class SkipMusicCommand extends BasicCommand{
 	/**
@@ -48,45 +49,58 @@ public class SkipMusicCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		
-		var track = RSNAudioManager.currentTrack(event.getGuild());
+		var guild = event.getGuild();
+		var author = event.getAuthor();
+		var channel = event.getChannel();
+		var track = RSNAudioManager.currentTrack(guild);
+		
 		if(track.isEmpty()){
-			Actions.reply(event, translate(event.getGuild(), "music.nothing-playing"), null);
-			return CommandResult.SUCCESS;
+			channel.sendMessage(translate(guild, "music.nothing-playing")).submit();
+			return SUCCESS;
 		}
 		
 		if(track.get().getDuration() - track.get().getPosition() < 30000){
-			Actions.reply(event, translate(event.getGuild(), "music.skip.soon-finish"), null);
-			return CommandResult.SUCCESS;
+			channel.sendMessage(translate(guild, "music.skip.soon-finish")).submit();
+			return SUCCESS;
 		}
 		
-		if(RSNAudioManager.isRequester(event.getGuild(), event.getAuthor()) || Utilities.isModerator(event.getMember())){
+		if(RSNAudioManager.isRequester(guild, author) || isModerator(event.getMember())){
 			skip(event);
-			return CommandResult.SUCCESS;
+			return SUCCESS;
 		}
 		
-		var requiredVote = Optional.ofNullable(event.getGuild().getAudioManager().getConnectedChannel())
+		var requiredVote = ofNullable(guild.getAudioManager().getConnectedChannel())
 				.map(voiceChannel -> voiceChannel.getMembers().size())
 				.map(count -> count - 1)
 				.map(count -> (int) Math.ceil(count / 2.0))
 				.orElse(1);
 		
-		Log.getLogger(event.getGuild()).info("Will start vote to skip music, will require {} votes", requiredVote);
+		Log.getLogger(guild).info("Will start vote to skip music, will require {} votes", requiredVote);
 		
-		var builder = Utilities.buildEmbed(event.getAuthor(), Color.ORANGE, translate(event.getGuild(), "music.skip.title"), null);
-		builder.addField(translate(event.getGuild(), "music.skip.votes-required"), "" + requiredVote, true);
-		Actions.sendEmbed(event.getChannel(), builder.build()).thenAccept(message -> {
-			Actions.addReaction(message, BasicEmotes.CHECK_OK.getValue());
-			UserReplyEventListener.handleReply(new SkipMusicReply(event, message, requiredVote, track.get()));
-		});
+		var embed = new EmbedBuilder().setAuthor(author.getName(), null, author.getAvatarUrl())
+				.setColor(ORANGE)
+				.setTitle(translate(guild, "music.skip.title"))
+				.addField(translate(guild, "music.skip.votes-required"), "" + requiredVote, true)
+				.build();
+		channel.sendMessage(embed).submit()
+				.thenAccept(message -> {
+					message.addReaction(CHECK_OK.getValue()).submit();
+					UserReplyEventListener.handleReply(new SkipMusicReply(event, message, requiredVote, track.get()));
+				});
 		
-		return CommandResult.SUCCESS;
+		return SUCCESS;
 	}
 	
 	private void skip(@NonNull final GuildMessageReceivedEvent event){
-		switch(RSNAudioManager.skip(event.getGuild())){
-			case NO_MUSIC -> Actions.reply(event, translate(event.getGuild(), "music.nothing-playing"), null);
-			case OK -> Actions.reply(event, translate(event.getGuild(), "music.skipped", event.getAuthor().getAsMention()), null);
-		}
+		var guild = event.getGuild();
+		var message = switch(RSNAudioManager.skip(guild)){
+			case NO_MUSIC -> "music.nothing-playing";
+			case OK -> "music.skipped";
+			case IMPOSSIBLE -> "unknown";
+		};
+		
+		event.getChannel().sendMessage(translate(guild, message, event.getAuthor().getAsMention())).submit()
+				.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 	}
 	
 	@Override

@@ -16,8 +16,4 @@ public class IRCTag{
 	public String toString(){
 		return this.getKey() + "=" + this.getValue();
 	}
-	
-	public String getTrigram(){
-		return this.getValue().substring(0, 3).toUpperCase();
-	}
 }

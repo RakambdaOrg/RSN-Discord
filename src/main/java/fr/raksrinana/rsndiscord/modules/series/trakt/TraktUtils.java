@@ -10,12 +10,9 @@ import fr.raksrinana.rsndiscord.modules.series.trakt.requests.oauth.OAuthRenewTo
 import fr.raksrinana.rsndiscord.modules.series.trakt.requests.users.UserSettingsGetRequest;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.general.trakt.TraktAccessTokenConfiguration;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import fr.raksrinana.rsndiscord.utils.RequestException;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import fr.raksrinana.utils.http.requestssenders.get.ObjectGetRequestSender;
-import fr.raksrinana.utils.http.requestssenders.post.ObjectPostRequestSender;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -24,6 +21,9 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
 
 public class TraktUtils{
 	public static final String API_URL = "https://api.trakt.tv";
@@ -31,45 +31,43 @@ public class TraktUtils{
 	private static String clientId;
 	private static String clientSecret;
 	
-	public static <T> Set<T> getPagedQuery(TraktAccessTokenConfiguration token, @NonNull ITraktPagedGetRequest<T> request) throws RequestException, InvalidResponseException{
-		final var results = new HashSet<T>();
-		final var headers = getHeaders(token);
+	public static <T> Set<T> getPagedQuery(TraktAccessTokenConfiguration token, @NonNull ITraktPagedGetRequest<T> traktRequest) throws RequestException, InvalidResponseException{
+		var results = new HashSet<T>();
+		var headers = getHeaders(token);
 		var pageCount = 1;
 		do{
-			final var handler = new ObjectGetRequestSender<>(request.getOutputType(), request.getRequest().headers(headers)).getRequestHandler();
-			if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
-				results.addAll(handler.getRequestResult());
-				pageCount = Optional.ofNullable(handler.getHeaders().getFirst("X-Pagination-Page-Count")).map(Integer::parseInt).orElseThrow(() -> new RequestException("No page count in header", handler.getStatus()));
-				@NonNull final var finalRequest = request;
-				request = Optional.ofNullable(handler.getHeaders().getFirst("X-Pagination-Page")).map(Integer::parseInt).map(page -> page + 1).map(finalRequest::getForPage).orElseThrow(() -> new RequestException("No page in header", handler.getStatus()));
+			var handler = traktRequest.getRequest().headers(headers).asObject(traktRequest.getOutputType());
+			if(handler.isSuccess() && traktRequest.isValidResult(handler.getStatus())){
+				results.addAll(handler.getBody());
+				pageCount = ofNullable(handler.getHeaders().getFirst("X-Pagination-Page-Count"))
+						.map(Integer::parseInt)
+						.orElseThrow(() -> new RequestException("No page count in header", handler.getStatus()));
+				var finalRequest = traktRequest;
+				traktRequest = ofNullable(handler.getHeaders().getFirst("X-Pagination-Page"))
+						.map(Integer::parseInt)
+						.map(page -> page + 1)
+						.map(finalRequest::getForPage)
+						.orElseThrow(() -> new RequestException("No page in header", handler.getStatus()));
 			}
 			else{
 				if(handler.getStatus() == 503 || handler.getStatus() == 521){
 					Log.getLogger(null).warn("Trakt replied with {} status", handler.getStatus());
 					return Set.of();
 				}
-				handler.getResult().getParsingError().ifPresent(error -> {
+				handler.getParsingError().ifPresent(error -> {
 					Utilities.reportException("Failed to parse Trakt response, http status " + handler.getStatus(), error);
 					Log.getLogger(null).warn("Failed to parse Trakt response", error);
 				});
-				throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult() + "(" + handler.getResult().getParsingError() + ")", handler.getStatus());
+				throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getBody() + "(" + handler.getParsingError() + ")", handler.getStatus());
 			}
 		}
-		while(request.getPage() < pageCount);
+		while(traktRequest.getPage() < pageCount);
 		return results;
 	}
 	
-	public static <T> T postQuery(TraktAccessTokenConfiguration token, @NonNull ITraktPostRequest<T> request) throws RequestException{
-		final var handler = new ObjectPostRequestSender<>(request.getOutputType(), request.getRequest().headers(getHeaders(token))).getRequestHandler();
-		if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
-			return handler.getRequestResult();
-		}
-		throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + Optional.ofNullable(handler.getRequestResult()).map(Object::toString).orElse(null), handler.getStatus());
-	}
-	
 	private static Map<String, String> getHeaders(TraktAccessTokenConfiguration token){
-		final var headers = new HashMap<String, String>();
-		if(Objects.nonNull(token)){
+		var headers = new HashMap<String, String>();
+		if(nonNull(token)){
 			headers.put("Authorization", "Bearer " + token.getToken());
 		}
 		headers.put("Content-Type", "application/json");
@@ -78,14 +76,25 @@ public class TraktUtils{
 		return headers;
 	}
 	
+	public static String getClientId(){
+		if(isNull(clientId)){
+			clientId = System.getProperty("TRAKT_CLIENT_ID");
+		}
+		return clientId;
+	}
+	
 	public static void pollDeviceToken(@NonNull GuildMessageReceivedEvent event, @NonNull DeviceCode deviceCode){
-		final var userToken = Settings.getGeneral().getTrakt().getAccessToken(event.getAuthor().getIdLong()).orElse(null);
-		final var expireDate = ZonedDateTime.now().plusSeconds(deviceCode.getExpiresIn());
-		final var sleepTime = deviceCode.getInterval() * 1000L;
+		var guild = event.getGuild();
+		var channel = event.getChannel();
+		var userToken = Settings.getGeneral().getTrakt().getAccessToken(event.getAuthor().getIdLong()).orElse(null);
+		var expireDate = ZonedDateTime.now().plusSeconds(deviceCode.getExpiresIn());
+		var sleepTime = deviceCode.getInterval() * 1000L;
+		
 		executor.submit(() -> {
-			final var deviceTokenQuery = new DeviceTokenPostRequest(deviceCode);
+			var deviceTokenQuery = new DeviceTokenPostRequest(deviceCode);
 			var additionalDelay = 0;
 			var retry = true;
+			
 			while(retry && ZonedDateTime.now().isBefore(expireDate)){
 				try{
 					Thread.sleep(sleepTime + additionalDelay);
@@ -93,10 +102,14 @@ public class TraktUtils{
 				catch(InterruptedException e){
 					Log.getLogger(null).warn("Failed to sleep while waiting to pull device token");
 				}
+				
 				try{
-					final var deviceToken = postQuery(userToken, deviceTokenQuery);
-					Settings.getGeneral().getTrakt().addAccessToken(new TraktAccessTokenConfiguration(event.getAuthor().getIdLong(), ZonedDateTime.now().plusSeconds(deviceToken.getExpiresIn()), deviceToken.getAccessToken(), deviceToken.getRefreshToken()));
-					Actions.reply(event, translate(event.getGuild(), "trakt.authenticated"), null);
+					var deviceToken = postQuery(userToken, deviceTokenQuery);
+					Settings.getGeneral().getTrakt()
+							.addAccessToken(new TraktAccessTokenConfiguration(event.getAuthor().getIdLong(),
+									ZonedDateTime.now().plusSeconds(deviceToken.getExpiresIn()),
+									deviceToken.getAccessToken(), deviceToken.getRefreshToken()));
+					channel.sendMessage(translate(guild, "trakt.authenticated")).submit();
 					return;
 				}
 				catch(RequestException e){
@@ -109,16 +122,17 @@ public class TraktUtils{
 					}
 					retry = false;
 				}
-				Actions.reply(event, translate(event.getGuild(), "trakt.authentication-failed"), null);
+				channel.sendMessage(translate(guild, "trakt.authentication-failed")).submit();
 			}
 		});
 	}
 	
-	public static String getClientId(){
-		if(Objects.isNull(clientId)){
-			clientId = System.getProperty("TRAKT_CLIENT_ID");
+	public static <T> T postQuery(TraktAccessTokenConfiguration token, @NonNull ITraktPostRequest<T> traktRequest) throws RequestException{
+		var request = traktRequest.getRequest().headers(getHeaders(token)).asObject(traktRequest.getOutputType());
+		if(request.isSuccess() && traktRequest.isValidResult(request.getStatus())){
+			return request.getBody();
 		}
-		return clientId;
+		throw new RequestException("Error sending API request, HTTP code " + request.getStatus() + " => " + request.getBody(), request.getStatus());
 	}
 	
 	public static void stopAll(){
@@ -126,48 +140,54 @@ public class TraktUtils{
 	}
 	
 	public static Optional<String> getUsername(@NonNull Member member){
-		final var traktConfig = Settings.getGeneral().getTrakt();
-		return traktConfig.getUserUsername(member.getIdLong()).or(() -> getAccessToken(member).map(token -> {
-			try{
-				final var userSettingsQuery = new UserSettingsGetRequest();
-				final var userSettings = getQuery(token, userSettingsQuery).orElseThrow(() -> new RequestException("No user found", 0));
-				final var username = userSettings.getUser().getIds().getSlug();
-				traktConfig.setUsername(member.getIdLong(), username);
-				return username;
-			}
-			catch(RequestException e){
-				Log.getLogger(null).error("Failed to renew token", e);
-			}
-			return null;
-		}));
+		var traktConfig = Settings.getGeneral().getTrakt();
+		var memberId = member.getIdLong();
+		
+		return traktConfig.getUserUsername(memberId)
+				.or(() -> getAccessToken(member).map(token -> {
+					try{
+						var userSettingsQuery = new UserSettingsGetRequest();
+						var userSettings = getQuery(token, userSettingsQuery)
+								.orElseThrow(() -> new RequestException("No user found", 0));
+						var username = userSettings.getUser().getIds().getSlug();
+						traktConfig.setUsername(memberId, username);
+						return username;
+					}
+					catch(RequestException e){
+						Log.getLogger(null).error("Failed to renew token", e);
+					}
+					return null;
+				}));
 	}
 	
-	public static <T> Optional<T> getQuery(TraktAccessTokenConfiguration token, @NonNull ITraktGetRequest<T> request) throws RequestException{
-		final var handler = new ObjectGetRequestSender<>(request.getOutputType(), request.getRequest().headers(getHeaders(token))).getRequestHandler();
-		if(handler.getResult().isSuccess() && request.isValidResult(handler.getStatus())){
-			return Optional.ofNullable(handler.getRequestResult());
+	public static <T> Optional<T> getQuery(TraktAccessTokenConfiguration token, @NonNull ITraktGetRequest<T> traktRequest) throws RequestException{
+		final var request = traktRequest.getRequest().headers(getHeaders(token)).asObject(traktRequest.getOutputType());
+		if(request.isSuccess() && traktRequest.isValidResult(request.getStatus())){
+			return ofNullable(request.getBody());
 		}
-		if(handler.getStatus() == 503 || handler.getStatus() == 521){
-			Log.getLogger(null).warn("Trakt replied with {} status", handler.getStatus());
+		if(request.getStatus() == 503 || request.getStatus() == 521){
+			Log.getLogger(null).warn("Trakt replied with {} status", request.getStatus());
 			return Optional.empty();
 		}
-		handler.getResult().getParsingError().ifPresent(error -> {
-			Utilities.reportException("Failed to parse Trakt response, http status " + handler.getStatus(), error);
+		request.getParsingError().ifPresent(error -> {
+			Utilities.reportException("Failed to parse Trakt response, http status " + request.getStatus(), error);
 			Log.getLogger(null).warn("Failed to parse Trakt response", error);
 		});
-		throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getRequestResult().toString(), handler.getStatus());
+		throw new RequestException("Error sending API request, HTTP code " + request.getStatus() + " => " + request.getBody(), request.getStatus());
 	}
 	
 	@NonNull
 	private static Optional<TraktAccessTokenConfiguration> getAccessToken(@NonNull final Member member){
-		Log.getLogger(member.getGuild()).debug("Getting previous access token for {}", member);
-		final var traktConfig = Settings.getGeneral().getTrakt();
-		final var accessTokenOptional = traktConfig.getAccessToken(member.getUser().getIdLong());
+		var guild = member.getGuild();
+		Log.getLogger(guild).debug("Getting previous access token for {}", member);
+		var traktConfig = Settings.getGeneral().getTrakt();
+		var accessTokenOptional = traktConfig.getAccessToken(member.getUser().getIdLong());
+		
 		if(accessTokenOptional.isPresent()){
-			Log.getLogger(member.getGuild()).debug("Found previous access token for {}", member);
-			final var accessToken = accessTokenOptional.get();
+			Log.getLogger(guild).debug("Found previous access token for {}", member);
+			var accessToken = accessTokenOptional.get();
 			if(accessToken.isExpired()){
-				final var newTokenOptional = renewToken(accessToken, member);
+				var newTokenOptional = renewToken(accessToken, member);
 				if(newTokenOptional.isPresent()){
 					traktConfig.removeAccessToken(accessToken);
 				}
@@ -175,15 +195,16 @@ public class TraktUtils{
 			}
 			return accessTokenOptional;
 		}
-		Log.getLogger(member.getGuild()).debug("No access token found for {}", member);
+		Log.getLogger(guild).debug("No access token found for {}", member);
 		return Optional.empty();
 	}
 	
 	private static Optional<TraktAccessTokenConfiguration> renewToken(@NonNull TraktAccessTokenConfiguration token, @NonNull Member member){
-		final var renewTokenQuery = new OAuthRenewTokenPostRequest(token);
+		var renewTokenQuery = new OAuthRenewTokenPostRequest(token);
 		try{
-			final var accessToken = postQuery(null, renewTokenQuery);
-			final var newToken = new TraktAccessTokenConfiguration(member.getIdLong(), ZonedDateTime.now().plusSeconds(accessToken.getExpiresIn()), accessToken.getAccessToken(), accessToken.getRefreshToken());
+			var accessToken = postQuery(null, renewTokenQuery);
+			var newToken = new TraktAccessTokenConfiguration(member.getIdLong(), ZonedDateTime.now().plusSeconds(accessToken.getExpiresIn()),
+					accessToken.getAccessToken(), accessToken.getRefreshToken());
 			Settings.getGeneral().getTrakt().addAccessToken(newToken);
 			return Optional.of(newToken);
 		}
@@ -194,7 +215,7 @@ public class TraktUtils{
 	}
 	
 	public static String getClientSecret(){
-		if(Objects.isNull(clientSecret)){
+		if(isNull(clientSecret)){
 			clientSecret = System.getProperty("TRAKT_CLIENT_SECRET");
 		}
 		return clientSecret;

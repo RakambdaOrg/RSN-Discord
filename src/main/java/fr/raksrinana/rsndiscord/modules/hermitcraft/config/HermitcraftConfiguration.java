@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.Optional;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -23,10 +24,10 @@ public class HermitcraftConfiguration implements ICompositeConfiguration{
 	private ChannelConfiguration streamingNotificationChannel;
 	
 	public Optional<ChannelConfiguration> getStreamingNotificationChannel(){
-		return Optional.ofNullable(streamingNotificationChannel);
+		return ofNullable(streamingNotificationChannel);
 	}
 	
 	public Optional<ChannelConfiguration> getVideoNotificationChannel(){
-		return Optional.ofNullable(videoNotificationChannel);
+		return ofNullable(videoNotificationChannel);
 	}
 }

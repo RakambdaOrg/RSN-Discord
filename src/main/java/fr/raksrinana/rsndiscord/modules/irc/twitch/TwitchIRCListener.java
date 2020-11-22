@@ -7,7 +7,6 @@ import fr.raksrinana.rsndiscord.modules.irc.messages.*;
 import fr.raksrinana.rsndiscord.modules.irc.twitch.messages.*;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.Getter;
 import lombok.NonNull;
@@ -24,44 +23,46 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.modules.irc.twitch.TwitchMessageId.*;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toSet;
 
 public class TwitchIRCListener extends AbstractTwitchIRCListener implements EventListener{
 	private static final Set<TwitchMessageId> ACCEPTED_NOTICES = Set.of(
-			TwitchMessageId.FOLLOWERS_OFF,
-			TwitchMessageId.FOLLOWERS_ON,
-			TwitchMessageId.FOLLOWERS_ONZERO,
-			TwitchMessageId.MSG_BANNED,
-			TwitchMessageId.MSG_BAD_CHARACTERS,
-			TwitchMessageId.MSG_CHANNEL_BLOCKED,
-			TwitchMessageId.MSG_CHANNEL_SUSPENDED,
-			TwitchMessageId.MSG_DUPLICATE,
-			TwitchMessageId.MSG_FOLLOWERSONLY,
-			TwitchMessageId.MSG_FOLLOWERSONLY_ZERO,
-			TwitchMessageId.MSG_R9K,
-			TwitchMessageId.MSG_RATELIMIT,
-			TwitchMessageId.MSG_REJECTED,
-			TwitchMessageId.MSG_REJECTED_MANDATORY,
-			TwitchMessageId.MSG_ROOM_NOT_FOUND,
-			TwitchMessageId.MSG_SLOWMODE,
-			TwitchMessageId.MSG_SUBSONLY,
-			TwitchMessageId.MSG_SUSPENDED,
-			TwitchMessageId.MSG_TIMEDOUT,
-			TwitchMessageId.R9K_OFF,
-			TwitchMessageId.R9K_ON,
-			TwitchMessageId.SLOW_OFF,
-			TwitchMessageId.SLOW_ON,
-			TwitchMessageId.SUBS_OFF,
-			TwitchMessageId.SUBS_ON,
-			TwitchMessageId.TOS_BAN,
-			TwitchMessageId.WHISPER_BANNED,
-			TwitchMessageId.WHISPER_BANNED_RECIPIENT,
-			TwitchMessageId.WHISPER_LIMIT_PER_MIN,
-			TwitchMessageId.WHISPER_LIMIT_PER_SEC,
-			TwitchMessageId.WHISPER_RESTRICTED,
-			TwitchMessageId.WHISPER_RESTRICTED_RECIPIENT
+			FOLLOWERS_OFF,
+			FOLLOWERS_ON,
+			FOLLOWERS_ONZERO,
+			MSG_BAD_CHARACTERS,
+			MSG_BANNED,
+			MSG_CHANNEL_BLOCKED,
+			MSG_CHANNEL_SUSPENDED,
+			MSG_DUPLICATE,
+			MSG_FOLLOWERSONLY,
+			MSG_FOLLOWERSONLY_ZERO,
+			MSG_R9K,
+			MSG_RATELIMIT,
+			MSG_REJECTED,
+			MSG_REJECTED_MANDATORY,
+			MSG_ROOM_NOT_FOUND,
+			MSG_SLOWMODE,
+			MSG_SUBSONLY,
+			MSG_SUSPENDED,
+			MSG_TIMEDOUT,
+			R9K_OFF,
+			R9K_ON,
+			SLOW_OFF,
+			SLOW_ON,
+			SUBS_OFF,
+			SUBS_ON,
+			TOS_BAN,
+			WHISPER_BANNED,
+			WHISPER_BANNED_RECIPIENT,
+			WHISPER_LIMIT_PER_MIN,
+			WHISPER_LIMIT_PER_SEC,
+			WHISPER_RESTRICTED,
+			WHISPER_RESTRICTED_RECIPIENT
 	);
 	@Getter
 	private final Guild guild;
@@ -82,15 +83,17 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 	
 	@Override
 	protected void onIRCChannelJoined(@NonNull final ChannelJoinIRCMessage event){
-		if(Objects.equals(event.getChannel(), this.ircChannel)){
-			Log.getLogger(this.getGuild()).info("Joined {}", event.getChannel());
+		var channel = event.getChannel();
+		if(Objects.equals(channel, this.ircChannel)){
+			Log.getLogger(this.getGuild()).info("Joined {}", channel);
 		}
 	}
 	
 	@Override
 	protected void onIRCChannelLeft(@NonNull final ChannelLeftIRCMessage event){
-		if(Objects.equals(event.getChannel(), this.ircChannel)){
-			Log.getLogger(this.getGuild()).info("Left {}", event.getChannel());
+		var channel = event.getChannel();
+		if(Objects.equals(channel, this.ircChannel)){
+			Log.getLogger(this.getGuild()).info("Left {}", channel);
 		}
 	}
 	
@@ -98,53 +101,67 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 	protected void onIRCChannelMessage(@NonNull final ChannelMessageIRCMessage event){
 		if(Objects.equals(event.getChannel(), this.ircChannel)){
 			this.lastMessage = System.currentTimeMillis();
-			final var twitchMessage = new TwitchChannelMessageIRCMessage(event);
-			var message = twitchMessage.getParent().getMessage().replace("@everyone", "<everyone>").replace("@here", "<here>");
-			if(message.chars().filter(Character::isUpperCase).sum() > 10){
-				message = message.toLowerCase();
-			}
-			final var displayName = event.getTags().stream().filter(t -> Objects.equals("display-name", t.getKey())).map(IRCTag::getValue).filter(Objects::nonNull).filter(t -> !t.isBlank()).findFirst().orElse(event.getUser().toString());
-			final var role = new StringBuilder();
+			var twitchMessage = new TwitchChannelMessageIRCMessage(event);
+			
+			var displayName = event.getTag("display-name")
+					.map(IRCTag::getValue)
+					.filter(t -> !t.isBlank())
+					.orElse(event.getUser().toString());
+			
+			var role = new StringBuilder();
 			if(twitchMessage.isBroadcaster()){
 				role.append("(boss)");
 			}
 			if(twitchMessage.isModerator()){
 				role.append("(mod)");
 			}
+			
 			twitchMessage.getSub().ifPresent(sub -> role.append("(sub/").append(sub.getVersion()).append(")"));
 			twitchMessage.getSubGifter().ifPresent(subGifter -> role.append("(subgifter/").append(subGifter.getVersion()).append(")"));
 			if(twitchMessage.isPartner()){
 				role.append("(partner)");
 			}
-			Actions.sendMessage(this.channel, MessageFormat.format("**`{0}`{1}** {2}", displayName, role, message), null);
+			
+			this.channel.sendMessage(MessageFormat.format("**`{0}`{1}** {2}", displayName, role, event.getMessage()))
+					.allowedMentions(List.of())
+					.submit();
+			
 			event.getCustomRewardId().flatMap(rewardId -> Settings.get(getGuild())
 					.getTwitchConfiguration()
 					.getRandomKickRewardId()
 					.filter(expectedId -> Objects.equals(rewardId, expectedId)))
-					.flatMap(expectedId -> Settings.get(getGuild()).getGeneralChannel()
-							.flatMap(ChannelConfiguration::getChannel))
-					.ifPresent(channel -> {
-						var pings = Settings.get(getGuild()).getRandomKick()
-								.getRandomKickRolesPing()
-								.stream()
-								.flatMap(pingRole -> pingRole.getRole().stream())
-								.collect(Collectors.toSet());
-						var pingsStr = pings.stream().map(Role::getAsMention)
-								.collect(Collectors.joining(" "));
-						var targetRole = RandomKick.getRandomRole(getGuild());
-						Actions.sendMessage(channel,
-								pingsStr + " => " + translate(getGuild(), "random-kick.bought", event.getUser().getNick(), targetRole.map(Role::getAsMention).orElse("@everyone")),
-								null,
-								false,
-								messageAction -> messageAction.allowedMentions(List.of(Message.MentionType.ROLE))
-										.mention(pings)
-						).thenAcceptAsync(message1 -> Main.getExecutorService().schedule(() -> RandomKick.randomKick(getGuild().getJDA().getSelfUser(),
-								channel,
-								targetRole.orElse(null),
-								translate(getGuild(), "random-kick.bought-reason", event.getUser().getNick(), getUser(), event.getMessage()),
-								false), 30, TimeUnit.SECONDS));
-					});
+					.ifPresent(expectedId -> randomKickClaimed(event));
 		}
+	}
+	
+	private void randomKickClaimed(@NonNull ChannelMessageIRCMessage event){
+		Settings.get(getGuild()).getGeneralChannel()
+				.flatMap(ChannelConfiguration::getChannel)
+				.ifPresent(channel -> {
+					var pings = Settings.get(getGuild()).getRandomKick()
+							.getRandomKickRolesPing().stream()
+							.flatMap(pingRole -> pingRole.getRole().stream())
+							.collect(toSet());
+					var pingsStr = pings.stream().map(Role::getAsMention)
+							.collect(joining(" "));
+					var targetRole = RandomKick.getRandomRole(getGuild());
+					
+					var messageContent = pingsStr + " => " + translate(getGuild(), "random-kick.bought",
+							event.getUser().getNick(),
+							targetRole.map(Role::getAsMention).orElse("@everyone"));
+					channel.sendMessage(messageContent)
+							.allowedMentions(List.of(Message.MentionType.ROLE))
+							.mention(pings)
+							.submit()
+							.thenAccept(message -> Main.getExecutorService().schedule(() -> {
+								var reason = translate(getGuild(), "random-kick.bought-reason",
+										event.getUser().getNick(),
+										getUser(),
+										event.getMessage());
+								
+								RandomKick.randomKick(channel, targetRole.orElse(null), reason, false);
+							}, 30, SECONDS));
+				});
 	}
 	
 	@Override
@@ -159,29 +176,51 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 	@Override
 	protected void onUserNotice(final UserNoticeIRCMessage event){
 		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
-			Actions.sendMessage(this.channel, translate(channel.getGuild(), "irc.notice", event.getTags().stream().filter(t -> Objects.equals("system-msg", t.getKey())).map(IRCTag::getValue).map(v -> v.replace("\\s", " ").trim()).findFirst().orElse("UNKNOWN")), null);
+			var message = translate(channel.getGuild(), "irc.notice",
+					event.getTags().stream()
+							.filter(t -> Objects.equals("system-msg", t.getKey()))
+							.map(IRCTag::getValue)
+							.map(v -> v.replace("\\s", " ").trim())
+							.findFirst()
+							.orElse("UNKNOWN"));
+			this.channel.sendMessage(message).submit();
 		}
 	}
 	
 	@Override
 	protected void onClearChat(final ClearChatIRCMessage event){
 		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
-			Actions.sendMessage(this.channel, translate(channel.getGuild(), "irc.banned", event.getUser(), event.getTags().stream().filter(t -> Objects.equals("ban-duration", t.getKey())).map(IRCTag::getValue).map(Integer::parseInt).map(Duration::ofSeconds).map(Utilities::durationToString).findFirst().orElse("UNKNOWN")), null);
+			var message = translate(channel.getGuild(), "irc.banned",
+					event.getUser(),
+					event.getTags().stream()
+							.filter(t -> Objects.equals("ban-duration", t.getKey()))
+							.map(IRCTag::getValue)
+							.map(Integer::parseInt)
+							.map(Duration::ofSeconds)
+							.map(Utilities::durationToString)
+							.findFirst()
+							.orElse("UNKNOWN"));
+			this.channel.sendMessage(message).submit();
 		}
 	}
 	
 	@Override
 	protected void onClearMessage(final ClearMessageIRCMessage event){
 		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
-			Log.getLogger(this.getGuild()).info("Message from {} deleted: {}", event.getTags().stream().filter(t -> Objects.equals("login", t.getKey())).map(IRCTag::getValue).findFirst().orElse("UNKNOWN"), event.getMessage());
+			Log.getLogger(this.getGuild()).info("Message from {} deleted: {}", event.getTags().stream()
+							.filter(t -> Objects.equals("login", t.getKey()))
+							.map(IRCTag::getValue)
+							.findFirst()
+							.orElse("UNKNOWN"),
+					event.getMessage());
 		}
 	}
 	
 	@Override
 	protected void onNotice(final NoticeIRCMessage event){
 		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
-			if(ACCEPTED_NOTICES.contains(event.getMessageId().orElse(TwitchMessageId.UNKNOWN))){
-				Actions.sendMessage(this.channel, translate(channel.getGuild(), "irc.notice", event.getMessage()), null);
+			if(ACCEPTED_NOTICES.contains(event.getMessageId().orElse(UNKNOWN))){
+				this.channel.sendMessage(translate(channel.getGuild(), "irc.notice", event.getMessage())).submit();
 			}
 			else{
 				Log.getLogger(this.getGuild()).debug("Unhandled notice: {}", event.getMessage());

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.settings.IAtomicConfiguration;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -19,6 +18,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -67,31 +67,30 @@ public class MessageConfiguration implements IAtomicConfiguration{
 	
 	@Override
 	public boolean shouldBeRemoved(){
-		return this.getChannel().shouldBeRemoved() ||
-				this.getChannel().getChannel()
-						.map(channel -> Utilities.getMessageById(channel, getMessageId())
-								.thenApply(m -> false)
-								.exceptionally(throwable -> throwable instanceof ErrorResponseException
-										&& ((ErrorResponseException) throwable).getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE))
-						.map(future -> {
-							try{
-								return future.get();
-							}
-							catch(InterruptedException | ExecutionException e){
-								Log.getLogger(null).error("Failed to get message", e);
-							}
-							return null;
-						}).orElse(false);
+		return this.getChannel().shouldBeRemoved() || this.getChannel().getChannel()
+				.map(channel -> channel.retrieveMessageById(getMessageId()).submit()
+						.thenApply(m -> false)
+						.exceptionally(throwable -> throwable instanceof ErrorResponseException
+								&& ((ErrorResponseException) throwable).getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE))
+				.map(future -> {
+					try{
+						return future.get();
+					}
+					catch(InterruptedException | ExecutionException e){
+						Log.getLogger(null).error("Failed to get message", e);
+					}
+					return null;
+				}).orElse(false);
 	}
 	
 	@NonNull
 	public Optional<Message> getMessage(){
 		return this.getChannel().getChannel()
-				.map(channel -> Utilities.getMessageById(channel, this.getMessageId())
+				.map(channel -> channel.retrieveMessageById(getMessageId()).submit()
 						.exceptionally(throwable -> null))
 				.flatMap(future -> {
 					try{
-						return Optional.ofNullable(future.get());
+						return ofNullable(future.get());
 					}
 					catch(InterruptedException | ExecutionException e){
 						Log.getLogger(null).error("Failed to get message from configuration", e);

@@ -7,23 +7,22 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
+import static java.util.Objects.isNull;
 
 public class AddCommand extends BasicCommand{
-	private static final DateTimeFormatter DF = DateTimeFormatter.ISO_LOCAL_DATE;
-	
 	public AddCommand(Command parent){
 		super(parent);
 	}
@@ -33,35 +32,35 @@ public class AddCommand extends BasicCommand{
 		return new SimplePermission("command.birthday.add", false);
 	}
 	
+	@Override
+	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField("user", translate(guild, "command.birthday.add.help.user"), false)
+				.addField("date", translate(guild, "command.birthday.add.help.date", "YYYY-MM-DD"), false);
+	}
+	
 	@NonNull
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		if(event.getMessage().getMentionedUsers().isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+		if(noUserIsMentioned(event)){
+			return BAD_ARGUMENTS;
 		}
-		event.getMessage().getMentionedUsers().stream().findFirst()
-				.ifPresent(user -> {
-					args.poll();
-					parseDate(event.getGuild(), args.poll()).ifPresentOrElse(date -> {
-						Settings.get(event.getGuild()).getBirthdays().setBirthday(user, date);
-						Actions.reply(event, translate(event.getGuild(), "birthday.saved"), null);
-					}, () -> Actions.reply(event, translate(event.getGuild(), "birthday.bad-date"), null));
-				});
-		return CommandResult.SUCCESS;
-	}
-	
-	private Optional<LocalDate> parseDate(Guild guild, String string){
-		if(Objects.isNull(string)){
-			return Optional.empty();
-		}
-		try{
-			return Optional.ofNullable(LocalDate.parse(string, DF));
-		}
-		catch(DateTimeParseException e){
-			Log.getLogger(guild).error("Failed to parse date {}", string, e);
-		}
-		return Optional.empty();
+		
+		args.pop();
+		var guild = event.getGuild();
+		var channel = event.getChannel();
+		var user = getFirstUserMentioned(event).orElseThrow();
+		
+		getArgumentAs(args, arg -> parseDate(guild, arg))
+				.ifPresentOrElse(birthday -> {
+					Settings.get(guild).getBirthdays().setBirthday(user, birthday);
+					
+					channel.sendMessage(translate(guild, "birthday.saved")).submit()
+							.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
+				}, () -> channel.sendMessage(translate(guild, "birthday.bad-date")).submit()
+						.thenAccept(deleteMessage(date -> date.plusMinutes(5))));
+		return SUCCESS;
 	}
 	
 	@NonNull
@@ -82,11 +81,17 @@ public class AddCommand extends BasicCommand{
 		return translate(guild, "command.birthday.add.description");
 	}
 	
-	@Override
-	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
-		super.addHelp(guild, builder);
-		builder.addField("user", translate(guild, "command.birthday.add.help.user"), false);
-		builder.addField("date", translate(guild, "command.birthday.add.help.date", "YYYY-MM-DD"), false);
+	private LocalDate parseDate(Guild guild, String string){
+		if(isNull(string)){
+			return null;
+		}
+		try{
+			return LocalDate.parse(string, ISO_LOCAL_DATE);
+		}
+		catch(DateTimeParseException e){
+			Log.getLogger(guild).error("Failed to parse date {}", string, e);
+		}
+		return null;
 	}
 	
 	@Override

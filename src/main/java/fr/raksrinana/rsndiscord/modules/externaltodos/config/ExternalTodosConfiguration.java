@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import java.util.Optional;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -27,13 +28,13 @@ public class ExternalTodosConfiguration implements ICompositeConfiguration{
 	private String token;
 	
 	@NonNull
+	public Optional<String> getEndpoint(){return ofNullable(this.endpoint);}
+	
+	@NonNull
 	public Optional<ChannelConfiguration> getNotificationChannel(){
-		return Optional.ofNullable(this.notificationChannel);
+		return ofNullable(this.notificationChannel);
 	}
 	
 	@NonNull
-	public Optional<String> getEndpoint(){return Optional.ofNullable(this.endpoint);}
-	
-	@NonNull
-	public Optional<String> getToken(){return Optional.ofNullable(this.token);}
+	public Optional<String> getToken(){return ofNullable(this.token);}
 }

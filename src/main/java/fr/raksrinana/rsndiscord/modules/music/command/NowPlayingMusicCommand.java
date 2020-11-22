@@ -9,17 +9,18 @@ import fr.raksrinana.rsndiscord.modules.music.trackfields.RequesterTrackDataFiel
 import fr.raksrinana.rsndiscord.modules.music.trackfields.TrackUserFields;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
-import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.awt.Color;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.awt.Color.CYAN;
+import static java.awt.Color.RED;
 
 public class NowPlayingMusicCommand extends BasicCommand{
 	/**
@@ -40,36 +41,47 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, translate(event.getGuild(), "music.currently-playing"), null);
-		RSNAudioManager.currentTrack(event.getGuild()).ifPresentOrElse(track -> {
-			builder.setTitle(translate(event.getGuild(), "music.currently-playing"), track.getInfo().uri);
-			final var userData = track.getUserData(TrackUserFields.class);
-			builder.setDescription(track.getInfo().title);
-			builder.addField(translate(event.getGuild(), "music.requester"), userData.get(new RequesterTrackDataField())
+		var guild = event.getGuild();
+		
+		var builder = new EmbedBuilder().setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl())
+				.setColor(CYAN);
+		
+		RSNAudioManager.currentTrack(guild).ifPresentOrElse(track -> {
+			var userData = track.getUserData(TrackUserFields.class);
+			
+			var requester = userData.get(new RequesterTrackDataField())
 					.map(User::getAsMention)
-					.orElseGet(() -> translate(event.getGuild(), "music.unknown-requester")),
-					true);
-			builder.addField(translate(event.getGuild(), "music.repeating"), userData.get(new ReplayTrackDataField())
+					.orElseGet(() -> translate(guild, "music.unknown-requester"));
+			var repeating = userData.get(new ReplayTrackDataField())
 					.map(Object::toString)
-					.orElse("False"),
-					true);
-			builder.addField(translate(event.getGuild(), "music.position"), String.format("%s %s / %s", NowPlayingMusicCommand.buildBar(track.getPosition(), track.getDuration()), getDuration(track.getPosition()), getDuration(track.getDuration())), true);
+					.orElse("False");
+			var progressBar = String.format("%s %s / %s",
+					NowPlayingMusicCommand.buildBar(track.getPosition(), track.getDuration()),
+					getDuration(track.getPosition()),
+					getDuration(track.getDuration()));
+			
+			builder.setTitle(translate(guild, "music.currently-playing"), track.getInfo().uri)
+					.setDescription(track.getInfo().title)
+					.addField(translate(guild, "music.requester"), requester, true)
+					.addField(translate(guild, "music.repeating"), repeating, true)
+					.addField(translate(guild, "music.position"), progressBar, true);
 		}, () -> {
-			builder.setColor(Color.RED);
-			builder.setDescription(translate(event.getGuild(), "music.nothing-playing"));
+			builder.setColor(RED);
+			builder.setDescription(translate(guild, "music.nothing-playing"));
 		});
-		Actions.sendEmbed(event.getChannel(), builder.build());
-		return CommandResult.SUCCESS;
+		
+		event.getChannel().sendMessage(builder.build()).submit();
+		return SUCCESS;
 	}
 	
 	@NonNull
 	private static String buildBar(double current, final double total){
-		final var charCount = 10;
+		var charCount = 10;
 		if(current > total){
 			current = total;
 		}
-		final var sb = new StringBuilder("=".repeat(charCount));
-		final var replaceIndex = (int) ((current / total) * charCount);
+		var sb = new StringBuilder("=".repeat(charCount));
+		var replaceIndex = (int) ((current / total) * charCount);
 		sb.replace(replaceIndex, replaceIndex + 1, "O");
 		return sb.toString();
 	}
@@ -83,7 +95,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	 */
 	@NonNull
 	static String getDuration(final long time){
-		final var duration = Duration.ofMillis(time);
+		var duration = Duration.ofMillis(time);
 		if(duration.toHoursPart() > 0){
 			return String.format("%02d:%02d:%02d", duration.toHoursPart(), duration.toMinutesPart(), duration.toSecondsPart());
 		}

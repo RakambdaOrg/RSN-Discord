@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 class HistoryCommand extends BasicCommand{
@@ -33,7 +34,7 @@ class HistoryCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		new TraktUserHistoryRunner(event.getJDA()).runQueryOnDefaultUsersChannels();
-		return CommandResult.SUCCESS;
+		return SUCCESS;
 	}
 	
 	@NonNull

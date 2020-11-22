@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -37,11 +38,11 @@ public class PermissionsConfiguration{
 	}
 	
 	public Optional<EntityPermissions> getUserPermissions(@NonNull User user){
-		return Optional.ofNullable(getUsersPermissions().get(user.getIdLong()));
+		return ofNullable(getUsersPermissions().get(user.getIdLong()));
 	}
 	
 	public Optional<EntityPermissions> getRolePermissions(@NonNull Role role){
-		return Optional.ofNullable(getRolesPermissions().get(role.getIdLong()));
+		return ofNullable(getRolesPermissions().get(role.getIdLong()));
 	}
 	
 	public void grant(User user, String permissionId){
@@ -55,22 +56,22 @@ public class PermissionsConfiguration{
 	}
 	
 	public void deny(User user, String permissionId){
-		Optional.ofNullable(usersPermissions.get(user.getIdLong()))
+		ofNullable(usersPermissions.get(user.getIdLong()))
 				.ifPresent(entityPermissions -> entityPermissions.deny(permissionId));
 	}
 	
 	public void deny(Role role, String permissionId){
-		Optional.ofNullable(rolesPermissions.get(role.getIdLong()))
+		ofNullable(rolesPermissions.get(role.getIdLong()))
 				.ifPresent(entityPermissions -> entityPermissions.deny(permissionId));
 	}
 	
 	public void reset(User user, String permissionId){
-		Optional.ofNullable(usersPermissions.get(user.getIdLong()))
+		ofNullable(usersPermissions.get(user.getIdLong()))
 				.ifPresent(entityPermissions -> entityPermissions.reset(permissionId));
 	}
 	
 	public void reset(Role role, String permissionId){
-		Optional.ofNullable(rolesPermissions.get(role.getIdLong()))
+		ofNullable(rolesPermissions.get(role.getIdLong()))
 				.ifPresent(entityPermissions -> entityPermissions.reset(permissionId));
 	}
 }

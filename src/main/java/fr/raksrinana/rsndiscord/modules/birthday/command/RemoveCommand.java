@@ -6,13 +6,14 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class RemoveCommand extends BasicCommand{
@@ -29,16 +30,18 @@ public class RemoveCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		if(event.getMessage().getMentionedUsers().isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+		
+		if(noUserIsMentioned(event)){
+			return BAD_ARGUMENTS;
 		}
-		event.getMessage().getMentionedUsers().stream().findFirst()
-				.ifPresent(user -> {
-					args.poll();
-					Settings.get(event.getGuild()).getBirthdays().removeBirthday(user);
-					Actions.reply(event, translate(event.getGuild(), "birthday.removed"), null);
-				});
-		return CommandResult.SUCCESS;
+		
+		args.poll();
+		var guild = event.getGuild();
+		var user = getFirstUserMentioned(event).orElseThrow();
+		
+		Settings.get(guild).getBirthdays().removeBirthday(user);
+		event.getChannel().sendMessage(translate(guild, "birthday.removed")).submit();
+		return SUCCESS;
 	}
 	
 	@NonNull

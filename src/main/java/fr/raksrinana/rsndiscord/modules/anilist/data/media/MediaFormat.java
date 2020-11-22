@@ -4,12 +4,21 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.NonNull;
-import java.util.Objects;
+import static java.util.Objects.isNull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public enum MediaFormat{
-	TV("TV"), TV_SHORT("TV Short"), MOVIE("Movie"), SPECIAL("Special"), OVA, ONA, MUSIC("Music"), MANGA("Manga"), NOVEL("Novel"), ONE_SHOT("One shot");
+	MANGA("Manga"),
+	MOVIE("Movie"),
+	MUSIC("Music"),
+	NOVEL("Novel"),
+	ONA,
+	ONE_SHOT("One shot"),
+	OVA,
+	SPECIAL("Special"),
+	TV("TV"),
+	TV_SHORT("TV Short");
 	private final String display;
 	
 	MediaFormat(){
@@ -28,6 +37,6 @@ public enum MediaFormat{
 	
 	@Override
 	public String toString(){
-		return Objects.isNull(this.display) ? this.name() : this.display;
+		return isNull(this.display) ? this.name() : this.display;
 	}
 }

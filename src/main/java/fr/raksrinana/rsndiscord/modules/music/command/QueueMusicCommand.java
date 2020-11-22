@@ -10,19 +10,17 @@ import fr.raksrinana.rsndiscord.modules.music.trackfields.RequesterTrackDataFiel
 import fr.raksrinana.rsndiscord.modules.music.trackfields.TrackUserFields;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
-import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.awt.Color.PINK;
 
 public class QueueMusicCommand extends BasicCommand{
 	/**
@@ -49,46 +47,54 @@ public class QueueMusicCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		final var perPage = 10L;
-		final var page = Optional.ofNullable(args.poll()).map(pageStr -> {
-			try{
-				return Long.parseLong(pageStr);
-			}
-			catch(final Exception ignored){
-			}
-			return null;
-		}).orElse(1L) - 1;
-		final var position = new AtomicLong(perPage * page);
-		final var queue = RSNAudioManager.getQueue(event.getGuild());
+		
+		var guild = event.getGuild();
+		var author = event.getAuthor();
+		var queue = RSNAudioManager.getQueue(guild);
+		var perPage = 10L;
 		var maxPageNumber = (int) Math.ceil(queue.size() / (double) perPage);
-		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.PINK, translate(event.getGuild(), "music.queue.page", page + 1, maxPageNumber), null);
-		builder.setDescription(translate(event.getGuild(), "music.queue.size", queue.size()));
-		final var beforeDuration = new AtomicLong(RSNAudioManager.currentTrack(event.getGuild())
+		
+		var page = getArgumentAsLong(args)
+				.map(val -> val - 1L)
+				.orElse(0L);
+		var position = new AtomicLong(perPage * page);
+		
+		var currentTrackTimeLeft = RSNAudioManager.currentTrack(guild)
 				.map(t -> t.getDuration() - t.getPosition())
-				.orElse(0L)
-				+ queue.stream().limit(perPage * page)
+				.orElse(0L);
+		var queueDuration = queue.stream().limit(perPage * page)
 				.mapToLong(AudioTrack::getDuration)
-				.sum());
-		queue.stream()
-				.skip(perPage * page)
+				.sum();
+		var beforeDuration = new AtomicLong(currentTrackTimeLeft + queueDuration);
+		
+		var builder = new EmbedBuilder().setAuthor(author.getName(), null, author.getAvatarUrl())
+				.setColor(PINK)
+				.setTitle(translate(guild, "music.queue.page", page + 1, maxPageNumber))
+				.setDescription(translate(guild, "music.queue.size", queue.size()));
+		
+		queue.stream().skip(perPage * page)
 				.limit(perPage)
 				.forEachOrdered(track -> {
-					final var userData = track.getUserData(TrackUserFields.class);
-					builder.addField("Position " + position.addAndGet(1),
-							track.getInfo().title +
-									"\n" + translate(event.getGuild(), "music.requester") + ": " + userData.get(new RequesterTrackDataField())
-									.map(User::getAsMention)
-									.orElseGet(() -> translate(event.getGuild(), "music.unknown-requester")) +
-									"\n" + translate(event.getGuild(), "music.repeating") + ": " + userData.get(new ReplayTrackDataField())
-									.map(Object::toString)
-									.orElse("False") +
-									"\n" + translate(event.getGuild(), "music.track.duration") + ": " + NowPlayingMusicCommand.getDuration(track.getDuration()) +
-									"\n" + translate(event.getGuild(), "music.track.eta") + ": " + NowPlayingMusicCommand.getDuration(beforeDuration.get()),
-							false);
+					var userData = track.getUserData(TrackUserFields.class);
+					var requester = userData.get(new RequesterTrackDataField())
+							.map(User::getAsMention)
+							.orElseGet(() -> translate(guild, "music.unknown-requester"));
+					var repeating = userData.get(new ReplayTrackDataField())
+							.map(Object::toString)
+							.orElse("False");
+					
+					var trackInfo = track.getInfo().title +
+							"\n" + translate(guild, "music.requester") + ": " + requester +
+							"\n" + translate(guild, "music.repeating") + ": " + repeating +
+							"\n" + translate(guild, "music.track.duration") + ": " + NowPlayingMusicCommand.getDuration(track.getDuration()) +
+							"\n" + translate(guild, "music.track.eta") + ": " + NowPlayingMusicCommand.getDuration(beforeDuration.get());
+					
+					builder.addField("Position " + position.addAndGet(1), trackInfo, false);
 					beforeDuration.addAndGet(track.getDuration());
 				});
-		Actions.sendEmbed(event.getChannel(), builder.build());
-		return CommandResult.SUCCESS;
+		
+		event.getChannel().sendMessage(builder.build()).submit();
+		return SUCCESS;
 	}
 	
 	@NonNull

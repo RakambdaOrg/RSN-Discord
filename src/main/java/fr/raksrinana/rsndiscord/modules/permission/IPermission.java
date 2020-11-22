@@ -1,12 +1,8 @@
 package fr.raksrinana.rsndiscord.modules.permission;
 
 import lombok.NonNull;
+import net.dv8tion.jda.api.entities.Member;
 
 public interface IPermission{
-	boolean matches(@NonNull String permissionId);
-	
-	@NonNull
-	String getId();
-	
-	boolean isAllowedByDefault();
+	boolean isAllowed(@NonNull Member member);
 }

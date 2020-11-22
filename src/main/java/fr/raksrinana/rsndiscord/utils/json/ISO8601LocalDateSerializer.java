@@ -5,13 +5,11 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import static java.time.format.DateTimeFormatter.ISO_DATE;
 
 public class ISO8601LocalDateSerializer extends JsonSerializer<LocalDate>{
-	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_DATE;
-	
 	@Override
 	public void serialize(LocalDate date, JsonGenerator jsonGenerator, SerializerProvider serializers) throws IOException{
-		jsonGenerator.writeString(date.format(FORMATTER));
+		jsonGenerator.writeString(date.format(ISO_DATE));
 	}
 }

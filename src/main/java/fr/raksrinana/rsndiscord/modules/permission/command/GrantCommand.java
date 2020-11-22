@@ -6,13 +6,15 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class GrantCommand extends BasicCommand{
@@ -23,23 +25,27 @@ public class GrantCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("permission", translate(guild, "command.permissions.grant.help.permission"), false);
-		builder.addField("entity", translate(guild, "command.permissions.grant.help.entity"), false);
+		builder.addField("permission", translate(guild, "command.permissions.grant.help.permission"), false)
+				.addField("entity", translate(guild, "command.permissions.grant.help.entity"), false);
 	}
 	
 	@NonNull
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		if(args.isEmpty() || args.size() == event.getMessage().getMentions().size()){
-			return CommandResult.BAD_ARGUMENTS;
+		var guild = event.getGuild();
+		var message = event.getMessage();
+		
+		if(args.isEmpty() || args.size() == message.getMentions().size()){
+			return BAD_ARGUMENTS;
 		}
-		var permissionsConfiguration = Settings.get(event.getGuild()).getPermissionsConfiguration();
+		var permissionsConfiguration = Settings.get(guild).getPermissionsConfiguration();
 		String permissionId = args.poll();
-		event.getMessage().getMentionedUsers().forEach(user -> permissionsConfiguration.grant(user, permissionId));
-		event.getMessage().getMentionedRoles().forEach(role -> permissionsConfiguration.grant(role, permissionId));
-		Actions.reply(event, translate(event.getGuild(), "permissions.granted", permissionId), null);
-		return CommandResult.SUCCESS;
+		message.getMentionedUsers().forEach(user -> permissionsConfiguration.grant(user, permissionId));
+		message.getMentionedRoles().forEach(role -> permissionsConfiguration.grant(role, permissionId));
+		event.getChannel().sendMessage(translate(guild, "permissions.granted", permissionId)).submit()
+				.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
+		return SUCCESS;
 	}
 	
 	@Override

@@ -16,9 +16,9 @@ import net.dv8tion.jda.api.entities.Guild;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -74,13 +74,14 @@ public class Show implements ITraktObject{
 	}
 	
 	public void fillEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder, TVDetails tvDetails){
-		builder.addField(translate(guild, "trakt.title"), this.getTitle(), true);
-		builder.addField(translate(guild, "trakt.year"), Integer.toString(this.getYear()), true);
-		Optional.ofNullable(tvDetails).map(TVDetails::getNumberOfSeasons).ifPresent(numberOfSeasons -> builder.addField(translate(guild, "trakt.seasons"), Integer.toString(numberOfSeasons), true));
-		builder.addField(translate(guild, "trakt.episodes"), Integer.toString(this.getAiredEpisodes()), true);
-		builder.addField(translate(guild, "trakt.status"), this.getStatus(), true);
-		builder.addField(translate(guild, "trakt.genres"), String.join(", ", this.getGenres()), true);
-		builder.addField(translate(guild, "trakt.overview"), this.getOverview(), false);
+		builder.addField(translate(guild, "trakt.title"), getTitle(), true)
+				.addField(translate(guild, "trakt.year"), Integer.toString(getYear()), true);
+		ofNullable(tvDetails).map(TVDetails::getNumberOfSeasons)
+				.ifPresent(numberOfSeasons -> builder.addField(translate(guild, "trakt.seasons"), Integer.toString(numberOfSeasons), true));
+		builder.addField(translate(guild, "trakt.episodes"), Integer.toString(getAiredEpisodes()), true)
+				.addField(translate(guild, "trakt.status"), getStatus(), true)
+				.addField(translate(guild, "trakt.genres"), String.join(", ", getGenres()), true)
+				.addField(translate(guild, "trakt.overview"), getOverview(), false);
 	}
 	
 	@Override

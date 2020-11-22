@@ -9,19 +9,15 @@ import kong.unirest.Unirest;
 import lombok.NonNull;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 import java.util.Set;
+import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
+import static java.util.Objects.nonNull;
 
 public class UserHistoryPagedGetRequest implements ITraktPagedGetRequest<UserHistory>{
 	private final int page;
 	private final ZonedDateTime startDate;
 	private final ZonedDateTime endDate;
 	private final String username;
-	
-	public UserHistoryPagedGetRequest(@NonNull String username){
-		this(username, 1);
-	}
 	
 	public UserHistoryPagedGetRequest(@NonNull String username, int page){
 		this(username, page, null);
@@ -55,12 +51,16 @@ public class UserHistoryPagedGetRequest implements ITraktPagedGetRequest<UserHis
 	
 	@Override
 	public GetRequest getRequest(){
-		final var request = Unirest.get(TraktUtils.API_URL + "/users/{username}/history").routeParam("username", this.username).queryString("extended", "full").queryString("page", getPage()).queryString("limit", getLimit());
-		if(Objects.nonNull(startDate)){
-			request.queryString("start_at", startDate.withZoneSameInstant(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_DATE_TIME));
+		final var request = Unirest.get(TraktUtils.API_URL + "/users/{username}/history")
+				.routeParam("username", this.username)
+				.queryString("extended", "full")
+				.queryString("page", getPage())
+				.queryString("limit", getLimit());
+		if(nonNull(startDate)){
+			request.queryString("start_at", startDate.withZoneSameInstant(ZoneId.of("UTC")).format(ISO_DATE_TIME));
 		}
-		if(Objects.nonNull(endDate)){
-			request.queryString("end_at", endDate.withZoneSameInstant(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_DATE_TIME));
+		if(nonNull(endDate)){
+			request.queryString("end_at", endDate.withZoneSameInstant(ZoneId.of("UTC")).format(ISO_DATE_TIME));
 		}
 		return request;
 	}

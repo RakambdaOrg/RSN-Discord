@@ -1,18 +1,19 @@
 package fr.raksrinana.rsndiscord.modules.irc.twitch;
 
+import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.irc.IIRCMessageBuilder;
 import fr.raksrinana.rsndiscord.modules.irc.messages.*;
 import fr.raksrinana.rsndiscord.modules.irc.twitch.messages.*;
-import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.utils.Utilities.MAIN_RAKSRINANA_ACCOUNT;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 class TwitchIRCMessageBuilder implements IIRCMessageBuilder{
 	private static final Pattern EVENT_PATTERN = Pattern.compile("^(@([^\\s]+)\\s)?:([^\\s]+)\\s([^\\s]+)\\s([^:]+)\\s?(:(.*))?$");
@@ -61,7 +62,9 @@ class TwitchIRCMessageBuilder implements IIRCMessageBuilder{
 						return Optional.of(new HostTargetIRCMessage(matcher.group(5).trim(), matcher.group(7)));
 				}
 			}
-			Actions.sendPrivateMessage(null, Utilities.MAIN_RAKSRINANA_ACCOUNT, "Unknown IRC message: " + message, null);
+			ofNullable(Main.getJda().getUserById(MAIN_RAKSRINANA_ACCOUNT))
+					.ifPresent(user -> user.openPrivateChannel().submit()
+							.thenAccept(privateChannel -> privateChannel.sendMessage("Unknown IRC message: " + message).submit()));
 			Log.getLogger(null).warn("Unknown IRC message: {}", message);
 			return Optional.empty();
 		}
@@ -72,12 +75,16 @@ class TwitchIRCMessageBuilder implements IIRCMessageBuilder{
 	}
 	
 	private static List<IRCTag> getTags(final String tags){
-		return Optional.ofNullable(tags).stream().flatMap(t -> Arrays.stream(t.split(";"))).map(t -> {
-			final var eq = t.indexOf('=');
-			if(eq >= 0){
-				return new IRCTag(t.substring(0, eq), t.substring(eq + 1));
-			}
-			return null;
-		}).filter(Objects::nonNull).collect(Collectors.toList());
+		return ofNullable(tags).stream()
+				.flatMap(t -> Arrays.stream(t.split(";")))
+				.map(t -> {
+					final var eq = t.indexOf('=');
+					if(eq >= 0){
+						return new IRCTag(t.substring(0, eq), t.substring(eq + 1));
+					}
+					return null;
+				})
+				.filter(Objects::nonNull)
+				.collect(toList());
 	}
 }

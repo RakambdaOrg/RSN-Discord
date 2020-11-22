@@ -1,7 +1,6 @@
 package fr.raksrinana.rsndiscord.commands.generic;
 
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
-import fr.raksrinana.rsndiscord.modules.permission.PermissionUtils;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -9,6 +8,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.DeleteMode.BEFORE;
 
 public interface Command extends Comparable<Command>{
 	/**
@@ -27,11 +27,11 @@ public interface Command extends Comparable<Command>{
 	 * @return True if allowed, false otherwise.
 	 */
 	default boolean isAllowed(@NonNull final Member member){
-		return PermissionUtils.isUserAllowed(member, getPermission());
+		return getPermission().isAllowed(member);
 	}
 	
-	default boolean deleteCommandMessageImmediately(){
-		return true;
+	default DeleteMode getDeleteMode(){
+		return BEFORE;
 	}
 	
 	/**
@@ -52,7 +52,8 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @throws RuntimeException If something bad happened.
 	 */
-	@NonNull CommandResult execute(@NonNull GuildMessageReceivedEvent event, @NonNull LinkedList<String> args) throws RuntimeException;
+	@NonNull
+	CommandResult execute(@NonNull GuildMessageReceivedEvent event, @NonNull LinkedList<String> args) throws RuntimeException;
 	
 	@Override
 	default int compareTo(@NonNull final Command otherCommand){
@@ -64,28 +65,32 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return The name.
 	 */
-	@NonNull String getName(@NonNull Guild guild);
-	
-	/**
-	 * Get the command (what's after the prefix).
-	 *
-	 * @return The command.
-	 */
-	@NonNull List<String> getCommandStrings();
-	
-	/**
-	 * Get a description of the usage of command.
-	 *
-	 * @return The description.
-	 */
-	@NonNull String getCommandUsage();
+	@NonNull
+	String getName(@NonNull Guild guild);
 	
 	/**
 	 * Get the description of the command.
 	 *
 	 * @return The description.
 	 */
-	@NonNull String getDescription(@NonNull Guild guild);
+	@NonNull
+	String getDescription(@NonNull Guild guild);
+	
+	/**
+	 * Get the command (what's after the prefix).
+	 *
+	 * @return The command.
+	 */
+	@NonNull
+	List<String> getCommandStrings();
+	
+	/**
+	 * Get a description of the usage of command.
+	 *
+	 * @return The description.
+	 */
+	@NonNull
+	String getCommandUsage();
 	
 	/**
 	 * Get the parent command.

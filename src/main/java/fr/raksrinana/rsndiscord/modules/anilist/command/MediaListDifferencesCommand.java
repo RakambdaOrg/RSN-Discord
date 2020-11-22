@@ -12,6 +12,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 class MediaListDifferencesCommand extends BasicCommand{
@@ -25,11 +27,11 @@ class MediaListDifferencesCommand extends BasicCommand{
 	}
 	
 	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder embedBuilder){
-		super.addHelp(guild, embedBuilder);
-		embedBuilder.addField("filter", translate(guild, "command.anilist.media-list-differences.help.filter"), false);
-		embedBuilder.addField("user1", translate(guild, "command.anilist.media-list-differences.help.user1"), false);
-		embedBuilder.addField("user2", translate(guild, "command.anilist.media-list-differences.help.user2"), false);
+	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField("filter", translate(guild, "command.anilist.media-list-differences.help.filter"), false)
+				.addField("user1", translate(guild, "command.anilist.media-list-differences.help.user1"), false)
+				.addField("user2", translate(guild, "command.anilist.media-list-differences.help.user2"), false);
 	}
 	
 	@Override
@@ -41,13 +43,17 @@ class MediaListDifferencesCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		if(args.size() != 3 || event.getMessage().getMentionedUsers().size() < 2){
-			return CommandResult.BAD_ARGUMENTS;
+		var message = event.getMessage();
+		
+		if(args.size() != 3 || message.getMentionedUsers().size() < 2){
+			return BAD_ARGUMENTS;
 		}
+		
 		final var type = MediaType.valueOf(args.pop().toUpperCase());
-		final var members = event.getMessage().getMentionedMembers();
+		final var members = message.getMentionedMembers();
+		
 		new MediaListDifferencesRunner(event.getJDA(), type, event.getChannel(), members.get(0), members.get(1)).runQueryOnDefaultUsersChannels();
-		return CommandResult.SUCCESS;
+		return SUCCESS;
 	}
 	
 	@NonNull

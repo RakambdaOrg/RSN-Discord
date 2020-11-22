@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.*;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -28,7 +29,7 @@ public class TwitterConfiguration implements ICompositeConfiguration{
 	private Map<Long, Long> lastTweet = new HashMap<>();
 	
 	public Optional<Long> getLastTweet(long userId){
-		return Optional.ofNullable(lastTweet.get(userId));
+		return ofNullable(lastTweet.get(userId));
 	}
 	
 	public void setLastTweet(long userId, long tweetId){
@@ -36,6 +37,6 @@ public class TwitterConfiguration implements ICompositeConfiguration{
 	}
 	
 	public Optional<ChannelConfiguration> getChannel(){
-		return Optional.ofNullable(channel);
+		return ofNullable(channel);
 	}
 }
