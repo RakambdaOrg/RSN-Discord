@@ -9,7 +9,11 @@ import lombok.Getter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 public enum IncidentStatus{
-	INVESTIGATING, IDENTIFIED, MONITORING, RESOLVED, POSTMORTEM;
+	IDENTIFIED,
+	INVESTIGATING,
+	MONITORING,
+	POSTMORTEM,
+	RESOLVED;
 	
 	@JsonCreator
 	public IncidentStatus getByName(String name){

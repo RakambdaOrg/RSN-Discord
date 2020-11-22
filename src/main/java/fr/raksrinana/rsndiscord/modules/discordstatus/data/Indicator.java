@@ -5,12 +5,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import java.awt.Color;
+import static java.awt.Color.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 public enum Indicator{
-	NONE(Color.BLACK), MINOR(Color.YELLOW), MAJOR(Color.ORANGE), CRITICAL(Color.RED);
+	CRITICAL(RED),
+	MAJOR(ORANGE),
+	MINOR(YELLOW),
+	NONE(BLACK);
 	private final Color color;
 	
 	Indicator(Color color){
