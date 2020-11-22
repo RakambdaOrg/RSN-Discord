@@ -2,17 +2,16 @@ package fr.raksrinana.rsndiscord.modules.schedule.runner;
 
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils;
-import fr.raksrinana.rsndiscord.modules.schedule.config.ScheduleConfiguration;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import java.time.ZonedDateTime;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import static java.util.Optional.ofNullable;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 public class SchedulesRunner implements IScheduledRunner{
 	@Getter
@@ -24,12 +23,12 @@ public class SchedulesRunner implements IScheduledRunner{
 	
 	@Override
 	public void execute(){
-		final var currentDate = ZonedDateTime.now();
-		for(final var guild : this.getJda().getGuilds()){
+		var currentDate = ZonedDateTime.now();
+		for(var guild : this.getJda().getGuilds()){
 			Log.getLogger(guild).debug("Processing guild {}", guild);
-			for(ScheduleConfiguration schedule : Settings.get(guild).getSchedules()){
+			for(var schedule : Settings.get(guild).getSchedules()){
 				if(currentDate.isAfter(schedule.getScheduleDate())){
-					for(final var handler : ScheduleUtils.getHandlers()){
+					for(var handler : ScheduleUtils.getHandlers()){
 						if(handler.acceptTag(schedule.getTag())){
 							if(handler.accept(schedule)){
 								Settings.get(guild).removeSchedule(schedule);
@@ -39,7 +38,9 @@ public class SchedulesRunner implements IScheduledRunner{
 					}
 				}
 				else{
-					Optional.ofNullable(schedule.getReminderCountdownMessage()).flatMap(MessageConfiguration::getMessage).ifPresent(message -> Actions.editMessage(message, ScheduleUtils.getEmbedFor(message.getGuild(), schedule)));
+					ofNullable(schedule.getReminderCountdownMessage())
+							.flatMap(MessageConfiguration::getMessage)
+							.ifPresent(message -> message.editMessage(ScheduleUtils.getEmbedFor(message.getGuild(), schedule)).submit());
 				}
 			}
 		}
@@ -58,12 +59,12 @@ public class SchedulesRunner implements IScheduledRunner{
 	
 	@Override
 	public long getPeriod(){
-		return 2;
+		return 1;
 	}
 	
 	@NonNull
 	@Override
 	public TimeUnit getPeriodUnit(){
-		return TimeUnit.MINUTES;
+		return MINUTES;
 	}
 }

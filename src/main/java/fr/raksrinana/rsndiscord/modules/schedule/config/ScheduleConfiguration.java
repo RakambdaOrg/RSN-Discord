@@ -23,6 +23,7 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleTag.NONE;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -30,7 +31,7 @@ import java.util.StringJoiner;
 @NoArgsConstructor
 public class ScheduleConfiguration implements IAtomicConfiguration{
 	@JsonProperty("tag")
-	private ScheduleTag tag = ScheduleTag.NONE;
+	private ScheduleTag tag = NONE;
 	@JsonProperty("user")
 	private UserConfiguration user;
 	@JsonProperty("channel")
@@ -50,7 +51,7 @@ public class ScheduleConfiguration implements IAtomicConfiguration{
 	private Map<String, String> data = new HashMap<>();
 	
 	protected ScheduleConfiguration(@NonNull User user, @NonNull TextChannel channel, @NonNull ZonedDateTime scheduleDate, @NonNull String message){
-		this(user, channel, scheduleDate, message, ScheduleTag.NONE, null);
+		this(user, channel, scheduleDate, message, NONE, null);
 	}
 	
 	protected ScheduleConfiguration(@NonNull User user, @NonNull TextChannel channel, @NonNull ZonedDateTime scheduleDate, @NonNull String message, @NonNull ScheduleTag tag, Map<String, String> data){

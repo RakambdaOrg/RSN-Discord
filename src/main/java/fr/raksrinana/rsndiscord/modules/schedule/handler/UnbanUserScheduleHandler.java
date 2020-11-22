@@ -2,10 +2,10 @@ package fr.raksrinana.rsndiscord.modules.schedule.handler;
 
 import fr.raksrinana.rsndiscord.modules.schedule.ScheduleTag;
 import fr.raksrinana.rsndiscord.modules.schedule.config.ScheduleConfiguration;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.TextChannel;
 import java.util.Objects;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleTag.UNBAN_USER;
 
 @ScheduleHandler
 public class UnbanUserScheduleHandler implements IScheduleHandler{
@@ -13,14 +13,14 @@ public class UnbanUserScheduleHandler implements IScheduleHandler{
 	
 	@Override
 	public boolean acceptTag(@NonNull ScheduleTag tag){
-		return Objects.equals(tag, ScheduleTag.UNBAN_USER);
+		return Objects.equals(tag, UNBAN_USER);
 	}
 	
 	@Override
 	public boolean accept(@NonNull ScheduleConfiguration reminder){
 		reminder.getChannel().getChannel()
 				.map(TextChannel::getGuild)
-				.ifPresent(guild -> Actions.unban(guild, reminder.getData().get(USER_ID_KEY)));
+				.ifPresent(guild -> guild.unban(reminder.getData().get(USER_ID_KEY)).submit());
 		return true;
 	}
 	

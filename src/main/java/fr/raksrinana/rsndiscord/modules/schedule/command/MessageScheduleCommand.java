@@ -13,6 +13,9 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.modules.schedule.command.ScheduleCommandComposite.getReminderDate;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class MessageScheduleCommand extends BasicCommand{
@@ -36,12 +39,13 @@ public class MessageScheduleCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		if(args.size() < 2){
-			return CommandResult.BAD_ARGUMENTS;
+			return BAD_ARGUMENTS;
 		}
-		return ScheduleCommandComposite.getReminderDate(args.pop()).map(date -> {
-			ScheduleUtils.addScheduleAndNotify(new SimpleScheduleConfiguration(event.getAuthor(), event.getChannel(), date, String.join(" ", args)), event.getChannel());
-			return CommandResult.SUCCESS;
-		}).orElse(CommandResult.BAD_ARGUMENTS);
+		return getReminderDate(args.pop()).map(date -> {
+			ScheduleUtils.addScheduleAndNotify(new SimpleScheduleConfiguration(event.getAuthor(), event.getChannel(), date,
+					String.join(" ", args)), event.getChannel());
+			return SUCCESS;
+		}).orElse(BAD_ARGUMENTS);
 	}
 	
 	@Override
