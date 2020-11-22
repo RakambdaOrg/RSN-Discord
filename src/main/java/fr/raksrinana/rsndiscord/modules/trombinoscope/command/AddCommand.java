@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.modules.trombinoscope.command;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
+import fr.raksrinana.rsndiscord.commands.generic.DeleteMode;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
@@ -27,6 +28,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import static fr.raksrinana.rsndiscord.commands.generic.DeleteMode.AFTER;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static fr.raksrinana.rsndiscord.utils.Utilities.isModerator;
 
@@ -127,8 +129,8 @@ class AddCommand extends BasicCommand{
 	}
 	
 	@Override
-	public boolean deleteCommandMessageImmediately(){
-		return false;
+	public DeleteMode getDeleteMode(){
+		return AFTER;
 	}
 	
 	@NonNull

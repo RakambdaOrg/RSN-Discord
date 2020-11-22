@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.DeleteMode.BEFORE;
 
 public interface Command extends Comparable<Command>{
 	/**
@@ -29,8 +30,8 @@ public interface Command extends Comparable<Command>{
 		return getPermission().isAllowed(member);
 	}
 	
-	default boolean deleteCommandMessageImmediately(){
-		return true;
+	default DeleteMode getDeleteMode(){
+		return BEFORE;
 	}
 	
 	/**

@@ -24,6 +24,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
 import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.FAILED;
+import static fr.raksrinana.rsndiscord.commands.generic.DeleteMode.AFTER;
+import static fr.raksrinana.rsndiscord.commands.generic.DeleteMode.BEFORE;
 import static fr.raksrinana.rsndiscord.modules.reaction.ReactionTag.EXTERNAL_TODO;
 import static fr.raksrinana.rsndiscord.modules.reaction.ReactionTag.TODO;
 import static fr.raksrinana.rsndiscord.modules.reaction.ReactionUtils.DELETE_KEY;
@@ -156,7 +158,7 @@ public class CommandsEventListener extends ListenerAdapter{
 		var cmdText = args.pop().substring(Settings.get(guild).getPrefix().orElse(DEFAULT_PREFIX).length());
 		
 		this.getCommand(cmdText).ifPresentOrElse(command -> {
-			if(command.deleteCommandMessageImmediately()){
+			if(command.getDeleteMode() == BEFORE){
 				message.delete().submit();
 				messageDeleted.set(true);
 			}
@@ -194,6 +196,10 @@ public class CommandsEventListener extends ListenerAdapter{
 						.build();
 				channel.sendMessage(embed).submit();
 			}
+			
+			if(command.getDeleteMode() == AFTER){
+				message.delete().submit();
+			}
 		}, () -> {
 			final var embed = new EmbedBuilder()
 					.setAuthor(author.getName(), null, author.getAvatarUrl())
@@ -203,11 +209,8 @@ public class CommandsEventListener extends ListenerAdapter{
 					.build();
 			channel.sendMessage(embed).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
-		});
-		
-		if(!messageDeleted.get()){
 			message.delete().submit();
-		}
+		});
 	}
 	
 	private boolean isExternalTodoChannel(GuildConfiguration guildConfiguration, TextChannel channel){

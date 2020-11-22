@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEve
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import static fr.raksrinana.rsndiscord.modules.reaction.ReactionTag.EXTERNAL_TODO;
 import static fr.raksrinana.rsndiscord.modules.reaction.handler.ReactionHandlerResult.*;
@@ -53,7 +54,8 @@ public class ExternalTodoReactionHandler implements IReactionHandler{
 	}
 	
 	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emote, @NonNull WaitingReactionMessageConfiguration todo) throws InterruptedException, ExecutionException, TimeoutException{
-		var user = event.getUser();
+		var user = event.retrieveUser().submit().get(30, TimeUnit.SECONDS);
+		
 		return todo.getMessage().getMessage()
 				.map(message -> {
 					var messageContent = user.getAsMention() + " reacted " + emote.getValue() + " => " + message.getContentRaw();
