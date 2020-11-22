@@ -4,9 +4,9 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.reaction.handler.IReactionHandler;
 import fr.raksrinana.rsndiscord.modules.reaction.handler.ReactionHandler;
 import fr.raksrinana.rsndiscord.utils.SortedList;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import java.util.Collection;
+import static fr.raksrinana.rsndiscord.utils.Utilities.getAllAnnotatedWith;
 
 public class ReactionUtils{
 	public static final String DELETE_KEY = "delete";
@@ -15,7 +15,7 @@ public class ReactionUtils{
 	private static final Collection<IReactionHandler> handlers = new SortedList<>();
 	
 	public static void registerAllHandlers(){
-		Utilities.getAllAnnotatedWith(ReactionHandler.class, clazz -> (IReactionHandler) clazz.getConstructor().newInstance())
+		getAllAnnotatedWith(ReactionHandler.class, clazz -> (IReactionHandler) clazz.getConstructor().newInstance())
 				.peek(c -> Log.getLogger(null).info("Loaded reaction handler {}", c.getClass().getName()))
 				.forEach(ReactionUtils::addHandler);
 	}

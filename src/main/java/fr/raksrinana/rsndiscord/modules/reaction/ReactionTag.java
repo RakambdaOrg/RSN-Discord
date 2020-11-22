@@ -4,7 +4,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.NonNull;
 
 public enum ReactionTag{
-	NONE, TODO, ANILIST_TODO, SCHEDULED_DELETE_CHANNEL, DELETE_CHANNEL, EXTERNAL_TODO, MEDIA_REACTION;
+	ANILIST_TODO,
+	DELETE_CHANNEL,
+	EXTERNAL_TODO,
+	MEDIA_REACTION,
+	NONE,
+	SCHEDULED_DELETE_CHANNEL,
+	TODO;
 	
 	@JsonCreator
 	@NonNull
