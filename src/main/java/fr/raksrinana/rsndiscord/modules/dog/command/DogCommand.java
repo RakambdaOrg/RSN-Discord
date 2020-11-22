@@ -21,8 +21,6 @@ import static java.awt.Color.GREEN;
 
 @BotCommand
 public class DogCommand extends BasicCommand{
-	private static final int HTTP_OK = 200;
-	
 	@Override
 	public @NonNull IPermission getPermission(){
 		return new SimplePermission("command.dog", true);
