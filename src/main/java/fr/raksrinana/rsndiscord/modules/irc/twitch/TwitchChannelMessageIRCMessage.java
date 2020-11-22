@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toList;
 
 public class TwitchChannelMessageIRCMessage implements IIRCMessage{
 	@Getter
@@ -18,29 +18,39 @@ public class TwitchChannelMessageIRCMessage implements IIRCMessage{
 	
 	public TwitchChannelMessageIRCMessage(@NonNull ChannelMessageIRCMessage event){
 		this.parent = event;
-		this.badges = event.getTags().stream().filter(t -> Objects.equals("badges", t.getKey())).map(IRCTag::getValue).flatMap(t -> Arrays.stream(t.split(",")).filter(v -> !v.isBlank()).map(v -> {
-			final var split = v.split("/");
-			return new TwitchBadge(split[0], split[1]);
-		})).collect(Collectors.toList());
+		this.badges = event.getTags().stream()
+				.filter(tag -> Objects.equals("badges", tag.getKey()))
+				.map(IRCTag::getValue)
+				.flatMap(tag -> Arrays.stream(tag.split(","))
+						.filter(v -> !v.isBlank())
+						.map(value -> {
+							var split = value.split("/");
+							return new TwitchBadge(split[0], split[1]);
+						})).collect(toList());
 	}
 	
 	public Optional<TwitchBadge> getSub(){
-		return getBadges().stream().filter(t -> Objects.equals("subscriber", t.getName())).findFirst();
+		return getBadge("subscriber");
+	}
+	
+	@NonNull
+	private Optional<TwitchBadge> getBadge(String name){
+		return getBadges().stream().filter(t -> Objects.equals(name, t.getName())).findFirst();
 	}
 	
 	public Optional<TwitchBadge> getSubGifter(){
-		return getBadges().stream().filter(t -> Objects.equals("sub-gifter", t.getName())).findFirst();
+		return getBadge("sub-gifter");
 	}
 	
 	public boolean isBroadcaster(){
-		return getBadges().stream().anyMatch(t -> Objects.equals("broadcaster", t.getName()));
+		return getBadge("broadcaster").isPresent();
 	}
 	
 	public boolean isModerator(){
-		return getParent().getTags().stream().anyMatch(t -> Objects.equals("moderator", t.getKey()));
+		return parent.getTag("moderator").isPresent();
 	}
 	
 	public boolean isPartner(){
-		return getParent().getTags().stream().anyMatch(t -> Objects.equals("partner", t.getKey()));
+		return parent.getTag("partner").isPresent();
 	}
 }

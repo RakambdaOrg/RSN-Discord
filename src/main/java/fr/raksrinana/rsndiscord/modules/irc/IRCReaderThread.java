@@ -6,7 +6,7 @@ import fr.raksrinana.rsndiscord.modules.irc.twitch.TwitchIRC;
 import lombok.NonNull;
 import java.io.*;
 import java.net.SocketTimeoutException;
-import java.util.Objects;
+import static java.util.Objects.nonNull;
 
 public class IRCReaderThread extends Thread implements Closeable{
 	public static final double MESSAGE_TIMEOUT = 6.048e8;
@@ -28,7 +28,7 @@ public class IRCReaderThread extends Thread implements Closeable{
 			try{
 				if(this.reader.ready()){
 					String line;
-					while(Objects.nonNull(line = this.reader.readLine())){
+					while(nonNull(line = this.reader.readLine())){
 						processLine(line);
 					}
 				}
@@ -57,9 +57,9 @@ public class IRCReaderThread extends Thread implements Closeable{
 				if(event instanceof PingIRCMessage){
 					Log.getLogger(null).debug("Replying to IRC ping message");
 					this.client.sendMessage("PONG");
-					final var iterator = this.client.getListeners().iterator();
+					var iterator = this.client.getListeners().iterator();
 					while(iterator.hasNext()){
-						final var listener = iterator.next();
+						var listener = iterator.next();
 						if(listener.getLastMessage() > MESSAGE_TIMEOUT){
 							iterator.remove();
 							TwitchIRC.disconnect(listener.getGuild(), listener.getUser(), false);
@@ -67,7 +67,7 @@ public class IRCReaderThread extends Thread implements Closeable{
 					}
 				}
 				Log.getLogger(null).debug("New IRC message of type {}", event.getClass().getSimpleName());
-				for(final var ircListener : this.client.getListeners()){
+				for(var ircListener : this.client.getListeners()){
 					ircListener.onIRCMessage(event);
 				}
 			});

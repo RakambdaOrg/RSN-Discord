@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -36,11 +37,11 @@ public class TwitchConfiguration implements ICompositeConfiguration{
 	private String randomKickRewardId;
 	
 	public Optional<String> getRandomKickRewardId(){
-		return Optional.ofNullable(randomKickRewardId);
+		return ofNullable(randomKickRewardId);
 	}
 	
 	@NonNull
 	public Optional<ChannelConfiguration> getTwitchChannel(){
-		return Optional.ofNullable(this.twitchChannel);
+		return ofNullable(this.twitchChannel);
 	}
 }

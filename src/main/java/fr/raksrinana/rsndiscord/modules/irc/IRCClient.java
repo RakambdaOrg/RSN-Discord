@@ -7,7 +7,11 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import static java.util.Objects.nonNull;
 
 public class IRCClient implements Closeable{
 	public static final int DEFAULT_TIMEOUT = 600000;
@@ -41,7 +45,7 @@ public class IRCClient implements Closeable{
 		this.socketWriter = new PrintWriter(this.socket.getOutputStream(), true);
 		this.ircReader = new IRCReaderThread(this, this.ircMessageBuilder, this.socket.getInputStream());
 		this.ircReader.start();
-		if(Objects.nonNull(this.pass)){
+		if(nonNull(this.pass)){
 			this.sendMessage(String.format("PASS %s", this.pass));
 			Log.getLogger(null).info("Using pass to connect to {}:{}", this.host, this.port);
 		}
