@@ -7,7 +7,6 @@ import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.modules.permission.config.EntityPermissions;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -16,6 +15,9 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class ListCommand extends BasicCommand{
@@ -33,15 +35,18 @@ public class ListCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		if(event.getMessage().getMentions().isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+		var message = event.getMessage();
+		
+		if(message.getMentions().isEmpty()){
+			return BAD_ARGUMENTS;
 		}
-		event.getMessage().getMentionedMembers().forEach(member -> {
+		
+		message.getMentionedMembers().forEach(member -> {
 			displayUserPermissions(event, member.getUser());
 			member.getRoles().forEach(role -> displayRolePermissions(event, role));
 		});
-		event.getMessage().getMentionedRoles().forEach(role -> displayRolePermissions(event, role));
-		return CommandResult.SUCCESS;
+		message.getMentionedRoles().forEach(role -> displayRolePermissions(event, role));
+		return SUCCESS;
 	}
 	
 	private void displayUserPermissions(GuildMessageReceivedEvent event, User user){
@@ -49,7 +54,8 @@ public class ListCommand extends BasicCommand{
 		permissionsConfiguration.getUserPermissions(user)
 				.ifPresent(perms -> {
 					var permsString = buildPermString(perms);
-					Actions.sendMessage(event.getChannel(), "Direct user permissions for " + user.getAsMention() + ":\n" + permsString, null);
+					event.getChannel().sendMessage("Direct user permissions for " + user.getAsMention() + ":\n" + permsString).submit()
+							.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 				});
 	}
 	
@@ -58,7 +64,8 @@ public class ListCommand extends BasicCommand{
 		permissionsConfiguration.getRolePermissions(role)
 				.ifPresent(perms -> {
 					var permsString = buildPermString(perms);
-					Actions.sendMessage(event.getChannel(), "Role permissions for " + role.getAsMention() + ":\n" + permsString, null);
+					event.getChannel().sendMessage("Role permissions for " + role.getAsMention() + ":\n" + permsString).submit()
+							.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 				});
 	}
 	
