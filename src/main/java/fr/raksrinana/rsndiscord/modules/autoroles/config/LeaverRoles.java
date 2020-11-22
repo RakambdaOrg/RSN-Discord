@@ -18,7 +18,7 @@ import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toSet;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -38,7 +38,7 @@ public class LeaverRoles implements IAtomicConfiguration{
 		this.user = new UserConfiguration(user);
 		this.roles = roles.stream()
 				.map(RoleConfiguration::new)
-				.collect(Collectors.toSet());
+				.collect(toSet());
 		this.leaveDate = ZonedDateTime.now();
 	}
 	
