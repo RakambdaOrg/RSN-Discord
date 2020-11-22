@@ -4,7 +4,13 @@ import lombok.Getter;
 
 @Getter
 public enum Kind{
-	UNKNOWN(true), FEE(false), SUGGESTION(true), PUNISHMENT(false), ANIME(true), MANGA(true), INFORMATION(true);
+	ANIME(true),
+	FEE(false),
+	INFORMATION(true),
+	MANGA(true),
+	PUNISHMENT(false),
+	SUGGESTION(true),
+	UNKNOWN(true);
 	private final boolean cancellable;
 	
 	Kind(boolean cancellable){

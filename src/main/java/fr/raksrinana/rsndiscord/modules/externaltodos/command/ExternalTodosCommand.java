@@ -9,10 +9,9 @@ import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-
 import java.util.LinkedList;
 import java.util.List;
-
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.FAILED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
@@ -27,7 +26,7 @@ public class ExternalTodosCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		new ExternalTodosRunner(event.getJDA()).execute();
-		return CommandResult.FAILED;
+		return FAILED;
 	}
 	
 	@NonNull
