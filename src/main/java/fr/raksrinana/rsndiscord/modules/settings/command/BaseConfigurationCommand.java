@@ -5,7 +5,6 @@ import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.settings.ConfigurationOperation;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -15,6 +14,8 @@ import java.awt.Color;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.*;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public abstract class BaseConfigurationCommand extends BasicCommand{
@@ -41,16 +42,21 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+			return BAD_ARGUMENTS;
 		}
-		final var operationStr = args.pop();
+		
+		var guild = event.getGuild();
+		var channel = event.getChannel();
+		var operationStr = args.pop();
+		
 		try{
-			final var operation = ConfigurationOperation.valueOf(operationStr.toUpperCase());
+			var operation = ConfigurationOperation.valueOf(operationStr.toUpperCase());
 			if(!getAllowedOperations().contains(operation)){
-				Actions.reply(event, translate(event.getGuild(), "configuration.operation.not-supported"), null);
-				return CommandResult.NOT_HANDLED;
+				channel.sendMessage(translate(guild, "configuration.operation.not-supported")).submit()
+						.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
+				return NOT_HANDLED;
 			}
-			Log.getLogger(event.getGuild()).info("Executing configuration operation {}", operation);
+			Log.getLogger(guild).info("Executing configuration operation {}", operation);
 			switch(operation){
 				case ADD -> this.onAdd(event, args);
 				case SET -> this.onSet(event, args);
@@ -59,15 +65,17 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 			}
 		}
 		catch(final IllegalArgumentException e){
-			Actions.reply(event, translate(event.getGuild(), "configuration.operation.unknown"), null);
+			channel.sendMessage(translate(guild, "configuration.operation.unknown")).submit()
+					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 		}
 		catch(final RuntimeException e){
-			Log.getLogger(event.getGuild()).warn("Failed to update configuration", e);
-			Actions.reply(event, translate(event.getGuild(), "configuration.update-failed", e.getMessage()), null);
+			Log.getLogger(guild).warn("Failed to update configuration", e);
 			Utilities.reportException("Error updating configuration", e);
-			return CommandResult.FAILED;
+			channel.sendMessage(translate(guild, "configuration.update-failed", e.getMessage())).submit()
+					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
+			return FAILED;
 		}
-		return CommandResult.SUCCESS;
+		return SUCCESS;
 	}
 	
 	protected void onAdd(@NonNull GuildMessageReceivedEvent event, @NonNull LinkedList<String> args){}
@@ -86,12 +94,11 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 	
 	@NonNull
 	protected EmbedBuilder getConfigEmbed(@NonNull final GuildMessageReceivedEvent event, @NonNull final String description, @NonNull final Color color){
-		final var builder = new EmbedBuilder();
-		builder.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl());
-		builder.setColor(color);
-		builder.setTitle(this.getName(event.getGuild()));
-		builder.setDescription(description);
-		return builder;
+		return new EmbedBuilder()
+				.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl())
+				.setColor(color)
+				.setTitle(this.getName(event.getGuild()))
+				.setDescription(description);
 	}
 	
 	@NonNull

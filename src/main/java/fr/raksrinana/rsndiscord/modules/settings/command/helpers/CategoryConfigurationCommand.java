@@ -5,7 +5,7 @@ import fr.raksrinana.rsndiscord.modules.settings.types.CategoryConfiguration;
 import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
-import java.util.Optional;
+import static java.util.Optional.ofNullable;
 
 public abstract class CategoryConfigurationCommand extends ValueConfigurationCommand<CategoryConfiguration>{
 	protected CategoryConfigurationCommand(final Command parent){
@@ -17,7 +17,7 @@ public abstract class CategoryConfigurationCommand extends ValueConfigurationCom
 		if(args.isEmpty()){
 			throw new IllegalArgumentException("Please mention the role");
 		}
-		return Optional.ofNullable(event.getGuild().getCategoryById(args.pop()))
+		return ofNullable(event.getGuild().getCategoryById(args.pop()))
 				.map(CategoryConfiguration::new)
 				.orElseThrow(() -> new IllegalArgumentException("Invalid category id"));
 	}

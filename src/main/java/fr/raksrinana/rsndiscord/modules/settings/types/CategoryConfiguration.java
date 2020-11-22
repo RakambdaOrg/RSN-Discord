@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.Category;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.Optional;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -60,7 +61,7 @@ public class CategoryConfiguration implements IAtomicConfiguration{
 	
 	@NonNull
 	public Optional<Category> getCategory(){
-		return Optional.ofNullable(Main.getJda().getCategoryById(this.getCategoryId()));
+		return ofNullable(Main.getJda().getCategoryById(this.getCategoryId()));
 	}
 	
 	public void setCategory(@NonNull final Category category){

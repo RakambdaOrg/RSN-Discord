@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.User;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.Optional;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -60,7 +61,7 @@ public class UserConfiguration implements IAtomicConfiguration{
 	
 	@NonNull
 	public Optional<User> getUser(){
-		return Optional.ofNullable(Main.getJda().retrieveUserById(this.getUserId()).complete());
+		return ofNullable(Main.getJda().retrieveUserById(this.getUserId()).complete());
 	}
 	
 	public void setUser(@NonNull final User user){

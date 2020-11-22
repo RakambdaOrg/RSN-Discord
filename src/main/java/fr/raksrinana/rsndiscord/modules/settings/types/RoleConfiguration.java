@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.Role;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.Optional;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -60,7 +61,7 @@ public class RoleConfiguration implements IAtomicConfiguration{
 	
 	@NonNull
 	public Optional<Role> getRole(){
-		return Optional.ofNullable(Main.getJda().getRoleById(this.getRoleId()));
+		return ofNullable(Main.getJda().getRoleById(this.getRoleId()));
 	}
 	
 	public void setRole(@NonNull final Role role){

@@ -17,6 +17,7 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -36,7 +37,7 @@ public class NicknameConfiguration implements ICompositeConfiguration{
 	}
 	
 	private Optional<ZonedDateTime> getLastChange(final long userId){
-		return Optional.ofNullable(this.lastChange.get(userId));
+		return ofNullable(this.lastChange.get(userId));
 	}
 	
 	public void setLastChange(@NonNull final User user, final ZonedDateTime date){

@@ -8,10 +8,10 @@ import fr.raksrinana.rsndiscord.modules.settings.types.RoleConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -35,6 +35,6 @@ public class RandomKickConfiguration implements ICompositeConfiguration {
     private double kickRoleProbability = 0.25;
 
     public Optional<RoleConfiguration> getKickedRole() {
-        return Optional.ofNullable(kickedRole);
+        return ofNullable(kickedRole);
     }
 }

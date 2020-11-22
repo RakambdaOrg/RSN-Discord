@@ -15,6 +15,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.Optional;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -46,7 +47,7 @@ public class ChannelConfiguration implements IAtomicConfiguration{
 		if(!(o instanceof ChannelConfiguration)){
 			return false;
 		}
-		final var that = (ChannelConfiguration) o;
+		var that = (ChannelConfiguration) o;
 		return new EqualsBuilder().append(this.getChannelId(), that.getChannelId()).isEquals();
 	}
 	
@@ -64,7 +65,7 @@ public class ChannelConfiguration implements IAtomicConfiguration{
 	
 	@NonNull
 	public Optional<TextChannel> getChannel(){
-		return Optional.ofNullable(Main.getJda().getTextChannelById(this.getChannelId()));
+		return ofNullable(Main.getJda().getTextChannelById(this.getChannelId()));
 	}
 	
 	public void setChannel(@NonNull final TextChannel channel){
