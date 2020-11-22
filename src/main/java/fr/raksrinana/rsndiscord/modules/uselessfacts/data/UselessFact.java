@@ -32,8 +32,8 @@ public class UselessFact{
 	private URL permalink;
 	
 	public void fillEmbed(@NonNull EmbedBuilder builder){
-		builder.setFooter(getId());
-		builder.addField("Fact", getText(), true);
+		builder.setFooter(getId())
+				.addField("Fact", getText(), true);
 	}
 	
 	@Override
