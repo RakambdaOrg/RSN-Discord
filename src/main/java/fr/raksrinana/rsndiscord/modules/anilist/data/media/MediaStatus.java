@@ -8,7 +8,10 @@ import lombok.NonNull;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public enum MediaStatus{
-	FINISHED("Finished"), RELEASING("Releasing"), NOT_YET_RELEASED("Not yet released"), CANCELLED("Cancelled");
+	CANCELLED("Cancelled"),
+	FINISHED("Finished"),
+	NOT_YET_RELEASED("Not yet released"),
+	RELEASING("Releasing");
 	private final String display;
 	
 	MediaStatus(final String display){

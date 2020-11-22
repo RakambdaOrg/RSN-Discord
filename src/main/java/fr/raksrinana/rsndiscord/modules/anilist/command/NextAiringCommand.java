@@ -3,23 +3,24 @@ package fr.raksrinana.rsndiscord.modules.anilist.command;
 import fr.raksrinana.rsndiscord.commands.generic.BasicCommand;
 import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
-import fr.raksrinana.rsndiscord.modules.anilist.config.AnilistAiringScheduleConfiguration;
+import fr.raksrinana.rsndiscord.modules.anilist.config.AniListAiringScheduleConfiguration;
 import fr.raksrinana.rsndiscord.modules.anilist.data.airing.AiringSchedule;
 import fr.raksrinana.rsndiscord.modules.anilist.query.AiringSchedulePagedQuery;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
-import fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.time.ZonedDateTime;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.*;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.addScheduleAndNotify;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.util.Comparator.comparingInt;
 
 @Slf4j
 class NextAiringCommand extends BasicCommand{
@@ -33,9 +34,9 @@ class NextAiringCommand extends BasicCommand{
 	}
 	
 	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder embedBuilder){
-		super.addHelp(guild, embedBuilder);
-		embedBuilder.addField("id", translate(guild, "command.anilist.next-airing.help.id"), false);
+	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField("id", translate(guild, "command.anilist.next-airing.help.id"), false);
 	}
 	
 	@Override
@@ -47,37 +48,40 @@ class NextAiringCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
+		
 		if(args.isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+			return BAD_ARGUMENTS;
 		}
-		final int mediaId;
+		
+		var mediaId = getArgumentAsInteger(args);
+		if(mediaId.isEmpty()){
+			return BAD_ARGUMENTS;
+		}
+		
+		var guild = event.getGuild();
+		var channel = event.getChannel();
+		
 		try{
-			mediaId = Integer.parseInt(args.pop());
-		}
-		catch(NumberFormatException e){
-			return CommandResult.BAD_ARGUMENTS;
-		}
-		try{
-			final var now = ZonedDateTime.now();
-			final var schedules = new AiringSchedulePagedQuery(mediaId).getResult(event.getMember());
+			var now = ZonedDateTime.now();
+			var schedules = new AiringSchedulePagedQuery(mediaId.get()).getResult(event.getMember());
+			
 			schedules.stream().filter(schedule -> now.isBefore(schedule.getAiringAt()))
-					.min(Comparator.comparingInt(AiringSchedule::getTimeUntilAiring))
+					.min(comparingInt(AiringSchedule::getTimeUntilAiring))
 					.ifPresentOrElse(schedule -> {
-						final var builder = new EmbedBuilder();
-						schedule.fillEmbed(event.getGuild(), builder);
-						ScheduleUtils.addScheduleAndNotify(new AnilistAiringScheduleConfiguration(
-										event.getAuthor(),
-										event.getChannel(),
-										schedule.getDate(),
-										schedule),
-								event.getChannel());
-					}, () -> Actions.reply(event, translate(event.getGuild(), "anilist.airing-schedule-not-found"), null));
+						var builder = new EmbedBuilder();
+						schedule.fillEmbed(guild, builder);
+						
+						var airingScheduleConfiguration = new AniListAiringScheduleConfiguration(
+								event.getAuthor(), channel, schedule.getDate(), schedule);
+						addScheduleAndNotify(airingScheduleConfiguration, channel);
+					}, () -> channel.sendMessage(translate(guild, "anilist.airing-schedule-not-found")).submit()
+							.thenAccept(deleteMessage(date -> date.plusMinutes(5))));
 		}
 		catch(Exception e){
 			log.error("Failed to get airing schedule", e);
-			return CommandResult.FAILED;
+			return FAILED;
 		}
-		return CommandResult.SUCCESS;
+		return SUCCESS;
 	}
 	
 	@NonNull

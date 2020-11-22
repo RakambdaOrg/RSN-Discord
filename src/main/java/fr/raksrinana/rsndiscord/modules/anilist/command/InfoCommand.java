@@ -6,7 +6,6 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.modules.anilist.query.MediaPagedQuery;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -14,6 +13,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.*;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @Slf4j
@@ -28,9 +29,9 @@ class InfoCommand extends BasicCommand{
 	}
 	
 	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder embedBuilder){
-		super.addHelp(guild, embedBuilder);
-		embedBuilder.addField("id", translate(guild, "command.anilist.info.help.id"), false);
+	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField("id", translate(guild, "command.anilist.info.help.id"), false);
 	}
 	
 	@Override
@@ -43,33 +44,36 @@ class InfoCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+			return BAD_ARGUMENTS;
 		}
-		final int mediaId;
+		
+		var mediaId = getArgumentAsInteger(args);
+		if(mediaId.isEmpty()){
+			return BAD_ARGUMENTS;
+		}
+		
+		var guild = event.getGuild();
+		var channel = event.getChannel();
+		
 		try{
-			mediaId = Integer.parseInt(args.pop());
-		}
-		catch(NumberFormatException e){
-			return CommandResult.BAD_ARGUMENTS;
-		}
-		try{
-			final var medias = new MediaPagedQuery(mediaId).getResult(event.getMember());
-			if(medias.isEmpty()){
-				Actions.reply(event, translate(event.getGuild(), "anilist.media-not-found"), null);
+			var medias = new MediaPagedQuery(mediaId.get()).getResult(event.getMember());
+			if(!medias.isEmpty()){
+				medias.forEach(media -> {
+					var builder = new EmbedBuilder();
+					media.fillEmbed(guild, builder);
+					channel.sendMessage(builder.build()).submit();
+				});
 			}
 			else{
-				medias.forEach(media -> {
-					final var builder = new EmbedBuilder();
-					media.fillEmbed(event.getGuild(), builder);
-					Actions.sendEmbed(event.getChannel(), builder.build());
-				});
+				channel.sendMessage(translate(guild, "anilist.media-not-found")).submit()
+						.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 			}
 		}
 		catch(Exception e){
 			log.error("Failed to get media with id {}", mediaId, e);
-			return CommandResult.FAILED;
+			return FAILED;
 		}
-		return CommandResult.SUCCESS;
+		return SUCCESS;
 	}
 	
 	@NonNull

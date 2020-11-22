@@ -12,9 +12,9 @@ import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -81,24 +81,28 @@ public abstract class IMedia implements IAniListObject{
 	
 	@Override
 	public void fillEmbed(@NonNull Guild guild, @NonNull final EmbedBuilder builder){
-		builder.setDescription(this.getTitle().getRomaji());
-		if(this.getType().isShouldDisplay()){
-			builder.addField(translate(guild, "anilist.type"), this.getType().toString(), true);
+		builder.setDescription(getTitle().getRomaji());
+		if(getType().isShouldDisplay()){
+			builder.addField(translate(guild, "anilist.type"), getType().toString(), true);
 		}
-		builder.addField(translate(guild, "anilist.format"), Optional.ofNullable(this.getFormat()).map(Enum::toString).orElse("-"), true);
-		builder.addField(translate(guild, "anilist.status"), Optional.ofNullable(this.getStatus()).map(Enum::toString).orElse("-"), true);
-		if(this.isAdult()){
+		builder.addField(translate(guild, "anilist.format"), ofNullable(getFormat()).map(Enum::toString).orElse("-"), true)
+				.addField(translate(guild, "anilist.status"), ofNullable(getStatus()).map(Enum::toString).orElse("-"), true);
+		if(isAdult()){
 			builder.addField(translate(guild, "anilist.adult"), "", true);
 		}
+		
 		fillAdditionalEmbed(guild, builder);
-		this.getStartDate().asDate().ifPresent(startDate -> builder.addField(translate(guild, "anilist.started"), startDate.format(DF), true));
-		this.getEndDate().asDate().ifPresent(startDate -> builder.addField(translate(guild, "anilist.ended"), startDate.format(DF), true));
+		
+		getStartDate().asDate()
+				.ifPresent(startDate -> builder.addField(translate(guild, "anilist.started"), startDate.format(DF), true));
+		getEndDate().asDate()
+				.ifPresent(startDate -> builder.addField(translate(guild, "anilist.ended"), startDate.format(DF), true));
+		
 		if(!genres.isEmpty()){
 			builder.addField(translate(guild, "anilist.genres"), String.join(", ", getGenres()), true);
 		}
-		//builder.addField("Link", getUrl(), false);
-		builder.setThumbnail(this.getCoverImage().getLarge().toString());
-		builder.setFooter("ID: " + getId());
+		builder.setThumbnail(getCoverImage().getLarge().toString())
+				.setFooter("ID: " + getId());
 	}
 	
 	protected abstract void fillAdditionalEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder);
@@ -108,12 +112,12 @@ public abstract class IMedia implements IAniListObject{
 	
 	@Override
 	public int hashCode(){
-		return this.getId();
+		return getId();
 	}
 	
 	@Override
 	public boolean equals(final Object obj){
-		return obj instanceof IMedia && Objects.equals(((IMedia) obj).getId(), this.getId());
+		return obj instanceof IMedia && Objects.equals(((IMedia) obj).getId(), getId());
 	}
 	
 	@Override
@@ -123,7 +127,7 @@ public abstract class IMedia implements IAniListObject{
 	
 	@Override
 	public int compareTo(@NonNull final IAniListObject o){
-		return Integer.compare(this.getId(), o.getId());
+		return Integer.compare(getId(), o.getId());
 	}
 	
 	public abstract Integer getItemCount();

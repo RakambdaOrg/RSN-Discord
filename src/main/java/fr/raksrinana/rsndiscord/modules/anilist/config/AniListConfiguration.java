@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import java.util.Optional;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -32,21 +33,21 @@ public class AniListConfiguration implements ICompositeConfiguration{
 	
 	@NonNull
 	public Optional<ChannelConfiguration> getMediaChangeChannel(){
-		return Optional.ofNullable(this.mediaChangeChannel);
+		return ofNullable(this.mediaChangeChannel);
 	}
 	
 	@NonNull
 	public Optional<ChannelConfiguration> getNotificationsChannel(){
-		return Optional.ofNullable(this.notificationsChannel);
+		return ofNullable(this.notificationsChannel);
 	}
 	
 	@NonNull
 	public Optional<ChannelConfiguration> getThaChannel(){
-		return Optional.ofNullable(this.thaChannel);
+		return ofNullable(this.thaChannel);
 	}
 	
 	@NonNull
 	public Optional<UserConfiguration> getThaUser(){
-		return Optional.ofNullable(this.thaUser);
+		return ofNullable(this.thaUser);
 	}
 }

@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.modules.anilist.data.FuzzyDate;
+import fr.raksrinana.rsndiscord.modules.anilist.data.IAniListDatedObject;
 import fr.raksrinana.rsndiscord.modules.anilist.data.IAniListObject;
-import fr.raksrinana.rsndiscord.modules.anilist.data.IAnilistDatedObject;
 import fr.raksrinana.rsndiscord.modules.anilist.data.media.IMedia;
 import fr.raksrinana.rsndiscord.modules.anilist.data.media.MangaMedia;
 import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
@@ -21,15 +21,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.lang.Boolean.TRUE;
 import static java.time.temporal.ChronoUnit.DAYS;
+import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.joining;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
-public class MediaList implements IAnilistDatedObject{
+public class MediaList implements IAniListDatedObject{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	@Getter
 	private static final String QUERY = """
@@ -89,33 +91,39 @@ public class MediaList implements IAnilistDatedObject{
 	
 	@Override
 	public void fillEmbed(@NonNull Guild guild, @NonNull final EmbedBuilder builder){
-		builder.setTimestamp(getDate());
-		builder.setColor(getStatus().getColor());
-		builder.setTitle(translate(guild, "anilist.list-info"), getMedia().getUrl().toString());
-		builder.addField(translate(guild, "anilist.list-status"), this.getStatus().toString(), true);
-		if(Objects.nonNull(getScore())){
+		builder.setTimestamp(getDate())
+				.setColor(getStatus().getColor())
+				.setTitle(translate(guild, "anilist.list-info"), getMedia().getUrl().toString())
+				.addField(translate(guild, "anilist.list-status"), this.getStatus().toString(), true);
+		if(nonNull(getScore())){
 			builder.addField(translate(guild, "anilist.list-score"), this.getScore() + "/100", true);
 		}
-		if(Objects.equals(isPrivateItem(), Boolean.TRUE)){
+		if(Objects.equals(isPrivateItem(), TRUE)){
 			builder.addField(translate(guild, "anilist.list-private"), "Yes", true);
 		}
+		
 		getStartedAt().asDate().ifPresent(date -> builder.addField(translate(guild, "anilist.list-started"), date.format(DF), true));
 		getCompletedAt().asDate().ifPresent(date -> {
 			builder.addField(translate(guild, "anilist.list-complete"), date.format(DF), true);
 			getStartedAt().durationTo(date).ifPresent(duration -> builder.addField(translate(guild, "anilist.list-time"), String.format("%d days", duration.get(DAYS)), true));
 		});
-		builder.addField(translate(guild, "anilist.list-progress"), getProgress() + "/" + Optional.ofNullable(getMedia().getItemCount()).map(Object::toString).orElse("?"), true);
-		if(Objects.nonNull(getProgressVolumes()) && getMedia() instanceof MangaMedia){
-			builder.addField(translate(guild, "anilist.list-volumes"), getProgressVolumes() + "/" + Optional.ofNullable(((MangaMedia) getMedia()).getVolumes()).map(Object::toString).orElse("?"), true);
+		
+		builder.addField(translate(guild, "anilist.list-progress"), getProgress() + "/" + ofNullable(getMedia().getItemCount()).map(Object::toString).orElse("?"), true);
+		if(nonNull(getProgressVolumes()) && getMedia() instanceof MangaMedia){
+			builder.addField(translate(guild, "anilist.list-volumes"), getProgressVolumes() + "/" + ofNullable(((MangaMedia) getMedia()).getVolumes()).map(Object::toString).orElse("?"), true);
 		}
-		if(Objects.nonNull(getRepeat()) && getRepeat() > 0){
+		if(nonNull(getRepeat()) && getRepeat() > 0){
 			builder.addField(translate(guild, "anilist.list-repeat"), Integer.toString(this.getRepeat()), true);
 		}
-		final var lists = Optional.ofNullable(this.customLists).orElse(new HashMap<>()).entrySet().stream().filter(k -> Objects.nonNull(k.getValue()) && k.getValue()).map(Map.Entry::getKey).collect(Collectors.joining(", "));
+		
+		final var lists = this.customLists.entrySet().stream()
+				.filter(k -> nonNull(k.getValue()) && k.getValue())
+				.map(Map.Entry::getKey)
+				.collect(joining(", "));
 		if(!lists.isBlank()){
 			builder.addField(translate(guild, "anilist.list-custom"), lists, true);
 		}
-		if(Objects.nonNull(getNotes()) && !getNotes().isBlank()){
+		if(nonNull(getNotes()) && !getNotes().isBlank()){
 			builder.addField(translate(guild, "anilist.list-notes"), getNotes(), false);
 		}
 		builder.addBlankField(false);
@@ -151,8 +159,8 @@ public class MediaList implements IAnilistDatedObject{
 	
 	@Override
 	public int compareTo(@NonNull final IAniListObject o){
-		if(o instanceof IAnilistDatedObject){
-			return getDate().compareTo(((IAnilistDatedObject) o).getDate());
+		if(o instanceof IAniListDatedObject){
+			return getDate().compareTo(((IAniListDatedObject) o).getDate());
 		}
 		return Integer.compare(getId(), o.getId());
 	}

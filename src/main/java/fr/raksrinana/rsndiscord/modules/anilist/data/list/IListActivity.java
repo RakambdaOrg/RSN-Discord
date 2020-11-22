@@ -2,8 +2,8 @@ package fr.raksrinana.rsndiscord.modules.anilist.data.list;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fr.raksrinana.rsndiscord.modules.anilist.data.IAniListDatedObject;
 import fr.raksrinana.rsndiscord.modules.anilist.data.IAniListObject;
-import fr.raksrinana.rsndiscord.modules.anilist.data.IAnilistDatedObject;
 import fr.raksrinana.rsndiscord.modules.anilist.data.media.IMedia;
 import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
 import lombok.Getter;
@@ -26,7 +26,7 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 		@JsonSubTypes.Type(value = MangaListActivity.class, name = "MANGA_LIST")
 })
 @Getter
-public abstract class IListActivity implements IAnilistDatedObject{
+public abstract class IListActivity implements IAniListDatedObject{
 	@Getter
 	private static final String QUERY = """
 			ListActivity {
@@ -52,16 +52,16 @@ public abstract class IListActivity implements IAnilistDatedObject{
 	
 	@Override
 	public void fillEmbed(@NonNull Guild guild, @NonNull final EmbedBuilder builder){
-		builder.setColor(getColor());
-		builder.setTimestamp(getDate());
+		builder.setColor(getColor())
+				.setTimestamp(getDate());
 		if(Objects.isNull(getProgress())){
 			builder.setDescription(translate(guild, "anilist.list-added"));
 		}
 		else{
 			builder.setDescription(StringUtils.capitalize(getMedia().getProgressType(getProgress().contains("-"))) + " " + getProgress());
 		}
-		builder.addBlankField(false);
-		builder.addField(translate(guild, "anilist.media"), "", false);
+		builder.addBlankField(false)
+				.addField(translate(guild, "anilist.media"), "", false);
 		getMedia().fillEmbed(guild, builder);
 	}
 	
@@ -75,8 +75,8 @@ public abstract class IListActivity implements IAnilistDatedObject{
 	
 	@Override
 	public int compareTo(@NonNull final IAniListObject o){
-		if(o instanceof IAnilistDatedObject){
-			return getDate().compareTo(((IAnilistDatedObject) o).getDate());
+		if(o instanceof IAniListDatedObject){
+			return getDate().compareTo(((IAniListDatedObject) o).getDate());
 		}
 		return Integer.compare(getId(), o.getId());
 	}

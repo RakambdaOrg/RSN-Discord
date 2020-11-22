@@ -11,12 +11,10 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
-
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import static java.util.concurrent.TimeUnit.HOURS;
 
 public class AniListActivityRunner implements IAniListRunner<IListActivity, ActivityPagedQuery>{
 	@Getter
@@ -28,14 +26,11 @@ public class AniListActivityRunner implements IAniListRunner<IListActivity, Acti
 	
 	@Override
 	public Set<TextChannel> getChannels(){
-		return this.getJda().getGuilds().stream()
-				.map(g -> Settings.get(g).getAniListConfiguration()
+		return getJda().getGuilds().stream()
+				.flatMap(guild -> Settings.get(guild).getAniListConfiguration()
 						.getMediaChangeChannel()
-						.map(ChannelConfiguration::getChannel)
-						.filter(Optional::isPresent)
-						.map(Optional::get)
-						.orElse(null))
-				.filter(Objects::nonNull)
+						.flatMap(ChannelConfiguration::getChannel)
+						.stream())
 				.collect(Collectors.toSet());
 	}
 	
@@ -72,7 +67,7 @@ public class AniListActivityRunner implements IAniListRunner<IListActivity, Acti
 	@NonNull
 	@Override
 	public TimeUnit getPeriodUnit(){
-		return TimeUnit.HOURS;
+		return HOURS;
 	}
 	
 	@Override

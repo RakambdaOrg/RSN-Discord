@@ -2,10 +2,11 @@ package fr.raksrinana.rsndiscord.modules.anilist.query;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.raksrinana.rsndiscord.modules.anilist.data.notifications.INotification;
-import fr.raksrinana.rsndiscord.modules.anilist.data.notifications.NotificationType;
 import kong.unirest.json.JSONObject;
 import lombok.NonNull;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.modules.anilist.data.notifications.NotificationType.AIRING;
+import static fr.raksrinana.rsndiscord.modules.anilist.data.notifications.NotificationType.RELATED_MEDIA_ADDITION;
 
 public class NotificationsPagedQuery implements IPagedQuery<INotification>{
 	private static final String QUERY = IPagedQuery.pagedQuery(", $type_in: [NotificationType]", INotification.getQuery());
@@ -16,7 +17,7 @@ public class NotificationsPagedQuery implements IPagedQuery<INotification>{
 		this.variables = new JSONObject();
 		this.variables.put("page", 1);
 		this.variables.put("perPage", PER_PAGE);
-		this.variables.put("type_in", List.of(NotificationType.AIRING.name(), NotificationType.RELATED_MEDIA_ADDITION.name()));
+		this.variables.put("type_in", List.of(AIRING.name(), RELATED_MEDIA_ADDITION.name()));
 	}
 	
 	@NonNull

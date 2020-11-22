@@ -15,12 +15,12 @@ public class ActivityPagedQuery implements IPagedQuery<IListActivity>{
 	private int currentPage = 0;
 	
 	public ActivityPagedQuery(final int userId, final ZonedDateTime date){
+		final var second = date.toEpochSecond();
 		this.variables = new JSONObject();
 		this.variables.put("userID", userId);
 		this.variables.put("page", 1);
 		this.variables.put("perPage", PER_PAGE);
-		final var s = date.toEpochSecond();
-		this.variables.put("date", s >= 0 ? s : 0);
+		this.variables.put("date", second >= 0 ? second : 0);
 	}
 	
 	@Override

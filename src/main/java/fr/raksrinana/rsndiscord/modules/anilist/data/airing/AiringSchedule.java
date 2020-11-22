@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fr.raksrinana.rsndiscord.modules.anilist.data.IAniListDatedObject;
 import fr.raksrinana.rsndiscord.modules.anilist.data.IAniListObject;
-import fr.raksrinana.rsndiscord.modules.anilist.data.IAnilistDatedObject;
 import fr.raksrinana.rsndiscord.modules.anilist.data.media.IMedia;
 import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
 import lombok.Getter;
@@ -22,7 +22,7 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class AiringSchedule implements IAnilistDatedObject{
+public class AiringSchedule implements IAniListDatedObject{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
 	@Getter
 	private static final String QUERY = """
@@ -47,9 +47,9 @@ public class AiringSchedule implements IAnilistDatedObject{
 	
 	@Override
 	public void fillEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder){
-		builder.addField(translate(guild, "anilist.episode"), Integer.toString(getEpisode()), true);
-		builder.addField(translate(guild, "anilist.air"), getAiringAt().format(DF), true);
-		builder.addBlankField(false);
+		builder.addField(translate(guild, "anilist.episode"), Integer.toString(getEpisode()), true)
+				.addField(translate(guild, "anilist.air"), getAiringAt().format(DF), true)
+				.addBlankField(false);
 		getMedia().fillEmbed(guild, builder);
 	}
 	
@@ -60,8 +60,8 @@ public class AiringSchedule implements IAnilistDatedObject{
 	
 	@Override
 	public int compareTo(@NonNull IAniListObject o){
-		if(o instanceof IAnilistDatedObject){
-			return getDate().compareTo(((IAnilistDatedObject) o).getDate());
+		if(o instanceof IAniListDatedObject){
+			return getDate().compareTo(((IAniListDatedObject) o).getDate());
 		}
 		return Integer.compare(getId(), o.getId());
 	}

@@ -8,7 +8,10 @@ import lombok.NonNull;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public enum MediaSeason{
-	WINTER("Winter"), SPRING("Spring"), SUMMER("Summer"), FALL("Fall");
+	FALL("Fall"),
+	SPRING("Spring"),
+	SUMMER("Summer"),
+	WINTER("Winter");
 	private final String display;
 	
 	MediaSeason(final String display){

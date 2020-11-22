@@ -6,10 +6,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.utils.DayDuration;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import java.time.Duration;
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.Optional;
+import static java.time.Duration.between;
+import static java.util.Objects.nonNull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -29,11 +29,13 @@ public class FuzzyDate{
 	
 	@NonNull
 	public Optional<DayDuration> durationTo(@NonNull final LocalDate toDate){
-		return this.asDate().map(date -> new DayDuration(Duration.between(date.atStartOfDay(), toDate.atStartOfDay())));
+		return this.asDate().map(date -> new DayDuration(between(date.atStartOfDay(), toDate.atStartOfDay())));
 	}
 	
 	@NonNull
 	public Optional<LocalDate> asDate(){
-		return (Objects.nonNull(this.day) && Objects.nonNull(this.month) && Objects.nonNull(this.year)) ? Optional.of(LocalDate.of(this.year, this.month, this.day)) : Optional.empty();
+		return nonNull(this.day) && nonNull(this.month) && nonNull(this.year)
+				? Optional.of(LocalDate.of(this.year, this.month, this.day))
+				: Optional.empty();
 	}
 }

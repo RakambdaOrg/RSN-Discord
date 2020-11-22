@@ -9,8 +9,9 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import java.util.Optional;
+import static fr.raksrinana.rsndiscord.modules.anilist.data.media.MediaType.MANGA;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -23,13 +24,15 @@ public class MangaMedia extends IMedia{
 	private Integer volumes;
 	
 	public MangaMedia(){
-		super(MediaType.MANGA);
+		super(MANGA);
 	}
 	
 	@Override
 	protected void fillAdditionalEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder){
-		Optional.ofNullable(this.getChapters()).map(Object::toString).ifPresent(val -> builder.addField(translate(guild, "anilist.chapters"), val, true));
-		Optional.ofNullable(this.getVolumes()).map(Object::toString).ifPresent(val -> builder.addField(translate(guild, "anilist.volumes"), val, true));
+		ofNullable(this.getChapters()).map(Object::toString)
+				.ifPresent(val -> builder.addField(translate(guild, "anilist.chapters"), val, true));
+		ofNullable(this.getVolumes()).map(Object::toString)
+				.ifPresent(val -> builder.addField(translate(guild, "anilist.volumes"), val, true));
 	}
 	
 	@Override

@@ -7,7 +7,6 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.anilist.AniListUtils;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
@@ -16,6 +15,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.*;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 class RegisterCommand extends BasicCommand{
@@ -44,23 +45,31 @@ class RegisterCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+			return BAD_ARGUMENTS;
 		}
+		
+		var guild = event.getGuild();
+		var channel = event.getChannel();
+		
 		try{
 			AniListUtils.requestToken(event.getMember(), args.pop());
-			Actions.reply(event, translate(event.getGuild(), "anilist.api-code.saved"), null);
+			channel.sendMessage(translate(guild, "anilist.api-code.saved")).submit()
+					.thenAccept(deleteMessage(date -> date.plusMinutes(10)));
 		}
 		catch(final IllegalArgumentException e){
-			Actions.reply(event, translate(event.getGuild(), "anilist.api-code.invalid"), null);
-			return CommandResult.NOT_HANDLED;
+			channel.sendMessage(translate(guild, "anilist.api-code.invalid")).submit()
+					.thenAccept(deleteMessage(date -> date.plusMinutes(10)));
+			return NOT_HANDLED;
 		}
 		catch(final InvalidResponseException e){
-			Log.getLogger(event.getGuild()).error("Error getting AniList access token", e);
-			Actions.reply(event, translate(event.getGuild(), "anilist.api-code.save-error"), null);
+			Log.getLogger(guild).error("Error getting AniList access token", e);
 			Utilities.reportException("Error getting AniList Token", e);
-			return CommandResult.FAILED;
+			
+			channel.sendMessage(translate(guild, "anilist.api-code.save-error")).submit()
+					.thenAccept(deleteMessage(date -> date.plusMinutes(10)));
+			return FAILED;
 		}
-		return CommandResult.SUCCESS;
+		return SUCCESS;
 	}
 	
 	@NonNull

@@ -5,7 +5,6 @@ import fr.raksrinana.rsndiscord.modules.anilist.data.list.MediaList;
 import fr.raksrinana.rsndiscord.modules.anilist.data.media.MediaType;
 import fr.raksrinana.rsndiscord.modules.anilist.query.MediaListPagedQuery;
 import fr.raksrinana.rsndiscord.modules.anilist.runner.IAniListRunner;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
@@ -15,6 +14,7 @@ import net.dv8tion.jda.api.entities.User;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 class MediaListDifferencesRunner implements IAniListRunner<MediaList, MediaListPagedQuery>{
 	@Getter
@@ -54,11 +54,6 @@ class MediaListDifferencesRunner implements IAniListRunner<MediaList, MediaListP
 	}
 	
 	@Override
-	public @NonNull TimeUnit getPeriodUnit(){
-		return TimeUnit.MINUTES;
-	}
-	
-	@Override
 	public Set<TextChannel> getChannels(){
 		return Set.of(this.channel);
 	}
@@ -76,9 +71,14 @@ class MediaListDifferencesRunner implements IAniListRunner<MediaList, MediaListP
 					.filter(user1Media -> user1Media.getMedia().getType().equals(this.type))
 					.filter(user2Medias::contains)
 					.sorted()
-					.map(commonMedia -> this.buildMessage(this.channel.getGuild(), null, commonMedia))
-					.forEach(message -> Actions.sendEmbed(this.channel, message));
+					.map(commonMedia -> buildMessage(this.channel.getGuild(), null, commonMedia))
+					.forEach(embed -> this.channel.sendMessage(embed).submit());
 		}
+	}
+	
+	@Override
+	public @NonNull TimeUnit getPeriodUnit(){
+		return MINUTES;
 	}
 	
 	@NonNull
