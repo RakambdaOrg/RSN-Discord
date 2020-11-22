@@ -7,7 +7,6 @@ import fr.raksrinana.rsndiscord.modules.birthday.config.Birthday;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -16,6 +15,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class GetCommand extends BasicCommand{
@@ -34,13 +36,25 @@ public class GetCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		if(event.getMessage().getMentionedUsers().isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+		
+		if(noUserIsMentioned(event)){
+			return BAD_ARGUMENTS;
 		}
-		var user = event.getMessage().getMentionedUsers().stream().findFirst().orElseThrow();
-		Settings.get(event.getGuild()).getBirthdays().getBirthday(user).map(Birthday::getDate)
-				.ifPresentOrElse(date -> Actions.reply(event, translate(event.getGuild(), "birthday.birthday", user.getAsMention(), date.format(DF), date.until(LocalDate.now()).normalized().getYears()), null), () -> Actions.reply(event, translate(event.getGuild(), "birthday.unknown-date"), null));
-		return CommandResult.SUCCESS;
+		
+		var guild = event.getGuild();
+		var user = getFirstUserMentioned(event).orElseThrow();
+		
+		Settings.get(guild).getBirthdays().getBirthday(user).map(Birthday::getDate)
+				.ifPresentOrElse(date -> {
+					
+					var message = translate(guild, "birthday.birthday",
+							user.getAsMention(),
+							date.format(DF),
+							date.until(LocalDate.now()).normalized().getYears());
+					event.getChannel().sendMessage(message).submit();
+				}, () -> event.getChannel().sendMessage(translate(guild, "birthday.unknown-date")).submit()
+						.thenAccept(deleteMessage(date -> date.plusMinutes(5))));
+		return SUCCESS;
 	}
 	
 	@NonNull

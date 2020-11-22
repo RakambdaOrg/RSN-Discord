@@ -5,12 +5,12 @@ import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import java.time.LocalDate;
 import java.util.concurrent.TimeUnit;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.util.concurrent.TimeUnit.HOURS;
 
 @ScheduledRunner
 public class BirthdayRunner implements IScheduledRunner{
@@ -22,17 +22,27 @@ public class BirthdayRunner implements IScheduledRunner{
 	
 	@Override
 	public void execute(){
-		final var day = LocalDate.now();
-		this.jda.getGuilds().forEach(guild -> {
+		var day = LocalDate.now();
+		jda.getGuilds().forEach(guild -> {
 			Log.getLogger(guild).info("Processing guild {}", guild);
 			var birthdaysConfiguration = Settings.get(guild).getBirthdays();
-			birthdaysConfiguration.getNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(textChannel ->
-					birthdaysConfiguration.getBirthdays().forEach((userConfiguration, birthday) -> {
-						if(birthday.isAt(day) && !birthday.isNotified(day)){
-							birthday.setNotified(day);
-							userConfiguration.getUser().ifPresent(user -> Actions.sendMessage(textChannel, translate(guild, "birthday.today", user.getAsMention(), birthday.getDate().until(day).normalized().getYears()), null));
-						}
-					}));
+			birthdaysConfiguration.getNotificationChannel()
+					.flatMap(ChannelConfiguration::getChannel)
+					.ifPresent(textChannel ->
+							birthdaysConfiguration.getBirthdays().forEach((userConfiguration, birthday) -> {
+								if(birthday.isAt(day) && !birthday.isNotified(day)){
+									birthday.setNotified(day);
+									
+									userConfiguration.getUser()
+											.ifPresent(user -> {
+												var message = translate(guild, "birthday.today",
+														user.getAsMention(),
+														birthday.getDate().until(day).normalized().getYears());
+												
+												textChannel.sendMessage(message).submit();
+											});
+								}
+							}));
 		});
 	}
 	
@@ -55,6 +65,6 @@ public class BirthdayRunner implements IScheduledRunner{
 	@NonNull
 	@Override
 	public TimeUnit getPeriodUnit(){
-		return TimeUnit.HOURS;
+		return HOURS;
 	}
 }

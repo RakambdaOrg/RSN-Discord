@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -50,10 +51,10 @@ public class BirthdaysConfiguration implements ICompositeConfiguration{
 	}
 	
 	public Optional<Birthday> getBirthday(User user){
-		return Optional.ofNullable(birthdays.get(new UserConfiguration(user)));
+		return ofNullable(birthdays.get(new UserConfiguration(user)));
 	}
 	
 	public Optional<ChannelConfiguration> getNotificationChannel(){
-		return Optional.ofNullable(notificationChannel);
+		return ofNullable(notificationChannel);
 	}
 }
