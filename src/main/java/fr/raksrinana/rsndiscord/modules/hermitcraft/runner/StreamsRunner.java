@@ -6,8 +6,6 @@ import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
-import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -18,6 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 @ScheduledRunner
 public class StreamsRunner implements IScheduledRunner{
@@ -32,11 +31,15 @@ public class StreamsRunner implements IScheduledRunner{
 	@Override
 	public void execute(){
 		HermitcraftUtils.getHermits().ifPresent(hermits -> {
-			for(final var hermit : hermits){
+			for(var hermit : hermits){
 				if(hermit.isLive()){
 					if(!this.hermitAlreadyNotified.contains(hermit.getChannelId())){
 						this.hermitAlreadyNotified.add(hermit.getChannelId());
-						this.jda.getGuilds().forEach(guild -> Settings.get(guild).getHermitcraftConfiguration().getStreamingNotificationChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> sendStream(hermit, channel)));
+						this.jda.getGuilds().forEach(guild -> Settings.get(guild)
+								.getHermitcraftConfiguration()
+								.getStreamingNotificationChannel()
+								.flatMap(ChannelConfiguration::getChannel)
+								.ifPresent(channel -> sendStream(hermit, channel)));
 					}
 				}
 				else{
@@ -65,13 +68,19 @@ public class StreamsRunner implements IScheduledRunner{
 	@NonNull
 	@Override
 	public TimeUnit getPeriodUnit(){
-		return TimeUnit.MINUTES;
+		return MINUTES;
 	}
 	
 	private void sendStream(Hermit hermit, TextChannel channel){
-		EmbedBuilder embed = Utilities.buildEmbed(this.jda.getSelfUser(), Color.GREEN, translate(channel.getGuild(), "hermitcraft.live", hermit.getDisplayName()), hermit.getLiveUrl().map(URL::toString).orElse(null));
-		embed.addField(translate(channel.getGuild(), "hermitcraft.hermit"), hermit.getDisplayName(), true);
-		embed.setThumbnail(hermit.getProfilePicture().toString());
-		Actions.sendEmbed(channel, embed.build());
+		var selfUser = jda.getSelfUser();
+		var url = hermit.getLiveUrl().map(URL::toString).orElse(null);
+		
+		var embed = new EmbedBuilder().setAuthor(selfUser.getName(), null, selfUser.getAvatarUrl())
+				.setColor(Color.GREEN)
+				.setTitle(translate(channel.getGuild(), "hermitcraft.live", hermit.getDisplayName()), url)
+				.addField(translate(channel.getGuild(), "hermitcraft.hermit"), hermit.getDisplayName(), true)
+				.setThumbnail(hermit.getProfilePicture().toString())
+				.build();
+		channel.sendMessage(embed).submit();
 	}
 }
