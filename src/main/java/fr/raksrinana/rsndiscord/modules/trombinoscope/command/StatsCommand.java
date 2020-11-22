@@ -7,18 +7,18 @@ import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.trombinoscope.config.Picture;
-import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.awt.Color;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.awt.Color.GREEN;
 
 class StatsCommand extends BasicCommand{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
@@ -42,21 +42,28 @@ class StatsCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		if(event.getMessage().getMentionedUsers().isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+		if(noUserIsMentioned(event)){
+			return BAD_ARGUMENTS;
 		}
-		var trombinoscope = Settings.get(event.getGuild()).getTrombinoscope();
-		var target = event.getMessage().getMentionedUsers().get(0);
+		
+		var guild = event.getGuild();
+		var author = event.getAuthor();
+		var trombinoscope = Settings.get(guild).getTrombinoscope();
+		var target = getFirstUserMentioned(event).orElseThrow();
 		var pictures = trombinoscope.getPictures(target);
-		var embed = Utilities.buildEmbed(event.getAuthor(), Color.GREEN, translate(event.getGuild(), "trombinoscope.stats.title"), null);
-		embed.addField(translate(event.getGuild(), "trombinoscope.stats.user"), target.getAsMention(), true);
-		embed.addField(translate(event.getGuild(), "trombinoscope.stats.count"), Integer.toString(pictures.size()), true);
-		embed.addField(translate(event.getGuild(), "trombinoscope.stats.date"), pictures.stream().max(Comparator.comparing(Picture::getDate))
-				.map(Picture::getDate)
-				.map(DF::format)
-				.orElseGet(() -> translate(event.getGuild(), "trombinoscope.stats.date-unknown")), true);
-		Actions.sendEmbed(event.getChannel(), embed.build());
-		return CommandResult.SUCCESS;
+		
+		var embed = new EmbedBuilder().setAuthor(author.getName(), null, author.getAvatarUrl())
+				.setColor(GREEN)
+				.setTitle(translate(guild, "trombinoscope.stats.title"))
+				.addField(translate(guild, "trombinoscope.stats.user"), target.getAsMention(), true)
+				.addField(translate(guild, "trombinoscope.stats.count"), Integer.toString(pictures.size()), true)
+				.addField(translate(guild, "trombinoscope.stats.date"), pictures.stream().max(Comparator.comparing(Picture::getDate))
+						.map(Picture::getDate)
+						.map(DF::format)
+						.orElseGet(() -> translate(guild, "trombinoscope.stats.date-unknown")), true)
+				.build();
+		event.getChannel().sendMessage(embed).submit();
+		return SUCCESS;
 	}
 	
 	@Override

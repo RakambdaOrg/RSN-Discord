@@ -6,10 +6,10 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.modules.trombinoscope.config.Picture;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.coobird.thumbnailator.Thumbnails;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -23,15 +23,18 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.modules.trombinoscope.command.PictureMode.KEEP_ASPECT_RATIO;
+import static fr.raksrinana.rsndiscord.modules.trombinoscope.command.PictureMode.STRETCH;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.util.Comparator.comparingInt;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toSet;
 
 class GlobalCommand extends BasicCommand{
 	private static final int PICTURE_PIXELS = 500;
@@ -60,44 +63,56 @@ class GlobalCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		var mode = Optional.ofNullable(args.poll()).flatMap(PictureMode::fromString).orElse(PictureMode.STRETCH);
-		var trombinoscopeConfiguration = Settings.get(event.getGuild()).getTrombinoscope();
+		var guild = event.getGuild();
+		var mode = ofNullable(args.poll()).flatMap(PictureMode::fromString).orElse(STRETCH);
+		var trombinoscopeConfiguration = Settings.get(guild).getTrombinoscope();
 		var userCount = trombinoscopeConfiguration.getUserCount();
 		var dimensions = getDims(userCount);
 		
 		var bufferedImage = new BufferedImage(PICTURE_PIXELS * dimensions.getLeft(), PICTURE_PIXELS * dimensions.getRight(), BufferedImage.TYPE_INT_RGB);
 		var g2d = bufferedImage.createGraphics();
+		
 		var currentIndex = new AtomicInteger(0);
 		trombinoscopeConfiguration.getPictures().entrySet().stream().parallel().forEach(entry -> {
 			var userIndex = currentIndex.getAndIncrement();
-			entry.getValue().stream().skip(ThreadLocalRandom.current().nextInt(entry.getValue().size())).findFirst().ifPresent(picture -> {
-				int x = userIndex % dimensions.getLeft();
-				int y = userIndex / dimensions.getLeft();
-				drawImage(g2d, picture, PICTURE_PIXELS * x, PICTURE_PIXELS * y, PICTURE_PIXELS, mode);
-			});
+			entry.getValue().stream().skip(ThreadLocalRandom.current().nextInt(entry.getValue().size())).findFirst()
+					.ifPresent(picture -> {
+						int x = userIndex % dimensions.getLeft();
+						int y = userIndex / dimensions.getLeft();
+						drawImage(g2d, picture, PICTURE_PIXELS * x, PICTURE_PIXELS * y, PICTURE_PIXELS, mode);
+					});
 		});
 		g2d.dispose();
+		
 		ByteArrayOutputStream imgOutputStream = new ByteArrayOutputStream();
 		try{
 			if(ImageIO.write(bufferedImage, "jpeg", imgOutputStream)){
 				try(var imgInputStream = new ByteArrayInputStream(imgOutputStream.toByteArray())){
-					trombinoscopeConfiguration.getPicturesChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel -> Actions.sendMessage(channel, translate(event.getGuild(), "trombinoscope.global", userCount, event.getAuthor().getAsMention()), null, false, action -> action.addFile(imgInputStream, System.currentTimeMillis() + ".jpg")));
+					trombinoscopeConfiguration.getPicturesChannel()
+							.flatMap(ChannelConfiguration::getChannel)
+							.ifPresent(channel -> {
+								var message = translate(guild, "trombinoscope.global", userCount, event.getAuthor().getAsMention());
+								channel.sendMessage(message)
+										.addFile(imgInputStream, System.currentTimeMillis() + ".jpg")
+										.submit();
+							});
 				}
 			}
 		}
 		catch(IOException e){
-			Actions.reply(event, translate(event.getGuild(), "trombinoscope.error.create-fail"), null);
+			event.getChannel().sendMessage(translate(guild, "trombinoscope.error.create-fail")).submit()
+					.thenAccept(ScheduleUtils.deleteMessage(date -> date.plusMinutes(5)));
 		}
-		return CommandResult.SUCCESS;
+		return SUCCESS;
 	}
 	
 	private static Pair<Integer, Integer> getDims(int count){
 		var divisors = IntStream.rangeClosed(1, (int) Math.floor(Math.sqrt(count)))
 				.filter(i -> count % i == 0)
 				.mapToObj(i -> Pair.of(i, count / i))
-				.collect(Collectors.toSet());
+				.collect(toSet());
 		return divisors.stream()
-				.min(Comparator.comparingInt(GlobalCommand::getDimsDiff))
+				.min(comparingInt(GlobalCommand::getDimsDiff))
 				.orElseGet(() -> {
 					var side = (int) Math.ceil(Math.sqrt(count));
 					return Pair.of(side, side);
@@ -117,7 +132,7 @@ class GlobalCommand extends BasicCommand{
 		try{
 			var image = Thumbnails.of(picture.getPath().toFile())
 					.size(dim, dim)
-					.keepAspectRatio(mode == PictureMode.KEEP_ASPECT_RATIO)
+					.keepAspectRatio(mode == KEEP_ASPECT_RATIO)
 					.useExifOrientation(true)
 					.asBufferedImage();
 			image = Scalr.resize(image, dim);

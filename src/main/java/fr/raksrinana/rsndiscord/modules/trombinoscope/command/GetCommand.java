@@ -8,7 +8,6 @@ import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.modules.trombinoscope.config.Picture;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -20,7 +19,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.util.Optional.ofNullable;
 
 class GetCommand extends BasicCommand{
 	/**
@@ -58,23 +61,24 @@ class GetCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("user", translate(guild, "command.trombinoscope.get.help.user"), true);
-		builder.addField("index", translate(guild, "command.trombinoscope.get.help.index"), true);
+		builder.addField("user", translate(guild, "command.trombinoscope.get.help.user"), true)
+				.addField("index", translate(guild, "command.trombinoscope.get.help.index"), true);
 	}
 	
 	@NonNull
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		var target = event.getMessage().getMentionedUsers()
-				.stream()
-				.findFirst()
-				.stream()
+		var guild = event.getGuild();
+		var channel = event.getChannel();
+		
+		var target = event.getMessage().getMentionedUsers().stream()
+				.findFirst().stream()
 				.peek(user -> args.poll())
 				.findFirst()
 				.or(() -> {
 					try{
-						return Optional.ofNullable(args.poll())
+						return ofNullable(args.poll())
 								.map(NumberUtils::createLong)
 								.map(UserById::new);
 					}
@@ -83,23 +87,18 @@ class GetCommand extends BasicCommand{
 					}
 				});
 		if(target.isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+			return BAD_ARGUMENTS;
 		}
-		var trombinoscope = Settings.get(event.getGuild()).getTrombinoscope();
+		
+		var trombinoscope = Settings.get(guild).getTrombinoscope();
 		var pictureCount = trombinoscope.getPictures(target.get()).size();
 		if(pictureCount < 1){
-			Actions.reply(event, translate(event.getGuild(), "trombinoscope.user.no-picture"), null);
-			return CommandResult.SUCCESS;
+			channel.sendMessage(translate(guild, "trombinoscope.user.no-picture")).submit();
+			return SUCCESS;
 		}
-		var pictureIndex = Optional.ofNullable(args.poll())
-				.map(arg -> {
-					try{
-						return Integer.parseInt(arg);
-					}
-					catch(NumberFormatException ignored){
-					}
-					return null;
-				}).filter(arg -> arg > 0 && arg <= pictureCount)
+		
+		var pictureIndex = getArgumentAsInteger(args)
+				.filter(arg -> arg > 0 && arg <= pictureCount)
 				.map(arg -> arg - 1)
 				.orElseGet(() -> ThreadLocalRandom.current().nextInt(pictureCount));
 		trombinoscope.getPictures(target.get()).stream()
@@ -107,9 +106,19 @@ class GetCommand extends BasicCommand{
 				.skip(pictureIndex)
 				.findFirst()
 				.ifPresentOrElse(picture -> trombinoscope.getPicturesChannel()
-						.flatMap(ChannelConfiguration::getChannel)
-						.ifPresent(picturesChannel -> Actions.sendMessage(picturesChannel, translate(event.getGuild(), "trombinoscope.user.picture", event.getAuthor().getAsMention(), target.get().getAsMention(), picture.getUuid()), null, false, message -> message.addFile(picture.getPath().toFile()))), () -> Actions.reply(event, translate(event.getGuild(), "trombinoscope.error.unknown"), null));
-		return CommandResult.SUCCESS;
+								.flatMap(ChannelConfiguration::getChannel)
+								.ifPresent(picturesChannel -> {
+									var message = translate(guild, "trombinoscope.user.picture",
+											event.getAuthor().getAsMention(),
+											target.get().getAsMention(),
+											picture.getUuid());
+									picturesChannel.sendMessage(message)
+											.addFile(picture.getPath().toFile())
+											.submit();
+								}),
+						() -> channel.sendMessage(translate(guild, "trombinoscope.error.unknown")).submit()
+								.thenAccept(deleteMessage(date -> date.plusMinutes(5))));
+		return SUCCESS;
 	}
 	
 	@Override

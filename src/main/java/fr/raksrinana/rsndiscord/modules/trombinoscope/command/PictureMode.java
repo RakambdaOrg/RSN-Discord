@@ -4,8 +4,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 public enum PictureMode{
-	STRETCH,
-	KEEP_ASPECT_RATIO;
+	KEEP_ASPECT_RATIO,
+	STRETCH;
 	
 	public static Optional<PictureMode> fromString(String value){
 		for(var mode : PictureMode.values()){

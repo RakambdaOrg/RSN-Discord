@@ -7,7 +7,6 @@ import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.RoleConfiguration;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -16,6 +15,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static fr.raksrinana.rsndiscord.utils.Utilities.isModerator;
 
@@ -45,32 +47,40 @@ class RemoveCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+			return BAD_ARGUMENTS;
 		}
+		
+		var guild = event.getGuild();
+		var channel = event.getChannel();
 		var id = args.pop();
+		
 		try{
 			var uuid = UUID.fromString(id);
-			var trombinoscope = Settings.get(event.getGuild()).getTrombinoscope();
+			var trombinoscope = Settings.get(guild).getTrombinoscope();
 			trombinoscope.getUserIdOfPicture(uuid).ifPresentOrElse(userId -> {
 				if(Objects.equals(userId, event.getAuthor().getIdLong()) || isModerator(event.getMember())){
 					trombinoscope.removePicture(userId, uuid);
-					Actions.reply(event, translate(event.getGuild(), "trombinoscope.picture-removed"), null);
+					channel.sendMessage(translate(guild, "trombinoscope.picture-removed")).submit()
+							.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
+					
 					if(!trombinoscope.isUserPresent(userId)){
-						event.getGuild().retrieveMemberById(userId).submit()
-								.thenAccept(target -> trombinoscope.getPosterRole()
-										.flatMap(RoleConfiguration::getRole)
-										.ifPresent(role -> Actions.removeRole(target, role)));
+						guild.retrieveMemberById(userId).submit().thenAccept(target -> trombinoscope.getPosterRole()
+								.flatMap(RoleConfiguration::getRole)
+								.ifPresent(role -> guild.removeRoleFromMember(target, role).submit()));
 					}
 				}
 				else{
-					Actions.reply(event, translate(event.getGuild(), "trombinoscope.error.remove-other"), null);
+					channel.sendMessage(translate(guild, "trombinoscope.error.remove-other")).submit()
+							.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 				}
-			}, () -> Actions.reply(event, translate(event.getGuild(), "trombinoscope.error.unknown"), null));
+			}, () -> channel.sendMessage(translate(guild, "trombinoscope.error.unknown")).submit()
+					.thenAccept(deleteMessage(date -> date.plusMinutes(5))));
 		}
 		catch(IllegalArgumentException e){
-			Actions.reply(event, translate(event.getGuild(), "trombinoscope.error.invalid-id"), null);
+			channel.sendMessage(translate(guild, "trombinoscope.error.invalid-id")).submit()
+					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 		}
-		return CommandResult.SUCCESS;
+		return SUCCESS;
 	}
 	
 	@Override

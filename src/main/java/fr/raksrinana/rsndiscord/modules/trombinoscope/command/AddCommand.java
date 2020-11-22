@@ -10,7 +10,6 @@ import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.modules.settings.types.RoleConfiguration;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
@@ -24,13 +23,16 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.commands.generic.DeleteMode.AFTER;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static fr.raksrinana.rsndiscord.utils.Utilities.isModerator;
+import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
 
 class AddCommand extends BasicCommand{
 	private static final Path trombinoscopeFolder = Paths.get("trombinoscope");
@@ -53,21 +55,27 @@ class AddCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		if(event.getMessage().getAttachments().isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+		var guild = event.getGuild();
+		var author = event.getAuthor();
+		var attachments = event.getMessage().getAttachments();
+		
+		if(attachments.isEmpty()){
+			return BAD_ARGUMENTS;
 		}
-		var trombinoscope = Settings.get(event.getGuild()).getTrombinoscope();
+		
+		var trombinoscope = Settings.get(guild).getTrombinoscope();
 		var target = event.getMessage().getMentionedMembers().stream().findFirst()
-				.or(() -> Optional.ofNullable(event.getMember()))
+				.or(() -> ofNullable(event.getMember()))
 				.orElseThrow(() -> new IllegalStateException("Failed to get member from event"));
 		if(!Objects.equals(target, event.getMember()) && !isModerator(event.getMember())){
-			Actions.sendPrivateMessage(event.getGuild(), event.getAuthor(), translate(event.getGuild(), "trombinoscope.error.add-other"), null);
-			return CommandResult.SUCCESS;
+			author.openPrivateChannel().submit()
+					.thenAccept(privateChannel -> privateChannel.sendMessage(translate(guild, "trombinoscope.error.add-other")).submit());
+			return SUCCESS;
 		}
 		boolean failed = false;
 		try{
-			for(Message.Attachment attachment : event.getMessage().getAttachments()){
-				Log.getLogger(event.getGuild()).info("Downloading {}", attachment);
+			for(Message.Attachment attachment : attachments){
+				Log.getLogger(guild).info("Downloading {}", attachment);
 				var path = getFilePath(target, attachment);
 				var savedFile = attachment.retrieveInputStream()
 						.thenApply(is -> {
@@ -76,13 +84,13 @@ class AddCommand extends BasicCommand{
 								return path;
 							}
 							catch(IOException e){
-								Log.getLogger(event.getGuild()).error("Failed downloading attachment", e);
+								Log.getLogger(guild).error("Failed downloading attachment", e);
 								Utilities.reportException("Failed to save attachment", e);
 							}
 							return null;
 						})
 						.exceptionally(e -> {
-							Log.getLogger(event.getGuild()).error("Failed to save file", e);
+							Log.getLogger(guild).error("Failed to save file", e);
 							Utilities.reportException("Failed to save trombinoscope file", e);
 							return null;
 						})
@@ -92,7 +100,7 @@ class AddCommand extends BasicCommand{
 				}
 				else{
 					failed = true;
-					if(Objects.nonNull(savedFile) && Files.isRegularFile(savedFile)){
+					if(nonNull(savedFile) && Files.isRegularFile(savedFile)){
 						Files.deleteIfExists(savedFile);
 					}
 				}
@@ -100,21 +108,22 @@ class AddCommand extends BasicCommand{
 		}
 		catch(InterruptedException | ExecutionException | TimeoutException | IOException e){
 			failed = true;
-			Log.getLogger(event.getGuild()).error("Failed to save file", e);
+			Log.getLogger(guild).error("Failed to save file", e);
 			Utilities.reportException("Failed to save trombinoscope file", e);
 		}
 		if(failed){
-			Actions.sendPrivateMessage(event.getGuild(), event.getAuthor(), translate(event.getGuild(), "trombinoscope.error.save-error"), null);
+			author.openPrivateChannel().submit()
+					.thenAccept(privateChannel -> privateChannel.sendMessage(translate(guild, "trombinoscope.error.save-error")).submit());
 		}
 		else{
 			trombinoscope.getPosterRole()
 					.flatMap(RoleConfiguration::getRole)
-					.ifPresent(role -> Actions.giveRole(target, role));
+					.ifPresent(role -> guild.addRoleToMember(target, role).submit());
 			trombinoscope.getPicturesChannel()
 					.flatMap(ChannelConfiguration::getChannel)
-					.ifPresent(channel -> Actions.sendMessage(channel, translate(event.getGuild(), "trombinoscope.picture-added", target.getAsMention(), trombinoscope.getPictures(target.getUser()).size()), null));
+					.ifPresent(channel -> channel.sendMessage(translate(guild, "trombinoscope.picture-added", target.getAsMention(), trombinoscope.getPictures(target.getUser()).size())).submit());
 		}
-		return CommandResult.SUCCESS;
+		return SUCCESS;
 	}
 	
 	private Path getFilePath(Member member, Message.Attachment attachment) throws IOException{
@@ -125,7 +134,7 @@ class AddCommand extends BasicCommand{
 	}
 	
 	private boolean checkFile(Message.Attachment attachment, Path savedFile) throws IOException{
-		return Objects.nonNull(savedFile) && Files.size(savedFile) == attachment.getSize() && attachment.getSize() != 0;
+		return nonNull(savedFile) && Files.size(savedFile) == attachment.getSize() && attachment.getSize() != 0;
 	}
 	
 	@Override
