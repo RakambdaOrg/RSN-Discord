@@ -24,12 +24,13 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import java.time.ZonedDateTime;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+import static java.util.Optional.ofNullable;
+import static java.util.concurrent.TimeUnit.HOURS;
+import static java.util.stream.Collectors.toSet;
 
 @ScheduledRunner
 public class TraktUserHistoryRunner implements ITraktPagedGetRunner<UserHistory, UserHistoryPagedGetRequest>{
@@ -40,19 +41,25 @@ public class TraktUserHistoryRunner implements ITraktPagedGetRunner<UserHistory,
 	
 	@Override
 	public Set<TextChannel> getChannels(){
-		return this.getJda().getGuilds().stream().map(g -> Settings.get(g).getTraktConfiguration().getMediaChangeChannel().map(ChannelConfiguration::getChannel).filter(Optional::isPresent).map(Optional::get).orElse(null)).filter(Objects::nonNull).collect(Collectors.toSet());
+		return this.getJda().getGuilds().stream()
+				.flatMap(g -> Settings.get(g).getTraktConfiguration()
+						.getMediaChangeChannel()
+						.flatMap(ChannelConfiguration::getChannel)
+						.stream())
+				.collect(toSet());
 	}
 	
 	@NonNull
 	@Override
 	public UserHistoryPagedGetRequest initQuery(@NonNull Member member){
-		return new UserHistoryPagedGetRequest(TraktUtils.getUsername(member).orElseThrow(() -> new RuntimeException("Failed to get username for member " + member)),
-				1,
-				Settings.getGeneral().getTrakt()
-						.getLastAccess(getFetcherID(), member.getIdLong())
-						.map(UserDateConfiguration::getDate)
-						.map(date -> date.plusNanos(1000L))
-						.orElse(ZonedDateTime.now()));
+		var username = TraktUtils.getUsername(member)
+				.orElseThrow(() -> new RuntimeException("Failed to get username for member " + member));
+		var lastAccess = Settings.getGeneral().getTrakt()
+				.getLastAccess(getFetcherID(), member.getIdLong())
+				.map(UserDateConfiguration::getDate)
+				.map(date -> date.plusNanos(1000L))
+				.orElse(ZonedDateTime.now());
+		return new UserHistoryPagedGetRequest(username, 1, lastAccess);
 	}
 	
 	@Override
@@ -60,29 +67,30 @@ public class TraktUserHistoryRunner implements ITraktPagedGetRunner<UserHistory,
 		return true;
 	}
 	
-	@NonNull
-	private static Optional<MediaDetails> getTMDBInfos(@NonNull UserHistory change){
-		final Function<Long, ITMDBGetRequest<? extends MediaDetails>> requestBuilder = change instanceof UserMovieHistory ? MovieDetailsGetRequest::new : TVDetailsGetRequest::new;
-		return Optional.ofNullable(change.getIds().getTmdb()).map(requestBuilder).map(query -> {
-			try{
-				return TMDBUtils.getQuery(query);
-			}
-			catch(RequestException e){
-				Log.getLogger(null).error("Failed to get extra movie infos for {}", change, e);
-			}
-			return null;
-		});
-	}
-	
 	@Override
 	public void buildMessage(@NonNull Guild guild, EmbedBuilder builder, User user, @NonNull UserHistory change){
-		if(Objects.isNull(user)){
-			builder.setAuthor(this.getJda().getSelfUser().getName(), null, this.getJda().getSelfUser().getAvatarUrl());
-		}
-		else{
-			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
-		}
-		getTMDBInfos(change).ifPresentOrElse(mediaDetails -> change.fillEmbed(guild, builder, mediaDetails), () -> change.fillEmbed(guild, builder));
+		var author = Optional.ofNullable(user).orElse(getJda().getSelfUser());
+		builder.setAuthor(author.getName(), null, author.getAvatarUrl());
+		getTMDBInfos(change).ifPresentOrElse(mediaDetails -> change.fillEmbed(guild, builder, mediaDetails),
+				() -> change.fillEmbed(guild, builder));
+	}
+	
+	@NonNull
+	private static Optional<MediaDetails> getTMDBInfos(@NonNull UserHistory change){
+		final Function<Long, ITMDBGetRequest<? extends MediaDetails>> requestBuilder = change instanceof UserMovieHistory
+				? MovieDetailsGetRequest::new
+				: TVDetailsGetRequest::new;
+		return ofNullable(change.getIds().getTmdb())
+				.map(requestBuilder)
+				.map(query -> {
+					try{
+						return TMDBUtils.getQuery(query);
+					}
+					catch(RequestException e){
+						Log.getLogger(null).error("Failed to get extra movie infos for {}", change, e);
+					}
+					return null;
+				});
 	}
 	
 	@Override
@@ -108,7 +116,7 @@ public class TraktUserHistoryRunner implements ITraktPagedGetRunner<UserHistory,
 	
 	@Override
 	public @NonNull TimeUnit getPeriodUnit(){
-		return TimeUnit.HOURS;
+		return HOURS;
 	}
 	
 	@Override

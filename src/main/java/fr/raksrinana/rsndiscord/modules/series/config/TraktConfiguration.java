@@ -12,6 +12,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Optional;
+import static java.util.Optional.ofNullable;
 
 @SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -32,16 +33,16 @@ public class TraktConfiguration implements ICompositeConfiguration{
 	
 	@NonNull
 	public Optional<ChannelConfiguration> getMediaChangeChannel(){
-		return Optional.ofNullable(this.mediaChangeChannel);
+		return ofNullable(this.mediaChangeChannel);
 	}
 	
 	@NonNull
 	public Optional<ChannelConfiguration> getThaChannel(){
-		return Optional.ofNullable(this.thaChannel);
+		return ofNullable(this.thaChannel);
 	}
 	
 	@NonNull
 	public Optional<UserConfiguration> getThaUser(){
-		return Optional.ofNullable(this.thaUser);
+		return ofNullable(this.thaUser);
 	}
 }

@@ -16,9 +16,9 @@ import net.dv8tion.jda.api.entities.Guild;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.Objects;
-import java.util.Optional;
 import static fr.raksrinana.rsndiscord.modules.series.trakt.model.users.history.UserHistory.DATETIME_FORMAT;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -56,12 +56,16 @@ public class Episode implements ITraktObject{
 	}
 	
 	public void fillEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder, TVDetails tvDetails){
-		final var totalSeason = Optional.ofNullable(tvDetails).map(TVDetails::getNumberOfSeasons);
-		final var episodesOfSeason = Optional.ofNullable(tvDetails).flatMap(details -> details.getSeason(getSeason())).map(Season::getEpisodeCount);
-		builder.addField(translate(guild, "trakt.season"), this.getSeason() + totalSeason.map(numberOfSeasons -> "/" + numberOfSeasons).orElse(""), true);
-		builder.addField(translate(guild, "trakt.episode"), this.getNumber() + episodesOfSeason.map(numberOfSeasons -> "/" + numberOfSeasons).orElse(""), true);
-		builder.addField(translate(guild, "trakt.aired"), this.getFirstAired().format(DATETIME_FORMAT), true);
-		Optional.ofNullable(this.getOverview()).ifPresent(overview -> builder.addField(translate(guild, "trakt.overview"), overview, false));
+		var totalSeason = ofNullable(tvDetails).map(TVDetails::getNumberOfSeasons);
+		var episodesOfSeason = ofNullable(tvDetails).flatMap(details -> details.getSeason(getSeason())).map(Season::getEpisodeCount);
+		
+		var season = getSeason() + totalSeason.map(numberOfSeasons -> "/" + numberOfSeasons).orElse("");
+		var episode = getNumber() + episodesOfSeason.map(numberOfSeasons -> "/" + numberOfSeasons).orElse("");
+		
+		builder.addField(translate(guild, "trakt.season"), season, true)
+				.addField(translate(guild, "trakt.episode"), episode, true)
+				.addField(translate(guild, "trakt.aired"), this.getFirstAired().format(DATETIME_FORMAT), true);
+		ofNullable(this.getOverview()).ifPresent(overview -> builder.addField(translate(guild, "trakt.overview"), overview, false));
 	}
 	
 	@Override
