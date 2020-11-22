@@ -7,13 +7,14 @@ import fr.raksrinana.rsndiscord.modules.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class VolumeMusicCommand extends BasicCommand{
@@ -42,20 +43,23 @@ public class VolumeMusicCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+			return BAD_ARGUMENTS;
 		}
-		else{
-			try{
-				final var volume = Math.min(100, Math.max(0, Integer.parseInt(args.pop())));
-				Settings.get(event.getGuild()).setMusicVolume(volume);
-				RSNAudioManager.getFor(event.getGuild()).ifPresent(g -> g.setVolume(volume));
-				Actions.reply(event, translate(event.getGuild(), "music.volume-set", volume), null);
-			}
-			catch(NumberFormatException e){
-				Actions.reply(event, translate(event.getGuild(), "music.invalid-format"), null);
-			}
+		
+		var guild = event.getGuild();
+		var channel = event.getChannel();
+		var requestedVolume = getArgumentAsInteger(args);
+		
+		if(requestedVolume.isEmpty()){
+			channel.sendMessage(translate(guild, "music.invalid-format")).submit();
+			return SUCCESS;
 		}
-		return CommandResult.SUCCESS;
+		
+		var volume = Math.min(100, Math.max(0, requestedVolume.get()));
+		Settings.get(guild).setMusicVolume(volume);
+		RSNAudioManager.getFor(guild).ifPresent(audioManager -> audioManager.setVolume(volume));
+		channel.sendMessage(translate(guild, "music.volume-set", volume)).submit();
+		return SUCCESS;
 	}
 	
 	@NonNull

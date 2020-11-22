@@ -9,19 +9,18 @@ import fr.raksrinana.rsndiscord.modules.music.trackfields.RequesterTrackDataFiel
 import fr.raksrinana.rsndiscord.modules.music.trackfields.TrackUserFields;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
-import fr.raksrinana.rsndiscord.utils.Actions;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import java.awt.Color;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.awt.Color.CYAN;
 
 public class MoveMusicCommand extends BasicCommand{
 	/**
@@ -36,8 +35,8 @@ public class MoveMusicCommand extends BasicCommand{
 	@Override
 	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("from", translate(guild, "command.music.move.help.from"), false);
-		builder.addField("to", translate(guild, "command.music.move.help.to"), false);
+		builder.addField("from", translate(guild, "command.music.move.help.from"), false)
+				.addField("to", translate(guild, "command.music.move.help.to"), false);
 	}
 	
 	@Override
@@ -51,41 +50,41 @@ public class MoveMusicCommand extends BasicCommand{
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+			return BAD_ARGUMENTS;
 		}
-		final var queue = RSNAudioManager.getQueue(event.getGuild());
-		final var moveFromPosition = Optional.ofNullable(args.poll()).map(value -> {
-			try{
-				return Integer.parseInt(value);
-			}
-			catch(Exception ignored){
-			}
-			return 0;
-		}).filter(value -> value > 0 && value <= queue.size()).orElseThrow(() -> new IllegalArgumentException("Please give a valid position")) - 1;
-		final var moveToPosition = Math.min(Optional.ofNullable(args.poll()).map(value -> {
-			try{
-				return Integer.parseInt(value);
-			}
-			catch(Exception ignored){
-			}
-			return 0;
-		}).filter(value -> value > 0).orElse(1), queue.size()) - 1;
-		final var track = queue.get(moveFromPosition);
+		
+		var author = event.getAuthor();
+		
+		var queue = RSNAudioManager.getQueue(event.getGuild());
+		var moveFromPosition = getArgumentAsInteger(args)
+				.filter(value -> value > 0 && value <= queue.size())
+				.map(val -> val - 1)
+				.orElseThrow(() -> new IllegalArgumentException("Please give a valid position"));
+		var moveToPosition = -1 + Math.min(queue.size(), getArgumentAsInteger(args)
+				.filter(value -> value > 0)
+				.orElse(1));
+		var track = queue.get(moveFromPosition);
+		var userData = track.getUserData(TrackUserFields.class);
+		
 		Collections.rotate(queue.subList(moveFromPosition, moveToPosition + 1), -1);
-		final var builder = Utilities.buildEmbed(event.getAuthor(), Color.CYAN, translate(event.getGuild(), "music.track.moved"), null);
-		builder.setTitle(translate(event.getGuild(), "music.track.moved"), track.getInfo().uri);
-		final var userData = track.getUserData(TrackUserFields.class);
-		builder.setDescription(track.getInfo().title);
-		builder.addField(translate(event.getGuild(), "music.queue.new-position"), Integer.toString(moveToPosition + 1), true);
-		builder.addField(translate(event.getGuild(), "music.requester"), userData.get(new RequesterTrackDataField())
+		
+		var requester = userData.get(new RequesterTrackDataField())
 				.map(User::getAsMention)
-				.orElseGet(() -> translate(event.getGuild(), "music.unknown-requester")), true);
-		builder.addField(translate(event.getGuild(), "music.repeating"), userData.get(new ReplayTrackDataField())
+				.orElseGet(() -> translate(event.getGuild(), "music.unknown-requester"));
+		var repeating = userData.get(new ReplayTrackDataField())
 				.map(Object::toString)
-				.orElse("False"),
-				true);
-		Actions.sendEmbed(event.getChannel(), builder.build());
-		return CommandResult.SUCCESS;
+				.orElse("False");
+		
+		var embed = new EmbedBuilder().setAuthor(author.getName(), null, author.getAvatarUrl())
+				.setColor(CYAN)
+				.setTitle(translate(event.getGuild(), "music.track.moved"), track.getInfo().uri)
+				.setDescription(track.getInfo().title)
+				.addField(translate(event.getGuild(), "music.queue.new-position"), Integer.toString(moveToPosition + 1), true)
+				.addField(translate(event.getGuild(), "music.requester"), requester, true)
+				.addField(translate(event.getGuild(), "music.repeating"), repeating, true)
+				.build();
+		event.getChannel().sendMessage(embed).submit();
+		return SUCCESS;
 	}
 	
 	@NonNull

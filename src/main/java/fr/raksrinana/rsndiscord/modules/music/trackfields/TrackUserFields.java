@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.modules.music.trackfields;
 import lombok.NonNull;
 import java.util.HashMap;
 import java.util.Optional;
+import static java.util.Optional.ofNullable;
 
 public class TrackUserFields{
 	private final HashMap<String, Object> map;
@@ -17,6 +18,6 @@ public class TrackUserFields{
 	
 	@NonNull
 	public <T> Optional<T> get(@NonNull final AudioTrackDataFields<T> field){
-		return Optional.ofNullable(this.map.get(field.getName())).map(field::parseObject);
+		return ofNullable(this.map.get(field.getName())).map(field::parseObject);
 	}
 }

@@ -24,13 +24,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.modules.music.MusicActionResponse.*;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.util.Optional.ofNullable;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.stream.Collectors.toList;
 
 public class RSNAudioManager implements IStatusTrackSchedulerListener{
 	private static final HashMap<Guild, RSNAudioManager> managers = new HashMap<>();
+	@Getter
 	private final AudioManager audioManager;
 	@Getter
 	private final AudioPlayerManager audioPlayerManager;
@@ -51,97 +53,97 @@ public class RSNAudioManager implements IStatusTrackSchedulerListener{
 		this.isSearchingTracks = false;
 	}
 	
-	public static void play(@NonNull final User requester, @NonNull final VoiceChannel channel, @NonNull final String... identifier){
-		play(requester, channel, null, identifier);
-	}
-	
-	private static void play(@NonNull final User requester, @NonNull final VoiceChannel channel, @SuppressWarnings("SameParameterValue") final IStatusTrackSchedulerListener listener, @NonNull final String... identifier){
-		play(requester, channel, listener, track -> {}, 0, 10, identifier);
-	}
-	
-	public static void play(@NonNull final User requester, @NonNull final VoiceChannel channel, final IStatusTrackSchedulerListener listener, @NonNull final Consumer<AudioTrack> onTrackAdded, final int skipCount, final int maxTracks, @NonNull final String... identifier){
-		play(requester, channel, listener, onTrackAdded, playlist -> {}, error -> {}, skipCount, maxTracks, identifier);
-	}
-	
-	public static void play(@NonNull final User requester, @NonNull final VoiceChannel channel, final IStatusTrackSchedulerListener listener, @NonNull final Consumer<AudioTrack> onTrackAdded, final Consumer<List<AudioTrack>> onPlaylistAdded, final Consumer<String> onFail, final int skipCount, final int maxTracks, @NonNull final String... identifiers){
-		final var gunterAudioManager = getOrCreatePlayerManager(channel, listener);
+	public static void play(@NonNull final User requester, @NonNull final VoiceChannel channel, final @NonNull TrackConsumer listener, int skipCount, int maxTracks, @NonNull final String... identifiers){
+		var guild = channel.getGuild();
+		var channelName = channel.getName();
+		
+		var gunterAudioManager = getOrCreatePlayerManager(channel);
 		gunterAudioManager.isSearchingTracks = true;
-		for(final var identifier : identifiers){
+		
+		for(var identifier : identifiers){
 			gunterAudioManager.getAudioPlayerManager().loadItem(identifier, new AudioLoadResultHandler(){
 				@Override
 				public void trackLoaded(@NonNull final AudioTrack track){
-					Log.getLogger(channel.getGuild()).debug("Added `{}` to the audio queue on channel `{}`", identifier, channel.getName());
+					Log.getLogger(guild).debug("Added `{}` to the audio queue on channel `{}`", identifier, channelName);
 					setTrackData(track, requester);
 					try{
 						gunterAudioManager.getTrackScheduler().queue(track);
-						onTrackAdded.accept(track);
+						listener.onTrack(track);
 					}
 					catch(final Exception e){
-						Log.getLogger(channel.getGuild()).warn("Error loading song", e);
+						Log.getLogger(guild).warn("Error loading song", e);
 					}
 					gunterAudioManager.isSearchingTracks = false;
 				}
 				
 				@Override
 				public void playlistLoaded(@NonNull final AudioPlaylist playlist){
-					Log.getLogger(channel.getGuild()).debug("Added `{}`(size: {}) to the audio queue on channel `{}`", identifier, playlist.getTracks().size(), channel.getName());
-					List<AudioTrack> tracks = playlist.getTracks().stream()
+					Log.getLogger(guild).debug("Added `{}`(size: {}) to the audio queue on channel `{}`", identifier, playlist.getTracks().size(), channelName);
+					var tracks = playlist.getTracks().stream()
 							.skip(skipCount)
 							.limit(maxTracks)
-							.collect(Collectors.toList());
+							.collect(toList());
+					
 					tracks.forEach(track -> {
-						Log.getLogger(channel.getGuild()).debug("Added `{}` to the audio queue on channel `{}`", identifier, channel.getName());
+						Log.getLogger(guild).debug("Added `{}` to the audio queue on channel `{}`", identifier, channelName);
 						setTrackData(track, requester);
 						try{
 							gunterAudioManager.getTrackScheduler().queue(track);
 						}
 						catch(final Exception e){
-							Log.getLogger(channel.getGuild()).warn("Error loading song", e);
+							Log.getLogger(guild).warn("Error loading song", e);
 						}
 					});
-					onPlaylistAdded.accept(tracks);
+					listener.onPlaylist(tracks);
 					gunterAudioManager.isSearchingTracks = false;
 				}
 				
 				@Override
 				public void noMatches(){
-					Log.getLogger(channel.getGuild()).warn("Player found nothing for channel `{}`", channel.getName());
+					Log.getLogger(guild).warn("Player found nothing for channel `{}`", channelName);
 					gunterAudioManager.isSearchingTracks = false;
 					gunterAudioManager.getTrackScheduler().foundNothing();
-					onFail.accept(translate(channel.getGuild(), "music.not-found"));
+					listener.onFailure(translate(guild, "music.not-found"));
 				}
 				
 				@Override
 				public void loadFailed(@NonNull final FriendlyException throwable){
-					Log.getLogger(channel.getGuild()).warn("Failed to load audio for channel `{}`", channel.getName(), throwable);
+					Log.getLogger(guild).warn("Failed to load audio for channel `{}`", channelName, throwable);
 					gunterAudioManager.isSearchingTracks = false;
 					gunterAudioManager.getTrackScheduler().foundNothing();
-					onFail.accept(translate(channel.getGuild(), "music.load-error"));
+					listener.onFailure(translate(guild, "music.load-error"));
 				}
 			});
 		}
 	}
 	
 	@NonNull
-	private static RSNAudioManager getOrCreatePlayerManager(@NonNull final VoiceChannel channel, final IStatusTrackSchedulerListener listener){
-		return managers.computeIfAbsent(channel.getGuild(), g -> {
-			final var audioManager = channel.getGuild().getAudioManager();
-			audioManager.openAudioConnection(channel);
-			final AudioPlayerManager audioPlayerManager = new DefaultAudioPlayerManager();
-			AudioSourceManagers.registerRemoteSources(audioPlayerManager);
-			final var audioPlayer = audioPlayerManager.createPlayer();
-			audioManager.setSendingHandler(new AudioPlayerSendHandler(audioPlayer));
-			final var trackScheduler = new TrackScheduler(channel.getGuild(), audioPlayer);
-			audioPlayer.setVolume(Math.min(100, Math.max(0, Settings.get(channel.getGuild()).getMusicVolume())));
-			audioPlayer.addListener(trackScheduler);
-			final var gunterAudioManager = new RSNAudioManager(channel, audioManager, audioPlayerManager, audioPlayer, trackScheduler);
-			trackScheduler.addStatusTrackSchedulerListener(gunterAudioManager);
-			if(Objects.nonNull(listener)){
-				trackScheduler.addStatusTrackSchedulerListener(listener);
-			}
-			Log.getLogger(channel.getGuild()).info("Audio manager Created");
-			return gunterAudioManager;
-		});
+	private static RSNAudioManager getOrCreatePlayerManager(@NonNull final VoiceChannel channel){
+		return managers.computeIfAbsent(channel.getGuild(), g -> createAudioManager(channel));
+	}
+	
+	@NonNull
+	private static RSNAudioManager createAudioManager(@NonNull VoiceChannel channel){
+		var guild = channel.getGuild();
+		
+		var audioManager = guild.getAudioManager();
+		audioManager.openAudioConnection(channel);
+		
+		var audioPlayerManager = new DefaultAudioPlayerManager();
+		AudioSourceManagers.registerRemoteSources(audioPlayerManager);
+		
+		var audioPlayer = audioPlayerManager.createPlayer();
+		audioManager.setSendingHandler(new AudioPlayerSendHandler(audioPlayer));
+		
+		var trackScheduler = new TrackScheduler(guild, audioPlayer);
+		audioPlayer.setVolume(Math.min(100, Math.max(0, Settings.get(guild).getMusicVolume())));
+		audioPlayer.addListener(trackScheduler);
+		
+		var manager = new RSNAudioManager(channel, audioManager, audioPlayerManager, audioPlayer, trackScheduler);
+		trackScheduler.addStatusTrackSchedulerListener(manager);
+		
+		Log.getLogger(guild).info("Audio manager Created");
+		return manager;
 	}
 	
 	private static void setTrackData(@NonNull AudioTrack track, @NonNull final User requester){
@@ -152,7 +154,7 @@ public class RSNAudioManager implements IStatusTrackSchedulerListener{
 	
 	@NonNull
 	public static Optional<RSNAudioManager> getFor(@NonNull final Guild guild){
-		return Optional.ofNullable(managers.get(guild));
+		return ofNullable(managers.get(guild));
 	}
 	
 	public static void shuffle(@NonNull final Guild guild){
@@ -162,7 +164,7 @@ public class RSNAudioManager implements IStatusTrackSchedulerListener{
 	}
 	
 	public static void stopAll(){
-		for(final var guild : managers.keySet()){
+		for(var guild : managers.keySet()){
 			leave(guild);
 		}
 	}
@@ -171,30 +173,30 @@ public class RSNAudioManager implements IStatusTrackSchedulerListener{
 	public static MusicActionResponse leave(@NonNull final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).close();
-			return MusicActionResponse.OK;
+			return OK;
 		}
-		return MusicActionResponse.NO_MUSIC;
+		return NO_MUSIC;
 	}
 	
 	private void close(){
 		if(!this.isSearchingTracks){
-			final var executor = Executors.newScheduledThreadPool(1);
+			var guild = channel.getGuild();
+			var executor = Executors.newScheduledThreadPool(1);
+			
 			executor.schedule(() -> {
-				this.getAudioPlayerManager().shutdown();
-				this.getAudioManager().setSendingHandler(null);
-				if(this.getAudioManager().isConnected()){
-					this.getAudioManager().closeAudioConnection();
+				getAudioPlayerManager().shutdown();
+				getAudioManager().setSendingHandler(null);
+				
+				if(getAudioManager().isConnected()){
+					getAudioManager().closeAudioConnection();
 				}
-				managers.remove(this.channel.getGuild());
-				Log.getLogger(this.getChannel().getGuild()).info("Audio manager shutdown");
-			}, 2, TimeUnit.SECONDS);
+				
+				managers.remove(guild);
+				Log.getLogger(guild).info("Audio manager shutdown");
+			}, 2, SECONDS);
+			
 			executor.shutdown();
 		}
-	}
-	
-	@NonNull
-	private AudioManager getAudioManager(){
-		return this.audioManager;
 	}
 	
 	@NonNull
@@ -208,24 +210,23 @@ public class RSNAudioManager implements IStatusTrackSchedulerListener{
 	@NonNull
 	public static MusicActionResponse seek(@NonNull final Guild guild, final long time){
 		if(managers.containsKey(guild)){
-			final var track = currentTrack(guild);
+			var track = currentTrack(guild);
 			if(track.isPresent()){
 				if(track.get().isSeekable()){
 					track.get().setPosition(time);
-					return MusicActionResponse.OK;
+					return OK;
 				}
-				else{
-					return MusicActionResponse.IMPOSSIBLE;
-				}
+				
+				return IMPOSSIBLE;
 			}
 		}
-		return MusicActionResponse.NO_MUSIC;
+		return NO_MUSIC;
 	}
 	
 	@NonNull
 	public static Optional<AudioTrack> currentTrack(@NonNull final Guild guild){
 		if(managers.containsKey(guild)){
-			return Optional.ofNullable(managers.get(guild).getAudioPlayer().getPlayingTrack());
+			return ofNullable(managers.get(guild).getAudioPlayer().getPlayingTrack());
 		}
 		return Optional.empty();
 	}
@@ -249,27 +250,27 @@ public class RSNAudioManager implements IStatusTrackSchedulerListener{
 	public static MusicActionResponse pause(@NonNull final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).getAudioPlayer().setPaused(true);
-			return MusicActionResponse.OK;
+			return OK;
 		}
-		return MusicActionResponse.NO_MUSIC;
+		return NO_MUSIC;
 	}
 	
 	@NonNull
 	public static MusicActionResponse resume(@NonNull final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).getAudioPlayer().setPaused(false);
-			return MusicActionResponse.OK;
+			return OK;
 		}
-		return MusicActionResponse.NO_MUSIC;
+		return NO_MUSIC;
 	}
 	
 	@NonNull
 	public static MusicActionResponse skip(@NonNull final Guild guild){
 		if(managers.containsKey(guild)){
 			managers.get(guild).skip();
-			return MusicActionResponse.OK;
+			return OK;
 		}
-		return MusicActionResponse.NO_MUSIC;
+		return NO_MUSIC;
 	}
 	
 	private void skip(){
@@ -293,10 +294,6 @@ public class RSNAudioManager implements IStatusTrackSchedulerListener{
 	
 	@Override
 	public void onTrackStart(@NonNull final AudioTrack track){
-	}
-	
-	public int getVolume(){
-		return getAudioPlayer().getVolume();
 	}
 	
 	public void setVolume(int volume){

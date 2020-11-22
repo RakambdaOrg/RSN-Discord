@@ -7,7 +7,6 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -16,9 +15,12 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.BAD_ARGUMENTS;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static java.util.Objects.isNull;
 
 public class SeekMusicCommand extends BasicCommand{
 	private static final Pattern TIME_PATTERN = Pattern.compile("((\\d{1,2}):)?((\\d{1,2}):)?(\\d{1,2})");
@@ -44,27 +46,17 @@ public class SeekMusicCommand extends BasicCommand{
 		return new SimplePermission("command.music.seek", false);
 	}
 	
-	@NonNull
-	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
-		super.execute(event, args);
-		if(args.isEmpty()){
-			return CommandResult.BAD_ARGUMENTS;
+	private static long getAsLong(final Guild guild, final String str){
+		if(isNull(str) || str.isBlank()){
+			return 0;
 		}
-		else{
-			final var time = SeekMusicCommand.parseTime(event.getGuild(), args.pop());
-			if(time < 0){
-				Actions.reply(event, translate(event.getGuild(), "music.invalid-format"), null);
-			}
-			else{
-				switch(RSNAudioManager.seek(event.getGuild(), time)){
-					case NO_MUSIC -> Actions.reply(event, translate(event.getGuild(), "music.nothing-playing"), null);
-					case OK -> Actions.reply(event, translate(event.getGuild(), "music.seeked", event.getAuthor().getAsMention(), NowPlayingMusicCommand.getDuration(time)), null);
-					case IMPOSSIBLE -> Actions.reply(event, translate(event.getGuild(), "music.seek-error"), null);
-				}
-			}
+		try{
+			return Long.parseLong(str);
 		}
-		return CommandResult.SUCCESS;
+		catch(final Exception e){
+			Log.getLogger(guild).error("Error parsing {} into long", str, e);
+		}
+		return 0;
 	}
 	
 	private static long parseTime(@NonNull final Guild guild, @NonNull final String time){
@@ -79,17 +71,32 @@ public class SeekMusicCommand extends BasicCommand{
 		return duration * 1000;
 	}
 	
-	private static long getAsLong(final Guild guild, final String str){
-		if(Objects.isNull(str) || str.isBlank()){
-			return 0;
+	@NonNull
+	@Override
+	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+		super.execute(event, args);
+		if(args.isEmpty()){
+			return BAD_ARGUMENTS;
 		}
-		try{
-			return Long.parseLong(str);
+		
+		var guild = event.getGuild();
+		var channel = event.getChannel();
+		var time = SeekMusicCommand.parseTime(guild, args.pop());
+		
+		if(time < 0){
+			channel.sendMessage(translate(guild, "music.invalid-format")).submit()
+					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 		}
-		catch(final Exception e){
-			Log.getLogger(guild).error("Error parsing {} into long", str, e);
+		else{
+			var message = switch(RSNAudioManager.seek(guild, time)){
+				case NO_MUSIC -> "music.nothing-playing";
+				case OK -> "music.seeked";
+				case IMPOSSIBLE -> "music.seek-error";
+			};
+			channel.sendMessage(translate(guild, message, event.getAuthor().getAsMention())).submit()
+					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 		}
-		return 0;
+		return SUCCESS;
 	}
 	
 	@NonNull

@@ -6,13 +6,14 @@ import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.modules.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
-import fr.raksrinana.rsndiscord.utils.Actions;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import java.util.LinkedList;
 import java.util.List;
+import static fr.raksrinana.rsndiscord.commands.generic.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class PauseMusicCommand extends BasicCommand{
@@ -39,11 +40,16 @@ public class PauseMusicCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		switch(RSNAudioManager.pause(event.getGuild())){
-			case NO_MUSIC -> Actions.reply(event, translate(event.getGuild(), "music.nothing-playing"), null);
-			case OK -> Actions.reply(event, translate(event.getGuild(), "music.paused", event.getAuthor().getAsMention()), null);
-		}
-		return CommandResult.SUCCESS;
+		var guild = event.getGuild();
+		
+		var message = switch(RSNAudioManager.pause(guild)){
+			case NO_MUSIC -> "music.nothing-playing";
+			case OK -> "music.paused";
+			case IMPOSSIBLE -> "unknown";
+		};
+		event.getChannel().sendMessage(translate(guild, message, event.getAuthor().getAsMention())).submit()
+				.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
+		return SUCCESS;
 	}
 	
 	@NonNull

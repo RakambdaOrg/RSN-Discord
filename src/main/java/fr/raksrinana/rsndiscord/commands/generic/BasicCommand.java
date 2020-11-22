@@ -65,6 +65,11 @@ public abstract class BasicCommand implements Command{
 	}
 	
 	@NonNull
+	protected Optional<Long> getArgumentAsLong(@NonNull LinkedList<String> args){
+		return getArgumentAs(args, Long::parseLong);
+	}
+	
+	@NonNull
 	protected <T> Optional<T> getArgumentAs(@NonNull LinkedList<String> args, Function<String, T> converter){
 		return Optional.ofNullable(args.poll()).map(arg -> {
 			try{
