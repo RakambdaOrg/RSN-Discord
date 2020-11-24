@@ -13,10 +13,10 @@ import static java.util.Comparator.comparing;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @ScheduledRunner
-public class LastTweetsRunner implements IScheduledRunner{
+public class SearchTweetsRunner implements IScheduledRunner{
 	private final JDA jda;
 	
-	public LastTweetsRunner(@NonNull JDA jda){
+	public SearchTweetsRunner(@NonNull JDA jda){
 		this.jda = jda;
 	}
 	
@@ -44,7 +44,7 @@ public class LastTweetsRunner implements IScheduledRunner{
 	@NonNull
 	@Override
 	public String getName(){
-		return "Twitter last tweets";
+		return "Twitter search last tweets";
 	}
 	
 	@Override

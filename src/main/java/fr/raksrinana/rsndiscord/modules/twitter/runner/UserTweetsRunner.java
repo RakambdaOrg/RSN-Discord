@@ -46,7 +46,7 @@ public class UserTweetsRunner implements IScheduledRunner{
 	@NonNull
 	@Override
 	public String getName(){
-		return "Twitter last tweets";
+		return "Twitter user last tweets";
 	}
 	
 	@Override
