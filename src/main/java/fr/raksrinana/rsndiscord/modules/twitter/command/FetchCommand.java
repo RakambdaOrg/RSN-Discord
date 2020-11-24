@@ -5,7 +5,7 @@ import fr.raksrinana.rsndiscord.commands.generic.Command;
 import fr.raksrinana.rsndiscord.commands.generic.CommandResult;
 import fr.raksrinana.rsndiscord.modules.permission.IPermission;
 import fr.raksrinana.rsndiscord.modules.permission.SimplePermission;
-import fr.raksrinana.rsndiscord.modules.twitter.runner.LastTweetsRunner;
+import fr.raksrinana.rsndiscord.modules.twitter.runner.UserTweetsRunner;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -28,7 +28,7 @@ public class FetchCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
 		super.execute(event, args);
-		new LastTweetsRunner(event.getJDA()).execute();
+		new UserTweetsRunner(event.getJDA()).execute();
 		return SUCCESS;
 	}
 	

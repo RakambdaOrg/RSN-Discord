@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.modules.twitter.config;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,27 +17,52 @@ import static java.util.Optional.ofNullable;
 @Getter
 @NoArgsConstructor
 public class TwitterConfiguration implements ICompositeConfiguration{
-	@JsonProperty("channels")
+	@JsonProperty("usersChannel")
+	@JsonAlias("channels")
 	@Setter
-	private ChannelConfiguration channel;
+	private ChannelConfiguration usersChannel;
+	@JsonProperty("latestChannel")
+	@Setter
+	private ChannelConfiguration searchChannel;
 	@JsonProperty("userIds")
 	@Getter
 	@Setter
 	private Set<Long> userIds = new HashSet<>();
-	@JsonProperty("lastTweet")
+	@JsonProperty("searches")
 	@Getter
 	@Setter
-	private Map<Long, Long> lastTweet = new HashMap<>();
+	private Set<String> searches = new HashSet<>();
+	@JsonProperty("lastUserTweet")
+	@JsonAlias("lastTweet")
+	@Getter
+	@Setter
+	private Map<Long, Long> lastUserTweet = new HashMap<>();
+	@JsonProperty("lastSearchTweet")
+	@Getter
+	@Setter
+	private Map<String, Long> lastSearchTweet = new HashMap<>();
 	
-	public Optional<Long> getLastTweet(long userId){
-		return ofNullable(lastTweet.get(userId));
+	public Optional<Long> getLastUserTweet(long userId){
+		return ofNullable(lastUserTweet.get(userId));
 	}
 	
-	public void setLastTweet(long userId, long tweetId){
-		lastTweet.put(userId, tweetId);
+	public void setLastUserTweet(long userId, long tweetId){
+		lastUserTweet.put(userId, tweetId);
 	}
 	
-	public Optional<ChannelConfiguration> getChannel(){
-		return ofNullable(channel);
+	public Optional<Long> getLastSearchTweet(String search){
+		return ofNullable(lastSearchTweet.get(search));
+	}
+	
+	public void setLastSearchTweet(String search, long tweetId){
+		lastSearchTweet.put(search, tweetId);
+	}
+	
+	public Optional<ChannelConfiguration> getSearchChannel(){
+		return ofNullable(searchChannel);
+	}
+	
+	public Optional<ChannelConfiguration> getUsersChannel(){
+		return ofNullable(usersChannel);
 	}
 }

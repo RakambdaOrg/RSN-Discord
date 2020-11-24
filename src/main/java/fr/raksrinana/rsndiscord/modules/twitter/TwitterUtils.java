@@ -5,18 +5,13 @@ import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 import java.util.List;
 import java.util.Objects;
+import static twitter4j.Query.RECENT;
 
 public class TwitterUtils{
 	private static Twitter client = null;
 	
 	public static List<Status> getUserLastTweets(long userId){
-		try{
-			return getClient().getUserTimeline(userId);
-		}
-		catch(TwitterException e){
-			Log.getLogger(null).error("Failed to get tweets of user {}", userId);
-		}
-		return List.of();
+		return getUserLastTweets(userId, -1);
 	}
 	
 	private static Twitter getClient(){
@@ -36,11 +31,30 @@ public class TwitterUtils{
 	public static List<Status> getUserLastTweets(long userId, long maxId){
 		try{
 			var page = new Paging();
+			page.setCount(20);
 			page.setSinceId(maxId);
 			return getClient().getUserTimeline(userId, page);
 		}
 		catch(TwitterException e){
 			Log.getLogger(null).error("Failed to get tweets of user {}", userId);
+		}
+		return List.of();
+	}
+	
+	public static List<Status> searchLastTweets(String search){
+		return searchLastTweets(search, -1);
+	}
+	
+	public static List<Status> searchLastTweets(String search, long maxId){
+		try{
+			var query = new Query(search);
+			query.setCount(20);
+			query.setSinceId(maxId);
+			query.setResultType(RECENT);
+			return getClient().search(query).getTweets();
+		}
+		catch(TwitterException e){
+			Log.getLogger(null).error("Failed to get latest tweets for search {}", search);
 		}
 		return List.of();
 	}
