@@ -11,25 +11,25 @@ import java.util.List;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.modules.permission.PermissionUtils.ALLOW;
 
-public class TwitterChannelConfigurationCommand extends ChannelConfigurationCommand{
-	public TwitterChannelConfigurationCommand(final Command parent){
+public class SearchChannelConfigurationCommand extends ChannelConfigurationCommand{
+	public SearchChannelConfigurationCommand(final Command parent){
 		super(parent);
 	}
 	
 	@Override
 	protected void setConfig(@NonNull final Guild guild, @NonNull final ChannelConfiguration value){
-		Settings.get(guild).getTwitterConfiguration().setChannel(value);
+		Settings.get(guild).getTwitterConfiguration().setSearchChannel(value);
 	}
 	
 	@Override
 	protected void removeConfig(@NonNull final Guild guild){
-		Settings.get(guild).getTwitterConfiguration().setChannel(null);
+		Settings.get(guild).getTwitterConfiguration().setSearchChannel(null);
 	}
 	
 	@NonNull
 	@Override
 	protected Optional<ChannelConfiguration> getConfig(@NonNull final Guild guild){
-		return Settings.get(guild).getTwitterConfiguration().getChannel();
+		return Settings.get(guild).getTwitterConfiguration().getSearchChannel();
 	}
 	
 	@Override
@@ -40,12 +40,12 @@ public class TwitterChannelConfigurationCommand extends ChannelConfigurationComm
 	@NonNull
 	@Override
 	public String getName(@NonNull Guild guild){
-		return "Twitter channel";
+		return "Search channel";
 	}
 	
 	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("channel");
+		return List.of("searchChannel");
 	}
 }

@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.modules.twitter.runner;
 
+import fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.modules.twitter.TwitterUtils;
@@ -13,10 +14,10 @@ import static java.util.Comparator.comparing;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 @ScheduledRunner
-public class LastTweetsRunner implements IScheduledRunner{
+public class UserTweetsRunner implements IScheduledRunner{
 	private final JDA jda;
 	
-	public LastTweetsRunner(@NonNull JDA jda){
+	public UserTweetsRunner(@NonNull JDA jda){
 		this.jda = jda;
 	}
 	
@@ -24,14 +25,15 @@ public class LastTweetsRunner implements IScheduledRunner{
 	public void execute(){
 		jda.getGuilds().forEach(guild -> {
 			var conf = Settings.get(guild).getTwitterConfiguration();
-			conf.getChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel ->
-					conf.getUserIds().forEach(userId -> conf.getLastTweet(userId)
+			conf.getUsersChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel ->
+					conf.getUserIds().forEach(userId -> conf.getLastUserTweet(userId)
 							.map(lastTweet -> TwitterUtils.getUserLastTweets(userId, lastTweet))
 							.orElseGet(() -> TwitterUtils.getUserLastTweets(userId)).stream()
 							.sorted(comparing(Status::getCreatedAt))
 							.forEach(tweet -> {
-								channel.sendMessage(String.format("https://twitter.com/%s/status/%s", tweet.getUser().getName(), tweet.getId())).submit();
-								conf.setLastTweet(userId, tweet.getId());
+								channel.sendMessage(String.format("https://twitter.com/%s/status/%s", tweet.getUser().getName(), tweet.getId())).submit()
+										.thenAccept(ScheduleUtils.deleteMessage(date -> date.plusHours(6)));
+								conf.setLastUserTweet(userId, tweet.getId());
 							})));
 		});
 	}
@@ -44,7 +46,7 @@ public class LastTweetsRunner implements IScheduledRunner{
 	@NonNull
 	@Override
 	public String getName(){
-		return "Twitter last tweets";
+		return "Twitter user last tweets";
 	}
 	
 	@Override
