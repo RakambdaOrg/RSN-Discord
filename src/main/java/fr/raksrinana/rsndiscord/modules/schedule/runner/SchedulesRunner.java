@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
+import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
@@ -13,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
+@ScheduledRunner
 public class SchedulesRunner implements IScheduledRunner{
 	@Getter
 	private final JDA jda;
