@@ -36,7 +36,6 @@ public class TwitterUtils{
 				page.setSinceId(maxId);
 			}
 			
-			page.setSinceId(maxId);
 			return getClient().getUserTimeline(userId, page);
 		}
 		catch(TwitterException e){
