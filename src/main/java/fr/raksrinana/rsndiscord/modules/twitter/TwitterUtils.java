@@ -30,8 +30,12 @@ public class TwitterUtils{
 	
 	public static List<Status> getUserLastTweets(long userId, long maxId){
 		try{
-			var page = new Paging();
-			page.setCount(20);
+			var page = new Paging().count(20);
+			
+			if(maxId > 0){
+				page.setSinceId(maxId);
+			}
+			
 			page.setSinceId(maxId);
 			return getClient().getUserTimeline(userId, page);
 		}
@@ -47,11 +51,12 @@ public class TwitterUtils{
 	
 	public static List<Status> searchLastTweets(String search, long maxId){
 		try{
-			var query = new Query(search);
-			query.setCount(20);
-			query.setSinceId(maxId);
-			query.setResultType(RECENT);
-			return getClient().search(query).getTweets();
+			return getClient()
+					.search(new Query(search)
+							.count(20)
+							.sinceId(maxId)
+							.resultType(RECENT))
+					.getTweets();
 		}
 		catch(TwitterException e){
 			Log.getLogger(null).error("Failed to get latest tweets for search {}", search);
