@@ -9,7 +9,9 @@ import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import twitter4j.Status;
+import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Comparator.comparing;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
@@ -31,7 +33,10 @@ public class UserTweetsRunner implements IScheduledRunner{
 							.orElseGet(() -> TwitterUtils.getUserLastTweets(userId)).stream()
 							.sorted(comparing(Status::getCreatedAt))
 							.forEach(tweet -> {
-								channel.sendMessage(String.format("https://twitter.com/%s/status/%s", tweet.getUser().getName(), tweet.getId())).submit()
+								channel.sendMessage(String.format("https://twitter.com/%s/status/%s",
+										URLEncoder.encode(tweet.getUser().getScreenName(), UTF_8),
+										tweet.getId())
+								).submit()
 										.thenAccept(ScheduleUtils.deleteMessage(date -> date.plusHours(6)));
 								conf.setLastUserTweet(userId, tweet.getId());
 							})));

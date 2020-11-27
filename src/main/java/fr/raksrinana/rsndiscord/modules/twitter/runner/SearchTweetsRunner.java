@@ -8,7 +8,9 @@ import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import twitter4j.Status;
+import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Comparator.comparing;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -30,7 +32,10 @@ public class SearchTweetsRunner implements IScheduledRunner{
 							.orElseGet(() -> TwitterUtils.searchLastTweets(search)).stream()
 							.sorted(comparing(Status::getCreatedAt))
 							.forEach(tweet -> {
-								channel.sendMessage(String.format("https://twitter.com/%s/status/%s", tweet.getUser().getScreenName(), tweet.getId())).submit();
+								channel.sendMessage(String.format("https://twitter.com/%s/status/%s",
+										URLEncoder.encode(tweet.getUser().getScreenName(), UTF_8),
+										tweet.getId())
+								).submit();
 								conf.setLastSearchTweet(search, tweet.getId());
 							})));
 		});
