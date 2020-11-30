@@ -9,7 +9,7 @@ buildscript {
 
         picocli_version = '4.5.2'
         raksrinana_utils_version = '15.0.1'
-        jackson_version = '2.11.3'
+        jackson_version = '2.12.0'
         httpclient_version = '4.5.13'
         lang3_version = '3.11'
         reflections_version = '0.9.12'
