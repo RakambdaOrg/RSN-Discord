@@ -41,6 +41,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		this.addSubCommand(new DiscordIncidentsChannelChannelConfigurationCommand(this));
 		this.addSubCommand(new LeaveServerBanDurationConfigurationCommand(this));
 		this.addSubCommand(new TwitterConfigurationCommandComposite(this));
+		this.addSubCommand(new JoinLeaveConfigurationCommandComposite(this));
 	}
 	
 	@Override

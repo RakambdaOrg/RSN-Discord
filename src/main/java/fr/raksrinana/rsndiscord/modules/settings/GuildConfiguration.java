@@ -12,6 +12,7 @@ import fr.raksrinana.rsndiscord.modules.birthday.config.BirthdaysConfiguration;
 import fr.raksrinana.rsndiscord.modules.externaltodos.config.ExternalTodosConfiguration;
 import fr.raksrinana.rsndiscord.modules.hermitcraft.config.HermitcraftConfiguration;
 import fr.raksrinana.rsndiscord.modules.irc.config.TwitchConfiguration;
+import fr.raksrinana.rsndiscord.modules.joinleave.config.JoinLeaveConfiguration;
 import fr.raksrinana.rsndiscord.modules.participation.config.ParticipationConfiguration;
 import fr.raksrinana.rsndiscord.modules.permission.config.PermissionsConfiguration;
 import fr.raksrinana.rsndiscord.modules.reaction.ReactionTag;
@@ -150,6 +151,10 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@Getter
 	@Setter
 	private TwitterConfiguration twitterConfiguration = new TwitterConfiguration();
+	@JsonProperty("joinLeave")
+	@Getter
+	@Setter
+	private JoinLeaveConfiguration joinLeaveConfiguration = new JoinLeaveConfiguration();
 	
 	GuildConfiguration(final long guildId){
 		this.guildId = guildId;
