@@ -24,7 +24,7 @@ public class JoinLeaveConfiguration implements ICompositeConfiguration{
 	@Getter
 	@Setter
 	private Set<String> joinImages = new HashSet<>();
-	@JsonProperty("joinImages")
+	@JsonProperty("leaveImages")
 	@Getter
 	@Setter
 	private Set<String> leaveImages = new HashSet<>();
