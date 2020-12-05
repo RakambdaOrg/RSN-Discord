@@ -49,12 +49,12 @@ public class LeaveImagesConfigurationCommand extends SetConfigurationCommand<Str
 	@NonNull
 	@Override
 	public String getName(@NonNull Guild guild){
-		return "Join images";
+		return "Leave images";
 	}
 	
 	@NonNull
 	@Override
 	public List<String> getCommandStrings(){
-		return List.of("joinImages");
+		return List.of("leaveImages");
 	}
 }
