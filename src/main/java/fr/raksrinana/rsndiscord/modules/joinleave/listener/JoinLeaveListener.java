@@ -38,7 +38,6 @@ public class JoinLeaveListener extends ListenerAdapter{
 					var image = LEAVE_IMAGES.get(ThreadLocalRandom.current().nextInt(LEAVE_IMAGES.size()));
 					
 					var embed = new EmbedBuilder()
-							.setAuthor(title, null, user.getAvatarUrl())
 							.setTitle(title)
 							.setDescription(description)
 							.setThumbnail(user.getAvatarUrl())
@@ -62,7 +61,6 @@ public class JoinLeaveListener extends ListenerAdapter{
 					var image = JOIN_IMAGES.get(ThreadLocalRandom.current().nextInt(JOIN_IMAGES.size()));
 					
 					var embed = new EmbedBuilder()
-							.setAuthor(title, null, user.getAvatarUrl())
 							.setTitle(title)
 							.setDescription(description)
 							.setThumbnail(user.getAvatarUrl())
