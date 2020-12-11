@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.modules.anilist.runner;
 
+import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.anilist.AniListUtils;
 import fr.raksrinana.rsndiscord.modules.anilist.config.AniListConfiguration;
 import fr.raksrinana.rsndiscord.modules.anilist.data.list.MediaList;
@@ -11,6 +12,7 @@ import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.modules.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
+import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
@@ -93,7 +95,12 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 	private void deleteSimilarPendingMedia(TextChannel channel, MediaList mediaList){
 		getSimilarWaitingReactions(channel, mediaList.getMedia())
 				.forEach(reaction -> channel.deleteMessageById(reaction.getMessage().getMessageId()).submit()
-						.thenAccept(empty -> Settings.get(channel.getGuild()).removeMessagesAwaitingReaction(reaction)));
+						.thenAccept(empty -> Settings.get(channel.getGuild()).removeMessagesAwaitingReaction(reaction))
+						.exceptionally(th -> {
+							Log.getLogger(channel.getGuild()).error("Failed to delete similar pending media", th);
+							Utilities.reportException("Failed to delete similar pending media", th);
+							return null;
+						}));
 	}
 	
 	private static Collection<WaitingReactionMessageConfiguration> getSimilarWaitingReactions(@NonNull final TextChannel channel, @NonNull final IMedia media){
