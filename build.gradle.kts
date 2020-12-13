@@ -54,11 +54,12 @@ tasks {
         options.encoding = "UTF-8"
         options.isDeprecation = true
 
-        classpath = files()
-
-        val compilerArgs = options.compilerArgs
-        compilerArgs.add("--module-path")
-        compilerArgs.add(classpath.asPath)
+        doFirst {
+            val compilerArgs = options.compilerArgs
+            compilerArgs.add("--module-path")
+            compilerArgs.add(classpath.asPath)
+            classpath = files()
+        }
     }
 
     test {
