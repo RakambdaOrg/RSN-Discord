@@ -3,8 +3,6 @@ open module fr.raksrinana.rsndiscord {
 	requires java.sql;
 	requires org.apache.commons.lang3;
 	requires org.apache.commons.io;
-	requires fr.raksrinana.utils.base;
-	requires fr.raksrinana.utils.http;
 	requires unirest.java;
 	requires reflections;
 	requires com.fasterxml.jackson.core;
