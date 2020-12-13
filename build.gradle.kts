@@ -82,6 +82,7 @@ application {
     val moduleName: String by project
     val className: String by project
 
+    mainClassName = className
     mainModule.set(moduleName)
     mainClass.set(className)
 }
