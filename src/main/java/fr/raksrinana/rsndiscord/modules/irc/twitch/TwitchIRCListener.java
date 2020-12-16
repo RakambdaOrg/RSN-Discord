@@ -122,7 +122,7 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 				role.append("(partner)");
 			}
 			
-			this.channel.sendMessage(MessageFormat.format("#{0} : **`{1}`{2}** {3}", twitchMessage.getParent().getChannel(), displayName, role, event.getMessage()))
+			this.channel.sendMessage(MessageFormat.format("{0} : **`{1}`{2}** {3}", twitchMessage.getParent().getChannel(), displayName, role, event.getMessage()))
 					.allowedMentions(List.of())
 					.submit();
 			
