@@ -50,7 +50,7 @@ public class JoinLeaveListener extends ListenerAdapter{
 		joinLeaveConfiguration.getChannel()
 				.flatMap(ChannelConfiguration::getChannel)
 				.ifPresent(channel -> {
-					var title = translate(guild, "joinLeave.join.title", user.getName() + "#" + user.getDiscriminator());
+					var title = translate(guild, "joinLeave.join.title", user.getAsMention());
 					var description = translate(guild, "joinLeave.join.description", guild.getMemberCount());
 					var image = getImage(joinLeaveConfiguration.getJoinImages()).orElse(null);
 					
