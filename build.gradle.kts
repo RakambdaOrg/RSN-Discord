@@ -14,8 +14,8 @@ dependencies {
     implementation(libs.jda) {
         exclude(module = "opus-java")
     }
-    implementation(libs.lavaplayer)
-    implementation(libs.lavaplayer_arm)
+    implementation(libs.lavaplayerD)
+    implementation(libs.lavaplayerArm)
     implementation(libs.jump3r)
 
     implementation(libs.slf4j)
@@ -29,7 +29,7 @@ dependencies {
     implementation(libs.httpclient)
     implementation(libs.lang3)
     implementation(libs.reflections)
-    implementation(libs.emoji_java)
+    implementation(libs.emojiJava)
     implementation(libs.imgscalr)
     implementation(libs.thumbnailator)
     implementation(libs.twitter4j)
