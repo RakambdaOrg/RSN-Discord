@@ -147,7 +147,7 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 					musicChannelId = null;
 				}
 			}
-			if(event.getMessage().startsWith("?request") || event.getMessage().startsWith("?r")){
+			if(event.getMessage().startsWith("?request")){
 				var link = event.getMessage().split(" ", 2)[1];
 				Optional.ofNullable(musicChannelId)
 						.map(getGuild()::getVoiceChannelById)
@@ -171,6 +171,10 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 								}
 							}, 0, 1, link);
 						});
+			}
+			if(twitchMessage.isModerator() && event.getMessage().startsWith("?rskip")){
+				RSNAudioManager.skip(getGuild());
+				TwitchIRC.sendMessage(getGuild(), getIrcChannel(), event.getUser().getNick() + " skipped the music");
 			}
 		}
 	}
