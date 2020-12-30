@@ -1,10 +1,13 @@
 package fr.raksrinana.rsndiscord.modules.irc.twitch;
 
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.commands.RandomKick;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.modules.irc.messages.*;
 import fr.raksrinana.rsndiscord.modules.irc.twitch.messages.*;
+import fr.raksrinana.rsndiscord.modules.music.RSNAudioManager;
+import fr.raksrinana.rsndiscord.modules.music.TrackConsumer;
 import fr.raksrinana.rsndiscord.modules.settings.Settings;
 import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Utilities;
@@ -22,7 +25,9 @@ import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.modules.irc.twitch.TwitchMessageId.*;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -72,6 +77,7 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 	private final String ircChannel;
 	private final TextChannel channel;
 	private long lastMessage;
+	private Long musicChannelId;
 	
 	TwitchIRCListener(@NonNull final Guild guild, @NonNull final String user, @NonNull final String channel){
 		this.guild = guild;
@@ -131,6 +137,41 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 					.getRandomKickRewardId()
 					.filter(expectedId -> Objects.equals(rewardId, expectedId)))
 					.ifPresent(expectedId -> randomKickClaimed(event));
+			
+			if(twitchMessage.isBroadcaster()){
+				if(event.getMessage().startsWith("?ron")){
+					var id = event.getMessage().split(" ", 2)[1];
+					musicChannelId = Long.parseLong(id);
+				}
+				else if(event.getMessage().startsWith("?roff")){
+					musicChannelId = null;
+				}
+			}
+			if(event.getMessage().startsWith("?request") || event.getMessage().startsWith("?r")){
+				var link = event.getMessage().split(" ", 2)[1];
+				Optional.ofNullable(musicChannelId)
+						.map(getGuild()::getVoiceChannelById)
+						.ifPresent(voiceChannel -> {
+							RSNAudioManager.play(Main.getJda().getSelfUser(), voiceChannel, new TrackConsumer(){
+								@Override
+								public void onPlaylist(List<AudioTrack> tracks){
+									TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Track added by " + event.getUser().getNick() + ": " + tracks.stream()
+											.map(track -> track.getInfo().title)
+											.collect(Collectors.joining(", ")));
+								}
+								
+								@Override
+								public void onTrack(AudioTrack track){
+									TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Track added " + event.getUser().getNick() + ": " + track.getInfo().title);
+								}
+								
+								@Override
+								public void onFailure(String message){
+									TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Failed to add track");
+								}
+							}, 0, 1, link);
+						});
+			}
 		}
 	}
 	
