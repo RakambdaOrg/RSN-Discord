@@ -106,12 +106,12 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 	}
 	
 	private static Collection<WaitingReactionMessageConfiguration> getSimilarWaitingReactions(@NonNull final TextChannel channel, @NonNull final IMedia media){
-		var mediaIdStr = Integer.toString(media.getId());
+		var footer = "ID: " + media.getId();
 		return Settings.get(channel.getGuild()).getMessagesAwaitingReaction(ANILIST_TODO).stream()
 				.filter(reaction -> {
 					if(Objects.equals(reaction.getMessage().getChannel().getChannelId(), channel.getIdLong())){
 						return reaction.getMessage().getMessage()
-								.map(message -> isSameMedia(mediaIdStr, reaction, message))
+								.map(message -> isSameMedia(footer, reaction, message))
 								.orElse(false);
 					}
 					return false;
@@ -119,11 +119,11 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 	}
 	
 	@NonNull
-	private static Boolean isSameMedia(String mediaId, WaitingReactionMessageConfiguration reaction, Message message){
+	private static Boolean isSameMedia(String footer, WaitingReactionMessageConfiguration reaction, Message message){
 		var isDeleteMode = ofNullable(reaction.getData().get(DELETE_KEY)).map(Boolean::parseBoolean).orElse(false);
 		var isSameMedia = message.getEmbeds().stream()
 				.anyMatch(embed -> Objects.equals(embed.getTitle(), "User list information")
-						&& (Objects.equals(ofNullable(embed.getFooter()).map(MessageEmbed.Footer::getText).orElse(null), mediaId)));
+						&& Objects.equals(ofNullable(embed.getFooter()).map(MessageEmbed.Footer::getText).orElse(null), footer));
 		return isSameMedia && isDeleteMode;
 	}
 	
