@@ -80,7 +80,9 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 	
 	private void sendMediaList(TextChannel channel, Member member, MediaList mediaList){
 		
-		channel.sendMessage(member.getAsMention()).embed(buildMessage(channel.getGuild(), member.getUser(), mediaList)).submit()
+		channel.sendMessage(member.getAsMention())
+				.embed(buildMessage(channel.getGuild(), member.getUser(), mediaList))
+				.submit()
 				.thenAccept(message -> {
 					message.addReaction(CHECK_OK.getValue()).submit();
 					
