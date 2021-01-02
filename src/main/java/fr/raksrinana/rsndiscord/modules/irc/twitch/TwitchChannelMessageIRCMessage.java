@@ -47,7 +47,9 @@ public class TwitchChannelMessageIRCMessage implements IIRCMessage{
 	}
 	
 	public boolean isModerator(){
-		return parent.getTag("moderator").isPresent();
+		return parent.getTag("mod")
+				.filter(tag -> Objects.equals(tag.getValue(), "1"))
+				.isPresent();
 	}
 	
 	public boolean isPartner(){
