@@ -66,7 +66,7 @@ public class MoveMusicCommand extends BasicCommand{
 		var track = queue.get(moveFromPosition);
 		var userData = track.getUserData(TrackUserFields.class);
 		
-		Collections.rotate(queue.subList(moveFromPosition, moveToPosition + 1), -1);
+		Collections.rotate(queue.subList(moveToPosition, moveFromPosition + 1), -1);
 		
 		var requester = userData.get(new RequesterTrackDataField())
 				.map(User::getAsMention)
