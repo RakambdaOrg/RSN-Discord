@@ -78,11 +78,11 @@ public class VideosRunner implements IScheduledRunner{
 				.setTitle(translate(guild, "hermitcraft.uploaded", video.getUploader().getDisplayName()), "https://youtu.be/" + video.getId())
 				.setDescription(video.getTitle())
 				.addField(translate(guild, "hermitcraft.uploader"), video.getUploader().getDisplayName(), true)
-				.addField(translate(guild, "hermitcraft.upload-date"), video.getUploaded().format(DF), true)
 				.addField(translate(guild, "hermitcraft.duration"), video.getFriendlyDuration(), true)
 				.setImage(String.format("https://i.ytimg.com/vi/%s/mqdefault.jpg", video.getId()))
 				.setThumbnail(video.getUploader().getProfilePicture().toString())
 				.setFooter(video.getId())
+				.setTimestamp(video.getUploaded())
 				.build();
 		channel.sendMessage(embed).submit();
 	}
