@@ -151,7 +151,7 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 				var link = event.getMessage().split(" ", 2)[1];
 				Optional.ofNullable(musicChannelId)
 						.map(getGuild()::getVoiceChannelById)
-						.ifPresent(voiceChannel -> {
+						.ifPresentOrElse(voiceChannel -> {
 							RSNAudioManager.play(Main.getJda().getSelfUser(), voiceChannel, new TrackConsumer(){
 								@Override
 								public void onPlaylist(List<AudioTrack> tracks){
@@ -170,7 +170,7 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 									TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Failed to add track");
 								}
 							}, 0, 1, link);
-						});
+						}, () -> TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Requests are currently disabled"));
 			}
 			if(twitchMessage.isModerator() && event.getMessage().startsWith("?rskip")){
 				RSNAudioManager.skip(getGuild());
