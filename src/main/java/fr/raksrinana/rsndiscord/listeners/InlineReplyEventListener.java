@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import static java.util.Objects.isNull;
 
 @EventListener
@@ -40,13 +41,12 @@ public class InlineReplyEventListener extends ListenerAdapter{
 				var received = Arrays.stream(message.getContentRaw().split("\n")).collect(Collectors.toList());
 				
 				if(original.size() == received.size()){
-					var sb = new StringBuilder();
-					for(int i = 0; i < original.size(); i++){
-						sb.append(original.get(i))
-								.append(" ")
-								.append(received.get(i));
-					}
-					channel.sendMessage(sb).submit()
+					var content = event.getAuthor().getAsMention() + "\n" +
+							IntStream.range(0, original.size())
+									.mapToObj(index -> original.get(index) + " " + received.get(index))
+									.collect(Collectors.joining("\n"));
+					
+					reference.reply(content).submit()
 							.thenAccept(sent -> message.delete().submit());
 				}
 			}
