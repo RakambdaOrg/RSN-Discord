@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
@@ -72,10 +73,12 @@ public class CommandsEventListener extends ListenerAdapter{
 			var author = event.getAuthor();
 			var channel = event.getChannel();
 			
+			if(message.getType() != MessageType.DEFAULT || author.isBot()){
+				return;
+			}
+			
 			if(isCommand(event.getGuild(), message.getContentRaw())){
-				if(!author.isBot()){
-					processCommand(event);
-				}
+				processCommand(event);
 			}
 			else{
 				if(containsChannel(guildConfiguration.getReactionsConfiguration().getAutoTodoChannels(), channel)){
