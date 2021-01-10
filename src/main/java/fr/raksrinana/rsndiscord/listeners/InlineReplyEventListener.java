@@ -35,13 +35,13 @@ public class InlineReplyEventListener extends ListenerAdapter{
 			
 			if(Objects.equals(reference.getAuthor(), Main.getJda().getSelfUser())){
 				var original = Arrays.stream(reference.getContentRaw().split("\n"))
-						.filter(line -> Character.isDigit(line.charAt(0)))
+						.filter(line -> !line.startsWith("__**EP "))
 						.map(line -> line.split(" ", 2)[0])
 						.collect(Collectors.toList());
 				var received = Arrays.stream(message.getContentRaw().split("\n")).collect(Collectors.toList());
 				
 				if(original.size() == received.size()){
-					var content = event.getAuthor().getAsMention() + "\n" +
+					var content = event.getAuthor().getAsMention() + " replied:\n\n" +
 							IntStream.range(0, original.size())
 									.mapToObj(index -> original.get(index) + " " + received.get(index))
 									.collect(Collectors.joining("\n"));
