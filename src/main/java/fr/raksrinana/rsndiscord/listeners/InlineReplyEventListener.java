@@ -34,6 +34,7 @@ public class InlineReplyEventListener extends ListenerAdapter{
 			
 			if(Objects.equals(reference.getAuthor(), Main.getJda().getSelfUser())){
 				var original = Arrays.stream(reference.getContentRaw().split("\n"))
+						.filter(line -> Character.isDigit(line.charAt(0)))
 						.map(line -> line.split(" ", 2)[0])
 						.collect(Collectors.toList());
 				var received = Arrays.stream(message.getContentRaw().split("\n")).collect(Collectors.toList());
