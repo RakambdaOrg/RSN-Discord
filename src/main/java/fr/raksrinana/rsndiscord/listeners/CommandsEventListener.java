@@ -73,11 +73,14 @@ public class CommandsEventListener extends ListenerAdapter{
 			var author = event.getAuthor();
 			var channel = event.getChannel();
 			
-			if(message.getType() != MessageType.DEFAULT || author.isBot()){
+			if(message.getType() != MessageType.DEFAULT){
 				return;
 			}
 			
 			if(isCommand(event.getGuild(), message.getContentRaw())){
+				if(author.isBot()){
+				    return;	
+				}
 				processCommand(event);
 			}
 			else{
