@@ -11,13 +11,9 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.modules.reaction.ReactionTag.DELETE_CHANNEL;
 import static fr.raksrinana.rsndiscord.modules.reaction.ReactionTag.TODO;
 import static fr.raksrinana.rsndiscord.modules.reaction.ReactionUtils.DELETE_KEY;
@@ -94,44 +90,12 @@ public class TodoReactionHandler implements IReactionHandler{
 				.flatMap(ChannelConfiguration::getChannel)
 				.map(forwardChannel -> {
 					try{
-						var tempDir = Files.createTempDirectory("rsn");
-						var attachments = message.getAttachments().stream()
-								.map(attachment -> attachment.downloadToFile(tempDir.resolve(attachment.getFileName()).toFile()))
-								.map(attachment -> {
-									try{
-										return attachment.get(60, SECONDS);
-									}
-									catch(InterruptedException | ExecutionException | TimeoutException e){
-										Log.getLogger(guild).error("Failed to download attachment", e);
-									}
-									return null;
-								})
-								.filter(Objects::nonNull)
-								.collect(Collectors.toList());
-						
-						var forwardedMessage = forwardChannel.sendMessage(message).clearFiles();
-						
-						for(var file : attachments){
-							forwardedMessage = forwardedMessage.addFile(file);
-						}
-						
-						return forwardedMessage.submit()
-								.thenApply(sent -> true)
+						return forwardChannel.sendMessage(message).submit()
+								.thenApply(forwardedMessage -> true)
 								.exceptionally(e -> false)
-								.thenApply(result -> {
-									attachments.forEach(attachment -> {
-										try{
-											Files.deleteIfExists(Paths.get(attachment.toURI()));
-										}
-										catch(IOException e){
-											Log.getLogger(guild).error("Failed to delete attachment", e);
-										}
-									});
-									return result;
-								})
 								.get(30, SECONDS);
 					}
-					catch(InterruptedException | ExecutionException | TimeoutException | IOException e){
+					catch(InterruptedException | ExecutionException | TimeoutException e){
 						Log.getLogger(guild).error("Failed to forward message", e);
 					}
 					return false;
