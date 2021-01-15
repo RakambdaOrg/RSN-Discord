@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.reply;
 
-import fr.raksrinana.rsndiscord.listeners.EventListener;
+import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.log.Log;
 import lombok.Getter;
 import lombok.NonNull;

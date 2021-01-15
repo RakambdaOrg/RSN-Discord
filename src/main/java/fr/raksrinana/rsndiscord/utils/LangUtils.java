@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.utils;
 
-import fr.raksrinana.rsndiscord.modules.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;

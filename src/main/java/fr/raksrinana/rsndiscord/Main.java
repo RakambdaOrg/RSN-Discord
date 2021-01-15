@@ -1,18 +1,18 @@
 package fr.raksrinana.rsndiscord;
 
-import fr.raksrinana.rsndiscord.listeners.EventListener;
+import fr.raksrinana.rsndiscord.api.irc.twitch.TwitchIRC;
+import fr.raksrinana.rsndiscord.api.trakt.TraktApi;
+import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.log.Log;
-import fr.raksrinana.rsndiscord.modules.irc.config.TwitchConfiguration;
-import fr.raksrinana.rsndiscord.modules.irc.twitch.TwitchIRC;
-import fr.raksrinana.rsndiscord.modules.music.RSNAudioManager;
-import fr.raksrinana.rsndiscord.modules.reaction.ReactionUtils;
-import fr.raksrinana.rsndiscord.modules.schedule.ScheduleUtils;
-import fr.raksrinana.rsndiscord.modules.series.trakt.TraktUtils;
-import fr.raksrinana.rsndiscord.modules.settings.GuildConfiguration;
-import fr.raksrinana.rsndiscord.modules.settings.Settings;
-import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.music.RSNAudioManager;
+import fr.raksrinana.rsndiscord.reaction.ReactionUtils;
 import fr.raksrinana.rsndiscord.reply.UserReplyEventListener;
 import fr.raksrinana.rsndiscord.runner.RunnerUtils;
+import fr.raksrinana.rsndiscord.schedule.ScheduleUtils;
+import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
+import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.guild.TwitchConfiguration;
+import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.JacksonObjectMapper;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import kong.unirest.Unirest;
@@ -35,7 +35,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import static fr.raksrinana.rsndiscord.listeners.CommandsEventListener.DEFAULT_PREFIX;
+import static fr.raksrinana.rsndiscord.event.CommandsEventListener.DEFAULT_PREFIX;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.OnlineStatus.ONLINE;
 
@@ -194,7 +194,7 @@ public class Main{
 	 * Close the bot.
 	 */
 	public static void close(){
-		TraktUtils.stopAll();
+		TraktApi.stopAll();
 		UserReplyEventListener.stopAll();
 		RSNAudioManager.stopAll();
 		TwitchIRC.close();

@@ -2,9 +2,9 @@ package fr.raksrinana.rsndiscord.utils;
 
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.log.Log;
-import fr.raksrinana.rsndiscord.modules.settings.Settings;
-import fr.raksrinana.rsndiscord.modules.settings.types.ChannelConfiguration;
-import fr.raksrinana.rsndiscord.modules.settings.types.RoleConfiguration;
+import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
