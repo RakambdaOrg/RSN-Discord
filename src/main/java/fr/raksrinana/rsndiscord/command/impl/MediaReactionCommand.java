@@ -89,16 +89,22 @@ public class MediaReactionCommand extends BasicCommand{
 				}
 				var restMessage = channel.sendMessage(newText).submit();
 				if(askArchive){
-					restMessage.thenAccept(message -> {
+					restMessage = restMessage.thenApply(message -> {
 						message.addReaction(PACKAGE.getValue()).submit();
 						
 						var reactionMessageConfiguration = new WaitingReactionMessageConfiguration(message, MEDIA_REACTION,
 								Map.of(DELETE_KEY, Boolean.toString(false)));
 						Settings.get(guild).addMessagesAwaitingReaction(reactionMessageConfiguration);
+						
+						return message;
 					});
 				}
 				
-				event.getMessage().delete().submit();
+				restMessage.thenAccept(message -> event.getMessage().delete().submit())
+						.exceptionally(error -> {
+							event.getChannel().sendMessage("Failed to send message: " + error.getMessage()).submit();
+							return null;
+						});
 				return SUCCESS;
 			}
 			return BAD_ARGUMENTS;
