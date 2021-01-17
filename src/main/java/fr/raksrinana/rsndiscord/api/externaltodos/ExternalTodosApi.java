@@ -9,12 +9,16 @@ import fr.raksrinana.rsndiscord.utils.Utilities;
 import kong.unirest.GenericType;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static kong.unirest.HeaderNames.AUTHORIZATION;
 
 public class ExternalTodosApi{
-	public static Optional<GetTodoResponse> getTodos(String endpoint, String token){
+	@NotNull
+	public static Optional<GetTodoResponse> getTodos(@NotNull String endpoint, @Nullable String token){
 		var builder = Unirest.get(endpoint + "/todos");
 		ofNullable(token).ifPresent(t -> builder.header(AUTHORIZATION, "Bearer " + t));
 		var request = builder.asObject(new GenericType<GetTodoResponse>(){});
@@ -26,17 +30,18 @@ public class ExternalTodosApi{
 		if(request.isSuccess()){
 			return Optional.of(request.getBody());
 		}
-		return Optional.empty();
+		return empty();
 	}
 	
-	public static Optional<SetStatusResponse> setStatus(String endpoint, String token, Todo todo, Status status){
-		final var body = new JSONObject();
+	@NotNull
+	public static Optional<SetStatusResponse> setStatus(@NotNull String endpoint, @Nullable String token, @NotNull Todo todo, @NotNull Status status){
+		var body = new JSONObject();
 		body.put("id", todo.getId());
 		body.put("status", status.name());
 		
-		final var builder = Unirest.post(endpoint + "/todos/status/set").body(body);
+		var builder = Unirest.post(endpoint + "/todos/status/set").body(body);
 		ofNullable(token).ifPresent(t -> builder.header(AUTHORIZATION, "Bearer " + t));
-		final var request = builder.asObject(new GenericType<SetStatusResponse>(){});
+		var request = builder.asObject(new GenericType<SetStatusResponse>(){});
 		
 		request.getParsingError().ifPresent(error -> {
 			Utilities.reportException("Failed to parse external todos response", error);
@@ -45,6 +50,6 @@ public class ExternalTodosApi{
 		if(request.isSuccess()){
 			return Optional.of(request.getBody());
 		}
-		return Optional.empty();
+		return empty();
 	}
 }

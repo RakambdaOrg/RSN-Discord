@@ -11,6 +11,7 @@ public enum Kind{
 	PUNISHMENT(false),
 	SUGGESTION(true),
 	UNKNOWN(true);
+	
 	private final boolean cancellable;
 	
 	Kind(boolean cancellable){
