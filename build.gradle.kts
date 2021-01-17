@@ -33,6 +33,8 @@ dependencies {
     implementation(libs.imgscalr)
     implementation(libs.thumbnailator)
     implementation(libs.twitter4j)
+
+    compileOnly(libs.jetbrainsAnnotations)
 }
 
 repositories {

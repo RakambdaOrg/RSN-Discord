@@ -6,10 +6,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import fr.raksrinana.rsndiscord.api.anilist.data.media.IMedia;
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jetbrains.annotations.NotNull;
 import java.net.URL;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,8 +23,7 @@ import static java.awt.Color.GREEN;
 @JsonTypeName("AIRING")
 @Getter
 public class AiringNotification extends INotification{
-	@Getter
-	private static final String QUERY = """
+	public static final String QUERY = """
 			AiringNotification {
 			    id
 			    type
@@ -32,7 +31,8 @@ public class AiringNotification extends INotification{
 			    createdAt
 			    %s
 			}
-			""".formatted(IMedia.getQUERY());
+			""".formatted(IMedia.QUERY);
+	
 	@JsonProperty("episode")
 	private int episode;
 	@JsonProperty("media")
@@ -43,7 +43,7 @@ public class AiringNotification extends INotification{
 	}
 	
 	@Override
-	public void fillEmbed(@NonNull Guild guild, @NonNull final EmbedBuilder builder){
+	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		builder.setTimestamp(getDate())
 				.setColor(GREEN)
 				.setTitle(translate(guild, "anilist.release"), getMedia().getUrl().toString())
@@ -54,23 +54,25 @@ public class AiringNotification extends INotification{
 	}
 	
 	@Override
-	@NonNull
+	@NotNull
 	public URL getUrl(){
-		return Optional.of(getMedia()).map(IMedia::getUrl).orElse(FALLBACK_URL);
+		return Optional.of(getMedia())
+				.map(IMedia::getUrl)
+				.orElse(FALLBACK_URL);
 	}
 	
 	@Override
 	public int hashCode(){
-		return this.getEpisode();
+		return getEpisode();
 	}
 	
 	@Override
-	public boolean equals(final Object obj){
+	public boolean equals(Object obj){
 		if(!(obj instanceof AiringNotification)){
 			return false;
 		}
-		final var notification = (AiringNotification) obj;
-		return Objects.equals(notification.getEpisode(), this.getEpisode()) && Objects.equals(notification.getMedia(), this.getMedia());
+		var notification = (AiringNotification) obj;
+		return Objects.equals(notification.getEpisode(), getEpisode()) && Objects.equals(notification.getMedia(), getMedia());
 	}
 	
 	@Override

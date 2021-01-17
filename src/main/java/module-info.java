@@ -14,11 +14,12 @@ open module fr.raksrinana.rsndiscord {
 	requires net.dv8tion.jda;
 	requires lavaplayer;
 	requires okhttp3;
-	requires static lombok;
 	requires com.google.gson;
 	requires emoji.java;
 	requires imgscalr.lib;
 	requires jump3r;
 	requires thumbnailator;
 	requires org.twitter4j.core;
+	requires static lombok;
+	requires static annotations;
 }

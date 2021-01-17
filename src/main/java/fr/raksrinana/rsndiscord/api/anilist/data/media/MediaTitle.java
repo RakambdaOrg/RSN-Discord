@@ -10,14 +10,14 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 public class MediaTitle{
-	@Getter
-	private static final String QUERY = """
+	public static final String QUERY = """
 			title {
 				userPreferred
 				romaji
 				english
 				native
 			}""";
+	
 	@JsonProperty("userPreferred")
 	private String userPreferred;
 	@JsonProperty("romaji")

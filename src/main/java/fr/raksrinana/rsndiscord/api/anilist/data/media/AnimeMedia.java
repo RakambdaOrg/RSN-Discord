@@ -6,10 +6,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import fr.raksrinana.rsndiscord.api.anilist.data.FuzzyDate;
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.time.LocalDate;
 import static fr.raksrinana.rsndiscord.api.anilist.data.media.MediaType.ANIME;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
@@ -28,19 +29,19 @@ public class AnimeMedia extends IMedia{
 	}
 	
 	@Override
-	protected void fillAdditionalEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder){
-		final var year = ofNullable(this.getStartDate())
+	protected void fillAdditionalEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+		var year = ofNullable(getStartDate())
 				.flatMap(FuzzyDate::asDate)
 				.map(LocalDate::getYear);
-		ofNullable(this.getEpisodes()).map(Object::toString)
+		ofNullable(getEpisodes()).map(Object::toString)
 				.ifPresent(val -> builder.addField(translate(guild, "anilist.episodes"), val, true));
-		ofNullable(this.getSeason()).map(Enum::toString)
+		ofNullable(getSeason()).map(Enum::toString)
 				.ifPresent(val -> builder.addField(translate(guild, "anilist.season"), val + year.map(y -> " " + y).orElse(""), true));
 	}
 	
 	@Override
-	@NonNull
-	public String getProgressType(final boolean contains){
+	@NotNull
+	public String getProgressType(boolean contains){
 		return "watched episode";
 	}
 	
@@ -50,7 +51,8 @@ public class AnimeMedia extends IMedia{
 	}
 	
 	@Override
+	@Nullable
 	public Integer getItemCount(){
-		return this.getEpisodes();
+		return getEpisodes();
 	}
 }

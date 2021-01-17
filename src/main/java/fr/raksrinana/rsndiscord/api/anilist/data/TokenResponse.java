@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class TokenRequest{
+public class TokenResponse{
 	@JsonProperty("error")
 	private String error;
 	@JsonProperty("access_token")

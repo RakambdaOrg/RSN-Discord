@@ -3,8 +3,9 @@ package fr.raksrinana.rsndiscord.api.anilist.query;
 import fr.raksrinana.rsndiscord.api.anilist.AniListApi;
 import fr.raksrinana.rsndiscord.log.Log;
 import kong.unirest.json.JSONObject;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Member;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -14,7 +15,7 @@ import static java.util.Optional.ofNullable;
 public interface IPagedQuery<T>{
 	int PER_PAGE = 150;
 	
-	static String pagedQuery(final String additionalParams, final String query){
+	static String pagedQuery(String additionalParams, String query){
 		return """
 				query($page: Int, $perPage: Int%s){
 				    Page (page: $page, perPage: $perPage) {
@@ -30,8 +31,8 @@ public interface IPagedQuery<T>{
 				}""".formatted(additionalParams, query);
 	}
 	
-	@NonNull
-	default Set<T> getResult(@NonNull final Member member) throws Exception{
+	@NotNull
+	default Set<T> getResult(@NotNull Member member) throws Exception{
 		var elements = new HashSet<T>();
 		var hasNext = true;
 		
@@ -50,14 +51,16 @@ public interface IPagedQuery<T>{
 		return true;
 	}
 	
-	@NonNull String getQuery();
+	@NotNull
+	String getQuery();
 	
-	@NonNull JSONObject getParameters(int page);
+	@NotNull
+	JSONObject getParameters(int page);
 	
 	int getNextPage();
 	
-	@NonNull
-	default List<T> parseResult(@NonNull final JSONObject json){
+	@NotNull
+	default List<T> parseResult(@NotNull JSONObject json){
 		var changes = new ArrayList<T>();
 		for(var change : json.getJSONObject("data").getJSONObject("Page").getJSONArray(getPageElementName())){
 			try{
@@ -69,14 +72,16 @@ public interface IPagedQuery<T>{
 					Log.getLogger(null).trace("Skipped AniList object, json: {}", change);
 				}
 			}
-			catch(final Exception e){
+			catch(Exception e){
 				Log.getLogger(null).error("Error building {} object, json was {}", getPageElementName(), change, e);
 			}
 		}
 		return changes;
 	}
 	
-	@NonNull String getPageElementName();
+	@NotNull
+	String getPageElementName();
 	
-	T buildChange(@NonNull final JSONObject change) throws Exception;
+	@Nullable
+	T buildChange(@NotNull JSONObject change) throws Exception;
 }

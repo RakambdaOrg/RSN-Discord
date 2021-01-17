@@ -15,6 +15,7 @@ emoji_java-version = "5.1.1"
 imgscalr-version = "4.2"
 thumbnailator-version = "0.4.13"
 twitter4j-version = "4.0.7"
+jetbrains-annotations-version = "16.0.2"
 
 [dependencies]
 jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda-version" }
@@ -35,6 +36,7 @@ emojiJava = { group = "com.vdurmont", name = "emoji-java", version.ref = "emoji_
 imgscalr = { group = "org.imgscalr", name = "imgscalr-lib", version.ref = "imgscalr-version" }
 thumbnailator = { group = "net.coobird", name = "thumbnailator", version.ref = "thumbnailator-version" }
 twitter4j = { group = "org.twitter4j", name = "twitter4j-core", version.ref = "twitter4j-version" }
+jetbrainsAnnotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations-version" }
 
 [bundles]
 jackson = ["jackson-core", "jackson-annotations", "jackson-databind"]

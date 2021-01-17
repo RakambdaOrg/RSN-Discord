@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.api.anilist;
 
-import fr.raksrinana.rsndiscord.api.anilist.data.TokenRequest;
+import fr.raksrinana.rsndiscord.api.anilist.data.TokenResponse;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.general.anilist.AniListAccessTokenConfiguration;
@@ -8,8 +8,8 @@ import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Member;
+import org.jetbrains.annotations.NotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Instant;
@@ -32,18 +32,21 @@ public class AniListApi{
 	private static final String USER_INFO_QUERY = "query{Viewer {id name}}";
 	private static final int HTTP_ERROR = 503;
 	private static final int HTTP_TOO_MANY_REQUESTS = 429;
+	
 	public static URL FALLBACK_URL;
 	
-	public static void requestToken(@NonNull final Member member, @NonNull final String code) throws InvalidResponseException{
+	public static void requestToken(@NotNull Member member, @NotNull String code) throws InvalidResponseException{
 		Log.getLogger(member.getGuild()).debug("Getting access token for {}", member);
 		
 		var accessToken = getAccessToken(member);
 		if(accessToken.isPresent()){
 			return;
 		}
+		
 		var headers = new HashMap<String, String>();
 		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "application/json");
+		
 		var body = new JSONObject();
 		body.put("grant_type", "authorization_code");
 		body.put("client_id", "" + APP_ID);
@@ -51,7 +54,7 @@ public class AniListApi{
 		body.put("redirect_uri", REDIRECT_URI);
 		body.put("code", code);
 		
-		var request = Unirest.post(API_URL + "/oauth/token").headers(headers).body(body).asObject(TokenRequest.class);
+		var request = Unirest.post(API_URL + "/oauth/token").headers(headers).body(body).asObject(TokenResponse.class);
 		if(!request.isSuccess()){
 			throw new InvalidResponseException("Getting token failed HTTP code " + request.getStatus());
 		}
@@ -67,8 +70,8 @@ public class AniListApi{
 				response.getAccessToken()));
 	}
 	
-	@NonNull
-	private static Optional<AniListAccessTokenConfiguration> getAccessToken(@NonNull final Member member){
+	@NotNull
+	private static Optional<AniListAccessTokenConfiguration> getAccessToken(@NotNull Member member){
 		var guild = member.getGuild();
 		Log.getLogger(guild).trace("Getting previous access token for {}", member);
 		
@@ -83,7 +86,8 @@ public class AniListApi{
 		return Optional.empty();
 	}
 	
-	public static Optional<Integer> getUserId(@NonNull final Member member){
+	@NotNull
+	public static Optional<Integer> getUserId(@NotNull Member member){
 		var user = member.getUser();
 		return Settings.getGeneral().getAniList()
 				.getUserId(user.getIdLong())
@@ -96,15 +100,15 @@ public class AniListApi{
 						Settings.getGeneral().getAniList().setUserId(user.getIdLong(), userId);
 						return Optional.of(userId);
 					}
-					catch(final Exception e){
+					catch(Exception e){
 						Log.getLogger(member.getGuild()).error("Failed to get AniList user id for {}", member);
 					}
 					return Optional.empty();
 				});
 	}
 	
-	@NonNull
-	public static JSONObject postQuery(@NonNull final Member member, @NonNull final String query, @NonNull final JSONObject variables) throws Exception{
+	@NotNull
+	public static JSONObject postQuery(@NotNull Member member, @NotNull String query, @NotNull JSONObject variables) throws Exception{
 		var guild = member.getGuild();
 		var user = member.getUser();
 		Log.getLogger(guild).debug("Sending query to AniList for user {}", user);
@@ -119,8 +123,8 @@ public class AniListApi{
 		return postQuery(token, query, variables);
 	}
 	
-	@NonNull
-	private static JSONObject postQuery(@NonNull final AniListAccessTokenConfiguration token, @NonNull final String query, @NonNull final JSONObject variables) throws Exception{
+	@NotNull
+	private static JSONObject postQuery(@NotNull AniListAccessTokenConfiguration token, @NotNull String query, @NotNull JSONObject variables) throws Exception{
 		var headers = new HashMap<String, String>();
 		headers.put("Authorization", "Bearer " + token.getToken());
 		headers.put("Content-Type", "application/json");
@@ -145,12 +149,13 @@ public class AniListApi{
 					}
 				}
 			}
-			catch(final Exception ignored){
+			catch(Exception ignored){
 			}
 		}
 		throw new Exception("Error sending API request, HTTP code " + requestStatus + " => " + request.getBody() + " | query was " + query);
 	}
 	
+	@NotNull
 	public static ZonedDateTime getDefaultDate(){
 		return ZonedDateTime.ofInstant(Instant.parse("2019-07-07T00:00:00Z"), ZoneId.of("UTC"));
 	}
@@ -159,7 +164,7 @@ public class AniListApi{
 		try{
 			FALLBACK_URL = new URL("https://anilist.co");
 		}
-		catch(final MalformedURLException e){
+		catch(MalformedURLException e){
 			Log.getLogger(null).error("Failed to create default URL", e);
 		}
 	}

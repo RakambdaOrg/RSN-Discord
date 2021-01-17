@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.*;
 import fr.raksrinana.rsndiscord.api.anilist.data.FuzzyDate;
 import fr.raksrinana.rsndiscord.api.anilist.data.IAniListObject;
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
@@ -25,9 +26,7 @@ import static java.util.Optional.ofNullable;
 })
 @Getter
 public abstract class IMedia implements IAniListObject{
-	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-	@Getter
-	private static final String QUERY = """
+	public static final String QUERY = """
 			media {
 			    id
 			    season
@@ -44,14 +43,17 @@ public abstract class IMedia implements IAniListObject{
 			    %s
 			    %s
 			    %s
-			}
-			""".formatted(
-			MediaTitle.getQUERY(),
+			}""".formatted(
+			MediaTitle.QUERY,
 			FuzzyDate.getQuery("startDate"),
 			FuzzyDate.getQuery("endDate"),
-			MediaCoverImage.getQUERY()
+			MediaCoverImage.QUERY
 	);
+	
+	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	
 	private final MediaType type;
+	
 	@JsonProperty("startDate")
 	private final FuzzyDate startDate = new FuzzyDate();
 	@JsonProperty("endDate")
@@ -75,12 +77,12 @@ public abstract class IMedia implements IAniListObject{
 	@JsonProperty("id")
 	private int id;
 	
-	protected IMedia(@NonNull final MediaType type){
+	protected IMedia(@NotNull MediaType type){
 		this.type = type;
 	}
 	
 	@Override
-	public void fillEmbed(@NonNull Guild guild, @NonNull final EmbedBuilder builder){
+	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		builder.setDescription(getTitle().getRomaji());
 		if(getType().isShouldDisplay()){
 			builder.addField(translate(guild, "anilist.type"), getType().toString(), true);
@@ -105,10 +107,10 @@ public abstract class IMedia implements IAniListObject{
 				.setFooter("ID: " + getId());
 	}
 	
-	protected abstract void fillAdditionalEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder);
+	protected abstract void fillAdditionalEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder);
 	
-	@NonNull
-	public abstract String getProgressType(final boolean contains);
+	@NotNull
+	public abstract String getProgressType(boolean contains);
 	
 	@Override
 	public int hashCode(){
@@ -116,7 +118,7 @@ public abstract class IMedia implements IAniListObject{
 	}
 	
 	@Override
-	public boolean equals(final Object obj){
+	public boolean equals(Object obj){
 		return obj instanceof IMedia && Objects.equals(((IMedia) obj).getId(), getId());
 	}
 	
@@ -126,13 +128,37 @@ public abstract class IMedia implements IAniListObject{
 	}
 	
 	@Override
-	public int compareTo(@NonNull final IAniListObject o){
+	public int compareTo(@NotNull IAniListObject o){
 		return Integer.compare(getId(), o.getId());
 	}
 	
+	@Nullable
 	public abstract Integer getItemCount();
 	
+	@NotNull
 	public static String getQueryWithId(){
-		return "media(id: $mediaId) {\n" + "id\n" + MediaTitle.getQUERY() + "\n" + "season\n" + "type\n" + "format\n" + "status\n" + "episodes\n" + "chapters\n" + "volumes\n" + FuzzyDate.getQuery("startDate") + "\n" + FuzzyDate.getQuery("endDate") + "\n" + "genres\n" + "isAdult\n" + MediaCoverImage.getQUERY() + "\n" + "siteUrl" + "}";
+		return """
+				media(id: $mediaId) {
+					id
+					season
+					type
+					format
+					status
+					episodes
+					chapters
+					volumes
+					genres
+					isAdult
+					siteUrl
+					%s
+					%s
+					%s
+					%s
+				}""".formatted(
+				MediaTitle.QUERY,
+				FuzzyDate.getQuery("startDate"),
+				FuzzyDate.getQuery("endDate"),
+				MediaCoverImage.QUERY
+		);
 	}
 }

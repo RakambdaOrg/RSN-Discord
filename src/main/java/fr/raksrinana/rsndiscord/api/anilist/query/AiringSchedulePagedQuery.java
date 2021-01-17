@@ -3,46 +3,48 @@ package fr.raksrinana.rsndiscord.api.anilist.query;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.raksrinana.rsndiscord.api.anilist.data.airing.AiringSchedule;
 import kong.unirest.json.JSONObject;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class AiringSchedulePagedQuery implements IPagedQuery<AiringSchedule>{
-	private static final String QUERY = IPagedQuery.pagedQuery(", $mediaID: Int", AiringSchedule.getQUERY());
+	private static final String QUERY = IPagedQuery.pagedQuery(", $mediaID: Int", AiringSchedule.QUERY);
+	
 	private final JSONObject variables;
 	private int currentPage = 0;
 	
-	public AiringSchedulePagedQuery(final int mediaId){
-		this.variables = new JSONObject();
-		this.variables.put("mediaID", mediaId);
-		this.variables.put("page", 1);
-		this.variables.put("perPage", PER_PAGE);
+	public AiringSchedulePagedQuery(int mediaId){
+		variables = new JSONObject();
+		variables.put("mediaID", mediaId);
+		variables.put("page", 1);
+		variables.put("perPage", PER_PAGE);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public String getQuery(){
 		return QUERY;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public JSONObject getParameters(final int page){
-		this.variables.put("page", page);
-		return this.variables;
+	public JSONObject getParameters(int page){
+		variables.put("page", page);
+		return variables;
 	}
 	
 	@Override
 	public int getNextPage(){
-		return ++this.currentPage;
+		return ++currentPage;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public String getPageElementName(){
 		return "airingSchedules";
 	}
 	
-	@NonNull
-	public AiringSchedule buildChange(@NonNull final JSONObject change) throws Exception{
+	@Nullable
+	public AiringSchedule buildChange(@NotNull JSONObject change) throws Exception{
 		return new ObjectMapper().readerFor(AiringSchedule.class).readValue(change.toString());
 	}
 }

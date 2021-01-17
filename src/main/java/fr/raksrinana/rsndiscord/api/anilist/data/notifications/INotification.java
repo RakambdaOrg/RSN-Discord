@@ -6,7 +6,7 @@ import fr.raksrinana.rsndiscord.api.anilist.data.IAniListDatedObject;
 import fr.raksrinana.rsndiscord.api.anilist.data.IAniListObject;
 import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
 import lombok.Getter;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -25,20 +25,22 @@ public abstract class INotification implements IAniListDatedObject{
 	@JsonProperty("id")
 	private int id;
 	
-	public INotification(NotificationType type){this.type = type;}
-	
-	@Override
-	public int compareTo(@NonNull IAniListObject o){
-		if(o instanceof IAniListDatedObject){
-			return this.getDate().compareTo(((IAniListDatedObject) o).getDate());
-		}
-		return Integer.compare(this.getId(), o.getId());
+	public INotification(NotificationType type){
+		this.type = type;
 	}
 	
-	@NonNull
+	@Override
+	public int compareTo(@NotNull IAniListObject o){
+		if(o instanceof IAniListDatedObject){
+			return getDate().compareTo(((IAniListDatedObject) o).getDate());
+		}
+		return Integer.compare(getId(), o.getId());
+	}
+	
+	@NotNull
 	@Override
 	public ZonedDateTime getDate(){
-		return this.getCreatedAt();
+		return getCreatedAt();
 	}
 	
 	public static String getQuery(){
@@ -46,6 +48,6 @@ public abstract class INotification implements IAniListDatedObject{
 				notifications(type_in: $type_in){
 					... on %s
 					... on %s
-				}""".formatted(AiringNotification.getQUERY(), RelatedMediaNotification.getQUERY());
+				}""".formatted(AiringNotification.QUERY, RelatedMediaNotification.QUERY);
 	}
 }

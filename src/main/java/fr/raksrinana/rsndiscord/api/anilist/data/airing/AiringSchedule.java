@@ -10,9 +10,9 @@ import fr.raksrinana.rsndiscord.api.anilist.data.media.IMedia;
 import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,16 +23,17 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 @Getter
 @NoArgsConstructor
 public class AiringSchedule implements IAniListDatedObject{
-	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
-	@Getter
-	private static final String QUERY = """
+	public static final String QUERY = """
 			airingSchedules(mediaId: $mediaID) {
 			    id
 			    airingAt
 			    episode
 			    timeUntilAiring
 			    %s
-			}""".formatted(IMedia.getQUERY());
+			}""".formatted(IMedia.QUERY);
+	
+	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
+	
 	@JsonProperty("id")
 	private int id;
 	@JsonProperty("airingAt")
@@ -46,28 +47,30 @@ public class AiringSchedule implements IAniListDatedObject{
 	private int timeUntilAiring;
 	
 	@Override
-	public void fillEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder){
+	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		builder.addField(translate(guild, "anilist.episode"), Integer.toString(getEpisode()), true)
 				.addField(translate(guild, "anilist.air"), getAiringAt().format(DF), true)
 				.addBlankField(false);
 		getMedia().fillEmbed(guild, builder);
 	}
 	
+	@NotNull
 	@Override
-	public @NonNull URL getUrl(){
+	public URL getUrl(){
 		return getMedia().getUrl();
 	}
 	
 	@Override
-	public int compareTo(@NonNull IAniListObject o){
+	public int compareTo(@NotNull IAniListObject o){
 		if(o instanceof IAniListDatedObject){
 			return getDate().compareTo(((IAniListDatedObject) o).getDate());
 		}
 		return Integer.compare(getId(), o.getId());
 	}
 	
+	@NotNull
 	@Override
-	public @NonNull ZonedDateTime getDate(){
+	public ZonedDateTime getDate(){
 		return getAiringAt();
 	}
 }

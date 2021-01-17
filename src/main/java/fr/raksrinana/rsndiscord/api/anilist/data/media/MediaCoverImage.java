@@ -10,11 +10,11 @@ import java.net.URL;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 class MediaCoverImage{
-	@Getter
-	private static final String QUERY = """
+	public static final String QUERY = """
 			coverImage {
 				large
 			}""";
+	
 	@JsonProperty("large")
 	private URL large;
 }

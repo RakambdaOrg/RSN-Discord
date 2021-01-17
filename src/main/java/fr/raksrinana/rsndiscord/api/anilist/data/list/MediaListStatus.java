@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -18,22 +19,23 @@ public enum MediaListStatus{
 	PLANNING(Color.WHITE, "Planning"),
 	REPEATING(Color.YELLOW, "Repeating"),
 	UNKNOWN(Color.MAGENTA, "Unknown");
-	private final Color color;
-	private final String display;
 	
-	MediaListStatus(@NonNull final Color color, @NonNull final String display){
+	private final Color color;
+	private final String value;
+	
+	MediaListStatus(@NotNull Color color, @NotNull String value){
 		this.color = color;
-		this.display = display;
+		this.value = value;
 	}
 	
 	@JsonCreator
 	@NonNull
-	public static MediaListStatus getFromString(@NonNull final String value){
+	public static MediaListStatus getFromName(@NonNull String value){
 		return MediaListStatus.valueOf(value);
 	}
 	
 	@Override
 	public String toString(){
-		return this.display;
+		return value;
 	}
 }

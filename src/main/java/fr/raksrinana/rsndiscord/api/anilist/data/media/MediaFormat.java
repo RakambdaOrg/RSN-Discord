@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.api.anilist.data.media;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import static java.util.Objects.isNull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -19,24 +19,25 @@ public enum MediaFormat{
 	SPECIAL("Special"),
 	TV("TV"),
 	TV_SHORT("TV Short");
-	private final String display;
+	
+	private final String value;
 	
 	MediaFormat(){
 		this(null);
 	}
 	
-	MediaFormat(final String display){
-		this.display = display;
+	MediaFormat(String value){
+		this.value = value;
 	}
 	
 	@JsonCreator
-	@NonNull
-	public static MediaFormat getFromString(@NonNull final String value){
+	@NotNull
+	public static MediaFormat getFromName(@NotNull String value){
 		return MediaFormat.valueOf(value);
 	}
 	
 	@Override
 	public String toString(){
-		return isNull(this.display) ? this.name() : this.display;
+		return isNull(value) ? name() : value;
 	}
 }

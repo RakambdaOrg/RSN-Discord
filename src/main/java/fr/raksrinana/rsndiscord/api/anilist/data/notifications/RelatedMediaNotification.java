@@ -6,10 +6,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import fr.raksrinana.rsndiscord.api.anilist.data.media.IMedia;
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jetbrains.annotations.NotNull;
 import java.net.URL;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.api.anilist.AniListApi.FALLBACK_URL;
@@ -22,15 +22,15 @@ import static java.awt.Color.PINK;
 @JsonTypeName("RELATED_MEDIA_ADDITION")
 @Getter
 public class RelatedMediaNotification extends INotification{
-	@Getter
-	private static final String QUERY = """
+	public static final String QUERY = """
 			RelatedMediaAdditionNotification {
 			    id
 			    type
 			    createdAt
 			    %s
 			}
-			""".formatted(IMedia.getQUERY());
+			""".formatted(IMedia.QUERY);
+	
 	@JsonProperty("media")
 	private IMedia media;
 	
@@ -39,7 +39,7 @@ public class RelatedMediaNotification extends INotification{
 	}
 	
 	@Override
-	public void fillEmbed(@NonNull Guild guild, @NonNull final EmbedBuilder builder){
+	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		builder.setTimestamp(getDate())
 				.setColor(PINK)
 				.setTitle(translate(guild, "anilist.related"), getMedia().getUrl().toString())
@@ -49,14 +49,16 @@ public class RelatedMediaNotification extends INotification{
 	}
 	
 	@Override
-	@NonNull
+	@NotNull
 	public URL getUrl(){
-		return Optional.of(getMedia()).map(IMedia::getUrl).orElse(FALLBACK_URL);
+		return Optional.of(getMedia())
+				.map(IMedia::getUrl)
+				.orElse(FALLBACK_URL);
 	}
 	
 	@Override
 	public int hashCode(){
-		return this.getId();
+		return getId();
 	}
 	
 	@Override

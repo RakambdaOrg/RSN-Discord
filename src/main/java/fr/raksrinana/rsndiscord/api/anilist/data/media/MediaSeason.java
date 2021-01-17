@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.api.anilist.data.media;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -12,20 +12,21 @@ public enum MediaSeason{
 	SPRING("Spring"),
 	SUMMER("Summer"),
 	WINTER("Winter");
-	private final String display;
 	
-	MediaSeason(final String display){
-		this.display = display;
+	private final String value;
+	
+	MediaSeason(String value){
+		this.value = value;
 	}
 	
 	@JsonCreator
-	@NonNull
-	public static MediaSeason getFromString(@NonNull final String value){
+	@NotNull
+	public static MediaSeason getFromName(@NotNull String value){
 		return MediaSeason.valueOf(value);
 	}
 	
 	@Override
 	public String toString(){
-		return this.display;
+		return value;
 	}
 }

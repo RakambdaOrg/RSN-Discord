@@ -3,34 +3,36 @@ package fr.raksrinana.rsndiscord.api.anilist.query;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.raksrinana.rsndiscord.api.anilist.data.notifications.INotification;
 import kong.unirest.json.JSONObject;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.api.anilist.data.notifications.NotificationType.AIRING;
 import static fr.raksrinana.rsndiscord.api.anilist.data.notifications.NotificationType.RELATED_MEDIA_ADDITION;
 
 public class NotificationsPagedQuery implements IPagedQuery<INotification>{
 	private static final String QUERY = IPagedQuery.pagedQuery(", $type_in: [NotificationType]", INotification.getQuery());
+	
 	private final JSONObject variables;
 	private int currentPage = 0;
 	
 	public NotificationsPagedQuery(){
-		this.variables = new JSONObject();
-		this.variables.put("page", 1);
-		this.variables.put("perPage", PER_PAGE);
-		this.variables.put("type_in", List.of(AIRING.name(), RELATED_MEDIA_ADDITION.name()));
+		variables = new JSONObject();
+		variables.put("page", 1);
+		variables.put("perPage", PER_PAGE);
+		variables.put("type_in", List.of(AIRING.name(), RELATED_MEDIA_ADDITION.name()));
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public String getQuery(){
 		return QUERY;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public JSONObject getParameters(final int page){
-		this.variables.put("page", page);
-		return this.variables;
+	public JSONObject getParameters(int page){
+		variables.put("page", page);
+		return variables;
 	}
 	
 	@Override
@@ -38,19 +40,19 @@ public class NotificationsPagedQuery implements IPagedQuery<INotification>{
 		return currentPage < 1;
 	}
 	
-	@NonNull
+	@Override
+	public int getNextPage(){
+		return ++currentPage;
+	}
+	
+	@NotNull
 	@Override
 	public String getPageElementName(){
 		return "notifications";
 	}
 	
-	@NonNull
-	public INotification buildChange(@NonNull final JSONObject change) throws Exception{
+	@Nullable
+	public INotification buildChange(@NotNull JSONObject change) throws Exception{
 		return new ObjectMapper().readerFor(INotification.class).readValue(change.toString());
-	}
-	
-	@Override
-	public int getNextPage(){
-		return ++this.currentPage;
 	}
 }

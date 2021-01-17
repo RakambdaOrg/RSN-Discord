@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -24,7 +25,7 @@ public enum NotificationType{
 	
 	@JsonCreator
 	@NonNull
-	public static NotificationType getFromString(@NonNull final String value){
+	public static NotificationType getFromName(@NotNull String value){
 		return NotificationType.valueOf(value);
 	}
 }

@@ -5,10 +5,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import static fr.raksrinana.rsndiscord.api.anilist.data.media.MediaType.MANGA;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.Optional.ofNullable;
@@ -28,16 +29,16 @@ public class MangaMedia extends IMedia{
 	}
 	
 	@Override
-	protected void fillAdditionalEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder){
-		ofNullable(this.getChapters()).map(Object::toString)
+	protected void fillAdditionalEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+		ofNullable(getChapters()).map(Object::toString)
 				.ifPresent(val -> builder.addField(translate(guild, "anilist.chapters"), val, true));
-		ofNullable(this.getVolumes()).map(Object::toString)
+		ofNullable(getVolumes()).map(Object::toString)
 				.ifPresent(val -> builder.addField(translate(guild, "anilist.volumes"), val, true));
 	}
 	
 	@Override
-	@NonNull
-	public String getProgressType(final boolean contains){
+	@NotNull
+	public String getProgressType(boolean contains){
 		return "read chapter";
 	}
 	
@@ -47,7 +48,8 @@ public class MangaMedia extends IMedia{
 	}
 	
 	@Override
+	@Nullable
 	public Integer getItemCount(){
-		return this.getChapters();
+		return getChapters();
 	}
 }

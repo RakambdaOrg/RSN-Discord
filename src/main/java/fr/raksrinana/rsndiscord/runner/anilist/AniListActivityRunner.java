@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.runner.anilist;
 
 import fr.raksrinana.rsndiscord.api.anilist.AniListApi;
-import fr.raksrinana.rsndiscord.api.anilist.data.list.IListActivity;
+import fr.raksrinana.rsndiscord.api.anilist.data.list.ListActivity;
 import fr.raksrinana.rsndiscord.api.anilist.query.ActivityPagedQuery;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
@@ -16,11 +16,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import static java.util.concurrent.TimeUnit.HOURS;
 
-public class AniListActivityRunner implements IAniListRunner<IListActivity, ActivityPagedQuery>{
+public class AniListActivityRunner implements IAniListRunner<ListActivity, ActivityPagedQuery>{
 	@Getter
 	private final JDA jda;
 	
-	public AniListActivityRunner(@NonNull final JDA jda){
+	public AniListActivityRunner(@NonNull JDA jda){
 		this.jda = jda;
 	}
 	
@@ -36,9 +36,9 @@ public class AniListActivityRunner implements IAniListRunner<IListActivity, Acti
 	
 	@NonNull
 	@Override
-	public ActivityPagedQuery initQuery(@NonNull final Member member){
+	public ActivityPagedQuery initQuery(@NonNull Member member){
 		return new ActivityPagedQuery(AniListApi.getUserId(member).orElseThrow(),
-				Settings.getGeneral().getAniList().getLastAccess(this.getFetcherID(), member.getIdLong())
+				Settings.getGeneral().getAniList().getLastAccess(getFetcherID(), member.getIdLong())
 						.map(UserDateConfiguration::getDate)
 						.orElse(AniListApi.getDefaultDate()));
 	}
@@ -72,7 +72,7 @@ public class AniListActivityRunner implements IAniListRunner<IListActivity, Acti
 	
 	@Override
 	public void execute(){
-		this.runQueryOnDefaultUsersChannels();
+		runQueryOnDefaultUsersChannels();
 	}
 	
 	@NonNull

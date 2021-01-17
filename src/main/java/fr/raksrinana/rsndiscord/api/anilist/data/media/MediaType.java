@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -12,22 +12,23 @@ import lombok.NonNull;
 public enum MediaType{
 	ANIME(true, "Anime"),
 	MANGA(false, "Manga");
-	private final boolean shouldDisplay;
-	private final String display;
 	
-	MediaType(final boolean shouldDisplay, final String display){
+	private final boolean shouldDisplay;
+	private final String value;
+	
+	MediaType(boolean shouldDisplay, String value){
 		this.shouldDisplay = shouldDisplay;
-		this.display = display;
+		this.value = value;
 	}
 	
 	@JsonCreator
-	@NonNull
-	public static MediaType getFromString(@NonNull final String value){
+	@NotNull
+	public static MediaType getFromName(@NotNull String value){
 		return MediaType.valueOf(value);
 	}
 	
 	@Override
 	public String toString(){
-		return this.display;
+		return value;
 	}
 }
