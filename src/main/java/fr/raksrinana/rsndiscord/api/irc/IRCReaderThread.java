@@ -3,32 +3,33 @@ package fr.raksrinana.rsndiscord.api.irc;
 import fr.raksrinana.rsndiscord.api.irc.messages.PingIRCMessage;
 import fr.raksrinana.rsndiscord.api.irc.twitch.TwitchIRC;
 import fr.raksrinana.rsndiscord.log.Log;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import java.io.*;
 import java.net.SocketTimeoutException;
 import static java.util.Objects.nonNull;
 
 public class IRCReaderThread extends Thread implements Closeable{
 	public static final double MESSAGE_TIMEOUT = 6.048e8;
+	
 	private final BufferedReader reader;
 	private final IRCClient client;
 	private final IIRCMessageBuilder ircMessageBuilder;
 	private boolean stop;
 	
-	public IRCReaderThread(@NonNull final IRCClient client, @NonNull final IIRCMessageBuilder ircMessageBuilder, @NonNull final InputStream inputStream){
+	public IRCReaderThread(@NotNull IRCClient client, @NotNull IIRCMessageBuilder ircMessageBuilder, @NotNull InputStream inputStream){
 		this.client = client;
-		this.reader = new BufferedReader(new InputStreamReader(inputStream));
-		this.stop = false;
 		this.ircMessageBuilder = ircMessageBuilder;
+		reader = new BufferedReader(new InputStreamReader(inputStream));
+		stop = false;
 	}
 	
 	@Override
 	public void run(){
-		while(!this.stop){
+		while(!stop){
 			try{
-				if(this.reader.ready()){
+				if(reader.ready()){
 					String line;
-					while(nonNull(line = this.reader.readLine())){
+					while(nonNull(line = reader.readLine())){
 						processLine(line);
 					}
 				}
@@ -36,28 +37,28 @@ public class IRCReaderThread extends Thread implements Closeable{
 					try{
 						Thread.sleep(500);
 					}
-					catch(final InterruptedException e){
+					catch(InterruptedException e){
 						Log.getLogger(null).error("Error while sleeping", e);
 					}
 				}
 			}
-			catch(final SocketTimeoutException e){
+			catch(SocketTimeoutException e){
 				Log.getLogger(null).error("Socket timed out");
-				this.client.timedOut();
+				client.timedOut();
 			}
-			catch(final IOException e){
+			catch(IOException e){
 				Log.getLogger(null).error("Error reading stream", e);
 			}
 		}
 	}
 	
-	private void processLine(@NonNull String line){
+	private void processLine(@NotNull String line){
 		try{
 			ircMessageBuilder.buildEvent(line).ifPresent(event -> {
 				if(event instanceof PingIRCMessage){
 					Log.getLogger(null).debug("Replying to IRC ping message");
-					this.client.sendMessage("PONG");
-					var iterator = this.client.getListeners().iterator();
+					client.sendMessage("PONG");
+					var iterator = client.getListeners().iterator();
 					while(iterator.hasNext()){
 						var listener = iterator.next();
 						if(listener.getLastMessage() > MESSAGE_TIMEOUT){
@@ -67,19 +68,19 @@ public class IRCReaderThread extends Thread implements Closeable{
 					}
 				}
 				Log.getLogger(null).debug("New IRC message of type {}", event.getClass().getSimpleName());
-				for(var ircListener : this.client.getListeners()){
+				for(var ircListener : client.getListeners()){
 					ircListener.onIRCMessage(event);
 				}
 			});
 		}
-		catch(final Exception e){
+		catch(Exception e){
 			Log.getLogger(null).error("Error handling IRC message: {}", line, e);
 		}
 	}
 	
 	@Override
 	public void close() throws IOException{
-		this.stop = true;
-		this.reader.close();
+		stop = true;
+		reader.close();
 	}
 }

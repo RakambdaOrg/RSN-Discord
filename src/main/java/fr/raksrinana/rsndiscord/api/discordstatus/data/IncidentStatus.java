@@ -18,7 +18,7 @@ public enum IncidentStatus{
 	
 	@JsonCreator
 	@Nullable
-	public IncidentStatus getByName(String name){
+	public IncidentStatus getByName(@Nullable String name){
 		for(var indicator : IncidentStatus.values()){
 			if(indicator.name().equalsIgnoreCase(name)){
 				return indicator;

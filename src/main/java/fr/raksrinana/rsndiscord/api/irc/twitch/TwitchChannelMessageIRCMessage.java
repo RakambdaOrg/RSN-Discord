@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.api.irc.twitch;
 import fr.raksrinana.rsndiscord.api.irc.messages.IIRCMessage;
 import fr.raksrinana.rsndiscord.api.irc.twitch.messages.ChannelMessageIRCMessage;
 import lombok.Getter;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -16,9 +16,9 @@ public class TwitchChannelMessageIRCMessage implements IIRCMessage{
 	@Getter
 	private final List<TwitchBadge> badges;
 	
-	public TwitchChannelMessageIRCMessage(@NonNull ChannelMessageIRCMessage event){
-		this.parent = event;
-		this.badges = event.getTags().stream()
+	public TwitchChannelMessageIRCMessage(@NotNull ChannelMessageIRCMessage event){
+		parent = event;
+		badges = event.getTags().stream()
 				.filter(tag -> Objects.equals("badges", tag.getKey()))
 				.map(IRCTag::getValue)
 				.flatMap(tag -> Arrays.stream(tag.split(","))
@@ -29,15 +29,17 @@ public class TwitchChannelMessageIRCMessage implements IIRCMessage{
 						})).collect(toList());
 	}
 	
+	@NotNull
 	public Optional<TwitchBadge> getSub(){
 		return getBadge("subscriber");
 	}
 	
-	@NonNull
+	@NotNull
 	private Optional<TwitchBadge> getBadge(String name){
 		return getBadges().stream().filter(t -> Objects.equals(name, t.getName())).findFirst();
 	}
 	
+	@NotNull
 	public Optional<TwitchBadge> getSubGifter(){
 		return getBadge("sub-gifter");
 	}

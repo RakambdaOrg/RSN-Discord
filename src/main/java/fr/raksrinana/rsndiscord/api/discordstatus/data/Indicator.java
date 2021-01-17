@@ -25,7 +25,7 @@ public enum Indicator{
 	
 	@JsonCreator
 	@Nullable
-	public Indicator getByName(String name){
+	public Indicator getByName(@Nullable String name){
 		for(var indicator : Indicator.values()){
 			if(indicator.name().equalsIgnoreCase(name)){
 				return indicator;

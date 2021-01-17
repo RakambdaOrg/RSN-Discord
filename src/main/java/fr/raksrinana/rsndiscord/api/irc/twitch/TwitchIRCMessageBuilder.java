@@ -5,29 +5,31 @@ import fr.raksrinana.rsndiscord.api.irc.IIRCMessageBuilder;
 import fr.raksrinana.rsndiscord.api.irc.messages.*;
 import fr.raksrinana.rsndiscord.api.irc.twitch.messages.*;
 import fr.raksrinana.rsndiscord.log.Log;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import static fr.raksrinana.rsndiscord.utils.Utilities.MAIN_RAKSRINANA_ACCOUNT;
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 class TwitchIRCMessageBuilder implements IIRCMessageBuilder{
 	private static final Pattern EVENT_PATTERN = Pattern.compile("^(@([^\\s]+)\\s)?:([^\\s]+)\\s([^\\s]+)\\s([^:]+)\\s?(:(.*))?$");
 	
-	@NonNull
-	public Optional<IIRCMessage> buildEvent(@NonNull final String message){
+	@NotNull
+	public Optional<IIRCMessage> buildEvent(@NotNull String message){
 		try{
 			if("PING :tmi.twitch.tv".equals(message)){
 				return Optional.of(new PingIRCMessage());
 			}
-			final var matcher = EVENT_PATTERN.matcher(message);
+			var matcher = EVENT_PATTERN.matcher(message);
 			if(matcher.matches()){
-				final var tags = getTags(matcher.group(2));
-				final var user = new IRCUser(matcher.group(3));
+				var tags = getTags(matcher.group(2));
+				var user = new IRCUser(matcher.group(3));
 				switch(matcher.group(4)){
 					case "001":
 					case "002":
@@ -66,19 +68,20 @@ class TwitchIRCMessageBuilder implements IIRCMessageBuilder{
 					.ifPresent(user -> user.openPrivateChannel().submit()
 							.thenAccept(privateChannel -> privateChannel.sendMessage("Unknown IRC message: " + message).submit()));
 			Log.getLogger(null).warn("Unknown IRC message: {}", message);
-			return Optional.empty();
+			return empty();
 		}
-		catch(final Exception e){
+		catch(Exception e){
 			Log.getLogger(null).error("Failed to handle IRC message: {}", message);
 		}
-		return Optional.empty();
+		return empty();
 	}
 	
-	private static List<IRCTag> getTags(final String tags){
+	@NotNull
+	private static List<IRCTag> getTags(@Nullable String tags){
 		return ofNullable(tags).stream()
 				.flatMap(t -> Arrays.stream(t.split(";")))
 				.map(t -> {
-					final var eq = t.indexOf('=');
+					var eq = t.indexOf('=');
 					if(eq >= 0){
 						return new IRCTag(t.substring(0, eq), t.substring(eq + 1));
 					}

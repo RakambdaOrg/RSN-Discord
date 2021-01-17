@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.api.irc.twitch;
 
 import lombok.Getter;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 public class IRCUser{
@@ -9,21 +9,21 @@ public class IRCUser{
 	private final String nick;
 	private final String host;
 	
-	public IRCUser(@NonNull final String infos){
+	public IRCUser(@NotNull String infos){
 		if(infos.contains("!")){
-			this.nick = infos.substring(0, infos.indexOf("!"));
-			this.user = infos.substring(infos.indexOf("!") + 1, infos.indexOf("@"));
-			this.host = infos.substring(infos.indexOf("@") + 1);
+			nick = infos.substring(0, infos.indexOf("!"));
+			user = infos.substring(infos.indexOf("!") + 1, infos.indexOf("@"));
+			host = infos.substring(infos.indexOf("@") + 1);
 		}
 		else{
-			this.user = infos;
-			this.nick = infos;
-			this.host = infos;
+			user = infos;
+			nick = infos;
+			host = infos;
 		}
 	}
 	
 	@Override
 	public String toString(){
-		return this.getNick();
+		return getNick();
 	}
 }

@@ -1,21 +1,24 @@
 package fr.raksrinana.rsndiscord.api.irc;
 
 import fr.raksrinana.rsndiscord.api.irc.messages.IIRCMessage;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 
 public interface IIRCListener{
-	void onIRCMessage(@NonNull IIRCMessage event);
+	void onIRCMessage(@NotNull IIRCMessage event);
 	
-	boolean handlesChannel(@NonNull String channel);
+	boolean handlesChannel(@NotNull String channel);
 	
 	void timedOut();
 	
-	@NonNull Guild getGuild();
+	@NotNull
+	Guild getGuild();
 	
-	@NonNull String getIrcChannel();
+	@NotNull
+	String getIrcChannel();
 	
 	long getLastMessage();
 	
-	@NonNull String getUser();
+	@NotNull
+	String getUser();
 }

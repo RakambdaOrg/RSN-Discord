@@ -1,5 +1,7 @@
 package fr.raksrinana.rsndiscord.api.irc.twitch;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public enum TwitchMessageId{
@@ -148,15 +150,17 @@ public enum TwitchMessageId{
 	WHISPER_LIMIT_PER_SEC("whisper_limit_per_sec"),
 	WHISPER_RESTRICTED("whisper_restricted"),
 	WHISPER_RESTRICTED_RECIPIENT("whisper_restricted_recipient");
-	private final String name;
 	
-	TwitchMessageId(String name){
-		this.name = name;
+	private final String value;
+	
+	TwitchMessageId(String value){
+		this.value = value;
 	}
 	
-	public static TwitchMessageId getFromName(String name){
-		for(final var msgId : TwitchMessageId.values()){
-			if(Objects.equals(name, msgId.name)){
+	@NotNull
+	public static TwitchMessageId getFromName(@Nullable String name){
+		for(var msgId : TwitchMessageId.values()){
+			if(Objects.equals(name, msgId.value)){
 				return msgId;
 			}
 		}

@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.api.irc;
 import fr.raksrinana.rsndiscord.log.Log;
 import lombok.Getter;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,6 +16,7 @@ import static java.util.Objects.nonNull;
 
 public class IRCClient implements Closeable{
 	public static final int DEFAULT_TIMEOUT = 600000;
+	
 	private final String host;
 	private final int port;
 	@Getter
@@ -29,39 +31,39 @@ public class IRCClient implements Closeable{
 	private boolean connected;
 	private IRCReaderThread ircReader;
 	
-	public IRCClient(@NonNull final String host, final int port, @NonNull final IIRCMessageBuilder ircMessageBuilder){
+	public IRCClient(@NonNull String host, int port, @NonNull IIRCMessageBuilder ircMessageBuilder){
 		this.host = host;
 		this.port = port;
-		this.pass = null;
-		this.connected = false;
-		this.joinedChannels = new HashSet<>();
-		this.listeners = new HashSet<>();
 		this.ircMessageBuilder = ircMessageBuilder;
+		pass = null;
+		connected = false;
+		joinedChannels = new HashSet<>();
+		listeners = new HashSet<>();
 	}
 	
 	public void connect() throws IOException{
-		this.socket = new Socket(this.host, this.port);
-		this.socket.setSoTimeout(DEFAULT_TIMEOUT);
-		this.socketWriter = new PrintWriter(this.socket.getOutputStream(), true);
-		this.ircReader = new IRCReaderThread(this, this.ircMessageBuilder, this.socket.getInputStream());
-		this.ircReader.start();
-		if(nonNull(this.pass)){
-			this.sendMessage(String.format("PASS %s", this.pass));
-			Log.getLogger(null).info("Using pass to connect to {}:{}", this.host, this.port);
+		socket = new Socket(host, port);
+		socket.setSoTimeout(DEFAULT_TIMEOUT);
+		socketWriter = new PrintWriter(socket.getOutputStream(), true);
+		ircReader = new IRCReaderThread(this, ircMessageBuilder, socket.getInputStream());
+		ircReader.start();
+		if(nonNull(pass)){
+			sendMessage("PASS " + pass);
+			Log.getLogger(null).info("Using pass to connect to {}:{}", host, port);
 		}
-		this.connected = true;
-		Log.getLogger(null).info("IRC connection initialized with {}:{}", this.host, this.port);
+		connected = true;
+		Log.getLogger(null).info("IRC connection initialized with {}:{}", host, port);
 	}
 	
-	public void sendMessage(@NonNull final String message){
-		this.socketWriter.println(message);
+	public void sendMessage(@NotNull String message){
+		socketWriter.println(message);
 	}
 	
-	public void joinChannel(@NonNull final String channel){
-		if(this.isConnected()){
-			this.sendMessage(String.format("JOIN %s", channel));
-			this.joinedChannels.add(channel);
-			Log.getLogger(null).info("Joined channel {} on {}:{}", channel, this.host, this.port);
+	public void joinChannel(@NotNull String channel){
+		if(isConnected()){
+			sendMessage("JOIN " + channel);
+			joinedChannels.add(channel);
+			Log.getLogger(null).info("Joined channel {} on {}:{}", channel, host, port);
 		}
 		else{
 			throw new IllegalStateException("Not connected");
@@ -70,46 +72,46 @@ public class IRCClient implements Closeable{
 	
 	@Override
 	public void close() throws IOException{
-		if(this.isConnected()){
-			this.sendMessage("QUIT");
-			this.socketWriter.close();
-			this.ircReader.close();
-			this.socket.close();
-			Log.getLogger(null).info("Connection IRC closed with {}:{}", this.host, this.port);
+		if(isConnected()){
+			sendMessage("QUIT");
+			socketWriter.close();
+			ircReader.close();
+			socket.close();
+			Log.getLogger(null).info("Connection IRC closed with {}:{}", host, port);
 		}
 	}
 	
 	public void timedOut(){
-		final var ls = new ArrayList<>(this.listeners);
+		var ls = new ArrayList<>(listeners);
 		ls.forEach(IIRCListener::timedOut);
 	}
 	
-	public void addEventListener(@NonNull final IIRCListener ircListener){
-		this.listeners.add(ircListener);
+	public void addEventListener(@NotNull IIRCListener ircListener){
+		listeners.add(ircListener);
 	}
 	
-	public void leaveChannel(@NonNull final String channel){
-		if(this.isConnected()){
-			this.sendMessage(String.format("PART %s", channel));
-			this.joinedChannels.remove(channel);
-			Log.getLogger(null).info("Left channel {} on {}:{}", channel, this.host, this.port);
+	public void leaveChannel(@NotNull String channel){
+		if(isConnected()){
+			sendMessage("PART " + channel);
+			joinedChannels.remove(channel);
+			Log.getLogger(null).info("Left channel {} on {}:{}", channel, host, port);
 		}
 		else{
 			throw new IllegalStateException("Not connected");
 		}
 	}
 	
-	public void setNick(@NonNull final String nickname){
-		if(this.isConnected()){
-			this.sendMessage(String.format("NICK %s", nickname));
-			Log.getLogger(null).info("Set nick to {} on {}:{}", nickname, this.host, this.port);
+	public void setNick(@NotNull String nickname){
+		if(isConnected()){
+			sendMessage("NICK " + nickname);
+			Log.getLogger(null).info("Set nick to {} on {}:{}", nickname, host, port);
 		}
 		else{
 			throw new IllegalStateException("Not connected");
 		}
 	}
 	
-	public void setSecureKeyPassword(@NonNull final String pass){
+	public void setSecureKeyPassword(@NotNull String pass){
 		this.pass = pass;
 	}
 }

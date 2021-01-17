@@ -12,7 +12,6 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
@@ -20,6 +19,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
+import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.time.Duration;
@@ -79,34 +79,34 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 	private long lastMessage;
 	private Long musicChannelId;
 	
-	TwitchIRCListener(@NonNull final Guild guild, @NonNull final String user, @NonNull final String channel){
+	TwitchIRCListener(@NotNull Guild guild, @NotNull String user, @NotNull String channel){
 		this.guild = guild;
 		this.user = user;
-		this.ircChannel = channel;
-		this.lastMessage = System.currentTimeMillis();
 		this.channel = Settings.get(guild).getTwitchConfiguration().getTwitchChannel().orElseThrow().getChannel().orElseThrow();
+		ircChannel = channel;
+		lastMessage = System.currentTimeMillis();
 	}
 	
 	@Override
-	protected void onIRCChannelJoined(@NonNull final ChannelJoinIRCMessage event){
+	protected void onIRCChannelJoined(@NotNull ChannelJoinIRCMessage event){
 		var channel = event.getChannel();
-		if(Objects.equals(channel, this.ircChannel)){
-			Log.getLogger(this.getGuild()).info("Joined {}", channel);
+		if(Objects.equals(channel, ircChannel)){
+			Log.getLogger(getGuild()).info("Joined {}", channel);
 		}
 	}
 	
 	@Override
-	protected void onIRCChannelLeft(@NonNull final ChannelLeftIRCMessage event){
+	protected void onIRCChannelLeft(@NotNull ChannelLeftIRCMessage event){
 		var channel = event.getChannel();
-		if(Objects.equals(channel, this.ircChannel)){
-			Log.getLogger(this.getGuild()).info("Left {}", channel);
+		if(Objects.equals(channel, ircChannel)){
+			Log.getLogger(getGuild()).info("Left {}", channel);
 		}
 	}
 	
 	@Override
-	protected void onIRCChannelMessage(@NonNull final ChannelMessageIRCMessage event){
-		if(Objects.equals(event.getChannel(), this.ircChannel)){
-			this.lastMessage = System.currentTimeMillis();
+	protected void onIRCChannelMessage(@NotNull ChannelMessageIRCMessage event){
+		if(Objects.equals(event.getChannel(), ircChannel)){
+			lastMessage = System.currentTimeMillis();
 			var twitchMessage = new TwitchChannelMessageIRCMessage(event);
 			
 			var displayName = event.getTag("display-name")
@@ -128,7 +128,7 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 				role.append("(partner)");
 			}
 			
-			this.channel.sendMessage(MessageFormat.format("{0} : **`{1}`{2}** {3}", twitchMessage.getParent().getChannel(), displayName, role, event.getMessage()))
+			channel.sendMessage(MessageFormat.format("{0} : **`{1}`{2}** {3}", twitchMessage.getParent().getChannel(), displayName, role, event.getMessage()))
 					.allowedMentions(List.of())
 					.submit();
 			
@@ -151,26 +151,24 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 				var link = event.getMessage().split(" ", 2)[1];
 				Optional.ofNullable(musicChannelId)
 						.map(getGuild()::getVoiceChannelById)
-						.ifPresentOrElse(voiceChannel -> {
-							RSNAudioManager.play(Main.getJda().getSelfUser(), voiceChannel, new TrackConsumer(){
-								@Override
-								public void onPlaylist(List<AudioTrack> tracks){
-									TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Track added by " + event.getUser().getNick() + ": " + tracks.stream()
-											.map(track -> track.getInfo().title)
-											.collect(Collectors.joining(", ")));
-								}
-								
-								@Override
-								public void onTrack(AudioTrack track){
-									TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Track added " + event.getUser().getNick() + ": " + track.getInfo().title);
-								}
-								
-								@Override
-								public void onFailure(String message){
-									TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Failed to add track");
-								}
-							}, 0, 1, link);
-						}, () -> TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Requests are currently disabled"));
+						.ifPresentOrElse(voiceChannel -> RSNAudioManager.play(Main.getJda().getSelfUser(), voiceChannel, new TrackConsumer(){
+							@Override
+							public void onPlaylist(List<AudioTrack> tracks){
+								TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Track added by " + event.getUser().getNick() + ": " + tracks.stream()
+										.map(track -> track.getInfo().title)
+										.collect(Collectors.joining(", ")));
+							}
+							
+							@Override
+							public void onTrack(AudioTrack track){
+								TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Track added " + event.getUser().getNick() + ": " + track.getInfo().title);
+							}
+							
+							@Override
+							public void onFailure(String message){
+								TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Failed to add track");
+							}
+						}, 0, 1, link), () -> TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Requests are currently disabled"));
 			}
 			if(twitchMessage.isModerator() && event.getMessage().startsWith("?rskip")){
 				RSNAudioManager.skip(getGuild());
@@ -179,7 +177,7 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 		}
 	}
 	
-	private void randomKickClaimed(@NonNull ChannelMessageIRCMessage event){
+	private void randomKickClaimed(@NotNull ChannelMessageIRCMessage event){
 		Settings.get(getGuild()).getGeneralChannel()
 				.flatMap(ChannelConfiguration::getChannel)
 				.ifPresent(channel -> {
@@ -210,17 +208,17 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 	}
 	
 	@Override
-	protected void onPingIRC(@NonNull final PingIRCMessage event){
+	protected void onPingIRC(@NotNull PingIRCMessage event){
 	}
 	
 	@Override
-	protected void onInfoMessage(final InfoMessageIRCMessage event){
-		Log.getLogger(this.getGuild()).info("IRC Info: {}", event.getMessage());
+	protected void onInfoMessage(@NotNull InfoMessageIRCMessage event){
+		Log.getLogger(getGuild()).info("IRC Info: {}", event.getMessage());
 	}
 	
 	@Override
-	protected void onUserNotice(final UserNoticeIRCMessage event){
-		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
+	protected void onUserNotice(@NotNull UserNoticeIRCMessage event){
+		if(Objects.equals(event.getIrcChannel(), ircChannel)){
 			var message = translate(channel.getGuild(), "irc.notice",
 					event.getTags().stream()
 							.filter(t -> Objects.equals("system-msg", t.getKey()))
@@ -228,13 +226,13 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 							.map(v -> v.replace("\\s", " ").trim())
 							.findFirst()
 							.orElse("UNKNOWN"));
-			this.channel.sendMessage(message).submit();
+			channel.sendMessage(message).submit();
 		}
 	}
 	
 	@Override
-	protected void onClearChat(final ClearChatIRCMessage event){
-		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
+	protected void onClearChat(@NotNull ClearChatIRCMessage event){
+		if(Objects.equals(event.getIrcChannel(), ircChannel)){
 			var message = translate(channel.getGuild(), "irc.banned",
 					event.getUser(),
 					event.getTags().stream()
@@ -245,14 +243,14 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 							.map(Utilities::durationToString)
 							.findFirst()
 							.orElse("UNKNOWN"));
-			this.channel.sendMessage(message).submit();
+			channel.sendMessage(message).submit();
 		}
 	}
 	
 	@Override
-	protected void onClearMessage(final ClearMessageIRCMessage event){
-		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
-			Log.getLogger(this.getGuild()).info("Message from {} deleted: {}", event.getTags().stream()
+	protected void onClearMessage(@NotNull ClearMessageIRCMessage event){
+		if(Objects.equals(event.getIrcChannel(), ircChannel)){
+			Log.getLogger(getGuild()).info("Message from {} deleted: {}", event.getTags().stream()
 							.filter(t -> Objects.equals("login", t.getKey()))
 							.map(IRCTag::getValue)
 							.findFirst()
@@ -262,31 +260,31 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 	}
 	
 	@Override
-	protected void onNotice(final NoticeIRCMessage event){
-		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
+	protected void onNotice(@NotNull NoticeIRCMessage event){
+		if(Objects.equals(event.getIrcChannel(), ircChannel)){
 			if(ACCEPTED_NOTICES.contains(event.getMessageId().orElse(UNKNOWN))){
-				this.channel.sendMessage(translate(channel.getGuild(), "irc.notice", event.getMessage())).submit();
+				channel.sendMessage(translate(channel.getGuild(), "irc.notice", event.getMessage())).submit();
 			}
 			else{
-				Log.getLogger(this.getGuild()).debug("Unhandled notice: {}", event.getMessage());
+				Log.getLogger(getGuild()).debug("Unhandled notice: {}", event.getMessage());
 			}
 		}
 	}
 	
 	@Override
-	protected void onHostTarget(final HostTargetIRCMessage event){
-		if(Objects.equals(event.getIrcChannel(), this.ircChannel)){
-			Log.getLogger(this.getGuild()).info("{} hosting {}", event.getIrcChannel(), event.getInfos());
+	protected void onHostTarget(@NotNull HostTargetIRCMessage event){
+		if(Objects.equals(event.getIrcChannel(), ircChannel)){
+			Log.getLogger(getGuild()).info("{} hosting {}", event.getIrcChannel(), event.getInfos());
 		}
 	}
 	
 	@Override
-	protected void onIRCUnknownEvent(@NonNull final IIRCMessage event){
+	protected void onIRCUnknownEvent(@NotNull IIRCMessage event){
 	}
 	
 	@Override
-	public boolean handlesChannel(@NonNull final String channel){
-		return Objects.equals(channel, this.ircChannel);
+	public boolean handlesChannel(@NotNull String channel){
+		return Objects.equals(channel, ircChannel);
 	}
 	
 	@Override
@@ -295,26 +293,26 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 		try{
 			TwitchIRC.connect(getGuild(), getUser());
 		}
-		catch(final IOException e){
+		catch(IOException e){
 			Log.getLogger(null).warn("Failed to reconnect {} to user {}", getGuild(), getUser());
 		}
 	}
 	
 	@Override
 	public long getLastMessage(){
-		return System.currentTimeMillis() - this.lastMessage;
+		return System.currentTimeMillis() - lastMessage;
 	}
 	
 	@Override
-	public void onEvent(@NonNull final GenericEvent event){
+	public void onEvent(@NotNull GenericEvent event){
 		if(event instanceof GuildMessageReceivedEvent){
-			final var evt = (GuildMessageReceivedEvent) event;
+			var evt = (GuildMessageReceivedEvent) event;
 			try{
-				if(!evt.getAuthor().isBot() && Objects.equals(evt.getChannel(), this.channel)){
-					TwitchIRC.sendMessage(evt.getGuild(), this.ircChannel, evt.getAuthor().getName() + " -> " + evt.getMessage().getContentRaw());
+				if(!evt.getAuthor().isBot() && Objects.equals(evt.getChannel(), channel)){
+					TwitchIRC.sendMessage(evt.getGuild(), ircChannel, evt.getAuthor().getName() + " -> " + evt.getMessage().getContentRaw());
 				}
 			}
-			catch(final Exception e){
+			catch(Exception e){
 				Log.getLogger(evt.getGuild()).error("Failed to transfer message", e);
 			}
 		}
