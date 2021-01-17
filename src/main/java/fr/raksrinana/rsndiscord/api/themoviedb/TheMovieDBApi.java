@@ -4,7 +4,8 @@ import fr.raksrinana.rsndiscord.api.themoviedb.requests.ITMDBGetRequest;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.RequestException;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -16,8 +17,9 @@ public class TheMovieDBApi{
 	public static final String API_URL = "https://api.themoviedb.org/3";
 	private static String accessToken;
 	
-	public static <T> T getQuery(@NonNull ITMDBGetRequest<T> tmdbGetRequest) throws RequestException{
-		final var request = tmdbGetRequest.getRequest().headers(getHeaders()).asObject(tmdbGetRequest.getOutputType());
+	@NotNull
+	public static <T> T getQuery(@NotNull ITMDBGetRequest<T> tmdbGetRequest) throws RequestException{
+		var request = tmdbGetRequest.getRequest().headers(getHeaders()).asObject(tmdbGetRequest.getOutputType());
 		request.getParsingError().ifPresent(error -> {
 			Utilities.reportException("Failed to parse TMDB response", error);
 			Log.getLogger(null).warn("Failed to parse TMDB response", error);
@@ -28,13 +30,15 @@ public class TheMovieDBApi{
 		throw new RequestException("Error sending API request, HTTP code " + request.getStatus() + " => " + request.getBody(), request.getStatus());
 	}
 	
+	@NotNull
 	private static Map<String, String> getHeaders(){
-		final var headers = new HashMap<String, String>();
+		var headers = new HashMap<String, String>();
 		headers.put("Authorization", "Bearer " + getAccessToken());
 		headers.put("Content-Type", "application/json");
 		return headers;
 	}
 	
+	@NotNull
 	public static String getAccessToken(){
 		if(isNull(accessToken)){
 			accessToken = System.getProperty("TMDB_ACCESS_TOKEN");
@@ -42,7 +46,8 @@ public class TheMovieDBApi{
 		return accessToken;
 	}
 	
-	public static URL getImageURL(@NonNull String path, @NonNull String size){
+	@Nullable
+	public static URL getImageURL(@NotNull String path, @NotNull String size){
 		if(!path.startsWith("/")){
 			path = "/" + path;
 		}

@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.api.themoviedb.model.TVDetails;
 import kong.unirest.GenericType;
 import kong.unirest.GetRequest;
 import kong.unirest.Unirest;
+import org.jetbrains.annotations.NotNull;
 
 public class TVDetailsGetRequest implements ITMDBGetRequest<TVDetails>{
 	private final long id;
@@ -14,12 +15,14 @@ public class TVDetailsGetRequest implements ITMDBGetRequest<TVDetails>{
 	}
 	
 	@Override
+	@NotNull
 	public GenericType<TVDetails> getOutputType(){
 		return new GenericType<>(){};
 	}
 	
 	@Override
+	@NotNull
 	public GetRequest getRequest(){
-		return Unirest.get(TheMovieDBApi.API_URL + "/tv/{id}").routeParam("id", Long.toString(this.id));
+		return Unirest.get(TheMovieDBApi.API_URL + "/tv/{id}").routeParam("id", Long.toString(id));
 	}
 }

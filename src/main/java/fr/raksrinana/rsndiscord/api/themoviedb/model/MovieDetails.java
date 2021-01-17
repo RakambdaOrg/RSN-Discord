@@ -9,6 +9,7 @@ import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -92,11 +93,13 @@ public class MovieDetails implements MediaDetails{
 	}
 	
 	@Override
+	@NotNull
 	public Optional<URL> getPosterURL(int seasonNumber){
 		return getPosterURL();
 	}
 	
 	@Override
+	@NotNull
 	public Optional<URL> getPosterURL(){
 		return ofNullable(getPosterPath()).map(path -> TheMovieDBApi.getImageURL(path, "original"));
 	}
