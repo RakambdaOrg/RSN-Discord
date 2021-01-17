@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
+import org.jetbrains.annotations.NotNull;
 import java.net.URL;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -31,7 +31,7 @@ public class UselessFact{
 	@JsonDeserialize(using = URLDeserializer.class)
 	private URL permalink;
 	
-	public void fillEmbed(@NonNull EmbedBuilder builder){
+	public void fillEmbed(@NotNull EmbedBuilder builder){
 		builder.setFooter(getId())
 				.addField("Fact", getText(), true);
 	}
