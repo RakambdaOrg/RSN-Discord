@@ -15,6 +15,7 @@ import java.util.Objects;
 @ToString
 public class DogResponse{
 	public static final String SUCCESS = "success";
+	
 	@JsonProperty("status")
 	private String status;
 	@JsonProperty("message")

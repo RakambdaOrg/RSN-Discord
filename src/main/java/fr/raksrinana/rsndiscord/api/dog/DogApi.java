@@ -6,10 +6,11 @@ import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import kong.unirest.Unirest;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.Nullable;
 
 public class DogApi{
 	@NonNull
-	public static String getDogPictureURL(final Guild guild){
+	public static String getDogPictureURL(@Nullable Guild guild){
 		Log.getLogger(guild).debug("Getting random dog picture");
 		
 		var response = Unirest.get("https://dog.ceo/api/breeds/image/random").asObject(DogResponse.class);
