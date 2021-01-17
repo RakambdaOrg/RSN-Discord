@@ -1,6 +1,7 @@
 package fr.raksrinana.rsndiscord.api.twitter;
 
 import fr.raksrinana.rsndiscord.log.Log;
+import org.jetbrains.annotations.NotNull;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 import java.util.List;
@@ -10,24 +11,12 @@ import static twitter4j.Query.RECENT;
 public class TwitterApi{
 	private static Twitter client = null;
 	
+	@NotNull
 	public static List<Status> getUserLastTweets(long userId){
 		return getUserLastTweets(userId, -1);
 	}
 	
-	private static Twitter getClient(){
-		if(Objects.isNull(client)){
-			var configurationBuilder = new ConfigurationBuilder()
-					.setDebugEnabled(true)
-					.setOAuthConsumerKey(System.getProperty("TWITTER_API"))
-					.setOAuthConsumerSecret(System.getProperty("TWITTER_API_SECRET"))
-					.setOAuthAccessToken(System.getProperty("TWITTER_TOKEN"))
-					.setOAuthAccessTokenSecret(System.getProperty("TWITTER_TOKEN_SECRET"));
-			
-			client = new TwitterFactory(configurationBuilder.build()).getInstance();
-		}
-		return client;
-	}
-	
+	@NotNull
 	public static List<Status> getUserLastTweets(long userId, long maxId){
 		try{
 			var page = new Paging().count(20);
@@ -44,10 +33,27 @@ public class TwitterApi{
 		return List.of();
 	}
 	
+	@NotNull
+	private static Twitter getClient(){
+		if(Objects.isNull(client)){
+			var configurationBuilder = new ConfigurationBuilder()
+					.setDebugEnabled(true)
+					.setOAuthConsumerKey(System.getProperty("TWITTER_API"))
+					.setOAuthConsumerSecret(System.getProperty("TWITTER_API_SECRET"))
+					.setOAuthAccessToken(System.getProperty("TWITTER_TOKEN"))
+					.setOAuthAccessTokenSecret(System.getProperty("TWITTER_TOKEN_SECRET"));
+			
+			client = new TwitterFactory(configurationBuilder.build()).getInstance();
+		}
+		return client;
+	}
+	
+	@NotNull
 	public static List<Status> searchLastTweets(String search){
 		return searchLastTweets(search, -1);
 	}
 	
+	@NotNull
 	public static List<Status> searchLastTweets(String search, long maxId){
 		try{
 			return getClient()
