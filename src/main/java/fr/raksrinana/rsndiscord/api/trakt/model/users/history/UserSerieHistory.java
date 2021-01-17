@@ -9,12 +9,12 @@ import fr.raksrinana.rsndiscord.api.themoviedb.model.TVDetails;
 import fr.raksrinana.rsndiscord.api.trakt.model.ITraktObject;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.net.URL;
 import java.util.Objects;
-import java.util.Optional;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.Optional.ofNullable;
 
@@ -30,8 +30,8 @@ public class UserSerieHistory extends UserHistory{
 	private Show show;
 	
 	@Override
-	public void fillEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder, MediaDetails mediaDetails){
-		builder.setTitle(translate(guild, "trakt.watched.episode"), Optional.of(getUrl()).map(Object::toString).orElse(null));
+	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder, @Nullable MediaDetails mediaDetails){
+		builder.setTitle(translate(guild, "trakt.watched.episode"), ofNullable(getUrl()).map(Object::toString).orElse(null));
 		ofNullable(mediaDetails).flatMap(details -> details.getPosterURL(getEpisode().getSeason())
 				.or(details::getPosterURL))
 				.ifPresent(posterUrl -> builder.setThumbnail(posterUrl.toString()));
@@ -46,14 +46,15 @@ public class UserSerieHistory extends UserHistory{
 	}
 	
 	@Override
+	@Nullable
 	public URL getUrl(){
-		return this.getShow().getUrl();
+		return getShow().getUrl();
 	}
 	
 	@Override
-	public int compareTo(@NonNull ITraktObject o){
+	public int compareTo(@NotNull ITraktObject o){
 		if(o instanceof UserSerieHistory){
-			final var h = (UserSerieHistory) o;
+			var h = (UserSerieHistory) o;
 			if(Objects.equals(getShow(), h.getShow())){
 				return getEpisode().compareTo(h.getEpisode());
 			}
@@ -63,6 +64,7 @@ public class UserSerieHistory extends UserHistory{
 	}
 	
 	@Override
+	@NotNull
 	public MediaIds getIds(){
 		return getShow().getIds();
 	}

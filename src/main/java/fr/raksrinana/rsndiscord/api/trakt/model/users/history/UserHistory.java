@@ -9,9 +9,10 @@ import fr.raksrinana.rsndiscord.api.trakt.model.ITraktObject;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601ZonedDateTimeDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
@@ -30,6 +31,7 @@ import static java.awt.Color.GREEN;
 public abstract class UserHistory implements ITraktDatedObject{
 	protected static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
 	protected static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	
 	@JsonProperty("id")
 	private long id;
 	@JsonProperty("watched_at")
@@ -41,11 +43,11 @@ public abstract class UserHistory implements ITraktDatedObject{
 	private TraktMediaType type;
 	
 	@Override
-	public void fillEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder){
+	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		fillEmbed(guild, builder, null);
 	}
 	
-	public void fillEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder, MediaDetails mediaDetails){
+	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder, @Nullable MediaDetails mediaDetails){
 		builder.setFooter(Long.toString(getId()))
 				.setColor(GREEN)
 				.setTimestamp(getWatchedAt())
@@ -53,17 +55,19 @@ public abstract class UserHistory implements ITraktDatedObject{
 	}
 	
 	@Override
-	public int compareTo(@NonNull ITraktObject o){
+	public int compareTo(@NotNull ITraktObject o){
 		if(o instanceof ITraktDatedObject){
-			return this.getDate().compareTo(((ITraktDatedObject) o).getDate());
+			return getDate().compareTo(((ITraktDatedObject) o).getDate());
 		}
 		return 0;
 	}
 	
 	@Override
-	public @NonNull ZonedDateTime getDate(){
-		return this.getWatchedAt();
+	@NotNull
+	public ZonedDateTime getDate(){
+		return getWatchedAt();
 	}
 	
+	@Nullable
 	public abstract MediaIds getIds();
 }

@@ -8,31 +8,34 @@ import kong.unirest.GenericType;
 import kong.unirest.RequestBodyEntity;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 public class OAuthRenewTokenPostRequest implements ITraktPostRequest<AccessToken>{
 	private final String refreshToken;
 	
-	public OAuthRenewTokenPostRequest(@NonNull TraktAccessTokenConfiguration refreshToken){
+	public OAuthRenewTokenPostRequest(@NotNull TraktAccessTokenConfiguration refreshToken){
 		this(refreshToken.getRefreshToken());
 	}
 	
-	public OAuthRenewTokenPostRequest(@NonNull String refreshToken){
+	public OAuthRenewTokenPostRequest(@NotNull String refreshToken){
 		this.refreshToken = refreshToken;
 	}
 	
 	@Override
+	@NotNull
 	public GenericType<AccessToken> getOutputType(){
 		return new GenericType<>(){};
 	}
 	
 	@Override
+	@NotNull
 	public RequestBodyEntity getRequest(){
 		return Unirest.post(TraktApi.API_URL + "/oauth/token").body(getBody());
 	}
 	
+	@NotNull
 	public JSONObject getBody(){
-		final var data = new JSONObject();
+		var data = new JSONObject();
 		data.put("client_id", TraktApi.getClientId());
 		data.put("client_secret", TraktApi.getClientSecret());
 		data.put("grant_type", "refresh_token");

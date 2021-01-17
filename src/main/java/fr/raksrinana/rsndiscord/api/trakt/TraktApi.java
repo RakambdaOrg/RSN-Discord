@@ -13,9 +13,10 @@ import fr.raksrinana.rsndiscord.settings.general.trakt.TraktAccessTokenConfigura
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import fr.raksrinana.rsndiscord.utils.RequestException;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -28,10 +29,12 @@ import static java.util.Optional.ofNullable;
 public class TraktApi{
 	public static final String API_URL = "https://api.trakt.tv";
 	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+	
 	private static String clientId;
 	private static String clientSecret;
 	
-	public static <T> Set<T> getPagedQuery(TraktAccessTokenConfiguration token, @NonNull ITraktPagedGetRequest<T> traktRequest) throws RequestException, InvalidResponseException{
+	@NotNull
+	public static <T> Set<T> getPagedQuery(@Nullable TraktAccessTokenConfiguration token, @NotNull ITraktPagedGetRequest<T> traktRequest) throws RequestException, InvalidResponseException{
 		var results = new HashSet<T>();
 		var headers = getHeaders(token);
 		var pageCount = 1;
@@ -65,7 +68,8 @@ public class TraktApi{
 		return results;
 	}
 	
-	private static Map<String, String> getHeaders(TraktAccessTokenConfiguration token){
+	@NotNull
+	private static Map<String, String> getHeaders(@Nullable TraktAccessTokenConfiguration token){
 		var headers = new HashMap<String, String>();
 		if(nonNull(token)){
 			headers.put("Authorization", "Bearer " + token.getToken());
@@ -76,6 +80,7 @@ public class TraktApi{
 		return headers;
 	}
 	
+	@Nullable
 	public static String getClientId(){
 		if(isNull(clientId)){
 			clientId = System.getProperty("TRAKT_CLIENT_ID");
@@ -83,7 +88,7 @@ public class TraktApi{
 		return clientId;
 	}
 	
-	public static void pollDeviceToken(@NonNull GuildMessageReceivedEvent event, @NonNull DeviceCode deviceCode){
+	public static void pollDeviceToken(@NotNull GuildMessageReceivedEvent event, @NotNull DeviceCode deviceCode){
 		var guild = event.getGuild();
 		var channel = event.getChannel();
 		var userToken = Settings.getGeneral().getTrakt().getAccessToken(event.getAuthor().getIdLong()).orElse(null);
@@ -127,7 +132,8 @@ public class TraktApi{
 		});
 	}
 	
-	public static <T> T postQuery(TraktAccessTokenConfiguration token, @NonNull ITraktPostRequest<T> traktRequest) throws RequestException{
+	@NotNull
+	public static <T> T postQuery(@Nullable TraktAccessTokenConfiguration token, @NotNull ITraktPostRequest<T> traktRequest) throws RequestException{
 		var request = traktRequest.getRequest().headers(getHeaders(token)).asObject(traktRequest.getOutputType());
 		if(request.isSuccess() && traktRequest.isValidResult(request.getStatus())){
 			return request.getBody();
@@ -139,7 +145,8 @@ public class TraktApi{
 		executor.shutdown();
 	}
 	
-	public static Optional<String> getUsername(@NonNull Member member){
+	@NotNull
+	public static Optional<String> getUsername(@NotNull Member member){
 		var traktConfig = Settings.getGeneral().getTrakt();
 		var memberId = member.getIdLong();
 		
@@ -160,8 +167,9 @@ public class TraktApi{
 				}));
 	}
 	
-	public static <T> Optional<T> getQuery(TraktAccessTokenConfiguration token, @NonNull ITraktGetRequest<T> traktRequest) throws RequestException{
-		final var request = traktRequest.getRequest().headers(getHeaders(token)).asObject(traktRequest.getOutputType());
+	@NotNull
+	public static <T> Optional<T> getQuery(@Nullable TraktAccessTokenConfiguration token, @NotNull ITraktGetRequest<T> traktRequest) throws RequestException{
+		var request = traktRequest.getRequest().headers(getHeaders(token)).asObject(traktRequest.getOutputType());
 		if(request.isSuccess() && traktRequest.isValidResult(request.getStatus())){
 			return ofNullable(request.getBody());
 		}
@@ -176,8 +184,8 @@ public class TraktApi{
 		throw new RequestException("Error sending API request, HTTP code " + request.getStatus() + " => " + request.getBody(), request.getStatus());
 	}
 	
-	@NonNull
-	private static Optional<TraktAccessTokenConfiguration> getAccessToken(@NonNull final Member member){
+	@NotNull
+	private static Optional<TraktAccessTokenConfiguration> getAccessToken(@NotNull Member member){
 		var guild = member.getGuild();
 		Log.getLogger(guild).debug("Getting previous access token for {}", member);
 		var traktConfig = Settings.getGeneral().getTrakt();
@@ -199,7 +207,8 @@ public class TraktApi{
 		return Optional.empty();
 	}
 	
-	private static Optional<TraktAccessTokenConfiguration> renewToken(@NonNull TraktAccessTokenConfiguration token, @NonNull Member member){
+	@NotNull
+	private static Optional<TraktAccessTokenConfiguration> renewToken(@NotNull TraktAccessTokenConfiguration token, @NotNull Member member){
 		var renewTokenQuery = new OAuthRenewTokenPostRequest(token);
 		try{
 			var accessToken = postQuery(null, renewTokenQuery);
@@ -214,6 +223,7 @@ public class TraktApi{
 		return Optional.empty();
 	}
 	
+	@Nullable
 	public static String getClientSecret(){
 		if(isNull(clientSecret)){
 			clientSecret = System.getProperty("TRAKT_CLIENT_SECRET");

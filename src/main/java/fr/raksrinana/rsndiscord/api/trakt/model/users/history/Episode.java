@@ -10,9 +10,10 @@ import fr.raksrinana.rsndiscord.api.trakt.model.ITraktObject;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601ZonedDateTimeDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -51,11 +52,11 @@ public class Episode implements ITraktObject{
 	private int runtime;
 	
 	@Override
-	public void fillEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder){
+	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		fillEmbed(guild, builder, null);
 	}
 	
-	public void fillEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder, TVDetails tvDetails){
+	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder, @Nullable TVDetails tvDetails){
 		var totalSeason = ofNullable(tvDetails).map(TVDetails::getNumberOfSeasons);
 		var episodesOfSeason = ofNullable(tvDetails).flatMap(details -> details.getSeason(getSeason())).map(Season::getEpisodeCount);
 		
@@ -64,19 +65,20 @@ public class Episode implements ITraktObject{
 		
 		builder.addField(translate(guild, "trakt.season"), season, true)
 				.addField(translate(guild, "trakt.episode"), episode, true)
-				.addField(translate(guild, "trakt.aired"), this.getFirstAired().format(DATETIME_FORMAT), true);
-		ofNullable(this.getOverview()).ifPresent(overview -> builder.addField(translate(guild, "trakt.overview"), overview, false));
+				.addField(translate(guild, "trakt.aired"), getFirstAired().format(DATETIME_FORMAT), true);
+		ofNullable(getOverview()).ifPresent(overview -> builder.addField(translate(guild, "trakt.overview"), overview, false));
 	}
 	
 	@Override
+	@Nullable
 	public URL getUrl(){
 		return null;
 	}
 	
 	@Override
-	public int compareTo(@NonNull ITraktObject o){
+	public int compareTo(@NotNull ITraktObject o){
 		if(o instanceof Episode){
-			final var e = (Episode) o;
+			var e = (Episode) o;
 			if(getSeason() == e.getSeason()){
 				return Integer.compare(getNumber(), e.getNumber());
 			}

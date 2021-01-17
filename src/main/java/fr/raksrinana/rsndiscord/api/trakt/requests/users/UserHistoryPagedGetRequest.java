@@ -6,7 +6,7 @@ import fr.raksrinana.rsndiscord.api.trakt.requests.ITraktPagedGetRequest;
 import kong.unirest.GenericType;
 import kong.unirest.GetRequest;
 import kong.unirest.Unirest;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Set;
@@ -19,15 +19,15 @@ public class UserHistoryPagedGetRequest implements ITraktPagedGetRequest<UserHis
 	private final ZonedDateTime endDate;
 	private final String username;
 	
-	public UserHistoryPagedGetRequest(@NonNull String username, int page){
+	public UserHistoryPagedGetRequest(@NotNull String username, int page){
 		this(username, page, null);
 	}
 	
-	public UserHistoryPagedGetRequest(@NonNull String username, int page, ZonedDateTime startDate){
+	public UserHistoryPagedGetRequest(@NotNull String username, int page, ZonedDateTime startDate){
 		this(username, page, startDate, null);
 	}
 	
-	public UserHistoryPagedGetRequest(@NonNull String username, int page, ZonedDateTime startDate, ZonedDateTime endDate){
+	public UserHistoryPagedGetRequest(@NotNull String username, int page, ZonedDateTime startDate, ZonedDateTime endDate){
 		this.username = username;
 		this.page = page;
 		this.startDate = startDate;
@@ -35,24 +35,27 @@ public class UserHistoryPagedGetRequest implements ITraktPagedGetRequest<UserHis
 	}
 	
 	@Override
+	@NotNull
 	public ITraktPagedGetRequest<UserHistory> getForPage(int page){
-		return new UserHistoryPagedGetRequest(this.username, page);
+		return new UserHistoryPagedGetRequest(username, page);
 	}
 	
 	@Override
 	public int getPage(){
-		return this.page;
+		return page;
 	}
 	
 	@Override
+	@NotNull
 	public GenericType<Set<UserHistory>> getOutputType(){
 		return new GenericType<>(){};
 	}
 	
 	@Override
+	@NotNull
 	public GetRequest getRequest(){
-		final var request = Unirest.get(TraktApi.API_URL + "/users/{username}/history")
-				.routeParam("username", this.username)
+		var request = Unirest.get(TraktApi.API_URL + "/users/{username}/history")
+				.routeParam("username", username)
 				.queryString("extended", "full")
 				.queryString("page", getPage())
 				.queryString("limit", getLimit());

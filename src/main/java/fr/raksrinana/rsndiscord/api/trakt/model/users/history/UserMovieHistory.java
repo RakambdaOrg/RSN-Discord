@@ -9,12 +9,12 @@ import fr.raksrinana.rsndiscord.api.themoviedb.model.MovieDetails;
 import fr.raksrinana.rsndiscord.api.trakt.model.ITraktObject;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.net.URL;
 import java.util.Objects;
-import java.util.Optional;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.Optional.ofNullable;
 
@@ -28,8 +28,8 @@ public class UserMovieHistory extends UserHistory{
 	private Movie movie;
 	
 	@Override
-	public void fillEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder, MediaDetails mediaDetails){
-		builder.setTitle(translate(guild, "trakt.watched.movie"), Optional.of(getUrl()).map(Object::toString).orElse(null));
+	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder, @Nullable MediaDetails mediaDetails){
+		builder.setTitle(translate(guild, "trakt.watched.movie"), ofNullable(getUrl()).map(Object::toString).orElse(null));
 		ofNullable(mediaDetails).flatMap(MediaDetails::getPosterURL)
 				.ifPresent(posterUrl -> builder.setThumbnail(posterUrl.toString()));
 		
@@ -40,12 +40,13 @@ public class UserMovieHistory extends UserHistory{
 	}
 	
 	@Override
+	@Nullable
 	public URL getUrl(){
-		return this.getMovie().getUrl();
+		return getMovie().getUrl();
 	}
 	
 	@Override
-	public int compareTo(@NonNull ITraktObject o){
+	public int compareTo(@NotNull ITraktObject o){
 		if(o instanceof UserMovieHistory){
 			return getMovie().compareTo(((UserMovieHistory) o).getMovie());
 		}
@@ -53,6 +54,7 @@ public class UserMovieHistory extends UserHistory{
 	}
 	
 	@Override
+	@NotNull
 	public MediaIds getIds(){
 		return getMovie().getIds();
 	}

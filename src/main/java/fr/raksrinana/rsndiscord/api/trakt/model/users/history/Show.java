@@ -10,9 +10,10 @@ import fr.raksrinana.rsndiscord.utils.json.ISO8601ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -69,11 +70,11 @@ public class Show implements ITraktObject{
 	private int airedEpisodes;
 	
 	@Override
-	public void fillEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder){
+	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		fillEmbed(guild, builder, null);
 	}
 	
-	public void fillEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder, TVDetails tvDetails){
+	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder, @Nullable TVDetails tvDetails){
 		builder.addField(translate(guild, "trakt.title"), getTitle(), true)
 				.addField(translate(guild, "trakt.year"), Integer.toString(getYear()), true);
 		ofNullable(tvDetails).map(TVDetails::getNumberOfSeasons)
@@ -85,12 +86,13 @@ public class Show implements ITraktObject{
 	}
 	
 	@Override
+	@Nullable
 	public URL getUrl(){
-		return this.getTrailer();
+		return getTrailer();
 	}
 	
 	@Override
-	public int compareTo(@NonNull ITraktObject o){
+	public int compareTo(@NotNull ITraktObject o){
 		if(o instanceof Show){
 			return getTitle().compareTo(((Show) o).getTitle());
 		}

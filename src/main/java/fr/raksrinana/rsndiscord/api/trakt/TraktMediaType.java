@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -18,6 +18,7 @@ public enum TraktMediaType{
 	SEASONS("seasons"),
 	SHOWS("shows"),
 	UNKNOWN("unknown");
+	
 	private final String value;
 	
 	TraktMediaType(String value){
@@ -25,7 +26,8 @@ public enum TraktMediaType{
 	}
 	
 	@JsonCreator
-	public static TraktMediaType getFromValue(@NonNull final String value){
+	@NotNull
+	public static TraktMediaType getFromValue(@NotNull String value){
 		for(var type : TraktMediaType.values()){
 			if(Objects.equals(value, type.getValue())){
 				return type;

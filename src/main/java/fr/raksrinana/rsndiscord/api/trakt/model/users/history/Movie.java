@@ -11,9 +11,10 @@ import fr.raksrinana.rsndiscord.utils.json.ISO8601ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -67,11 +68,11 @@ public class Movie implements ITraktObject{
 	private Set<String> genres;
 	
 	@Override
-	public void fillEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder){
+	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		fillEmbed(guild, builder, null);
 	}
 	
-	public void fillEmbed(@NonNull Guild guild, @NonNull EmbedBuilder builder, MovieDetails movieDetails){
+	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder, @Nullable MovieDetails movieDetails){
 		builder.addField(translate(guild, "trakt.title"), getTitle(), true)
 				.addField(translate(guild, "trakt.year"), Integer.toString(getYear()), true)
 				.addField(translate(guild, "trakt.status"), getStatus(), true)
@@ -81,12 +82,13 @@ public class Movie implements ITraktObject{
 	}
 	
 	@Override
+	@Nullable
 	public URL getUrl(){
-		return this.getTrailer();
+		return getTrailer();
 	}
 	
 	@Override
-	public int compareTo(@NonNull ITraktObject o){
+	public int compareTo(@NotNull ITraktObject o){
 		if(o instanceof Movie){
 			return getTitle().compareTo(((Movie) o).getTitle());
 		}
