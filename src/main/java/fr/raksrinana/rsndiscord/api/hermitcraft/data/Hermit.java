@@ -8,9 +8,11 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
+import static java.util.Optional.empty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -48,6 +50,12 @@ public class Hermit{
 	@JsonProperty("UploadPlaylistID")
 	private String uploadPlaylistId;
 	
+	@Override
+	public String toString(){
+		return getDisplayName();
+	}
+	
+	@NotNull
 	public Optional<URL> getLiveUrl(){
 		try{
 			if(isStreaming()){
@@ -63,15 +71,10 @@ public class Hermit{
 		catch(MalformedURLException e){
 			Log.getLogger(null).error("Failed to build hermit livestream url", e);
 		}
-		return Optional.empty();
+		return empty();
 	}
 	
 	public boolean isLive(){
 		return isStreaming() || isYtStreaming() || isBeamStreaming();
-	}
-	
-	@Override
-	public String toString(){
-		return this.getDisplayName();
 	}
 }
