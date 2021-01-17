@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+import org.jetbrains.annotations.Nullable;
 import java.awt.Color;
 import static java.awt.Color.*;
 
@@ -15,6 +16,7 @@ public enum Indicator{
 	MAJOR(ORANGE),
 	MINOR(YELLOW),
 	NONE(BLACK);
+	
 	private final Color color;
 	
 	Indicator(Color color){
@@ -22,6 +24,7 @@ public enum Indicator{
 	}
 	
 	@JsonCreator
+	@Nullable
 	public Indicator getByName(String name){
 		for(var indicator : Indicator.values()){
 			if(indicator.name().equalsIgnoreCase(name)){
