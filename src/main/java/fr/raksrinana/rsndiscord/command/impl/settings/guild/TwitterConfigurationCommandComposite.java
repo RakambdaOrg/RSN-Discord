@@ -7,40 +7,40 @@ import fr.raksrinana.rsndiscord.command.impl.settings.guild.twitter.SearchesConf
 import fr.raksrinana.rsndiscord.command.impl.settings.guild.twitter.UsersChannelConfigurationCommand;
 import fr.raksrinana.rsndiscord.command.impl.settings.guild.twitter.UsersConfigurationCommand;
 import fr.raksrinana.rsndiscord.permission.IPermission;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.permission.PermissionUtils.ALLOW;
 
 public class TwitterConfigurationCommandComposite extends CommandComposite{
-	public TwitterConfigurationCommandComposite(final Command parent){
+	public TwitterConfigurationCommandComposite(Command parent){
 		super(parent);
-		this.addSubCommand(new UsersChannelConfigurationCommand(this));
-		this.addSubCommand(new UsersConfigurationCommand(this));
-		this.addSubCommand(new SearchChannelConfigurationCommand(this));
-		this.addSubCommand(new SearchesConfigurationCommand(this));
+		addSubCommand(new UsersChannelConfigurationCommand(this));
+		addSubCommand(new UsersConfigurationCommand(this));
+		addSubCommand(new SearchChannelConfigurationCommand(this));
+		addSubCommand(new SearchesConfigurationCommand(this));
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return ALLOW;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return "Twitter";
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public List<String> getCommandStrings(){
+	public @NotNull List<String> getCommandStrings(){
 		return List.of("twitter");
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getDescription(@NonNull Guild guild){
+	public String getDescription(@NotNull Guild guild){
 		return "Twitter configurations";
 	}
 }

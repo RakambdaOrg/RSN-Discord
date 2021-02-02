@@ -3,10 +3,10 @@ package fr.raksrinana.rsndiscord.command.impl.settings.helpers;
 import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.impl.settings.BaseConfigurationCommand;
 import fr.raksrinana.rsndiscord.settings.ConfigurationOperation;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,70 +15,71 @@ import static fr.raksrinana.rsndiscord.settings.ConfigurationOperation.*;
 import static java.awt.Color.GREEN;
 
 public abstract class ValueConfigurationCommand<T> extends BaseConfigurationCommand{
-	protected ValueConfigurationCommand(final Command parent){
+	protected ValueConfigurationCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField(this.getValueName(), "The value to set", false);
+		builder.addField(getValueName(), "The value to set", false);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	protected Set<ConfigurationOperation> getAllowedOperations(){
 		return Set.of(SET, REMOVE, SHOW);
 	}
 	
 	@Override
-	protected void onSet(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	protected void onSet(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		var channel = event.getChannel();
 		
 		try{
-			var value = this.extractValue(event, args);
-			this.setConfig(event.getGuild(), value);
-			var embed = this.getConfigEmbed(event, SET.name(), GREEN)
-					.addField(this.getValueName(), value.toString(), false)
+			var value = extractValue(event, args);
+			setConfig(event.getGuild(), value);
+			var embed = getConfigEmbed(event, SET.name(), GREEN)
+					.addField(getValueName(), value.toString(), false)
 					.build();
 			channel.sendMessage(embed).submit();
 		}
-		catch(final IllegalArgumentException e){
+		catch(IllegalArgumentException e){
 			channel.sendMessage(e.getMessage()).submit();
 		}
 	}
 	
-	protected abstract T extractValue(@NonNull GuildMessageReceivedEvent event, @NonNull LinkedList<String> args);
+	protected abstract T extractValue(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args);
 	
-	protected abstract void setConfig(@NonNull Guild guild, @NonNull T value);
+	protected abstract void setConfig(@NotNull Guild guild, @NotNull T value);
 	
 	@Override
-	protected void onRemove(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
-		this.removeConfig(event.getGuild());
-		var embed = this.getConfigEmbed(event, REMOVE.name(), GREEN)
-				.addField(this.getValueName(), "<<EMPTY>>", false)
+	protected void onRemove(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
+		removeConfig(event.getGuild());
+		var embed = getConfigEmbed(event, REMOVE.name(), GREEN)
+				.addField(getValueName(), "<<EMPTY>>", false)
 				.build();
 		event.getChannel().sendMessage(embed).submit();
 	}
 	
-	protected abstract void removeConfig(@NonNull Guild guild);
+	protected abstract void removeConfig(@NotNull Guild guild);
 	
 	@Override
-	protected void onShow(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
-		var embed = this.getConfigEmbed(event, SHOW.name(), GREEN)
-				.addField(this.getValueName(), this.getConfig(event.getGuild()).map(Objects::toString).orElse("<<EMPTY>>"), false)
+	protected void onShow(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
+		var embed = getConfigEmbed(event, SHOW.name(), GREEN)
+				.addField(getValueName(), getConfig(event.getGuild()).map(Objects::toString).orElse("<<EMPTY>>"), false)
 				.build();
 		event.getChannel().sendMessage(embed).submit();
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getDescription(@NonNull Guild guild){
-		return super.getDescription(guild) + " [" + this.getValueName().toLowerCase() + "]";
+	public String getDescription(@NotNull Guild guild){
+		return super.getDescription(guild) + " [" + getValueName().toLowerCase() + "]";
 	}
 	
-	@NonNull
+	@NotNull
 	protected abstract Optional<T> getConfig(Guild guild);
 	
+	@NotNull
 	protected abstract String getValueName();
 }

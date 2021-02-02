@@ -5,32 +5,32 @@ import fr.raksrinana.rsndiscord.command.impl.settings.helpers.SetConfigurationCo
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import static fr.raksrinana.rsndiscord.permission.PermissionUtils.ALLOW;
 
 public class AutoRolesConfigurationCommand extends SetConfigurationCommand<RoleConfiguration>{
-	public AutoRolesConfigurationCommand(final Command parent){
+	public AutoRolesConfigurationCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return ALLOW;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	protected Optional<Set<RoleConfiguration>> getConfig(@NonNull final Guild guild){
+	protected Optional<Set<RoleConfiguration>> getConfig(@NotNull Guild guild){
 		return Optional.of(Settings.get(guild).getAutoRoles());
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	protected RoleConfiguration extractValue(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args) throws IllegalArgumentException{
+	protected RoleConfiguration extractValue(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args) throws IllegalArgumentException{
 		if(event.getMessage().getMentionedRoles().isEmpty()){
 			throw new IllegalArgumentException("Please mention a role");
 		}
@@ -38,36 +38,36 @@ public class AutoRolesConfigurationCommand extends SetConfigurationCommand<RoleC
 	}
 	
 	@Override
-	protected void removeConfig(@NonNull final Guild guild, @NonNull final RoleConfiguration value){
+	protected void removeConfig(@NotNull Guild guild, @NotNull RoleConfiguration value){
 		Settings.get(guild).getAutoRoles().remove(value);
 	}
 	
 	@Override
-	protected void createConfig(@NonNull final Guild guild, @NonNull final RoleConfiguration value){
-		final var set = new HashSet<RoleConfiguration>();
+	protected void createConfig(@NotNull Guild guild, @NotNull RoleConfiguration value){
+		var set = new HashSet<RoleConfiguration>();
 		set.add(value);
 		Settings.get(guild).setAutoRoles(set);
 	}
 	
 	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Role", "The role to add or remove", false);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getCommandUsage(){
+	public @NotNull String getCommandUsage(){
 		return super.getCommandUsage() + " [role]";
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return "Auto roles";
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("autoRoles");

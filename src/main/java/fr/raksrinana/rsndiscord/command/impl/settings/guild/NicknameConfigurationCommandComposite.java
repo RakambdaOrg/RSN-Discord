@@ -4,37 +4,37 @@ import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.CommandComposite;
 import fr.raksrinana.rsndiscord.command.impl.settings.guild.nickname.ChangeDelayConfigurationCommand;
 import fr.raksrinana.rsndiscord.permission.IPermission;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.permission.PermissionUtils.ALLOW;
 
 public class NicknameConfigurationCommandComposite extends CommandComposite{
-	public NicknameConfigurationCommandComposite(final Command parent){
+	public NicknameConfigurationCommandComposite(Command parent){
 		super(parent);
-		this.addSubCommand(new ChangeDelayConfigurationCommand(this));
+		addSubCommand(new ChangeDelayConfigurationCommand(this));
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return ALLOW;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return "Nickname";
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public List<String> getCommandStrings(){
+	public @NotNull List<String> getCommandStrings(){
 		return List.of("nickname");
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getDescription(@NonNull Guild guild){
+	public String getDescription(@NotNull Guild guild){
 		return "Nickname configurations";
 	}
 }

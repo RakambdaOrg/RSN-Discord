@@ -6,39 +6,39 @@ import fr.raksrinana.rsndiscord.command.impl.settings.guild.trakt.MediaChangeCha
 import fr.raksrinana.rsndiscord.command.impl.settings.guild.trakt.ThaChannelConfigurationCommand;
 import fr.raksrinana.rsndiscord.command.impl.settings.guild.trakt.ThaUserConfigurationCommand;
 import fr.raksrinana.rsndiscord.permission.IPermission;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.permission.PermissionUtils.ALLOW;
 
 public class TraktConfigurationCommandComposite extends CommandComposite{
-	public TraktConfigurationCommandComposite(final Command parent){
+	public TraktConfigurationCommandComposite(Command parent){
 		super(parent);
-		this.addSubCommand(new ThaChannelConfigurationCommand(this));
-		this.addSubCommand(new ThaUserConfigurationCommand(this));
-		this.addSubCommand(new MediaChangeChannelConfigurationCommand(this));
+		addSubCommand(new ThaChannelConfigurationCommand(this));
+		addSubCommand(new ThaUserConfigurationCommand(this));
+		addSubCommand(new MediaChangeChannelConfigurationCommand(this));
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return ALLOW;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return "Trakt";
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public List<String> getCommandStrings(){
+	public @NotNull List<String> getCommandStrings(){
 		return List.of("trakt");
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getDescription(@NonNull Guild guild){
+	public String getDescription(@NotNull Guild guild){
 		return "Trakt configurations";
 	}
 }

@@ -4,64 +4,64 @@ import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.impl.settings.helpers.ValueConfigurationCommand;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.permission.PermissionUtils.ALLOW;
 
 public class ChangeDelayConfigurationCommand extends ValueConfigurationCommand<Long>{
-	public ChangeDelayConfigurationCommand(final Command parent){
+	public ChangeDelayConfigurationCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return ALLOW;
 	}
 	
 	@Override
-	protected Long extractValue(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	protected Long extractValue(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		if(args.isEmpty()){
 			throw new IllegalArgumentException("Please mention the delay");
 		}
 		try{
 			return Long.parseLong(args.pop());
 		}
-		catch(final NumberFormatException e){
+		catch(NumberFormatException e){
 			throw new IllegalArgumentException("Please mention the delay");
 		}
 	}
 	
 	@Override
-	protected void setConfig(@NonNull final Guild guild, @NonNull final Long value){
+	protected void setConfig(@NotNull Guild guild, @NotNull Long value){
 		Settings.get(guild).getNicknameConfiguration().setChangeDelay(value);
 	}
 	
 	@Override
-	protected void removeConfig(@NonNull final Guild guild){
+	protected void removeConfig(@NotNull Guild guild){
 	}
 	
 	@Override
-	protected String getValueName(){
+	protected @NotNull String getValueName(){
 		return "Change delay";
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	protected Optional<Long> getConfig(final Guild guild){
+	protected Optional<Long> getConfig(Guild guild){
 		return Optional.of(Settings.get(guild).getNicknameConfiguration().getChangeDelay());
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return "Nickname change delay";
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("changeDelay");

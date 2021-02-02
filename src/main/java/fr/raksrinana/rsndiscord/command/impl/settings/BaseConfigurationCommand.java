@@ -6,10 +6,10 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.ConfigurationOperation;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.util.LinkedList;
 import java.util.Set;
@@ -19,14 +19,14 @@ import static fr.raksrinana.rsndiscord.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public abstract class BaseConfigurationCommand extends BasicCommand{
-	protected BaseConfigurationCommand(final Command parent){
+	protected BaseConfigurationCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
-		builder.addField("Type", this.getAllowedOperations().stream().map(Enum::name).collect(Collectors.joining(", ")), false);
+		builder.addField("Type", getAllowedOperations().stream().map(Enum::name).collect(Collectors.joining(", ")), false);
 	}
 	
 	/**
@@ -34,12 +34,12 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 	 *
 	 * @return A set of operations possible.
 	 */
-	@NonNull
+	@NotNull
 	protected abstract Set<ConfigurationOperation> getAllowedOperations();
 	
-	@NonNull
+	@NotNull
 	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
 			return BAD_ARGUMENTS;
@@ -58,17 +58,17 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 			}
 			Log.getLogger(guild).info("Executing configuration operation {}", operation);
 			switch(operation){
-				case ADD -> this.onAdd(event, args);
-				case SET -> this.onSet(event, args);
-				case REMOVE -> this.onRemove(event, args);
-				case SHOW -> this.onShow(event, args);
+				case ADD -> onAdd(event, args);
+				case SET -> onSet(event, args);
+				case REMOVE -> onRemove(event, args);
+				case SHOW -> onShow(event, args);
 			}
 		}
-		catch(final IllegalArgumentException e){
+		catch(IllegalArgumentException e){
 			channel.sendMessage(translate(guild, "configuration.operation.unknown")).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 		}
-		catch(final RuntimeException e){
+		catch(RuntimeException e){
 			Log.getLogger(guild).warn("Failed to update configuration", e);
 			Utilities.reportException("Error updating configuration", e);
 			channel.sendMessage(translate(guild, "configuration.update-failed", e.getMessage())).submit()
@@ -78,32 +78,32 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 		return SUCCESS;
 	}
 	
-	protected void onAdd(@NonNull GuildMessageReceivedEvent event, @NonNull LinkedList<String> args){}
+	protected void onAdd(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){}
 	
-	protected void onSet(@NonNull GuildMessageReceivedEvent event, @NonNull LinkedList<String> args){}
+	protected void onSet(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){}
 	
-	protected void onRemove(@NonNull GuildMessageReceivedEvent event, @NonNull LinkedList<String> args){}
+	protected void onRemove(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){}
 	
-	protected void onShow(@NonNull GuildMessageReceivedEvent event, @NonNull LinkedList<String> args){}
+	protected void onShow(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <type>";
 	}
 	
-	@NonNull
-	protected EmbedBuilder getConfigEmbed(@NonNull final GuildMessageReceivedEvent event, @NonNull final String description, @NonNull final Color color){
+	@NotNull
+	protected EmbedBuilder getConfigEmbed(@NotNull GuildMessageReceivedEvent event, @NotNull String description, @NotNull Color color){
 		return new EmbedBuilder()
 				.setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl())
 				.setColor(color)
-				.setTitle(this.getName(event.getGuild()))
+				.setTitle(getName(event.getGuild()))
 				.setDescription(description);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.config.generic-description", this.getName(guild));
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.config.generic-description", getName(guild));
 	}
 }

@@ -6,39 +6,39 @@ import fr.raksrinana.rsndiscord.command.impl.settings.guild.joinleave.ChannelCon
 import fr.raksrinana.rsndiscord.command.impl.settings.guild.joinleave.JoinImagesConfigurationCommand;
 import fr.raksrinana.rsndiscord.command.impl.settings.guild.joinleave.LeaveImagesConfigurationCommand;
 import fr.raksrinana.rsndiscord.permission.IPermission;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.permission.PermissionUtils.ALLOW;
 
 public class JoinLeaveConfigurationCommandComposite extends CommandComposite{
-	public JoinLeaveConfigurationCommandComposite(final Command parent){
+	public JoinLeaveConfigurationCommandComposite(Command parent){
 		super(parent);
-		this.addSubCommand(new ChannelConfigurationCommand(this));
-		this.addSubCommand(new JoinImagesConfigurationCommand(this));
-		this.addSubCommand(new LeaveImagesConfigurationCommand(this));
+		addSubCommand(new ChannelConfigurationCommand(this));
+		addSubCommand(new JoinImagesConfigurationCommand(this));
+		addSubCommand(new LeaveImagesConfigurationCommand(this));
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return ALLOW;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return "JoinLeave";
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getDescription(@NonNull Guild guild){
+	public String getDescription(@NotNull Guild guild){
 		return "Join/Leave configurations";
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public List<String> getCommandStrings(){
+	public @NotNull List<String> getCommandStrings(){
 		return List.of("joinLeave");
 	}
 }

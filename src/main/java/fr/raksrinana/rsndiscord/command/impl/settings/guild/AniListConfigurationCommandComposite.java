@@ -7,40 +7,40 @@ import fr.raksrinana.rsndiscord.command.impl.settings.guild.anilist.Notification
 import fr.raksrinana.rsndiscord.command.impl.settings.guild.anilist.ThaChannelConfigurationCommand;
 import fr.raksrinana.rsndiscord.command.impl.settings.guild.anilist.ThaUserConfigurationCommand;
 import fr.raksrinana.rsndiscord.permission.IPermission;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.permission.PermissionUtils.ALLOW;
 
 public class AniListConfigurationCommandComposite extends CommandComposite{
-	public AniListConfigurationCommandComposite(final Command parent){
+	public AniListConfigurationCommandComposite(Command parent){
 		super(parent);
-		this.addSubCommand(new NotificationChannelConfigurationCommand(this));
-		this.addSubCommand(new ThaChannelConfigurationCommand(this));
-		this.addSubCommand(new ThaUserConfigurationCommand(this));
-		this.addSubCommand(new MediaChangeChannelConfigurationCommand(this));
+		addSubCommand(new NotificationChannelConfigurationCommand(this));
+		addSubCommand(new ThaChannelConfigurationCommand(this));
+		addSubCommand(new ThaUserConfigurationCommand(this));
+		addSubCommand(new MediaChangeChannelConfigurationCommand(this));
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return ALLOW;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return "AniList";
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public List<String> getCommandStrings(){
+	public @NotNull List<String> getCommandStrings(){
 		return List.of("al", "anilist");
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getDescription(@NonNull Guild guild){
+	public String getDescription(@NotNull Guild guild){
 		return "AniList configurations";
 	}
 }

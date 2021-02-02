@@ -2,22 +2,22 @@ package fr.raksrinana.rsndiscord.command.impl.settings.helpers;
 
 import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.log.Log;
-import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 
 public abstract class BooleanConfigurationCommand extends ValueConfigurationCommand<Boolean>{
-	protected BooleanConfigurationCommand(final Command parent){
+	protected BooleanConfigurationCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	protected Boolean extractValue(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	protected Boolean extractValue(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		if(!args.isEmpty()){
 			try{
 				return Boolean.valueOf(args.pop());
 			}
-			catch(final Exception e){
+			catch(Exception e){
 				Log.getLogger(event.getGuild()).error("Failed to parse boolean", e);
 			}
 		}
@@ -25,7 +25,7 @@ public abstract class BooleanConfigurationCommand extends ValueConfigurationComm
 	}
 	
 	@Override
-	protected String getValueName(){
+	protected @NotNull String getValueName(){
 		return "Boolean";
 	}
 }

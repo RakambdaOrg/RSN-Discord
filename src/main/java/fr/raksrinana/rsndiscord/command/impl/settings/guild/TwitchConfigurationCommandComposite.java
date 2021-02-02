@@ -7,40 +7,40 @@ import fr.raksrinana.rsndiscord.command.impl.settings.guild.twitch.IrcForwardCon
 import fr.raksrinana.rsndiscord.command.impl.settings.guild.twitch.RandomKickRewardIdConfigurationCommand;
 import fr.raksrinana.rsndiscord.command.impl.settings.guild.twitch.TwitchChannelConfigurationCommand;
 import fr.raksrinana.rsndiscord.permission.IPermission;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.permission.PermissionUtils.ALLOW;
 
 public class TwitchConfigurationCommandComposite extends CommandComposite{
-	public TwitchConfigurationCommandComposite(final Command parent){
+	public TwitchConfigurationCommandComposite(Command parent){
 		super(parent);
-		this.addSubCommand(new TwitchChannelConfigurationCommand(this));
-		this.addSubCommand(new AutoConnectUsersConfigurationCommand(this));
-		this.addSubCommand(new IrcForwardConfigurationCommand(this));
-		this.addSubCommand(new RandomKickRewardIdConfigurationCommand(this));
+		addSubCommand(new TwitchChannelConfigurationCommand(this));
+		addSubCommand(new AutoConnectUsersConfigurationCommand(this));
+		addSubCommand(new IrcForwardConfigurationCommand(this));
+		addSubCommand(new RandomKickRewardIdConfigurationCommand(this));
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return ALLOW;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return "Twitch";
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public List<String> getCommandStrings(){
+	public @NotNull List<String> getCommandStrings(){
 		return List.of("tw", "twitch");
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getDescription(@NonNull Guild guild){
+	public String getDescription(@NotNull Guild guild){
 		return "Twitch configurations";
 	}
 }

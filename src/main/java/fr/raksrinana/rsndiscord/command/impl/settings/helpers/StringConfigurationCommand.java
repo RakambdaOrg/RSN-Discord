@@ -1,17 +1,17 @@
 package fr.raksrinana.rsndiscord.command.impl.settings.helpers;
 
 import fr.raksrinana.rsndiscord.command.Command;
-import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 
 public abstract class StringConfigurationCommand extends ValueConfigurationCommand<String>{
-	protected StringConfigurationCommand(final Command parent){
+	protected StringConfigurationCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	protected String extractValue(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	protected String extractValue(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		if(!args.isEmpty()){
 			return args.pop();
 		}
@@ -19,7 +19,7 @@ public abstract class StringConfigurationCommand extends ValueConfigurationComma
 	}
 	
 	@Override
-	protected String getValueName(){
+	protected @NotNull String getValueName(){
 		return "String";
 	}
 }

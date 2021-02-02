@@ -7,40 +7,40 @@ import fr.raksrinana.rsndiscord.command.impl.settings.guild.randomkick.KickableR
 import fr.raksrinana.rsndiscord.command.impl.settings.guild.randomkick.KickedRoleConfigurationCommand;
 import fr.raksrinana.rsndiscord.command.impl.settings.guild.randomkick.RandomKickRolesPingRolesConfigurationCommand;
 import fr.raksrinana.rsndiscord.permission.IPermission;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.permission.PermissionUtils.ALLOW;
 
 public class RandomKickConfigurationCommandComposite extends CommandComposite{
-	public RandomKickConfigurationCommandComposite(final Command parent) {
+	public RandomKickConfigurationCommandComposite(Command parent) {
 		super(parent);
-		this.addSubCommand(new RandomKickRolesPingRolesConfigurationCommand(this));
-		this.addSubCommand(new KickedRoleConfigurationCommand(this));
-		this.addSubCommand(new KickableRolesConfigurationCommand(this));
-		this.addSubCommand(new KickRoleProbabilityConfigurationCommand(this));
+		addSubCommand(new RandomKickRolesPingRolesConfigurationCommand(this));
+		addSubCommand(new KickedRoleConfigurationCommand(this));
+		addSubCommand(new KickableRolesConfigurationCommand(this));
+		addSubCommand(new KickRoleProbabilityConfigurationCommand(this));
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return ALLOW;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return "RandomKick";
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public List<String> getCommandStrings(){
+	public @NotNull List<String> getCommandStrings(){
 		return List.of("randomKick");
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getDescription(@NonNull Guild guild){
+	public String getDescription(@NotNull Guild guild){
 		return "Random kick configuration";
 	}
 }

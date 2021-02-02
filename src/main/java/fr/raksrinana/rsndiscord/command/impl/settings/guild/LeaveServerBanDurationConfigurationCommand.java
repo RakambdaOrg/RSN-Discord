@@ -4,9 +4,9 @@ import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.impl.settings.helpers.ValueConfigurationCommand;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,12 +14,12 @@ import java.util.Optional;
 import static fr.raksrinana.rsndiscord.permission.PermissionUtils.ALLOW;
 
 public class LeaveServerBanDurationConfigurationCommand extends ValueConfigurationCommand<Duration>{
-	public LeaveServerBanDurationConfigurationCommand(final Command parent){
+	public LeaveServerBanDurationConfigurationCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	protected Duration extractValue(@NonNull GuildMessageReceivedEvent event, @NonNull LinkedList<String> args){
+	protected Duration extractValue(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		if(args.isEmpty()){
 			throw new IllegalArgumentException("Please pass the language");
 		}
@@ -33,38 +33,38 @@ public class LeaveServerBanDurationConfigurationCommand extends ValueConfigurati
 	}
 	
 	@Override
-	protected void setConfig(@NonNull final Guild guild, @NonNull final Duration value){
+	protected void setConfig(@NotNull Guild guild, @NotNull Duration value){
 		Settings.get(guild).setLeaveServerBanDuration(value);
 	}
 	
 	@Override
-	protected void removeConfig(@NonNull final Guild guild){
+	protected void removeConfig(@NotNull Guild guild){
 		Settings.get(guild).setLeaveServerBanDuration(null);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	protected Optional<Duration> getConfig(@NonNull final Guild guild){
+	protected Optional<Duration> getConfig(@NotNull Guild guild){
 		return Settings.get(guild).getLeaveServerBanDuration();
 	}
 	
 	@Override
-	protected String getValueName(){
+	protected @NotNull String getValueName(){
 		return "LeaveServerBanDuration";
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return ALLOW;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return "Leave server ban duration";
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("leaveServerBanDuration");

@@ -5,45 +5,45 @@ import fr.raksrinana.rsndiscord.command.impl.settings.helpers.RoleConfigurationC
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.permission.PermissionUtils.ALLOW;
 
 public class PosterRoleConfigurationCommand extends RoleConfigurationCommand{
-	public PosterRoleConfigurationCommand(final Command parent){
+	public PosterRoleConfigurationCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return ALLOW;
 	}
 	
 	@Override
-	protected void setConfig(@NonNull final Guild guild, @NonNull final RoleConfiguration value){
+	protected void setConfig(@NotNull Guild guild, @NotNull RoleConfiguration value){
 		Settings.get(guild).getTrombinoscope().setPosterRole(value);
 	}
 	
 	@Override
-	protected void removeConfig(@NonNull final Guild guild){
+	protected void removeConfig(@NotNull Guild guild){
 		Settings.get(guild).getTrombinoscope().setPosterRole(null);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	protected Optional<RoleConfiguration> getConfig(@NonNull final Guild guild){
+	protected Optional<RoleConfiguration> getConfig(@NotNull Guild guild){
 		return Settings.get(guild).getTrombinoscope().getPosterRole();
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return "Poster role";
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("posterRole");

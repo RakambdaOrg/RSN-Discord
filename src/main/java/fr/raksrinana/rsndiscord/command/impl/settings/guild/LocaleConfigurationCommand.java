@@ -4,9 +4,9 @@ import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.impl.settings.helpers.ValueConfigurationCommand;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -14,17 +14,17 @@ import java.util.Optional;
 import static fr.raksrinana.rsndiscord.permission.PermissionUtils.ALLOW;
 
 public class LocaleConfigurationCommand extends ValueConfigurationCommand<Locale>{
-	public LocaleConfigurationCommand(final Command parent){
+	public LocaleConfigurationCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return ALLOW;
 	}
 	
 	@Override
-	protected Locale extractValue(@NonNull GuildMessageReceivedEvent event, @NonNull LinkedList<String> args){
+	protected Locale extractValue(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		if(args.isEmpty()){
 			throw new IllegalArgumentException("Please pass the language");
 		}
@@ -32,35 +32,35 @@ public class LocaleConfigurationCommand extends ValueConfigurationCommand<Locale
 	}
 	
 	@Override
-	protected void setConfig(@NonNull final Guild guild, @NonNull final Locale value){
+	protected void setConfig(@NotNull Guild guild, @NotNull Locale value){
 		Settings.get(guild).setLocale(value);
 	}
 	
 	@Override
-	protected void removeConfig(@NonNull final Guild guild){
+	protected void removeConfig(@NotNull Guild guild){
 		Settings.get(guild).setLocale(null);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	protected Optional<Locale> getConfig(@NonNull final Guild guild){
+	protected Optional<Locale> getConfig(@NotNull Guild guild){
 		return Settings.get(guild).getLocale();
 	}
 	
 	@Override
-	protected String getValueName(){
+	protected @NotNull String getValueName(){
 		return "Locale";
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("locale");
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return "Locale";
 	}
 }

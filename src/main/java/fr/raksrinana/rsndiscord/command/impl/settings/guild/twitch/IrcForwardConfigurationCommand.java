@@ -4,45 +4,45 @@ import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.impl.settings.helpers.BooleanConfigurationCommand;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.permission.PermissionUtils.ALLOW;
 
 public class IrcForwardConfigurationCommand extends BooleanConfigurationCommand{
-	public IrcForwardConfigurationCommand(final Command parent){
+	public IrcForwardConfigurationCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return ALLOW;
 	}
 	
 	@Override
-	protected void setConfig(@NonNull final Guild guild, @NonNull final Boolean value){
+	protected void setConfig(@NotNull Guild guild, @NotNull Boolean value){
 		Settings.get(guild).getTwitchConfiguration().setIrcForward(value);
 	}
 	
 	@Override
-	protected void removeConfig(@NonNull final Guild guild){
+	protected void removeConfig(@NotNull Guild guild){
 		Settings.get(guild).getTwitchConfiguration().setIrcForward(false);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	protected Optional<Boolean> getConfig(final Guild guild){
+	protected Optional<Boolean> getConfig(Guild guild){
 		return Optional.of(Settings.get(guild).getTwitchConfiguration().isIrcForward());
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return "IRC message forwarding";
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("forward");
