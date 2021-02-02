@@ -3,16 +3,16 @@ package fr.raksrinana.rsndiscord.event;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.reaction.ReactionUtils;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import static fr.raksrinana.rsndiscord.reaction.handler.ReactionHandlerResult.PROCESSED_DELETE;
 
 @EventListener
 public class ReactionEventListener extends ListenerAdapter{
 	@Override
-	public void onGuildMessageReactionAdd(@NonNull final GuildMessageReactionAddEvent event){
+	public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event){
 		super.onGuildMessageReactionAdd(event);
 		var guild = event.getGuild();
 		
@@ -39,7 +39,7 @@ public class ReactionEventListener extends ListenerAdapter{
 				}
 			}
 		}
-		catch(final Exception e){
+		catch(Exception e){
 			Log.getLogger(guild).error("", e);
 		}
 	}

@@ -3,10 +3,10 @@ package fr.raksrinana.rsndiscord.event;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.log.Log;
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -17,12 +17,11 @@ import static java.util.Objects.isNull;
 @Getter
 public class InlineReplyEventListener extends ListenerAdapter{
 	@Override
-	public void onGuildMessageReceived(@NonNull final GuildMessageReceivedEvent event){
+	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
 			var message = event.getMessage();
 			var author = event.getAuthor();
-			var channel = event.getChannel();
 			
 			if(message.getType() != MessageType.INLINE_REPLY || author.isBot()){
 				return;
@@ -51,7 +50,7 @@ public class InlineReplyEventListener extends ListenerAdapter{
 				}
 			}
 		}
-		catch(final Exception e){
+		catch(Exception e){
 			Log.getLogger(event.getGuild()).error("Error handling message", e);
 		}
 	}

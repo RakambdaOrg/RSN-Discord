@@ -2,11 +2,11 @@ package fr.raksrinana.rsndiscord.event;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -15,7 +15,7 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 @EventListener
 public class JoinLeaveListener extends ListenerAdapter{
 	@Override
-	public void onGuildMemberRemove(@NonNull GuildMemberRemoveEvent event){
+	public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event){
 		super.onGuildMemberRemove(event);
 		var guild = event.getGuild();
 		var user = event.getUser();
@@ -40,7 +40,7 @@ public class JoinLeaveListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildMemberJoin(@NonNull final GuildMemberJoinEvent event){
+	public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event){
 		super.onGuildMemberJoin(event);
 		var guild = event.getGuild();
 		var user = event.getUser();
@@ -65,7 +65,8 @@ public class JoinLeaveListener extends ListenerAdapter{
 				});
 	}
 	
-	private Optional<String> getImage(Set<String> set){
+	@NotNull
+	private Optional<String> getImage(@NotNull Set<String> set){
 		if(set.isEmpty()){
 			return Optional.empty();
 		}

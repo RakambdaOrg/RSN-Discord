@@ -12,7 +12,6 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageType;
@@ -20,6 +19,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -48,12 +48,12 @@ public class CommandsEventListener extends ListenerAdapter{
 	 * Constructor.
 	 */
 	public CommandsEventListener(){
-		this.commands = getAllAnnotatedWith(BotCommand.class, clazz -> (Command) clazz.getConstructor().newInstance())
+		commands = getAllAnnotatedWith(BotCommand.class, clazz -> (Command) clazz.getConstructor().newInstance())
 				.peek(c -> Log.getLogger(null).info("Loaded command {}", c.getClass().getName()))
 				.collect(Collectors.toSet());
 		
 		var counts = new HashMap<String, Integer>();
-		this.commands.forEach(command -> command.getCommandStrings()
+		commands.forEach(command -> command.getCommandStrings()
 				.forEach(cmd -> counts.put(cmd, counts.getOrDefault(cmd, 0) + 1)));
 		
 		var clash = counts.keySet().stream()
@@ -65,7 +65,7 @@ public class CommandsEventListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildMessageReceived(@NonNull final GuildMessageReceivedEvent event){
+	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
 			var guildConfiguration = Settings.get(event.getGuild());
@@ -107,13 +107,13 @@ public class CommandsEventListener extends ListenerAdapter{
 				}
 			}
 		}
-		catch(final Exception e){
+		catch(Exception e){
 			Log.getLogger(event.getGuild()).error("Error handling message", e);
 		}
 	}
 	
 	@Override
-	public void onPrivateMessageReceived(@NonNull PrivateMessageReceivedEvent event){
+	public void onPrivateMessageReceived(@NotNull PrivateMessageReceivedEvent event){
 		super.onPrivateMessageReceived(event);
 		var author = event.getAuthor();
 		try{
@@ -135,7 +135,7 @@ public class CommandsEventListener extends ListenerAdapter{
 						.submit();
 			}, () -> event.getChannel().sendMessage("I just farted").submit());
 		}
-		catch(final Exception e){
+		catch(Exception e){
 			Log.getLogger(null).error("Error private message from {}", author, e);
 		}
 	}
@@ -148,11 +148,11 @@ public class CommandsEventListener extends ListenerAdapter{
 	 *
 	 * @return True if a command, false otherwise.
 	 */
-	private static boolean isCommand(@NonNull final Guild guild, @NonNull final String text){
+	private static boolean isCommand(@NotNull Guild guild, @NotNull String text){
 		return text.startsWith(Settings.get(guild).getPrefix().orElse(DEFAULT_PREFIX));
 	}
 	
-	private void processCommand(GuildMessageReceivedEvent event){
+	private void processCommand(@NotNull GuildMessageReceivedEvent event){
 		var guild = event.getGuild();
 		var author = event.getAuthor();
 		var message = event.getMessage();
@@ -163,7 +163,7 @@ public class CommandsEventListener extends ListenerAdapter{
 		var args = new LinkedList<>(Arrays.asList(message.getContentRaw().split(" ")));
 		var cmdText = args.pop().substring(Settings.get(guild).getPrefix().orElse(DEFAULT_PREFIX).length());
 		
-		this.getCommand(cmdText).ifPresentOrElse(command -> {
+		getCommand(cmdText).ifPresentOrElse(command -> {
 			if(command.getDeleteMode() == BEFORE){
 				message.delete().submit();
 				messageDeleted.set(true);
@@ -180,21 +180,21 @@ public class CommandsEventListener extends ListenerAdapter{
 							.thenAccept(privateChannel -> privateChannel.sendMessage(translate(guild, "listeners.commands.invalid-arguments")).submit());
 				}
 			}
-			catch(final NotAllowedException e){
+			catch(NotAllowedException e){
 				Log.getLogger(guild).error("Error executing command {} (not allowed)", command, e);
-				final var embed = new EmbedBuilder()
+				var embed = new EmbedBuilder()
 						.setAuthor(author.getName(), null, author.getAvatarUrl())
 						.setColor(RED)
 						.setTitle(translate(guild, "listeners.commands.unauthorized"))
 						.build();
 				channel.sendMessage(embed).submit();
 			}
-			catch(final NotHandledException e){
+			catch(NotHandledException e){
 				Log.getLogger(guild).warn("Command {} isn't handled for {} ({})", command, author, e.getMessage());
 			}
-			catch(final Exception e){
+			catch(Exception e){
 				Log.getLogger(guild).error("Error executing command {}", command, e);
-				final var embed = new EmbedBuilder()
+				var embed = new EmbedBuilder()
 						.setAuthor(author.getName(), null, author.getAvatarUrl())
 						.setColor(RED)
 						.setTitle(translate(guild, "listeners.commands.exception.title"))
@@ -207,7 +207,7 @@ public class CommandsEventListener extends ListenerAdapter{
 				message.delete().submit();
 			}
 		}, () -> {
-			final var embed = new EmbedBuilder()
+			var embed = new EmbedBuilder()
 					.setAuthor(author.getName(), null, author.getAvatarUrl())
 					.setColor(ORANGE)
 					.setTitle(translate(guild, "listeners.commands.not-found.title"))
@@ -219,7 +219,7 @@ public class CommandsEventListener extends ListenerAdapter{
 		});
 	}
 	
-	private boolean isExternalTodoChannel(GuildConfiguration guildConfiguration, TextChannel channel){
+	private boolean isExternalTodoChannel(@NotNull GuildConfiguration guildConfiguration, @NotNull TextChannel channel){
 		return guildConfiguration.getExternalTodos()
 				.getNotificationChannel()
 				.map(ChannelConfiguration::getChannelId)
@@ -234,8 +234,8 @@ public class CommandsEventListener extends ListenerAdapter{
 	 *
 	 * @return The command or null if not found.
 	 */
-	@NonNull
-	private Optional<Command> getCommand(@NonNull final String commandText){
-		return this.commands.stream().filter(command -> command.getCommandStrings().contains(commandText)).findFirst();
+	@NotNull
+	private Optional<Command> getCommand(@NotNull String commandText){
+		return commands.stream().filter(command -> command.getCommandStrings().contains(commandText)).findFirst();
 	}
 }

@@ -3,9 +3,9 @@ package fr.raksrinana.rsndiscord.event;
 import com.vdurmont.emoji.EmojiParser;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import static fr.raksrinana.rsndiscord.utils.BasicEmotes.THUMB_DOWN;
 import static fr.raksrinana.rsndiscord.utils.BasicEmotes.THUMB_UP;
 import static fr.raksrinana.rsndiscord.utils.Utilities.containsChannel;
@@ -13,7 +13,7 @@ import static fr.raksrinana.rsndiscord.utils.Utilities.containsChannel;
 @EventListener
 public class AutoReactionsEventListener extends ListenerAdapter{
 	@Override
-	public void onGuildMessageReceived(@NonNull final GuildMessageReceivedEvent event){
+	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
 			var guildConfiguration = Settings.get(event.getGuild());
@@ -32,7 +32,7 @@ public class AutoReactionsEventListener extends ListenerAdapter{
 						.forEach(emoji -> message.addReaction(emoji).submit());
 			}
 		}
-		catch(final Exception e){
+		catch(Exception e){
 			Log.getLogger(event.getGuild()).error("", e);
 		}
 	}

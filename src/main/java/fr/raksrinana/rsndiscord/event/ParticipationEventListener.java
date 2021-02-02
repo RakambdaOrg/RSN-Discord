@@ -3,7 +3,6 @@ package fr.raksrinana.rsndiscord.event;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
@@ -11,6 +10,7 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ public class ParticipationEventListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildMessageReceived(@NonNull GuildMessageReceivedEvent event){
+	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		var guild = event.getGuild();
 		var author = event.getAuthor();
@@ -45,13 +45,13 @@ public class ParticipationEventListener extends ListenerAdapter{
 						.incrementUser(author);
 			}
 		}
-		catch(final Exception e){
+		catch(Exception e){
 			Log.getLogger(guild).error("", e);
 		}
 	}
 	
 	@Override
-	public void onGuildVoiceJoin(@NonNull GuildVoiceJoinEvent event){
+	public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event){
 		super.onGuildVoiceJoin(event);
 		try{
 			var user = event.getMember().getUser();
@@ -60,21 +60,21 @@ public class ParticipationEventListener extends ListenerAdapter{
 				userJoinedVoice(user, event.getChannelJoined());
 			}
 		}
-		catch(final Exception e){
+		catch(Exception e){
 			Log.getLogger(event.getGuild()).error("", e);
 		}
 	}
 	
-	private void userJoinedVoice(@NonNull User user, @NonNull VoiceChannel channel){
+	private void userJoinedVoice(@NotNull User user, @NotNull VoiceChannel channel){
 		var participationConfiguration = Settings.get(channel.getGuild()).getParticipationConfiguration();
 		if(!participationConfiguration.isChannelIgnored(channel)){
-			this.lastVocalJoin.computeIfAbsent(channel.getIdLong(), channelId -> new HashMap<>())
+			lastVocalJoin.computeIfAbsent(channel.getIdLong(), channelId -> new HashMap<>())
 					.put(user.getIdLong(), ZonedDateTime.now());
 		}
 	}
 	
 	@Override
-	public void onGuildVoiceMove(@NonNull GuildVoiceMoveEvent event){
+	public void onGuildVoiceMove(@NotNull GuildVoiceMoveEvent event){
 		super.onGuildVoiceMove(event);
 		try{
 			var user = event.getMember().getUser();
@@ -84,13 +84,13 @@ public class ParticipationEventListener extends ListenerAdapter{
 				userJoinedVoice(user, event.getChannelJoined());
 			}
 		}
-		catch(final Exception e){
+		catch(Exception e){
 			Log.getLogger(event.getGuild()).error("", e);
 		}
 	}
 	
 	@Override
-	public void onGuildVoiceLeave(@NonNull GuildVoiceLeaveEvent event){
+	public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event){
 		super.onGuildVoiceLeave(event);
 		var guild = event.getGuild();
 		
@@ -111,15 +111,15 @@ public class ParticipationEventListener extends ListenerAdapter{
 				userLeftVoice(user, channelLeft);
 			}
 		}
-		catch(final Exception e){
+		catch(Exception e){
 			Log.getLogger(guild).error("", e);
 		}
 	}
 	
-	private void userLeftVoice(@NonNull User user, @NonNull VoiceChannel channel){
-		final var participationConfiguration = Settings.get(channel.getGuild()).getParticipationConfiguration();
+	private void userLeftVoice(@NotNull User user, @NotNull VoiceChannel channel){
+		var participationConfiguration = Settings.get(channel.getGuild()).getParticipationConfiguration();
 		if(!participationConfiguration.isChannelIgnored(channel)){
-			Optional.ofNullable(this.lastVocalJoin.get(channel.getIdLong()))
+			Optional.ofNullable(lastVocalJoin.get(channel.getIdLong()))
 					.map(map -> map.get(user.getIdLong()))
 					.ifPresent(joinDate -> {
 						var timeSpent = between(joinDate, ZonedDateTime.now()).toMinutes();

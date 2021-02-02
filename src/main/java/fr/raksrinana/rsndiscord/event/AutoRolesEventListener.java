@@ -5,10 +5,10 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.autoroles.LeaverRoles;
 import fr.raksrinana.rsndiscord.settings.guild.schedule.UnbanScheduleConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
-import lombok.NonNull;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.schedule.ScheduleUtils.addSchedule;
@@ -17,7 +17,7 @@ import static java.util.Optional.ofNullable;
 @EventListener
 public class AutoRolesEventListener extends ListenerAdapter{
 	@Override
-	public void onGuildMemberRemove(@NonNull GuildMemberRemoveEvent event){
+	public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event){
 		super.onGuildMemberRemove(event);
 		
 		var guild = event.getGuild();
@@ -46,7 +46,7 @@ public class AutoRolesEventListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildMemberJoin(@NonNull final GuildMemberJoinEvent event){
+	public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event){
 		super.onGuildMemberJoin(event);
 		
 		var guild = event.getGuild();
@@ -67,7 +67,7 @@ public class AutoRolesEventListener extends ListenerAdapter{
 				leavingRolesConfiguration.removeUser(user);
 			});
 		}
-		catch(final Exception e){
+		catch(Exception e){
 			Log.getLogger(guild).error("Error on user join", e);
 		}
 	}
