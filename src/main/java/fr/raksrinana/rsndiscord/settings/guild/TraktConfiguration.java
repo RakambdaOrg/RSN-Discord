@@ -8,13 +8,12 @@ import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import static java.util.Optional.ofNullable;
 
-@SuppressWarnings("FieldMayBeFinal")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
@@ -31,18 +30,18 @@ public class TraktConfiguration implements ICompositeConfiguration{
 	@Setter
 	private UserConfiguration thaUser;
 	
-	@NonNull
+	@NotNull
 	public Optional<ChannelConfiguration> getMediaChangeChannel(){
-		return ofNullable(this.mediaChangeChannel);
+		return ofNullable(mediaChangeChannel);
 	}
 	
-	@NonNull
+	@NotNull
 	public Optional<ChannelConfiguration> getThaChannel(){
-		return ofNullable(this.thaChannel);
+		return ofNullable(thaChannel);
 	}
 	
-	@NonNull
+	@NotNull
 	public Optional<UserConfiguration> getThaUser(){
-		return ofNullable(this.thaUser);
+		return ofNullable(thaUser);
 	}
 }

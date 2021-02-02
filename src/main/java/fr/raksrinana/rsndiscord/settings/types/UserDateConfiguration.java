@@ -10,11 +10,11 @@ import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.User;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -30,35 +30,35 @@ public class UserDateConfiguration implements IAtomicConfiguration{
 	@Setter
 	private ZonedDateTime date;
 	
-	public UserDateConfiguration(@NonNull final User user, @NonNull final ZonedDateTime date){
+	public UserDateConfiguration(@NotNull User user, @NotNull ZonedDateTime date){
 		this(new UserConfiguration(user.getIdLong()), date);
 	}
 	
-	private UserDateConfiguration(@NonNull final UserConfiguration user, @NonNull final ZonedDateTime date){
+	private UserDateConfiguration(@NotNull UserConfiguration user, @NotNull ZonedDateTime date){
 		this.user = user;
 		this.date = date;
 	}
 	
 	@Override
 	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(this.getUser()).append(this.getDate()).toHashCode();
+		return new HashCodeBuilder(17, 37).append(getUser()).append(getDate()).toHashCode();
 	}
 	
 	@Override
-	public boolean equals(final Object o){
+	public boolean equals(Object o){
 		if(this == o){
 			return true;
 		}
 		if(!(o instanceof UserDateConfiguration)){
 			return false;
 		}
-		final var that = (UserDateConfiguration) o;
-		return new EqualsBuilder().append(this.getUser(), that.getUser()).append(this.getDate(), that.getDate()).isEquals();
+		var that = (UserDateConfiguration) o;
+		return new EqualsBuilder().append(getUser(), that.getUser()).append(getDate(), that.getDate()).isEquals();
 	}
 	
 	@Override
 	public String toString(){
-		return "UserDate(" + this.getUser().toString() + '|' + this.getDate() + ')';
+		return "UserDate(" + getUser().toString() + '|' + getDate() + ')';
 	}
 	
 	@Override

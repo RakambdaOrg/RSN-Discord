@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.User;
+import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,18 +43,20 @@ public class BirthdaysConfiguration implements ICompositeConfiguration{
 	@JsonDeserialize(keyUsing = UserConfigurationKeyDeserializer.class, contentUsing = ISO8601LocalDateDeserializer.class)
 	private final Map<UserConfiguration, LocalDate> dates = new HashMap<>();
 	
-	public void setBirthday(User user, LocalDate date){
-		this.birthdays.put(new UserConfiguration(user), new Birthday(date));
+	public void setBirthday(@NotNull User user, @NotNull LocalDate date){
+		birthdays.put(new UserConfiguration(user), new Birthday(date));
 	}
 	
-	public void removeBirthday(User user){
-		this.birthdays.remove(new UserConfiguration(user));
+	public void removeBirthday(@NotNull User user){
+		birthdays.remove(new UserConfiguration(user));
 	}
 	
-	public Optional<Birthday> getBirthday(User user){
+	@NotNull
+	public Optional<Birthday> getBirthday(@NotNull User user){
 		return ofNullable(birthdays.get(new UserConfiguration(user)));
 	}
 	
+	@NotNull
 	public Optional<ChannelConfiguration> getNotificationChannel(){
 		return ofNullable(notificationChannel);
 	}

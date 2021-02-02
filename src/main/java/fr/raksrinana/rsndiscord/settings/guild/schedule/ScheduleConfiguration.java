@@ -15,10 +15,11 @@ import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,15 +51,15 @@ public class ScheduleConfiguration implements IAtomicConfiguration{
 	@JsonProperty("data")
 	private Map<String, String> data = new HashMap<>();
 	
-	protected ScheduleConfiguration(@NonNull User user, @NonNull TextChannel channel, @NonNull ZonedDateTime scheduleDate, @NonNull String message){
+	protected ScheduleConfiguration(@NotNull User user, @NotNull TextChannel channel, @NotNull ZonedDateTime scheduleDate, @NotNull String message){
 		this(user, channel, scheduleDate, message, NONE, null);
 	}
 	
-	protected ScheduleConfiguration(@NonNull User user, @NonNull TextChannel channel, @NonNull ZonedDateTime scheduleDate, @NonNull String message, @NonNull ScheduleTag tag, Map<String, String> data){
+	protected ScheduleConfiguration(@NotNull User user, @NotNull TextChannel channel, @NotNull ZonedDateTime scheduleDate, @NotNull String message, @NotNull ScheduleTag tag, @Nullable Map<String, String> data){
 		this(new UserConfiguration(user), new ChannelConfiguration(channel), scheduleDate, message, tag, data);
 	}
 	
-	protected ScheduleConfiguration(@NonNull UserConfiguration user, @NonNull ChannelConfiguration channel, @NonNull ZonedDateTime scheduleDate, @NonNull String message, @NonNull ScheduleTag tag, Map<String, String> data){
+	protected ScheduleConfiguration(@NotNull UserConfiguration user, @NotNull ChannelConfiguration channel, @NotNull ZonedDateTime scheduleDate, @NotNull String message, @NotNull ScheduleTag tag, @Nullable Map<String, String> data){
 		this.user = user;
 		this.channel = channel;
 		this.scheduleDate = scheduleDate;
@@ -67,7 +68,7 @@ public class ScheduleConfiguration implements IAtomicConfiguration{
 		this.data = data;
 	}
 	
-	protected ScheduleConfiguration(@NonNull User user, @NonNull TextChannel channel, @NonNull ZonedDateTime scheduleDate, @NonNull String message, @NonNull ScheduleTag tag){
+	protected ScheduleConfiguration(@NotNull User user, @NotNull TextChannel channel, @NotNull ZonedDateTime scheduleDate, @NotNull String message, @NotNull ScheduleTag tag){
 		this(new UserConfiguration(user), new ChannelConfiguration(channel), scheduleDate, message, tag, null);
 	}
 	

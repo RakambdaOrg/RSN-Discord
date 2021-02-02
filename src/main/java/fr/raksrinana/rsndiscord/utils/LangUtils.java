@@ -1,9 +1,9 @@
 package fr.raksrinana.rsndiscord.utils;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -11,11 +11,13 @@ import java.util.*;
 public class LangUtils{
 	private static final Map<Locale, ResourceBundle> bundles = new HashMap<>();
 	
-	public static String translate(@NonNull Guild guild, @NonNull String key, Object... args){
+	@NotNull
+	public static String translate(@NotNull Guild guild, @NotNull String key, Object... args){
 		return translate(Settings.get(guild).getLocale().orElseGet(guild::getLocale), key, args);
 	}
 	
-	public static String translate(@NonNull Locale locale, @NonNull String key, Object... args){
+	@NotNull
+	public static String translate(@NotNull Locale locale, @NotNull String key, Object... args){
 		try{
 			var bundle = Optional.ofNullable(bundles.computeIfAbsent(locale, mapKey -> {
 				try{

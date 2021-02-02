@@ -11,6 +11,7 @@ import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.entities.User;
+import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,12 +31,12 @@ public class ChatParticipation implements IAtomicConfiguration{
 	@JsonProperty("userCounts")
 	private final Map<Long, Long> userCounts = new HashMap<>();
 	
-	public ChatParticipation(LocalDate day){
+	public ChatParticipation(@NotNull LocalDate day){
 		this.day = day;
 	}
 	
-	public long incrementUser(User user){
-		return this.userCounts.compute(user.getIdLong(), (key, value) -> {
+	public long incrementUser(@NotNull User user){
+		return userCounts.compute(user.getIdLong(), (key, value) -> {
 			if(isNull(value)){
 				value = 0L;
 			}

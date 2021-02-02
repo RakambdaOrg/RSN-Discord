@@ -7,11 +7,11 @@ import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.settings.IAtomicConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.Category;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import static java.util.Optional.ofNullable;
 
@@ -24,34 +24,34 @@ public class CategoryConfiguration implements IAtomicConfiguration{
 	@Setter
 	private long categoryId;
 	
-	public CategoryConfiguration(final Category category){
+	public CategoryConfiguration(@NotNull Category category){
 		this(category.getIdLong());
 	}
 	
-	public CategoryConfiguration(final long categoryId){
+	public CategoryConfiguration(long categoryId){
 		this.categoryId = categoryId;
 	}
 	
 	@Override
 	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(this.getCategoryId()).toHashCode();
+		return new HashCodeBuilder(17, 37).append(getCategoryId()).toHashCode();
 	}
 	
 	@Override
-	public boolean equals(final Object o){
+	public boolean equals(Object o){
 		if(this == o){
 			return true;
 		}
 		if(!(o instanceof CategoryConfiguration)){
 			return false;
 		}
-		final var that = (CategoryConfiguration) o;
-		return new EqualsBuilder().append(this.getCategoryId(), that.getCategoryId()).isEquals();
+		var that = (CategoryConfiguration) o;
+		return new EqualsBuilder().append(getCategoryId(), that.getCategoryId()).isEquals();
 	}
 	
 	@Override
 	public String toString(){
-		return "Category(" + this.getCategoryId() + ')';
+		return "Category(" + getCategoryId() + ')';
 	}
 	
 	@Override
@@ -59,12 +59,12 @@ public class CategoryConfiguration implements IAtomicConfiguration{
 		return getCategory().isEmpty();
 	}
 	
-	@NonNull
+	@NotNull
 	public Optional<Category> getCategory(){
-		return ofNullable(Main.getJda().getCategoryById(this.getCategoryId()));
+		return ofNullable(Main.getJda().getCategoryById(getCategoryId()));
 	}
 	
-	public void setCategory(@NonNull final Category category){
-		this.setCategoryId(category.getIdLong());
+	public void setCategory(@NotNull Category category){
+		setCategoryId(category.getIdLong());
 	}
 }

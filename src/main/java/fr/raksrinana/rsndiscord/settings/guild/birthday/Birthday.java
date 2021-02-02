@@ -9,6 +9,7 @@ import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601LocalDateSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,19 +28,19 @@ public class Birthday{
 	@JsonSerialize(contentUsing = ISO8601LocalDateSerializer.class)
 	private final Set<LocalDate> datesNotified = new HashSet<>();
 	
-	public Birthday(LocalDate date){
+	public Birthday(@NotNull LocalDate date){
 		this.date = date;
 	}
 	
-	public boolean isNotified(LocalDate date){
+	public boolean isNotified(@NotNull LocalDate date){
 		return datesNotified.contains(date);
 	}
 	
-	public boolean isAt(LocalDate date){
+	public boolean isAt(@NotNull LocalDate date){
 		return this.date.getMonth() == date.getMonth() && this.date.getDayOfMonth() == date.getDayOfMonth();
 	}
 	
-	public void setNotified(LocalDate date){
+	public void setNotified(@NotNull LocalDate date){
 		datesNotified.add(date);
 	}
 }

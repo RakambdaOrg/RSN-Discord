@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import fr.raksrinana.rsndiscord.log.Log;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -12,14 +13,15 @@ import static java.util.Objects.nonNull;
 
 public class URLDeserializer extends JsonDeserializer<URL>{
 	@Override
-	public URL deserialize(@NonNull final JsonParser jsonParser, @NonNull final DeserializationContext deserializationContext) throws IOException{
+	@Nullable
+	public URL deserialize(@NotNull JsonParser jsonParser, @NotNull DeserializationContext deserializationContext) throws IOException{
 		try{
-			final var value = jsonParser.getValueAsString();
+			var value = jsonParser.getValueAsString();
 			if(nonNull(value) && !value.isBlank() && !value.equals(".")){
 				return new URL(value);
 			}
 		}
-		catch(final MalformedURLException e){
+		catch(MalformedURLException e){
 			Log.getLogger(null).warn("Failed to parse URL: {}", jsonParser.getValueAsString());
 		}
 		return null;

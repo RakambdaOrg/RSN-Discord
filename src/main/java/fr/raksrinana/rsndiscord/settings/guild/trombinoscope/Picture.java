@@ -10,6 +10,7 @@ import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -28,8 +29,8 @@ public class Picture implements IAtomicConfiguration{
 	@JsonSerialize(using = ZonedDateTimeSerializer.class)
 	private ZonedDateTime date;
 	
-	public Picture(Path path, ZonedDateTime date){
-		this.uuid = UUID.randomUUID();
+	public Picture(@NotNull Path path, @NotNull ZonedDateTime date){
+		uuid = UUID.randomUUID();
 		this.path = path;
 		this.date = date;
 	}

@@ -7,9 +7,9 @@ import fr.raksrinana.rsndiscord.settings.ICompositeConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -36,12 +36,13 @@ public class TwitchConfiguration implements ICompositeConfiguration{
 	@Setter
 	private String randomKickRewardId;
 	
+	@NotNull
 	public Optional<String> getRandomKickRewardId(){
 		return ofNullable(randomKickRewardId);
 	}
 	
-	@NonNull
+	@NotNull
 	public Optional<ChannelConfiguration> getTwitchChannel(){
-		return ofNullable(this.twitchChannel);
+		return ofNullable(twitchChannel);
 	}
 }

@@ -15,33 +15,33 @@ class ConsoleHandler extends Thread{
 	
 	ConsoleHandler(){
 		super();
-		this.stop = false;
-		this.setDaemon(true);
-		this.setName("Console watcher");
+		stop = false;
+		setDaemon(true);
+		setName("Console watcher");
 		Log.getLogger(null).info("Console handler created");
 	}
 	
 	@Override
 	public void run(){
 		Log.getLogger(null).info("Console handler started");
-		final var quitList = List.of("stop", "quit", "exit");
-		try(final var sc = new Scanner(System.in)){
-			while(!this.stop){
+		var quitList = List.of("stop", "quit", "exit");
+		try(var sc = new Scanner(System.in)){
+			while(!stop){
 				try{
 					if(!sc.hasNext()){
 						try{
 							Thread.sleep(WAIT_DELAY);
 						}
-						catch(final InterruptedException ignored){
+						catch(InterruptedException ignored){
 						}
 						continue;
 					}
-					final var line = sc.nextLine();
-					final var args = new LinkedList<>(Arrays.asList(line.split(" ")));
+					var line = sc.nextLine();
+					var args = new LinkedList<>(Arrays.asList(line.split(" ")));
 					if(args.isEmpty()){
 						continue;
 					}
-					final var command = args.poll();
+					var command = args.poll();
 					if(quitList.contains(command)){
 						Main.close();
 					}
@@ -50,7 +50,7 @@ class ConsoleHandler extends Thread{
 							Log.getLogger(null).warn("Please pass the guild as an argument");
 						}
 						else{
-							final var guildId = args.poll();
+							var guildId = args.poll();
 							Optional.ofNullable(Main.getJda().getGuildById(guildId)).ifPresentOrElse(guild -> {
 								guild.leave().submit();
 								Log.getLogger(guild).info("Guild {} left", guild);
@@ -62,7 +62,7 @@ class ConsoleHandler extends Thread{
 							Log.getLogger(null).warn("Please pass the guild name as an argument");
 						}
 						else{
-							final var guilds = Main.getJda().getGuildsByName(args.pop(), true);
+							var guilds = Main.getJda().getGuildsByName(args.pop(), true);
 							Log.getLogger(null).info("Guilds matched : {}", guilds);
 						}
 					}
@@ -71,7 +71,7 @@ class ConsoleHandler extends Thread{
 							Log.getLogger(null).warn("Please pass the guild id as an argument");
 						}
 						else{
-							final var guildId = args.poll();
+							var guildId = args.poll();
 							Optional.ofNullable(Main.getJda().getGuildById(guildId))
 									.ifPresentOrElse(guild -> Log.getLogger(guild).info("Members of {}: {}", guild, guild.getMembers()),
 											() -> Log.getLogger(null).warn("Guild with id {} not found", guildId));
@@ -97,7 +97,7 @@ class ConsoleHandler extends Thread{
 						Settings.save();
 					}
 				}
-				catch(final Exception e){
+				catch(Exception e){
 					Log.getLogger(null).warn("Error executing console command", e);
 				}
 			}
@@ -108,6 +108,6 @@ class ConsoleHandler extends Thread{
 	 * Close the console handler.
 	 */
 	void close(){
-		this.stop = true;
+		stop = true;
 	}
 }

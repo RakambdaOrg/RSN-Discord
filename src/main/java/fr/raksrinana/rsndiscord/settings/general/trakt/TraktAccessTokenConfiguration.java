@@ -10,9 +10,9 @@ import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -31,7 +31,7 @@ public class TraktAccessTokenConfiguration implements IAtomicConfiguration{
 	@JsonProperty("refreshToken")
 	private String refreshToken;
 	
-	public TraktAccessTokenConfiguration(final long userId, @NonNull final ZonedDateTime expireDate, @NonNull final String token, @NonNull final String refreshToken){
+	public TraktAccessTokenConfiguration(long userId, @NotNull ZonedDateTime expireDate, @NotNull String token, @NotNull String refreshToken){
 		this.userId = userId;
 		this.expireDate = expireDate;
 		this.token = token;
@@ -40,19 +40,19 @@ public class TraktAccessTokenConfiguration implements IAtomicConfiguration{
 	
 	@Override
 	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(this.getToken()).toHashCode();
+		return new HashCodeBuilder(17, 37).append(getToken()).toHashCode();
 	}
 	
 	@Override
-	public boolean equals(final Object o){
+	public boolean equals(Object o){
 		if(this == o){
 			return true;
 		}
 		if(!(o instanceof TraktAccessTokenConfiguration)){
 			return false;
 		}
-		final var that = (TraktAccessTokenConfiguration) o;
-		return new EqualsBuilder().append(this.getToken(), that.getToken()).isEquals();
+		var that = (TraktAccessTokenConfiguration) o;
+		return new EqualsBuilder().append(getToken(), that.getToken()).isEquals();
 	}
 	
 	@Override
@@ -61,6 +61,6 @@ public class TraktAccessTokenConfiguration implements IAtomicConfiguration{
 	}
 	
 	public boolean isExpired(){
-		return ZonedDateTime.now().minusMinutes(1).isAfter(this.getExpireDate());
+		return ZonedDateTime.now().minusMinutes(1).isAfter(getExpireDate());
 	}
 }

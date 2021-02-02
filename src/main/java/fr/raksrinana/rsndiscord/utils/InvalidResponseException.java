@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.utils;
 
+import org.jetbrains.annotations.NotNull;
 import java.io.Serial;
 
 /**
@@ -12,7 +13,7 @@ public class InvalidResponseException extends RuntimeException{
 	/**
 	 * @param reason The reason.
 	 */
-	public InvalidResponseException(String reason){
+	public InvalidResponseException(@NotNull String reason){
 		super(reason);
 	}
 }

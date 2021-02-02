@@ -7,11 +7,11 @@ import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.settings.IAtomicConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.Role;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import static java.util.Optional.ofNullable;
 
@@ -24,34 +24,34 @@ public class RoleConfiguration implements IAtomicConfiguration{
 	@Setter
 	private long roleId;
 	
-	public RoleConfiguration(final Role role){
+	public RoleConfiguration(@NotNull Role role){
 		this(role.getIdLong());
 	}
 	
-	public RoleConfiguration(final long roleId){
+	public RoleConfiguration(long roleId){
 		this.roleId = roleId;
 	}
 	
 	@Override
 	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(this.getRoleId()).toHashCode();
+		return new HashCodeBuilder(17, 37).append(getRoleId()).toHashCode();
 	}
 	
 	@Override
-	public boolean equals(final Object o){
+	public boolean equals(Object o){
 		if(this == o){
 			return true;
 		}
 		if(!(o instanceof RoleConfiguration)){
 			return false;
 		}
-		final var that = (RoleConfiguration) o;
-		return new EqualsBuilder().append(this.getRoleId(), that.getRoleId()).isEquals();
+		var that = (RoleConfiguration) o;
+		return new EqualsBuilder().append(getRoleId(), that.getRoleId()).isEquals();
 	}
 	
 	@Override
 	public String toString(){
-		return "Role(" + this.getRoleId() + ')';
+		return "Role(" + getRoleId() + ')';
 	}
 	
 	@Override
@@ -59,12 +59,12 @@ public class RoleConfiguration implements IAtomicConfiguration{
 		return getRole().isEmpty();
 	}
 	
-	@NonNull
+	@NotNull
 	public Optional<Role> getRole(){
-		return ofNullable(Main.getJda().getRoleById(this.getRoleId()));
+		return ofNullable(Main.getJda().getRoleById(getRoleId()));
 	}
 	
-	public void setRole(@NonNull final Role role){
-		this.setRoleId(role.getIdLong());
+	public void setRole(@NotNull Role role){
+		setRoleId(role.getIdLong());
 	}
 }

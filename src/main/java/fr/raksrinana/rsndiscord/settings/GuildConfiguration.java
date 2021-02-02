@@ -24,8 +24,8 @@ import fr.raksrinana.rsndiscord.utils.json.DurationDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.DurationSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.util.*;
 import static java.util.Optional.ofNullable;
@@ -149,75 +149,84 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@Setter
 	private JoinLeaveConfiguration joinLeaveConfiguration = new JoinLeaveConfiguration();
 	
-	GuildConfiguration(final long guildId){
+	GuildConfiguration(long guildId){
 		this.guildId = guildId;
 	}
 	
-	public void addMessagesAwaitingReaction(@NonNull WaitingReactionMessageConfiguration reaction){
-		this.messagesAwaitingReaction.add(reaction);
+	public void addMessagesAwaitingReaction(@NotNull WaitingReactionMessageConfiguration reaction){
+		messagesAwaitingReaction.add(reaction);
 	}
 	
-	public void removeMessagesAwaitingReaction(@NonNull WaitingReactionMessageConfiguration reaction){
-		this.messagesAwaitingReaction.remove(reaction);
+	public void removeMessagesAwaitingReaction(@NotNull WaitingReactionMessageConfiguration reaction){
+		messagesAwaitingReaction.remove(reaction);
 	}
 	
-	public Collection<WaitingReactionMessageConfiguration> getMessagesAwaitingReaction(@NonNull ReactionTag tag){
-		return new HashSet<>(this.messagesAwaitingReaction).stream()
+	public Collection<WaitingReactionMessageConfiguration> getMessagesAwaitingReaction(@NotNull ReactionTag tag){
+		return new HashSet<>(messagesAwaitingReaction).stream()
 				.filter(reaction -> Objects.equals(reaction.getTag(), tag))
 				.collect(toSet());
 	}
 	
 	public void removeSchedule(ScheduleConfiguration schedule){
-		this.schedules.remove(schedule);
+		schedules.remove(schedule);
 	}
 	
-	public void addSchedule(@NonNull ScheduleConfiguration schedule){
-		this.schedules.add(schedule);
+	public void addSchedule(@NotNull ScheduleConfiguration schedule){
+		schedules.add(schedule);
 	}
 	
-	@NonNull
+	@NotNull
 	public Optional<ChannelConfiguration> getAnnounceStartChannel(){
-		return ofNullable(this.announceStartChannel);
+		return ofNullable(announceStartChannel);
 	}
 	
+	@NotNull
 	public Optional<CategoryConfiguration> getArchiveCategory(){
 		return ofNullable(archiveCategory);
 	}
 	
+	@NotNull
 	public Optional<ChannelConfiguration> getDiscordIncidentsChannel(){
-		return ofNullable(this.discordIncidentsChannel);
+		return ofNullable(discordIncidentsChannel);
 	}
 	
+	@NotNull
 	public Optional<RoleConfiguration> getEventWinnerRole(){
-		return ofNullable(this.eventWinnerRole);
+		return ofNullable(eventWinnerRole);
 	}
 	
+	@NotNull
 	public Optional<ChannelConfiguration> getGeneralChannel(){
 		return Optional.of(generalChannel);
 	}
 	
+	@NotNull
 	public Optional<Duration> getLeaveServerBanDuration(){
 		return ofNullable(leaveServerBanDuration);
 	}
 	
-	public Iterator<WaitingReactionMessageConfiguration> getMessagesAwaitingReaction(){
-		return this.messagesAwaitingReaction.iterator();
-	}
-	
+	@NotNull
 	public Optional<Locale> getLocale(){
-		return ofNullable(this.locale);
+		return ofNullable(locale);
 	}
 	
+	@NotNull
 	public Optional<ChannelConfiguration> getLogChannel(){
-		return ofNullable(this.logChannel);
+		return ofNullable(logChannel);
 	}
 	
-	@NonNull
+	@NotNull
+	public Iterator<WaitingReactionMessageConfiguration> getMessagesAwaitingReaction(){
+		return messagesAwaitingReaction.iterator();
+	}
+	
+	@NotNull
 	public Optional<String> getPrefix(){
-		return ofNullable(this.prefix);
+		return ofNullable(prefix);
 	}
 	
+	@NotNull
 	public List<ScheduleConfiguration> getSchedules(){
-		return new LinkedList<>(this.schedules);
+		return new LinkedList<>(schedules);
 	}
 }

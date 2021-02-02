@@ -9,6 +9,7 @@ import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import static java.util.Optional.ofNullable;
 
@@ -42,6 +43,7 @@ public class TwitterConfiguration implements ICompositeConfiguration{
 	@Setter
 	private Map<String, Long> lastSearchTweet = new HashMap<>();
 	
+	@NotNull
 	public Optional<Long> getLastUserTweet(long userId){
 		return ofNullable(lastUserTweet.get(userId));
 	}
@@ -50,18 +52,21 @@ public class TwitterConfiguration implements ICompositeConfiguration{
 		lastUserTweet.put(userId, tweetId);
 	}
 	
-	public Optional<Long> getLastSearchTweet(String search){
+	@NotNull
+	public Optional<Long> getLastSearchTweet(@NotNull String search){
 		return ofNullable(lastSearchTweet.get(search));
 	}
 	
-	public void setLastSearchTweet(String search, long tweetId){
+	public void setLastSearchTweet(@NotNull String search, long tweetId){
 		lastSearchTweet.put(search, tweetId);
 	}
 	
+	@NotNull
 	public Optional<ChannelConfiguration> getSearchChannel(){
 		return ofNullable(searchChannel);
 	}
 	
+	@NotNull
 	public Optional<ChannelConfiguration> getUsersChannel(){
 		return ofNullable(usersChannel);
 	}

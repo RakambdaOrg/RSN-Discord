@@ -7,9 +7,9 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.log.Log;
-import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,20 +31,20 @@ public class Settings{
 	private static final ObjectWriter generalConfigurationWriter;
 	private static GeneralConfiguration generalConfiguration;
 	
-	@NonNull
-	public static GuildConfiguration get(@NonNull final Guild guild){
+	@NotNull
+	public static GuildConfiguration get(@NotNull Guild guild){
 		return configurations.computeIfAbsent(guild.getIdLong(), guildId -> loadGuildConfiguration(guild)
 				.orElseThrow(() -> new RuntimeException("Failed to load configuration for guild " + guild)));
 	}
 	
-	@NonNull
-	private static Optional<GuildConfiguration> loadGuildConfiguration(@NonNull final Guild guild){
+	@NotNull
+	private static Optional<GuildConfiguration> loadGuildConfiguration(@NotNull Guild guild){
 		var guildConfPath = getConfigPath(guild.getId());
 		if(guildConfPath.toFile().exists()){
 			try(var fis = new FileInputStream(guildConfPath.toFile())){
 				return ofNullable(guildConfigurationReader.readValue(fis));
 			}
-			catch(final IOException e){
+			catch(IOException e){
 				Log.getLogger(guild).error("Failed to read settings in {}", guildConfPath, e);
 				return Optional.empty();
 			}
@@ -52,8 +52,8 @@ public class Settings{
 		return Optional.of(new GuildConfiguration(guild.getIdLong()));
 	}
 	
-	@NonNull
-	private static Path getConfigPath(final String name){
+	@NotNull
+	private static Path getConfigPath(@NotNull String name){
 		return Main.getParameters().getSettingsPath().resolve(name + ".json");
 	}
 	
@@ -64,7 +64,7 @@ public class Settings{
 		}
 	}
 	
-	private static void saveGuildConfiguration(final long guildId, @NonNull final GuildConfiguration value){
+	private static void saveGuildConfiguration(long guildId, @NotNull GuildConfiguration value){
 		var guildConfPath = getConfigPath(Long.toString(guildId));
 		try{
 			Files.createDirectories(guildConfPath.getParent());
@@ -72,7 +72,7 @@ public class Settings{
 			guildConfigurationWriter.writeValue(guildConfPath.toFile(), value);
 			Log.getLogger(null).info("Wrote settings to {}", guildConfPath);
 		}
-		catch(final IOException e){
+		catch(IOException e){
 			Log.getLogger(null).error("Failed to write settings to {}", guildConfPath, e);
 		}
 	}
@@ -81,20 +81,20 @@ public class Settings{
 		save();
 	}
 	
-	private static void saveGeneralConfiguration(@NonNull final GeneralConfiguration value){
-		final var guildConfPath = getConfigPath(GENERAL_CONF_NAME);
+	private static void saveGeneralConfiguration(@NotNull GeneralConfiguration value){
+		var guildConfPath = getConfigPath(GENERAL_CONF_NAME);
 		try{
 			Files.createDirectories(guildConfPath.getParent());
 			generalConfigurationWriter.writeValueAsString(value);
 			generalConfigurationWriter.writeValue(guildConfPath.toFile(), value);
 			Log.getLogger(null).info("Wrote settings to {}", guildConfPath);
 		}
-		catch(final IOException e){
+		catch(IOException e){
 			Log.getLogger(null).error("Failed to write settings to {}", guildConfPath, e);
 		}
 	}
 	
-	public static void clean(@NonNull JDA jda){
+	public static void clean(@NotNull JDA jda){
 		synchronized(cleaningLock){
 			Log.getLogger(null).info("Cleaning settings");
 			configurations.forEach((guildId, configuration) -> {
@@ -118,7 +118,7 @@ public class Settings{
 		}
 	}
 	
-	@NonNull
+	@NotNull
 	public static GeneralConfiguration getGeneral(){
 		if(Objects.isNull(generalConfiguration)){
 			generalConfiguration = loadGeneralConfiguration()
@@ -127,14 +127,14 @@ public class Settings{
 		return generalConfiguration;
 	}
 	
-	@NonNull
+	@NotNull
 	private static Optional<GeneralConfiguration> loadGeneralConfiguration(){
-		final var generalConfPath = getConfigPath(GENERAL_CONF_NAME);
+		var generalConfPath = getConfigPath(GENERAL_CONF_NAME);
 		if(generalConfPath.toFile().exists()){
-			try(final var fis = new FileInputStream(generalConfPath.toFile())){
+			try(var fis = new FileInputStream(generalConfPath.toFile())){
 				return ofNullable(generalConfigurationReader.readValue(fis));
 			}
-			catch(final IOException e){
+			catch(IOException e){
 				Log.getLogger(null).error("Failed to read settings in {}", generalConfPath, e);
 				return Optional.empty();
 			}

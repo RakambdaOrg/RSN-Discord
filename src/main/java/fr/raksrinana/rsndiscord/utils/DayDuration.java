@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.utils;
 
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
@@ -22,22 +22,22 @@ public class DayDuration implements TemporalAmount, Comparable<DayDuration>{
 	 *
 	 * @param duration The duration to wrap.
 	 */
-	public DayDuration(@NonNull final Duration duration){
+	public DayDuration(@NotNull Duration duration){
 		this.duration = duration;
 	}
 	
 	@Override
-	public int compareTo(@NonNull final DayDuration o){
-		return this.duration.compareTo(o.duration);
+	public int compareTo(@NotNull DayDuration o){
+		return duration.compareTo(o.duration);
 	}
 	
 	@Override
-	public long get(@NonNull final TemporalUnit unit){
+	public long get(@NotNull TemporalUnit unit){
 		if(Objects.equals(unit, SECONDS) || Objects.equals(unit, NANOS)){
-			return this.duration.get(unit);
+			return duration.get(unit);
 		}
 		else if(Objects.equals(unit, DAYS)){
-			return this.duration.getSeconds() / unit.getDuration().getSeconds();
+			return duration.getSeconds() / unit.getDuration().getSeconds();
 		}
 		else{
 			throw new UnsupportedTemporalTypeException("Unsupported unit: " + unit);
@@ -45,20 +45,20 @@ public class DayDuration implements TemporalAmount, Comparable<DayDuration>{
 	}
 	
 	@Override
-	@NonNull
+	@NotNull
 	public List<TemporalUnit> getUnits(){
 		return UNITS;
 	}
 	
 	@Override
-	@NonNull
-	public Temporal addTo(@NonNull final Temporal temporal){
-		return this.duration.addTo(temporal);
+	@NotNull
+	public Temporal addTo(@NotNull Temporal temporal){
+		return duration.addTo(temporal);
 	}
 	
 	@Override
-	@NonNull
-	public Temporal subtractFrom(@NonNull final Temporal temporal){
-		return this.duration.subtractFrom(temporal);
+	@NotNull
+	public Temporal subtractFrom(@NotNull Temporal temporal){
+		return duration.subtractFrom(temporal);
 	}
 }

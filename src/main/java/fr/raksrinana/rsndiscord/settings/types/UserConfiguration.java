@@ -7,11 +7,11 @@ import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.settings.IAtomicConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.User;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import static java.util.Optional.ofNullable;
 
@@ -24,34 +24,34 @@ public class UserConfiguration implements IAtomicConfiguration{
 	@Setter
 	private long userId;
 	
-	public UserConfiguration(final User user){
+	public UserConfiguration(@NotNull User user){
 		this(user.getIdLong());
 	}
 	
-	public UserConfiguration(final long userId){
+	public UserConfiguration(long userId){
 		this.userId = userId;
 	}
 	
 	@Override
 	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(this.getUserId()).toHashCode();
+		return new HashCodeBuilder(17, 37).append(getUserId()).toHashCode();
 	}
 	
 	@Override
-	public boolean equals(final Object o){
+	public boolean equals(Object o){
 		if(this == o){
 			return true;
 		}
 		if(!(o instanceof UserConfiguration)){
 			return false;
 		}
-		final var that = (UserConfiguration) o;
-		return new EqualsBuilder().append(this.getUserId(), that.getUserId()).isEquals();
+		var that = (UserConfiguration) o;
+		return new EqualsBuilder().append(getUserId(), that.getUserId()).isEquals();
 	}
 	
 	@Override
 	public String toString(){
-		return "User(" + this.getUserId() + ')';
+		return "User(" + getUserId() + ')';
 	}
 	
 	@Override
@@ -59,12 +59,12 @@ public class UserConfiguration implements IAtomicConfiguration{
 		return getUser().isEmpty();
 	}
 	
-	@NonNull
+	@NotNull
 	public Optional<User> getUser(){
-		return ofNullable(Main.getJda().retrieveUserById(this.getUserId()).complete());
+		return ofNullable(Main.getJda().retrieveUserById(getUserId()).complete());
 	}
 	
-	public void setUser(@NonNull final User user){
-		this.setUserId(user.getIdLong());
+	public void setUser(@NotNull User user){
+		setUserId(user.getIdLong());
 	}
 }

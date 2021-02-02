@@ -16,10 +16,15 @@ public class JacksonObjectMapper implements ObjectMapper{
 	private final com.fasterxml.jackson.databind.ObjectMapper mapper;
 	
 	public JacksonObjectMapper(){
-		final var factoryBuilder = new JsonFactoryBuilder();
+		var factoryBuilder = new JsonFactoryBuilder();
 		factoryBuilder.enable(JsonReadFeature.ALLOW_TRAILING_COMMA);
 		mapper = new com.fasterxml.jackson.databind.ObjectMapper(factoryBuilder.build());
-		mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker().withFieldVisibility(JsonAutoDetect.Visibility.ANY).withGetterVisibility(JsonAutoDetect.Visibility.NONE).withSetterVisibility(JsonAutoDetect.Visibility.NONE).withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
+		mapper.setVisibility(mapper.getSerializationConfig()
+				.getDefaultVisibilityChecker()
+				.withFieldVisibility(JsonAutoDetect.Visibility.ANY)
+				.withGetterVisibility(JsonAutoDetect.Visibility.NONE)
+				.withSetterVisibility(JsonAutoDetect.Visibility.NONE)
+				.withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
 		mapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
 		mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
 	}
@@ -37,7 +42,7 @@ public class JacksonObjectMapper implements ObjectMapper{
 	@Override
 	public <T> T readValue(String value, GenericType<T> genericType){
 		try{
-			return this.mapper.readValue(value, new TypeReference<>(){
+			return mapper.readValue(value, new TypeReference<>(){
 				@Override
 				public Type getType(){
 					return genericType.getType();

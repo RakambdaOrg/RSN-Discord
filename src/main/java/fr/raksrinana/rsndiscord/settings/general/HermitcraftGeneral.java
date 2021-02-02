@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,11 +19,11 @@ public class HermitcraftGeneral{
 	@Setter
 	private Set<String> notifiedVideos = new HashSet<>();
 	
-	public boolean isVideoNotified(String id){
+	public boolean isVideoNotified(@NotNull String id){
 		return notifiedVideos.contains(id);
 	}
 	
-	public void setVideoNotified(String id){
-		this.notifiedVideos.add(id);
+	public void setVideoNotified(@NotNull String id){
+		notifiedVideos.add(id);
 	}
 }

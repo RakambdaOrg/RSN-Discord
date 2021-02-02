@@ -3,15 +3,17 @@ package fr.raksrinana.rsndiscord.utils.json;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.time.Duration;
 import static java.time.Duration.ofMillis;
 
 public class DurationDeserializer extends JsonDeserializer<Duration>{
 	@Override
-	public Duration deserialize(@NonNull final JsonParser jsonParser, @NonNull final DeserializationContext deserializationContext) throws IOException{
-		final var value = jsonParser.getValueAsLong();
+	@Nullable
+	public Duration deserialize(@NotNull JsonParser jsonParser, @NotNull DeserializationContext deserializationContext) throws IOException{
+		var value = jsonParser.getValueAsLong();
 		if(value > 0){
 			return ofMillis(value);
 		}

@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -34,12 +35,12 @@ public class LeaverRoles implements IAtomicConfiguration{
 	@JsonSerialize(using = ZonedDateTimeSerializer.class)
 	private ZonedDateTime leaveDate;
 	
-	public LeaverRoles(User user, List<Role> roles){
+	public LeaverRoles(@NotNull User user, @NotNull List<Role> roles){
 		this.user = new UserConfiguration(user);
 		this.roles = roles.stream()
 				.map(RoleConfiguration::new)
 				.collect(toSet());
-		this.leaveDate = ZonedDateTime.now();
+		leaveDate = ZonedDateTime.now();
 	}
 	
 	@Override

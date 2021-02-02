@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.utils;
 
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 public enum BasicEmotes implements Comparable<BasicEmotes>{
 	A("\uD83C\uDDE6", "a"),
@@ -44,9 +44,9 @@ public enum BasicEmotes implements Comparable<BasicEmotes>{
 	 *
 	 * @param name The representation of the emote.
 	 */
-	BasicEmotes(@NonNull final String name){
+	BasicEmotes(@NotNull String name){
 		this.name = name;
-		this.others = new String[]{};
+		others = new String[]{};
 	}
 	
 	/**
@@ -55,7 +55,7 @@ public enum BasicEmotes implements Comparable<BasicEmotes>{
 	 * @param name   The representation of the emote.
 	 * @param others The other representations of the emote.
 	 */
-	BasicEmotes(@NonNull final String name, @NonNull final String... others){
+	BasicEmotes(@NotNull String name, @NotNull String... others){
 		this.name = name;
 		this.others = others;
 	}
@@ -67,12 +67,13 @@ public enum BasicEmotes implements Comparable<BasicEmotes>{
 	 *
 	 * @return The emote, or null if non were found.
 	 */
-	public static BasicEmotes getEmote(@NonNull final String text){
-		for(final var emote : BasicEmotes.values()){
+	@NotNull
+	public static BasicEmotes getEmote(@NotNull String text){
+		for(var emote : BasicEmotes.values()){
 			if(emote.getValue().equalsIgnoreCase(text)){
 				return emote;
 			}
-			for(final var other : emote.getOthers()){
+			for(var other : emote.getOthers()){
 				if(other.equalsIgnoreCase(text)){
 					return emote;
 				}
@@ -86,9 +87,9 @@ public enum BasicEmotes implements Comparable<BasicEmotes>{
 	 *
 	 * @return The emote's value.
 	 */
-	@NonNull
+	@NotNull
 	public String getValue(){
-		return this.name;
+		return name;
 	}
 	
 	/**
@@ -96,9 +97,9 @@ public enum BasicEmotes implements Comparable<BasicEmotes>{
 	 *
 	 * @return The other representations.
 	 */
-	@NonNull
+	@NotNull
 	private String[] getOthers(){
-		return this.others;
+		return others;
 	}
 }
 

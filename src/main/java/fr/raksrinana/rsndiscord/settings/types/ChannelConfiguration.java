@@ -7,13 +7,13 @@ import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.settings.IAtomicConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import static java.util.Optional.ofNullable;
 
@@ -26,21 +26,21 @@ public class ChannelConfiguration implements IAtomicConfiguration{
 	@Setter
 	private long channelId;
 	
-	public ChannelConfiguration(@NonNull final TextChannel channel){
+	public ChannelConfiguration(@NotNull TextChannel channel){
 		this(channel.getIdLong());
 	}
 	
-	public ChannelConfiguration(final long channelId){
+	public ChannelConfiguration(long channelId){
 		this.channelId = channelId;
 	}
 	
 	@Override
 	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(this.getChannelId()).toHashCode();
+		return new HashCodeBuilder(17, 37).append(getChannelId()).toHashCode();
 	}
 	
 	@Override
-	public boolean equals(final Object o){
+	public boolean equals(Object o){
 		if(this == o){
 			return true;
 		}
@@ -48,7 +48,7 @@ public class ChannelConfiguration implements IAtomicConfiguration{
 			return false;
 		}
 		var that = (ChannelConfiguration) o;
-		return new EqualsBuilder().append(this.getChannelId(), that.getChannelId()).isEquals();
+		return new EqualsBuilder().append(getChannelId(), that.getChannelId()).isEquals();
 	}
 	
 	@Override
@@ -63,12 +63,12 @@ public class ChannelConfiguration implements IAtomicConfiguration{
 		return getChannel().isEmpty();
 	}
 	
-	@NonNull
+	@NotNull
 	public Optional<TextChannel> getChannel(){
-		return ofNullable(Main.getJda().getTextChannelById(this.getChannelId()));
+		return ofNullable(Main.getJda().getTextChannelById(getChannelId()));
 	}
 	
-	public void setChannel(@NonNull final TextChannel channel){
-		this.setChannelId(channel.getIdLong());
+	public void setChannel(@NotNull TextChannel channel){
+		setChannelId(channel.getIdLong());
 	}
 }

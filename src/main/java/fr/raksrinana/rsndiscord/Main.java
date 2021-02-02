@@ -17,13 +17,13 @@ import fr.raksrinana.rsndiscord.utils.JacksonObjectMapper;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import kong.unirest.Unirest;
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executors;
@@ -55,9 +56,8 @@ public class Main{
 	 *
 	 * @param args Not used.
 	 */
-	public static void main(@NonNull final String[] args){
-		parameters = Optional.ofNullable(loadEnv(args))
-				.orElseThrow(() -> new IllegalStateException("Failed to load environment"));
+	public static void main(@NotNull String[] args){
+		parameters = loadEnv(args);
 		Unirest.config()
 				.setObjectMapper(new JacksonObjectMapper())
 				.connectTimeout(30000)
@@ -92,22 +92,18 @@ public class Main{
 			Log.getLogger(null).info("Shutdown hook registered");
 			consoleHandler.start();
 		}
-		catch(final LoginException | InterruptedException e){
+		catch(LoginException | InterruptedException e){
 			Log.getLogger(null).error("Couldn't start bot", e);
 			close();
 		}
-		catch(final Exception e){
+		catch(Exception e){
 			Log.getLogger(null).error("Bot error", e);
 			close();
 		}
 	}
 	
-	private static void registerAllEventListeners(JDABuilder jdaBuilder){
-		Utilities.getAllAnnotatedWith(EventListener.class, clazz -> (ListenerAdapter) clazz.getConstructor().newInstance())
-				.forEach(jdaBuilder::addEventListeners);
-	}
-	
-	static CLIParameters loadEnv(@NonNull String[] args){
+	@NotNull
+	static CLIParameters loadEnv(@NotNull String[] args){
 		Log.getLogger(null).info("Starting bot version {}", getRSNBotVersion());
 		if(DEVELOPMENT){
 			Log.getLogger(null).warn("Developer mode activated, shouldn't be used in production!");
@@ -120,22 +116,27 @@ public class Main{
 		try{
 			cli.parseArgs(args);
 		}
-		catch(final CommandLine.ParameterException e){
+		catch(CommandLine.ParameterException e){
 			Log.getLogger(null).error("Failed to parse arguments", e);
 			cli.usage(System.out);
-			return null;
+			throw new IllegalStateException("Failed to load environment");
 		}
 		
-		final var prop = new Properties();
+		var prop = new Properties();
 		try(var is = Files.newInputStream(parameters.getConfigurationFile())){
 			prop.load(is);
 		}
-		catch(final IOException e){
+		catch(IOException e){
 			Log.getLogger(null).warn("Failed to read file {}", parameters.getConfigurationFile());
 		}
 		prop.forEach((key, value) -> System.setProperty(key.toString(), value.toString()));
 		Log.getLogger(null).debug("Loaded {} properties from file", prop.keySet().size());
 		return parameters;
+	}
+	
+	private static void registerAllEventListeners(@NotNull JDABuilder jdaBuilder){
+		Utilities.getAllAnnotatedWith(EventListener.class, clazz -> (ListenerAdapter) clazz.getConstructor().newInstance())
+				.forEach(jdaBuilder::addEventListeners);
 	}
 	
 	/**
@@ -178,13 +179,18 @@ public class Main{
 	 *
 	 * @return The version, or {@code "Unknown"} if unknown.
 	 */
-	@NonNull
+	@NotNull
 	public static String getRSNBotVersion(){
-		final var properties = new Properties();
+		var properties = new Properties();
 		try{
-			properties.load(Main.class.getResource("/version.properties").openStream());
+			var versionProperties = Main.class.getResource("/version.properties");
+			if(Objects.nonNull(versionProperties)){
+				try(var is = versionProperties.openStream()){
+					properties.load(is);
+				}
+			}
 		}
-		catch(final Exception e){
+		catch(Exception e){
 			Log.getLogger(null).warn("Error reading version", e);
 		}
 		return properties.getProperty("bot.version", "Unknown");

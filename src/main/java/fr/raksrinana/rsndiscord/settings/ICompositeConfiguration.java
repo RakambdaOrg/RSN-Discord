@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public interface ICompositeConfiguration{
 	default void cleanFields(Guild guild, String fieldName) throws Exception{
-		for(var field : this.getClass().getDeclaredFields()){
+		for(var field : getClass().getDeclaredFields()){
 			var fieldValue = FieldUtils.readField(field, this, true);
 			if(cleanObject(guild, fieldValue, fieldName + "." + field.getName())){
 				Log.getLogger(guild).debug("Setting field {}.{} to null", fieldName, field);
@@ -44,7 +44,7 @@ public interface ICompositeConfiguration{
 						cleanObject(guild, elem, fieldName);
 					}
 					catch(Exception e){
-						Log.getLogger(guild).error("Failed to clean settings object {}", this.getClass(), e);
+						Log.getLogger(guild).error("Failed to clean settings object {}", getClass(), e);
 					}
 				});
 			}
@@ -70,7 +70,7 @@ public interface ICompositeConfiguration{
 					cleanObject(guild, elem, fieldName);
 				}
 				catch(Exception e){
-					Log.getLogger(guild).error("Failed to clean settings object {}", this.getClass(), e);
+					Log.getLogger(guild).error("Failed to clean settings object {}", getClass(), e);
 				}
 			});
 			return false;

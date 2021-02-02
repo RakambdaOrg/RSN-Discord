@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
+import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 import java.util.*;
 import static java.util.Optional.ofNullable;
@@ -47,31 +48,36 @@ public class ParticipationConfiguration implements ICompositeConfiguration{
 	@Setter
 	private Set<LocalDate> reportedDays = new HashSet<>();
 	
-	public Optional<ChatParticipation> getChatDay(LocalDate date){
-		return ofNullable(this.chatParticipation.get(date));
+	@NotNull
+	public Optional<ChatParticipation> getChatDay(@NotNull LocalDate date){
+		return ofNullable(chatParticipation.get(date));
 	}
 	
-	public Optional<VoiceParticipation> getVoiceDay(LocalDate date){
-		return ofNullable(this.voiceParticipation.get(date));
+	@NotNull
+	public Optional<VoiceParticipation> getVoiceDay(@NotNull LocalDate date){
+		return ofNullable(voiceParticipation.get(date));
 	}
 	
-	public ChatParticipation getOrCreateChatDay(LocalDate date){
-		return this.chatParticipation.computeIfAbsent(date, key -> new ChatParticipation(date));
+	@NotNull
+	public ChatParticipation getOrCreateChatDay(@NotNull LocalDate date){
+		return chatParticipation.computeIfAbsent(date, key -> new ChatParticipation(date));
 	}
 	
-	public VoiceParticipation getOrCreateVoiceDay(LocalDate date){
-		return this.voiceParticipation.computeIfAbsent(date, key -> new VoiceParticipation(date));
+	@NotNull
+	public VoiceParticipation getOrCreateVoiceDay(@NotNull LocalDate date){
+		return voiceParticipation.computeIfAbsent(date, key -> new VoiceParticipation(date));
 	}
 	
-	public boolean isChannelIgnored(TextChannel channel){
-		return this.ignoredChannels.stream().anyMatch(ignoredChannel -> Objects.equals(ignoredChannel.getChannelId(), channel.getIdLong()));
+	public boolean isChannelIgnored(@NotNull TextChannel channel){
+		return ignoredChannels.stream().anyMatch(ignoredChannel -> Objects.equals(ignoredChannel.getChannelId(), channel.getIdLong()));
 	}
 	
-	public boolean isChannelIgnored(VoiceChannel channel){
-		return this.ignoredChannels.stream().anyMatch(ignoredChannel -> Objects.equals(ignoredChannel.getChannelId(), channel.getIdLong()));
+	public boolean isChannelIgnored(@NotNull VoiceChannel channel){
+		return ignoredChannels.stream().anyMatch(ignoredChannel -> Objects.equals(ignoredChannel.getChannelId(), channel.getIdLong()));
 	}
 	
+	@NotNull
 	public Optional<ChannelConfiguration> getReportChannel(){
-		return ofNullable(this.reportChannel);
+		return ofNullable(reportChannel);
 	}
 }

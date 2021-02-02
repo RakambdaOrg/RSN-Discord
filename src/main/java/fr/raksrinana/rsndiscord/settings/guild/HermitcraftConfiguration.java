@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import static java.util.Optional.ofNullable;
 
@@ -23,10 +24,12 @@ public class HermitcraftConfiguration implements ICompositeConfiguration{
 	@Setter
 	private ChannelConfiguration streamingNotificationChannel;
 	
+	@NotNull
 	public Optional<ChannelConfiguration> getStreamingNotificationChannel(){
 		return ofNullable(streamingNotificationChannel);
 	}
 	
+	@NotNull
 	public Optional<ChannelConfiguration> getVideoNotificationChannel(){
 		return ofNullable(videoNotificationChannel);
 	}

@@ -7,7 +7,6 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.IAtomicConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
@@ -16,6 +15,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import static java.util.Optional.ofNullable;
@@ -31,30 +31,30 @@ public class MessageConfiguration implements IAtomicConfiguration{
 	@Setter
 	private long messageId;
 	
-	public MessageConfiguration(@NonNull final Message message){
+	public MessageConfiguration(@NotNull Message message){
 		this(message.getChannel().getIdLong(), message.getIdLong());
 	}
 	
-	public MessageConfiguration(final long channelId, final long messageId){
-		this.channel = new ChannelConfiguration(channelId);
+	public MessageConfiguration(long channelId, long messageId){
+		channel = new ChannelConfiguration(channelId);
 		this.messageId = messageId;
 	}
 	
 	@Override
 	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(this.getMessageId()).append(this.getChannel()).toHashCode();
+		return new HashCodeBuilder(17, 37).append(getMessageId()).append(getChannel()).toHashCode();
 	}
 	
 	@Override
-	public boolean equals(final Object o){
+	public boolean equals(Object o){
 		if(this == o){
 			return true;
 		}
 		if(!(o instanceof MessageConfiguration)){
 			return false;
 		}
-		final var that = (MessageConfiguration) o;
-		return new EqualsBuilder().append(this.getMessageId(), that.getMessageId()).append(this.getChannel(), that.getChannel()).isEquals();
+		var that = (MessageConfiguration) o;
+		return new EqualsBuilder().append(getMessageId(), that.getMessageId()).append(getChannel(), that.getChannel()).isEquals();
 	}
 	
 	@Override
@@ -67,7 +67,7 @@ public class MessageConfiguration implements IAtomicConfiguration{
 	
 	@Override
 	public boolean shouldBeRemoved(){
-		return this.getChannel().shouldBeRemoved() || this.getChannel().getChannel()
+		return getChannel().shouldBeRemoved() || getChannel().getChannel()
 				.map(channel -> channel.retrieveMessageById(getMessageId()).submit()
 						.thenApply(m -> false)
 						.exceptionally(throwable -> throwable instanceof ErrorResponseException
@@ -83,9 +83,9 @@ public class MessageConfiguration implements IAtomicConfiguration{
 				}).orElse(false);
 	}
 	
-	@NonNull
+	@NotNull
 	public Optional<Message> getMessage(){
-		return this.getChannel().getChannel()
+		return getChannel().getChannel()
 				.map(channel -> channel.retrieveMessageById(getMessageId()).submit()
 						.exceptionally(throwable -> null))
 				.flatMap(future -> {
@@ -99,12 +99,12 @@ public class MessageConfiguration implements IAtomicConfiguration{
 				});
 	}
 	
-	public void setMessage(@NonNull final Message message){
-		this.setMessageId(message.getIdLong());
-		this.setChannel(message.getChannel().getIdLong());
+	public void setMessage(@NotNull Message message){
+		setMessageId(message.getIdLong());
+		setChannel(message.getChannel().getIdLong());
 	}
 	
-	private void setChannel(final long channelId){
-		this.channel.setChannelId(channelId);
+	private void setChannel(long channelId){
+		channel.setChannelId(channelId);
 	}
 }

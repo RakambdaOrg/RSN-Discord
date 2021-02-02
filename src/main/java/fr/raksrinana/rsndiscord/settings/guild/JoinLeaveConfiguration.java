@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -29,6 +30,7 @@ public class JoinLeaveConfiguration implements ICompositeConfiguration{
 	@Setter
 	private Set<String> leaveImages = new HashSet<>();
 	
+	@NotNull
 	public Optional<ChannelConfiguration> getChannel(){
 		return Optional.ofNullable(channel);
 	}

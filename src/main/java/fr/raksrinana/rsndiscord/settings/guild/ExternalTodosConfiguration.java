@@ -7,8 +7,8 @@ import fr.raksrinana.rsndiscord.settings.ICompositeConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import static java.util.Optional.ofNullable;
 
@@ -27,14 +27,16 @@ public class ExternalTodosConfiguration implements ICompositeConfiguration{
 	@Setter
 	private String token;
 	
-	@NonNull
-	public Optional<String> getEndpoint(){return ofNullable(this.endpoint);}
+	@NotNull
+	public Optional<String> getEndpoint(){return ofNullable(endpoint);}
 	
-	@NonNull
+	@NotNull
 	public Optional<ChannelConfiguration> getNotificationChannel(){
-		return ofNullable(this.notificationChannel);
+		return ofNullable(notificationChannel);
 	}
 	
-	@NonNull
-	public Optional<String> getToken(){return ofNullable(this.token);}
+	@NotNull
+	public Optional<String> getToken(){
+		return ofNullable(token);
+	}
 }

@@ -9,8 +9,8 @@ public class ForceShutdownThread extends Thread{
 	private static final int TIMEOUT_SHUTDOWN = 30000;
 	
 	public ForceShutdownThread(){
-		this.setDaemon(true);
-		this.setName("Force shutdown");
+		setDaemon(true);
+		setName("Force shutdown");
 	}
 	
 	@Override
@@ -20,7 +20,7 @@ public class ForceShutdownThread extends Thread{
 			Log.getLogger(null).warn("Forcing shutdown");
 			System.exit(0);
 		}
-		catch(final InterruptedException e){
+		catch(InterruptedException e){
 			Log.getLogger(null).warn("Failed to wait for forced shutdown", e);
 		}
 	}

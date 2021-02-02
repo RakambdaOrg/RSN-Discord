@@ -8,10 +8,11 @@ import fr.raksrinana.rsndiscord.settings.IAtomicConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Message;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -28,15 +29,15 @@ public class WaitingReactionMessageConfiguration implements IAtomicConfiguration
 	@JsonProperty("data")
 	private Map<String, String> data = new HashMap<>();
 	
-	public WaitingReactionMessageConfiguration(@NonNull Message message, @NonNull ReactionTag tag){
+	public WaitingReactionMessageConfiguration(@NotNull Message message, @NotNull ReactionTag tag){
 		this(message, tag, null);
 	}
 	
-	public WaitingReactionMessageConfiguration(@NonNull Message message, @NonNull ReactionTag tag, Map<String, String> data){
+	public WaitingReactionMessageConfiguration(@NotNull Message message, @NotNull ReactionTag tag, @Nullable Map<String, String> data){
 		this(new MessageConfiguration(message), tag, data);
 	}
 	
-	public WaitingReactionMessageConfiguration(@NonNull MessageConfiguration message, @NonNull ReactionTag tag, Map<String, String> data){
+	public WaitingReactionMessageConfiguration(@NotNull MessageConfiguration message, @NotNull ReactionTag tag, @Nullable Map<String, String> data){
 		this.message = message;
 		this.tag = tag;
 		this.data = data;

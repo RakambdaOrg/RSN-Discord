@@ -5,7 +5,6 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -14,6 +13,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 import java.awt.Color;
 import java.lang.annotation.Annotation;
@@ -34,6 +34,16 @@ public class Utilities{
 	public static final DateTimeFormatter DATE_TIME_MINUTE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
 	private static final Pattern PERIOD_PATTERN = Pattern.compile("([0-9]+)([mhd])");
 	
+	@FunctionalInterface
+	public interface ClassInstantiator<T>{
+		@NotNull
+		T apply(@NotNull Class<?> clazz) throws
+				InstantiationException,
+				NoSuchMethodException,
+				InvocationTargetException,
+				IllegalAccessException;
+	}
+	
 	/**
 	 * Tell if the member is a moderator.
 	 *
@@ -41,7 +51,7 @@ public class Utilities{
 	 *
 	 * @return True if moderator, false otherwise.
 	 */
-	public static boolean isModerator(@NonNull final Member member){
+	public static boolean isModerator(@NotNull Member member){
 		return isAdmin(member) || Settings.get(member.getGuild()).getModeratorRoles().stream()
 				.map(RoleConfiguration::getRole)
 				.flatMap(Optional::stream)
@@ -55,7 +65,7 @@ public class Utilities{
 	 *
 	 * @return True if admin, false otherwise.
 	 */
-	public static boolean isAdmin(@NonNull final Member member){
+	public static boolean isAdmin(@NotNull Member member){
 		return member.getRoles().stream()
 				.anyMatch(role -> role.hasPermission(Permission.ADMINISTRATOR)) || isCreator(member);
 	}
@@ -67,13 +77,13 @@ public class Utilities{
 	 *
 	 * @return True if the creator, false otherwise.
 	 */
-	public static boolean isCreator(@NonNull final Member member){
+	public static boolean isCreator(@NotNull Member member){
 		return RAKSRINANA_ACCOUNTS.stream()
 				.anyMatch(id -> Objects.equals(member.getIdLong(), id));
 	}
 	
-	@NonNull
-	public static String durationToString(final Duration duration){
+	@NotNull
+	public static String durationToString(@NotNull Duration duration){
 		if(duration.toDaysPart() > 0){
 			return String.format("%dd %dh%02dm%02ds", duration.toDaysPart(), duration.toHoursPart(), duration.toMinutesPart(), duration.toSecondsPart());
 		}
@@ -86,8 +96,8 @@ public class Utilities{
 		return String.format("%02ds", duration.toSecondsPart());
 	}
 	
-	@NonNull
-	public static Duration parseDuration(@NonNull String period){
+	@NotNull
+	public static Duration parseDuration(@NotNull String period){
 		period = period.toLowerCase(Locale.ENGLISH);
 		Matcher matcher = PERIOD_PATTERN.matcher(period);
 		Duration duration = Duration.ZERO;
@@ -110,8 +120,8 @@ public class Utilities{
 	 *
 	 * @return A completable future of a message (see {@link RestAction#submit()}).
 	 */
-	@NonNull
-	public static CompletableFuture<Message> reportException(@NonNull String message, @NonNull Throwable throwable){
+	@NotNull
+	public static CompletableFuture<Message> reportException(@NotNull String message, @NotNull Throwable throwable){
 		return Optional.ofNullable(Main.getJda().getUserById(MAIN_RAKSRINANA_ACCOUNT))
 				.map(user -> user.openPrivateChannel().submit()
 						.thenCompose(privateChannel -> privateChannel.sendMessage(MessageFormat.format("RSN got an exception: {0}\n", message))
@@ -120,16 +130,18 @@ public class Utilities{
 				.orElse(CompletableFuture.failedFuture(new RuntimeException("User not found")));
 	}
 	
-	private static EmbedBuilder throwableToEmbed(Throwable throwable){
-		final var embed = new EmbedBuilder();
+	@NotNull
+	private static EmbedBuilder throwableToEmbed(@NotNull Throwable throwable){
+		var embed = new EmbedBuilder();
 		embed.setTitle(throwable.getMessage().substring(0, Math.min(throwable.getMessage().length(), MessageEmbed.TITLE_MAX_LENGTH)));
 		embed.setColor(Color.RED);
-		final var trace = ExceptionUtils.getStackTrace(throwable);
+		var trace = ExceptionUtils.getStackTrace(throwable);
 		embed.addField("Trace", trace.substring(0, Math.min(trace.length(), MessageEmbed.VALUE_MAX_LENGTH)), false);
 		return embed;
 	}
 	
-	public static <T> Stream<T> getAllAnnotatedWith(Class<? extends Annotation> annotationClazz, ClassInstantiator<T> instantiator){
+	@NotNull
+	public static <T> Stream<T> getAllAnnotatedWith(@NotNull Class<? extends Annotation> annotationClazz, @NotNull ClassInstantiator<T> instantiator){
 		return new Reflections(Main.class.getPackage().getName())
 				.getTypesAnnotatedWith(annotationClazz).stream()
 				.map(clazz -> {
@@ -144,16 +156,7 @@ public class Utilities{
 				.filter(Objects::nonNull);
 	}
 	
-	@FunctionalInterface
-	public interface ClassInstantiator<T>{
-		T apply(Class<?> clazz) throws
-				InstantiationException,
-				NoSuchMethodException,
-				InvocationTargetException,
-				IllegalAccessException;
-	}
-	
-	public static boolean containsChannel(Collection<ChannelConfiguration> channels, TextChannel channel){
+	public static boolean containsChannel(@NotNull Collection<ChannelConfiguration> channels, @NotNull TextChannel channel){
 		return channels.stream().anyMatch(c -> Objects.equals(c.getChannelId(), channel.getIdLong()));
 	}
 }

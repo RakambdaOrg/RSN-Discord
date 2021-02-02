@@ -10,9 +10,9 @@ import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -29,7 +29,7 @@ public class AniListAccessTokenConfiguration implements IAtomicConfiguration{
 	@JsonProperty("token")
 	private String token;
 	
-	public AniListAccessTokenConfiguration(final long userId, @NonNull final ZonedDateTime expireDate, @NonNull final String token){
+	public AniListAccessTokenConfiguration(long userId, @NotNull ZonedDateTime expireDate, @NotNull String token){
 		this.userId = userId;
 		this.expireDate = expireDate;
 		this.token = token;
@@ -37,23 +37,23 @@ public class AniListAccessTokenConfiguration implements IAtomicConfiguration{
 	
 	@Override
 	public int hashCode(){
-		return new HashCodeBuilder(17, 37).append(this.getToken()).toHashCode();
+		return new HashCodeBuilder(17, 37).append(getToken()).toHashCode();
 	}
 	
 	@Override
-	public boolean equals(final Object o){
+	public boolean equals(Object o){
 		if(this == o){
 			return true;
 		}
 		if(!(o instanceof AniListAccessTokenConfiguration)){
 			return false;
 		}
-		final var that = (AniListAccessTokenConfiguration) o;
-		return new EqualsBuilder().append(this.getToken(), that.getToken()).isEquals();
+		var that = (AniListAccessTokenConfiguration) o;
+		return new EqualsBuilder().append(getToken(), that.getToken()).isEquals();
 	}
 	
 	@Override
 	public boolean shouldBeRemoved(){
-		return ZonedDateTime.now().isAfter(this.getExpireDate());
+		return ZonedDateTime.now().isAfter(getExpireDate());
 	}
 }

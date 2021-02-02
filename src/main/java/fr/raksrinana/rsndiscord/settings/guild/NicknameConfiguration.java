@@ -10,9 +10,9 @@ import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.ZonedDateTimeSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.User;
+import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,15 +32,17 @@ public class NicknameConfiguration implements ICompositeConfiguration{
 	@Setter
 	private long changeDelay = 3600;
 	
-	public Optional<ZonedDateTime> getLastChange(@NonNull final User user){
-		return this.getLastChange(user.getIdLong());
+	@NotNull
+	public Optional<ZonedDateTime> getLastChange(@NotNull User user){
+		return getLastChange(user.getIdLong());
 	}
 	
-	private Optional<ZonedDateTime> getLastChange(final long userId){
-		return ofNullable(this.lastChange.get(userId));
+	@NotNull
+	private Optional<ZonedDateTime> getLastChange(long userId){
+		return ofNullable(lastChange.get(userId));
 	}
 	
-	public void setLastChange(@NonNull final User user, final ZonedDateTime date){
-		this.lastChange.put(user.getIdLong(), date);
+	public void setLastChange(@NotNull User user, @NotNull ZonedDateTime date){
+		lastChange.put(user.getIdLong(), date);
 	}
 }
