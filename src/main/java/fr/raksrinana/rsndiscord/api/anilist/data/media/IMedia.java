@@ -37,6 +37,7 @@ public abstract class IMedia implements IAniListObject{
 			    chapters
 			    volumes
 			    genres
+			    synonyms
 			    isAdult
 			    siteUrl
 			    %s
@@ -60,6 +61,8 @@ public abstract class IMedia implements IAniListObject{
 	private final FuzzyDate endDate = new FuzzyDate();
 	@JsonProperty("genres")
 	private final Set<String> genres = new HashSet<>();
+	@JsonProperty("synonyms")
+	private final Set<String> synonyms = new HashSet<>();
 	@JsonProperty("title")
 	private MediaTitle title;
 	@JsonProperty("season")
@@ -102,6 +105,9 @@ public abstract class IMedia implements IAniListObject{
 		
 		if(!genres.isEmpty()){
 			builder.addField(translate(guild, "anilist.genres"), String.join(", ", getGenres()), true);
+		}
+		if(!synonyms.isEmpty()){
+			builder.addField(translate(guild, "anilist.synonyms"), String.join(", ", getSynonyms()), true);
 		}
 		builder.setThumbnail(getCoverImage().getLarge().toString())
 				.setFooter("ID: " + getId());
