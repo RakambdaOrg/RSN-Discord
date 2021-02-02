@@ -2,7 +2,6 @@ package fr.raksrinana.rsndiscord.api.irc;
 
 import fr.raksrinana.rsndiscord.log.Log;
 import lombok.Getter;
-import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import java.io.Closeable;
 import java.io.IOException;
@@ -31,7 +30,7 @@ public class IRCClient implements Closeable{
 	private boolean connected;
 	private IRCReaderThread ircReader;
 	
-	public IRCClient(@NonNull String host, int port, @NonNull IIRCMessageBuilder ircMessageBuilder){
+	public IRCClient(@NotNull String host, int port, @NotNull IIRCMessageBuilder ircMessageBuilder){
 		this.host = host;
 		this.port = port;
 		this.ircMessageBuilder = ircMessageBuilder;

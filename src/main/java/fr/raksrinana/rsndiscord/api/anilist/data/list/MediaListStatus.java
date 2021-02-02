@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
-import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 
@@ -29,8 +28,8 @@ public enum MediaListStatus{
 	}
 	
 	@JsonCreator
-	@NonNull
-	public static MediaListStatus getFromName(@NonNull String value){
+	@NotNull
+	public static MediaListStatus getFromName(@NotNull String value){
 		return MediaListStatus.valueOf(value);
 	}
 	

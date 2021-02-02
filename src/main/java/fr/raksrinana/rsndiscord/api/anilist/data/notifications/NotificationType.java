@@ -3,7 +3,6 @@ package fr.raksrinana.rsndiscord.api.anilist.data.notifications;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -24,7 +23,7 @@ public enum NotificationType{
 	THREAD_SUBSCRIBED;
 	
 	@JsonCreator
-	@NonNull
+	@NotNull
 	public static NotificationType getFromName(@NotNull String value){
 		return NotificationType.valueOf(value);
 	}

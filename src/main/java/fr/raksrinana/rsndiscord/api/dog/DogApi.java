@@ -4,12 +4,12 @@ import fr.raksrinana.rsndiscord.api.dog.data.DogResponse;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import kong.unirest.Unirest;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DogApi{
-	@NonNull
+	@NotNull
 	public static String getDogPictureURL(@Nullable Guild guild){
 		Log.getLogger(guild).debug("Getting random dog picture");
 		
