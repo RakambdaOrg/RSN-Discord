@@ -7,10 +7,10 @@ import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageCo
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -26,16 +26,17 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @ReactionHandler
 public class TodoReactionHandler implements IReactionHandler{
 	@Override
-	public boolean acceptTag(@NonNull ReactionTag tag){
+	public boolean acceptTag(@NotNull ReactionTag tag){
 		return Objects.equals(tag, TODO);
 	}
 	
 	@Override
-	public ReactionHandlerResult accept(@NonNull GuildMessageReactionAddEvent event, @NonNull WaitingReactionMessageConfiguration reaction){
+	@NotNull
+	public ReactionHandlerResult accept(@NotNull GuildMessageReactionAddEvent event, @NotNull WaitingReactionMessageConfiguration reaction){
 		var reactionEmote = event.getReactionEmote();
 		
 		if(reactionEmote.isEmoji()){
-			final var emote = BasicEmotes.getEmote(reactionEmote.getEmoji());
+			var emote = BasicEmotes.getEmote(reactionEmote.getEmoji());
 			if(isValidEmote(emote)){
 				try{
 					return processTodoCompleted(event, emote, reaction);
@@ -50,11 +51,12 @@ public class TodoReactionHandler implements IReactionHandler{
 		return PROCESSED;
 	}
 	
-	protected boolean isValidEmote(@NonNull BasicEmotes emote){
+	protected boolean isValidEmote(@NotNull BasicEmotes emote){
 		return emote == CHECK_OK || emote == PAPERCLIP || emote == RIGHT_ARROW_CURVING_LEFT;
 	}
 	
-	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emote, @NonNull WaitingReactionMessageConfiguration todo) throws InterruptedException, ExecutionException, TimeoutException{
+	@NotNull
+	protected ReactionHandlerResult processTodoCompleted(@NotNull GuildMessageReactionAddEvent event, @NotNull BasicEmotes emote, @NotNull WaitingReactionMessageConfiguration todo) throws InterruptedException, ExecutionException, TimeoutException{
 		var user = event.retrieveUser().submit().get(30, SECONDS);
 		return todo.getMessage().getMessage()
 				.map(message -> {
@@ -80,7 +82,8 @@ public class TodoReactionHandler implements IReactionHandler{
 				}).orElse(PROCESSED);
 	}
 	
-	private ReactionHandlerResult handleArchive(@NonNull GuildMessageReactionAddEvent event, User user, Message message){
+	@NotNull
+	private ReactionHandlerResult handleArchive(@NotNull GuildMessageReactionAddEvent event, @NotNull User user, @NotNull Message message){
 		var guild = event.getGuild();
 		
 		var forwarded = ofNullable(Settings.get(guild)
@@ -112,7 +115,8 @@ public class TodoReactionHandler implements IReactionHandler{
 		return PROCESSED_DELETE;
 	}
 	
-	private ReactionHandlerResult handleReply(@NonNull GuildMessageReactionAddEvent event, User user, Message message){
+	@NotNull
+	private ReactionHandlerResult handleReply(@NotNull GuildMessageReactionAddEvent event, @NotNull User user, @NotNull Message message){
 		var guild = event.getGuild();
 		
 		try{

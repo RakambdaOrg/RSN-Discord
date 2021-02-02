@@ -3,8 +3,8 @@ package fr.raksrinana.rsndiscord.runner;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
-import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
+import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 import java.util.concurrent.TimeUnit;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
@@ -14,7 +14,7 @@ import static java.util.concurrent.TimeUnit.HOURS;
 public class BirthdayRunner implements IScheduledRunner{
 	private final JDA jda;
 	
-	public BirthdayRunner(JDA jda){
+	public BirthdayRunner(@NotNull JDA jda){
 		this.jda = jda;
 	}
 	
@@ -49,7 +49,7 @@ public class BirthdayRunner implements IScheduledRunner{
 		return 0;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public String getName(){
 		return "participation";
@@ -60,7 +60,7 @@ public class BirthdayRunner implements IScheduledRunner{
 		return 1;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return HOURS;

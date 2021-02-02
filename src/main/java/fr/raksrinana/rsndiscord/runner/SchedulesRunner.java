@@ -5,8 +5,8 @@ import fr.raksrinana.rsndiscord.schedule.ScheduleUtils;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
+import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.concurrent.TimeUnit;
 import static java.util.Optional.ofNullable;
@@ -24,7 +24,7 @@ public class SchedulesRunner implements IScheduledRunner{
 	@Override
 	public void execute(){
 		var currentDate = ZonedDateTime.now();
-		for(var guild : this.getJda().getGuilds()){
+		for(var guild : getJda().getGuilds()){
 			Log.getLogger(guild).debug("Processing guild {}", guild);
 			for(var schedule : Settings.get(guild).getSchedules()){
 				if(currentDate.isAfter(schedule.getScheduleDate())){
@@ -51,7 +51,7 @@ public class SchedulesRunner implements IScheduledRunner{
 		return 3;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public String getName(){
 		return "Schedules refresher";
@@ -62,7 +62,7 @@ public class SchedulesRunner implements IScheduledRunner{
 		return 1;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return MINUTES;

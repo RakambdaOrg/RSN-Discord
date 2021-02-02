@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.api.themoviedb.requests.ITMDBGetRequest;
 import fr.raksrinana.rsndiscord.api.themoviedb.requests.MovieDetailsGetRequest;
 import fr.raksrinana.rsndiscord.api.themoviedb.requests.TVDetailsGetRequest;
 import fr.raksrinana.rsndiscord.api.trakt.TraktApi;
+import fr.raksrinana.rsndiscord.api.trakt.model.users.history.MediaIds;
 import fr.raksrinana.rsndiscord.api.trakt.model.users.history.UserHistory;
 import fr.raksrinana.rsndiscord.api.trakt.model.users.history.UserMovieHistory;
 import fr.raksrinana.rsndiscord.api.trakt.requests.users.UserHistoryPagedGetRequest;
@@ -16,13 +17,13 @@ import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
 import fr.raksrinana.rsndiscord.utils.RequestException;
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.Set;
@@ -37,11 +38,33 @@ public class TraktUserHistoryRunner implements ITraktPagedGetRunner<UserHistory,
 	@Getter
 	private final JDA jda;
 	
-	public TraktUserHistoryRunner(JDA jda){this.jda = jda;}
+	public TraktUserHistoryRunner(@NotNull JDA jda){this.jda = jda;}
 	
 	@Override
-	public Set<TextChannel> getChannels(){
-		return this.getJda().getGuilds().stream()
+	public void execute(){
+		runQueryOnDefaultUsersChannels();
+	}
+	
+	@NotNull
+	@Override
+	public String getName(){
+		return "Trakt user history";
+	}
+	
+	@Override
+	public boolean isKeepOnlyNew(){
+		return true;
+	}
+	
+	@Override
+	@NotNull
+	public TimeUnit getPeriodUnit(){
+		return HOURS;
+	}
+	
+	@Override
+	public @NotNull Set<TextChannel> getChannels(){
+		return getJda().getGuilds().stream()
 				.flatMap(g -> Settings.get(g).getTraktConfiguration()
 						.getMediaChangeChannel()
 						.flatMap(ChannelConfiguration::getChannel)
@@ -49,9 +72,9 @@ public class TraktUserHistoryRunner implements ITraktPagedGetRunner<UserHistory,
 				.collect(toSet());
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public UserHistoryPagedGetRequest initQuery(@NonNull Member member){
+	public UserHistoryPagedGetRequest initQuery(@NotNull Member member){
 		var username = TraktApi.getUsername(member)
 				.orElseThrow(() -> new RuntimeException("Failed to get username for member " + member));
 		var lastAccess = Settings.getGeneral().getTrakt()
@@ -63,24 +86,35 @@ public class TraktUserHistoryRunner implements ITraktPagedGetRunner<UserHistory,
 	}
 	
 	@Override
-	public boolean isKeepOnlyNew(){
-		return true;
+	public long getDelay(){
+		return 7;
 	}
 	
 	@Override
-	public void buildMessage(@NonNull Guild guild, EmbedBuilder builder, User user, @NonNull UserHistory change){
-		var author = Optional.ofNullable(user).orElse(getJda().getSelfUser());
-		builder.setAuthor(author.getName(), null, author.getAvatarUrl());
+	@NotNull
+	public String getFetcherID(){
+		return "history";
+	}
+	
+	@Override
+	public long getPeriod(){
+		return 1;
+	}
+	
+	@Override
+	public void buildMessage(@NotNull Guild guild, @NotNull EmbedBuilder builder, @NotNull User user, @NotNull UserHistory change){
+		builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 		getTMDBInfos(change).ifPresentOrElse(mediaDetails -> change.fillEmbed(guild, builder, mediaDetails),
 				() -> change.fillEmbed(guild, builder));
 	}
 	
-	@NonNull
-	private static Optional<MediaDetails> getTMDBInfos(@NonNull UserHistory change){
-		final Function<Long, ITMDBGetRequest<? extends MediaDetails>> requestBuilder = change instanceof UserMovieHistory
+	@NotNull
+	private static Optional<MediaDetails> getTMDBInfos(@NotNull UserHistory change){
+		Function<Long, ITMDBGetRequest<? extends MediaDetails>> requestBuilder = change instanceof UserMovieHistory
 				? MovieDetailsGetRequest::new
 				: TVDetailsGetRequest::new;
-		return ofNullable(change.getIds().getTmdb())
+		return ofNullable(change.getIds())
+				.map(MediaIds::getTmdb)
 				.map(requestBuilder)
 				.map(query -> {
 					try{
@@ -91,36 +125,5 @@ public class TraktUserHistoryRunner implements ITraktPagedGetRunner<UserHistory,
 					}
 					return null;
 				});
-	}
-	
-	@Override
-	public void execute(){
-		this.runQueryOnDefaultUsersChannels();
-	}
-	
-	@Override
-	public long getDelay(){
-		return 7;
-	}
-	
-	@NonNull
-	@Override
-	public String getName(){
-		return "Trakt user history";
-	}
-	
-	@Override
-	public long getPeriod(){
-		return 1;
-	}
-	
-	@Override
-	public @NonNull TimeUnit getPeriodUnit(){
-		return HOURS;
-	}
-	
-	@Override
-	public String getFetcherID(){
-		return "history";
 	}
 }

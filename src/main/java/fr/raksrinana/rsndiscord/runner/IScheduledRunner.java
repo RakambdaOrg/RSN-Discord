@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.runner;
 
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.TimeUnit;
 
 public interface IScheduledRunner{
@@ -8,9 +8,9 @@ public interface IScheduledRunner{
 	
 	long getDelay();
 	
-	@NonNull String getName();
+	@NotNull String getName();
 	
 	long getPeriod();
 	
-	@NonNull TimeUnit getPeriodUnit();
+	@NotNull TimeUnit getPeriodUnit();
 }

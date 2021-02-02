@@ -6,8 +6,8 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.CategoryConfiguration;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
-import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -22,16 +22,18 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @ReactionHandler
 public class ChannelDeletionReactionHandler extends TodoReactionHandler{
 	@Override
-	public boolean acceptTag(@NonNull ReactionTag tag){
+	public boolean acceptTag(@NotNull ReactionTag tag){
 		return Objects.equals(tag, DELETE_CHANNEL);
 	}
 	
 	@Override
-	protected boolean isValidEmote(@NonNull BasicEmotes emote){
+	protected boolean isValidEmote(@NotNull BasicEmotes emote){
 		return CROSS_NO == emote;
 	}
 	
-	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emote, @NonNull WaitingReactionMessageConfiguration todo) throws InterruptedException, ExecutionException, TimeoutException{
+	@Override
+	@NotNull
+	protected ReactionHandlerResult processTodoCompleted(@NotNull GuildMessageReactionAddEvent event, @NotNull BasicEmotes emote, @NotNull WaitingReactionMessageConfiguration todo) throws InterruptedException, ExecutionException, TimeoutException{
 		var guild = event.getGuild();
 		var user = event.retrieveUser().submit().get(30, SECONDS);
 		

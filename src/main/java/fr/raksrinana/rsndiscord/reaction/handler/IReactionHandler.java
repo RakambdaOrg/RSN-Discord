@@ -2,16 +2,17 @@ package fr.raksrinana.rsndiscord.reaction.handler;
 
 import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
-import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import org.jetbrains.annotations.NotNull;
 
 public interface IReactionHandler extends Comparable<IReactionHandler>{
-	boolean acceptTag(@NonNull ReactionTag tag);
+	boolean acceptTag(@NotNull ReactionTag tag);
 	
-	ReactionHandlerResult accept(@NonNull GuildMessageReactionAddEvent event, @NonNull WaitingReactionMessageConfiguration reaction);
+	@NotNull
+	ReactionHandlerResult accept(@NotNull GuildMessageReactionAddEvent event, @NotNull WaitingReactionMessageConfiguration reaction);
 	
 	@Override
-	default int compareTo(@NonNull IReactionHandler o){
+	default int compareTo(@NotNull IReactionHandler o){
 		return Integer.compare(getPriority(), o.getPriority());
 	}
 	

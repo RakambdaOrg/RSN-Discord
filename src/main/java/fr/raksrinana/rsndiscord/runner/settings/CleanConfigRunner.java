@@ -3,8 +3,8 @@ package fr.raksrinana.rsndiscord.runner.settings;
 import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
+import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.TimeUnit;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
@@ -12,7 +12,7 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 public class CleanConfigRunner implements IScheduledRunner{
 	private final JDA jda;
 	
-	public CleanConfigRunner(JDA jda){
+	public CleanConfigRunner(@NotNull JDA jda){
 		this.jda = jda;
 	}
 	
@@ -26,10 +26,10 @@ public class CleanConfigRunner implements IScheduledRunner{
 		return 12 * 60;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public TimeUnit getPeriodUnit(){
-		return MINUTES;
+	public String getName(){
+		return "Config cleaner";
 	}
 	
 	@Override
@@ -37,9 +37,9 @@ public class CleanConfigRunner implements IScheduledRunner{
 		Settings.clean(jda);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(){
-		return "Config cleaner";
+	public TimeUnit getPeriodUnit(){
+		return MINUTES;
 	}
 }

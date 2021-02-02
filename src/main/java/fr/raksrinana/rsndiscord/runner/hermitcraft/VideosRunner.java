@@ -8,12 +8,11 @@ import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.HermitcraftConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -24,10 +23,9 @@ import static java.util.stream.Collectors.toList;
 
 @ScheduledRunner
 public class VideosRunner implements IScheduledRunner{
-	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
 	private final JDA jda;
 	
-	public VideosRunner(@NonNull JDA jda){
+	public VideosRunner(@NotNull JDA jda){
 		this.jda = jda;
 	}
 	
@@ -63,14 +61,8 @@ public class VideosRunner implements IScheduledRunner{
 				});
 	}
 	
-	@NonNull
-	@Override
-	public TimeUnit getPeriodUnit(){
-		return MINUTES;
-	}
-	
-	private void sendVideo(HermitcraftVideo video, TextChannel channel){
-		var selfUser = this.jda.getSelfUser();
+	private void sendVideo(@NotNull HermitcraftVideo video, @NotNull TextChannel channel){
+		var selfUser = jda.getSelfUser();
 		var guild = channel.getGuild();
 		
 		var embed = new EmbedBuilder().setAuthor(selfUser.getName(), null, selfUser.getAvatarUrl())
@@ -87,9 +79,15 @@ public class VideosRunner implements IScheduledRunner{
 		channel.sendMessage(embed).submit();
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public String getName(){
 		return "Hermitcraft video fetcher";
+	}
+	
+	@NotNull
+	@Override
+	public TimeUnit getPeriodUnit(){
+		return MINUTES;
 	}
 }

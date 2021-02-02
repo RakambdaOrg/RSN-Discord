@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.reaction;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 public enum ReactionTag{
 	ANILIST_TODO,
@@ -13,8 +13,8 @@ public enum ReactionTag{
 	TODO;
 	
 	@JsonCreator
-	@NonNull
-	public static ReactionTag getFromString(@NonNull final String value){
+	@NotNull
+	public static ReactionTag getFromString(@NotNull String value){
 		return ReactionTag.valueOf(value);
 	}
 }

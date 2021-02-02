@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.text.MessageFormat;
 import java.time.ZonedDateTime;
 import java.util.Map;
-import static fr.raksrinana.rsndiscord.reaction.handler.AniListReleaseScheduleHandler.MEDIA_ID_KEY;
+import static fr.raksrinana.rsndiscord.schedule.AniListReleaseScheduleHandler.MEDIA_ID_KEY;
 import static fr.raksrinana.rsndiscord.schedule.ScheduleTag.ANILIST_AIRING_SCHEDULE;
 
 @JsonIgnoreProperties(ignoreUnknown = true)

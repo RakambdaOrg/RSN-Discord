@@ -6,10 +6,10 @@ import fr.raksrinana.rsndiscord.api.discordstatus.data.unresolvedincidents.Incid
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.jetbrains.annotations.NotNull;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -26,9 +26,9 @@ public class DiscordStatusRunner implements IScheduledRunner{
 	private final JDA jda;
 	private ZonedDateTime lastData;
 	
-	public DiscordStatusRunner(JDA jda){
+	public DiscordStatusRunner(@NotNull JDA jda){
 		this.jda = jda;
-		this.lastData = ZonedDateTime.now();
+		lastData = ZonedDateTime.now();
 	}
 	
 	@Override
@@ -42,7 +42,7 @@ public class DiscordStatusRunner implements IScheduledRunner{
 						.collect(toList());
 				
 				if(!embeds.isEmpty()){
-					this.jda.getGuilds().stream()
+					jda.getGuilds().stream()
 							.map(Settings::get)
 							.map(GuildConfiguration::getDiscordIncidentsChannel)
 							.flatMap(Optional::stream)
@@ -61,7 +61,8 @@ public class DiscordStatusRunner implements IScheduledRunner{
 		});
 	}
 	
-	private MessageEmbed buildEmbed(Incident incident){
+	@NotNull
+	private MessageEmbed buildEmbed(@NotNull Incident incident){
 		var selfUser = jda.getSelfUser();
 		var link = Optional.ofNullable(incident.getShortLink())
 				.map(URL::toString)
@@ -94,7 +95,7 @@ public class DiscordStatusRunner implements IScheduledRunner{
 		return 5;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public String getName(){
 		return "discordstatus";
@@ -105,7 +106,7 @@ public class DiscordStatusRunner implements IScheduledRunner{
 		return 10;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return MINUTES;

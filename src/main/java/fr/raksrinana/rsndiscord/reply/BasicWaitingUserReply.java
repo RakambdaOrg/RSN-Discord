@@ -1,13 +1,13 @@
 package fr.raksrinana.rsndiscord.reply;
 
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -17,7 +17,6 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public abstract class BasicWaitingUserReply implements IWaitingUserReply{
-	private static final int DEFAULT_DELAY = 30;
 	@Getter
 	private final List<Message> infoMessages;
 	@Getter
@@ -30,18 +29,18 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 	@Getter
 	private boolean handled;
 	
-	protected BasicWaitingUserReply(@NonNull final GenericGuildMessageEvent event, @NonNull final User author, @NonNull final TextChannel waitChannel, final int delay, @NonNull final TimeUnit unit, final Message... infoMessages){
-		this.lock = new Object();
+	protected BasicWaitingUserReply(@NotNull GenericGuildMessageEvent event, @NotNull User author, @NotNull TextChannel waitChannel, int delay, @NotNull TimeUnit unit, @NotNull Message... infoMessages){
+		lock = new Object();
 		this.waitChannel = waitChannel;
-		this.waitUser = author;
-		this.originalMessageId = event.getMessageIdLong();
-		this.handled = false;
+		waitUser = author;
+		originalMessageId = event.getMessageIdLong();
+		handled = false;
 		this.infoMessages = new ArrayList<>();
 		this.infoMessages.addAll(Arrays.asList(infoMessages));
 		UserReplyEventListener.getExecutor().schedule(() -> {
-			synchronized(this.lock){
-				if(!this.isHandled()){
-					this.handled = this.onExpire();
+			synchronized(lock){
+				if(!isHandled()){
+					handled = onExpire();
 				}
 			}
 		}, delay, unit);
@@ -52,47 +51,47 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 	}
 	
 	@Override
-	public boolean execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
-		synchronized(this.lock){
-			if(!this.isHandled()){
-				this.handled = this.onExecute(event, args);
-				if(this.isHandled()){
-					this.infoMessages.forEach(message -> message.delete().submit());
+	public boolean execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
+		synchronized(lock){
+			if(!isHandled()){
+				handled = onExecute(event, args);
+				if(isHandled()){
+					infoMessages.forEach(message -> message.delete().submit());
 				}
 			}
 		}
-		return this.isHandled();
+		return isHandled();
 	}
 	
 	@Override
-	public boolean execute(@NonNull final GuildMessageReactionAddEvent event){
-		synchronized(this.lock){
-			if(!this.isHandled()){
-				this.handled = this.onExecute(event);
-				if(this.isHandled()){
-					this.infoMessages.forEach(message -> message.delete().submit());
+	public boolean execute(@NotNull GuildMessageReactionAddEvent event){
+		synchronized(lock){
+			if(!isHandled()){
+				handled = onExecute(event);
+				if(isHandled()){
+					infoMessages.forEach(message -> message.delete().submit());
 				}
 			}
 		}
-		return this.isHandled();
+		return isHandled();
 	}
 	
-	protected abstract boolean onExecute(@NonNull final GuildMessageReactionAddEvent event);
+	protected abstract boolean onExecute(@NotNull GuildMessageReactionAddEvent event);
 	
 	@Override
 	public boolean onExpire(){
-		this.getWaitChannel().sendMessage(translate(getWaitChannel().getGuild(), "listeners.reply.expire", getUser().getAsMention())).submit();
-		this.infoMessages.forEach(message -> message.delete().submit());
+		getWaitChannel().sendMessage(translate(getWaitChannel().getGuild(), "listeners.reply.expire", getUser().getAsMention())).submit();
+		infoMessages.forEach(message -> message.delete().submit());
 		return true;
 	}
 	
 	@Override
-	public boolean handleEvent(final GuildMessageReceivedEvent event){
+	public boolean handleEvent(@NotNull GuildMessageReceivedEvent event){
 		return Objects.equals(getUser(), event.getAuthor()) && Objects.equals(getWaitChannel(), event.getChannel());
 	}
 	
 	@Override
-	public boolean handleEvent(final GuildMessageReactionAddEvent event) throws InterruptedException, ExecutionException, TimeoutException{
+	public boolean handleEvent(@NotNull GuildMessageReactionAddEvent event) throws InterruptedException, ExecutionException, TimeoutException{
 		return event.retrieveUser().submit()
 				.thenApply(user -> Objects.equals(getUser(), event.getUser())
 						&& Objects.equals(getWaitChannel(), event.getChannel())
@@ -102,14 +101,14 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 	
 	@Override
 	public long getEmoteMessageId(){
-		return this.getInfoMessages().stream().map(Message::getIdLong).findFirst().orElse(-1L);
+		return getInfoMessages().stream().map(Message::getIdLong).findFirst().orElse(-1L);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public User getUser(){
-		return this.waitUser;
+		return waitUser;
 	}
 	
-	protected abstract boolean onExecute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args);
+	protected abstract boolean onExecute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args);
 }

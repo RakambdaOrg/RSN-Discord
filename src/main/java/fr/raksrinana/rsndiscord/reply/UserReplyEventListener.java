@@ -3,10 +3,10 @@ package fr.raksrinana.rsndiscord.reply;
 import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.log.Log;
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +25,7 @@ public class UserReplyEventListener extends ListenerAdapter{
 	private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	private static final List<IWaitingUserReply> replies = new ArrayList<>();
 	
-	public static void handleReply(@NonNull final IWaitingUserReply reply){
+	public static void handleReply(@NotNull IWaitingUserReply reply){
 		replies.add(reply);
 	}
 	
@@ -35,27 +35,27 @@ public class UserReplyEventListener extends ListenerAdapter{
 			try{
 				reply.close();
 			}
-			catch(final IOException e){
+			catch(IOException e){
 				Log.getLogger(null).error("Failed to close reply handler", e);
 			}
 		});
 	}
 	
 	@Override
-	public void onGuildMessageReceived(@NonNull final GuildMessageReceivedEvent event){
+	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
 		try{
 			replies.removeIf(reply -> reply.isHandled()
 					|| (reply.handleEvent(event) && reply.execute(event, Arrays.stream(event.getMessage().getContentRaw().split(" "))
 					.collect(Collectors.toCollection(LinkedList::new)))));
 		}
-		catch(final Exception e){
+		catch(Exception e){
 			Log.getLogger(event.getGuild()).error("Failed to handle user reply", e);
 		}
 	}
 	
 	@Override
-	public void onGuildMessageReactionAdd(@NonNull final GuildMessageReactionAddEvent event){
+	public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event){
 		super.onGuildMessageReactionAdd(event);
 		try{
 			replies.removeIf(reply -> {
@@ -69,7 +69,7 @@ public class UserReplyEventListener extends ListenerAdapter{
 				return false;
 			});
 		}
-		catch(final Exception e){
+		catch(Exception e){
 			Log.getLogger(event.getGuild()).error("Failed to handle user reply", e);
 		}
 	}

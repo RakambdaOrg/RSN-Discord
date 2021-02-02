@@ -8,12 +8,13 @@ import fr.raksrinana.rsndiscord.settings.guild.schedule.DeleteMessageScheduleCon
 import fr.raksrinana.rsndiscord.settings.guild.schedule.ScheduleConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.SortedList;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Objects;
@@ -34,7 +35,8 @@ public class ScheduleUtils{
 	 * @param schedule The schedule to add.
 	 * @param channel  The channel to send the message to.
 	 */
-	public static CompletableFuture<Message> addScheduleAndNotify(@NonNull ScheduleConfiguration schedule, @NonNull TextChannel channel){
+	@NotNull
+	public static CompletableFuture<Message> addScheduleAndNotify(@NotNull ScheduleConfiguration schedule, @NotNull TextChannel channel){
 		return addScheduleAndNotify(schedule, channel, null);
 	}
 	
@@ -44,7 +46,8 @@ public class ScheduleUtils{
 	 * @param schedule The schedule to add.
 	 * @param channel  The channel to send the message to.
 	 */
-	public static CompletableFuture<Message> addScheduleAndNotify(@NonNull ScheduleConfiguration schedule, @NonNull TextChannel channel, Consumer<EmbedBuilder> embedBuilderConsumer){
+	@NotNull
+	public static CompletableFuture<Message> addScheduleAndNotify(@NotNull ScheduleConfiguration schedule, @NotNull TextChannel channel, @Nullable Consumer<EmbedBuilder> embedBuilderConsumer){
 		addSchedule(channel.getGuild(), schedule);
 		
 		var content = translate(channel.getGuild(), "schedule.scheduled", schedule.getScheduleDate().format(DATE_TIME_MINUTE_FORMATTER));
@@ -63,11 +66,12 @@ public class ScheduleUtils{
 	 * @param guild    The guild where it is from.
 	 * @param schedule The schedule to add.
 	 */
-	public static void addSchedule(@NonNull Guild guild, @NonNull ScheduleConfiguration schedule){
+	public static void addSchedule(@NotNull Guild guild, @NotNull ScheduleConfiguration schedule){
 		Settings.get(guild).addSchedule(schedule);
 	}
 	
-	public static MessageEmbed getEmbedFor(@NonNull Guild guild, @NonNull ScheduleConfiguration reminder, Consumer<EmbedBuilder> embedBuilderConsumer){
+	@NotNull
+	public static MessageEmbed getEmbedFor(@NotNull Guild guild, @NotNull ScheduleConfiguration reminder, @Nullable Consumer<EmbedBuilder> embedBuilderConsumer){
 		var notifyDate = reminder.getScheduleDate();
 		var author = reminder.getUser().getUser().orElse(guild.getJDA().getSelfUser());
 		
@@ -85,7 +89,8 @@ public class ScheduleUtils{
 		return builder.build();
 	}
 	
-	public static MessageEmbed getEmbedFor(@NonNull Guild guild, @NonNull ScheduleConfiguration reminder){
+	@NotNull
+	public static MessageEmbed getEmbedFor(@NotNull Guild guild, @NotNull ScheduleConfiguration reminder){
 		return getEmbedFor(guild, reminder, null);
 	}
 	
@@ -95,23 +100,25 @@ public class ScheduleUtils{
 				.forEach(ScheduleUtils::addHandler);
 	}
 	
-	public static void addHandler(@NonNull IScheduleHandler handler){
+	public static void addHandler(@NotNull IScheduleHandler handler){
 		handlers.add(handler);
 	}
 	
-	public static Collection<IScheduleHandler> getHandlers(){
-		return handlers;
-	}
-	
-	public static Consumer<Message> deleteMessage(Function<ZonedDateTime, ZonedDateTime> applyDelay){
+	@NotNull
+	public static Consumer<Message> deleteMessage(@NotNull Function<ZonedDateTime, ZonedDateTime> applyDelay){
 		return message -> deleteMessage(message, applyDelay);
 	}
 	
-	public static void deleteMessage(Message message, Function<ZonedDateTime, ZonedDateTime> applyDelay){
+	public static void deleteMessage(@NotNull Message message, @NotNull Function<ZonedDateTime, ZonedDateTime> applyDelay){
 		addSchedule(message.getGuild(), new DeleteMessageScheduleConfiguration(
 				message.getAuthor(),
 				applyDelay.apply(ZonedDateTime.now()),
 				message
 		));
+	}
+	
+	@NotNull
+	public static Collection<IScheduleHandler> getHandlers(){
+		return handlers;
 	}
 }

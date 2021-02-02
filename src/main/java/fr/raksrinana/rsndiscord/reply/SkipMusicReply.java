@@ -6,11 +6,11 @@ import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.schedule.ScheduleUtils;
 import fr.raksrinana.rsndiscord.settings.guild.schedule.DeleteMessageScheduleConfiguration;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,14 +25,14 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 	private int votesRequired;
 	private final AudioTrack audioTrack;
 	
-	public SkipMusicReply(final GuildMessageReceivedEvent event, final Message message, int votesRequired, AudioTrack audioTrack){
+	public SkipMusicReply(GuildMessageReceivedEvent event, Message message, int votesRequired, AudioTrack audioTrack){
 		super(event, event.getAuthor(), event.getChannel(), 20, SECONDS, message);
 		this.votesRequired = votesRequired;
 		this.audioTrack = audioTrack;
 	}
 	
 	@Override
-	protected boolean onExecute(@NonNull final GuildMessageReactionAddEvent event){
+	protected boolean onExecute(@NotNull GuildMessageReactionAddEvent event){
 		if(Objects.equals(event.getUser(), event.getJDA().getSelfUser())){
 			return false;
 		}
@@ -65,7 +65,7 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 		return false;
 	}
 	
-	private boolean count(GuildMessageReactionAddEvent event) throws InterruptedException, ExecutionException, TimeoutException{
+	private boolean count(@NotNull GuildMessageReactionAddEvent event) throws InterruptedException, ExecutionException, TimeoutException{
 		var count = event.retrieveMessage().submit()
 				.thenApply(message -> message.getReactions().stream()
 						.filter(r -> BasicEmotes.getEmote(r.getReactionEmote().getName()) == CHECK_OK)
@@ -76,8 +76,8 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 		return count >= votesRequired;
 	}
 	
-	@NonNull
-	private Boolean isSameTrack(@NonNull GuildMessageReactionAddEvent event){
+	@NotNull
+	private Boolean isSameTrack(@NotNull GuildMessageReactionAddEvent event){
 		return RSNAudioManager.currentTrack(event.getGuild())
 				.map(track -> Objects.equals(track, audioTrack))
 				.orElse(false);
@@ -89,8 +89,18 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 		return true;
 	}
 	
+	@Override
+	public boolean handleEvent(@NotNull GuildMessageReactionAddEvent event){
+		return Objects.equals(getWaitChannel(), event.getChannel()) && Objects.equals(getEmoteMessageId(), event.getMessageIdLong());
+	}
+	
+	@Override
+	protected boolean onExecute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
+		return false;
+	}
+	
 	private void stop(){
-		var channel = this.getWaitChannel();
+		var channel = getWaitChannel();
 		var guild = channel.getGuild();
 		
 		Log.getLogger(guild).info("Vote note successful, music not skipped");
@@ -100,15 +110,5 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 		var deleteMessageScheduleConfiguration = new DeleteMessageScheduleConfiguration(channel.getJDA().getSelfUser(),
 				ZonedDateTime.now().plusMinutes(5), channel, getOriginalMessageId());
 		ScheduleUtils.addSchedule(guild, deleteMessageScheduleConfiguration);
-	}
-	
-	@Override
-	public boolean handleEvent(final GuildMessageReactionAddEvent event){
-		return Objects.equals(this.getWaitChannel(), event.getChannel()) && Objects.equals(this.getEmoteMessageId(), event.getMessageIdLong());
-	}
-	
-	@Override
-	protected boolean onExecute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
-		return false;
 	}
 }

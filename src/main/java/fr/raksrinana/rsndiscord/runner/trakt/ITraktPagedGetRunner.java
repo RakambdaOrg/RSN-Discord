@@ -8,35 +8,34 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import static java.awt.Color.RED;
 import static java.util.stream.Collectors.toSet;
 
 public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPagedGetRequest<T>> extends IScheduledRunner{
 	default void runQueryOnDefaultUsersChannels(){
-		this.runQuery(getMembers(), getChannels());
+		runQuery(getMembers(), getChannels());
 	}
 	
-	Set<TextChannel> getChannels();
-	
-	String getFetcherID();
-	
-	default void runQuery(@NonNull final Set<Member> members, @NonNull final Set<TextChannel> channels){
+	default void runQuery(@NotNull Set<Member> members, @NotNull Set<TextChannel> channels){
 		var userElements = new HashMap<User, Set<T>>();
 		for(var member : members){
 			userElements.computeIfAbsent(member.getUser(), user -> {
 				try{
 					return getElements(member);
 				}
-				catch(final Exception e){
+				catch(Exception e){
 					Log.getLogger(member.getGuild()).error("Error fetching user {} on Trakt", member, e);
 				}
 				return null;
@@ -46,8 +45,9 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 		sendMessages(channels, userElements);
 	}
 	
+	@NotNull
 	default Set<Member> getMembers(){
-		return this.getChannels().stream().flatMap(channel -> Settings.getGeneral()
+		return getChannels().stream().flatMap(channel -> Settings.getGeneral()
 				.getTrakt()
 				.getRegisteredUsers()
 				.stream()
@@ -56,8 +56,11 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 				.collect(toSet());
 	}
 	
-	@NonNull
-	default Set<T> getElements(@NonNull final Member member) throws Exception{
+	@NotNull
+	Set<TextChannel> getChannels();
+	
+	@NotNull
+	default Set<T> getElements(@NotNull Member member) throws Exception{
 		var guild = member.getGuild();
 		var user = member.getUser();
 		
@@ -92,19 +95,7 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 		return elementList;
 	}
 	
-	@NonNull U initQuery(@NonNull Member member);
-	
-	boolean isKeepOnlyNew();
-	
-	default boolean sendToChannel(final TextChannel channel, final User user){
-		return Settings.getGeneral().getTrakt().isRegisteredOn(channel.getGuild(), user);
-	}
-	
-	default boolean isSortedByUser(){
-		return false;
-	}
-	
-	default void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<T>> userElements){
+	default void sendMessages(@NotNull Set<TextChannel> channels, @NotNull Map<User, Set<T>> userElements){
 		if(isSortedByUser()){
 			for(var entry : userElements.entrySet()){
 				var user = entry.getKey();
@@ -133,18 +124,32 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 		}
 	}
 	
-	default void buildMessage(@NonNull Guild guild, final EmbedBuilder builder, final User user, @NonNull final T change){
+	@NotNull U initQuery(@NotNull Member member);
+	
+	boolean isKeepOnlyNew();
+	
+	@NotNull
+	String getFetcherID();
+	
+	default boolean isSortedByUser(){
+		return false;
+	}
+	
+	default boolean sendToChannel(@NotNull TextChannel channel, @NotNull User user){
+		return Settings.getGeneral().getTrakt().isRegisteredOn(channel.getGuild(), user);
+	}
+	
+	default void buildMessage(@NotNull Guild guild, @NotNull EmbedBuilder builder, @NotNull User user, @NotNull T change){
 		try{
-			var author = Optional.ofNullable(user).orElse(getJda().getSelfUser());
-			builder.setAuthor(author.getName(), null, author.getAvatarUrl());
+			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 			change.fillEmbed(guild, builder);
 		}
-		catch(final Exception e){
-			Log.getLogger(null).error("Error building message for {}", this.getName(), e);
+		catch(Exception e){
+			Log.getLogger(null).error("Error building message for {}", getName(), e);
 			builder.addField("Error", e.getClass().getName() + " => " + e.getMessage(), false);
 			builder.setColor(RED);
 		}
 	}
 	
-	@NonNull JDA getJda();
+	@NotNull JDA getJda();
 }

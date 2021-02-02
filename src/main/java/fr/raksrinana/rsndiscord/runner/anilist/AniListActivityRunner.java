@@ -7,10 +7,10 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -20,11 +20,12 @@ public class AniListActivityRunner implements IAniListRunner<ListActivity, Activ
 	@Getter
 	private final JDA jda;
 	
-	public AniListActivityRunner(@NonNull JDA jda){
+	public AniListActivityRunner(@NotNull JDA jda){
 		this.jda = jda;
 	}
 	
 	@Override
+	@NotNull
 	public Set<TextChannel> getChannels(){
 		return getJda().getGuilds().stream()
 				.flatMap(guild -> Settings.get(guild).getAniListConfiguration()
@@ -34,13 +35,10 @@ public class AniListActivityRunner implements IAniListRunner<ListActivity, Activ
 				.collect(Collectors.toSet());
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public ActivityPagedQuery initQuery(@NonNull Member member){
-		return new ActivityPagedQuery(AniListApi.getUserId(member).orElseThrow(),
-				Settings.getGeneral().getAniList().getLastAccess(getFetcherID(), member.getIdLong())
-						.map(UserDateConfiguration::getDate)
-						.orElse(AniListApi.getDefaultDate()));
+	public String getFetcherID(){
+		return "listActivity";
 	}
 	
 	@Override
@@ -48,10 +46,13 @@ public class AniListActivityRunner implements IAniListRunner<ListActivity, Activ
 		return true;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getFetcherID(){
-		return "listActivity";
+	public ActivityPagedQuery initQuery(@NotNull Member member){
+		return new ActivityPagedQuery(AniListApi.getUserId(member).orElseThrow(),
+				Settings.getGeneral().getAniList().getLastAccess(getFetcherID(), member.getIdLong())
+						.map(UserDateConfiguration::getDate)
+						.orElse(AniListApi.getDefaultDate()));
 	}
 	
 	@Override
@@ -64,10 +65,10 @@ public class AniListActivityRunner implements IAniListRunner<ListActivity, Activ
 		return 1;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public TimeUnit getPeriodUnit(){
-		return HOURS;
+	public String getName(){
+		return "AniList list activity";
 	}
 	
 	@Override
@@ -75,9 +76,9 @@ public class AniListActivityRunner implements IAniListRunner<ListActivity, Activ
 		runQueryOnDefaultUsersChannels();
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(){
-		return "AniList list activity";
+	public TimeUnit getPeriodUnit(){
+		return HOURS;
 	}
 }

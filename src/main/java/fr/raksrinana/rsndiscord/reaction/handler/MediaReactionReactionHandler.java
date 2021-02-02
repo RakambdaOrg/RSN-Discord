@@ -7,8 +7,8 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.CategoryConfiguration;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
-import lombok.NonNull;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -23,17 +23,18 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @ReactionHandler
 public class MediaReactionReactionHandler extends TodoReactionHandler{
 	@Override
-	public boolean acceptTag(@NonNull ReactionTag tag){
+	public boolean acceptTag(@NotNull ReactionTag tag){
 		return Objects.equals(tag, MEDIA_REACTION);
 	}
 	
 	@Override
-	protected boolean isValidEmote(@NonNull BasicEmotes emote){
+	protected boolean isValidEmote(@NotNull BasicEmotes emote){
 		return emote == PACKAGE;
 	}
 	
 	@Override
-	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emotes, @NonNull WaitingReactionMessageConfiguration todo) throws InterruptedException, ExecutionException, TimeoutException{
+	@NotNull
+	protected ReactionHandlerResult processTodoCompleted(@NotNull GuildMessageReactionAddEvent event, @NotNull BasicEmotes emotes, @NotNull WaitingReactionMessageConfiguration todo) throws InterruptedException, ExecutionException, TimeoutException{
 		var guild = event.getGuild();
 		var channel = event.getChannel();
 		var user = event.retrieveUser().submit().get(30, SECONDS);

@@ -6,10 +6,10 @@ import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.net.URL;
 import java.util.HashSet;
@@ -23,9 +23,9 @@ public class StreamsRunner implements IScheduledRunner{
 	private final JDA jda;
 	private final Set<String> hermitAlreadyNotified;
 	
-	public StreamsRunner(@NonNull JDA jda){
+	public StreamsRunner(@NotNull JDA jda){
 		this.jda = jda;
-		this.hermitAlreadyNotified = new HashSet<>();
+		hermitAlreadyNotified = new HashSet<>();
 	}
 	
 	@Override
@@ -33,9 +33,9 @@ public class StreamsRunner implements IScheduledRunner{
 		HermitcraftApi.getHermits().ifPresent(hermits -> {
 			for(var hermit : hermits){
 				if(hermit.isLive()){
-					if(!this.hermitAlreadyNotified.contains(hermit.getChannelId())){
-						this.hermitAlreadyNotified.add(hermit.getChannelId());
-						this.jda.getGuilds().forEach(guild -> Settings.get(guild)
+					if(!hermitAlreadyNotified.contains(hermit.getChannelId())){
+						hermitAlreadyNotified.add(hermit.getChannelId());
+						jda.getGuilds().forEach(guild -> Settings.get(guild)
 								.getHermitcraftConfiguration()
 								.getStreamingNotificationChannel()
 								.flatMap(ChannelConfiguration::getChannel)
@@ -43,7 +43,7 @@ public class StreamsRunner implements IScheduledRunner{
 					}
 				}
 				else{
-					this.hermitAlreadyNotified.remove(hermit.getChannelId());
+					hermitAlreadyNotified.remove(hermit.getChannelId());
 				}
 			}
 		});
@@ -54,7 +54,7 @@ public class StreamsRunner implements IScheduledRunner{
 		return 2;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public String getName(){
 		return "Hermitcraft stream fetcher";
@@ -65,13 +65,13 @@ public class StreamsRunner implements IScheduledRunner{
 		return 5;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return MINUTES;
 	}
 	
-	private void sendStream(Hermit hermit, TextChannel channel){
+	private void sendStream(@NotNull Hermit hermit, @NotNull TextChannel channel){
 		var selfUser = jda.getSelfUser();
 		var url = hermit.getLiveUrl().map(URL::toString).orElse(null);
 		

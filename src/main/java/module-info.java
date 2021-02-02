@@ -21,5 +21,5 @@ open module fr.raksrinana.rsndiscord {
 	requires thumbnailator;
 	requires org.twitter4j.core;
 	requires static lombok;
-	requires static annotations;
+	requires static org.jetbrains.annotations;
 }

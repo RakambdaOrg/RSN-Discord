@@ -2,10 +2,10 @@ package fr.raksrinana.rsndiscord.reply;
 
 import fr.raksrinana.rsndiscord.command.impl.StopwatchCommand;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -18,7 +18,6 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static fr.raksrinana.rsndiscord.utils.Utilities.durationToString;
 import static java.time.Duration.ZERO;
 import static java.time.Duration.between;
-import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -28,10 +27,10 @@ public class StopwatchReply extends BasicWaitingUserReply{
 	private ZonedDateTime lastStart = ZonedDateTime.now();
 	private Duration totalTime = ZERO;
 	
-	public StopwatchReply(final GuildMessageReceivedEvent event, final Message message){
+	public StopwatchReply(@NotNull GuildMessageReceivedEvent event, @NotNull Message message){
 		super(event, event.getAuthor(), event.getChannel(), 1, DAYS, message);
-		this.executor = Executors.newSingleThreadScheduledExecutor();
-		this.executor.scheduleAtFixedRate(this::updateTimer, 5, 10, SECONDS);
+		executor = Executors.newSingleThreadScheduledExecutor();
+		executor.scheduleAtFixedRate(this::updateTimer, 5, 10, SECONDS);
 	}
 	
 	private void updateTimer(){
@@ -45,41 +44,39 @@ public class StopwatchReply extends BasicWaitingUserReply{
 	@Override
 	public void close() throws IOException{
 		super.close();
-		this.executor.shutdownNow();
+		executor.shutdownNow();
 	}
 	
 	@Override
-	protected boolean onExecute(@NonNull final GuildMessageReactionAddEvent event){
+	protected boolean onExecute(@NotNull GuildMessageReactionAddEvent event){
 		if(!Objects.equals(event.getUser(), event.getJDA().getSelfUser())){
 			var replyEmote = BasicEmotes.getEmote(event.getReactionEmote().getName());
-			if(nonNull(replyEmote)){
-				if(replyEmote == S){
-					stop();
-					return true;
+			if(replyEmote == S){
+				stop();
+				return true;
+			}
+			if(counting){
+				if(replyEmote == P){
+					counting = false;
+					totalTime = totalTime.plus(between(lastStart, ZonedDateTime.now()));
 				}
-				if(this.counting){
-					if(replyEmote == P){
-						this.counting = false;
-						this.totalTime = this.totalTime.plus(between(this.lastStart, ZonedDateTime.now()));
-					}
+			}
+			else{
+				if(replyEmote == R){
+					counting = true;
+					lastStart = ZonedDateTime.now();
+				}
+			}
+			getInfoMessages().stream().findFirst().ifPresent(message -> {
+				message.clearReactions().queue();
+				if(counting){
+					message.addReaction(P.getValue()).submit();
 				}
 				else{
-					if(replyEmote == R){
-						this.counting = true;
-						this.lastStart = ZonedDateTime.now();
-					}
+					message.addReaction(R.getValue()).submit();
 				}
-				getInfoMessages().stream().findFirst().ifPresent(message -> {
-					message.clearReactions().queue();
-					if(counting){
-						message.addReaction(P.getValue()).submit();
-					}
-					else{
-						message.addReaction(R.getValue()).submit();
-					}
-					message.addReaction(S.getValue()).submit();
-				});
-			}
+				message.addReaction(S.getValue()).submit();
+			});
 		}
 		return false;
 	}
@@ -91,21 +88,21 @@ public class StopwatchReply extends BasicWaitingUserReply{
 	}
 	
 	@Override
-	public boolean handleEvent(final GuildMessageReactionAddEvent event){
-		return Objects.equals(this.getWaitChannel(), event.getChannel()) && Objects.equals(this.getEmoteMessageId(), event.getMessageIdLong());
+	public boolean handleEvent(@NotNull GuildMessageReactionAddEvent event){
+		return Objects.equals(getWaitChannel(), event.getChannel()) && Objects.equals(getEmoteMessageId(), event.getMessageIdLong());
 	}
 	
 	@Override
-	protected boolean onExecute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	protected boolean onExecute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		return false;
 	}
 	
 	private void stop(){
-		this.counting = false;
-		this.totalTime = this.totalTime.plus(between(this.lastStart, ZonedDateTime.now()));
-		this.executor.shutdown();
+		counting = false;
+		totalTime = totalTime.plus(between(lastStart, ZonedDateTime.now()));
+		executor.shutdown();
 		
-		var channel = this.getWaitChannel();
-		channel.sendMessage(translate(channel.getGuild(), "stopwatch.total-time", durationToString(this.totalTime))).submit();
+		var channel = getWaitChannel();
+		channel.sendMessage(translate(channel.getGuild(), "stopwatch.total-time", durationToString(totalTime))).submit();
 	}
 }

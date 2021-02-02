@@ -6,11 +6,11 @@ import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import static java.util.Comparator.comparing;
@@ -23,13 +23,36 @@ public class AniListNotificationRunner implements IAniListRunner<INotification, 
 	@Getter
 	private final JDA jda;
 	
-	public AniListNotificationRunner(@NonNull final JDA jda){
+	public AniListNotificationRunner(@NotNull JDA jda){
 		this.jda = jda;
 	}
 	
 	@Override
+	public void execute(){
+		runQueryOnDefaultUsersChannels();
+	}
+	
+	@NotNull
+	@Override
+	public String getName(){
+		return "Notification";
+	}
+	
+	@NotNull
+	@Override
+	public TimeUnit getPeriodUnit(){
+		return MINUTES;
+	}
+	
+	@Override
+	public boolean isKeepOnlyNew(){
+		return true;
+	}
+	
+	@Override
+	@NotNull
 	public Set<TextChannel> getChannels(){
-		return this.getJda().getGuilds().stream()
+		return getJda().getGuilds().stream()
 				.flatMap(g -> Settings.get(g).getAniListConfiguration()
 						.getNotificationsChannel()
 						.map(ChannelConfiguration::getChannel)
@@ -39,8 +62,19 @@ public class AniListNotificationRunner implements IAniListRunner<INotification, 
 				.collect(toSet());
 	}
 	
+	@NotNull
 	@Override
-	public void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<INotification>> userElements){
+	public String getFetcherID(){
+		return "notification";
+	}
+	
+	@Override
+	public long getDelay(){
+		return 1;
+	}
+	
+	@Override
+	public void sendMessages(@NotNull Set<TextChannel> channels, @NotNull Map<User, Set<INotification>> userElements){
 		var notifications = new HashMap<INotification, List<User>>();
 		for(var entry : userElements.entrySet()){
 			for(var notification : entry.getValue()){
@@ -52,55 +86,22 @@ public class AniListNotificationRunner implements IAniListRunner<INotification, 
 				.sorted(comparing(e -> e.getKey().getDate()))
 				.forEachOrdered(e -> channels.forEach(channel -> {
 					var mentions = e.getValue().stream()
-							.filter(user -> this.shouldSendTo(channel, user))
+							.filter(user -> shouldSendTo(channel, user))
 							.distinct()
 							.map(User::getAsMention)
 							.collect(toList());
 					if(!mentions.isEmpty()){
 						channel.sendMessage(String.join("\n", mentions))
-								.embed(this.buildMessage(channel.getGuild(), null, e.getKey()))
+								.embed(buildMessage(channel.getGuild(), null, e.getKey()))
 								.submit();
 					}
 				}));
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public NotificationsPagedQuery initQuery(@NonNull final Member member){
+	public NotificationsPagedQuery initQuery(@NotNull Member member){
 		return new NotificationsPagedQuery();
-	}
-	
-	@Override
-	public boolean isKeepOnlyNew(){
-		return true;
-	}
-	
-	@NonNull
-	@Override
-	public String getFetcherID(){
-		return "notification";
-	}
-	
-	@Override
-	public void execute(){
-		this.runQueryOnDefaultUsersChannels();
-	}
-	
-	@Override
-	public long getDelay(){
-		return 1;
-	}
-	
-	@NonNull
-	@Override
-	public TimeUnit getPeriodUnit(){
-		return MINUTES;
-	}
-	
-	@NonNull
-	@Override
-	public String getName(){
-		return "Notification";
 	}
 	
 	@Override

@@ -3,14 +3,14 @@ package fr.raksrinana.rsndiscord.runner.settings;
 import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
+import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.TimeUnit;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 @ScheduledRunner
 public class SaveConfigRunner implements IScheduledRunner{
-	public SaveConfigRunner(@NonNull JDA jda){
+	public SaveConfigRunner(@NotNull JDA jda){
 	}
 	
 	@Override
@@ -23,10 +23,10 @@ public class SaveConfigRunner implements IScheduledRunner{
 		return 5;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public TimeUnit getPeriodUnit(){
-		return MINUTES;
+	public String getName(){
+		return "Config saver";
 	}
 	
 	@Override
@@ -34,9 +34,9 @@ public class SaveConfigRunner implements IScheduledRunner{
 		Settings.close();
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(){
-		return "Config saver";
+	public TimeUnit getPeriodUnit(){
+		return MINUTES;
 	}
 }

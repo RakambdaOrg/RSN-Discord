@@ -10,6 +10,6 @@ public enum ReactionHandlerResult{
 	ReactionHandlerResult(boolean terminal){this.terminal = terminal;}
 	
 	public boolean isTerminal(){
-		return this.terminal;
+		return terminal;
 	}
 }

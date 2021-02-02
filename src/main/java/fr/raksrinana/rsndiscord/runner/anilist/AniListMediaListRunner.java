@@ -14,10 +14,10 @@ import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.requests.RestAction;
+import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -34,48 +34,30 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 	@Getter
 	private final JDA jda;
 	
-	public AniListMediaListRunner(@NonNull final JDA jda){
+	public AniListMediaListRunner(@NotNull JDA jda){
 		this.jda = jda;
 	}
 	
-	@Override
-	public Set<TextChannel> getChannels(){
-		return getJda().getGuilds().stream()
-				.flatMap(g -> Settings.get(g).getAniListConfiguration()
-						.getMediaChangeChannel()
-						.flatMap(ChannelConfiguration::getChannel)
-						.stream())
-				.filter(Objects::nonNull)
-				.collect(Collectors.toSet());
+	private static Collection<WaitingReactionMessageConfiguration> getSimilarWaitingReactions(@NotNull TextChannel channel, @NotNull IMedia media){
+		var footer = "ID: " + media.getId();
+		return Settings.get(channel.getGuild()).getMessagesAwaitingReaction(ANILIST_TODO).stream()
+				.filter(reaction -> {
+					if(Objects.equals(reaction.getMessage().getChannel().getChannelId(), channel.getIdLong())){
+						return reaction.getMessage().getMessage()
+								.map(message -> isSameMedia(footer, reaction, message))
+								.orElse(false);
+					}
+					return false;
+				}).collect(toList());
 	}
 	
-	@Override
-	public void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<MediaList>> userElements){
-		IAniListRunner.super.sendMessages(channels, userElements);
-		var thaChannels = getJda().getGuilds().stream()
-				.map(Settings::get)
-				.map(GuildConfiguration::getAniListConfiguration)
-				.map(AniListConfiguration::getThaChannel)
-				.flatMap(Optional::stream)
-				.map(ChannelConfiguration::getChannel)
-				.flatMap(Optional::stream)
-				.collect(Collectors.toSet());
-		var mediaListsToSend = userElements.values().stream().flatMap(Set::stream)
-				.filter(mediaList -> mediaList.getCustomLists()
-						.entrySet().stream()
-						.filter(Map.Entry::getValue)
-						.map(Map.Entry::getKey)
-						.anyMatch(acceptedThaLists::contains))
-				.collect(toList());
-		thaChannels.forEach(channelToSend -> Settings.get(channelToSend.getGuild())
-				.getAniListConfiguration()
-				.getThaUser()
-				.flatMap(UserConfiguration::getUser)
-				.map(channelToSend.getGuild()::retrieveMember)
-				.map(RestAction::complete)
-				.ifPresent(memberToSend -> mediaListsToSend.stream()
-						.sorted()
-						.forEach(mediaListToSend -> sendMediaList(channelToSend, memberToSend, mediaListToSend))));
+	@NotNull
+	private static Boolean isSameMedia(String footer, WaitingReactionMessageConfiguration reaction, Message message){
+		var isDeleteMode = ofNullable(reaction.getData().get(DELETE_KEY)).map(Boolean::parseBoolean).orElse(false);
+		var isSameMedia = message.getEmbeds().stream()
+				.anyMatch(embed -> Objects.equals(embed.getTitle(), "User list information")
+						&& Objects.equals(ofNullable(embed.getFooter()).map(MessageEmbed.Footer::getText).orElse(null), footer));
+		return isSameMedia && isDeleteMode;
 	}
 	
 	private void sendMediaList(TextChannel channel, Member member, MediaList mediaList){
@@ -105,40 +87,36 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 						}));
 	}
 	
-	private static Collection<WaitingReactionMessageConfiguration> getSimilarWaitingReactions(@NonNull final TextChannel channel, @NonNull final IMedia media){
-		var footer = "ID: " + media.getId();
-		return Settings.get(channel.getGuild()).getMessagesAwaitingReaction(ANILIST_TODO).stream()
-				.filter(reaction -> {
-					if(Objects.equals(reaction.getMessage().getChannel().getChannelId(), channel.getIdLong())){
-						return reaction.getMessage().getMessage()
-								.map(message -> isSameMedia(footer, reaction, message))
-								.orElse(false);
-					}
-					return false;
-				}).collect(toList());
-	}
-	
-	@NonNull
-	private static Boolean isSameMedia(String footer, WaitingReactionMessageConfiguration reaction, Message message){
-		var isDeleteMode = ofNullable(reaction.getData().get(DELETE_KEY)).map(Boolean::parseBoolean).orElse(false);
-		var isSameMedia = message.getEmbeds().stream()
-				.anyMatch(embed -> Objects.equals(embed.getTitle(), "User list information")
-						&& Objects.equals(ofNullable(embed.getFooter()).map(MessageEmbed.Footer::getText).orElse(null), footer));
-		return isSameMedia && isDeleteMode;
-	}
-	
-	@NonNull
-	@Override
-	public MediaListPagedQuery initQuery(@NonNull final Member member){
-		return new MediaListPagedQuery(AniListApi.getUserId(member).orElseThrow());
-	}
-	
 	@Override
 	public void execute(){
-		this.runQueryOnDefaultUsersChannels();
+		runQueryOnDefaultUsersChannels();
 	}
 	
-	@NonNull
+	@NotNull
+	@Override
+	public String getName(){
+		return "AniList media list";
+	}
+	
+	@NotNull
+	@Override
+	public TimeUnit getPeriodUnit(){
+		return HOURS;
+	}
+	
+	@Override
+	@NotNull
+	public Set<TextChannel> getChannels(){
+		return getJda().getGuilds().stream()
+				.flatMap(g -> Settings.get(g).getAniListConfiguration()
+						.getMediaChangeChannel()
+						.flatMap(ChannelConfiguration::getChannel)
+						.stream())
+				.filter(Objects::nonNull)
+				.collect(Collectors.toSet());
+	}
+	
+	@NotNull
 	@Override
 	public String getFetcherID(){
 		return "medialist";
@@ -149,16 +127,39 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 		return 0;
 	}
 	
-	@NonNull
 	@Override
-	public String getName(){
-		return "AniList media list";
+	public void sendMessages(@NotNull Set<TextChannel> channels, @NotNull Map<User, Set<MediaList>> userElements){
+		IAniListRunner.super.sendMessages(channels, userElements);
+		var thaChannels = getJda().getGuilds().stream()
+				.map(Settings::get)
+				.map(GuildConfiguration::getAniListConfiguration)
+				.map(AniListConfiguration::getThaChannel)
+				.flatMap(Optional::stream)
+				.map(ChannelConfiguration::getChannel)
+				.flatMap(Optional::stream)
+				.collect(Collectors.toSet());
+		var mediaListsToSend = userElements.values().stream().flatMap(Set::stream)
+				.filter(mediaList -> mediaList.getCustomLists()
+						.entrySet().stream()
+						.filter(Map.Entry::getValue)
+						.map(Map.Entry::getKey)
+						.anyMatch(acceptedThaLists::contains))
+				.collect(toList());
+		thaChannels.forEach(channelToSend -> Settings.get(channelToSend.getGuild())
+				.getAniListConfiguration()
+				.getThaUser()
+				.flatMap(UserConfiguration::getUser)
+				.map(channelToSend.getGuild()::retrieveMember)
+				.map(RestAction::complete)
+				.ifPresent(memberToSend -> mediaListsToSend.stream()
+						.sorted()
+						.forEach(mediaListToSend -> sendMediaList(channelToSend, memberToSend, mediaListToSend))));
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public TimeUnit getPeriodUnit(){
-		return HOURS;
+	public MediaListPagedQuery initQuery(@NotNull Member member){
+		return new MediaListPagedQuery(AniListApi.getUserId(member).orElseThrow());
 	}
 	
 	@Override

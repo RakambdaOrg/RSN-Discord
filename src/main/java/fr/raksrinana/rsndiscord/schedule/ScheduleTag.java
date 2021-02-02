@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -18,8 +18,8 @@ public enum ScheduleTag{
 	UNBAN_USER;
 	
 	@JsonCreator
-	@NonNull
-	public static ScheduleTag getFromString(@NonNull final String value){
+	@NotNull
+	public static ScheduleTag getFromString(@NotNull String value){
 		return ScheduleTag.valueOf(value);
 	}
 }

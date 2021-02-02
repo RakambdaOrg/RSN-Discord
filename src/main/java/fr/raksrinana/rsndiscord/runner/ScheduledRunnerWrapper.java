@@ -2,13 +2,13 @@ package fr.raksrinana.rsndiscord.runner;
 
 import fr.raksrinana.rsndiscord.log.Log;
 import lombok.Getter;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 public class ScheduledRunnerWrapper implements Runnable{
 	private final IScheduledRunner runner;
 	
-	public ScheduledRunnerWrapper(@NonNull IScheduledRunner runner){
+	public ScheduledRunnerWrapper(@NotNull IScheduledRunner runner){
 		this.runner = runner;
 		Log.getLogger(null).info("Created {} scheduler runner", runner.getName());
 	}

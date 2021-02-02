@@ -6,11 +6,11 @@ import fr.raksrinana.rsndiscord.api.anilist.data.media.MediaType;
 import fr.raksrinana.rsndiscord.api.anilist.query.MediaListPagedQuery;
 import fr.raksrinana.rsndiscord.runner.anilist.IAniListRunner;
 import lombok.Getter;
-import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -24,7 +24,7 @@ class MediaListDifferencesRunner implements IAniListRunner<MediaList, MediaListP
 	private final Member member1;
 	private final Member member2;
 	
-	public MediaListDifferencesRunner(@NonNull final JDA jda, @NonNull final MediaType type, @NonNull final TextChannel channel, @NonNull final Member member1, @NonNull final Member member2){
+	public MediaListDifferencesRunner(@NotNull JDA jda, @NotNull MediaType type, @NotNull TextChannel channel, @NotNull Member member1, @NotNull Member member2){
 		this.jda = jda;
 		this.type = type;
 		this.channel = channel;
@@ -34,7 +34,7 @@ class MediaListDifferencesRunner implements IAniListRunner<MediaList, MediaListP
 	
 	@Override
 	public void execute(){
-		this.runQueryOnDefaultUsersChannels();
+		runQueryOnDefaultUsersChannels();
 	}
 	
 	@Override
@@ -42,7 +42,7 @@ class MediaListDifferencesRunner implements IAniListRunner<MediaList, MediaListP
 		return 0;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public String getName(){
 		return "AniList list differences";
@@ -54,37 +54,37 @@ class MediaListDifferencesRunner implements IAniListRunner<MediaList, MediaListP
 	}
 	
 	@Override
-	public Set<TextChannel> getChannels(){
-		return Set.of(this.channel);
-	}
-	
-	@Override
-	public Set<Member> getMembers(){
-		return Set.of(this.member1, this.member2);
-	}
-	
-	@Override
-	public void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<MediaList>> userMedias){
-		if(userMedias.containsKey(this.member1.getUser()) && userMedias.containsKey(this.member2.getUser())){
-			final var user2Medias = userMedias.get(this.member2.getUser());
-			userMedias.get(this.member1.getUser()).stream()
-					.filter(user1Media -> user1Media.getMedia().getType().equals(this.type))
-					.filter(user2Medias::contains)
-					.sorted()
-					.map(commonMedia -> buildMessage(this.channel.getGuild(), null, commonMedia))
-					.forEach(embed -> this.channel.sendMessage(embed).submit());
-		}
-	}
-	
-	@Override
-	public @NonNull TimeUnit getPeriodUnit(){
+	public @NotNull TimeUnit getPeriodUnit(){
 		return MINUTES;
 	}
 	
-	@NonNull
 	@Override
-	public MediaListPagedQuery initQuery(@NonNull final Member member){
-		return new MediaListPagedQuery(AniListApi.getUserId(member).orElseThrow());
+	public @NotNull Set<TextChannel> getChannels(){
+		return Set.of(channel);
+	}
+	
+	@Override
+	public @NotNull Set<Member> getMembers(){
+		return Set.of(member1, member2);
+	}
+	
+	@NotNull
+	@Override
+	public String getFetcherID(){
+		return "differences";
+	}
+	
+	@Override
+	public void sendMessages(@NotNull Set<TextChannel> channels, @NotNull Map<User, Set<MediaList>> userMedias){
+		if(userMedias.containsKey(member1.getUser()) && userMedias.containsKey(member2.getUser())){
+			var user2Medias = userMedias.get(member2.getUser());
+			userMedias.get(member1.getUser()).stream()
+					.filter(user1Media -> user1Media.getMedia().getType().equals(type))
+					.filter(user2Medias::contains)
+					.sorted()
+					.map(commonMedia -> buildMessage(channel.getGuild(), null, commonMedia))
+					.forEach(embed -> channel.sendMessage(embed).submit());
+		}
 	}
 	
 	@Override
@@ -92,9 +92,9 @@ class MediaListDifferencesRunner implements IAniListRunner<MediaList, MediaListP
 		return false;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getFetcherID(){
-		return "differences";
+	public MediaListPagedQuery initQuery(@NotNull Member member){
+		return new MediaListPagedQuery(AniListApi.getUserId(member).orElseThrow());
 	}
 }

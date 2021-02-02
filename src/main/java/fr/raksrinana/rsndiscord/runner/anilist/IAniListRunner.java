@@ -7,10 +7,10 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
+import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,16 +24,14 @@ public interface IAniListRunner<T extends IAniListObject, U extends IPagedQuery<
 		runQuery(getMembers(), getChannels());
 	}
 	
-	Set<TextChannel> getChannels();
-	
-	default void runQuery(@NonNull final Set<Member> members, @NonNull final Set<TextChannel> channels){
+	default void runQuery(@NotNull Set<Member> members, @NotNull Set<TextChannel> channels){
 		var userElements = new HashMap<User, Set<T>>();
 		for(var member : members){
 			userElements.computeIfAbsent(member.getUser(), user -> {
 				try{
 					return getElements(member);
 				}
-				catch(final Exception e){
+				catch(Exception e){
 					Log.getLogger(member.getGuild()).error("Error fetching user {} on AniList", member, e);
 				}
 				return null;
@@ -43,16 +41,8 @@ public interface IAniListRunner<T extends IAniListObject, U extends IPagedQuery<
 		sendMessages(channels, userElements);
 	}
 	
-	default Set<Member> getMembers(){
-		return getJda().getGuilds().stream()
-				.flatMap(guild -> Settings.getGeneral().getAniList().getRegisteredMembers(guild).stream())
-				.collect(toSet());
-	}
-	
-	@NonNull String getFetcherID();
-	
-	@NonNull
-	default Set<T> getElements(@NonNull final Member member) throws Exception{
+	@NotNull
+	default Set<T> getElements(@NotNull Member member) throws Exception{
 		var guild = member.getGuild();
 		var user = member.getUser();
 		Log.getLogger(guild).debug("Fetching user {}", member);
@@ -81,7 +71,7 @@ public interface IAniListRunner<T extends IAniListObject, U extends IPagedQuery<
 		return elementList;
 	}
 	
-	default void sendMessages(@NonNull final Set<TextChannel> channels, @NonNull final Map<User, Set<T>> userElements){
+	default void sendMessages(@NotNull Set<TextChannel> channels, @NotNull Map<User, Set<T>> userElements){
 		userElements.entrySet().stream()
 				.flatMap(entry -> entry.getValue().stream().map(val -> Map.entry(entry.getKey(), val)))
 				.sorted(Map.Entry.comparingByValue())
@@ -93,18 +83,16 @@ public interface IAniListRunner<T extends IAniListObject, U extends IPagedQuery<
 						}));
 	}
 	
-	@NonNull U initQuery(@NonNull Member member);
+	@NotNull U initQuery(@NotNull Member member);
 	
-	boolean isKeepOnlyNew();
+	@NotNull String getFetcherID();
 	
-	@NonNull JDA getJda();
-	
-	default boolean shouldSendTo(final TextChannel channel, final User user){
+	default boolean shouldSendTo(@NotNull TextChannel channel, @NotNull User user){
 		return Settings.getGeneral().getAniList().isRegisteredOn(channel.getGuild(), user);
 	}
 	
-	@NonNull
-	default MessageEmbed buildMessage(@NonNull Guild guild, final User user, @NonNull final T change){
+	@NotNull
+	default MessageEmbed buildMessage(@NotNull Guild guild, User user, @NotNull T change){
 		var builder = new EmbedBuilder();
 		
 		try{
@@ -113,11 +101,25 @@ public interface IAniListRunner<T extends IAniListObject, U extends IPagedQuery<
 			builder.setAuthor(author.getName(), change.getUrl().toString(), author.getAvatarUrl());
 			change.fillEmbed(guild, builder);
 		}
-		catch(final Exception e){
-			Log.getLogger(null).error("Error building message for {}", this.getName(), e);
+		catch(Exception e){
+			Log.getLogger(null).error("Error building message for {}", getName(), e);
 			builder.addField("Error", e.getClass().getName() + " => " + e.getMessage(), false)
 					.setColor(RED);
 		}
 		return builder.build();
+	}
+	
+	boolean isKeepOnlyNew();
+	
+	@NotNull JDA getJda();
+	
+	@NotNull
+	Set<TextChannel> getChannels();
+	
+	@NotNull
+	default Set<Member> getMembers(){
+		return getJda().getGuilds().stream()
+				.flatMap(guild -> Settings.getGeneral().getAniList().getRegisteredMembers(guild).stream())
+				.collect(toSet());
 	}
 }

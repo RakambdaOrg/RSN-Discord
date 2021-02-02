@@ -5,9 +5,9 @@ import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -23,15 +23,16 @@ import static fr.raksrinana.rsndiscord.utils.Utilities.MAIN_RAKSRINANA_ACCOUNT;
 @Slf4j
 public class ExternalTodoReactionHandler implements IReactionHandler{
 	@Override
-	public boolean acceptTag(@NonNull ReactionTag tag){
+	public boolean acceptTag(@NotNull ReactionTag tag){
 		return Objects.equals(tag, EXTERNAL_TODO);
 	}
 	
 	@Override
-	public ReactionHandlerResult accept(@NonNull GuildMessageReactionAddEvent event, @NonNull WaitingReactionMessageConfiguration reaction){
+	@NotNull
+	public ReactionHandlerResult accept(@NotNull GuildMessageReactionAddEvent event, @NotNull WaitingReactionMessageConfiguration reaction){
 		var reactionEmote = event.getReactionEmote();
 		if(reactionEmote.isEmoji()){
-			final var emote = BasicEmotes.getEmote(reactionEmote.getEmoji());
+			var emote = BasicEmotes.getEmote(reactionEmote.getEmoji());
 			if(isValidEmote(emote)){
 				try{
 					return processTodoCompleted(event, emote, reaction);
@@ -46,11 +47,11 @@ public class ExternalTodoReactionHandler implements IReactionHandler{
 		return PROCESSED;
 	}
 	
-	protected boolean isValidEmote(@NonNull BasicEmotes emote){
+	protected boolean isValidEmote(@NotNull BasicEmotes emote){
 		return emote == CHECK_OK || emote == CROSS_NO;
 	}
 	
-	protected ReactionHandlerResult processTodoCompleted(@NonNull GuildMessageReactionAddEvent event, @NonNull BasicEmotes emote, @NonNull WaitingReactionMessageConfiguration todo) throws InterruptedException, ExecutionException, TimeoutException{
+	protected ReactionHandlerResult processTodoCompleted(@NotNull GuildMessageReactionAddEvent event, @NotNull BasicEmotes emote, @NotNull WaitingReactionMessageConfiguration todo) throws InterruptedException, ExecutionException, TimeoutException{
 		var user = event.retrieveUser().submit().get(30, TimeUnit.SECONDS);
 		
 		return todo.getMessage().getMessage()

@@ -4,8 +4,8 @@ import fr.raksrinana.rsndiscord.api.externaltodos.ExternalTodosApi;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
-import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
+import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import static fr.raksrinana.rsndiscord.api.externaltodos.data.Status.EXTERNAL;
@@ -19,7 +19,7 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 public class ExternalTodosRunner implements IScheduledRunner{
 	private final JDA jda;
 	
-	public ExternalTodosRunner(@NonNull JDA jda){
+	public ExternalTodosRunner(@NotNull JDA jda){
 		this.jda = jda;
 	}
 	
@@ -35,7 +35,7 @@ public class ExternalTodosRunner implements IScheduledRunner{
 	
 	@Override
 	public void execute(){
-		this.jda.getGuilds().forEach(guild -> {
+		jda.getGuilds().forEach(guild -> {
 			var configuration = Settings.get(guild).getExternalTodos();
 			configuration.getEndpoint().ifPresent(endpoint -> {
 				var token = configuration.getToken().orElse(null);
@@ -65,15 +65,15 @@ public class ExternalTodosRunner implements IScheduledRunner{
 		});
 	}
 	
-	@NonNull
-	@Override
-	public TimeUnit getPeriodUnit(){
-		return MINUTES;
-	}
-	
-	@NonNull
+	@NotNull
 	@Override
 	public String getName(){
 		return "External todos fetcher";
+	}
+	
+	@NotNull
+	@Override
+	public TimeUnit getPeriodUnit(){
+		return MINUTES;
 	}
 }

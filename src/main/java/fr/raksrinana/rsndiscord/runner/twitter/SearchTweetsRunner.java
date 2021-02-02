@@ -5,8 +5,8 @@ import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
-import lombok.NonNull;
 import net.dv8tion.jda.api.JDA;
+import org.jetbrains.annotations.NotNull;
 import twitter4j.Status;
 import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
@@ -18,7 +18,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class SearchTweetsRunner implements IScheduledRunner{
 	private final JDA jda;
 	
-	public SearchTweetsRunner(@NonNull JDA jda){
+	public SearchTweetsRunner(@NotNull JDA jda){
 		this.jda = jda;
 	}
 	
@@ -46,7 +46,7 @@ public class SearchTweetsRunner implements IScheduledRunner{
 		return 30;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public String getName(){
 		return "Twitter search last tweets";
@@ -57,7 +57,7 @@ public class SearchTweetsRunner implements IScheduledRunner{
 		return 30;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public TimeUnit getPeriodUnit(){
 		return SECONDS;
