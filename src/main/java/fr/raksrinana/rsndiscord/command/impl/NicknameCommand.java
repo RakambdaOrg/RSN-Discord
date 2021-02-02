@@ -7,12 +7,12 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
+import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -32,15 +32,15 @@ public class NicknameCommand extends BasicCommand{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
 	
 	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("user", translate(guild, "command.nickname.help.user"), false)
 				.addField("nickname", translate(guild, "command.nickname.help.nickname"), false);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		
 		var guild = event.getGuild();
@@ -54,10 +54,10 @@ public class NicknameCommand extends BasicCommand{
 				.orElse(event.getMember());
 		boolean bypass = isModerator(event.getMember());
 		
-		final var oldNickname = Optional.ofNullable(target.getNickname());
-		final var newNickname = args.isEmpty() ? Optional.<String> empty() : Optional.of(String.join(" ", args));
+		var oldNickname = Optional.ofNullable(target.getNickname());
+		var newNickname = args.isEmpty() ? Optional.<String> empty() : Optional.of(String.join(" ", args));
 		
-		final var builder = new EmbedBuilder()
+		var builder = new EmbedBuilder()
 				.setAuthor(author.getName(), null, author.getAvatarUrl())
 				.addField(translate(guild, "nickname.user"), target.getAsMention(), true)
 				.addField(translate(guild, "nickname.old-nick"), oldNickname.orElseGet(() -> translate(guild, "nickname.unknown")), true)
@@ -127,7 +127,7 @@ public class NicknameCommand extends BasicCommand{
 						return null;
 					});
 		}
-		catch(final HierarchyException e){
+		catch(HierarchyException e){
 			builder.setColor(RED)
 					.addField(translate(guild, "nickname.reason"), translate(guild, "nickname.target-error"), false);
 			channel.sendMessage(builder.build()).submit()
@@ -136,32 +136,32 @@ public class NicknameCommand extends BasicCommand{
 		return SUCCESS;
 	}
 	
-	@Override
-	public @NonNull IPermission getPermission(){
-		return new SimplePermission("command.nickname", true);
-	}
-	
-	@NonNull
+	@NotNull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [@user] [nickname]";
 	}
 	
-	@NonNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public @NotNull IPermission getPermission(){
+		return new SimplePermission("command.nickname", true);
+	}
+	
+	@NotNull
+	@Override
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.nickname.name");
 	}
 	
-	@NonNull
+	@NotNull
+	@Override
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.nickname.description");
+	}
+	
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("nickname", "nick");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.nickname.description");
 	}
 }

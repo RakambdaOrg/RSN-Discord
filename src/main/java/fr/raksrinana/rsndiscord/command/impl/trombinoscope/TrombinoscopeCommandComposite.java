@@ -4,8 +4,8 @@ import fr.raksrinana.rsndiscord.command.BotCommand;
 import fr.raksrinana.rsndiscord.command.CommandComposite;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
@@ -16,33 +16,33 @@ public class TrombinoscopeCommandComposite extends CommandComposite{
 	 */
 	public TrombinoscopeCommandComposite(){
 		super();
-		this.addSubCommand(new AddCommand(this));
-		this.addSubCommand(new GetCommand(this));
-		this.addSubCommand(new RemoveCommand(this));
-		this.addSubCommand(new StatsCommand(this));
-		this.addSubCommand(new GlobalCommand(this));
+		addSubCommand(new AddCommand(this));
+		addSubCommand(new GetCommand(this));
+		addSubCommand(new RemoveCommand(this));
+		addSubCommand(new StatsCommand(this));
+		addSubCommand(new GlobalCommand(this));
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return new SimplePermission("command.trombinoscope", false);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.trombinoscope.name");
 	}
 	
-	@NonNull
+	@NotNull
+	@Override
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.trombinoscope.description");
+	}
+	
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("trombinoscope", "trombi", "t");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.trombinoscope.description");
 	}
 }

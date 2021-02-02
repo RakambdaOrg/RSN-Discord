@@ -7,10 +7,10 @@ import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.command.CommandResult.BAD_ARGUMENTS;
@@ -23,24 +23,19 @@ public class VolumeMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	VolumeMusicCommand(final Command parent){
+	VolumeMusicCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("Volume", translate(guild, "command.music.volume.help.volume"), false);
 	}
 	
+	@NotNull
 	@Override
-	public @NonNull IPermission getPermission(){
-		return new SimplePermission("command.music.volume", false);
-	}
-	
-	@NonNull
-	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
 			return BAD_ARGUMENTS;
@@ -62,27 +57,32 @@ public class VolumeMusicCommand extends BasicCommand{
 		return SUCCESS;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <volume>";
 	}
 	
-	@NonNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public @NotNull IPermission getPermission(){
+		return new SimplePermission("command.music.volume", false);
+	}
+	
+	@NotNull
+	@Override
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.music.volume.name");
 	}
 	
-	@NonNull
+	@NotNull
+	@Override
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.music.volume.description");
+	}
+	
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("volume");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.music.volume.description");
 	}
 }

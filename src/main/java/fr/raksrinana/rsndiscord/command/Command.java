@@ -1,11 +1,12 @@
 package fr.raksrinana.rsndiscord.command;
 
 import fr.raksrinana.rsndiscord.permission.IPermission;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.command.DeleteMode.BEFORE;
@@ -17,7 +18,7 @@ public interface Command extends Comparable<Command>{
 	 * @param guild   The guild.
 	 * @param builder The help menu.
 	 */
-	void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder);
+	void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder);
 	
 	/**
 	 * Tell if a member is allowed to run the command.
@@ -26,12 +27,8 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return True if allowed, false otherwise.
 	 */
-	default boolean isAllowed(@NonNull final Member member){
+	default boolean isAllowed(@NotNull Member member){
 		return getPermission().isAllowed(member);
-	}
-	
-	default DeleteMode getDeleteMode(){
-		return BEFORE;
 	}
 	
 	/**
@@ -39,7 +36,7 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @return The permission.
 	 */
-	@NonNull
+	@NotNull
 	IPermission getPermission();
 	
 	/**
@@ -52,50 +49,56 @@ public interface Command extends Comparable<Command>{
 	 *
 	 * @throws RuntimeException If something bad happened.
 	 */
-	@NonNull
-	CommandResult execute(@NonNull GuildMessageReceivedEvent event, @NonNull LinkedList<String> args) throws RuntimeException;
+	@NotNull
+	CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args) throws RuntimeException;
 	
 	@Override
-	default int compareTo(@NonNull final Command otherCommand){
-		return this.getCommandStrings().get(0).compareTo(otherCommand.getCommandStrings().get(0));
+	default int compareTo(@NotNull Command otherCommand){
+		return getCommandStrings().get(0).compareTo(otherCommand.getCommandStrings().get(0));
 	}
-	
-	/**
-	 * Get the name of the command.
-	 *
-	 * @return The name.
-	 */
-	@NonNull
-	String getName(@NonNull Guild guild);
-	
-	/**
-	 * Get the description of the command.
-	 *
-	 * @return The description.
-	 */
-	@NonNull
-	String getDescription(@NonNull Guild guild);
 	
 	/**
 	 * Get the command (what's after the prefix).
 	 *
 	 * @return The command.
 	 */
-	@NonNull
+	@NotNull
 	List<String> getCommandStrings();
+	
+	/**
+	 * Get the name of the command.
+	 *
+	 * @return The name.
+	 */
+	@NotNull
+	String getName(@NotNull Guild guild);
+	
+	/**
+	 * Get the description of the command.
+	 *
+	 * @return The description.
+	 */
+	@NotNull
+	String getDescription(@NotNull Guild guild);
 	
 	/**
 	 * Get a description of the usage of command.
 	 *
 	 * @return The description.
 	 */
-	@NonNull
+	@NotNull
 	String getCommandUsage();
+	
+	@NotNull
+	default DeleteMode getDeleteMode(){
+		return BEFORE;
+	}
 	
 	/**
 	 * Get the parent command.
 	 *
 	 * @return The parent command.
 	 */
+	@Nullable
 	Command getParent();
 }

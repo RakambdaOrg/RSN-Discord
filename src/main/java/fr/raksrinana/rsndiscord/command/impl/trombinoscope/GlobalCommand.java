@@ -10,13 +10,13 @@ import fr.raksrinana.rsndiscord.schedule.ScheduleUtils;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.trombinoscope.Picture;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
-import lombok.NonNull;
 import net.coobird.thumbnailator.Thumbnails;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.imgscalr.Scalr;
+import org.jetbrains.annotations.NotNull;
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -44,24 +44,19 @@ class GlobalCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	GlobalCommand(final Command parent){
+	GlobalCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("mode", translate(guild, "command.trombinoscope.global.help.mode"), false);
 	}
 	
+	@NotNull
 	@Override
-	public @NonNull IPermission getPermission(){
-		return new SimplePermission("command.trombinoscope.global", true);
-	}
-	
-	@NonNull
-	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		var guild = event.getGuild();
 		var mode = ofNullable(args.poll()).flatMap(PictureMode::fromString).orElse(STRETCH);
@@ -106,6 +101,7 @@ class GlobalCommand extends BasicCommand{
 		return SUCCESS;
 	}
 	
+	@NotNull
 	private static Pair<Integer, Integer> getDims(int count){
 		var divisors = IntStream.rangeClosed(1, (int) Math.floor(Math.sqrt(count)))
 				.filter(i -> count % i == 0)
@@ -119,16 +115,7 @@ class GlobalCommand extends BasicCommand{
 				});
 	}
 	
-	private static int getDimsDiff(Pair<Integer, Integer> dimensions){
-		return Math.abs(dimensions.getLeft() - dimensions.getRight());
-	}
-	
-	@Override
-	public @NonNull String getCommandUsage(){
-		return super.getCommandUsage() + " [mode]";
-	}
-	
-	private void drawImage(Graphics2D g2d, Picture picture, int x, int y, int dim, PictureMode mode){
+	private void drawImage(@NotNull Graphics2D g2d, @NotNull Picture picture, int x, int y, int dim, @NotNull PictureMode mode){
 		try{
 			var image = Thumbnails.of(picture.getPath().toFile())
 					.size(dim, dim)
@@ -143,21 +130,35 @@ class GlobalCommand extends BasicCommand{
 		}
 	}
 	
-	@NonNull
+	private static int getDimsDiff(@NotNull Pair<Integer, Integer> dimensions){
+		return Math.abs(dimensions.getLeft() - dimensions.getRight());
+	}
+	
 	@Override
-	public String getName(@NonNull Guild guild){
+	public @NotNull String getCommandUsage(){
+		return super.getCommandUsage() + " [mode]";
+	}
+	
+	@Override
+	public @NotNull IPermission getPermission(){
+		return new SimplePermission("command.trombinoscope.global", true);
+	}
+	
+	@NotNull
+	@Override
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.trombinoscope.global.name");
 	}
 	
-	@NonNull
+	@NotNull
+	@Override
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.trombinoscope.global.description");
+	}
+	
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("global", "gl");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.trombinoscope.global.description");
 	}
 }

@@ -9,11 +9,11 @@ import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.reply.SkipMusicReply;
 import fr.raksrinana.rsndiscord.reply.UserReplyEventListener;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
@@ -30,23 +30,18 @@ public class SkipMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	SkipMusicCommand(final Command parent){
+	SkipMusicCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 	}
 	
+	@NotNull
 	@Override
-	public boolean isAllowed(final @NonNull Member member){
-		return super.isAllowed(member);
-	}
-	
-	@NonNull
-	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		
 		var guild = event.getGuild();
@@ -91,7 +86,7 @@ public class SkipMusicCommand extends BasicCommand{
 		return SUCCESS;
 	}
 	
-	private void skip(@NonNull final GuildMessageReceivedEvent event){
+	private void skip(@NotNull GuildMessageReceivedEvent event){
 		var guild = event.getGuild();
 		var message = switch(RSNAudioManager.skip(guild)){
 			case NO_MUSIC -> "music.nothing-playing";
@@ -104,25 +99,30 @@ public class SkipMusicCommand extends BasicCommand{
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public boolean isAllowed(@NotNull Member member){
+		return super.isAllowed(member);
+	}
+	
+	@Override
+	public @NotNull IPermission getPermission(){
 		return new SimplePermission("command.music.skip", false);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.music.skip.name");
 	}
 	
-	@NonNull
+	@NotNull
+	@Override
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.music.skip.description");
+	}
+	
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("skip");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.music.skip.description");
 	}
 }

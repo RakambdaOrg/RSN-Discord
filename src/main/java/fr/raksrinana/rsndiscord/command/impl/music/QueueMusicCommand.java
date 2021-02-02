@@ -10,11 +10,11 @@ import fr.raksrinana.rsndiscord.music.trackfields.RequesterTrackDataField;
 import fr.raksrinana.rsndiscord.music.trackfields.TrackUserFields;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -28,24 +28,19 @@ public class QueueMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	QueueMusicCommand(@NonNull final Command parent){
+	QueueMusicCommand(@NotNull Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("<page>", translate(guild, "command.music.queue.help.page"), false);
 	}
 	
+	@NotNull
 	@Override
-	public @NonNull IPermission getPermission(){
-		return new SimplePermission("command.music.queue", true);
-	}
-	
-	@NonNull
-	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		
 		var guild = event.getGuild();
@@ -54,7 +49,7 @@ public class QueueMusicCommand extends BasicCommand{
 		var perPage = 10L;
 		var maxPageNumber = (int) Math.ceil(queue.size() / (double) perPage);
 		
-		var page = getArgumentAsLong(args)
+		long page = getArgumentAsLong(args)
 				.map(val -> val - 1L)
 				.orElse(0L);
 		var position = new AtomicLong(perPage * page);
@@ -97,27 +92,32 @@ public class QueueMusicCommand extends BasicCommand{
 		return SUCCESS;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <page>";
 	}
 	
-	@NonNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public @NotNull IPermission getPermission(){
+		return new SimplePermission("command.music.queue", true);
+	}
+	
+	@NotNull
+	@Override
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.music.queue.name");
 	}
 	
-	@NonNull
+	@NotNull
+	@Override
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.music.queue.description");
+	}
+	
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("queue", "q");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.music.queue.description");
 	}
 }

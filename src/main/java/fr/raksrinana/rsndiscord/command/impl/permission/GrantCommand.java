@@ -6,10 +6,10 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.command.CommandResult.BAD_ARGUMENTS;
@@ -23,15 +23,15 @@ public class GrantCommand extends BasicCommand{
 	}
 	
 	@Override
-	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("permission", translate(guild, "command.permissions.grant.help.permission"), false)
 				.addField("entity", translate(guild, "command.permissions.grant.help.entity"), false);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		var guild = event.getGuild();
 		var message = event.getMessage();
@@ -40,7 +40,7 @@ public class GrantCommand extends BasicCommand{
 			return BAD_ARGUMENTS;
 		}
 		var permissionsConfiguration = Settings.get(guild).getPermissionsConfiguration();
-		String permissionId = args.poll();
+		String permissionId = args.pop();
 		message.getMentionedUsers().forEach(user -> permissionsConfiguration.grant(user, permissionId));
 		message.getMentionedRoles().forEach(role -> permissionsConfiguration.grant(role, permissionId));
 		event.getChannel().sendMessage(translate(guild, "permissions.granted", permissionId)).submit()
@@ -49,30 +49,30 @@ public class GrantCommand extends BasicCommand{
 	}
 	
 	@Override
-	public @NonNull String getCommandUsage(){
+	public @NotNull String getCommandUsage(){
 		return super.getCommandUsage() + " <permission> <@entity...>";
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return new SimplePermission("command.permissions.grant", false);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.permissions.grant.name");
 	}
 	
-	@NonNull
+	@NotNull
+	@Override
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.permissions.grant.description");
+	}
+	
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("grant", "g");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.permissions.grant.description");
 	}
 }

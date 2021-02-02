@@ -9,11 +9,11 @@ import fr.raksrinana.rsndiscord.music.trackfields.RequesterTrackDataField;
 import fr.raksrinana.rsndiscord.music.trackfields.TrackUserFields;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,26 +28,21 @@ public class MoveMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	MoveMusicCommand(final Command parent){
+	MoveMusicCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("from", translate(guild, "command.music.move.help.from"), false)
 				.addField("to", translate(guild, "command.music.move.help.to"), false);
 	}
 	
-	@Override
-	public @NonNull IPermission getPermission(){
-		return new SimplePermission("command.music.move", false);
-	}
-	
 	@SuppressWarnings("DuplicatedCode")
-	@NonNull
+	@NotNull
 	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
 			return BAD_ARGUMENTS;
@@ -87,27 +82,32 @@ public class MoveMusicCommand extends BasicCommand{
 		return SUCCESS;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <from> [to]";
 	}
 	
-	@NonNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public @NotNull IPermission getPermission(){
+		return new SimplePermission("command.music.move", false);
+	}
+	
+	@NotNull
+	@Override
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.music.move.name");
 	}
 	
-	@NonNull
+	@NotNull
+	@Override
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.music.move.description");
+	}
+	
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("move");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.music.move.description");
 	}
 }

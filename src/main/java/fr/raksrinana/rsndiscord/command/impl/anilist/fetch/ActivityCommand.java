@@ -6,9 +6,9 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.runner.anilist.AniListActivityRunner;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
@@ -20,38 +20,38 @@ public class ActivityCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	ActivityCommand(final Command parent){
+	ActivityCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	@NonNull
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	@NotNull
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		new AniListActivityRunner(event.getJDA()).execute();
 		return SUCCESS;
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return new SimplePermission("command.anilist.fetch.activity", false);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.anilist.fetch.activity.name");
 	}
 	
-	@NonNull
+	@NotNull
+	@Override
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.anilist.fetch.activity.description");
+	}
+	
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("activity", "a");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.anilist.fetch.activity.description");
 	}
 }

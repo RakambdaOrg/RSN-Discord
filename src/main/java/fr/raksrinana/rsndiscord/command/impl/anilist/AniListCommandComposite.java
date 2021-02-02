@@ -5,8 +5,8 @@ import fr.raksrinana.rsndiscord.command.CommandComposite;
 import fr.raksrinana.rsndiscord.command.impl.anilist.fetch.FetchCommandComposite;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
@@ -17,33 +17,33 @@ public class AniListCommandComposite extends CommandComposite{
 	 */
 	public AniListCommandComposite(){
 		super();
-		this.addSubCommand(new FetchCommandComposite(this));
-		this.addSubCommand(new RegisterCommand(this));
-		this.addSubCommand(new MediaListDifferencesCommand(this));
-		this.addSubCommand(new NextAiringCommand(this));
-		this.addSubCommand(new InfoCommand(this));
+		addSubCommand(new FetchCommandComposite(this));
+		addSubCommand(new RegisterCommand(this));
+		addSubCommand(new MediaListDifferencesCommand(this));
+		addSubCommand(new NextAiringCommand(this));
+		addSubCommand(new InfoCommand(this));
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return new SimplePermission("command.anilist", true);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.anilist.name");
 	}
 	
-	@NonNull
+	@NotNull
+	@Override
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.anilist.description");
+	}
+	
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("anilist", "al");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.anilist.description");
 	}
 }

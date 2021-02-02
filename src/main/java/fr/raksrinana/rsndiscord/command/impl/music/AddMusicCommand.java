@@ -6,12 +6,12 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.command.CommandResult.BAD_ARGUMENTS;
@@ -27,12 +27,12 @@ public class AddMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	AddMusicCommand(final Command parent){
+	AddMusicCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("link", translate(guild, "command.music.add.help.link"), false)
 				.addField("skip", translate(guild, "command.music.add.help.skip"), false)
@@ -40,14 +40,9 @@ public class AddMusicCommand extends BasicCommand{
 				.addField("repeat", translate(guild, "command.music.add.help.repeat"), false);
 	}
 	
+	@NotNull
 	@Override
-	public @NonNull IPermission getPermission(){
-		return new SimplePermission("command.music.add", false);
-	}
-	
-	@NonNull
-	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
 			return BAD_ARGUMENTS;
@@ -66,14 +61,14 @@ public class AddMusicCommand extends BasicCommand{
 			return SUCCESS;
 		}
 		
-		final var identifier = requireNonNull(args.poll()).trim();
-		final var skipCount = getArgumentAsInteger(args)
+		var identifier = requireNonNull(args.poll()).trim();
+		var skipCount = getArgumentAsInteger(args)
 				.filter(value -> value >= 0)
 				.orElse(0);
-		final var maxTracks = getArgumentAsInteger(args)
+		var maxTracks = getArgumentAsInteger(args)
 				.filter(value -> value >= 0)
 				.orElse(10);
-		final var repeat = ofNullable(args.poll())
+		var repeat = ofNullable(args.poll())
 				.map(Boolean::valueOf)
 				.orElse(false);
 		
@@ -82,27 +77,32 @@ public class AddMusicCommand extends BasicCommand{
 		return SUCCESS;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " <link> [skip] [max] [repeat]";
 	}
 	
-	@NonNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public @NotNull IPermission getPermission(){
+		return new SimplePermission("command.music.add", false);
+	}
+	
+	@NotNull
+	@Override
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.music.add.name");
 	}
 	
-	@NonNull
+	@NotNull
+	@Override
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.music.add.description");
+	}
+	
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("add", "a");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.music.add.description");
 	}
 }

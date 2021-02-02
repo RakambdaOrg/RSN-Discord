@@ -6,9 +6,9 @@ import fr.raksrinana.rsndiscord.command.BotCommand;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.permission.IPermission;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
@@ -17,9 +17,9 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class StopCommand extends BasicCommand{
-	@NonNull
+	@NotNull
 	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		Main.close();
 		Log.getLogger(event.getGuild()).info("BOT STOPPING");
@@ -27,25 +27,25 @@ public class StopCommand extends BasicCommand{
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return CREATOR;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.stop.name");
 	}
 	
-	@NonNull
+	@NotNull
+	@Override
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.stop.description");
+	}
+	
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("stop", "quit");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.stop.description");
 	}
 }

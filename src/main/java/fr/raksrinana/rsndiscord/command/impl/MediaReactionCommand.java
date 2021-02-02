@@ -9,10 +9,10 @@ import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,15 +31,15 @@ public class MediaReactionCommand extends BasicCommand{
 	private static final String COMMENT_STR = "--";
 	
 	@Override
-	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("option", translate(guild, "command.media-reaction.help.option"), false)
 				.addField("text", translate(guild, "command.media-reaction.help.text"), false);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		
 		var guild = event.getGuild();
@@ -116,7 +116,8 @@ public class MediaReactionCommand extends BasicCommand{
 		return FAILED;
 	}
 	
-	private static String convertTime(LinkedList<String> stringList) throws IllegalArgumentException{
+	@NotNull
+	private static String convertTime(@NotNull LinkedList<String> stringList) throws IllegalArgumentException{
 		if(stringList.size() < 1){
 			return "";
 		}
@@ -148,33 +149,33 @@ public class MediaReactionCommand extends BasicCommand{
 	}
 	
 	@Override
-	public @NonNull String getCommandUsage(){
+	public @NotNull String getCommandUsage(){
 		return super.getCommandUsage() + "[o<option>] <text>";
 	}
 	
 	@Override
-	public DeleteMode getDeleteMode(){
+	public @NotNull DeleteMode getDeleteMode(){
 		return NEVER;
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return new SimplePermission("command.media-reaction", false);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.media-reaction.name");
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getDescription(@NonNull Guild guild){
+	public String getDescription(@NotNull Guild guild){
 		return translate(guild, "command.media-reaction.description");
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("mediareaction", "mr");

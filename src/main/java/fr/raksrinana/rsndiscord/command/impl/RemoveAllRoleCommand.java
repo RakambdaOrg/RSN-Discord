@@ -6,10 +6,10 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.command.CommandResult.BAD_ARGUMENTS;
@@ -20,13 +20,14 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 @BotCommand
 public class RemoveAllRoleCommand extends BasicCommand{
 	@Override
-	public @NonNull IPermission getPermission(){
-		return new SimplePermission("command.remove-role", false);
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
+		super.addHelp(guild, builder);
+		builder.addField("role", translate(guild, "command.remove-role.help.role"), false);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		
 		var guild = event.getGuild();
@@ -54,32 +55,31 @@ public class RemoveAllRoleCommand extends BasicCommand{
 		return SUCCESS;
 	}
 	
-	@NonNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public @NotNull String getCommandUsage(){
+		return super.getCommandUsage() + "<@role>";
+	}
+	
+	@Override
+	public @NotNull IPermission getPermission(){
+		return new SimplePermission("command.remove-role", false);
+	}
+	
+	@NotNull
+	@Override
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.remove-role.name");
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public List<String> getCommandStrings(){
-		return List.of("removerole");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
+	public String getDescription(@NotNull Guild guild){
 		return translate(guild, "command.remove-role.description");
 	}
 	
+	@NotNull
 	@Override
-	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
-		super.addHelp(guild, builder);
-		builder.addField("role", translate(guild, "command.remove-role.help.role"), false);
-	}
-	
-	@Override
-	public @NonNull String getCommandUsage(){
-		return super.getCommandUsage() + "<@role>";
+	public List<String> getCommandStrings(){
+		return List.of("removerole");
 	}
 }

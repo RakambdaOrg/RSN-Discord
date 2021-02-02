@@ -9,7 +9,6 @@ import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -17,6 +16,8 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.requests.RestAction;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +30,7 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @BotCommand
 public class RandomKick extends BasicCommand{
-	public static Optional<Role> getRandomRole(@NonNull Guild guild){
+	public static Optional<Role> getRandomRole(@NotNull Guild guild){
 		var chance = ThreadLocalRandom.current().nextDouble();
 		var randomKickConfiguration = Settings.get(guild).getRandomKick();
 		
@@ -44,14 +45,14 @@ public class RandomKick extends BasicCommand{
 	}
 	
 	@Override
-	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("reason", translate(guild, "command.random-kick.help.reason"), false);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		if(args.isEmpty()){
 			return BAD_ARGUMENTS;
@@ -64,7 +65,7 @@ public class RandomKick extends BasicCommand{
 		return SUCCESS;
 	}
 	
-	public static void randomKick(@NonNull TextChannel channel, Role targetRole, String reason, boolean allowReKick){
+	public static void randomKick(@NotNull TextChannel channel, @Nullable Role targetRole, @NotNull String reason, boolean allowReKick){
 		var guild = channel.getGuild();
 		var botMember = guild.getSelfMember();
 		
@@ -84,7 +85,7 @@ public class RandomKick extends BasicCommand{
 				});
 	}
 	
-	private static void performKick(Guild guild, TextChannel channel, List<Member> members, String reason, boolean allowReKick){
+	private static void performKick(@NotNull Guild guild, @NotNull TextChannel channel, @NotNull List<Member> members, @NotNull String reason, boolean allowReKick){
 		var kickRole = Settings.get(guild).getRandomKick()
 				.getKickedRole()
 				.flatMap(RoleConfiguration::getRole);
@@ -132,30 +133,30 @@ public class RandomKick extends BasicCommand{
 	}
 	
 	@Override
-	public @NonNull String getCommandUsage(){
+	public @NotNull String getCommandUsage(){
 		return super.getCommandUsage() + "[@role] <reason>";
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return new SimplePermission("command.random-kick", false);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.random-kick.name");
 	}
 	
-	@NonNull
+	@NotNull
+	@Override
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.random-kick.description");
+	}
+	
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("randomKick");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.random-kick.description");
 	}
 }

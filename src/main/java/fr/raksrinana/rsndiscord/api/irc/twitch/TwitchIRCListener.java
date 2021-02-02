@@ -153,19 +153,19 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 						.map(getGuild()::getVoiceChannelById)
 						.ifPresentOrElse(voiceChannel -> RSNAudioManager.play(Main.getJda().getSelfUser(), voiceChannel, new TrackConsumer(){
 							@Override
-							public void onPlaylist(List<AudioTrack> tracks){
+							public void onPlaylist(@NotNull List<AudioTrack> tracks){
 								TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Track added by " + event.getUser().getNick() + ": " + tracks.stream()
 										.map(track -> track.getInfo().title)
 										.collect(Collectors.joining(", ")));
 							}
 							
 							@Override
-							public void onTrack(AudioTrack track){
+							public void onTrack(@NotNull AudioTrack track){
 								TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Track added " + event.getUser().getNick() + ": " + track.getInfo().title);
 							}
 							
 							@Override
-							public void onFailure(String message){
+							public void onFailure(@NotNull String message){
 								TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Failed to add track");
 							}
 						}, 0, 1, link), () -> TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Requests are currently disabled"));

@@ -7,12 +7,12 @@ import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.reply.StopwatchReply;
 import fr.raksrinana.rsndiscord.reply.UserReplyEventListener;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
@@ -22,9 +22,9 @@ import static java.awt.Color.GREEN;
 
 @BotCommand
 public class StopwatchCommand extends BasicCommand{
-	@NonNull
+	@NotNull
 	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		var embed = buildEmbed(event.getGuild(), event.getAuthor(), "");
 		event.getChannel().sendMessage(embed).submit()
@@ -36,8 +36,8 @@ public class StopwatchCommand extends BasicCommand{
 		return SUCCESS;
 	}
 	
-	@NonNull
-	public static MessageEmbed buildEmbed(@NonNull Guild guild, @NonNull User user, @NonNull String time){
+	@NotNull
+	public static MessageEmbed buildEmbed(@NotNull Guild guild, @NotNull User user, @NotNull String time){
 		return new EmbedBuilder().setAuthor(user.getName(), null, user.getAvatarUrl())
 				.setColor(GREEN)
 				.setTitle(translate(guild, "stopwatch.name"))
@@ -49,23 +49,23 @@ public class StopwatchCommand extends BasicCommand{
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
+	public @NotNull IPermission getPermission(){
 		return new SimplePermission("command.stopwatch", false);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.stopwatch.name");
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public String getDescription(@NonNull Guild guild){
+	public String getDescription(@NotNull Guild guild){
 		return translate(guild, "command.stopwatch.description");
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("stopwatch");

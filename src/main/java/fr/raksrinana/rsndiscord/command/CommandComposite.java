@@ -1,12 +1,13 @@
 package fr.raksrinana.rsndiscord.command;
 
 import fr.raksrinana.rsndiscord.schedule.ScheduleUtils;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.awt.Color;
 import java.text.MessageFormat;
 import java.util.LinkedHashSet;
@@ -26,7 +27,7 @@ public abstract class CommandComposite extends BasicCommand{
 	 */
 	protected CommandComposite(){
 		super();
-		this.subCommands = new LinkedHashSet<>();
+		subCommands = new LinkedHashSet<>();
 	}
 	
 	/**
@@ -34,9 +35,9 @@ public abstract class CommandComposite extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	protected CommandComposite(final Command parent){
+	protected CommandComposite(@Nullable Command parent){
 		super(parent);
-		this.subCommands = new LinkedHashSet<>();
+		subCommands = new LinkedHashSet<>();
 	}
 	
 	/**
@@ -44,8 +45,8 @@ public abstract class CommandComposite extends BasicCommand{
 	 *
 	 * @param command The command to add.
 	 */
-	protected void addSubCommand(@NonNull final Command command){
-		if(this.subCommands.stream()
+	protected void addSubCommand(@NotNull Command command){
+		if(subCommands.stream()
 				.flatMap(subCommand -> subCommand.getCommandStrings().stream())
 				.anyMatch(commandStr -> command.getCommandStrings().contains(commandStr))){
 			var message = MessageFormat.format("Duplicate command found when adding {0} with inputs {1}",
@@ -53,7 +54,7 @@ public abstract class CommandComposite extends BasicCommand{
 					command.getCommandStrings());
 			throw new IllegalStateException(message);
 		}
-		this.subCommands.add(command);
+		subCommands.add(command);
 	}
 	
 	/**
@@ -63,22 +64,22 @@ public abstract class CommandComposite extends BasicCommand{
 	 *
 	 * @return The command or null if not found.
 	 */
-	@NonNull
-	public Optional<Command> getSubCommand(final String commandStr){
-		return this.subCommands.stream()
+	@NotNull
+	public Optional<Command> getSubCommand(@NotNull String commandStr){
+		return subCommands.stream()
 				.filter(command -> command.getCommandStrings().contains(commandStr))
 				.findAny();
 	}
 	
 	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder embedBuilder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder embedBuilder){
 		embedBuilder.addField("sub-command", getSubCommandsList(), false);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args) throws RuntimeException{
-		if(!this.isAllowed(event.getMember())){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args) throws RuntimeException{
+		if(!isAllowed(event.getMember())){
 			throw new NotAllowedException("You're not allowed to execute this command");
 		}
 		
@@ -87,7 +88,7 @@ public abstract class CommandComposite extends BasicCommand{
 		var switchStr = args.poll();
 		
 		if(nonNull(switchStr)){
-			var toExecute = this.subCommands.stream()
+			var toExecute = subCommands.stream()
 					.filter(command -> command.getCommandStrings().contains(switchStr))
 					.findFirst();
 			
@@ -103,11 +104,11 @@ public abstract class CommandComposite extends BasicCommand{
 		return CommandResult.SUCCESS;
 	}
 	
-	private void sendErrorMessage(Guild guild, TextChannel channel, User author, Color color, String reason){
+	private void sendErrorMessage(@NotNull Guild guild, @NotNull TextChannel channel, @NotNull User author, @NotNull Color color, @NotNull String reason){
 		var embed = new EmbedBuilder().setAuthor(author.getName(), null, author.getAvatarUrl())
 				.setColor(color)
 				.setTitle(translate(guild, "commands.error.title"))
-				.addField(translate(guild, "commands.error.command"), this.getName(guild), false)
+				.addField(translate(guild, "commands.error.command"), getName(guild), false)
 				.addField(translate(guild, "commands.error.reason"), reason, false)
 				.addField(translate(guild, "commands.error.sub-commands"), getSubCommandsList(), false)
 				.build();
@@ -115,16 +116,16 @@ public abstract class CommandComposite extends BasicCommand{
 				.thenAccept(message -> ScheduleUtils.deleteMessage(message, date -> date.plusMinutes(2)));
 	}
 	
-	@NonNull
-	private String getSubCommandsList(){
-		return this.subCommands.stream()
-				.flatMap(command -> command.getCommandStrings().stream())
-				.collect(Collectors.joining(", "));
-	}
-	
-	@NonNull
+	@NotNull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [sub-command]";
+	}
+	
+	@NotNull
+	private String getSubCommandsList(){
+		return subCommands.stream()
+				.flatMap(command -> command.getCommandStrings().stream())
+				.collect(Collectors.joining(", "));
 	}
 }

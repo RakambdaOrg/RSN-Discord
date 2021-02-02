@@ -9,11 +9,11 @@ import fr.raksrinana.rsndiscord.music.trackfields.RequesterTrackDataField;
 import fr.raksrinana.rsndiscord.music.trackfields.TrackUserFields;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,18 +28,13 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	NowPlayingMusicCommand(final Command parent){
+	NowPlayingMusicCommand(Command parent){
 		super(parent);
 	}
 	
+	@NotNull
 	@Override
-	public @NonNull IPermission getPermission(){
-		return new SimplePermission("command.music.currently-playing", true);
-	}
-	
-	@NonNull
-	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		var guild = event.getGuild();
 		
@@ -74,8 +69,8 @@ public class NowPlayingMusicCommand extends BasicCommand{
 		return SUCCESS;
 	}
 	
-	@NonNull
-	private static String buildBar(double current, final double total){
+	@NotNull
+	private static String buildBar(double current, double total){
 		var charCount = 10;
 		if(current > total){
 			current = total;
@@ -93,8 +88,8 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	 *
 	 * @return A readable version of this duration.
 	 */
-	@NonNull
-	static String getDuration(final long time){
+	@NotNull
+	static String getDuration(long time){
 		var duration = Duration.ofMillis(time);
 		if(duration.toHoursPart() > 0){
 			return String.format("%02d:%02d:%02d", duration.toHoursPart(), duration.toMinutesPart(), duration.toSecondsPart());
@@ -102,21 +97,26 @@ public class NowPlayingMusicCommand extends BasicCommand{
 		return String.format("%02d:%02d", duration.toMinutesPart(), duration.toSecondsPart());
 	}
 	
-	@NonNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public @NotNull IPermission getPermission(){
+		return new SimplePermission("command.music.currently-playing", true);
+	}
+	
+	@NotNull
+	@Override
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.music.now-playing.name");
 	}
 	
-	@NonNull
+	@NotNull
+	@Override
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.music.now-playing.description");
+	}
+	
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("nowplaying", "np");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.music.now-playing.description");
 	}
 }

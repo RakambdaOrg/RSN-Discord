@@ -8,13 +8,13 @@ import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.participation.ChatParticipation;
 import fr.raksrinana.rsndiscord.settings.guild.participation.VoiceParticipation;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
@@ -34,19 +34,14 @@ public class ParticipationCommand extends BasicCommand{
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	
 	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("date", translate(guild, "command.participation.help.date"), false);
 	}
 	
+	@NotNull
 	@Override
-	public @NonNull IPermission getPermission(){
-		return new SimplePermission("command.participation", false);
-	}
-	
-	@NonNull
-	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		
 		var guild = event.getGuild();
@@ -67,7 +62,7 @@ public class ParticipationCommand extends BasicCommand{
 		return SUCCESS;
 	}
 	
-	public static void sendMessagesReport(int maxUserCount, LocalDate day, ChatParticipation chatParticipation, User author, TextChannel channel){
+	public static void sendMessagesReport(int maxUserCount, @NotNull LocalDate day, @NotNull ChatParticipation chatParticipation, @NotNull User author, @NotNull TextChannel channel){
 		var guild = channel.getGuild();
 		guild.loadMembers().onSuccess(members -> {
 			var position = new AtomicInteger(0);
@@ -87,7 +82,7 @@ public class ParticipationCommand extends BasicCommand{
 		});
 	}
 	
-	public static void sendVoiceReport(int maxUserCount, LocalDate day, VoiceParticipation voiceParticipation, User author, TextChannel channel){
+	public static void sendVoiceReport(int maxUserCount, @NotNull LocalDate day, @NotNull VoiceParticipation voiceParticipation, @NotNull User author, @NotNull TextChannel channel){
 		var guild = channel.getGuild();
 		guild.loadMembers().onSuccess(members -> {
 			var position = new AtomicInteger(0);
@@ -110,27 +105,32 @@ public class ParticipationCommand extends BasicCommand{
 		});
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public String getCommandUsage(){
 		return super.getCommandUsage() + " [date]";
 	}
 	
-	@NonNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public @NotNull IPermission getPermission(){
+		return new SimplePermission("command.participation", false);
+	}
+	
+	@NotNull
+	@Override
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.participation.name");
 	}
 	
-	@NonNull
+	@NotNull
+	@Override
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.participation.description");
+	}
+	
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("participation");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.participation.description");
 	}
 }

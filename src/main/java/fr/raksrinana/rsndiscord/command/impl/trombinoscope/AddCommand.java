@@ -11,11 +11,12 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,18 +43,13 @@ class AddCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	AddCommand(final Command parent){
+	AddCommand(Command parent){
 		super(parent);
 	}
 	
+	@NotNull
 	@Override
-	public @NonNull IPermission getPermission(){
-		return new SimplePermission("command.trombinoscope.add", true);
-	}
-	
-	@NonNull
-	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		var guild = event.getGuild();
 		var author = event.getAuthor();
@@ -126,37 +122,43 @@ class AddCommand extends BasicCommand{
 		return SUCCESS;
 	}
 	
-	private Path getFilePath(Member member, Message.Attachment attachment) throws IOException{
+	@NotNull
+	private Path getFilePath(@NotNull Member member, @NotNull Message.Attachment attachment) throws IOException{
 		var path = trombinoscopeFolder.resolve(member.getId())
 				.resolve(String.format("%d-%s", attachment.getIdLong(), attachment.getFileName()));
 		Files.createDirectories(path.getParent());
 		return path;
 	}
 	
-	private boolean checkFile(Message.Attachment attachment, Path savedFile) throws IOException{
+	private boolean checkFile(@NotNull Message.Attachment attachment, @Nullable Path savedFile) throws IOException{
 		return nonNull(savedFile) && Files.size(savedFile) == attachment.getSize() && attachment.getSize() != 0;
 	}
 	
 	@Override
-	public DeleteMode getDeleteMode(){
+	public @NotNull DeleteMode getDeleteMode(){
 		return AFTER;
 	}
 	
-	@NonNull
 	@Override
-	public String getName(@NonNull Guild guild){
+	public @NotNull IPermission getPermission(){
+		return new SimplePermission("command.trombinoscope.add", true);
+	}
+	
+	@NotNull
+	@Override
+	public String getName(@NotNull Guild guild){
 		return translate(guild, "command.trombinoscope.add.name");
 	}
 	
-	@NonNull
+	@NotNull
+	@Override
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.trombinoscope.add.description");
+	}
+	
+	@NotNull
 	@Override
 	public List<String> getCommandStrings(){
 		return List.of("add", "a");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.trombinoscope.add.description");
 	}
 }

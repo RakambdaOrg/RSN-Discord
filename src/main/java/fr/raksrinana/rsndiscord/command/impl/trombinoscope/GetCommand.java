@@ -8,12 +8,12 @@ import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.trombinoscope.Picture;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.internal.entities.UserById;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.jetbrains.annotations.NotNull;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,43 +31,20 @@ class GetCommand extends BasicCommand{
 	 *
 	 * @param parent The parent command.
 	 */
-	GetCommand(final Command parent){
+	GetCommand(Command parent){
 		super(parent);
 	}
 	
 	@Override
-	public @NonNull IPermission getPermission(){
-		return new SimplePermission("command.trombinoscope.get", true);
-	}
-	
-	@NonNull
-	@Override
-	public String getName(@NonNull Guild guild){
-		return translate(guild, "command.trombinoscope.get.name");
-	}
-	
-	@NonNull
-	@Override
-	public List<String> getCommandStrings(){
-		return List.of("get", "g");
-	}
-	
-	@NonNull
-	@Override
-	public String getDescription(@NonNull Guild guild){
-		return translate(guild, "command.trombinoscope.get.description");
-	}
-	
-	@Override
-	public void addHelp(@NonNull Guild guild, @NonNull EmbedBuilder builder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		super.addHelp(guild, builder);
 		builder.addField("user", translate(guild, "command.trombinoscope.get.help.user"), true)
 				.addField("index", translate(guild, "command.trombinoscope.get.help.index"), true);
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args){
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		var guild = event.getGuild();
 		var channel = event.getChannel();
@@ -122,7 +99,30 @@ class GetCommand extends BasicCommand{
 	}
 	
 	@Override
-	public @NonNull String getCommandUsage(){
+	public @NotNull String getCommandUsage(){
 		return super.getCommandUsage() + " <user> [index]";
+	}
+	
+	@Override
+	public @NotNull IPermission getPermission(){
+		return new SimplePermission("command.trombinoscope.get", true);
+	}
+	
+	@NotNull
+	@Override
+	public String getName(@NotNull Guild guild){
+		return translate(guild, "command.trombinoscope.get.name");
+	}
+	
+	@NotNull
+	@Override
+	public String getDescription(@NotNull Guild guild){
+		return translate(guild, "command.trombinoscope.get.description");
+	}
+	
+	@NotNull
+	@Override
+	public List<String> getCommandStrings(){
+		return List.of("get", "g");
 	}
 }

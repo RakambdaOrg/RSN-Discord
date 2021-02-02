@@ -1,9 +1,10 @@
 package fr.raksrinana.rsndiscord.command;
 
-import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.function.Function;
@@ -26,51 +27,52 @@ public abstract class BasicCommand implements Command{
 	 *
 	 * @param parent The parent command.
 	 */
-	protected BasicCommand(final Command parent){
+	protected BasicCommand(Command parent){
 		this.parent = parent;
 	}
 	
 	@Override
-	public void addHelp(@NonNull final Guild guild, @NonNull final EmbedBuilder builder){
+	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public CommandResult execute(@NonNull final GuildMessageReceivedEvent event, @NonNull final LinkedList<String> args) throws RuntimeException{
+	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args) throws RuntimeException{
 		if(event.isWebhookMessage()){
 			throw new NotHandledException("This message is from a webhook");
 		}
-		if(!this.isAllowed(requireNonNull(event.getMember()))){
+		if(!isAllowed(requireNonNull(event.getMember()))){
 			throw new NotAllowedException("You're not allowed to execute this command");
 		}
 		return SUCCESS;
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
 	public String getCommandUsage(){
-		return isNull(this.getParent()) || this.getParent() instanceof CommandComposite
+		return isNull(getParent()) || getParent() instanceof CommandComposite
 				? ""
-				: this.getParent().getCommandUsage();
+				: getParent().getCommandUsage();
 	}
 	
-	@NonNull
-	protected Optional<User> getFirstUserMentioned(@NonNull GuildMessageReceivedEvent event){
+	@Override
+	@Nullable
+	public Command getParent(){
+		return parent;
+	}
+	
+	@NotNull
+	protected Optional<User> getFirstUserMentioned(@NotNull GuildMessageReceivedEvent event){
 		return event.getMessage().getMentionedUsers().stream().findFirst();
 	}
 	
-	@NonNull
-	protected Optional<Integer> getArgumentAsInteger(@NonNull LinkedList<String> args){
+	@NotNull
+	protected Optional<Integer> getArgumentAsInteger(@NotNull LinkedList<String> args){
 		return getArgumentAs(args, Integer::parseInt);
 	}
 	
-	@NonNull
-	protected Optional<Long> getArgumentAsLong(@NonNull LinkedList<String> args){
-		return getArgumentAs(args, Long::parseLong);
-	}
-	
-	@NonNull
-	protected <T> Optional<T> getArgumentAs(@NonNull LinkedList<String> args, Function<String, T> converter){
+	@NotNull
+	protected <T> Optional<T> getArgumentAs(@NotNull LinkedList<String> args, Function<String, T> converter){
 		return Optional.ofNullable(args.poll()).map(arg -> {
 			try{
 				return converter.apply(arg);
@@ -81,31 +83,31 @@ public abstract class BasicCommand implements Command{
 		});
 	}
 	
-	@NonNull
-	protected Optional<TextChannel> getFirstChannelMentioned(@NonNull GuildMessageReceivedEvent event){
+	@NotNull
+	protected Optional<Long> getArgumentAsLong(@NotNull LinkedList<String> args){
+		return getArgumentAs(args, Long::parseLong);
+	}
+	
+	@NotNull
+	protected Optional<TextChannel> getFirstChannelMentioned(@NotNull GuildMessageReceivedEvent event){
 		return event.getMessage().getMentionedChannels().stream().findFirst();
 	}
 	
-	@NonNull
-	protected Optional<Role> getFirstRoleMentioned(@NonNull GuildMessageReceivedEvent event){
+	@NotNull
+	protected Optional<Role> getFirstRoleMentioned(@NotNull GuildMessageReceivedEvent event){
 		return event.getMessage().getMentionedRoles().stream().findFirst();
 	}
 	
-	@NonNull
-	protected Optional<Member> getFirstMemberMentioned(@NonNull GuildMessageReceivedEvent event){
+	@NotNull
+	protected Optional<Member> getFirstMemberMentioned(@NotNull GuildMessageReceivedEvent event){
 		return event.getMessage().getMentionedMembers().stream().findFirst();
 	}
 	
-	@Override
-	public Command getParent(){
-		return this.parent;
-	}
-	
-	protected boolean noUserIsMentioned(@NonNull GuildMessageReceivedEvent event){
+	protected boolean noUserIsMentioned(@NotNull GuildMessageReceivedEvent event){
 		return event.getMessage().getMentionedUsers().isEmpty();
 	}
 	
-	protected boolean noMemberIsMentioned(@NonNull GuildMessageReceivedEvent event){
+	protected boolean noMemberIsMentioned(@NotNull GuildMessageReceivedEvent event){
 		return event.getMessage().getMentionedMembers().isEmpty();
 	}
 }
