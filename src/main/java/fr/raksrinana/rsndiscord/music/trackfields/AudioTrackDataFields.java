@@ -1,14 +1,14 @@
 package fr.raksrinana.rsndiscord.music.trackfields;
 
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 interface AudioTrackDataFields<T>{
-	T parseObject(@NonNull final Object value);
+	T parseObject(@NotNull Object value);
 	
-	@NonNull
-	default Object valueForField(@NonNull final T value){
+	@NotNull
+	default Object valueForField(@NotNull T value){
 		return value;
 	}
 	
-	@NonNull String getName();
+	@NotNull String getName();
 }

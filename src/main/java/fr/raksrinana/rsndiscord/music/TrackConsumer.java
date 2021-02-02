@@ -1,12 +1,13 @@
 package fr.raksrinana.rsndiscord.music;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public interface TrackConsumer{
-	void onPlaylist(List<AudioTrack> tracks);
+	void onPlaylist(@NotNull List<AudioTrack> tracks);
 	
-	void onTrack(AudioTrack track);
+	void onTrack(@NotNull AudioTrack track);
 	
-	void onFailure(String message);
+	void onFailure(@NotNull String message);
 }

@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.music;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 interface IStatusTrackSchedulerListener{
 	/**
@@ -14,12 +14,12 @@ interface IStatusTrackSchedulerListener{
 	 *
 	 * @param track The track that ended.
 	 */
-	void onTrackEnd(@NonNull AudioTrack track);
+	void onTrackEnd(@NotNull AudioTrack track);
 	
 	/**
 	 * Called when a track starts.
 	 *
 	 * @param track The track that started.
 	 */
-	void onTrackStart(@NonNull AudioTrack track);
+	void onTrackStart(@NotNull AudioTrack track);
 }

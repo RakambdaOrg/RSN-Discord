@@ -1,15 +1,15 @@
 package fr.raksrinana.rsndiscord.music.trackfields;
 
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 public class ReplayTrackDataField implements AudioTrackDataFields<Boolean>{
-	@NonNull
-	public Boolean parseObject(@NonNull final Object value) throws IllegalArgumentException{
+	@NotNull
+	public Boolean parseObject(@NotNull Object value) throws IllegalArgumentException{
 		return (Boolean) value;
 	}
 	
 	@Override
-	@NonNull
+	@NotNull
 	public String getName(){
 		return "replay";
 	}

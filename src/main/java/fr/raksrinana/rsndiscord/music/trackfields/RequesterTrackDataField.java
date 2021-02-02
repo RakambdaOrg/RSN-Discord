@@ -1,22 +1,22 @@
 package fr.raksrinana.rsndiscord.music.trackfields;
 
 import fr.raksrinana.rsndiscord.Main;
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.User;
+import org.jetbrains.annotations.NotNull;
 
 public class RequesterTrackDataField implements AudioTrackDataFields<User>{
-	public User parseObject(@NonNull final Object value) throws IllegalArgumentException{
+	public User parseObject(@NotNull Object value) throws IllegalArgumentException{
 		return Main.getJda().retrieveUserById((long) value).complete();
 	}
 	
-	@NonNull
+	@NotNull
 	@Override
-	public Object valueForField(@NonNull User value){
+	public Object valueForField(@NotNull User value){
 		return value.getIdLong();
 	}
 	
 	@Override
-	@NonNull
+	@NotNull
 	public String getName(){
 		return "requester";
 	}

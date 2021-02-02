@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.permission;
 
-import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Member;
+import org.jetbrains.annotations.NotNull;
 
 public class StaticPermission implements IPermission{
 	private final boolean value;
@@ -11,7 +11,7 @@ public class StaticPermission implements IPermission{
 	}
 	
 	@Override
-	public boolean isAllowed(@NonNull Member member){
+	public boolean isAllowed(@NotNull Member member){
 		return value;
 	}
 }
