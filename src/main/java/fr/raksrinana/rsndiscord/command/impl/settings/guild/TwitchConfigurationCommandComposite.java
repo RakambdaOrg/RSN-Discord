@@ -34,7 +34,7 @@ public class TwitchConfigurationCommandComposite extends CommandComposite{
 	
 	@NotNull
 	@Override
-	public @NotNull List<String> getCommandStrings(){
+	public List<String> getCommandStrings(){
 		return List.of("tw", "twitch");
 	}
 	

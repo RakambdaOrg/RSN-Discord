@@ -57,7 +57,7 @@ public class AutoThumbsChannelsConfigurationCommand extends SetConfigurationComm
 	
 	@NotNull
 	@Override
-	public @NotNull String getCommandUsage(){
+	public String getCommandUsage(){
 		return super.getCommandUsage() + " [channel]";
 	}
 	

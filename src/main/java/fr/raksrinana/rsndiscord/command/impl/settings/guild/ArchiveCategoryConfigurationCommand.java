@@ -27,7 +27,7 @@ public class ArchiveCategoryConfigurationCommand extends CategoryConfigurationCo
 	}
 	
 	@Override
-	protected void removeConfig(@NotNull @NotNull Guild guild){
+	protected void removeConfig(@NotNull Guild guild){
 		Settings.get(guild).setArchiveCategory(null);
 	}
 	

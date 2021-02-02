@@ -22,7 +22,7 @@ public class DiscordIncidentsChannelChannelConfigurationCommand extends ChannelC
 	}
 	
 	@Override
-	protected void removeConfig(@NotNull @NotNull Guild guild){
+	protected void removeConfig(@NotNull Guild guild){
 		Settings.get(guild).setDiscordIncidentsChannel(null);
 	}
 	

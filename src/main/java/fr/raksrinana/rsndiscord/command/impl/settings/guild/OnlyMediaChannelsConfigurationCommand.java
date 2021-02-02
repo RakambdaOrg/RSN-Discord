@@ -57,7 +57,7 @@ public class OnlyMediaChannelsConfigurationCommand extends SetConfigurationComma
 	
 	@NotNull
 	@Override
-	public @NotNull String getCommandUsage(){
+	public String getCommandUsage(){
 		return super.getCommandUsage() + " [channel]";
 	}
 	

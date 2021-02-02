@@ -57,7 +57,7 @@ public class AutoReactionsChannelsConfigurationCommand extends SetConfigurationC
 	
 	@NotNull
 	@Override
-	public @NotNull String getCommandUsage(){
+	public String getCommandUsage(){
 		return super.getCommandUsage() + " [channel]";
 	}
 	

@@ -57,7 +57,7 @@ public class ModeratorRolesConfigurationCommand extends SetConfigurationCommand<
 	
 	@NotNull
 	@Override
-	public @NotNull String getCommandUsage(){
+	public String getCommandUsage(){
 		return super.getCommandUsage() + " [role]";
 	}
 	

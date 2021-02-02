@@ -27,7 +27,7 @@ public class LogChannelConfigurationCommand extends ChannelConfigurationCommand{
 	}
 	
 	@Override
-	protected void removeConfig(@NotNull @NotNull Guild guild){
+	protected void removeConfig(@NotNull Guild guild){
 		Settings.get(guild).setLogChannel(null);
 	}
 	

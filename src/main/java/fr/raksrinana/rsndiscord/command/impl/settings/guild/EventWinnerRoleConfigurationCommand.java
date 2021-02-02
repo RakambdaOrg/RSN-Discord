@@ -22,7 +22,7 @@ public class EventWinnerRoleConfigurationCommand extends RoleConfigurationComman
 	}
 	
 	@Override
-	protected void removeConfig(@NotNull @NotNull Guild guild){
+	protected void removeConfig(@NotNull Guild guild){
 		Settings.get(guild).setEventWinnerRole(null);
 	}
 	

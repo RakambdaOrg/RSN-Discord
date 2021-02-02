@@ -57,7 +57,7 @@ public class AutoRolesConfigurationCommand extends SetConfigurationCommand<RoleC
 	
 	@NotNull
 	@Override
-	public @NotNull String getCommandUsage(){
+	public String getCommandUsage(){
 		return super.getCommandUsage() + " [role]";
 	}
 	
