@@ -40,18 +40,13 @@ public class ColorCommand extends BasicCommand{
 	@Override
 	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
-		if(event.getMessage().getMentionedRoles().size() != 1){
+		if(args.size() <= event.getMessage().getMentionedRoles().size()){
 			return BAD_ARGUMENTS;
 		}
-		args.poll();
 		
-		var targetRole = event.getMessage().getMentionedRoles().stream().findFirst().orElseThrow();
-		return getArgumentAsInteger(args)
-				.map(time -> {
-					colorize(time, targetRole);
-					return SUCCESS;
-				})
-				.orElse(BAD_ARGUMENTS);
+		var time = getArgumentAsInteger(args).orElseThrow();
+		event.getMessage().getMentionedRoles().forEach(role -> colorize(time, role));
+		return SUCCESS;
 	}
 	
 	private void colorize(int time, Role role){
@@ -82,7 +77,7 @@ public class ColorCommand extends BasicCommand{
 	@NotNull
 	@Override
 	public String getCommandUsage(){
-		return super.getCommandUsage() + " <@role> <time>";
+		return super.getCommandUsage() + " <time> <@role...>";
 	}
 	
 	@Override

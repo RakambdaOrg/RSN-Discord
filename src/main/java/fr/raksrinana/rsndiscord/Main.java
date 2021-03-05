@@ -61,7 +61,6 @@ public class Main{
 		Unirest.config()
 				.setObjectMapper(new JacksonObjectMapper())
 				.connectTimeout(30000)
-				.socketTimeout(30000)
 				.enableCookieManagement(true)
 				.verifySsl(true);
 		consoleHandler = new ConsoleHandler();
