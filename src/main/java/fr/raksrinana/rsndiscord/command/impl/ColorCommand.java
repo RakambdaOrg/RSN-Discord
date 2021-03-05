@@ -62,15 +62,10 @@ public class ColorCommand extends BasicCommand{
 		executorService.schedule(() -> {
 			Log.getLogger(role.getGuild()).info("Stopping color change for {}", role);
 			changeColorTask.cancel(false);
-			while(!changeColorTask.isDone()){
-				try{
-					Thread.sleep(500);
-				}
-				catch(InterruptedException e){
-					Log.getLogger(role.getGuild()).error("Failed to wait for role change task completion");
-				}
+			executorService.schedule(() -> {
+				Log.getLogger(role.getGuild()).info("Reverting {} color to {}", role, originalColor);
 				role.getManager().setColor(originalColor).submit();
-			}
+			}, 30, SECONDS);
 		}, time, SECONDS);
 	}
 	
