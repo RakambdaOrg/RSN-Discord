@@ -161,14 +161,14 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 							
 							@Override
 							public void onTrack(@NotNull AudioTrack track){
-								TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Track added " + event.getUser().getNick() + ": " + track.getInfo().title);
+								TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Track added by " + event.getUser().getNick() + ": " + track.getInfo().title);
 							}
 							
 							@Override
 							public void onFailure(@NotNull String message){
 								TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Failed to add track");
 							}
-						}, 0, 1, link), () -> TwitchIRC.sendMessage(getGuild(), getIrcChannel(), "Requests are currently disabled"));
+						}, 0, 1, link), () -> TwitchIRC.sendMessage(getGuild(), getIrcChannel(), MessageFormat.format("Requests are currently disabled {0}", musicChannelId)));
 			}
 			if(twitchMessage.isModerator() && event.getMessage().startsWith("?rskip")){
 				RSNAudioManager.skip(getGuild());
