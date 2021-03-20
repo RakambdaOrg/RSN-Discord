@@ -10,8 +10,8 @@ public abstract class AbstractTwitchMessageWithId implements IIRCMessage{
 	@NotNull
 	public Optional<TwitchMessageId> getMessageId(){
 		return getTags().stream()
-				.filter(tag -> Objects.equals("msg-id", tag.getKey()))
-				.map(tag -> TwitchMessageId.getFromName(tag.getValue()))
+				.filter(tag -> Objects.equals("msg-id", tag.key()))
+				.map(tag -> TwitchMessageId.getFromName(tag.value()))
 				.findFirst();
 	}
 	

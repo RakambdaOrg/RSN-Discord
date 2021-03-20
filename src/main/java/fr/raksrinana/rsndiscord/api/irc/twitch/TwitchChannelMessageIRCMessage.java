@@ -18,9 +18,9 @@ public class TwitchChannelMessageIRCMessage implements IIRCMessage{
 	
 	public TwitchChannelMessageIRCMessage(@NotNull ChannelMessageIRCMessage event){
 		parent = event;
-		badges = event.getTags().stream()
-				.filter(tag -> Objects.equals("badges", tag.getKey()))
-				.map(IRCTag::getValue)
+		badges = event.tags().stream()
+				.filter(tag -> Objects.equals("badges", tag.key()))
+				.map(IRCTag::value)
 				.flatMap(tag -> Arrays.stream(tag.split(","))
 						.filter(v -> !v.isBlank())
 						.map(value -> {
@@ -50,7 +50,7 @@ public class TwitchChannelMessageIRCMessage implements IIRCMessage{
 	
 	public boolean isModerator(){
 		return parent.getTag("mod")
-				.filter(tag -> Objects.equals(tag.getValue(), "1"))
+				.filter(tag -> Objects.equals(tag.value(), "1"))
 				.isPresent();
 	}
 	
