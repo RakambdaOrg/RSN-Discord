@@ -4,7 +4,13 @@ plugins {
     application
     id("com.github.johnrengelman.shadow") version ("6.1.0")
     id("com.github.ben-manes.versions") version ("0.38.0")
-    id("io.freefair.lombok") version ("5.3.0")
+//    id("io.freefair.lombok") version ("5.3.0")
+}
+
+repositories {
+    maven {
+        url = uri("https://projectlombok.org/edge-releases")
+    }
 }
 
 group = "fr.raksrinana"
@@ -35,6 +41,9 @@ dependencies {
     implementation(libs.twitter4j)
 
     compileOnly(libs.jetbrainsAnnotations)
+
+    compileOnly("org.projectlombok:lombok:edge-SNAPSHOT")
+    annotationProcessor("org.projectlombok:lombok:edge-SNAPSHOT")
 }
 
 repositories {
