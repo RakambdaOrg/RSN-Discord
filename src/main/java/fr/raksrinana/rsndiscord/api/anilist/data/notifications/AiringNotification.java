@@ -68,10 +68,9 @@ public class AiringNotification extends INotification{
 	
 	@Override
 	public boolean equals(Object obj){
-		if(!(obj instanceof AiringNotification)){
+		if(!(obj instanceof AiringNotification notification)){
 			return false;
 		}
-		var notification = (AiringNotification) obj;
 		return Objects.equals(notification.getEpisode(), getEpisode()) && Objects.equals(notification.getMedia(), getMedia());
 	}
 	

@@ -42,10 +42,9 @@ public class CategoryConfiguration implements IAtomicConfiguration{
 		if(this == o){
 			return true;
 		}
-		if(!(o instanceof CategoryConfiguration)){
+		if(!(o instanceof CategoryConfiguration that)){
 			return false;
 		}
-		var that = (CategoryConfiguration) o;
 		return new EqualsBuilder().append(getCategoryId(), that.getCategoryId()).isEquals();
 	}
 	

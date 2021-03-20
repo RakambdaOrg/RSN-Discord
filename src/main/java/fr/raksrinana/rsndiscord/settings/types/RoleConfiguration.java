@@ -42,10 +42,9 @@ public class RoleConfiguration implements IAtomicConfiguration{
 		if(this == o){
 			return true;
 		}
-		if(!(o instanceof RoleConfiguration)){
+		if(!(o instanceof RoleConfiguration that)){
 			return false;
 		}
-		var that = (RoleConfiguration) o;
 		return new EqualsBuilder().append(getRoleId(), that.getRoleId()).isEquals();
 	}
 	

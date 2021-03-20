@@ -42,10 +42,9 @@ public class UserConfiguration implements IAtomicConfiguration{
 		if(this == o){
 			return true;
 		}
-		if(!(o instanceof UserConfiguration)){
+		if(!(o instanceof UserConfiguration that)){
 			return false;
 		}
-		var that = (UserConfiguration) o;
 		return new EqualsBuilder().append(getUserId(), that.getUserId()).isEquals();
 	}
 	

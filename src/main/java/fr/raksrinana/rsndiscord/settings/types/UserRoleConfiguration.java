@@ -41,10 +41,9 @@ public class UserRoleConfiguration implements IAtomicConfiguration{
 		if(this == o){
 			return true;
 		}
-		if(!(o instanceof UserRoleConfiguration)){
+		if(!(o instanceof UserRoleConfiguration that)){
 			return false;
 		}
-		var that = (UserRoleConfiguration) o;
 		return new EqualsBuilder().append(getUser(), that.getUser()).append(getRole(), that.getRole()).isEquals();
 	}
 	

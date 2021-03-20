@@ -305,8 +305,7 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 	
 	@Override
 	public void onEvent(@NotNull GenericEvent event){
-		if(event instanceof GuildMessageReceivedEvent){
-			var evt = (GuildMessageReceivedEvent) event;
+		if(event instanceof GuildMessageReceivedEvent evt){
 			try{
 				if(!evt.getAuthor().isBot() && Objects.equals(evt.getChannel(), channel)){
 					TwitchIRC.sendMessage(evt.getGuild(), ircChannel, evt.getAuthor().getName() + " -> " + evt.getMessage().getContentRaw());

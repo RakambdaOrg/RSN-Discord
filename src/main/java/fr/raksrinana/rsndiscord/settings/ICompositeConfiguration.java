@@ -53,8 +53,7 @@ public interface ICompositeConfiguration{
 			}
 			return false;
 		}
-		else if(fieldValue instanceof Map){
-			var map = (Map<?, ?>) fieldValue;
+		else if(fieldValue instanceof Map<?, ?> map){
 			var toRemove = new HashMap<>(map).entrySet().stream()
 					.filter(entry -> Objects.isNull(entry.getValue())
 							|| atomicShouldBeRemoved(entry.getKey())

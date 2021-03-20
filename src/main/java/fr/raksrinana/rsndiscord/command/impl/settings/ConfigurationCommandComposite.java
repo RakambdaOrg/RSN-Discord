@@ -42,6 +42,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		addSubCommand(new LeaveServerBanDurationConfigurationCommand(this));
 		addSubCommand(new TwitterConfigurationCommandComposite(this));
 		addSubCommand(new JoinLeaveConfigurationCommandComposite(this));
+		addSubCommand(new AutoDeleteConfigurationCommand(this));
 	}
 	
 	@Override

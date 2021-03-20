@@ -45,10 +45,9 @@ public class AniListAccessTokenConfiguration implements IAtomicConfiguration{
 		if(this == o){
 			return true;
 		}
-		if(!(o instanceof AniListAccessTokenConfiguration)){
+		if(!(o instanceof AniListAccessTokenConfiguration that)){
 			return false;
 		}
-		var that = (AniListAccessTokenConfiguration) o;
 		return new EqualsBuilder().append(getToken(), that.getToken()).isEquals();
 	}
 	

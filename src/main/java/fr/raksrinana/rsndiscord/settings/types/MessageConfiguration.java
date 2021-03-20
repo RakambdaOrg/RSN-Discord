@@ -50,10 +50,9 @@ public class MessageConfiguration implements IAtomicConfiguration{
 		if(this == o){
 			return true;
 		}
-		if(!(o instanceof MessageConfiguration)){
+		if(!(o instanceof MessageConfiguration that)){
 			return false;
 		}
-		var that = (MessageConfiguration) o;
 		return new EqualsBuilder().append(getMessageId(), that.getMessageId()).append(getChannel(), that.getChannel()).isEquals();
 	}
 	

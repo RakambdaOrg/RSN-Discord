@@ -49,10 +49,9 @@ public class UserDateConfiguration implements IAtomicConfiguration{
 		if(this == o){
 			return true;
 		}
-		if(!(o instanceof UserDateConfiguration)){
+		if(!(o instanceof UserDateConfiguration that)){
 			return false;
 		}
-		var that = (UserDateConfiguration) o;
 		return new EqualsBuilder().append(getUser(), that.getUser()).append(getDate(), that.getDate()).isEquals();
 	}
 	

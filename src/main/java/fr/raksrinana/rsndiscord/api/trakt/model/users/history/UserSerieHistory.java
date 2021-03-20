@@ -53,8 +53,7 @@ public class UserSerieHistory extends UserHistory{
 	
 	@Override
 	public int compareTo(@NotNull ITraktObject o){
-		if(o instanceof UserSerieHistory){
-			var h = (UserSerieHistory) o;
+		if(o instanceof UserSerieHistory h){
 			if(Objects.equals(getShow(), h.getShow())){
 				return getEpisode().compareTo(h.getEpisode());
 			}

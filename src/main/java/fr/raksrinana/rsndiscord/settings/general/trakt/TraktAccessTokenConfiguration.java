@@ -48,10 +48,9 @@ public class TraktAccessTokenConfiguration implements IAtomicConfiguration{
 		if(this == o){
 			return true;
 		}
-		if(!(o instanceof TraktAccessTokenConfiguration)){
+		if(!(o instanceof TraktAccessTokenConfiguration that)){
 			return false;
 		}
-		var that = (TraktAccessTokenConfiguration) o;
 		return new EqualsBuilder().append(getToken(), that.getToken()).isEquals();
 	}
 	

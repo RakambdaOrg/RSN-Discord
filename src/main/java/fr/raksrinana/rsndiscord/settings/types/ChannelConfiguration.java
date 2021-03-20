@@ -44,10 +44,9 @@ public class ChannelConfiguration implements IAtomicConfiguration{
 		if(this == o){
 			return true;
 		}
-		if(!(o instanceof ChannelConfiguration)){
+		if(!(o instanceof ChannelConfiguration that)){
 			return false;
 		}
-		var that = (ChannelConfiguration) o;
 		return new EqualsBuilder().append(getChannelId(), that.getChannelId()).isEquals();
 	}
 	

@@ -22,7 +22,7 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class SkipMusicReply extends BasicWaitingUserReply{
-	private int votesRequired;
+	private final int votesRequired;
 	private final AudioTrack audioTrack;
 	
 	public SkipMusicReply(GuildMessageReceivedEvent event, Message message, int votesRequired, AudioTrack audioTrack){

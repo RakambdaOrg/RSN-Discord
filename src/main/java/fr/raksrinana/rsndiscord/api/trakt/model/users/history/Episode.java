@@ -77,8 +77,7 @@ public class Episode implements ITraktObject{
 	
 	@Override
 	public int compareTo(@NotNull ITraktObject o){
-		if(o instanceof Episode){
-			var e = (Episode) o;
+		if(o instanceof Episode e){
 			if(getSeason() == e.getSeason()){
 				return Integer.compare(getNumber(), e.getNumber());
 			}
