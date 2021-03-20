@@ -2,9 +2,9 @@ plugins {
     idea
     java
     application
-    id("com.github.johnrengelman.shadow")
-    id("com.github.ben-manes.versions")
-    id("io.freefair.lombok")
+    id("com.github.johnrengelman.shadow") version ("6.1.0")
+    id("com.github.ben-manes.versions") version ("0.38.0")
+    id("io.freefair.lombok") version ("5.3.0")
 }
 
 group = "fr.raksrinana"
@@ -88,7 +88,7 @@ application {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_15
-    targetCompatibility = JavaVersion.VERSION_15
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
     modularity.inferModulePath.set(true)
 }
