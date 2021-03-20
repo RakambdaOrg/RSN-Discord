@@ -40,8 +40,3 @@ jetbrainsAnnotations = { group = "org.jetbrains", name = "annotations", version.
 
 [bundles]
 jackson = ["jackson-core", "jackson-annotations", "jackson-databind"]
-
-[plugins]
-com.github.johnrengelman.shadow = "6.1.0"
-com.github.ben-manes.versions = "0.38.0"
-io.freefair.lombok = "5.3.0"
