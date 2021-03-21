@@ -39,7 +39,9 @@ public class TwitterApi{
 			filteredStream = null;
 		}
 		
-		getTwitteredClient().retrieveFilteredStreamRules().forEach(rule -> getTwitteredClient().deleteFilteredStreamRule(rule.getValue()));
+		Optional.ofNullable(getTwitteredClient().retrieveFilteredStreamRules())
+				.orElse(List.of())
+				.forEach(rule -> getTwitteredClient().deleteFilteredStreamRule(rule.getValue()));
 		searches.clear();
 	}
 	
