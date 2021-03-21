@@ -19,7 +19,8 @@ open module fr.raksrinana.rsndiscord {
 	requires imgscalr.lib;
 	requires jump3r;
 	requires thumbnailator;
-	requires org.twitter4j.core;
+	requires twittered;
+	requires scribejava.core;
 	requires static lombok;
 	requires static org.jetbrains.annotations;
 }

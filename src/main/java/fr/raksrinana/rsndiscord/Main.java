@@ -2,6 +2,7 @@ package fr.raksrinana.rsndiscord;
 
 import fr.raksrinana.rsndiscord.api.irc.twitch.TwitchIRC;
 import fr.raksrinana.rsndiscord.api.trakt.TraktApi;
+import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
 import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
@@ -83,6 +84,7 @@ public class Main{
 			Log.getLogger(null).info("Started");
 			announceStart();
 			restartTwitchIRCConnections();
+			TwitterApi.registerStreamFilters();
 			
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 				Log.getLogger(null).info("Shutdown hook triggered");
@@ -199,6 +201,7 @@ public class Main{
 	 * Close the bot.
 	 */
 	public static void close(){
+		TwitterApi.removeStreamFilters();
 		TraktApi.stopAll();
 		UserReplyEventListener.stopAll();
 		RSNAudioManager.stopAll();

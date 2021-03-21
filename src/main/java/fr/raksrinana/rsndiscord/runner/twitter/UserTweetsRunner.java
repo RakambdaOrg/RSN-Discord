@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.runner.twitter;
 
+import com.github.redouane59.twitter.dto.tweet.Tweet;
 import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
 import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
@@ -8,10 +9,7 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import net.dv8tion.jda.api.JDA;
 import org.jetbrains.annotations.NotNull;
-import twitter4j.Status;
-import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Comparator.comparing;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
@@ -31,12 +29,9 @@ public class UserTweetsRunner implements IScheduledRunner{
 					conf.getUserIds().forEach(userId -> conf.getLastUserTweet(userId)
 							.map(lastTweet -> TwitterApi.getUserLastTweets(userId, lastTweet))
 							.orElseGet(() -> TwitterApi.getUserLastTweets(userId)).stream()
-							.sorted(comparing(Status::getCreatedAt))
+							.sorted(comparing(Tweet::getCreatedAt))
 							.forEach(tweet -> {
-								channel.sendMessage(String.format("https://twitter.com/%s/status/%s",
-										URLEncoder.encode(tweet.getUser().getScreenName(), UTF_8),
-										tweet.getId())
-								).submit()
+								channel.sendMessage(TwitterApi.getUrl(tweet)).submit()
 										.thenAccept(ScheduleUtils.deleteMessage(date -> date.plusHours(6)));
 								conf.setLastUserTweet(userId, tweet.getId());
 							})));

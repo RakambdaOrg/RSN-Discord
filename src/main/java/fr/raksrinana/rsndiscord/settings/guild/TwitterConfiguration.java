@@ -28,7 +28,7 @@ public class TwitterConfiguration implements ICompositeConfiguration{
 	@JsonProperty("userIds")
 	@Getter
 	@Setter
-	private Set<Long> userIds = new HashSet<>();
+	private Set<String> userIds = new HashSet<>();
 	@JsonProperty("searches")
 	@Getter
 	@Setter
@@ -37,28 +37,15 @@ public class TwitterConfiguration implements ICompositeConfiguration{
 	@JsonAlias("lastTweet")
 	@Getter
 	@Setter
-	private Map<Long, Long> lastUserTweet = new HashMap<>();
-	@JsonProperty("lastSearchTweet")
-	@Getter
-	@Setter
-	private Map<String, Long> lastSearchTweet = new HashMap<>();
+	private Map<String, String> lastUserTweet = new HashMap<>();
 	
 	@NotNull
-	public Optional<Long> getLastUserTweet(long userId){
+	public Optional<String> getLastUserTweet(String userId){
 		return ofNullable(lastUserTweet.get(userId));
 	}
 	
-	public void setLastUserTweet(long userId, long tweetId){
+	public void setLastUserTweet(String userId, String tweetId){
 		lastUserTweet.put(userId, tweetId);
-	}
-	
-	@NotNull
-	public Optional<Long> getLastSearchTweet(@NotNull String search){
-		return ofNullable(lastSearchTweet.get(search));
-	}
-	
-	public void setLastSearchTweet(@NotNull String search, long tweetId){
-		lastSearchTweet.put(search, tweetId);
 	}
 	
 	@NotNull

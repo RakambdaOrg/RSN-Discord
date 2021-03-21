@@ -14,7 +14,7 @@ jump3r-version = "1.0.5"
 emoji_java-version = "5.1.1"
 imgscalr-version = "4.2"
 thumbnailator-version = "0.4.13"
-twitter4j-version = "4.0.7"
+twittered-version = "1.21"
 jetbrains-annotations-version = "20.1.0"
 
 [libraries]
@@ -35,7 +35,7 @@ reflections = { group = "org.reflections", name = "reflections", version.ref = "
 emojiJava = { group = "com.vdurmont", name = "emoji-java", version.ref = "emoji_java-version" }
 imgscalr = { group = "org.imgscalr", name = "imgscalr-lib", version.ref = "imgscalr-version" }
 thumbnailator = { group = "net.coobird", name = "thumbnailator", version.ref = "thumbnailator-version" }
-twitter4j = { group = "org.twitter4j", name = "twitter4j-core", version.ref = "twitter4j-version" }
+twittered = { group = "com.github.redouane59.twitter", name = "twittered", version.ref = "twittered-version" }
 jetbrainsAnnotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations-version" }
 
 [bundles]

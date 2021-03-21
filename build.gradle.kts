@@ -38,7 +38,7 @@ dependencies {
     implementation(libs.emojiJava)
     implementation(libs.imgscalr)
     implementation(libs.thumbnailator)
-    implementation(libs.twitter4j)
+    implementation(libs.twittered)
 
     compileOnly(libs.jetbrainsAnnotations)
 
