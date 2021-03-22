@@ -1,17 +1,20 @@
 package fr.raksrinana.rsndiscord.api.twitter;
 
+import com.github.redouane59.twitter.IAPIEventListener;
 import com.github.redouane59.twitter.TwitterClient;
 import com.github.redouane59.twitter.dto.tweet.Tweet;
 import com.github.redouane59.twitter.signature.TwitterCredentials;
 import com.github.scribejava.core.model.Response;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-public class TwitterApi{
+@Slf4j
+public class TwitterApi implements IAPIEventListener{
 	private static TwitterClient twitteredClient;
 	private static Map<String, List<Long>> searches = new HashMap<>();
 	private static Future<Response> filteredStream;
@@ -19,6 +22,7 @@ public class TwitterApi{
 	public static void registerStreamFilters(){
 		removeStreamFilters();
 		
+		log.info("Registering stream filters");
 		searches = Main.getJda().getGuilds().stream()
 				.flatMap(guild -> {
 					var conf = Settings.get(guild).getTwitterConfiguration();
@@ -34,6 +38,7 @@ public class TwitterApi{
 	}
 	
 	public static void removeStreamFilters(){
+		log.info("Removing stream filters");
 		if(Objects.nonNull(filteredStream)){
 			getTwitteredClient().stopFilteredStream(filteredStream);
 			filteredStream = null;
@@ -46,6 +51,7 @@ public class TwitterApi{
 	}
 	
 	private static void onFilteredStreamTweet(Tweet tweet){
+		log.info("New tweet from filter");
 		var tweetUrl = getUrl(tweet);
 		
 		searches.entrySet().stream()
@@ -73,6 +79,27 @@ public class TwitterApi{
 	
 	public static String getUrl(Tweet tweet){
 		return "https://twitter.com/i/web/status/%s".formatted(tweet.getId());
+	}
+	
+	@Override
+	public void onStreamError(int httpCode, String error){
+		log.error("Filtered stream error, code: {}, error: {}", httpCode, error);
+	}
+	
+	@Override
+	public void onTweetStreamed(Tweet tweet){
+		onFilteredStreamTweet(tweet);
+	}
+	
+	@Override
+	public void onUnknownDataStreamed(String json){
+		log.error("Unknown filtered stream data {}", json);
+	}
+	
+	@Override
+	public void onStreamEnded(Exception e){
+		log.error("Filtered stream ended", e);
+		registerStreamFilters();
 	}
 	
 	@NotNull
