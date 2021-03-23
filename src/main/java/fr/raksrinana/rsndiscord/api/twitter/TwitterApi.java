@@ -2,7 +2,9 @@ package fr.raksrinana.rsndiscord.api.twitter;
 
 import com.github.redouane59.twitter.IAPIEventListener;
 import com.github.redouane59.twitter.TwitterClient;
+import com.github.redouane59.twitter.dto.stream.StreamRules;
 import com.github.redouane59.twitter.dto.tweet.Tweet;
+import com.github.redouane59.twitter.dto.tweet.TweetV2;
 import com.github.redouane59.twitter.signature.TwitterCredentials;
 import com.github.scribejava.core.model.Response;
 import fr.raksrinana.rsndiscord.Main;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class TwitterApi implements IAPIEventListener{
 	private static TwitterClient twitteredClient;
 	private static Map<String, List<Long>> searches = new HashMap<>();
+	private static Map<String, List<Long>> searchesHash = new HashMap<>();
 	private static Future<Response> filteredStream;
 	
 	public static void registerStreamFilters(){
@@ -31,6 +34,7 @@ public class TwitterApi implements IAPIEventListener{
 							.flatMap(channelConfiguration -> conf.getSearches().stream().map(search -> Map.entry(search, channelConfiguration.getChannelId())));
 				})
 				.collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+		searchesHash = searches.entrySet().stream().collect(Collectors.toMap(e -> Integer.toString(e.getKey().hashCode()), Map.Entry::getValue));
 		
 		searches.keySet().forEach(search -> getTwitteredClient().addFilteredStreamRule(search, Integer.toString(search.hashCode())));
 		
@@ -48,23 +52,27 @@ public class TwitterApi implements IAPIEventListener{
 				.orElse(List.of())
 				.forEach(rule -> getTwitteredClient().deleteFilteredStreamRule(rule.getValue()));
 		searches.clear();
+		searchesHash.clear();
 	}
 	
 	private static void onFilteredStreamTweet(Tweet tweet){
-		log.info("New tweet from filter");
+		log.info("New tweet from filter: {}", tweet.getText());
 		var tweetUrl = getUrl(tweet);
 		
-		searches.entrySet().stream()
-				.filter(search -> searchMatch(search.getKey(), tweet))
-				.flatMap(search -> search.getValue().stream())
-				.distinct()
-				.map(Main.getJda()::getTextChannelById)
-				.filter(Objects::nonNull)
-				.forEach(channel -> channel.sendMessage(tweetUrl).submit());
-	}
-	
-	private static boolean searchMatch(String search, Tweet tweet){
-		return Arrays.stream(search.split(" ")).allMatch(split -> tweet.getText().contains(split));
+		if(tweet instanceof TweetV2 tweetV2){
+			Arrays.stream(tweetV2.getMatchingRules())
+					.map(StreamRules.StreamRule::getTag)
+					.map(hash -> searchesHash.get(hash))
+					.filter(Objects::nonNull)
+					.flatMap(List::stream)
+					.distinct()
+					.map(Main.getJda()::getTextChannelById)
+					.filter(Objects::nonNull)
+					.forEach(channel -> channel.sendMessage(tweetUrl).submit());
+		}
+		else {
+			log.error("Tweet isn't a tweet V2");
+		}
 	}
 	
 	@NotNull
