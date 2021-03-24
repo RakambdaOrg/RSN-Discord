@@ -84,7 +84,6 @@ public class Main{
 			Log.getLogger(null).info("Started");
 			announceStart();
 			restartTwitchIRCConnections();
-			TwitterApi.registerStreamFilters();
 			
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 				Log.getLogger(null).info("Shutdown hook triggered");

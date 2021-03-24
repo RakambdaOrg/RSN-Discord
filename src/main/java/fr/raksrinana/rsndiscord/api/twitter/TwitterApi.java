@@ -10,6 +10,7 @@ import com.github.scribejava.core.model.Response;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.JDA;
 import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.Future;
@@ -22,11 +23,11 @@ public class TwitterApi implements IAPIEventListener{
 	private static Map<String, List<Long>> searchesHash = new HashMap<>();
 	private static Future<Response> filteredStream;
 	
-	public static void registerStreamFilters(){
+	public static void registerStreamFilters(@NotNull JDA jda){
 		removeStreamFilters();
 		
 		log.info("Registering stream filters");
-		searches = Main.getJda().getGuilds().stream()
+		searches = jda.getGuilds().stream()
 				.flatMap(guild -> {
 					var conf = Settings.get(guild).getTwitterConfiguration();
 					return conf.getSearchChannel()
@@ -56,7 +57,7 @@ public class TwitterApi implements IAPIEventListener{
 	}
 	
 	private static void onFilteredStreamTweet(Tweet tweet){
-		log.info("New tweet from filter: {}", tweet.getText());
+		log.info("New tweet from filter");
 		var tweetUrl = getUrl(tweet);
 		
 		if(tweet instanceof TweetV2 tweetV2){
@@ -107,7 +108,7 @@ public class TwitterApi implements IAPIEventListener{
 	@Override
 	public void onStreamEnded(Exception e){
 		log.error("Filtered stream ended", e);
-		registerStreamFilters();
+		registerStreamFilters(Main.getJda());
 	}
 	
 	@NotNull
