@@ -7,12 +7,6 @@ plugins {
 //    id("io.freefair.lombok") version ("5.3.0")
 }
 
-repositories {
-    maven {
-        url = uri("https://projectlombok.org/edge-releases")
-    }
-}
-
 group = "fr.raksrinana"
 description = "RSNDiscord"
 
@@ -47,7 +41,13 @@ dependencies {
 }
 
 repositories {
-    jcenter()
+    maven {
+        name = "m2-dv8tion"
+        url = uri("https://m2.dv8tion.net/releases")
+    }
+    maven {
+        url = uri("https://projectlombok.org/edge-releases")
+    }
     mavenCentral()
 }
 
