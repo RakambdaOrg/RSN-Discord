@@ -49,6 +49,7 @@ repositories {
         url = uri("https://projectlombok.org/edge-releases")
     }
     mavenCentral()
+    jcenter()
 }
 
 tasks {
