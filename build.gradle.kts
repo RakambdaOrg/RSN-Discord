@@ -4,7 +4,7 @@ plugins {
     application
     id("com.github.johnrengelman.shadow") version ("6.1.0")
     id("com.github.ben-manes.versions") version ("0.38.0")
-//    id("io.freefair.lombok") version ("5.3.0")
+    id("io.freefair.lombok") version ("5.3.0")
 }
 
 group = "fr.raksrinana"
@@ -35,9 +35,6 @@ dependencies {
     implementation(libs.twittered)
 
     compileOnly(libs.jetbrainsAnnotations)
-
-    compileOnly("org.projectlombok:lombok:edge-SNAPSHOT")
-    annotationProcessor("org.projectlombok:lombok:edge-SNAPSHOT")
 }
 
 repositories {
@@ -100,5 +97,8 @@ application {
 java {
     sourceCompatibility = JavaVersion.VERSION_16
     targetCompatibility = JavaVersion.VERSION_16
-    modularity.inferModulePath.set(true)
+}
+
+lombok {
+    version.set("edge-SNAPSHOT")
 }
