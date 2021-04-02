@@ -45,8 +45,11 @@ repositories {
     maven {
         url = uri("https://projectlombok.org/edge-releases")
     }
-    mavenCentral()
+    maven{
+        url = uri("https://dl.bintray.com/sedmelluq/com.sedmelluq")
+    }
     jcenter()
+    mavenCentral()
 }
 
 tasks {
