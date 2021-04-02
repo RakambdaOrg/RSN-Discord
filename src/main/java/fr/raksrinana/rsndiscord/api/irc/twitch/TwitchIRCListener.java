@@ -82,7 +82,10 @@ public class TwitchIRCListener extends AbstractTwitchIRCListener implements Even
 	TwitchIRCListener(@NotNull Guild guild, @NotNull String user, @NotNull String channel){
 		this.guild = guild;
 		this.user = user;
-		this.channel = Settings.get(guild).getTwitchConfiguration().getTwitchChannel().orElseThrow().getChannel().orElseThrow();
+		this.channel = Settings.get(guild).getTwitchConfiguration()
+				.getTwitchChannel()
+				.flatMap(ChannelConfiguration::getChannel)
+				.orElseThrow();
 		ircChannel = channel;
 		lastMessage = System.currentTimeMillis();
 	}
