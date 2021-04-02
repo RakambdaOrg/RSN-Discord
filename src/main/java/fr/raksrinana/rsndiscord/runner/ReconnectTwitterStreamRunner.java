@@ -40,12 +40,12 @@ public class ReconnectTwitterStreamRunner implements IScheduledRunner{
 	
 	@Override
 	public long getPeriod(){
-		return 1;
+		return 15;
 	}
 	
 	@NotNull
 	@Override
 	public TimeUnit getPeriodUnit(){
-		return HOURS;
+		return MINUTES;
 	}
 }
