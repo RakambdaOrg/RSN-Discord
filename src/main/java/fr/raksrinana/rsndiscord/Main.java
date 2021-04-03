@@ -94,10 +94,12 @@ public class Main{
 		}
 		catch(LoginException | InterruptedException e){
 			Log.getLogger(null).error("Couldn't start bot", e);
+			new ForceShutdownThread().start();
 			close();
 		}
 		catch(Exception e){
 			Log.getLogger(null).error("Bot error", e);
+			new ForceShutdownThread().start();
 			close();
 		}
 	}
