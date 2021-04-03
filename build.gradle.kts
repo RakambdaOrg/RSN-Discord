@@ -14,8 +14,8 @@ dependencies {
     implementation(libs.jda) {
         exclude(module = "opus-java")
     }
-    implementation(libs.lavaplayerD)
-    implementation(libs.lavaplayerArm)
+    implementation(libs.lavaplayer)
+    implementation(libs.lpCross)
     implementation(libs.jump3r)
 
     implementation(libs.slf4j)
@@ -44,9 +44,6 @@ repositories {
     }
     maven {
         url = uri("https://projectlombok.org/edge-releases")
-    }
-    maven{
-        url = uri("https://dl.bintray.com/sedmelluq/com.sedmelluq")
     }
     jcenter()
     mavenCentral()
