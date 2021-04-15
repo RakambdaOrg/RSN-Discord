@@ -5,6 +5,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version ("6.1.0")
     id("com.github.ben-manes.versions") version ("0.38.0")
     id("io.freefair.lombok") version ("5.3.0")
+    id("com.google.cloud.tools.jib") version ("3.0.0")
 }
 
 group = "fr.raksrinana"
@@ -101,4 +102,23 @@ java {
 
 lombok {
     version.set("edge-SNAPSHOT")
+}
+
+jib {
+    from {
+        image = "adoptopenjdk:16-jre"
+        platforms {
+            platform {
+                os = "linux"
+                architecture = "arm64"
+            }
+        }
+    }
+    to {
+        image = "mrcraftcod/rsn-discord"
+        auth {
+            username = project.findProperty("dockerUsername").toString()
+            password = project.findProperty("dockerPassword").toString()
+        }
+    }
 }
