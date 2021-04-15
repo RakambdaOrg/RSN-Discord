@@ -47,4 +47,9 @@ jobs:
       url: 'https://google.com/'
     steps:
       - name: Deploy
-        run: echo I am deploying! 
+        uses: sagebind/docker-swarm-deploy-action@v2
+        with:
+          remote_host: ${{ secrets.DEPLOY_HOST }}
+          ssh_private_key: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
+          ssh_public_key: ${{ secrets.DOCKER_SSH_PUBLIC_KEY }}
+          args: service update --force rsn-discord_bot
