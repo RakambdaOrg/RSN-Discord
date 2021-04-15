@@ -35,7 +35,7 @@ jobs:
       - name: Check project
         run: ./gradlew check
       - name: Push on Docker Hub
-        if: success() && github.ref == 'refs/heads/master'
+        if: success() && github.ref == 'refs/heads/main'
         run: ./gradlew jib -PdockerUsername=${{ secrets.DOCKER_USERNAME }} -PdockerPassword=${{ secrets.DOCKER_TOKEN }}
 
   deploy:
