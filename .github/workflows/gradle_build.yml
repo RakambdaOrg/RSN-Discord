@@ -53,4 +53,4 @@ jobs:
           port: ${{ secrets.DEPLOY_PORT }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
-          script: hostname
+          script: docker service update --force rsn-discord_bot
