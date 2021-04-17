@@ -69,7 +69,7 @@ public class Hermit{
 			}
 		}
 		catch(MalformedURLException e){
-			Log.getLogger(null).error("Failed to build hermit livestream url", e);
+			Log.getLogger().error("Failed to build hermit livestream url", e);
 		}
 		return empty();
 	}

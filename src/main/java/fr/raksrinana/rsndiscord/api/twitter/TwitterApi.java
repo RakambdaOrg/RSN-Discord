@@ -57,7 +57,7 @@ public class TwitterApi implements IAPIEventListener{
 	}
 	
 	private static void onFilteredStreamTweet(Tweet tweet){
-		log.info("New tweet from filter");
+		log.debug("New tweet from filter");
 		var tweetUrl = getUrl(tweet);
 		
 		if(tweet instanceof TweetV2 tweetV2){

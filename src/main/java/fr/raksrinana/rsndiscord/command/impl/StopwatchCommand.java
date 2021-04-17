@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.reply.StopwatchReply;
 import fr.raksrinana.rsndiscord.reply.UserReplyEventListener;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -27,7 +28,7 @@ public class StopwatchCommand extends BasicCommand{
 	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		var embed = buildEmbed(event.getGuild(), event.getAuthor(), "");
-		event.getChannel().sendMessage(embed).submit()
+		JDAWrappers.message(event, embed).submit()
 				.thenAccept(message -> {
 					message.addReaction(P.getValue()).submit();
 					message.addReaction(S.getValue()).submit();

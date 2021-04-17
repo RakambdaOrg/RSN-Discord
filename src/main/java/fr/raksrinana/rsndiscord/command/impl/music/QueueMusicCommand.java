@@ -10,6 +10,7 @@ import fr.raksrinana.rsndiscord.music.trackfields.RequesterTrackDataField;
 import fr.raksrinana.rsndiscord.music.trackfields.TrackUserFields;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
@@ -88,7 +89,7 @@ public class QueueMusicCommand extends BasicCommand{
 					beforeDuration.addAndGet(track.getDuration());
 				});
 		
-		event.getChannel().sendMessage(builder.build()).submit();
+		JDAWrappers.message(event, builder.build()).submit();
 		return SUCCESS;
 	}
 	

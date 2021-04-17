@@ -9,6 +9,7 @@ import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -43,7 +44,6 @@ public class MediaReactionCommand extends BasicCommand{
 		super.execute(event, args);
 		
 		var guild = event.getGuild();
-		var channel = event.getChannel();
 		
 		try{
 			var hasEpisodes = true;
@@ -87,10 +87,10 @@ public class MediaReactionCommand extends BasicCommand{
 				if(askArchive){
 					newText += "\n\n" + translate(guild, "media-reaction.archive", PACKAGE.getValue());
 				}
-				var restMessage = channel.sendMessage(newText).submit();
+				var restMessage = JDAWrappers.message(event, newText).submit();
 				if(askArchive){
 					restMessage = restMessage.thenApply(message -> {
-						message.addReaction(PACKAGE.getValue()).submit();
+						JDAWrappers.addReaction(message, PACKAGE).submit();
 						
 						var reactionMessageConfiguration = new WaitingReactionMessageConfiguration(message, MEDIA_REACTION,
 								Map.of(DELETE_KEY, Boolean.toString(false)));
@@ -100,9 +100,9 @@ public class MediaReactionCommand extends BasicCommand{
 					});
 				}
 				
-				restMessage.thenAccept(message -> event.getMessage().delete().submit())
+				restMessage.thenAccept(message -> JDAWrappers.delete(event.getMessage()).submit())
 						.exceptionally(error -> {
-							event.getChannel().sendMessage("Failed to send message: " + error.getMessage()).submit();
+							JDAWrappers.message(event, "Failed to send message: " + error.getMessage()).submit();
 							return null;
 						});
 				return SUCCESS;
@@ -111,7 +111,7 @@ public class MediaReactionCommand extends BasicCommand{
 		}
 		catch(Exception e){
 			Log.getLogger(guild).error("Failed to parse anime reaction", e);
-			channel.sendMessage(translate(guild, "media-reaction.parse-error")).submit();
+			JDAWrappers.message(event, translate(guild, "media-reaction.parse-error")).submit();
 		}
 		return FAILED;
 	}

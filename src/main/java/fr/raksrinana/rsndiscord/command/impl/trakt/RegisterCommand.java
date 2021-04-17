@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -36,12 +37,12 @@ class RegisterCommand extends BasicCommand{
 		if(args.isEmpty()){
 			Settings.getGeneral().getTrakt()
 					.getAccessToken(event.getAuthor().getIdLong())
-					.ifPresentOrElse(userToken -> event.getChannel().sendMessage(translate(guild, "trakt.already-registered")).submit(),
+					.ifPresentOrElse(userToken -> JDAWrappers.message(event, translate(guild, "trakt.already-registered")).submit(),
 							() -> {
 								try{
 									var deviceCode = TraktApi.postQuery(null, new DeviceCodePostRequest());
 									var content = translate(guild, "trakt.register-url", deviceCode.getVerificationUrl(), deviceCode.getUserCode());
-									event.getChannel().sendMessage(content).submit();
+									JDAWrappers.message(event, content).submit();
 									TraktApi.pollDeviceToken(event, deviceCode);
 								}
 								catch(Exception e){

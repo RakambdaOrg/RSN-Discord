@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +38,7 @@ public class ListCommand extends BasicCommand{
 									user.getAsMention(),
 									birthday.getDate().format(DF),
 									birthday.getDate().until(LocalDate.now()).normalized().getYears());
-							event.getChannel().sendMessage(message).submit();
+							JDAWrappers.message(event, message).submit();
 						}));
 		return SUCCESS;
 	}

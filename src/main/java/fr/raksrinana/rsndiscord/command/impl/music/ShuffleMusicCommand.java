@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,7 @@ public class ShuffleMusicCommand extends BasicCommand{
 		var guild = event.getGuild();
 		
 		RSNAudioManager.shuffle(guild);
-		event.getChannel().sendMessage(translate(guild, "music.queue.shuffled", event.getAuthor().getAsMention())).submit();
+		JDAWrappers.message(event, translate(guild, "music.queue.shuffled", event.getAuthor().getAsMention())).submit();
 		return CommandResult.SUCCESS;
 	}
 	

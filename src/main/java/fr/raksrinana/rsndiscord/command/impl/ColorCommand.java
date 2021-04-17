@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
@@ -55,16 +56,14 @@ public class ColorCommand extends BasicCommand{
 		var executorService = Main.getExecutorService();
 		var changeColorTask = executorService.scheduleAtFixedRate(() -> {
 			var color = random.nextInt(0xffffff + 1);
-			Log.getLogger(role.getGuild()).info("Setting {} color to {}", role, color);
-			role.getManager().setColor(color).submit();
+			JDAWrappers.setColor(role, color);
 		}, 0, 15, TimeUnit.SECONDS);
 		
 		executorService.schedule(() -> {
 			Log.getLogger(role.getGuild()).info("Stopping color change for {}", role);
 			changeColorTask.cancel(false);
 			executorService.schedule(() -> {
-				Log.getLogger(role.getGuild()).info("Reverting {} color to {}", role, originalColor);
-				role.getManager().setColor(originalColor).submit();
+				JDAWrappers.setColor(role, originalColor);
 			}, 30, SECONDS);
 		}, time, SECONDS);
 	}

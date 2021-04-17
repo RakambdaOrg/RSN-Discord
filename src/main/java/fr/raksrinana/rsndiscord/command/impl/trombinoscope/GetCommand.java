@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.trombinoscope.Picture;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -47,7 +48,6 @@ class GetCommand extends BasicCommand{
 	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		super.execute(event, args);
 		var guild = event.getGuild();
-		var channel = event.getChannel();
 		
 		var target = event.getMessage().getMentionedUsers().stream()
 				.findFirst().stream()
@@ -70,7 +70,7 @@ class GetCommand extends BasicCommand{
 		var trombinoscope = Settings.get(guild).getTrombinoscope();
 		var pictureCount = trombinoscope.getPictures(target.get()).size();
 		if(pictureCount < 1){
-			channel.sendMessage(translate(guild, "trombinoscope.user.no-picture")).submit();
+			JDAWrappers.message(event, translate(guild, "trombinoscope.user.no-picture")).submit();
 			return SUCCESS;
 		}
 		
@@ -89,11 +89,11 @@ class GetCommand extends BasicCommand{
 											event.getAuthor().getAsMention(),
 											target.get().getAsMention(),
 											picture.getUuid());
-									picturesChannel.sendMessage(message)
-											.addFile(picture.getPath().toFile())
+									JDAWrappers.message(picturesChannel, message)
+											.addFile(picture.getPath())
 											.submit();
 								}),
-						() -> channel.sendMessage(translate(guild, "trombinoscope.error.unknown")).submit()
+						() -> JDAWrappers.message(event, translate(guild, "trombinoscope.error.unknown")).submit()
 								.thenAccept(deleteMessage(date -> date.plusMinutes(5))));
 		return SUCCESS;
 	}

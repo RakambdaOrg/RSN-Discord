@@ -18,12 +18,12 @@ class ConsoleHandler extends Thread{
 		stop = false;
 		setDaemon(true);
 		setName("Console watcher");
-		Log.getLogger(null).info("Console handler created");
+		Log.getLogger().info("Console handler created");
 	}
 	
 	@Override
 	public void run(){
-		Log.getLogger(null).info("Console handler started");
+		Log.getLogger().info("Console handler started");
 		var quitList = List.of("stop", "quit", "exit");
 		try(var sc = new Scanner(System.in)){
 			while(!stop){
@@ -47,34 +47,34 @@ class ConsoleHandler extends Thread{
 					}
 					else if("leave".equalsIgnoreCase(command)){
 						if(args.isEmpty()){
-							Log.getLogger(null).warn("Please pass the guild as an argument");
+							Log.getLogger().warn("Please pass the guild as an argument");
 						}
 						else{
 							var guildId = args.poll();
 							Optional.ofNullable(Main.getJda().getGuildById(guildId)).ifPresentOrElse(guild -> {
 								guild.leave().submit();
 								Log.getLogger(guild).info("Guild {} left", guild);
-							}, () -> Log.getLogger(null).warn("Guild with id {} not found", guildId));
+							}, () -> Log.getLogger().warn("Guild with id {} not found", guildId));
 						}
 					}
 					else if("gid".equalsIgnoreCase(command)){
 						if(args.isEmpty()){
-							Log.getLogger(null).warn("Please pass the guild name as an argument");
+							Log.getLogger().warn("Please pass the guild name as an argument");
 						}
 						else{
 							var guilds = Main.getJda().getGuildsByName(args.pop(), true);
-							Log.getLogger(null).info("Guilds matched : {}", guilds);
+							Log.getLogger().info("Guilds matched : {}", guilds);
 						}
 					}
 					else if("listMembers".equalsIgnoreCase(command)){
 						if(args.isEmpty()){
-							Log.getLogger(null).warn("Please pass the guild id as an argument");
+							Log.getLogger().warn("Please pass the guild id as an argument");
 						}
 						else{
 							var guildId = args.poll();
 							Optional.ofNullable(Main.getJda().getGuildById(guildId))
 									.ifPresentOrElse(guild -> Log.getLogger(guild).info("Members of {}: {}", guild, guild.getMembers()),
-											() -> Log.getLogger(null).warn("Guild with id {} not found", guildId));
+											() -> Log.getLogger().warn("Guild with id {} not found", guildId));
 						}
 					}
 					else if("listGuilds".equalsIgnoreCase(command)){
@@ -87,7 +87,7 @@ class ConsoleHandler extends Thread{
 					}
 					else if("game".equalsIgnoreCase(command)){
 						if(args.isEmpty()){
-							Log.getLogger(null).warn("Please pass the game");
+							Log.getLogger().warn("Please pass the game");
 						}
 						else{
 							Main.getJda().getPresence().setActivity(Activity.of(DEFAULT, String.join(" ", args)));
@@ -98,7 +98,7 @@ class ConsoleHandler extends Thread{
 					}
 				}
 				catch(Exception e){
-					Log.getLogger(null).warn("Error executing console command", e);
+					Log.getLogger().warn("Error executing console command", e);
 				}
 			}
 		}

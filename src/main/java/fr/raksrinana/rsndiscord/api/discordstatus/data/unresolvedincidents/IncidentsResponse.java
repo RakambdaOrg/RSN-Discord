@@ -12,7 +12,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class IncidentsReponse{
+public class IncidentsResponse{
 	@JsonProperty("page")
 	private Page page;
 	@JsonProperty("incidents")

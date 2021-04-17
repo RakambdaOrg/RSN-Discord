@@ -14,13 +14,15 @@ public class DogApi{
 		Log.getLogger(guild).debug("Getting random dog picture");
 		
 		var response = Unirest.get("https://dog.ceo/api/breeds/image/random").asObject(DogResponse.class);
-		if(response.isSuccess()){
-			var dog = response.getBody();
-			if(dog.isSuccess()){
-				return dog.getMessage();
-			}
+		if(!response.isSuccess()){
+			throw new InvalidResponseException("Error sending API request, HTTP code " + response.getStatus());
+		}
+		
+		var dog = response.getBody();
+		if(!dog.isSuccess()){
 			throw new InvalidResponseException("Error getting dog API, status isn't successful. " + dog);
 		}
-		throw new InvalidResponseException("Error sending API request, HTTP code " + response.getStatus());
+		
+		return dog.getMessage();
 	}
 }

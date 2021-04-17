@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -48,7 +49,6 @@ class InfoCommand extends BasicCommand{
 		}
 		
 		var guild = event.getGuild();
-		var channel = event.getChannel();
 		
 		try{
 			var medias = new MediaPagedQuery(mediaId.get()).getResult(event.getMember());
@@ -56,11 +56,11 @@ class InfoCommand extends BasicCommand{
 				medias.forEach(media -> {
 					var builder = new EmbedBuilder();
 					media.fillEmbed(guild, builder);
-					channel.sendMessage(builder.build()).submit();
+					JDAWrappers.message(event, builder.build()).submit();
 				});
 			}
 			else{
-				channel.sendMessage(translate(guild, "anilist.media-not-found")).submit()
+				JDAWrappers.message(event, translate(guild, "anilist.media-not-found")).submit()
 						.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 			}
 		}

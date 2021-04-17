@@ -21,6 +21,7 @@ open module fr.raksrinana.rsndiscord {
 	requires thumbnailator;
 	requires twittered;
 	requires scribejava.core;
+	requires org.kitteh.irc.client.library;
 	requires static lombok;
 	requires static org.jetbrains.annotations;
 }

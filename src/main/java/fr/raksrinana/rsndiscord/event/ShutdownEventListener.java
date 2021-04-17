@@ -11,7 +11,7 @@ public class ShutdownEventListener extends ListenerAdapter{
 	@Override
 	public void onShutdown(@NotNull ShutdownEvent event){
 		super.onShutdown(event);
-		Log.getLogger(null).info("BOT STOPPED");
+		Log.getLogger().info("BOT STOPPED");
 		new ForceShutdownThread().start();
 	}
 }

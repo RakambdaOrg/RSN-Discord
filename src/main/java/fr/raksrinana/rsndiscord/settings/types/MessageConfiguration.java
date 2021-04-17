@@ -76,7 +76,7 @@ public class MessageConfiguration implements IAtomicConfiguration{
 						return future.get();
 					}
 					catch(InterruptedException | ExecutionException e){
-						Log.getLogger(null).error("Failed to get message", e);
+						Log.getLogger().error("Failed to get message", e);
 					}
 					return null;
 				}).orElse(false);
@@ -92,7 +92,7 @@ public class MessageConfiguration implements IAtomicConfiguration{
 						return ofNullable(future.get());
 					}
 					catch(InterruptedException | ExecutionException e){
-						Log.getLogger(null).error("Failed to get message from configuration", e);
+						Log.getLogger().error("Failed to get message from configuration", e);
 					}
 					return Optional.empty();
 				});

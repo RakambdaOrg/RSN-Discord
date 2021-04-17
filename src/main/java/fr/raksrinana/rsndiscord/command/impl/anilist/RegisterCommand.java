@@ -9,6 +9,7 @@ import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -44,15 +45,14 @@ class RegisterCommand extends BasicCommand{
 		}
 		
 		var guild = event.getGuild();
-		var channel = event.getChannel();
 		
 		try{
 			AniListApi.requestToken(event.getMember(), args.pop());
-			channel.sendMessage(translate(guild, "anilist.api-code.saved")).submit()
+			JDAWrappers.message(event, translate(guild, "anilist.api-code.saved")).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(10)));
 		}
 		catch(IllegalArgumentException e){
-			channel.sendMessage(translate(guild, "anilist.api-code.invalid")).submit()
+			JDAWrappers.message(event, translate(guild, "anilist.api-code.invalid")).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(10)));
 			return NOT_HANDLED;
 		}
@@ -60,7 +60,7 @@ class RegisterCommand extends BasicCommand{
 			Log.getLogger(guild).error("Error getting AniList access token", e);
 			Utilities.reportException("Error getting AniList Token", e);
 			
-			channel.sendMessage(translate(guild, "anilist.api-code.save-error")).submit()
+			JDAWrappers.message(event, translate(guild, "anilist.api-code.save-error")).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(10)));
 			return FAILED;
 		}

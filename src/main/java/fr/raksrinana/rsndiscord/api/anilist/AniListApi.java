@@ -25,8 +25,8 @@ import static java.util.Objects.nonNull;
 
 public class AniListApi{
 	private static final String API_URL = "https://anilist.co/api/v2";
-	private static final int APP_ID = 1230;
 	private static final String REDIRECT_URI = "https://anilist.co/api/v2/oauth/pin";
+	private static final int APP_ID = 1230;
 	@Getter
 	private static final String CODE_LINK = String.format("%s/oauth/authorize?client_id=%d&response_type=code&redirect_uri=%s", API_URL, APP_ID, REDIRECT_URI);
 	private static final String USER_INFO_QUERY = "query{Viewer {id name}}";
@@ -165,7 +165,7 @@ public class AniListApi{
 			FALLBACK_URL = new URL("https://anilist.co");
 		}
 		catch(MalformedURLException e){
-			Log.getLogger(null).error("Failed to create default URL", e);
+			Log.getLogger().error("Failed to create default URL", e);
 		}
 	}
 }

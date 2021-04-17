@@ -41,7 +41,7 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 				return null;
 			});
 		}
-		Log.getLogger(null).debug("Trakt API done");
+		Log.getLogger().debug("Trakt API done");
 		sendMessages(channels, userElements);
 	}
 	
@@ -145,7 +145,7 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 			change.fillEmbed(guild, builder);
 		}
 		catch(Exception e){
-			Log.getLogger(null).error("Error building message for {}", getName(), e);
+			Log.getLogger().error("Error building message for {}", getName(), e);
 			builder.addField("Error", e.getClass().getName() + " => " + e.getMessage(), false);
 			builder.setColor(RED);
 		}

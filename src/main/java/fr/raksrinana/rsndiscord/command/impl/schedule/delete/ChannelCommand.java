@@ -9,6 +9,7 @@ import fr.raksrinana.rsndiscord.schedule.ScheduleUtils;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.schedule.SimpleScheduleConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -58,7 +59,7 @@ public class ChannelCommand extends BasicCommand{
 		Consumer<EmbedBuilder> builderConsumer = builder -> builder.addField(translate(channel.getGuild(), "schedule.info"),
 				translate(channel.getGuild(), "schedule.react-to-cancel", CROSS_NO.getValue()), false);
 		ScheduleUtils.addScheduleAndNotify(scheduleConfiguration, channel, builderConsumer).thenAccept(message -> {
-			message.addReaction(CROSS_NO.getValue()).submit();
+			JDAWrappers.addReaction(message, CROSS_NO).submit();
 			Settings.get(channel.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, SCHEDULED_DELETE_CHANNEL));
 		});
 	}

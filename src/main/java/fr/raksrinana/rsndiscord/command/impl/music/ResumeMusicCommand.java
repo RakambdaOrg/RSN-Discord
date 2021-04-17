@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +37,7 @@ public class ResumeMusicCommand extends BasicCommand{
 			case OK -> "music.resumed";
 			case IMPOSSIBLE -> "unknown";
 		};
-		event.getChannel().sendMessage(translate(guild, message, event.getAuthor().getAsMention())).submit()
+		JDAWrappers.message(event, translate(guild, message, event.getAuthor().getAsMention())).submit()
 				.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 		return SUCCESS;
 	}

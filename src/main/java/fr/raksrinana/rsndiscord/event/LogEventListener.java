@@ -14,12 +14,12 @@ public class LogEventListener extends ListenerAdapter{
 	public void onUserUpdateName(@NotNull UserUpdateNameEvent event){
 		super.onUserUpdateName(event);
 		try{
-			Log.getLogger(null).debug("User {} changed name of {} `{}` to `{}`", event.getUser(), event.getEntity(), event.getOldName(), event.getNewName());
+			Log.getLogger().debug("User {} changed name of {} `{}` to `{}`", event.getUser(), event.getEntity(), event.getOldName(), event.getNewName());
 		}
 		catch(NullPointerException ignored){
 		}
 		catch(Exception e){
-			Log.getLogger(null).error("", e);
+			Log.getLogger().error("", e);
 		}
 	}
 	
@@ -27,12 +27,12 @@ public class LogEventListener extends ListenerAdapter{
 	public void onSelfUpdateName(@NotNull SelfUpdateNameEvent event){
 		super.onSelfUpdateName(event);
 		try{
-			Log.getLogger(null).debug("User {} changed name `{}` to `{}`", event.getEntity(), event.getOldName(), event.getNewName());
+			Log.getLogger().debug("User {} changed name `{}` to `{}`", event.getEntity(), event.getOldName(), event.getNewName());
 		}
 		catch(NullPointerException ignored){
 		}
 		catch(Exception e){
-			Log.getLogger(null).error("", e);
+			Log.getLogger().error("", e);
 		}
 	}
 	

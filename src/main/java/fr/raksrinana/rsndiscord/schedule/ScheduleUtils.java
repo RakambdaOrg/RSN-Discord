@@ -96,7 +96,7 @@ public class ScheduleUtils{
 	
 	public static void registerAllHandlers(){
 		getAllAnnotatedWith(ScheduleHandler.class, clazz -> (IScheduleHandler) clazz.getConstructor().newInstance())
-				.peek(c -> Log.getLogger(null).info("Loaded schedule handler {}", c.getClass().getName()))
+				.peek(c -> Log.getLogger().info("Loaded schedule handler {}", c.getClass().getName()))
 				.forEach(ScheduleUtils::addHandler);
 	}
 	

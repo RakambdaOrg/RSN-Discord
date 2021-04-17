@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.command.BotCommand;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -31,7 +32,8 @@ public class TimeCommand extends BasicCommand{
 				.addField(translate(guild, "time.time"), ZonedDateTime.now().format(ISO_ZONED_DATE_TIME), false)
 				.addField(translate(guild, "time.milliseconds"), String.valueOf(System.currentTimeMillis()), false)
 				.build();
-		event.getChannel().sendMessage(embed).submit();
+		
+		JDAWrappers.message(event, embed).submit();
 		return CommandResult.SUCCESS;
 	}
 	

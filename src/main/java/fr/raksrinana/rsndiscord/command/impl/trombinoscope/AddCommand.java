@@ -11,6 +11,7 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -65,7 +66,7 @@ class AddCommand extends BasicCommand{
 				.orElseThrow(() -> new IllegalStateException("Failed to get member from event"));
 		if(!Objects.equals(target, event.getMember()) && !isModerator(event.getMember())){
 			author.openPrivateChannel().submit()
-					.thenAccept(privateChannel -> privateChannel.sendMessage(translate(guild, "trombinoscope.error.add-other")).submit());
+					.thenAccept(privateChannel -> JDAWrappers.message(privateChannel, translate(guild, "trombinoscope.error.add-other")).submit());
 			return SUCCESS;
 		}
 		boolean failed = false;
@@ -109,15 +110,15 @@ class AddCommand extends BasicCommand{
 		}
 		if(failed){
 			author.openPrivateChannel().submit()
-					.thenAccept(privateChannel -> privateChannel.sendMessage(translate(guild, "trombinoscope.error.save-error")).submit());
+					.thenAccept(privateChannel -> JDAWrappers.message(privateChannel, translate(guild, "trombinoscope.error.save-error")).submit());
 		}
 		else{
 			trombinoscope.getPosterRole()
 					.flatMap(RoleConfiguration::getRole)
-					.ifPresent(role -> guild.addRoleToMember(target, role).submit());
+					.ifPresent(role -> JDAWrappers.addRole(target, role).submit());
 			trombinoscope.getPicturesChannel()
 					.flatMap(ChannelConfiguration::getChannel)
-					.ifPresent(channel -> channel.sendMessage(translate(guild, "trombinoscope.picture-added", target.getAsMention(), trombinoscope.getPictures(target.getUser()).size())).submit());
+					.ifPresent(channel -> JDAWrappers.message(channel, translate(guild, "trombinoscope.picture-added", target.getAsMention(), trombinoscope.getPictures(target.getUser()).size())).submit());
 		}
 		return SUCCESS;
 	}

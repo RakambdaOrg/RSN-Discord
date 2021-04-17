@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
@@ -56,7 +57,7 @@ public class AddMusicCommand extends BasicCommand{
 				.map(GuildVoiceState::getChannel);
 		
 		if(voiceChannel.isEmpty()){
-			channel.sendMessage(translate(guild, "music.voice-error")).submit()
+			JDAWrappers.message(channel, translate(guild, "music.voice-error")).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 			return SUCCESS;
 		}

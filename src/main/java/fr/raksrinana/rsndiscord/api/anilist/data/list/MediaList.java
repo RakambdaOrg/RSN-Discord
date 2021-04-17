@@ -96,10 +96,12 @@ public class MediaList implements IAniListDatedObject{
 				.setColor(getStatus().getColor())
 				.setTitle(translate(guild, "anilist.list-info"), getMedia().getUrl().toString())
 				.addField(translate(guild, "anilist.list-status"), getStatus().toString(), true);
+		
 		if(nonNull(getScore())){
 			var scoreStr = getScore() + "/100";
 			builder.addField(translate(guild, "anilist.list-score"), scoreStr, true);
 		}
+		
 		if(Objects.equals(isPrivateItem(), TRUE)){
 			builder.addField(translate(guild, "anilist.list-private"), "Yes", true);
 		}
@@ -107,8 +109,7 @@ public class MediaList implements IAniListDatedObject{
 		getStartedAt().asDate().ifPresent(date -> builder.addField(translate(guild, "anilist.list-started"), date.format(DF), true));
 		getCompletedAt().asDate().ifPresent(date -> {
 			builder.addField(translate(guild, "anilist.list-complete"), date.format(DF), true);
-			getStartedAt().durationTo(date)
-					.ifPresent(duration -> builder.addField(translate(guild, "anilist.list-time"), "%d days".formatted(duration.get(DAYS)), true));
+			getStartedAt().durationTo(date).ifPresent(duration -> builder.addField(translate(guild, "anilist.list-time"), "%d days".formatted(duration.get(DAYS)), true));
 		});
 		
 		var totalElements = ofNullable(getMedia().getItemCount())

@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -45,16 +46,15 @@ public class AddCommand extends BasicCommand{
 		
 		args.pop();
 		var guild = event.getGuild();
-		var channel = event.getChannel();
 		var user = getFirstUserMentioned(event).orElseThrow();
 		
 		getArgumentAs(args, arg -> parseDate(guild, arg))
 				.ifPresentOrElse(birthday -> {
 					Settings.get(guild).getBirthdays().setBirthday(user, birthday);
 					
-					channel.sendMessage(translate(guild, "birthday.saved")).submit()
+					JDAWrappers.message(event, translate(guild, "birthday.saved")).submit()
 							.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
-				}, () -> channel.sendMessage(translate(guild, "birthday.bad-date")).submit()
+				}, () -> JDAWrappers.message(event, translate(guild, "birthday.bad-date")).submit()
 						.thenAccept(deleteMessage(date -> date.plusMinutes(5))));
 		return SUCCESS;
 	}

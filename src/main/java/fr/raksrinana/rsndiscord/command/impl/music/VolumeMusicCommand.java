@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -42,18 +43,17 @@ public class VolumeMusicCommand extends BasicCommand{
 		}
 		
 		var guild = event.getGuild();
-		var channel = event.getChannel();
 		var requestedVolume = getArgumentAsInteger(args);
 		
 		if(requestedVolume.isEmpty()){
-			channel.sendMessage(translate(guild, "music.invalid-format")).submit();
+			JDAWrappers.message(event, translate(guild, "music.invalid-format")).submit();
 			return SUCCESS;
 		}
 		
 		var volume = Math.min(100, Math.max(0, requestedVolume.get()));
 		Settings.get(guild).setMusicVolume(volume);
 		RSNAudioManager.getFor(guild).ifPresent(audioManager -> audioManager.setVolume(volume));
-		channel.sendMessage(translate(guild, "music.volume-set", volume)).submit();
+		JDAWrappers.message(event, translate(guild, "music.volume-set", volume)).submit();
 		return SUCCESS;
 	}
 	

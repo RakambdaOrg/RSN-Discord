@@ -23,7 +23,7 @@ public class HermitcraftApi{
 	
 	@NotNull
 	public static Optional<List<Hermit>> getHermits(){
-		Log.getLogger(null).debug("Fetching hermitcraft streams");
+		Log.getLogger().debug("Fetching hermitcraft streams");
 		return getRequestResult(new GenericType<>(){}, "/hermit", Map.of());
 	}
 	
@@ -32,17 +32,18 @@ public class HermitcraftApi{
 		var request = Unirest.get(ENDPOINT + endpoint).queryString(parameters).asObject(type);
 		request.getParsingError().ifPresent(error -> {
 			Utilities.reportException("Failed to parse Hermitcraft response", error);
-			Log.getLogger(null).warn("Failed to parse Hermitcraft response", error);
+			Log.getLogger().warn("Failed to parse Hermitcraft response", error);
 		});
-		if(request.isSuccess()){
-			return Optional.of(request.getBody());
+		if(!request.isSuccess()){
+			return empty();
 		}
-		return empty();
+		
+		return Optional.of(request.getBody());
 	}
 	
 	@NotNull
 	public static Optional<List<HermitcraftVideo>> getVideos(){
-		Log.getLogger(null).debug("Fetching hermitcraft videos");
+		Log.getLogger().debug("Fetching hermitcraft videos");
 		return getRequestResult(new GenericType<>(){}, "/videos", Map.of(
 				"type", "HermitCraft",
 				"start", ZonedDateTime.now(ZoneId.of("UTC")).format(DF)

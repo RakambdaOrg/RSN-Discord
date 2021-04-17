@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord;
 
-import fr.raksrinana.rsndiscord.api.irc.twitch.TwitchIRC;
 import fr.raksrinana.rsndiscord.api.trakt.TraktApi;
 import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
 import fr.raksrinana.rsndiscord.event.EventListener;
@@ -66,7 +65,7 @@ public class Main{
 				.verifySsl(true);
 		consoleHandler = new ConsoleHandler();
 		try{
-			Log.getLogger(null).info("Building JDA");
+			Log.getLogger().info("Building JDA");
 			var jdaBuilder = JDABuilder.createDefault(System.getProperty("RSN_TOKEN"))
 					.enableIntents(GatewayIntent.GUILD_MEMBERS)
 					.setMemberCachePolicy(MemberCachePolicy.ALL)
@@ -75,30 +74,30 @@ public class Main{
 			jda = jdaBuilder.build();
 			jda.awaitReady();
 			jda.getPresence().setPresence(ONLINE, Activity.of(Activity.ActivityType.DEFAULT, DEFAULT_PREFIX + "help for the help"));
-			Log.getLogger(null).info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
-			Log.getLogger(null).info("Adding handlers");
+			Log.getLogger().info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
+			Log.getLogger().info("Adding handlers");
 			ReactionUtils.registerAllHandlers();
 			ScheduleUtils.registerAllHandlers();
-			Log.getLogger(null).info("Creating runners");
+			Log.getLogger().info("Creating runners");
 			RunnerUtils.registerAllScheduledRunners();
-			Log.getLogger(null).info("Started");
+			Log.getLogger().info("Started");
 			announceStart();
 			restartTwitchIRCConnections();
 			
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-				Log.getLogger(null).info("Shutdown hook triggered");
+				Log.getLogger().info("Shutdown hook triggered");
 				Settings.close();
 			}));
-			Log.getLogger(null).info("Shutdown hook registered");
+			Log.getLogger().info("Shutdown hook registered");
 			consoleHandler.start();
 		}
 		catch(LoginException | InterruptedException e){
-			Log.getLogger(null).error("Couldn't start bot", e);
+			Log.getLogger().error("Couldn't start bot", e);
 			new ForceShutdownThread().start();
 			close();
 		}
 		catch(Exception e){
-			Log.getLogger(null).error("Bot error", e);
+			Log.getLogger().error("Bot error", e);
 			new ForceShutdownThread().start();
 			close();
 		}
@@ -106,9 +105,9 @@ public class Main{
 	
 	@NotNull
 	static CLIParameters loadEnv(@NotNull String[] args){
-		Log.getLogger(null).info("Starting bot version {}", getRSNBotVersion());
+		Log.getLogger().info("Starting bot version {}", getRSNBotVersion());
 		if(DEVELOPMENT){
-			Log.getLogger(null).warn("Developer mode activated, shouldn't be used in production!");
+			Log.getLogger().warn("Developer mode activated, shouldn't be used in production!");
 		}
 		
 		var parameters = new CLIParameters();
@@ -119,7 +118,7 @@ public class Main{
 			cli.parseArgs(args);
 		}
 		catch(CommandLine.ParameterException e){
-			Log.getLogger(null).error("Failed to parse arguments", e);
+			Log.getLogger().error("Failed to parse arguments", e);
 			cli.usage(System.out);
 			throw new IllegalStateException("Failed to load environment");
 		}
@@ -129,10 +128,10 @@ public class Main{
 			prop.load(is);
 		}
 		catch(IOException e){
-			Log.getLogger(null).warn("Failed to read file {}", parameters.getConfigurationFile());
+			Log.getLogger().warn("Failed to read file {}", parameters.getConfigurationFile());
 		}
 		prop.forEach((key, value) -> System.setProperty(key.toString(), value.toString()));
-		Log.getLogger(null).debug("Loaded {} properties from file", prop.keySet().size());
+		Log.getLogger().debug("Loaded {} properties from file", prop.keySet().size());
 		return parameters;
 	}
 	
@@ -193,7 +192,7 @@ public class Main{
 			}
 		}
 		catch(Exception e){
-			Log.getLogger(null).warn("Error reading version", e);
+			Log.getLogger().warn("Error reading version", e);
 		}
 		return properties.getProperty("bot.version", "Unknown");
 	}

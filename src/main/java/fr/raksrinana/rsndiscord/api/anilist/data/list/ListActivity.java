@@ -38,7 +38,6 @@ public abstract class ListActivity implements IAniListDatedObject{
 			    siteUrl
 			    %s
 			}""".formatted(IMedia.QUERY);
-	
 	@JsonProperty("createdAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
 	private ZonedDateTime createdAt;

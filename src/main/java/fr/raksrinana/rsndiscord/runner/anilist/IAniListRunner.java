@@ -37,7 +37,7 @@ public interface IAniListRunner<T extends IAniListObject, U extends IPagedQuery<
 				return null;
 			});
 		}
-		Log.getLogger(null).debug("AniList API done");
+		Log.getLogger().debug("AniList API done");
 		sendMessages(channels, userElements);
 	}
 	
@@ -102,7 +102,7 @@ public interface IAniListRunner<T extends IAniListObject, U extends IPagedQuery<
 			change.fillEmbed(guild, builder);
 		}
 		catch(Exception e){
-			Log.getLogger(null).error("Error building message for {}", getName(), e);
+			Log.getLogger().error("Error building message for {}", getName(), e);
 			builder.addField("Error", e.getClass().getName() + " => " + e.getMessage(), false)
 					.setColor(RED);
 		}

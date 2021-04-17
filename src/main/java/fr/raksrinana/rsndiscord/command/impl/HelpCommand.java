@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.event.CommandsEventListener;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -62,7 +63,7 @@ public class HelpCommand extends BasicCommand{
 				.sorted(comparing(command -> command.getCommandStrings().get(0)))
 				.forEach(command -> builder.addField(prefix + command.getCommandStrings().get(0), command.getDescription(guild), false));
 		
-		event.getChannel().sendMessage(builder.build()).submit()
+		JDAWrappers.message(event, builder.build()).submit()
 				.thenAccept(deleteMessage(date -> date.plusMinutes(10)));
 	}
 	
@@ -108,7 +109,7 @@ public class HelpCommand extends BasicCommand{
 					.addField(prefix + commandName, translate(guild, "help.not-exist"), false);
 		}
 		
-		event.getChannel().sendMessage(builder.build()).submit()
+		JDAWrappers.message(event, builder.build()).submit()
 				.thenAccept(deleteMessage(date -> date.plusMinutes(10)));
 	}
 	

@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.ConfigurationOperation;
 import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -46,13 +47,12 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 		}
 		
 		var guild = event.getGuild();
-		var channel = event.getChannel();
 		var operationStr = args.pop();
 		
 		try{
 			var operation = ConfigurationOperation.valueOf(operationStr.toUpperCase());
 			if(!getAllowedOperations().contains(operation)){
-				channel.sendMessage(translate(guild, "configuration.operation.not-supported")).submit()
+				JDAWrappers.message(event, translate(guild, "configuration.operation.not-supported")).submit()
 						.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 				return NOT_HANDLED;
 			}
@@ -65,13 +65,13 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 			}
 		}
 		catch(IllegalArgumentException e){
-			channel.sendMessage(translate(guild, "configuration.operation.unknown")).submit()
+			JDAWrappers.message(event, translate(guild, "configuration.operation.unknown")).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 		}
 		catch(RuntimeException e){
 			Log.getLogger(guild).warn("Failed to update configuration", e);
 			Utilities.reportException("Error updating configuration", e);
-			channel.sendMessage(translate(guild, "configuration.update-failed", e.getMessage())).submit()
+			JDAWrappers.message(event, translate(guild, "configuration.update-failed", e.getMessage())).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 			return FAILED;
 		}

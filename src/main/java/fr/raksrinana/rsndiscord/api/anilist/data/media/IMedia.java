@@ -98,10 +98,8 @@ public abstract class IMedia implements IAniListObject{
 		
 		fillAdditionalEmbed(guild, builder);
 		
-		getStartDate().asDate()
-				.ifPresent(startDate -> builder.addField(translate(guild, "anilist.started"), startDate.format(DF), true));
-		getEndDate().asDate()
-				.ifPresent(startDate -> builder.addField(translate(guild, "anilist.ended"), startDate.format(DF), true));
+		getStartDate().asDate().ifPresent(startDate -> builder.addField(translate(guild, "anilist.started"), startDate.format(DF), true));
+		getEndDate().asDate().ifPresent(startDate -> builder.addField(translate(guild, "anilist.ended"), startDate.format(DF), true));
 		
 		if(!genres.isEmpty()){
 			builder.addField(translate(guild, "anilist.genres"), String.join(", ", getGenres()), true);

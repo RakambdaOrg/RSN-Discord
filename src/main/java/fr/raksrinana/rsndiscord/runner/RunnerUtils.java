@@ -8,7 +8,7 @@ import static fr.raksrinana.rsndiscord.utils.Utilities.getAllAnnotatedWith;
 public class RunnerUtils{
 	public static void registerAllScheduledRunners(){
 		getAllAnnotatedWith(ScheduledRunner.class, clazz -> (IScheduledRunner) clazz.getConstructor(JDA.class).newInstance(Main.getJda()))
-				.peek(c -> Log.getLogger(null).info("Loaded scheduled runner {}", c.getClass().getName()))
+				.peek(c -> Log.getLogger().info("Loaded scheduled runner {}", c.getClass().getName()))
 				.forEach(scheduledRunner -> Main.getExecutorService().scheduleAtFixedRate(
 						new ScheduledRunnerWrapper(scheduledRunner),
 						scheduledRunner.getDelay(),

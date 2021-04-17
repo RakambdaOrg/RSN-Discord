@@ -1,6 +1,7 @@
 package fr.raksrinana.rsndiscord.command;
 
 import fr.raksrinana.rsndiscord.schedule.ScheduleUtils;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -9,9 +10,9 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.awt.Color;
-import java.text.MessageFormat;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
@@ -49,7 +50,7 @@ public abstract class CommandComposite extends BasicCommand{
 		if(subCommands.stream()
 				.flatMap(subCommand -> subCommand.getCommandStrings().stream())
 				.anyMatch(commandStr -> command.getCommandStrings().contains(commandStr))){
-			var message = MessageFormat.format("Duplicate command found when adding {0} with inputs {1}",
+			var message = "Duplicate command found when adding %s with inputs %s".formatted(
 					command.getClass(),
 					command.getCommandStrings());
 			throw new IllegalStateException(message);
@@ -79,7 +80,8 @@ public abstract class CommandComposite extends BasicCommand{
 	@NotNull
 	@Override
 	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args) throws RuntimeException{
-		if(!isAllowed(event.getMember())){
+		var member = event.getMember();
+		if(Objects.isNull(member) || !isAllowed(member)){
 			throw new NotAllowedException("You're not allowed to execute this command");
 		}
 		
@@ -112,7 +114,8 @@ public abstract class CommandComposite extends BasicCommand{
 				.addField(translate(guild, "commands.error.reason"), reason, false)
 				.addField(translate(guild, "commands.error.sub-commands"), getSubCommandsList(), false)
 				.build();
-		channel.sendMessage(embed).submit()
+		
+		JDAWrappers.message(channel, embed).submit()
 				.thenAccept(message -> ScheduleUtils.deleteMessage(message, date -> date.plusMinutes(2)));
 	}
 	

@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -44,7 +45,6 @@ public class NicknameCommand extends BasicCommand{
 		super.execute(event, args);
 		
 		var guild = event.getGuild();
-		var channel = event.getChannel();
 		var author = event.getAuthor();
 		var target = getFirstMemberMentioned(event)
 				.map(member -> {
@@ -67,7 +67,7 @@ public class NicknameCommand extends BasicCommand{
 		if(!bypass && !Objects.equals(target.getIdLong(), author.getIdLong())){
 			builder.setTitle(translate(guild, "nickname.error.permission-other"))
 					.setColor(RED);
-			channel.sendMessage(builder.build()).submit()
+			JDAWrappers.message(event, builder.build()).submit()
 					.thenAccept(deleteMessage(date -> date.plusDays(1)));
 			return SUCCESS;
 		}
@@ -80,7 +80,7 @@ public class NicknameCommand extends BasicCommand{
 			builder.setColor(ORANGE)
 					.setTitle(translate(guild, "nickname.no-changes"))
 					.addField(translate(guild, "nickname.reason"), translate(guild, "nickname.same-nickname"), false);
-			channel.sendMessage(builder.build()).submit()
+			JDAWrappers.message(event, builder.build()).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(10)));
 			return SUCCESS;
 		}
@@ -99,13 +99,13 @@ public class NicknameCommand extends BasicCommand{
 					.addField(translate(guild, "nickname.reason"), translate(guild, "nickname.cooldown", durationToString(delay)), true)
 					.addField(translate(guild, "nickname.last-change"), lastChangeStr, true)
 					.addField(translate(guild, "nickname.next-allowed"), nextChange, true);
-			channel.sendMessage(builder.build()).submit()
+			JDAWrappers.message(event, builder.build()).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(10)));
 			return SUCCESS;
 		}
 		
 		try{
-			target.modifyNickname(newNickname.orElse(null)).submit()
+			JDAWrappers.modifyNickname(target, newNickname.orElse(null)).submit()
 					.thenAccept(empty -> {
 						Log.getLogger(guild).info("{} renamed {} from `{}` to `{}`", author, target.getUser(), oldNickname, newNickname);
 						
@@ -115,14 +115,14 @@ public class NicknameCommand extends BasicCommand{
 						builder.setColor(GREEN)
 								.addField(translate(guild, "nickname.next-allowed"), newLastChange.plus(delay).format(DF), false);
 						
-						channel.sendMessage(builder.build()).submit();
+						JDAWrappers.message(event, builder.build()).submit();
 					})
 					.exceptionally(error -> {
 						var errorMessage = error instanceof ErrorResponseException ? ((ErrorResponseException) error).getMeaning() : error.getMessage();
 						builder.setColor(RED)
 								.setTitle(translate(guild, "nickname.invalid"))
 								.addField(translate(guild, "nickname.reason"), errorMessage, false);
-						channel.sendMessage(builder.build()).submit()
+						JDAWrappers.message(event, builder.build()).submit()
 								.thenAccept(deleteMessage(date -> date.plusMinutes(10)));
 						return null;
 					});
@@ -130,7 +130,7 @@ public class NicknameCommand extends BasicCommand{
 		catch(HierarchyException e){
 			builder.setColor(RED)
 					.addField(translate(guild, "nickname.reason"), translate(guild, "nickname.target-error"), false);
-			channel.sendMessage(builder.build()).submit()
+			JDAWrappers.message(event, builder.build()).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(10)));
 		}
 		return SUCCESS;

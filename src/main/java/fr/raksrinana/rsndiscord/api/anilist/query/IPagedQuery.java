@@ -69,11 +69,11 @@ public interface IPagedQuery<T>{
 					ofNullable(buildChange(changeJSONObj)).ifPresent(changes::add);
 				}
 				else{
-					Log.getLogger(null).trace("Skipped AniList object, json: {}", change);
+					Log.getLogger().trace("Skipped AniList object, json: {}", change);
 				}
 			}
 			catch(Exception e){
-				Log.getLogger(null).error("Error building {} object, json was {}", getPageElementName(), change, e);
+				Log.getLogger().error("Error building {} object, json was {}", getPageElementName(), change, e);
 			}
 		}
 		return changes;

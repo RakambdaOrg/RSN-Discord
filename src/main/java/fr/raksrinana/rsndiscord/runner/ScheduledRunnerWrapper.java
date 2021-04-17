@@ -10,18 +10,18 @@ public class ScheduledRunnerWrapper implements Runnable{
 	
 	public ScheduledRunnerWrapper(@NotNull IScheduledRunner runner){
 		this.runner = runner;
-		Log.getLogger(null).info("Created {} scheduler runner", runner.getName());
+		Log.getLogger().info("Created {} scheduler runner", runner.getName());
 	}
 	
 	@Override
 	public void run(){
-		Log.getLogger(null).info("Starting {} scheduler runner", getRunner().getName());
+		Log.getLogger().info("Starting {} scheduler runner", getRunner().getName());
 		try{
 			getRunner().execute();
 		}
 		catch(Exception e){
-			Log.getLogger(null).error("Error while executing {} scheduled runner", getRunner().getName(), e);
+			Log.getLogger().error("Error while executing {} scheduled runner", getRunner().getName(), e);
 		}
-		Log.getLogger(null).info("{} scheduled runner done", getRunner().getName());
+		Log.getLogger().info("{} scheduled runner done", getRunner().getName());
 	}
 }

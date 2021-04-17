@@ -121,7 +121,7 @@ public class TraktUserHistoryRunner implements ITraktPagedGetRunner<UserHistory,
 						return TheMovieDBApi.getQuery(query);
 					}
 					catch(RequestException e){
-						Log.getLogger(null).error("Failed to get extra movie infos for {}", change, e);
+						Log.getLogger().error("Failed to get extra movie infos for {}", change, e);
 					}
 					return null;
 				});

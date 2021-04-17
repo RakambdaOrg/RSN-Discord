@@ -49,7 +49,7 @@ public class CommandsEventListener extends ListenerAdapter{
 	 */
 	public CommandsEventListener(){
 		commands = getAllAnnotatedWith(BotCommand.class, clazz -> (Command) clazz.getConstructor().newInstance())
-				.peek(c -> Log.getLogger(null).info("Loaded command {}", c.getClass().getName()))
+				.peek(c -> Log.getLogger().info("Loaded command {}", c.getClass().getName()))
 				.collect(Collectors.toSet());
 		
 		var counts = new HashMap<String, Integer>();
@@ -60,7 +60,7 @@ public class CommandsEventListener extends ListenerAdapter{
 				.filter(key -> counts.get(key) > 1)
 				.collect(Collectors.joining(", "));
 		if(!clash.isEmpty()){
-			Log.getLogger(null).error("Command clash: {}", clash);
+			Log.getLogger().error("Command clash: {}", clash);
 		}
 	}
 	
@@ -122,9 +122,9 @@ public class CommandsEventListener extends ListenerAdapter{
 				return;
 			}
 			
-			Log.getLogger(null).info("Received private message from {}: {}", author, event.getMessage());
+			Log.getLogger().info("Received private message from {}: {}", author, event.getMessage());
 			UselessFactsApi.getFact().ifPresentOrElse(fact -> {
-				Log.getLogger(null).debug("Sending random fact: {}", fact);
+				Log.getLogger().debug("Sending random fact: {}", fact);
 				var builder = new EmbedBuilder().setAuthor(self.getName(), null, self.getAvatarUrl())
 						.setColor(GREEN)
 						.setTitle("Random fact");
@@ -136,7 +136,7 @@ public class CommandsEventListener extends ListenerAdapter{
 			}, () -> event.getChannel().sendMessage("I just farted").submit());
 		}
 		catch(Exception e){
-			Log.getLogger(null).error("Error private message from {}", author, e);
+			Log.getLogger().error("Error private message from {}", author, e);
 		}
 	}
 	

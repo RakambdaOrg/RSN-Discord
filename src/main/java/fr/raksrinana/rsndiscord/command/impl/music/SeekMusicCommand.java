@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -80,11 +81,10 @@ public class SeekMusicCommand extends BasicCommand{
 		}
 		
 		var guild = event.getGuild();
-		var channel = event.getChannel();
 		var time = SeekMusicCommand.parseTime(guild, args.pop());
 		
 		if(time < 0){
-			channel.sendMessage(translate(guild, "music.invalid-format")).submit()
+			JDAWrappers.message(event, translate(guild, "music.invalid-format")).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 		}
 		else{
@@ -93,7 +93,7 @@ public class SeekMusicCommand extends BasicCommand{
 				case OK -> "music.seeked";
 				case IMPOSSIBLE -> "music.seek-error";
 			};
-			channel.sendMessage(translate(guild, message, event.getAuthor().getAsMention())).submit()
+			JDAWrappers.message(event, translate(guild, message, event.getAuthor().getAsMention())).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 		}
 		return SUCCESS;

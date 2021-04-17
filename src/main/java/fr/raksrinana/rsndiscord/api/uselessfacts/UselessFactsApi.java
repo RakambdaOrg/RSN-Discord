@@ -13,17 +13,18 @@ import static java.util.Optional.ofNullable;
 public class UselessFactsApi{
 	@NotNull
 	public static Optional<UselessFact> getFact(){
-		Log.getLogger(null).debug("Requesting random fact");
+		Log.getLogger().debug("Requesting random fact");
 		var request = Unirest.get("https://uselessfacts.jsph.pl/random.json")
 				.queryString("language", "en")
 				.asObject(new GenericType<UselessFact>(){});
+		
 		request.getParsingError().ifPresent(error -> {
 			Utilities.reportException("Failed to parse UselessFacts response", error);
-			Log.getLogger(null).warn("Failed to parse UselessFacts response", error);
+			Log.getLogger().warn("Failed to parse UselessFacts response", error);
 		});
-		if(request.getStatus() == 200){
-			return ofNullable(request.getBody());
+		if(!request.isSuccess()){
+			return empty();
 		}
-		return empty();
+		return ofNullable(request.getBody());
 	}
 }

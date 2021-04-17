@@ -149,7 +149,7 @@ public class Utilities{
 						return instantiator.apply(clazz);
 					}
 					catch(InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e){
-						Log.getLogger(null).error("Failed to create instance of {}", annotationClazz.getName(), e);
+						Log.getLogger().error("Failed to create instance of {}", annotationClazz.getName(), e);
 					}
 					return null;
 				})
