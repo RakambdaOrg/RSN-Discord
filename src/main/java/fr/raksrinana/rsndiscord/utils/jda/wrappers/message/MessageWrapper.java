@@ -90,7 +90,7 @@ public class MessageWrapper{
 					else{
 						logger = Log.getLogger();
 					}
-					logger.debug("Sent message to {} : {}", target, message.getContentRaw());
+					logger.info("Sent message to {} : {}", target, message.getContentRaw());
 					return message;
 				});
 	}
