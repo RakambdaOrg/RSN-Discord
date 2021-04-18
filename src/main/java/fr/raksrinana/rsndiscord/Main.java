@@ -32,7 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executors;
@@ -108,7 +107,7 @@ public class Main{
 	
 	@NotNull
 	static CLIParameters loadEnv(@NotNull String[] args){
-		Log.getLogger().info("Starting bot version {}", getRSNBotVersion());
+		Log.getLogger().info("Starting bot version");
 		if(DEVELOPMENT){
 			Log.getLogger().warn("Developer mode activated, shouldn't be used in production!");
 		}
@@ -176,28 +175,6 @@ public class Main{
 								Log.getLogger(guild).error("Failed to automatically connect to twitch user {}", user, e);
 							}
 						}));
-	}
-	
-	/**
-	 * Get the version of the bot.
-	 *
-	 * @return The version, or {@code "Unknown"} if unknown.
-	 */
-	@NotNull
-	public static String getRSNBotVersion(){
-		var properties = new Properties();
-		try{
-			var versionProperties = Main.class.getResource("/version.properties");
-			if(Objects.nonNull(versionProperties)){
-				try(var is = versionProperties.openStream()){
-					properties.load(is);
-				}
-			}
-		}
-		catch(Exception e){
-			Log.getLogger().warn("Error reading version", e);
-		}
-		return properties.getProperty("bot.version", "Unknown");
 	}
 	
 	/**
