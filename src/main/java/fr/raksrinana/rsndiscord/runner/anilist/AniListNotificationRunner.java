@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.api.anilist.query.NotificationsPagedQuery;
 import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
@@ -91,7 +92,7 @@ public class AniListNotificationRunner implements IAniListRunner<INotification, 
 							.map(User::getAsMention)
 							.collect(toList());
 					if(!mentions.isEmpty()){
-						channel.sendMessage(String.join("\n", mentions))
+						JDAWrappers.message(channel, String.join("\n", mentions))
 								.embed(buildMessage(channel.getGuild(), null, e.getKey()))
 								.submit();
 					}

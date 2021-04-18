@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.utils.jda;
+package fr.raksrinana.rsndiscord.utils.jda.wrappers.channel;
 
 import fr.raksrinana.rsndiscord.log.Log;
 import net.dv8tion.jda.api.entities.Guild;

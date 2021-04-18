@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -124,7 +125,7 @@ public class Utilities{
 	public static CompletableFuture<Message> reportException(@NotNull String message, @NotNull Throwable throwable){
 		return Optional.ofNullable(Main.getJda().getUserById(MAIN_RAKSRINANA_ACCOUNT))
 				.map(user -> user.openPrivateChannel().submit()
-						.thenCompose(privateChannel -> privateChannel.sendMessage(MessageFormat.format("RSN got an exception: {0}\n", message))
+						.thenCompose(privateChannel -> JDAWrappers.message(privateChannel, MessageFormat.format("RSN got an exception: {0}\n", message))
 								.embed(throwableToEmbed(throwable).build())
 								.submit()))
 				.orElse(CompletableFuture.failedFuture(new RuntimeException("User not found")));

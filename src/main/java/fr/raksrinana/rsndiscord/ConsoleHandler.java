@@ -2,6 +2,7 @@ package fr.raksrinana.rsndiscord;
 
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.Activity;
 import java.util.*;
 import static net.dv8tion.jda.api.entities.Activity.ActivityType.DEFAULT;
@@ -52,8 +53,7 @@ class ConsoleHandler extends Thread{
 						else{
 							var guildId = args.poll();
 							Optional.ofNullable(Main.getJda().getGuildById(guildId)).ifPresentOrElse(guild -> {
-								guild.leave().submit();
-								Log.getLogger(guild).info("Guild {} left", guild);
+								JDAWrappers.leave(guild).submit();
 							}, () -> Log.getLogger().warn("Guild with id {} not found", guildId));
 						}
 					}
@@ -85,12 +85,12 @@ class ConsoleHandler extends Thread{
 										guild.loadMembers().get().size(),
 										guild.retrieveOwner().complete()));
 					}
-					else if("game".equalsIgnoreCase(command)){
+					else if("activity".equalsIgnoreCase(command)){
 						if(args.isEmpty()){
 							Log.getLogger().warn("Please pass the game");
 						}
 						else{
-							Main.getJda().getPresence().setActivity(Activity.of(DEFAULT, String.join(" ", args)));
+							JDAWrappers.editPresence().setActivity(Activity.of(DEFAULT, String.join(" ", args)));
 						}
 					}
 					else if("save".equalsIgnoreCase(command)){

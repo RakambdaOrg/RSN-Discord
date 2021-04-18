@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -106,7 +107,7 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 								.forEach(channel -> {
 									var builder = new EmbedBuilder();
 									buildMessage(channel.getGuild(), builder, user, change);
-									channel.sendMessage(builder.build()).submit();
+									JDAWrappers.message(channel, builder.build()).submit();
 								}));
 			}
 		}
@@ -119,7 +120,7 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 							.forEach(channel -> {
 								var builder = new EmbedBuilder();
 								buildMessage(channel.getGuild(), builder, change.getKey(), change.getValue());
-								channel.sendMessage(builder.build()).submit();
+								JDAWrappers.message(channel, builder.build()).submit();
 							}));
 		}
 	}

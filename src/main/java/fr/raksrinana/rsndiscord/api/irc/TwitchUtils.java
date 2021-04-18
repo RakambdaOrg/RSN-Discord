@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import org.kitteh.irc.client.library.Client;
 import org.kitteh.irc.client.library.feature.twitch.TwitchSupport;
 import java.util.Objects;
+import java.util.Optional;
 import static org.kitteh.irc.client.library.Client.Builder.Server.SecurityType.INSECURE;
 
 public class TwitchUtils{
@@ -52,6 +53,10 @@ public class TwitchUtils{
 		
 		Log.getLogger().info("Removed all Twitch listeners for channel");
 		listener.removeAllListeners();
+	}
+	
+	public static void close(){
+		Optional.ofNullable(ircClient).ifPresent(Client::shutdown);
 	}
 	
 	private static Client getIrcClient(){

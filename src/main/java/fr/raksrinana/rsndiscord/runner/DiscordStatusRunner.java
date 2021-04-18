@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.api.discordstatus.data.unresolvedincidents.Incid
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -48,7 +49,7 @@ public class DiscordStatusRunner implements IScheduledRunner{
 							.flatMap(Optional::stream)
 							.map(ChannelConfiguration::getChannel)
 							.flatMap(Optional::stream)
-							.forEach(channel -> embeds.forEach(embed -> channel.sendMessage(embed).submit()));
+							.forEach(channel -> embeds.forEach(embed -> JDAWrappers.message(channel, embed).submit()));
 					
 					lastData = unresolvedIncidents.getIncidents().stream()
 							.map(Incident::getIncidentUpdates)

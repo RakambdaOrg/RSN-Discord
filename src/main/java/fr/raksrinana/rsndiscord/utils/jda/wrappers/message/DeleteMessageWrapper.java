@@ -1,34 +1,31 @@
-package fr.raksrinana.rsndiscord.utils.jda.wrappers;
+package fr.raksrinana.rsndiscord.utils.jda.wrappers.message;
 
 import fr.raksrinana.rsndiscord.log.Log;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageReaction;
-import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import java.util.concurrent.CompletableFuture;
 
-public class RemoveReactionWrapper{
+public class DeleteMessageWrapper{
 	private final ISnowflake target;
 	private final String message;
-	private final String reaction;
-	private final RestAction<Void> action;
+	private final AuditableRestAction<Void> action;
 	
-	public RemoveReactionWrapper(@Nullable ISnowflake target, @NotNull Message message, @NotNull String reaction){
+	public DeleteMessageWrapper(@Nullable ISnowflake target, @NotNull Message message){
 		this.target = target;
 		this.message = message.toString();
-		this.reaction = reaction;
-		this.action = message.removeReaction(reaction);
+		this.action = message.delete();
 	}
 	
-	public RemoveReactionWrapper(ISnowflake target, MessageReaction reaction){
+	public DeleteMessageWrapper(@Nullable ISnowflake target, @NotNull TextChannel channel, long messageId){
 		this.target = target;
-		this.message = reaction.getMessageId();
-		this.reaction = reaction.getReactionEmote().toString();
-		this.action = reaction.removeReaction();
+		this.message = Long.toString(messageId);
+		this.action = channel.deleteMessageById(messageId);
 	}
 	
 	@NotNull
@@ -43,7 +40,7 @@ public class RemoveReactionWrapper{
 						logger = Log.getLogger();
 					}
 					
-					logger.info("Removed reaction {} from message {}", reaction, message);
+					logger.info("Deleted message {}", message);
 				});
 	}
 }

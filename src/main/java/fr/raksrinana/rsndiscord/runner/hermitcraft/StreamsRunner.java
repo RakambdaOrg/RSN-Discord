@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -81,6 +82,6 @@ public class StreamsRunner implements IScheduledRunner{
 				.addField(translate(channel.getGuild(), "hermitcraft.hermit"), hermit.getDisplayName(), true)
 				.setThumbnail(hermit.getProfilePicture().toString())
 				.build();
-		channel.sendMessage(embed).submit();
+		JDAWrappers.message(channel, embed).submit();
 	}
 }

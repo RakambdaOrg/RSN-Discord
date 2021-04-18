@@ -3,6 +3,13 @@ package fr.raksrinana.rsndiscord.utils.jda;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.*;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.CreateTextChannelWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.DeleteChannelWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.EditChannelWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.guild.LeaveGuildWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.*;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.*;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.role.SetColorWrapper;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
@@ -50,7 +57,7 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static MessageWrapper message(@NotNull TextChannel channel,@NotNull Message message){
+	public static MessageWrapper message(@NotNull TextChannel channel, @NotNull Message message){
 		return new MessageWrapper(channel.getGuild(), channel, message);
 	}
 	
@@ -128,6 +135,11 @@ public class JDAWrappers{
 	@NotNull
 	public static DeleteChannelWrapper delete(@NotNull TextChannel channel){
 		return new DeleteChannelWrapper(channel.getGuild(), channel);
+	}
+	
+	@NotNull
+	public static DeleteMessageWrapper delete(@NotNull TextChannel channel, long messageId){
+		return new DeleteMessageWrapper(channel.getGuild(), channel, messageId);
 	}
 	
 	@NotNull
@@ -217,5 +229,19 @@ public class JDAWrappers{
 	@NotNull
 	public static CreateTextChannelWrapper createTextChannel(@NotNull Guild guild, @NotNull String name){
 		return new CreateTextChannelWrapper(guild, name);
+	}
+	
+	@NotNull
+	public static UnbanWrapper unban(@NotNull Guild guild, @NotNull String userId){
+		return new UnbanWrapper(guild, userId);
+	}
+	
+	@NotNull
+	public static LeaveGuildWrapper leave(@NotNull Guild guild){
+		return new LeaveGuildWrapper(guild);
+	}
+	
+	public static EditPresenceWrapper editPresence(){
+		return new EditPresenceWrapper();
 	}
 }

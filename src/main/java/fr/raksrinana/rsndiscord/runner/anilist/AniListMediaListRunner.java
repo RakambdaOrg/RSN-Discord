@@ -13,6 +13,7 @@ import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageCo
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
@@ -61,12 +62,11 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 	}
 	
 	private void sendMediaList(TextChannel channel, Member member, MediaList mediaList){
-		
-		channel.sendMessage(member.getAsMention())
+		JDAWrappers.message(channel, member.getAsMention())
 				.embed(buildMessage(channel.getGuild(), member.getUser(), mediaList))
 				.submit()
 				.thenAccept(message -> {
-					message.addReaction(CHECK_OK.getValue()).submit();
+					JDAWrappers.addReaction(message, CHECK_OK).submit();
 					
 					deleteSimilarPendingMedia(channel, mediaList);
 					
@@ -78,7 +78,7 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 	
 	private void deleteSimilarPendingMedia(TextChannel channel, MediaList mediaList){
 		getSimilarWaitingReactions(channel, mediaList.getMedia())
-				.forEach(reaction -> channel.deleteMessageById(reaction.getMessage().getMessageId()).submit()
+				.forEach(reaction -> JDAWrappers.delete(channel, reaction.getMessage().getMessageId()).submit()
 						.thenAccept(empty -> Settings.get(channel.getGuild()).removeMessagesAwaitingReaction(reaction))
 						.exceptionally(th -> {
 							Log.getLogger(channel.getGuild()).error("Failed to delete similar pending media", th);

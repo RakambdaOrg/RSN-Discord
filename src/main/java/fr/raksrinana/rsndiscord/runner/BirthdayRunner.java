@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.runner;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.JDA;
 import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
@@ -37,7 +38,7 @@ public class BirthdayRunner implements IScheduledRunner{
 														user.getAsMention(),
 														birthday.getDate().until(day).normalized().getYears());
 												
-												textChannel.sendMessage(message).submit();
+												JDAWrappers.message(textChannel, message).submit();
 											});
 								}
 							}));

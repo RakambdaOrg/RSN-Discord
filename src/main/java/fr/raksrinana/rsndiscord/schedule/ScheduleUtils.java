@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.settings.guild.schedule.DeleteMessageScheduleCon
 import fr.raksrinana.rsndiscord.settings.guild.schedule.ScheduleConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.SortedList;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
@@ -51,7 +52,7 @@ public class ScheduleUtils{
 		addSchedule(channel.getGuild(), schedule);
 		
 		var content = translate(channel.getGuild(), "schedule.scheduled", schedule.getScheduleDate().format(DATE_TIME_MINUTE_FORMATTER));
-		return channel.sendMessage(content)
+		return JDAWrappers.message(channel, content)
 				.embed(getEmbedFor(channel.getGuild(), schedule, embedBuilderConsumer))
 				.submit()
 				.thenApply(message -> {

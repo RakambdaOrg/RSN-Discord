@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.utils.jda.wrappers;
+package fr.raksrinana.rsndiscord.utils.jda.wrappers.role;
 
 import fr.raksrinana.rsndiscord.log.Log;
 import net.dv8tion.jda.api.entities.Guild;

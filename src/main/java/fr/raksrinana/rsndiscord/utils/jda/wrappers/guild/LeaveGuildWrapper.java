@@ -1,26 +1,23 @@
-package fr.raksrinana.rsndiscord.utils.jda.wrappers;
+package fr.raksrinana.rsndiscord.utils.jda.wrappers.guild;
 
 import fr.raksrinana.rsndiscord.log.Log;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.CompletableFuture;
 
-public class UnpinMessageWrapper{
+public class LeaveGuildWrapper{
 	private final Guild guild;
-	private final Message message;
 	private final RestAction<Void> action;
 	
-	public UnpinMessageWrapper(@NotNull Guild guild, @NotNull Message message){
+	public LeaveGuildWrapper(@NotNull Guild guild){
 		this.guild = guild;
-		this.message = message;
-		this.action = message.unpin();
+		this.action = guild.leave();
 	}
 	
 	@NotNull
 	public CompletableFuture<Void> submit(){
 		return action.submit()
-				.thenAccept(empty -> Log.getLogger(guild).info("Unpinned message {}", message));
+				.thenAccept(empty -> Log.getLogger(guild).info("Left guild {}", guild));
 	}
 }

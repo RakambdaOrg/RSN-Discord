@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord;
 
-import fr.raksrinana.rsndiscord.api.trakt.TraktApi;
+import fr.raksrinana.rsndiscord.api.irc.TwitchUtils;
 import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
 import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.log.Log;
@@ -15,6 +15,7 @@ import fr.raksrinana.rsndiscord.settings.guild.TwitchConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.JacksonObjectMapper;
 import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import kong.unirest.Unirest;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
@@ -73,7 +74,9 @@ public class Main{
 			registerAllEventListeners(jdaBuilder);
 			jda = jdaBuilder.build();
 			jda.awaitReady();
-			jda.getPresence().setPresence(ONLINE, Activity.of(Activity.ActivityType.DEFAULT, DEFAULT_PREFIX + "help for the help"));
+			JDAWrappers.editPresence()
+					.setStatus(ONLINE)
+					.setActivity(Activity.of(Activity.ActivityType.DEFAULT, DEFAULT_PREFIX + "help for the help"));
 			Log.getLogger().info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
 			Log.getLogger().info("Adding handlers");
 			ReactionUtils.registerAllHandlers();
@@ -152,7 +155,7 @@ public class Main{
 				.flatMap(Optional::stream)
 				.map(ChannelConfiguration::getChannel)
 				.flatMap(Optional::stream)
-				.forEach(channel -> channel.sendMessage(translate(channel.getGuild(), "started")).submit());
+				.forEach(channel -> JDAWrappers.message(channel, translate(channel.getGuild(), "started")).submit());
 	}
 	
 	/**
@@ -167,7 +170,7 @@ public class Main{
 						.getTwitchAutoConnectUsers()
 						.forEach(user -> {
 							try{
-								TwitchIRC.connect(guild, user);
+								TwitchUtils.connect(guild, user);
 							}
 							catch(Exception e){
 								Log.getLogger(guild).error("Failed to automatically connect to twitch user {}", user, e);
@@ -202,10 +205,9 @@ public class Main{
 	 */
 	public static void close(){
 		TwitterApi.removeStreamFilters();
-		TraktApi.stopAll();
 		UserReplyEventListener.stopAll();
 		RSNAudioManager.stopAll();
-		TwitchIRC.close();
+		TwitchUtils.close();
 		executorService.shutdownNow();
 		consoleHandler.close();
 		Settings.close();

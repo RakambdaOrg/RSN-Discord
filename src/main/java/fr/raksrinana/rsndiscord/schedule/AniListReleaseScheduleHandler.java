@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.schedule.handler.IScheduleHandler;
 import fr.raksrinana.rsndiscord.settings.guild.schedule.ScheduleConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -55,12 +56,12 @@ public class AniListReleaseScheduleHandler implements IScheduleHandler{
 					var builder = new EmbedBuilder();
 					media.fillEmbed(member.getGuild(), builder);
 					
-					channel.sendMessage(translate(guild, "schedule.reminder-added", user.getAsMention(), reminder.getMessage()))
+					JDAWrappers.message(channel, translate(guild, "schedule.reminder-added", user.getAsMention(), reminder.getMessage()))
 							.embed(builder.build())
 							.submit()
 							.thenAccept(message -> ofNullable(reminder.getReminderCountdownMessage())
 									.flatMap(MessageConfiguration::getMessage)
-									.ifPresent(message1 -> message1.delete().submit()));
+									.ifPresent(message1 -> JDAWrappers.delete(message1).submit()));
 					
 					return true;
 				}).orElse(false);
