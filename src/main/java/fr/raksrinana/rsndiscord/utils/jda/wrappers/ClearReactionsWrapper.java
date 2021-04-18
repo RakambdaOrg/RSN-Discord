@@ -1,7 +1,6 @@
 package fr.raksrinana.rsndiscord.utils.jda.wrappers;
 
 import fr.raksrinana.rsndiscord.log.Log;
-import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.Message;
@@ -11,24 +10,15 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import java.util.concurrent.CompletableFuture;
 
-public class AddReactionWrapper{
+public class ClearReactionsWrapper{
 	private final ISnowflake target;
 	private final Message message;
-	private final String reaction;
 	private final RestAction<Void> action;
 	
-	public AddReactionWrapper(@Nullable ISnowflake target, @NotNull Message message, @NotNull String reaction){
+	public ClearReactionsWrapper(@Nullable ISnowflake target, @NotNull Message message){
 		this.target = target;
 		this.message = message;
-		this.reaction = reaction;
-		this.action = message.addReaction(reaction);
-	}
-	
-	public AddReactionWrapper(@Nullable ISnowflake target, @NotNull Message message, @NotNull Emote reaction){
-		this.target = target;
-		this.message = message;
-		this.reaction = reaction.toString();
-		this.action = message.addReaction(reaction);
+		this.action = message.clearReactions();
 	}
 	
 	@NotNull
@@ -43,7 +33,7 @@ public class AddReactionWrapper{
 						logger = Log.getLogger();
 					}
 					
-					logger.info("Added reaction {} to message {}", reaction, message);
+					logger.info("Cleared reactions from message {}", message);
 				});
 	}
 }

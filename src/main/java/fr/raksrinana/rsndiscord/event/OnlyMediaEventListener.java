@@ -1,6 +1,7 @@
 package fr.raksrinana.rsndiscord.event;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -16,9 +17,9 @@ public class OnlyMediaEventListener extends ListenerAdapter{
 		var message = event.getMessage();
 		
 		if(containsChannel(Settings.get(guild).getOnlyMediaChannels(), event.getChannel()) && message.getAttachments().isEmpty()){
-			message.delete().submit()
+			JDAWrappers.delete(message).submit()
 					.thenAccept(empty -> event.getAuthor().openPrivateChannel().submit()
-							.thenAccept(privateChannel -> privateChannel.sendMessage(translate(guild, "listeners.onlymedia.warn")).submit()));
+							.thenAccept(privateChannel -> JDAWrappers.message(privateChannel, translate(guild, "listeners.onlymedia.warn")).submit()));
 		}
 	}
 }

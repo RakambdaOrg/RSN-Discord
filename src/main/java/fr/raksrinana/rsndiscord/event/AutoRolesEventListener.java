@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.autoroles.LeaverRoles;
 import fr.raksrinana.rsndiscord.settings.guild.schedule.UnbanScheduleConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -39,7 +40,7 @@ public class AutoRolesEventListener extends ListenerAdapter{
 											member.getId());
 									addSchedule(guild, unbanScheduleConfiguration);
 									
-									member.ban(0, "Left server").submit();
+									JDAWrappers.ban(member, 0, "Left server").sumbit();
 								}
 							}));
 		});
@@ -56,14 +57,14 @@ public class AutoRolesEventListener extends ListenerAdapter{
 			
 			Settings.get(guild).getAutoRoles().stream()
 					.flatMap(roleConfiguration -> roleConfiguration.getRole().stream())
-					.forEach(role -> guild.addRoleToMember(member, role).submit());
+					.forEach(role -> JDAWrappers.addRole(member, role).submit());
 			
 			var leavingRolesConfiguration = Settings.get(guild).getLeavingRolesConfiguration();
 			leavingRolesConfiguration.getLeaver(user).ifPresent(leaverRoles -> {
 				leaverRoles.getRoles().stream()
 						.map(RoleConfiguration::getRole)
 						.flatMap(Optional::stream)
-						.forEach(role -> guild.addRoleToMember(member, role).submit());
+						.forEach(role -> JDAWrappers.addRole(member, role).submit());
 				leavingRolesConfiguration.removeUser(user);
 			});
 		}

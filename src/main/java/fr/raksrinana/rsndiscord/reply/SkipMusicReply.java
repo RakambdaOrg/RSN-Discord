@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.schedule.ScheduleUtils;
 import fr.raksrinana.rsndiscord.settings.guild.schedule.DeleteMessageScheduleConfiguration;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -49,7 +50,7 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 				Log.getLogger(guild).info("Vote successful, skipping");
 				if(isSameTrack(event)){
 					RSNAudioManager.skip(guild);
-					event.getChannel().sendMessage(translate(guild, "music.skipped", "@everyone"))
+					JDAWrappers.message(event, translate(guild, "music.skipped", "@everyone"))
 							.allowedMentions(List.of())
 							.submit();
 				}
@@ -105,7 +106,7 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 		
 		Log.getLogger(guild).info("Vote note successful, music not skipped");
 		
-		channel.sendMessage(translate(guild, "music.skip.timeout")).submit();
+		JDAWrappers.message(channel, translate(guild, "music.skip.timeout")).submit();
 		
 		var deleteMessageScheduleConfiguration = new DeleteMessageScheduleConfiguration(channel.getJDA().getSelfUser(),
 				ZonedDateTime.now().plusMinutes(5), channel, getOriginalMessageId());

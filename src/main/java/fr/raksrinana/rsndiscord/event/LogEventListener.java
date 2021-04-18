@@ -1,6 +1,7 @@
 package fr.raksrinana.rsndiscord.event;
 
 import fr.raksrinana.rsndiscord.log.Log;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildMuteEvent;
 import net.dv8tion.jda.api.events.self.SelfUpdateNameEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
@@ -40,8 +41,8 @@ public class LogEventListener extends ListenerAdapter{
 	public void onGuildVoiceGuildMute(@NotNull GuildVoiceGuildMuteEvent event){
 		super.onGuildVoiceGuildMute(event);
 		if(Objects.equals(event.getMember().getUser(), event.getJDA().getSelfUser())){
-			event.getMember().mute(false).submit();
-			event.getMember().deafen(false).submit();
+			JDAWrappers.mute(event.getMember(), false).submit();
+			JDAWrappers.deafen(event.getMember(), false).submit();
 		}
 	}
 }

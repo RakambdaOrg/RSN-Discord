@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.reply;
 
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -56,7 +57,7 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 			if(!isHandled()){
 				handled = onExecute(event, args);
 				if(isHandled()){
-					infoMessages.forEach(message -> message.delete().submit());
+					infoMessages.forEach(message -> JDAWrappers.delete(message).submit());
 				}
 			}
 		}
@@ -69,7 +70,7 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 			if(!isHandled()){
 				handled = onExecute(event);
 				if(isHandled()){
-					infoMessages.forEach(message -> message.delete().submit());
+					infoMessages.forEach(message -> JDAWrappers.delete(message).submit());
 				}
 			}
 		}
@@ -80,8 +81,8 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 	
 	@Override
 	public boolean onExpire(){
-		getWaitChannel().sendMessage(translate(getWaitChannel().getGuild(), "listeners.reply.expire", getUser().getAsMention())).submit();
-		infoMessages.forEach(message -> message.delete().submit());
+		JDAWrappers.message(getWaitChannel(), translate(getWaitChannel().getGuild(), "listeners.reply.expire", getUser().getAsMention())).submit();
+		infoMessages.forEach(message -> JDAWrappers.delete(message).submit());
 		return true;
 	}
 	

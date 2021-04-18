@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.reaction.handler;
 import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
@@ -36,7 +37,7 @@ public class AniListTodoReactionHandler extends TodoReactionHandler{
 				.map(User::openPrivateChannel)
 				.map(RestAction::submit)
 				.ifPresent(future -> future
-						.thenAccept(privateChannel -> privateChannel.sendMessage(user.getAsMention() + " completed").embed(embed).submit()));
+						.thenAccept(privateChannel -> JDAWrappers.message(privateChannel, user.getAsMention() + " completed").embed(embed).submit()));
 	}
 	
 	@Override

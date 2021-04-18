@@ -4,6 +4,7 @@ import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
@@ -36,7 +37,7 @@ public class CancelChannelDeletionReactionHandler extends TodoReactionHandler{
 							.map(channel -> Objects.equals(channel, message.getChannel()))
 							.orElse(false))
 					.forEach(schedule -> Settings.get(message.getGuild()).removeSchedule(schedule));
-			message.delete().submit();
+			JDAWrappers.delete(message).submit();
 			return PROCESSED_DELETE;
 		}).orElse(PROCESSED);
 	}

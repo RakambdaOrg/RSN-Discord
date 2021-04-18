@@ -26,6 +26,11 @@ public class MessageWrapper{
 		this.action = channel.sendMessage(embed);
 	}
 	
+	public MessageWrapper(@Nullable ISnowflake target, @NotNull TextChannel channel, @NotNull Message message){
+		this.target = target;
+		this.action = channel.sendMessage(message);
+	}
+	
 	@NotNull
 	public MessageWrapper allowedMentions(@Nullable Collection<Message.MentionType> mentionTypes){
 		action = action.allowedMentions(mentionTypes);
@@ -65,6 +70,12 @@ public class MessageWrapper{
 	@NotNull
 	public MessageWrapper addFile(@NotNull InputStream inputStream, @NotNull String fileName){
 		action = action.addFile(inputStream, fileName);
+		return this;
+	}
+	
+	@NotNull
+	public MessageWrapper embed(@Nullable MessageEmbed embed){
+		action = action.embed(embed);
 		return this;
 	}
 	

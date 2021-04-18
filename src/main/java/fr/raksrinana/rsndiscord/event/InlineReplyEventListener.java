@@ -2,6 +2,7 @@ package fr.raksrinana.rsndiscord.event;
 
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.log.Log;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -45,8 +46,8 @@ public class InlineReplyEventListener extends ListenerAdapter{
 									.mapToObj(index -> original.get(index) + " " + received.get(index))
 									.collect(Collectors.joining("\n"));
 					
-					reference.reply(content).submit()
-							.thenAccept(sent -> message.delete().submit());
+					JDAWrappers.reply(reference, content).submit()
+							.thenAccept(sent -> JDAWrappers.delete(message).submit());
 				}
 			}
 		}

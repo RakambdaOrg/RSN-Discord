@@ -1,40 +1,37 @@
 package fr.raksrinana.rsndiscord.utils.jda.wrappers;
 
 import fr.raksrinana.rsndiscord.log.Log;
-import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import java.util.concurrent.CompletableFuture;
 
-public class AddReactionWrapper{
+public class EditMessageWrapper{
 	private final ISnowflake target;
 	private final Message message;
-	private final String reaction;
-	private final RestAction<Void> action;
+	private final MessageAction action;
 	
-	public AddReactionWrapper(@Nullable ISnowflake target, @NotNull Message message, @NotNull String reaction){
+	public EditMessageWrapper(@Nullable ISnowflake target, @NotNull Message message, @NotNull String content){
 		this.target = target;
 		this.message = message;
-		this.reaction = reaction;
-		this.action = message.addReaction(reaction);
+		this.action = message.editMessage(content);
 	}
 	
-	public AddReactionWrapper(@Nullable ISnowflake target, @NotNull Message message, @NotNull Emote reaction){
+	public EditMessageWrapper(@Nullable ISnowflake target, @NotNull Message message, @NotNull MessageEmbed embed){
 		this.target = target;
 		this.message = message;
-		this.reaction = reaction.toString();
-		this.action = message.addReaction(reaction);
+		this.action = message.editMessage(embed);
 	}
 	
 	@NotNull
-	public CompletableFuture<Void> submit(){
+	public CompletableFuture<Message> submit(){
 		return action.submit()
-				.thenAccept(empty -> {
+				.thenApply(m -> {
 					Logger logger;
 					if(target instanceof Guild g){
 						logger = Log.getLogger(g);
@@ -43,7 +40,9 @@ public class AddReactionWrapper{
 						logger = Log.getLogger();
 					}
 					
-					logger.info("Added reaction {} to message {}", reaction, message);
+					logger.info("Edited message {} with content: {}", message, message.getContentRaw());
+					
+					return m;
 				});
 	}
 }

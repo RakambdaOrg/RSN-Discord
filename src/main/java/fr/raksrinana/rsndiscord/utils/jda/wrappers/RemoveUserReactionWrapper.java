@@ -1,34 +1,27 @@
 package fr.raksrinana.rsndiscord.utils.jda.wrappers;
 
 import fr.raksrinana.rsndiscord.log.Log;
-import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.ISnowflake;
-import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageReaction;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import java.util.concurrent.CompletableFuture;
 
-public class AddReactionWrapper{
+public class RemoveUserReactionWrapper{
 	private final ISnowflake target;
-	private final Message message;
-	private final String reaction;
+	private final MessageReaction messageReaction;
+	private final User user;
 	private final RestAction<Void> action;
 	
-	public AddReactionWrapper(@Nullable ISnowflake target, @NotNull Message message, @NotNull String reaction){
+	public RemoveUserReactionWrapper(@Nullable ISnowflake target, @NotNull MessageReaction messageReaction, @NotNull User user){
 		this.target = target;
-		this.message = message;
-		this.reaction = reaction;
-		this.action = message.addReaction(reaction);
-	}
-	
-	public AddReactionWrapper(@Nullable ISnowflake target, @NotNull Message message, @NotNull Emote reaction){
-		this.target = target;
-		this.message = message;
-		this.reaction = reaction.toString();
-		this.action = message.addReaction(reaction);
+		this.messageReaction = messageReaction;
+		this.user = user;
+		this.action = messageReaction.removeReaction(user);
 	}
 	
 	@NotNull
@@ -43,7 +36,7 @@ public class AddReactionWrapper{
 						logger = Log.getLogger();
 					}
 					
-					logger.info("Added reaction {} to message {}", reaction, message);
+					logger.info("Removed reaction {} of {} from message {}", messageReaction.getReactionEmote(), user, messageReaction.getMessageIdLong());
 				});
 	}
 }

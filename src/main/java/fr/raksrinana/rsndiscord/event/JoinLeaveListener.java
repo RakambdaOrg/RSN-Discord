@@ -2,6 +2,7 @@ package fr.raksrinana.rsndiscord.event;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
@@ -35,7 +36,7 @@ public class JoinLeaveListener extends ListenerAdapter{
 							.setImage(image)
 							.build();
 					
-					channel.sendMessage(embed).submit();
+					JDAWrappers.message(channel, embed).submit();
 				});
 	}
 	
@@ -61,7 +62,7 @@ public class JoinLeaveListener extends ListenerAdapter{
 							.addField("Mention", user.getAsMention(), true)
 							.build();
 					
-					channel.sendMessage(embed).submit();
+					JDAWrappers.message(channel, embed).submit();
 				});
 	}
 	
