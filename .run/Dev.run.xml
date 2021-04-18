@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Gunter - Dev" type="Application" factoryName="Application">
+  <configuration default="false" name="Dev" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="fr.raksrinana.rsndiscord.Main" />
-    <module name="RSN-Discord.main" />
+    <module name="rsn-discord.main" />
     <option name="PROGRAM_PARAMETERS" value="-s config/settings -c config/config.properties" />
     <option name="VM_PARAMETERS" value="-Drsndev=true" />
     <method v="2">
