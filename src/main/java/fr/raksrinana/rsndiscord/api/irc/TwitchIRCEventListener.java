@@ -1,13 +1,14 @@
 package fr.raksrinana.rsndiscord.api.irc;
 
 import fr.raksrinana.rsndiscord.log.Log;
-import org.jetbrains.annotations.NotNull;
 import net.engio.mbassy.listener.Handler;
+import org.jetbrains.annotations.NotNull;
 import org.kitteh.irc.client.library.element.Channel;
 import org.kitteh.irc.client.library.event.channel.ChannelJoinEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelMessageEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelNoticeEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelPartEvent;
+import org.kitteh.irc.client.library.event.connection.ClientConnectionClosedEvent;
 import org.kitteh.irc.client.library.feature.twitch.event.ClearChatEvent;
 import org.kitteh.irc.client.library.feature.twitch.event.UserNoticeEvent;
 import java.util.*;
@@ -33,6 +34,17 @@ public class TwitchIRCEventListener{
 	
 	public void removeAllListeners(){
 		listeners.clear();
+	}
+	
+	@Handler
+	public void onClientConnectionCLoseEvent(ClientConnectionClosedEvent event){
+		if(event.canAttemptReconnect()){
+			Log.getLogger().warn("IRC connection closed, attempting to reconnect");
+			event.setAttemptReconnect(true);
+		}
+		else{
+			Log.getLogger().info("IRC connection closed");
+		}
 	}
 	
 	@Handler
