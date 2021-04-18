@@ -4,6 +4,7 @@ import fr.raksrinana.rsndiscord.api.externaltodos.ExternalTodosApi;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.JDA;
 import org.jetbrains.annotations.NotNull;
 import java.util.Map;
@@ -45,11 +46,11 @@ public class ExternalTodosRunner implements IScheduledRunner{
 						.ifPresent(channel -> {
 							var response = ExternalTodosApi.getTodos(endpoint, token);
 							
-							response.ifPresent(todos -> todos.getTodos().forEach(todo -> channel.sendMessage("`" + todo.getKind().name() + "` => " + todo.getDescription()).submit()
+							response.ifPresent(todos -> todos.getTodos().forEach(todo -> JDAWrappers.message(channel, "`" + todo.getKind().name() + "` => " + todo.getDescription()).submit()
 									.thenAccept(message -> {
-										message.addReaction(CHECK_OK.getValue()).submit();
+										JDAWrappers.addReaction(message, CHECK_OK).submit();
 										if(todo.getKind().isCancellable()){
-											message.addReaction(CROSS_NO.getValue()).submit();
+											JDAWrappers.addReaction(message, CROSS_NO).submit();
 										}
 										
 										var waitingReactionMessageConfiguration = new WaitingReactionMessageConfiguration(message,

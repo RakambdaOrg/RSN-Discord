@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -46,7 +47,6 @@ class RemoveCommand extends BasicCommand{
 		}
 		
 		var guild = event.getGuild();
-		var channel = event.getChannel();
 		var id = args.pop();
 		
 		try{
@@ -55,24 +55,24 @@ class RemoveCommand extends BasicCommand{
 			trombinoscope.getUserIdOfPicture(uuid).ifPresentOrElse(userId -> {
 				if(Objects.equals(userId, event.getAuthor().getIdLong()) || isModerator(event.getMember())){
 					trombinoscope.removePicture(userId, uuid);
-					channel.sendMessage(translate(guild, "trombinoscope.picture-removed")).submit()
+					JDAWrappers.message(event, translate(guild, "trombinoscope.picture-removed")).submit()
 							.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 					
 					if(!trombinoscope.isUserPresent(userId)){
 						guild.retrieveMemberById(userId).submit().thenAccept(target -> trombinoscope.getPosterRole()
 								.flatMap(RoleConfiguration::getRole)
-								.ifPresent(role -> guild.removeRoleFromMember(target, role).submit()));
+								.ifPresent(role -> JDAWrappers.removeRole(target, role).submit()));
 					}
 				}
 				else{
-					channel.sendMessage(translate(guild, "trombinoscope.error.remove-other")).submit()
+					JDAWrappers.message(event, translate(guild, "trombinoscope.error.remove-other")).submit()
 							.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 				}
-			}, () -> channel.sendMessage(translate(guild, "trombinoscope.error.unknown")).submit()
+			}, () -> JDAWrappers.message(event, translate(guild, "trombinoscope.error.unknown")).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(5))));
 		}
 		catch(IllegalArgumentException e){
-			channel.sendMessage(translate(guild, "trombinoscope.error.invalid-id")).submit()
+			JDAWrappers.message(event, translate(guild, "trombinoscope.error.invalid-id")).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 		}
 		return SUCCESS;

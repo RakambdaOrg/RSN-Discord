@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -43,7 +44,7 @@ public class GrantCommand extends BasicCommand{
 		String permissionId = args.pop();
 		message.getMentionedUsers().forEach(user -> permissionsConfiguration.grant(user, permissionId));
 		message.getMentionedRoles().forEach(role -> permissionsConfiguration.grant(role, permissionId));
-		event.getChannel().sendMessage(translate(guild, "permissions.granted", permissionId)).submit()
+		JDAWrappers.message(event, translate(guild, "permissions.granted", permissionId)).submit()
 				.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 		return SUCCESS;
 	}

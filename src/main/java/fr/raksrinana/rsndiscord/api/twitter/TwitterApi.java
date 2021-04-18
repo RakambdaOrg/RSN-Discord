@@ -9,6 +9,7 @@ import com.github.redouane59.twitter.signature.TwitterCredentials;
 import com.github.scribejava.core.model.Response;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +58,7 @@ public class TwitterApi implements IAPIEventListener{
 	}
 	
 	private static void onFilteredStreamTweet(Tweet tweet){
-		log.info("New tweet from filter");
+		log.debug("New tweet from filter");
 		var tweetUrl = getUrl(tweet);
 		
 		if(tweet instanceof TweetV2 tweetV2){
@@ -69,7 +70,7 @@ public class TwitterApi implements IAPIEventListener{
 					.distinct()
 					.map(Main.getJda()::getTextChannelById)
 					.filter(Objects::nonNull)
-					.forEach(channel -> channel.sendMessage(tweetUrl).submit());
+					.forEach(channel -> JDAWrappers.message(channel, tweetUrl).submit());
 		}
 		else {
 			log.error("Tweet isn't a tweet V2");

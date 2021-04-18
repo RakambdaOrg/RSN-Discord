@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -41,7 +42,7 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 				return null;
 			});
 		}
-		Log.getLogger(null).debug("Trakt API done");
+		Log.getLogger().debug("Trakt API done");
 		sendMessages(channels, userElements);
 	}
 	
@@ -106,7 +107,7 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 								.forEach(channel -> {
 									var builder = new EmbedBuilder();
 									buildMessage(channel.getGuild(), builder, user, change);
-									channel.sendMessage(builder.build()).submit();
+									JDAWrappers.message(channel, builder.build()).submit();
 								}));
 			}
 		}
@@ -119,7 +120,7 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 							.forEach(channel -> {
 								var builder = new EmbedBuilder();
 								buildMessage(channel.getGuild(), builder, change.getKey(), change.getValue());
-								channel.sendMessage(builder.build()).submit();
+								JDAWrappers.message(channel, builder.build()).submit();
 							}));
 		}
 	}
@@ -145,7 +146,7 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 			change.fillEmbed(guild, builder);
 		}
 		catch(Exception e){
-			Log.getLogger(null).error("Error building message for {}", getName(), e);
+			Log.getLogger().error("Error building message for {}", getName(), e);
 			builder.addField("Error", e.getClass().getName() + " => " + e.getMessage(), false);
 			builder.setColor(RED);
 		}

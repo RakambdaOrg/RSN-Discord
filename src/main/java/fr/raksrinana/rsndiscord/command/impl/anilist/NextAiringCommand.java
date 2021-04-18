@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.guild.anilist.AniListAiringScheduleConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -69,7 +70,7 @@ class NextAiringCommand extends BasicCommand{
 						var airingScheduleConfiguration = new AniListAiringScheduleConfiguration(
 								event.getAuthor(), channel, schedule.getDate(), schedule);
 						addScheduleAndNotify(airingScheduleConfiguration, channel);
-					}, () -> channel.sendMessage(translate(guild, "anilist.airing-schedule-not-found")).submit()
+					}, () -> JDAWrappers.message(channel, translate(guild, "anilist.airing-schedule-not-found")).submit()
 							.thenAccept(deleteMessage(date -> date.plusMinutes(5))));
 		}
 		catch(Exception e){

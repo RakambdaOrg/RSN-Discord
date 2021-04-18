@@ -9,6 +9,7 @@ import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -73,7 +74,7 @@ public class RandomKick extends BasicCommand{
 				&& Optional.ofNullable(targetRole).map(role -> member.getRoles().contains(role)).orElse(true))
 				.onSuccess(members -> {
 					if(members.isEmpty()){
-						channel.sendMessage(translate(guild, "random-kick.no-member")).submit();
+						JDAWrappers.message(channel, translate(guild, "random-kick.no-member")).submit();
 					}
 					else{
 						performKick(guild, channel, members, reason, allowReKick);
@@ -81,7 +82,7 @@ public class RandomKick extends BasicCommand{
 				})
 				.onError(e -> {
 					Log.getLogger(guild).error("Failed to load members", e);
-					channel.sendMessage(translate(guild, "random-kick.error-members")).submit();
+					JDAWrappers.message(channel, translate(guild, "random-kick.error-members")).submit();
 				});
 	}
 	
@@ -105,28 +106,28 @@ public class RandomKick extends BasicCommand{
 		Settings.get(guild).getRandomKick()
 				.getKickedRole()
 				.flatMap(RoleConfiguration::getRole)
-				.ifPresent(kickedRole -> guild.addRoleToMember(member, kickedRole).submit());
+				.ifPresent(kickedRole -> JDAWrappers.addRole(member, kickedRole).submit());
 		
 		member.getUser().openPrivateChannel().submit()
 				.thenAccept(privateChannel -> {
-					privateChannel.sendMessage(kickMessage).submit();
+					JDAWrappers.message(privateChannel, kickMessage).submit();
 					
 					Optional.ofNullable(guild.getDefaultChannel())
 							.map(TextChannel::createInvite)
 							.map(invite -> invite.setMaxAge(24L, TimeUnit.HOURS)
 									.setMaxUses(1))
 							.map(RestAction::submit)
-							.ifPresent(invite -> invite.thenAccept(inv -> privateChannel.sendMessage(inv.getUrl()).submit()));
+							.ifPresent(invite -> invite.thenAccept(inv -> JDAWrappers.message(privateChannel, inv.getUrl()).submit()));
 				});
 		
-		channel.sendMessage(translate(guild, "random-kick.kicking", member.getAsMention()))
+		JDAWrappers.message(channel, translate(guild, "random-kick.kicking", member.getAsMention()))
 				.tts(true).submit()
 				.thenAccept(kickStartMessage -> Main.getExecutorService().schedule(() -> {
-					member.kick(reason).submit()
-							.thenAccept(empty2 -> kickStartMessage.reply(kickMessage)
-									.mentionUsers(member.getIdLong()).submit())
+					JDAWrappers.kick(member, reason).submit()
+							.thenAccept(empty2 -> JDAWrappers.reply(kickStartMessage, kickMessage)
+									.mention(member).submit())
 							.exceptionally(exception -> {
-								channel.sendMessage(translate(guild, "random-kick.error", exception.getMessage())).submit();
+								JDAWrappers.message(channel, translate(guild, "random-kick.error", exception.getMessage())).submit();
 								return null;
 							});
 				}, 30, TimeUnit.SECONDS));

@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.birthday.Birthday;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -52,8 +53,8 @@ public class GetCommand extends BasicCommand{
 							user.getAsMention(),
 							date.format(DF),
 							date.until(LocalDate.now()).normalized().getYears());
-					event.getChannel().sendMessage(message).submit();
-				}, () -> event.getChannel().sendMessage(translate(guild, "birthday.unknown-date")).submit()
+					JDAWrappers.message(event, message).submit();
+				}, () -> JDAWrappers.message(event, translate(guild, "birthday.unknown-date")).submit()
 						.thenAccept(deleteMessage(date -> date.plusMinutes(5))));
 		return SUCCESS;
 	}

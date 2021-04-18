@@ -17,11 +17,11 @@ public class ForceShutdownThread extends Thread{
 	public void run(){
 		try{
 			Thread.sleep(TIMEOUT_SHUTDOWN);
-			Log.getLogger(null).warn("Forcing shutdown");
+			Log.getLogger().warn("Forcing shutdown");
 			System.exit(0);
 		}
 		catch(InterruptedException e){
-			Log.getLogger(null).warn("Failed to wait for forced shutdown", e);
+			Log.getLogger().warn("Failed to wait for forced shutdown", e);
 		}
 	}
 }

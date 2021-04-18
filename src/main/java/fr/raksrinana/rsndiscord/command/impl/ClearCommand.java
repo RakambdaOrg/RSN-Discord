@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.command.BotCommand;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -33,12 +34,12 @@ public class ClearCommand extends BasicCommand{
 		var messageCount = getArgumentAsInteger(args).orElse(100);
 		var targetChannel = getFirstChannelMentioned(event).orElse(channel);
 		
-		channel.sendMessage(translate(event.getGuild(), "clear.removing", messageCount, targetChannel.getAsMention())).submit()
+		JDAWrappers.message(channel, translate(event.getGuild(), "clear.removing", messageCount, targetChannel.getAsMention())).submit()
 				.thenAccept(deleteMessage(date -> date.plusMinutes(2)));
 		
 		targetChannel.getIterableHistory()
 				.takeAsync(messageCount)
-				.thenAccept(messages -> messages.forEach(message -> message.delete().submit()));
+				.thenAccept(messages -> messages.forEach(message -> JDAWrappers.delete(message).submit()));
 		return SUCCESS;
 	}
 	

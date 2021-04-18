@@ -25,12 +25,13 @@ public class ExternalTodosApi{
 		
 		request.getParsingError().ifPresent(error -> {
 			Utilities.reportException("Failed to parse external todos response", error);
-			Log.getLogger(null).warn("Failed to parse external todos response", error);
+			Log.getLogger().warn("Failed to parse external todos response", error);
 		});
-		if(request.isSuccess()){
-			return Optional.of(request.getBody());
+		if(!request.isSuccess()){
+			return empty();
 		}
-		return empty();
+		
+		return Optional.of(request.getBody());
 	}
 	
 	@NotNull
@@ -45,11 +46,12 @@ public class ExternalTodosApi{
 		
 		request.getParsingError().ifPresent(error -> {
 			Utilities.reportException("Failed to parse external todos response", error);
-			Log.getLogger(null).warn("Failed to parse external todos response", error);
+			Log.getLogger().warn("Failed to parse external todos response", error);
 		});
-		if(request.isSuccess()){
-			return Optional.of(request.getBody());
+		if(!request.isSuccess()){
+			return empty();
 		}
-		return empty();
+		
+		return Optional.of(request.getBody());
 	}
 }

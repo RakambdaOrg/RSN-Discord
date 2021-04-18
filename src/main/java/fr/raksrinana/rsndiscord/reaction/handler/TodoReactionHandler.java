@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageCo
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
@@ -69,14 +70,14 @@ public class TodoReactionHandler implements IReactionHandler{
 					}
 					
 					if(message.isPinned()){
-						message.unpin().submit();
+						JDAWrappers.unpin(message).submit();
 					}
 					if(ofNullable(todo.getData().get(DELETE_KEY)).map(Boolean::parseBoolean).orElse(false)){
-						message.delete().submit();
+						JDAWrappers.delete(message).submit();
 					}
 					else{
-						message.editMessage(OK_HAND.getValue() + " __**DONE**__:  " + message.getContentRaw()).submit();
-						message.clearReactions().submit();
+						JDAWrappers.edit(message, OK_HAND.getValue() + " __**DONE**__:  " + message.getContentRaw()).submit();
+						JDAWrappers.clearReactions(message).submit();
 					}
 					return PROCESSED_DELETE;
 				}).orElse(PROCESSED);
@@ -93,7 +94,7 @@ public class TodoReactionHandler implements IReactionHandler{
 				.flatMap(ChannelConfiguration::getChannel)
 				.map(forwardChannel -> {
 					try{
-						return forwardChannel.sendMessage(message).submit()
+						return JDAWrappers.message(forwardChannel, message).submit()
 								.thenApply(forwardedMessage -> true)
 								.exceptionally(e -> false)
 								.get(30, SECONDS);
@@ -105,13 +106,13 @@ public class TodoReactionHandler implements IReactionHandler{
 				}).orElse(false);
 		
 		if(!forwarded){
-			event.getReaction().removeReaction().submit();
+			JDAWrappers.removeReaction(event.getReaction()).submit();
 			user.openPrivateChannel().submit()
-					.thenAccept(privateChannel -> privateChannel.sendMessage(translate(guild, "reaction.not-configured")).submit());
+					.thenAccept(privateChannel -> JDAWrappers.message(privateChannel, translate(guild, "reaction.not-configured")).submit());
 			return PROCESSED;
 		}
 		
-		message.delete().submit();
+		JDAWrappers.delete(message).submit();
 		return PROCESSED_DELETE;
 	}
 	
@@ -120,19 +121,20 @@ public class TodoReactionHandler implements IReactionHandler{
 		var guild = event.getGuild();
 		
 		try{
-			return guild.createTextChannel("reply-" + event.getMessageIdLong()).submit()
+			return JDAWrappers.createTextChannel(guild, "reply-" + event.getMessageIdLong()).submit()
 					.thenApply(forwardChannel -> {
 						ofNullable(message.getTextChannel().getParent())
-								.ifPresent(category -> forwardChannel.getManager().setParent(category)
+								.ifPresent(category -> JDAWrappers.edit(forwardChannel)
+										.setParent(category)
 										.sync(category)
 										.submit());
-						forwardChannel.sendMessage(translate(guild, "reaction.original-from", message.getAuthor().getAsMention())).submit()
-								.thenCompose(sent -> forwardChannel.sendMessage(message).submit())
-								.thenCompose(sent -> forwardChannel.sendMessage(translate(guild, "reaction.react-archive", user.getAsMention(), CROSS_NO.getValue())).submit()
+						JDAWrappers.message(forwardChannel, translate(guild, "reaction.original-from", message.getAuthor().getAsMention())).submit()
+								.thenCompose(sent -> JDAWrappers.message(forwardChannel, message).submit())
+								.thenCompose(sent -> JDAWrappers.message(forwardChannel, translate(guild, "reaction.react-archive", user.getAsMention(), CROSS_NO.getValue())).submit()
 										.thenAccept(forwarded -> {
-											forwarded.addReaction(CROSS_NO.getValue()).submit();
+											JDAWrappers.addReaction(forwarded, CROSS_NO).submit();
 											Settings.get(guild).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(forwarded, DELETE_CHANNEL));
-											message.delete().submit();
+											JDAWrappers.delete(message).submit();
 										}));
 						return PROCESSED_DELETE;
 					})

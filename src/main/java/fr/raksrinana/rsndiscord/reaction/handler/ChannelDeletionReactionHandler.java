@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.CategoryConfiguration;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
@@ -43,13 +44,14 @@ public class ChannelDeletionReactionHandler extends TodoReactionHandler{
 					Settings.get(guild).getArchiveCategory()
 							.flatMap(CategoryConfiguration::getCategory)
 							.ifPresentOrElse(archiveCategory -> {
-										channel.getManager().setParent(archiveCategory)
+										JDAWrappers.edit(channel)
+												.setParent(archiveCategory)
 												.sync(archiveCategory)
 												.submit()
-												.thenAccept(future -> channel.sendMessage(translate(guild, "reaction.archived", event.getMember().getAsMention())).submit());
+												.thenAccept(future -> JDAWrappers.message(channel, translate(guild, "reaction.archived", event.getMember().getAsMention())).submit());
 										ChannelCommand.scheduleDeletion(ZonedDateTime.now().plusDays(4), channel, user);
 									},
-									() -> channel.delete().submit());
+									() -> JDAWrappers.delete(channel).submit());
 					return PROCESSED_DELETE;
 				}).orElse(PROCESSED);
 	}

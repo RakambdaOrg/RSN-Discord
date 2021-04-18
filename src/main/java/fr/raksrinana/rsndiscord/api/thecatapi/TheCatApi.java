@@ -25,7 +25,7 @@ public class TheCatApi{
 			return getRandomCats().stream().findFirst();
 		}
 		catch(RequestException e){
-			Log.getLogger(null).error("Failed to get a random cat", e);
+			Log.getLogger().error("Failed to get a random cat", e);
 		}
 		return empty();
 	}
@@ -39,14 +39,14 @@ public class TheCatApi{
 		
 		request.getParsingError().ifPresent(error -> {
 			Utilities.reportException("Failed to parse TheCatAPI response", error);
-			Log.getLogger(null).warn("Failed to parse TheCatAPI response", error);
+			Log.getLogger().warn("Failed to parse TheCatAPI response", error);
 		});
 		
-		var status = request.getStatus();
-		if(status == 200){
-			return request.getBody();
+		if(!request.isSuccess()){
+			var status = request.getStatus();
+			throw new RequestException("Error sending API request, HTTP code " + status + " => " + request.getBody(), status);
 		}
-		throw new RequestException("Error sending API request, HTTP code " + status + " => " + request.getBody(), status);
+		return request.getBody();
 	}
 	
 	@NotNull

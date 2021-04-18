@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.guild.schedule.UnbanScheduleConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -45,14 +46,15 @@ public class SoftBanCommand extends BasicCommand{
 		var target = getFirstMemberMentioned(event).orElseThrow();
 		var duration = parseDuration(args.pop());
 		var reason = String.join(" ", args);
+		var message = translate(guild, "softban.banned", target.getAsMention(), durationToString(duration), reason);
 		
 		var unbanScheduleConfiguration = new UnbanScheduleConfiguration(event.getAuthor(), channel,
 				ZonedDateTime.now().plus(duration), "Banned for: " + reason, target.getId());
 		
-		target.ban(0, reason).submit()
+		JDAWrappers.ban(target, 0, reason).sumbit()
 				.thenAccept(empty -> {
 					addSchedule(guild, unbanScheduleConfiguration);
-					channel.sendMessage(translate(guild, "softban.banned", target.getAsMention(), durationToString(duration), reason)).submit();
+					JDAWrappers.message(channel, message).submit();
 				});
 		return SUCCESS;
 	}

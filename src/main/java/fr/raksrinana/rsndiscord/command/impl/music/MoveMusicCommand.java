@@ -9,6 +9,7 @@ import fr.raksrinana.rsndiscord.music.trackfields.RequesterTrackDataField;
 import fr.raksrinana.rsndiscord.music.trackfields.TrackUserFields;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
@@ -78,7 +79,7 @@ public class MoveMusicCommand extends BasicCommand{
 				.addField(translate(event.getGuild(), "music.requester"), requester, true)
 				.addField(translate(event.getGuild(), "music.repeating"), repeating, true)
 				.build();
-		event.getChannel().sendMessage(embed).submit();
+		JDAWrappers.message(event, embed).submit();
 		return SUCCESS;
 	}
 	

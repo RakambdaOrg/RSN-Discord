@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import static java.util.Objects.isNull;
@@ -22,12 +21,12 @@ public class TheMovieDBApi{
 		var request = tmdbGetRequest.getRequest().headers(getHeaders()).asObject(tmdbGetRequest.getOutputType());
 		request.getParsingError().ifPresent(error -> {
 			Utilities.reportException("Failed to parse TMDB response", error);
-			Log.getLogger(null).warn("Failed to parse TMDB response", error);
+			Log.getLogger().warn("Failed to parse TMDB response", error);
 		});
-		if(tmdbGetRequest.isValidResult(request.getStatus())){
-			return request.getBody();
+		if(!request.isSuccess()){
+			throw new RequestException("Error sending API request, HTTP code " + request.getStatus() + " => " + request.getBody(), request.getStatus());
 		}
-		throw new RequestException("Error sending API request, HTTP code " + request.getStatus() + " => " + request.getBody(), request.getStatus());
+		return request.getBody();
 	}
 	
 	@NotNull
@@ -52,10 +51,10 @@ public class TheMovieDBApi{
 			path = "/" + path;
 		}
 		try{
-			return new URL(MessageFormat.format("https://image.tmdb.org/t/p/{0}{1}", size, path));
+			return new URL("https://image.tmdb.org/t/p/%s%s".formatted(size, path));
 		}
 		catch(MalformedURLException e){
-			Log.getLogger(null).error("Failed to generate image url of size {} for path {}", size, path, e);
+			Log.getLogger().error("Failed to generate image url of size {} for path {}", size, path, e);
 		}
 		return null;
 	}

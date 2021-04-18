@@ -4,7 +4,7 @@ plugins {
     application
     id("com.github.johnrengelman.shadow") version ("6.1.0")
     id("com.github.ben-manes.versions") version ("0.38.0")
-    id("io.freefair.lombok") version ("5.3.0")
+    id("io.freefair.lombok") version ("6.0.0-m2")
     id("com.google.cloud.tools.jib") version ("3.0.0")
 }
 
@@ -34,6 +34,8 @@ dependencies {
     implementation(libs.imgscalr)
     implementation(libs.thumbnailator)
     implementation(libs.twittered)
+    implementation(libs.kittehIrc)
+    implementation("org.kitteh.irc:client-lib:8.0.0")
 
     compileOnly(libs.jetbrainsAnnotations)
 }
@@ -98,10 +100,6 @@ application {
 java {
     sourceCompatibility = JavaVersion.VERSION_16
     targetCompatibility = JavaVersion.VERSION_16
-}
-
-lombok {
-    version.set("edge-SNAPSHOT")
 }
 
 jib {

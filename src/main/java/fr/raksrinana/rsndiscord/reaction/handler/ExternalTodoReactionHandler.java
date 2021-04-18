@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.Utilities;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import org.jetbrains.annotations.NotNull;
@@ -60,8 +61,8 @@ public class ExternalTodoReactionHandler implements IReactionHandler{
 					Optional.ofNullable(event.getJDA().getUserById(MAIN_RAKSRINANA_ACCOUNT))
 							.ifPresent(target -> target.openPrivateChannel().submit()
 									.thenAccept(privateChannel -> {
-										privateChannel.sendMessage(messageContent).submit();
-										message.delete().submit();
+										JDAWrappers.message(privateChannel, messageContent).submit();
+										JDAWrappers.delete(message).submit();
 									}));
 					return PROCESSED_DELETE;
 				}).orElse(PROCESSED);

@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -31,24 +32,24 @@ public class RemoveAllRoleCommand extends BasicCommand{
 		super.execute(event, args);
 		
 		var guild = event.getGuild();
-		var channel = event.getChannel();
 		var targetRole = getFirstRoleMentioned(event);
 		
 		if(targetRole.isEmpty()){
 			return BAD_ARGUMENTS;
 		}
 		
-		channel.sendMessage(translate(guild, "remove-role.retrieving-with-role")).submit()
+		JDAWrappers.message(event, translate(guild, "remove-role.retrieving-with-role")).submit()
 				.thenAccept(message -> deleteMessage(message, date -> date.plusMinutes(5)));
+		
 		guild.findMembers(member -> member.getRoles().contains(targetRole.get()))
 				.onSuccess(members -> {
-					channel.sendMessage(translate(guild, "remove-role.removing", members.size())).submit()
+					JDAWrappers.message(event, translate(guild, "remove-role.removing", members.size())).submit()
 							.thenAccept(message -> deleteMessage(message, date -> date.plusMinutes(5)));
-					members.forEach(member -> guild.removeRoleFromMember(member, targetRole.get()).submit());
+					members.forEach(member -> JDAWrappers.removeRole(member, targetRole.get()).submit());
 				})
 				.onError(e -> {
 					Log.getLogger(guild).error("Failed to load members", e);
-					channel.sendMessage(translate(guild, "remove-role.error-members")).submit()
+					JDAWrappers.message(event, translate(guild, "remove-role.error-members")).submit()
 							.thenAccept(message -> deleteMessage(message, date -> date.plusMinutes(5)));
 				});
 		

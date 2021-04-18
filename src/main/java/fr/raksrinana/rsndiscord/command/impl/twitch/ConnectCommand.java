@@ -1,20 +1,19 @@
 package fr.raksrinana.rsndiscord.command.impl.twitch;
 
-import fr.raksrinana.rsndiscord.api.irc.twitch.TwitchIRC;
+import fr.raksrinana.rsndiscord.api.irc.TwitchUtils;
 import fr.raksrinana.rsndiscord.command.BasicCommand;
 import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import static fr.raksrinana.rsndiscord.command.CommandResult.BAD_ARGUMENTS;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.schedule.ScheduleUtils.deleteMessage;
@@ -44,10 +43,10 @@ public class ConnectCommand extends BasicCommand{
 			return BAD_ARGUMENTS;
 		}
 		try{
-			TwitchIRC.connect(event.getGuild(), args.pop());
+			TwitchUtils.connect(event.getGuild(), args.pop());
 		}
-		catch(NoSuchElementException | IOException e){
-			event.getChannel().sendMessage(translate(event.getGuild(), "twitch.not-configured")).submit()
+		catch(Exception e){
+			JDAWrappers.message(event, translate(event.getGuild(), "twitch.not-configured")).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 			Log.getLogger(event.getGuild()).warn("Missing configuration for IRC", e);
 		}

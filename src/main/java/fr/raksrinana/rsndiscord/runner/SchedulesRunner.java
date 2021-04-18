@@ -4,6 +4,7 @@ import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.schedule.ScheduleUtils;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +41,7 @@ public class SchedulesRunner implements IScheduledRunner{
 				else{
 					ofNullable(schedule.getReminderCountdownMessage())
 							.flatMap(MessageConfiguration::getMessage)
-							.ifPresent(message -> message.editMessage(ScheduleUtils.getEmbedFor(message.getGuild(), schedule)).submit());
+							.ifPresent(message -> JDAWrappers.edit(message, ScheduleUtils.getEmbedFor(message.getGuild(), schedule)).submit());
 				}
 			}
 		}

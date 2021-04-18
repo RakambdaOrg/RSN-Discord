@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.CategoryConfiguration;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
@@ -44,18 +45,18 @@ public class MediaReactionReactionHandler extends TodoReactionHandler{
 				.flatMap(CategoryConfiguration::getCategory)
 				.map(archiveCategory -> {
 					todo.getMessage().getMessage()
-							.ifPresent(message -> message.removeReaction(event.getReactionEmote().getEmoji()).queue());
-					channel.getManager()
+							.ifPresent(message -> JDAWrappers.removeReaction(message, event.getReactionEmote().getEmoji()).submit());
+					JDAWrappers.edit(channel)
 							.setParent(archiveCategory)
 							.sync(archiveCategory)
 							.submit()
-							.thenAccept(future -> channel.sendMessage(translate(guild, "reaction.archived", user.getAsMention())).submit());
+							.thenAccept(future -> JDAWrappers.message(channel, translate(guild, "reaction.archived", user.getAsMention())).submit());
 					
 					ChannelCommand.scheduleDeletion(ZonedDateTime.now().plusWeeks(2), channel, user);
 					return PROCESSED_DELETE;
 				}).orElseGet(() -> {
-					event.getReaction().removeReaction(user).submit();
-					channel.sendMessage(translate(guild, "reaction.no-archive")).submit()
+					JDAWrappers.removeReaction(event.getReaction(), user).submit();
+					JDAWrappers.message(channel, translate(guild, "reaction.no-archive")).submit()
 							.thenAccept(ScheduleUtils.deleteMessage(date -> date.plusMinutes(5)));
 					return PROCESSED;
 				});

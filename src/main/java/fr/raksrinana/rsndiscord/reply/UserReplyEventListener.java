@@ -36,7 +36,7 @@ public class UserReplyEventListener extends ListenerAdapter{
 				reply.close();
 			}
 			catch(IOException e){
-				Log.getLogger(null).error("Failed to close reply handler", e);
+				Log.getLogger().error("Failed to close reply handler", e);
 			}
 		});
 	}

@@ -14,7 +14,7 @@ public class ReactionUtils{
 	
 	public static void registerAllHandlers(){
 		getAllAnnotatedWith(ReactionHandler.class, clazz -> (IReactionHandler) clazz.getConstructor().newInstance())
-				.peek(c -> Log.getLogger(null).info("Loaded reaction handler {}", c.getClass().getName()))
+				.peek(c -> Log.getLogger().info("Loaded reaction handler {}", c.getClass().getName()))
 				.forEach(ReactionUtils::addHandler);
 	}
 	

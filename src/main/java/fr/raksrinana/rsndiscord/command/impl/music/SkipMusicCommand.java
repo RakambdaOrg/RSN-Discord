@@ -9,6 +9,7 @@ import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.reply.SkipMusicReply;
 import fr.raksrinana.rsndiscord.reply.UserReplyEventListener;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -46,16 +47,15 @@ public class SkipMusicCommand extends BasicCommand{
 		
 		var guild = event.getGuild();
 		var author = event.getAuthor();
-		var channel = event.getChannel();
 		var track = RSNAudioManager.currentTrack(guild);
 		
 		if(track.isEmpty()){
-			channel.sendMessage(translate(guild, "music.nothing-playing")).submit();
+			JDAWrappers.message(event, translate(guild, "music.nothing-playing")).submit();
 			return SUCCESS;
 		}
 		
 		if(track.get().getDuration() - track.get().getPosition() < 30000){
-			channel.sendMessage(translate(guild, "music.skip.soon-finish")).submit();
+			JDAWrappers.message(event, translate(guild, "music.skip.soon-finish")).submit();
 			return SUCCESS;
 		}
 		
@@ -77,9 +77,9 @@ public class SkipMusicCommand extends BasicCommand{
 				.setTitle(translate(guild, "music.skip.title"))
 				.addField(translate(guild, "music.skip.votes-required"), "" + requiredVote, true)
 				.build();
-		channel.sendMessage(embed).submit()
+		JDAWrappers.message(event, embed).submit()
 				.thenAccept(message -> {
-					message.addReaction(CHECK_OK.getValue()).submit();
+					JDAWrappers.addReaction(message, CHECK_OK).submit();
 					UserReplyEventListener.handleReply(new SkipMusicReply(event, message, requiredVote, track.get()));
 				});
 		
@@ -94,7 +94,7 @@ public class SkipMusicCommand extends BasicCommand{
 			case IMPOSSIBLE -> "unknown";
 		};
 		
-		event.getChannel().sendMessage(translate(guild, message, event.getAuthor().getAsMention())).submit()
+		JDAWrappers.message(event, translate(guild, message, event.getAuthor().getAsMention())).submit()
 				.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 	}
 	

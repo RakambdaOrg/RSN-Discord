@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.permission.EntityPermissions;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
@@ -54,7 +55,7 @@ public class ListCommand extends BasicCommand{
 		permissionsConfiguration.getUserPermissions(user)
 				.ifPresent(perms -> {
 					var permsString = buildPermString(perms);
-					event.getChannel().sendMessage("Direct user permissions for " + user.getAsMention() + ":\n" + permsString).submit()
+					JDAWrappers.message(event, "Direct user permissions for " + user.getAsMention() + ":\n" + permsString).submit()
 							.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 				});
 	}
@@ -64,7 +65,7 @@ public class ListCommand extends BasicCommand{
 		permissionsConfiguration.getRolePermissions(role)
 				.ifPresent(perms -> {
 					var permsString = buildPermString(perms);
-					event.getChannel().sendMessage("Role permissions for " + role.getAsMention() + ":\n" + permsString).submit()
+					JDAWrappers.message(event, "Role permissions for " + role.getAsMention() + ":\n" + permsString).submit()
 							.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 				});
 	}

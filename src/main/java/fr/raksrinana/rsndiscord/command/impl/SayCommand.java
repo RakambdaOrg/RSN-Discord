@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.command.BotCommand;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -30,7 +31,7 @@ public class SayCommand extends BasicCommand{
 		if(args.isEmpty()){
 			return BAD_ARGUMENTS;
 		}
-		event.getChannel().sendMessage(String.join(" ", args)).submit();
+		JDAWrappers.message(event, String.join(" ", args)).submit();
 		return SUCCESS;
 	}
 	

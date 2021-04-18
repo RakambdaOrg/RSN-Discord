@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.command.BotCommand;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -43,7 +44,7 @@ public class AvatarCommand extends BasicCommand{
 				.addField(translate(guild, "avatar.link"), target.getAvatarUrl(), true)
 				.setImage(target.getAvatarUrl())
 				.build();
-		event.getChannel().sendMessage(embed).submit();
+		JDAWrappers.message(event, embed).submit();
 		return SUCCESS;
 	}
 	

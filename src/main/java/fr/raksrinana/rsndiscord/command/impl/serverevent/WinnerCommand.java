@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -43,8 +44,8 @@ public class WinnerCommand extends BasicCommand{
 				.flatMap(RoleConfiguration::getRole)
 				.ifPresent(winnerRole -> {
 					guild.findMembers(member -> member.getRoles().contains(winnerRole) && !members.contains(member))
-							.onSuccess(previousWinners -> previousWinners.forEach(member -> guild.removeRoleFromMember(member, winnerRole).submit()));
-					members.forEach(member -> guild.addRoleToMember(member, winnerRole).submit());
+							.onSuccess(previousWinners -> previousWinners.forEach(member -> JDAWrappers.removeRole(member, winnerRole).submit()));
+					members.forEach(member -> JDAWrappers.addRole(member, winnerRole).submit());
 				});
 		return SUCCESS;
 	}

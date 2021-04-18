@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.api.irc.twitch;
 
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
@@ -151,6 +152,7 @@ public enum TwitchMessageId{
 	WHISPER_RESTRICTED("whisper_restricted"),
 	WHISPER_RESTRICTED_RECIPIENT("whisper_restricted_recipient");
 	
+	@Getter
 	private final String value;
 	
 	TwitchMessageId(String value){

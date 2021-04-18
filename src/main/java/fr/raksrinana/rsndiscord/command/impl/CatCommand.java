@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.command.BotCommand;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -27,7 +28,6 @@ public class CatCommand extends BasicCommand{
 		
 		var guild = event.getGuild();
 		var author = event.getAuthor();
-		var channel = event.getChannel();
 		
 		TheCatApi.getRandomCat().ifPresentOrElse(cat -> {
 			var embed = new EmbedBuilder()
@@ -40,8 +40,8 @@ public class CatCommand extends BasicCommand{
 			embed.setImage(cat.getUrl().toString())
 					.setFooter(cat.getId());
 			
-			channel.sendMessage(embed.build()).submit();
-		}, () -> channel.sendMessage(translate(guild, "cat.error")).submit()
+			JDAWrappers.message(event, embed.build()).submit();
+		}, () -> JDAWrappers.message(event, translate(guild, "cat.error")).submit()
 				.thenAccept(deleteMessage(date -> date.plusMinutes(5))));
 		return CommandResult.SUCCESS;
 	}

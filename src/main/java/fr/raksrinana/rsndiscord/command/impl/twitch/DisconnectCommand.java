@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.command.impl.twitch;
 
-import fr.raksrinana.rsndiscord.api.irc.twitch.TwitchIRC;
+import fr.raksrinana.rsndiscord.api.irc.TwitchUtils;
 import fr.raksrinana.rsndiscord.command.BasicCommand;
 import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.CommandResult;
@@ -39,7 +39,7 @@ public class DisconnectCommand extends BasicCommand{
 		if(args.isEmpty()){
 			return BAD_ARGUMENTS;
 		}
-		TwitchIRC.disconnect(event.getGuild(), args.pop());
+		TwitchUtils.disconnect(event.getGuild(), args.pop());
 		return SUCCESS;
 	}
 	

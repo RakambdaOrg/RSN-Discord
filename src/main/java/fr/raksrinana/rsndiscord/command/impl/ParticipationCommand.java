@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.participation.ChatParticipation;
 import fr.raksrinana.rsndiscord.settings.guild.participation.VoiceParticipation;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -53,11 +54,11 @@ public class ParticipationCommand extends BasicCommand{
 		var participationConfiguration = Settings.get(guild).getParticipationConfiguration();
 		participationConfiguration.getChatDay(day)
 				.ifPresentOrElse(chatParticipation -> sendMessagesReport(maxUserCount, day, chatParticipation, author, channel),
-						() -> channel.sendMessage(translate(guild, "participation.chat.no-data")).submit()
+						() -> JDAWrappers.message(channel, translate(guild, "participation.chat.no-data")).submit()
 								.thenAccept(deleteMessage(date -> date.plusMinutes(5))));
 		participationConfiguration.getVoiceDay(day)
 				.ifPresentOrElse(voiceParticipation -> sendVoiceReport(maxUserCount, day, voiceParticipation, author, channel),
-						() -> channel.sendMessage(translate(guild, "participation.voice.no-data")).submit()
+						() -> JDAWrappers.message(channel, translate(guild, "participation.voice.no-data")).submit()
 								.thenAccept(deleteMessage(date -> date.plusMinutes(5))));
 		return SUCCESS;
 	}
@@ -78,7 +79,7 @@ public class ParticipationCommand extends BasicCommand{
 								.orElse(Long.toString(entry.getKey()));
 						builder.addField(translate(guild, "participation.chat.entry", position.incrementAndGet(), entry.getValue()), userMention, false);
 					});
-			channel.sendMessage(builder.build()).submit();
+			JDAWrappers.message(channel, builder.build()).submit();
 		});
 	}
 	
@@ -101,7 +102,7 @@ public class ParticipationCommand extends BasicCommand{
 								durationToString(ofMinutes(entry.getValue())));
 						builder.addField(title, userMention, false);
 					});
-			channel.sendMessage(builder.build()).submit();
+			JDAWrappers.message(channel, builder.build()).submit();
 		});
 	}
 	

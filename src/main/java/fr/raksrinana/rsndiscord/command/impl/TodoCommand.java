@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -48,11 +49,11 @@ public class TodoCommand extends BasicCommand{
 			return BAD_ARGUMENTS;
 		}
 		
-		event.getChannel().sendMessage(String.join(" ", args)).submit()
+		JDAWrappers.message(event, String.join(" ", args)).submit()
 				.thenAccept(message -> {
 					Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, ReactionTag.TODO, data));
-					message.addReaction(CHECK_OK.getValue()).submit();
-					message.pin().submit();
+					JDAWrappers.addReaction(message, CHECK_OK).submit();
+					JDAWrappers.pin(message).submit();
 				});
 		return SUCCESS;
 	}

@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.event;
 import com.vdurmont.emoji.EmojiParser;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -21,15 +22,15 @@ public class AutoReactionsEventListener extends ListenerAdapter{
 			var channel = event.getChannel();
 			
 			if(containsChannel(guildConfiguration.getAutoThumbsChannels(), channel)){
-				message.addReaction(THUMB_UP.getValue()).submit();
-				message.addReaction(THUMB_DOWN.getValue()).submit();
+				JDAWrappers.addReaction(message, THUMB_UP).submit();
+				JDAWrappers.addReaction(message, THUMB_DOWN).submit();
 			}
 			if(containsChannel(guildConfiguration.getAutoReactionsChannels(), channel)){
 				message.getEmotes().stream()
 						.filter(emote -> emote.canInteract(event.getGuild().getSelfMember()))
-						.forEach(emote -> message.addReaction(emote).submit());
+						.forEach(emote -> JDAWrappers.addReaction(message, emote).submit());
 				EmojiParser.extractEmojis(message.getContentRaw())
-						.forEach(emoji -> message.addReaction(emoji).submit());
+						.forEach(emoji -> JDAWrappers.addReaction(message, emoji).submit());
 			}
 		}
 		catch(Exception e){

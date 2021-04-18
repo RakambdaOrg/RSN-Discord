@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -41,7 +42,7 @@ public class RemoveCommand extends BasicCommand{
 		var user = getFirstUserMentioned(event).orElseThrow();
 		
 		Settings.get(guild).getBirthdays().removeBirthday(user);
-		event.getChannel().sendMessage(translate(guild, "birthday.removed")).submit();
+		JDAWrappers.message(event, translate(guild, "birthday.removed")).submit();
 		return SUCCESS;
 	}
 	

@@ -70,10 +70,10 @@ public class Settings{
 			Files.createDirectories(guildConfPath.getParent());
 			guildConfigurationWriter.writeValueAsString(value);
 			guildConfigurationWriter.writeValue(guildConfPath.toFile(), value);
-			Log.getLogger(null).info("Wrote settings to {}", guildConfPath);
+			Log.getLogger().info("Wrote settings to {}", guildConfPath);
 		}
 		catch(IOException e){
-			Log.getLogger(null).error("Failed to write settings to {}", guildConfPath, e);
+			Log.getLogger().error("Failed to write settings to {}", guildConfPath, e);
 		}
 	}
 	
@@ -87,16 +87,16 @@ public class Settings{
 			Files.createDirectories(guildConfPath.getParent());
 			generalConfigurationWriter.writeValueAsString(value);
 			generalConfigurationWriter.writeValue(guildConfPath.toFile(), value);
-			Log.getLogger(null).info("Wrote settings to {}", guildConfPath);
+			Log.getLogger().info("Wrote settings to {}", guildConfPath);
 		}
 		catch(IOException e){
-			Log.getLogger(null).error("Failed to write settings to {}", guildConfPath, e);
+			Log.getLogger().error("Failed to write settings to {}", guildConfPath, e);
 		}
 	}
 	
 	public static void clean(@NotNull JDA jda){
 		synchronized(cleaningLock){
-			Log.getLogger(null).info("Cleaning settings");
+			Log.getLogger().info("Cleaning settings");
 			configurations.forEach((guildId, configuration) -> {
 				var guild = jda.getGuildById(guildId);
 				try{
@@ -111,10 +111,10 @@ public class Settings{
 					generalConfiguration.cleanFields(null, "[root]");
 				}
 				catch(Exception e){
-					Log.getLogger(null).error("Failed to clean guild configuration", e);
+					Log.getLogger().error("Failed to clean guild configuration", e);
 				}
 			}
-			Log.getLogger(null).info("Done cleaning settings");
+			Log.getLogger().info("Done cleaning settings");
 		}
 	}
 	
@@ -135,7 +135,7 @@ public class Settings{
 				return ofNullable(generalConfigurationReader.readValue(fis));
 			}
 			catch(IOException e){
-				Log.getLogger(null).error("Failed to read settings in {}", generalConfPath, e);
+				Log.getLogger().error("Failed to read settings in {}", generalConfPath, e);
 				return Optional.empty();
 			}
 		}

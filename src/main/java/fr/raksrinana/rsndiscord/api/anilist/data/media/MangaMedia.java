@@ -30,10 +30,8 @@ public class MangaMedia extends IMedia{
 	
 	@Override
 	protected void fillAdditionalEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder){
-		ofNullable(getChapters()).map(Object::toString)
-				.ifPresent(val -> builder.addField(translate(guild, "anilist.chapters"), val, true));
-		ofNullable(getVolumes()).map(Object::toString)
-				.ifPresent(val -> builder.addField(translate(guild, "anilist.volumes"), val, true));
+		ofNullable(getChapters()).map(Object::toString).ifPresent(val -> builder.addField(translate(guild, "anilist.chapters"), val, true));
+		ofNullable(getVolumes()).map(Object::toString).ifPresent(val -> builder.addField(translate(guild, "anilist.volumes"), val, true));
 	}
 	
 	@Override

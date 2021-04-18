@@ -2,6 +2,7 @@ package fr.raksrinana.rsndiscord.runner;
 
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.JDA;
 import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
@@ -36,7 +37,7 @@ public class AutoDeleteRunner implements IScheduledRunner{
 						var limitDate = OffsetDateTime.now().minus(entry.getValue());
 						entry.getKey().getIterableHistory().stream()
 								.filter(message -> message.getTimeCreated().isBefore(limitDate))
-								.forEach(message -> message.delete().queue());
+								.forEach(message -> JDAWrappers.delete(message).submit());
 					});
 		});
 	}

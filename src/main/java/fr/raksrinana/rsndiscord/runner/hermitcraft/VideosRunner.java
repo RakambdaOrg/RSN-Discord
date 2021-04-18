@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.HermitcraftConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -76,7 +77,7 @@ public class VideosRunner implements IScheduledRunner{
 				.setFooter(video.getId())
 				.setTimestamp(video.getUploaded())
 				.build();
-		channel.sendMessage(embed).submit();
+		JDAWrappers.message(channel, embed).submit();
 	}
 	
 	@NotNull

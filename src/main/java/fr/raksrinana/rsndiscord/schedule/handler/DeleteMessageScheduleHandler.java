@@ -2,6 +2,7 @@ package fr.raksrinana.rsndiscord.schedule.handler;
 
 import fr.raksrinana.rsndiscord.schedule.ScheduleTag;
 import fr.raksrinana.rsndiscord.settings.guild.schedule.ScheduleConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.Optional;
@@ -21,7 +22,7 @@ public class DeleteMessageScheduleHandler implements IScheduleHandler{
 		Optional.ofNullable(reminder.getData().get(DeleteMessageScheduleHandler.MESSAGE_ID_KEY))
 				.map(Long::parseLong)
 				.ifPresent(messageId -> reminder.getChannel().getChannel()
-						.map(channel -> channel.deleteMessageById(messageId).submit()));
+						.map(channel -> JDAWrappers.delete(channel, messageId).submit()));
 		return true;
 	}
 	

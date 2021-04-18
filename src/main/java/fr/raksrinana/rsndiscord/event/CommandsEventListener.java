@@ -11,6 +11,7 @@ import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -49,7 +50,7 @@ public class CommandsEventListener extends ListenerAdapter{
 	 */
 	public CommandsEventListener(){
 		commands = getAllAnnotatedWith(BotCommand.class, clazz -> (Command) clazz.getConstructor().newInstance())
-				.peek(c -> Log.getLogger(null).info("Loaded command {}", c.getClass().getName()))
+				.peek(c -> Log.getLogger().info("Loaded command {}", c.getClass().getName()))
 				.collect(Collectors.toSet());
 		
 		var counts = new HashMap<String, Integer>();
@@ -60,7 +61,7 @@ public class CommandsEventListener extends ListenerAdapter{
 				.filter(key -> counts.get(key) > 1)
 				.collect(Collectors.joining(", "));
 		if(!clash.isEmpty()){
-			Log.getLogger(null).error("Command clash: {}", clash);
+			Log.getLogger().error("Command clash: {}", clash);
 		}
 	}
 	
@@ -86,16 +87,16 @@ public class CommandsEventListener extends ListenerAdapter{
 			else{
 				if(containsChannel(guildConfiguration.getReactionsConfiguration().getAutoTodoChannels(), channel)){
 					if(message.getType() == CHANNEL_PINNED_ADD){
-						message.delete().submit();
+						JDAWrappers.delete(message).submit();
 					}
 					else{
 						var waitingReactionMessageConfiguration = new WaitingReactionMessageConfiguration(message,
 								TODO, Map.of(DELETE_KEY, Boolean.toString(true)));
 						guildConfiguration.addMessagesAwaitingReaction(waitingReactionMessageConfiguration);
 						
-						message.addReaction(CHECK_OK.getValue()).submit();
-						message.addReaction(PAPERCLIP.getValue()).submit();
-						message.addReaction(RIGHT_ARROW_CURVING_LEFT.getValue()).submit();
+						JDAWrappers.addReaction(message, CHECK_OK).submit();
+						JDAWrappers.addReaction(message, PAPERCLIP).submit();
+						JDAWrappers.addReaction(message, RIGHT_ARROW_CURVING_LEFT).submit();
 					}
 				}
 				else if(isExternalTodoChannel(guildConfiguration, channel)){
@@ -103,7 +104,7 @@ public class CommandsEventListener extends ListenerAdapter{
 							EXTERNAL_TODO, Map.of(DELETE_KEY, Boolean.toString(false)));
 					guildConfiguration.addMessagesAwaitingReaction(waitingReactionMessageConfiguration);
 					
-					message.addReaction(CHECK_OK.getValue()).submit();
+					JDAWrappers.addReaction(message, CHECK_OK).submit();
 				}
 			}
 		}
@@ -122,21 +123,21 @@ public class CommandsEventListener extends ListenerAdapter{
 				return;
 			}
 			
-			Log.getLogger(null).info("Received private message from {}: {}", author, event.getMessage());
+			Log.getLogger().info("Received private message from {}: {}", author, event.getMessage());
 			UselessFactsApi.getFact().ifPresentOrElse(fact -> {
-				Log.getLogger(null).debug("Sending random fact: {}", fact);
+				Log.getLogger().debug("Sending random fact: {}", fact);
 				var builder = new EmbedBuilder().setAuthor(self.getName(), null, self.getAvatarUrl())
 						.setColor(GREEN)
 						.setTitle("Random fact");
 				fact.fillEmbed(builder);
 				
-				event.getChannel().sendMessage("I don't really know what to answer, but here's a random fact for you")
+				JDAWrappers.message(event, "I don't really know what to answer, but here's a random fact for you")
 						.embed(builder.build())
 						.submit();
-			}, () -> event.getChannel().sendMessage("I just farted").submit());
+			}, () -> JDAWrappers.message(event, "I just farted").submit());
 		}
 		catch(Exception e){
-			Log.getLogger(null).error("Error private message from {}", author, e);
+			Log.getLogger().error("Error private message from {}", author, e);
 		}
 	}
 	
@@ -156,7 +157,6 @@ public class CommandsEventListener extends ListenerAdapter{
 		var guild = event.getGuild();
 		var author = event.getAuthor();
 		var message = event.getMessage();
-		var channel = event.getChannel();
 		var messageDeleted = new AtomicBoolean(false);
 		
 		Log.getLogger(guild).debug("Processing potential command from {}: {}", author, message.getContentRaw());
@@ -165,7 +165,7 @@ public class CommandsEventListener extends ListenerAdapter{
 		
 		getCommand(cmdText).ifPresentOrElse(command -> {
 			if(command.getDeleteMode() == BEFORE){
-				message.delete().submit();
+				JDAWrappers.delete(message).submit();
 				messageDeleted.set(true);
 			}
 			try{
@@ -173,11 +173,11 @@ public class CommandsEventListener extends ListenerAdapter{
 				var executionResult = command.execute(event, args);
 				if(executionResult == FAILED){
 					author.openPrivateChannel().submit()
-							.thenAccept(privateChannel -> privateChannel.sendMessage(translate(guild, "listeners.commands.error")).submit());
+							.thenAccept(privateChannel -> JDAWrappers.message(privateChannel, translate(guild, "listeners.commands.error")).submit());
 				}
 				else if(executionResult == BAD_ARGUMENTS){
 					author.openPrivateChannel().submit()
-							.thenAccept(privateChannel -> privateChannel.sendMessage(translate(guild, "listeners.commands.invalid-arguments")).submit());
+							.thenAccept(privateChannel -> JDAWrappers.message(privateChannel, translate(guild, "listeners.commands.invalid-arguments")).submit());
 				}
 			}
 			catch(NotAllowedException e){
@@ -187,7 +187,7 @@ public class CommandsEventListener extends ListenerAdapter{
 						.setColor(RED)
 						.setTitle(translate(guild, "listeners.commands.unauthorized"))
 						.build();
-				channel.sendMessage(embed).submit();
+				JDAWrappers.message(event, embed).submit();
 			}
 			catch(NotHandledException e){
 				Log.getLogger(guild).warn("Command {} isn't handled for {} ({})", command, author, e.getMessage());
@@ -200,11 +200,11 @@ public class CommandsEventListener extends ListenerAdapter{
 						.setTitle(translate(guild, "listeners.commands.exception.title"))
 						.addField(translate(guild, "listeners.commands.exception.kind"), e.getClass().getName(), false)
 						.build();
-				channel.sendMessage(embed).submit();
+				JDAWrappers.message(event, embed).submit();
 			}
 			
 			if(command.getDeleteMode() == AFTER){
-				message.delete().submit();
+				JDAWrappers.delete(message).submit();
 			}
 		}, () -> {
 			var embed = new EmbedBuilder()
@@ -213,9 +213,9 @@ public class CommandsEventListener extends ListenerAdapter{
 					.setTitle(translate(guild, "listeners.commands.not-found.title"))
 					.addField(translate(guild, "listeners.commands.exception.command"), cmdText, false)
 					.build();
-			channel.sendMessage(embed).submit()
+			JDAWrappers.message(event, embed).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
-			message.delete().submit();
+			JDAWrappers.delete(message).submit();
 		});
 	}
 	

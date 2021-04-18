@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.music.TrackConsumer;
 import fr.raksrinana.rsndiscord.music.trackfields.ReplayTrackDataField;
 import fr.raksrinana.rsndiscord.music.trackfields.TrackUserFields;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -70,11 +71,11 @@ public class AddMusicTrackConsumer implements TrackConsumer{
 		if(!isCurrentTrack){
 			builder.addField(translate(guild, "music.queue.position"), String.valueOf(1 + before.size()), true);
 		}
-		channel.sendMessage(builder.build()).submit();
+		JDAWrappers.message(channel, builder.build()).submit();
 	}
 	
 	@Override
 	public void onFailure(@NotNull String message){
-		channel.sendMessage(message).submit();
+		JDAWrappers.message(channel, message).submit();
 	}
 }

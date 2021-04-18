@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
 import fr.raksrinana.rsndiscord.schedule.ScheduleUtils;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.JDA;
 import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.TimeUnit;
@@ -31,8 +32,7 @@ public class UserTweetsRunner implements IScheduledRunner{
 							.orElseGet(() -> TwitterApi.getUserLastTweets(userId)).stream()
 							.sorted(comparing(Tweet::getCreatedAt))
 							.forEach(tweet -> {
-								channel.sendMessage(TwitterApi.getUrl(tweet)).submit()
-										.thenAccept(ScheduleUtils.deleteMessage(date -> date.plusHours(6)));
+								JDAWrappers.message(channel, TwitterApi.getUrl(tweet)).submit();
 								conf.setLastUserTweet(userId, tweet.getId());
 							})));
 		});

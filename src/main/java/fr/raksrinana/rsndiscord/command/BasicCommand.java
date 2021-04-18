@@ -11,6 +11,7 @@ import java.util.function.Function;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
 import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 
 public abstract class BasicCommand implements Command{
 	private final Command parent;
@@ -73,7 +74,7 @@ public abstract class BasicCommand implements Command{
 	
 	@NotNull
 	protected <T> Optional<T> getArgumentAs(@NotNull LinkedList<String> args, Function<String, T> converter){
-		return Optional.ofNullable(args.poll()).map(arg -> {
+		return ofNullable(args.poll()).map(arg -> {
 			try{
 				return converter.apply(arg);
 			}

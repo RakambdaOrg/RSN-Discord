@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.api.anilist.data.list.MediaList;
 import fr.raksrinana.rsndiscord.api.anilist.data.media.MediaType;
 import fr.raksrinana.rsndiscord.api.anilist.query.MediaListPagedQuery;
 import fr.raksrinana.rsndiscord.runner.anilist.IAniListRunner;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
@@ -83,7 +84,7 @@ class MediaListDifferencesRunner implements IAniListRunner<MediaList, MediaListP
 					.filter(user2Medias::contains)
 					.sorted()
 					.map(commonMedia -> buildMessage(channel.getGuild(), null, commonMedia))
-					.forEach(embed -> channel.sendMessage(embed).submit());
+					.forEach(embed -> JDAWrappers.message(channel, embed).submit());
 		}
 	}
 	

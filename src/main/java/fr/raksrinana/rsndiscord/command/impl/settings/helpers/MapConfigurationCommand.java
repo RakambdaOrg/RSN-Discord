@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.command.impl.settings.helpers;
 import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.impl.settings.BaseConfigurationCommand;
 import fr.raksrinana.rsndiscord.settings.ConfigurationOperation;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,6 @@ public abstract class MapConfigurationCommand<K, V> extends BaseConfigurationCom
 	@Override
 	protected void onAdd(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
 		var guild = event.getGuild();
-		var channel = event.getChannel();
 		
 		try{
 			var key = extractKey(event, args);
@@ -39,17 +39,15 @@ public abstract class MapConfigurationCommand<K, V> extends BaseConfigurationCom
 			var embed = getConfigEmbed(event, SET.name(), GREEN)
 					.addField(translate(guild, "command.config.helpers.value-added"), key + "=" + value, false)
 					.build();
-			channel.sendMessage(embed).submit();
+			JDAWrappers.message(event, embed).submit();
 		}
 		catch(IllegalArgumentException e){
-			channel.sendMessage(e.getMessage()).submit();
+			JDAWrappers.message(event, e.getMessage()).submit();
 		}
 	}
 	
 	@Override
 	protected void onRemove(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
-		var channel = event.getChannel();
-		
 		try{
 			var guild = event.getGuild();
 			var key = extractKey(event, args);
@@ -57,10 +55,10 @@ public abstract class MapConfigurationCommand<K, V> extends BaseConfigurationCom
 			var embed = getConfigEmbed(event, REMOVE.name(), GREEN)
 					.addField(translate(guild, "command.config.helpers.value-removed"), key.toString(), false)
 					.build();
-			channel.sendMessage(embed).submit();
+			JDAWrappers.message(event, embed).submit();
 		}
 		catch(IllegalArgumentException e){
-			channel.sendMessage(e.getMessage()).submit();
+			JDAWrappers.message(event, e.getMessage()).submit();
 		}
 	}
 	
@@ -74,7 +72,7 @@ public abstract class MapConfigurationCommand<K, V> extends BaseConfigurationCom
 		var embed = getConfigEmbed(event, SHOW.name(), GREEN)
 				.addField(translate(event.getGuild(), "command.config.helpers.values"), values, false)
 				.build();
-		event.getChannel().sendMessage(embed).submit();
+		JDAWrappers.message(event, embed).submit();
 	}
 	
 	protected abstract void removeConfig(@NotNull Guild guild, @NotNull K key);

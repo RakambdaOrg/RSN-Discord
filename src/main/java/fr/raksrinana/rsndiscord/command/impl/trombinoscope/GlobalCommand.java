@@ -10,6 +10,7 @@ import fr.raksrinana.rsndiscord.schedule.ScheduleUtils;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.trombinoscope.Picture;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.coobird.thumbnailator.Thumbnails;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -87,7 +88,7 @@ class GlobalCommand extends BasicCommand{
 							.flatMap(ChannelConfiguration::getChannel)
 							.ifPresent(channel -> {
 								var message = translate(guild, "trombinoscope.global", userCount, event.getAuthor().getAsMention());
-								channel.sendMessage(message)
+								JDAWrappers.message(channel, message)
 										.addFile(imgInputStream, System.currentTimeMillis() + ".jpg")
 										.submit();
 							});
@@ -95,7 +96,7 @@ class GlobalCommand extends BasicCommand{
 			}
 		}
 		catch(IOException e){
-			event.getChannel().sendMessage(translate(guild, "trombinoscope.error.create-fail")).submit()
+			JDAWrappers.message(event, translate(guild, "trombinoscope.error.create-fail")).submit()
 					.thenAccept(ScheduleUtils.deleteMessage(date -> date.plusMinutes(5)));
 		}
 		return SUCCESS;
@@ -126,7 +127,7 @@ class GlobalCommand extends BasicCommand{
 			g2d.drawImage(image, x, y, null);
 		}
 		catch(IOException e){
-			Log.getLogger(null).error("Failed to read trombinoscope picture {}", picture.getPath(), e);
+			Log.getLogger().error("Failed to read trombinoscope picture {}", picture.getPath(), e);
 		}
 	}
 	

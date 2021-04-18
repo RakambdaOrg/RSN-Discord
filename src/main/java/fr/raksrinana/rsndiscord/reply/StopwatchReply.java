@@ -2,6 +2,7 @@ package fr.raksrinana.rsndiscord.reply;
 
 import fr.raksrinana.rsndiscord.command.impl.StopwatchCommand;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
@@ -37,7 +38,7 @@ public class StopwatchReply extends BasicWaitingUserReply{
 		var newTotalTime = totalTime.plus(counting ? between(lastStart, ZonedDateTime.now()) : ZERO);
 		if(!Objects.equals(newTotalTime, totalTime)){
 			var embed = StopwatchCommand.buildEmbed(getWaitChannel().getGuild(), getWaitUser(), durationToString(newTotalTime));
-			getInfoMessages().stream().findFirst().ifPresent(m -> m.editMessage(embed).submit());
+			getInfoMessages().stream().findFirst().ifPresent(m -> JDAWrappers.edit(m, embed).submit());
 		}
 	}
 	
@@ -68,14 +69,14 @@ public class StopwatchReply extends BasicWaitingUserReply{
 				}
 			}
 			getInfoMessages().stream().findFirst().ifPresent(message -> {
-				message.clearReactions().queue();
+				JDAWrappers.clearReactions(message).submit();
 				if(counting){
-					message.addReaction(P.getValue()).submit();
+					JDAWrappers.addReaction(message, P).submit();
 				}
 				else{
-					message.addReaction(R.getValue()).submit();
+					JDAWrappers.addReaction(message, R).submit();
 				}
-				message.addReaction(S.getValue()).submit();
+				JDAWrappers.addReaction(message, S).submit();
 			});
 		}
 		return false;
@@ -103,6 +104,6 @@ public class StopwatchReply extends BasicWaitingUserReply{
 		executor.shutdown();
 		
 		var channel = getWaitChannel();
-		channel.sendMessage(translate(channel.getGuild(), "stopwatch.total-time", durationToString(totalTime))).submit();
+		JDAWrappers.message(channel, translate(channel.getGuild(), "stopwatch.total-time", durationToString(totalTime))).submit();
 	}
 }

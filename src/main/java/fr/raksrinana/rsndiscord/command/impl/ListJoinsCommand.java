@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
+import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -31,7 +32,6 @@ public class ListJoinsCommand extends BasicCommand{
 		super.execute(event, args);
 		
 		var guild = event.getGuild();
-		var channel = event.getChannel();
 		var limit = getArgumentAsInteger(args).orElse(50);
 		var joinPos = new AtomicInteger(0);
 		
@@ -39,15 +39,14 @@ public class ListJoinsCommand extends BasicCommand{
 				.onSuccess(members -> members.stream()
 						.sorted(Comparator.comparing(Member::getTimeJoined))
 						.limit(limit)
-						.forEachOrdered(member -> channel
-								.sendMessage(translate(guild, "list-joins.user-joined",
-										joinPos.incrementAndGet(),
-										member.getTimeJoined().format(DF),
-										member.getAsMention()))
+						.forEachOrdered(member -> JDAWrappers.message(event, translate(guild, "list-joins.user-joined",
+								joinPos.incrementAndGet(),
+								member.getTimeJoined().format(DF),
+								member.getAsMention()))
 								.submit()))
 				.onError(error -> {
 					Log.getLogger(guild).error("Failed to load members", error);
-					channel.sendMessage(translate(guild, "list-joins.error-members")).submit()
+					JDAWrappers.message(event, translate(guild, "list-joins.error-members")).submit()
 							.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
 				});
 		return SUCCESS;
