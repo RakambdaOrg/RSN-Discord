@@ -52,8 +52,8 @@ public class TodoCommand extends BasicCommand{
 		JDAWrappers.message(event, String.join(" ", args)).submit()
 				.thenAccept(message -> {
 					Settings.get(event.getGuild()).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(message, ReactionTag.TODO, data));
-					message.addReaction(CHECK_OK.getValue()).submit();
-					message.pin().submit();
+					JDAWrappers.addReaction(message, CHECK_OK).submit();
+					JDAWrappers.pin(message).submit();
 				});
 		return SUCCESS;
 	}

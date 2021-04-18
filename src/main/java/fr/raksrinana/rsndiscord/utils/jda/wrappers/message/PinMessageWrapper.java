@@ -10,15 +10,15 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import java.util.concurrent.CompletableFuture;
 
-public class UnpinMessageWrapper{
+public class PinMessageWrapper{
 	private final ISnowflake target;
 	private final Message message;
 	private final RestAction<Void> action;
 	
-	public UnpinMessageWrapper(@Nullable ISnowflake target, @NotNull Message message){
+	public PinMessageWrapper(@Nullable ISnowflake target, @NotNull Message message){
 		this.target = target;
 		this.message = message;
-		this.action = message.unpin();
+		this.action = message.pin();
 	}
 	
 	@NotNull
@@ -33,7 +33,7 @@ public class UnpinMessageWrapper{
 						logger = Log.getLogger();
 					}
 					
-					logger.info("Unpinned message {}", message);
+					logger.info("Pinned message {}", message);
 				});
 	}
 }

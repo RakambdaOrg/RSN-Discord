@@ -195,8 +195,21 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
+	public static PinMessageWrapper pin(@NotNull Message message){
+		if(message.isFromGuild()){
+			return new PinMessageWrapper(message.getGuild(), message);
+		}
+		
+		return new PinMessageWrapper(null, message);
+	}
+	
+	@NotNull
 	public static UnpinMessageWrapper unpin(@NotNull Message message){
-		return new UnpinMessageWrapper(message.getGuild(), message);
+		if(message.isFromGuild()){
+			return new UnpinMessageWrapper(message.getGuild(), message);
+		}
+		
+		return new UnpinMessageWrapper(null, message);
 	}
 	
 	@NotNull

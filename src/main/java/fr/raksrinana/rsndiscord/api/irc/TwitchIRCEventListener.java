@@ -2,6 +2,7 @@ package fr.raksrinana.rsndiscord.api.irc;
 
 import fr.raksrinana.rsndiscord.log.Log;
 import org.jetbrains.annotations.NotNull;
+import net.engio.mbassy.listener.Handler;
 import org.kitteh.irc.client.library.element.Channel;
 import org.kitteh.irc.client.library.event.channel.ChannelJoinEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelMessageEvent;
