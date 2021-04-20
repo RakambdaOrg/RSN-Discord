@@ -17,7 +17,6 @@ thumbnailator-version = "0.4.14"
 twittered-version = "1.22"
 jetbrains-annotations-version = "20.1.0"
 kitteh-irc-version = "8.0.0"
-janino-version = "3.0.6"
 
 [libraries]
 jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda-version" }
@@ -40,7 +39,6 @@ thumbnailator = { group = "net.coobird", name = "thumbnailator", version.ref = "
 twittered = { group = "com.github.redouane59.twitter", name = "twittered", version.ref = "twittered-version" }
 jetbrainsAnnotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations-version" }
 kittehIrc = { group = "org.kitteh.irc", name = "client-lib", version.ref = "kitteh-irc-version" }
-janino = { group = "org.codehaus.janino", name = "janino", version.ref = "janino-version" }
 
 [bundles]
 jackson = ["jackson-core", "jackson-annotations", "jackson-databind"]

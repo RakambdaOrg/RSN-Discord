@@ -24,7 +24,6 @@ dependencies {
     implementation(libs.logback) {
         exclude(group = "edu.washington.cs.types.checker", module = "checker-framework")
     }
-    implementation(libs.janino)
 
     implementation(libs.unirest)
     implementation(libs.picocli)
