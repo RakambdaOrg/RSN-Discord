@@ -28,6 +28,7 @@ import static java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME;
 @BotCommand
 public class InfosCommand extends BasicCommand{
 	private String botVersion;
+	private String commitId;
 	
 	public InfosCommand(){
 		loadAllProperties();
@@ -43,6 +44,7 @@ public class InfosCommand extends BasicCommand{
 		botVersion = versionProperties.getProperty("bot.version", "Unknown");
 		
 		var gitProperties = loadProperties("/git.properties");
+		commitId = gitProperties.getProperty("git.commit.id", "Unknown");
 	}
 	
 	@NotNull
@@ -73,6 +75,7 @@ public class InfosCommand extends BasicCommand{
 		var embed = new EmbedBuilder().setAuthor(author.getName(), null, author.getAvatarUrl())
 				.setColor(GREEN)
 				.addField(translate(guild, "infos.version"), botVersion, false)
+				.addField(translate(guild, "infos.commit"), commitId, false)
 				.addField(translate(guild, "infos.time"), now.format(ISO_ZONED_DATE_TIME), false)
 				.addField(translate(guild, "infos.last-boot"), Main.bootTime.format(ISO_ZONED_DATE_TIME), false)
 				.addField(translate(guild, "infos.elapsed"), durationToString(between(Main.bootTime, now)), false)

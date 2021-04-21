@@ -56,15 +56,15 @@ public class ColorCommand extends BasicCommand{
 		var executorService = Main.getExecutorService();
 		var changeColorTask = executorService.scheduleAtFixedRate(() -> {
 			var color = random.nextInt(0xffffff + 1);
-			JDAWrappers.setColor(role, color);
+			JDAWrappers.setColor(role, color).submit();
 		}, 0, 15, TimeUnit.SECONDS);
 		
 		executorService.schedule(() -> {
 			Log.getLogger(role.getGuild()).info("Stopping color change for {}", role);
 			changeColorTask.cancel(false);
 			executorService.schedule(() -> {
-				JDAWrappers.setColor(role, originalColor);
-			}, 30, SECONDS);
+				JDAWrappers.setColor(role, originalColor).submit();
+			}, 60, SECONDS);
 		}, time, SECONDS);
 	}
 	

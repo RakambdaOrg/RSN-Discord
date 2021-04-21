@@ -6,7 +6,7 @@ plugins {
     id("com.github.ben-manes.versions") version ("0.38.0")
     id("io.freefair.lombok") version ("6.0.0-m2")
     id("com.google.cloud.tools.jib") version ("3.0.0")
-//    id("com.gorylenko.gradle-git-properties") version ("2.3.1-rc1")
+    id("com.gorylenko.gradle-git-properties") version ("2.3.1-rc2")
 }
 
 group = "fr.raksrinana"
