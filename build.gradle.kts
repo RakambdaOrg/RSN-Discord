@@ -6,7 +6,7 @@ plugins {
     id("com.github.ben-manes.versions") version ("0.38.0")
     id("io.freefair.lombok") version ("6.0.0-m2")
     id("com.google.cloud.tools.jib") version ("3.0.0")
-    id("com.gorylenko.gradle-git-properties") version ("2.3.1-rc2")
+    id("com.gorylenko.gradle-git-properties") version ("2.3.1-rc3")
 }
 
 group = "fr.raksrinana"
@@ -21,9 +21,7 @@ dependencies {
     implementation(libs.jump3r)
 
     implementation(libs.slf4j)
-    implementation(libs.logback) {
-        exclude(group = "edu.washington.cs.types.checker", module = "checker-framework")
-    }
+    implementation(libs.bundles.log4j2)
 
     implementation(libs.unirest)
     implementation(libs.picocli)
@@ -46,9 +44,6 @@ repositories {
         name = "m2-dv8tion"
         url = uri("https://m2.dv8tion.net/releases")
     }
-    maven {
-        url = uri("https://projectlombok.org/edge-releases")
-    }
     jcenter()
     mavenCentral()
 }
@@ -70,6 +65,12 @@ tasks {
             compilerArgs.add("--module-path")
             compilerArgs.add(classpath.asPath)
             classpath = files()
+        }
+    }
+
+    jar {
+        manifest {
+            attributes["Multi-Release"] = "true"
         }
     }
 

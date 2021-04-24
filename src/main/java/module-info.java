@@ -10,7 +10,10 @@ open module fr.raksrinana.rsndiscord {
 	requires com.fasterxml.jackson.databind;
 	requires info.picocli;
 	requires org.slf4j;
-	requires ch.qos.logback.classic;
+	requires org.apache.logging.log4j;
+	requires org.apache.logging.log4j.core;
+	requires org.apache.logging.log4j.slf4j;
+	requires java.scripting;
 	requires net.dv8tion.jda;
 	requires lavaplayer;
 	requires okhttp3;
