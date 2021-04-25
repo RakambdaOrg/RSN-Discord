@@ -9,15 +9,13 @@ import fr.raksrinana.rsndiscord.permission.IPermission;
 import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
+import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import static fr.raksrinana.rsndiscord.command.CommandResult.*;
 import static fr.raksrinana.rsndiscord.command.DeleteMode.NEVER;
 import static fr.raksrinana.rsndiscord.reaction.ReactionTag.MEDIA_REACTION;
@@ -100,7 +98,11 @@ public class MediaReactionCommand extends BasicCommand{
 					});
 				}
 				
-				restMessage.thenAccept(message -> JDAWrappers.delete(event.getMessage()).submit())
+				restMessage
+						.thenAccept(message -> {
+							JDAWrappers.delete(event.getMessage()).submit();
+							Settings.get(guild).getMediaReactionMessages().add(new MessageConfiguration(message));
+						})
 						.exceptionally(error -> {
 							JDAWrappers.message(event, "Failed to send message: " + error.getMessage()).submit();
 							return null;

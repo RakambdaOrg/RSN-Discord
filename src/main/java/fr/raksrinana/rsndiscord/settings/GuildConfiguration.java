@@ -19,6 +19,7 @@ import fr.raksrinana.rsndiscord.settings.guild.schedule.ScheduleConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.trombinoscope.TrombinoscopeConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.CategoryConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.json.ChannelConfigurationKeyDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.ChannelConfigurationKeySerializer;
@@ -157,6 +158,10 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@JsonSerialize(keyUsing = ChannelConfigurationKeySerializer.class)
 	@JsonDeserialize(keyUsing = ChannelConfigurationKeyDeserializer.class)
 	private Map<ChannelConfiguration, Integer> autoDeleteChannels = new HashMap<>();
+	@JsonProperty("mediaReactionMessages")
+	@Getter
+	@Setter
+	private Set<MessageConfiguration> mediaReactionMessages = new HashSet<>();
 	
 	GuildConfiguration(long guildId){
 		this.guildId = guildId;
