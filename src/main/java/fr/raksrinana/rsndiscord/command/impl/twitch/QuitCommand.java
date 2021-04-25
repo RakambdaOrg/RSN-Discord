@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.command.impl.twitch;
 
-import fr.raksrinana.rsndiscord.api.irc.TwitchUtils;
+import fr.raksrinana.rsndiscord.api.twitch.TwitchUtils;
 import fr.raksrinana.rsndiscord.command.BasicCommand;
 import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.CommandResult;

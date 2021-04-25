@@ -12,6 +12,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.LinkedList;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.command.CommandResult.BAD_ARGUMENTS;
@@ -19,6 +21,8 @@ import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class WinnerCommand extends BasicCommand{
+	public static final int MAX_WINNERS = 2;
+	
 	public WinnerCommand(Command parent){
 		super(parent);
 	}
@@ -40,12 +44,25 @@ public class WinnerCommand extends BasicCommand{
 		var guild = event.getGuild();
 		var members = event.getMessage().getMentionedMembers();
 		
-		Settings.get(guild).getEventWinnerRole()
+		if(members.size() > MAX_WINNERS){
+			JDAWrappers.message(event, translate(guild, "event.tooMany", MAX_WINNERS)).submit();
+			return SUCCESS;
+		}
+		
+		var looseRoleTime = ZonedDateTime.now().plus(1, ChronoUnit.WEEKS);
+		var eventConfiguration = Settings.get(guild).getEventConfiguration();
+		eventConfiguration.getWinnerRole()
 				.flatMap(RoleConfiguration::getRole)
 				.ifPresent(winnerRole -> {
-					guild.findMembers(member -> member.getRoles().contains(winnerRole) && !members.contains(member))
-							.onSuccess(previousWinners -> previousWinners.forEach(member -> JDAWrappers.removeRole(member, winnerRole).submit()));
-					members.forEach(member -> JDAWrappers.addRole(member, winnerRole).submit());
+					guild.findMembersWithRoles(winnerRole)
+							.onSuccess(previousWinners -> previousWinners.stream()
+									.filter(member -> !members.contains(member))
+									.forEach(member -> JDAWrappers.removeRole(member, winnerRole).submit()));
+					
+					members.forEach(member -> {
+						JDAWrappers.addRole(member, winnerRole).submit();
+						eventConfiguration.setLooseRoleTime(member, looseRoleTime);
+					});
 				});
 		return SUCCESS;
 	}

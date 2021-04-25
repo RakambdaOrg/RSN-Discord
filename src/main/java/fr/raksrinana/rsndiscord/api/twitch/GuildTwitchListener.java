@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.api.irc;
+package fr.raksrinana.rsndiscord.api.twitch;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.raksrinana.rsndiscord.Main;
@@ -23,7 +23,7 @@ import org.kitteh.irc.client.library.feature.twitch.messagetag.*;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
-import static fr.raksrinana.rsndiscord.api.irc.twitch.TwitchMessageId.*;
+import static fr.raksrinana.rsndiscord.api.twitch.TwitchMessageId.*;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.joining;

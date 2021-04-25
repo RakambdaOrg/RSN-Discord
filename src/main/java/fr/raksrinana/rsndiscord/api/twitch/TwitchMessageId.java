@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.api.irc.twitch;
+package fr.raksrinana.rsndiscord.api.twitch;
 
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;

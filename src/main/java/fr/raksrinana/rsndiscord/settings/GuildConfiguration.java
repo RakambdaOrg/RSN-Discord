@@ -131,9 +131,10 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@Getter
 	@Setter
 	private PermissionsConfiguration permissionsConfiguration = new PermissionsConfiguration();
-	@JsonProperty("eventWinnerRole")
+	@JsonProperty("event")
 	@Setter
-	private RoleConfiguration eventWinnerRole;
+	@Getter
+	private EventConfiguration eventConfiguration = new EventConfiguration();
 	@JsonProperty("discordIncidentsChannel")
 	@Setter
 	private ChannelConfiguration discordIncidentsChannel;
@@ -196,11 +197,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@NotNull
 	public Optional<ChannelConfiguration> getDiscordIncidentsChannel(){
 		return ofNullable(discordIncidentsChannel);
-	}
-	
-	@NotNull
-	public Optional<RoleConfiguration> getEventWinnerRole(){
-		return ofNullable(eventWinnerRole);
 	}
 	
 	@NotNull

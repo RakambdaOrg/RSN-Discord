@@ -18,18 +18,18 @@ public class EventWinnerRoleConfigurationCommand extends RoleConfigurationComman
 	
 	@Override
 	protected void setConfig(@NotNull Guild guild, @NotNull RoleConfiguration value){
-		Settings.get(guild).setEventWinnerRole(value);
+		Settings.get(guild).getEventConfiguration().setWinnerRole(value);
 	}
 	
 	@Override
 	protected void removeConfig(@NotNull Guild guild){
-		Settings.get(guild).setEventWinnerRole(null);
+		Settings.get(guild).getEventConfiguration().setWinnerRole(null);
 	}
 	
 	@NotNull
 	@Override
 	protected Optional<RoleConfiguration> getConfig(@NotNull Guild guild){
-		return Settings.get(guild).getEventWinnerRole();
+		return Settings.get(guild).getEventConfiguration().getWinnerRole();
 	}
 	
 	@Override

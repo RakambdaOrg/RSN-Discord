@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.api.irc;
+package fr.raksrinana.rsndiscord.api.twitch;
 
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
@@ -73,6 +73,10 @@ public class TwitchUtils{
 	
 	public static void close(){
 		Optional.ofNullable(ircClient).ifPresent(Client::shutdown);
+	}
+	
+	public static void connect(){
+		getIrcClient();
 	}
 	
 	private static Client getIrcClient(){

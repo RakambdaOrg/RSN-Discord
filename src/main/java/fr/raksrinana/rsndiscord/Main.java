@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord;
 
-import fr.raksrinana.rsndiscord.api.irc.TwitchUtils;
+import fr.raksrinana.rsndiscord.api.twitch.TwitchUtils;
 import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
 import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.log.Log;
@@ -36,6 +36,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import static fr.raksrinana.rsndiscord.event.CommandsEventListener.DEFAULT_PREFIX;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.OnlineStatus.ONLINE;
@@ -84,7 +85,7 @@ public class Main{
 			RunnerUtils.registerAllScheduledRunners();
 			Log.getLogger().info("Started");
 			announceStart();
-			restartTwitchIRCConnections();
+			executorService.schedule(Main::restartTwitchIRCConnections, 15, TimeUnit.SECONDS);
 			
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 				Log.getLogger().info("Shutdown hook triggered");
@@ -163,6 +164,8 @@ public class Main{
 	 * @see TwitchConfiguration#getTwitchAutoConnectUsers()
 	 */
 	private static void restartTwitchIRCConnections(){
+		TwitchUtils.connect();
+		
 		Main.getJda().getGuilds()
 				.forEach(guild -> Settings.get(guild)
 						.getTwitchConfiguration()
