@@ -4,7 +4,6 @@ import fr.raksrinana.rsndiscord.api.anilist.AniListApi;
 import fr.raksrinana.rsndiscord.api.anilist.data.list.MediaList;
 import fr.raksrinana.rsndiscord.api.anilist.data.media.IMedia;
 import fr.raksrinana.rsndiscord.api.anilist.query.MediaListPagedQuery;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
@@ -12,7 +11,6 @@ import fr.raksrinana.rsndiscord.settings.guild.anilist.AniListConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
-import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
@@ -68,23 +66,10 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 				.thenAccept(message -> {
 					JDAWrappers.addReaction(message, CHECK_OK).submit();
 					
-					deleteSimilarPendingMedia(channel, mediaList);
-					
 					var reactionMessageConfiguration = new WaitingReactionMessageConfiguration(message, ANILIST_TODO,
 							Map.of(DELETE_KEY, Boolean.toString(true)));
 					Settings.get(channel.getGuild()).addMessagesAwaitingReaction(reactionMessageConfiguration);
 				});
-	}
-	
-	private void deleteSimilarPendingMedia(TextChannel channel, MediaList mediaList){
-		getSimilarWaitingReactions(channel, mediaList.getMedia())
-				.forEach(reaction -> JDAWrappers.delete(channel, reaction.getMessage().getMessageId()).submit()
-						.thenAccept(empty -> Settings.get(channel.getGuild()).removeMessagesAwaitingReaction(reaction))
-						.exceptionally(th -> {
-							Log.getLogger(channel.getGuild()).error("Failed to delete similar pending media", th);
-							Utilities.reportException("Failed to delete similar pending media", th);
-							return null;
-						}));
 	}
 	
 	@Override
