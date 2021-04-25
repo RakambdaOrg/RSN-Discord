@@ -164,7 +164,7 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@JsonProperty("mediaReactionMessages")
 	@Getter
 	@Setter
-	private Set<MessageConfiguration> mediaReactionMessages = new HashSet<>();
+	private List<MessageConfiguration> mediaReactionMessages = new LinkedList<>();
 	
 	GuildConfiguration(long guildId){
 		this.guildId = guildId;
