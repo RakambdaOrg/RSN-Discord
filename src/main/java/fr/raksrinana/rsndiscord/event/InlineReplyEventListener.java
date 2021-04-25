@@ -2,6 +2,8 @@ package fr.raksrinana.rsndiscord.event;
 
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.log.Log;
+import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.MessageType;
@@ -33,7 +35,7 @@ public class InlineReplyEventListener extends ListenerAdapter{
 				return;
 			}
 			
-			if(Objects.equals(reference.getAuthor(), Main.getJda().getSelfUser())){
+			if(Objects.equals(reference.getAuthor(), Main.getJda().getSelfUser()) && Settings.get(event.getGuild()).getMediaReactionMessages().contains(new MessageConfiguration(reference))){
 				var original = Arrays.stream(reference.getContentRaw().split("\n"))
 						.filter(line -> !line.startsWith("__**EP "))
 						.map(line -> line.split(" ", 2)[0])
@@ -41,7 +43,7 @@ public class InlineReplyEventListener extends ListenerAdapter{
 				var received = Arrays.stream(message.getContentRaw().split("\n")).collect(Collectors.toList());
 				
 				if(original.size() == received.size()){
-					var content = event.getAuthor().getAsMention() + " replied:\n\n" +
+					var content = author.getAsMention() + " replied:\n\n" +
 							IntStream.range(0, original.size())
 									.mapToObj(index -> original.get(index) + " " + received.get(index))
 									.collect(Collectors.joining("\n"));
