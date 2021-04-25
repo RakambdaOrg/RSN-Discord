@@ -16,6 +16,7 @@ public class TwitterCommandComposite extends CommandComposite{
 	 */
 	public TwitterCommandComposite(){
 		addSubCommand(new FetchCommand(this));
+		addSubCommand(new BlockCommand(this));
 	}
 	
 	@Override

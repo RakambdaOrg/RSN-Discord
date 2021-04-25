@@ -2,6 +2,7 @@ package fr.raksrinana.rsndiscord.api.twitter;
 
 import com.github.redouane59.twitter.IAPIEventListener;
 import com.github.redouane59.twitter.TwitterClient;
+import com.github.redouane59.twitter.dto.others.BlockResponse;
 import com.github.redouane59.twitter.dto.stream.StreamRules;
 import com.github.redouane59.twitter.dto.tweet.Tweet;
 import com.github.redouane59.twitter.dto.tweet.TweetV2;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TwitterApi implements IAPIEventListener{
 	private static TwitterClient twitteredClient;
+	private static String selfUserId;
 	private static Map<String, List<Long>> searches = new HashMap<>();
 	private static Map<String, List<Long>> searchesHash = new HashMap<>();
 	private static Future<Response> filteredStream;
@@ -123,5 +125,19 @@ public class TwitterApi implements IAPIEventListener{
 					.build());
 		}
 		return twitteredClient;
+	}
+	
+	public static BlockResponse blockUser(String userName){
+		var client = getTwitteredClient();
+		
+		var user = client.getUserFromUserName(userName);
+		return client.blockUser(getSelfUserId(), user.getId());
+	}
+	
+	private static String getSelfUserId(){
+		if(Objects.isNull(selfUserId)){
+			selfUserId = System.getProperty("TWITTER_USER_ID");
+		}
+		return selfUserId;
 	}
 }
