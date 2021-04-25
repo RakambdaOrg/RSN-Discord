@@ -21,7 +21,9 @@ public class TwitchIRCEventListener{
 	}
 	
 	public void addListener(@NotNull Channel channel, @NotNull GuildTwitchListener listener){
-		getListeners(channel).add(listener);
+		var channelListeners = getListeners(channel);
+		channelListeners.add(listener);
+		Log.getLogger().info("Loggers listening for channel {}: {}", channel, channelListeners);
 	}
 	
 	public Collection<GuildTwitchListener> getListeners(@NotNull Channel channel){

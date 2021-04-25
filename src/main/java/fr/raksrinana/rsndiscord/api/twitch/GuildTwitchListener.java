@@ -266,4 +266,12 @@ public class GuildTwitchListener{
 		return Optional.ofNullable(musicChannelId)
 				.map(getGuild()::getVoiceChannelById);
 	}
+	
+	@Override
+	public String toString(){
+		return new StringJoiner(", ", GuildTwitchListener.class.getSimpleName() + "[", "]")
+				.add("guildId=" + guildId)
+				.add("channelId=" + channelId)
+				.toString();
+	}
 }

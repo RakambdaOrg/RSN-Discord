@@ -166,18 +166,20 @@ public class Main{
 	private static void restartTwitchIRCConnections(){
 		TwitchUtils.connect();
 		
-		Main.getJda().getGuilds()
-				.forEach(guild -> Settings.get(guild)
-						.getTwitchConfiguration()
-						.getTwitchAutoConnectUsers()
-						.forEach(user -> {
-							try{
-								TwitchUtils.connect(guild, user);
-							}
-							catch(Exception e){
-								Log.getLogger(guild).error("Failed to automatically connect to twitch user {}", user, e);
-							}
-						}));
+		executorService.schedule(() -> {
+			Main.getJda().getGuilds()
+					.forEach(guild -> Settings.get(guild)
+							.getTwitchConfiguration()
+							.getTwitchAutoConnectUsers()
+							.forEach(user -> {
+								try{
+									TwitchUtils.connect(guild, user);
+								}
+								catch(Exception e){
+									Log.getLogger(guild).error("Failed to automatically connect to twitch user {}", user, e);
+								}
+							}));
+		}, 15, TimeUnit.SECONDS);
 	}
 	
 	/**

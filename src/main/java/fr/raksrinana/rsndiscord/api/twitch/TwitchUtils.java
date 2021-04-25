@@ -27,7 +27,7 @@ public class TwitchUtils{
 		client.addChannel(ircChannelName);
 		var ircChannel = tryGettingChannel(ircChannelName, 40);
 		
-		Log.getLogger(guild).info("Added Twitch listener for channel {}", ircChannelName);
+		Log.getLogger(guild).info("Added Twitch listener for channel {} and guild {}", ircChannel, guild);
 		listener.addListener(ircChannel, new GuildTwitchListener(guild.getIdLong(), channelId));
 	}
 	
