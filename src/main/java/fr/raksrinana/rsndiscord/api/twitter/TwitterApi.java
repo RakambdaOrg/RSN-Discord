@@ -131,13 +131,6 @@ public class TwitterApi implements IAPIEventListener{
 		var client = getTwitteredClient();
 		
 		var user = client.getUserFromUserName(userName);
-		return client.blockUser(getSelfUserId(), user.getId());
-	}
-	
-	private static String getSelfUserId(){
-		if(Objects.isNull(selfUserId)){
-			selfUserId = System.getProperty("TWITTER_USER_ID");
-		}
-		return selfUserId;
+		return client.blockUser(user.getId());
 	}
 }

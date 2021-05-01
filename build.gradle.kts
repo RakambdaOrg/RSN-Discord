@@ -2,11 +2,11 @@ plugins {
     idea
     java
     application
-    id("com.github.johnrengelman.shadow") version ("6.1.0")
+    id("com.github.johnrengelman.shadow") version ("7.0.0")
     id("com.github.ben-manes.versions") version ("0.38.0")
     id("io.freefair.lombok") version ("6.0.0-m2")
     id("com.google.cloud.tools.jib") version ("3.0.0")
-    id("com.gorylenko.gradle-git-properties") version ("2.3.1-rc3")
+    id("com.gorylenko.gradle-git-properties") version ("2.3.1")
 }
 
 group = "fr.raksrinana"
