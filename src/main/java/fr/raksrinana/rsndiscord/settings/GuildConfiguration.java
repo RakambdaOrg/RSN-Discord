@@ -59,7 +59,7 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@JsonProperty("hermitcraft")
 	@Getter
 	private final HermitcraftConfiguration hermitcraftConfiguration = new HermitcraftConfiguration();
-	@JsonProperty("hermitcraft")
+	@JsonProperty("rainbowSix")
 	@Getter
 	private final RainbowSixConfiguration rainbowSixConfiguration = new RainbowSixConfiguration();
 	@JsonProperty("prefix")
