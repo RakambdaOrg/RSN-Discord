@@ -29,7 +29,7 @@ public class PandaScoreApi {
                 .asObject(request.getGenericType());
 
         if (!response.isSuccess()) {
-            Log.getLogger().error("Failed to perform request on PandaScore");
+            Log.getLogger().error("Failed to perform request on PandaScore with status {}", response.getStatus());
             return Optional.empty();
         }
 
