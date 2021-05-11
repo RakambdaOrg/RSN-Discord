@@ -18,14 +18,16 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
+import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
 public class R6Match{
+	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 	@JsonProperty("begin_at")
 	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
 	@Nullable
@@ -116,33 +118,39 @@ public class R6Match{
 	private Integer winner_id;
 	
 	public void fillEmbed(EmbedBuilder builder){
-		var date = Optional.ofNullable(getStartDate())
-				.filter(d -> d.isAfter(getModifyDate()))
-				.orElse(getModifyDate());
 		var url = getStreams().stream()
 				.sorted().findFirst()
 				.flatMap(Stream::getUrlAsString)
 				.or(() -> getLeague().getUrlAsString())
 				.orElse(null);
-		var thumbnail = Optional.ofNullable(getWinner())
+		var thumbnail = ofNullable(getWinner())
 				.flatMap(Opponent::getImageUrlAsString)
 				.or(() -> getLeague().getImageUrlAsString())
 				.orElse(null);
-		var tier = Optional.ofNullable(getSerie().getTier())
+		var tier = ofNullable(getSerie().getTier())
 				.map(" (%s)"::formatted)
 				.orElse("");
 		var title = "%s%s".formatted(getLeague().getName(), tier);
+		var startDate = ofNullable(getStartDate())
+				.or(() -> ofNullable(getScheduledAt()))
+				.map(DF::format)
+				.orElse("Unknown");
+		var endDate = ofNullable(getEndDate())
+				.map(DF::format);
 		
 		builder.setColor(getStatus().getColor())
-				.setTimestamp(date)
+				.setTimestamp(ZonedDateTime.now())
 				.setThumbnail(thumbnail)
 				.setTitle(title, url)
 				.setDescription(getName())
-				.addField("Match type", getMatchType().getValue(), true);
+				.addField("Match type", getMatchType().getValue(), true)
+				.addField("Started at", startDate, true);
 		
-		Optional.ofNullable(getWinner())
+		endDate.ifPresent(d -> builder.addField("End date", d, true));
+		
+		ofNullable(getWinner())
 				.map(Opponent::getName)
-				.ifPresent(w -> builder.addField("Winner", w, true));
+				.ifPresent(w -> builder.addField("Winner", w, false));
 		
 		getGames().forEach(game -> game.fillEmbed(builder));
 	}
