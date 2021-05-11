@@ -20,6 +20,8 @@ import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -110,12 +112,13 @@ public class R6Match{
 	@JsonProperty("videogame_version")
 	@Nullable
 	private VideoGameVersion videogameVersion;
-	@JsonProperty("winner")
-	@Nullable
-	private Opponent winner;
+	//There is no type to differenciate them
+	// @JsonProperty("winner")
+	// @Nullable
+	// private Opponent winner;
 	@JsonProperty("winner_id")
 	@Nullable
-	private Integer winner_id;
+	private Integer winnerId;
 	
 	public void fillEmbed(EmbedBuilder builder){
 		var url = getStreams().stream()
@@ -123,7 +126,7 @@ public class R6Match{
 				.flatMap(Stream::getUrlAsString)
 				.or(() -> getLeague().getUrlAsString())
 				.orElse(null);
-		var thumbnail = ofNullable(getWinner())
+		var thumbnail = getWinner()
 				.flatMap(Opponent::getImageUrlAsString)
 				.or(() -> getLeague().getImageUrlAsString())
 				.orElse(null);
@@ -148,10 +151,17 @@ public class R6Match{
 		
 		endDate.ifPresent(d -> builder.addField("End date", d, true));
 		
-		ofNullable(getWinner())
-				.map(Opponent::getName)
+		getWinner().map(Opponent::getName)
 				.ifPresent(w -> builder.addField("Winner", w, false));
 		
 		getGames().forEach(game -> game.fillEmbed(builder));
+	}
+	
+	private Optional<Opponent> getWinner(){
+		return Optional.ofNullable(getWinnerId())
+				.flatMap(id -> getOpponents().stream()
+						.filter(o -> Objects.equals(o.getOpponent().getId(), id))
+						.findFirst()
+						.map(WrappedOpponent::getOpponent));
 	}
 }
