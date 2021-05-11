@@ -138,13 +138,12 @@ public class R6Match{
 				.setThumbnail(thumbnail)
 				.setTitle(title, url)
 				.setDescription(getName())
-				.addField("Match type", getMatchType().name(), true);
+				.addField("Match type", getMatchType().getValue(), true);
 		
 		Optional.ofNullable(getWinner())
 				.map(Opponent::getName)
 				.ifPresent(w -> builder.addField("Winner", w, true));
 		
-		builder.addBlankField(false);
 		getGames().forEach(game -> game.fillEmbed(builder));
 	}
 }

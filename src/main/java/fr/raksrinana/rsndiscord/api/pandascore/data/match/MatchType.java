@@ -4,16 +4,20 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
+@RequiredArgsConstructor
 public enum MatchType {
-	BEST_OF,
-	CUSTOM,
-	FIRST_TO,
-	OW_BEST_OF;
+	BEST_OF("Best of"),
+	CUSTOM("Custom"),
+	FIRST_TO("First to"),
+	OW_BEST_OF("OW Best of");
+	
+	private final String value;
 	
 	@JsonCreator
 	@Nullable
