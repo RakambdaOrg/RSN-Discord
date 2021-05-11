@@ -1,11 +1,11 @@
 package fr.raksrinana.rsndiscord.api.pandascore;
 
 import fr.raksrinana.rsndiscord.log.Log;
+import fr.raksrinana.rsndiscord.utils.Utilities;
 import kong.unirest.HeaderNames;
 import kong.unirest.Unirest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Objects;
 import java.util.Optional;
 
@@ -29,6 +29,10 @@ public class PandaScoreApi {
                 .asObject(request.getGenericType());
 
         if (!response.isSuccess()) {
+            response.getParsingError().ifPresent(error -> {
+                Utilities.reportException("Failed to parse PandaScore response", error);
+                Log.getLogger().warn("Failed to parse PandaScore response", error);
+            });
             Log.getLogger().error("Failed to perform request on PandaScore with status {}", response.getStatus());
             return Optional.empty();
         }

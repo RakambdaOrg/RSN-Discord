@@ -30,11 +30,11 @@ public class HermitcraftApi{
 	@NotNull
 	private static <T> Optional<T> getRequestResult(@NotNull GenericType<T> type, @NotNull String endpoint, @Nullable Map<String, Object> parameters){
 		var request = Unirest.get(ENDPOINT + endpoint).queryString(parameters).asObject(type);
-		request.getParsingError().ifPresent(error -> {
-			Utilities.reportException("Failed to parse Hermitcraft response", error);
-			Log.getLogger().warn("Failed to parse Hermitcraft response", error);
-		});
 		if(!request.isSuccess()){
+			request.getParsingError().ifPresent(error -> {
+				Utilities.reportException("Failed to parse Hermitcraft response", error);
+				Log.getLogger().warn("Failed to parse Hermitcraft response", error);
+			});
 			return empty();
 		}
 		
