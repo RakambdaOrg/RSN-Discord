@@ -10,9 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class GetR6MatchBySlug extends PandaScoreGetRequest<List<R6Match>> {
-    @NotNull
-    private final String slug;
+public class GetR6MatchById extends PandaScoreGetRequest<List<R6Match>> {
+    private final int id;
 
     @Override
     public @NotNull String getEndpoint() {
@@ -28,7 +27,7 @@ public class GetR6MatchBySlug extends PandaScoreGetRequest<List<R6Match>> {
     @Override
     public @NotNull Map<String, Object> getQueryParameters() {
         return Map.of(
-                "search[slug]", slug
+                "filter[id]", id
         );
     }
 }
