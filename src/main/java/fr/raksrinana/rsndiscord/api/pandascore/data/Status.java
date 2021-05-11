@@ -3,7 +3,6 @@ package fr.raksrinana.rsndiscord.api.pandascore.data;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import fr.raksrinana.rsndiscord.api.discordstatus.data.IncidentStatus;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,10 +18,10 @@ public enum Status {
 
     @JsonCreator
     @Nullable
-    public IncidentStatus getByName(@Nullable String name) {
-        for (var indicator : IncidentStatus.values()) {
-            if (indicator.name().equalsIgnoreCase(name)) {
-                return indicator;
+    public Status getByName(@Nullable String name) {
+        for (var status : Status.values()) {
+            if (status.name().equalsIgnoreCase(name)) {
+                return status;
             }
         }
         return null;
