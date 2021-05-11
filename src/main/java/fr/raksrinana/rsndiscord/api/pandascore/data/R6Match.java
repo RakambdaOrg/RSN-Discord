@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -151,10 +152,21 @@ public class R6Match{
 		
 		endDate.ifPresent(d -> builder.addField("End date", d, true));
 		
-		getWinner().map(Opponent::getName)
-				.ifPresent(w -> builder.addField("Winner", w, false));
+		builder.addField("Score", scoreAsString(), true);
 		
-		getGames().forEach(game -> game.fillEmbed(builder));
+		getWinner().map(Opponent::getName)
+				.ifPresent(w -> builder.addField("Winner", w, true));
+		
+		getGames().stream()
+				.sorted()
+				.forEach(game -> game.fillEmbed(builder, getOpponents()));
+	}
+	
+	private String scoreAsString(){
+		return getResults().stream()
+				.map(Result::getScore)
+				.map(String::valueOf)
+				.collect(Collectors.joining(" - "));
 	}
 	
 	private Optional<Opponent> getWinner(){

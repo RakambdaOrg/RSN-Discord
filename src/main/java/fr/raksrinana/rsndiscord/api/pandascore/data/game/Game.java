@@ -4,22 +4,27 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fr.raksrinana.rsndiscord.api.pandascore.data.opponent.Opponent;
 import fr.raksrinana.rsndiscord.api.pandascore.data.opponent.OpponentType;
+import fr.raksrinana.rsndiscord.api.pandascore.data.opponent.WrappedOpponent;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.net.URL;
 import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class Game{
+public class Game implements Comparable<Game>{
 	@JsonProperty("begin_at")
 	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
 	@Nullable
@@ -57,21 +62,31 @@ public class Game{
 	@Nullable
 	private OpponentType winnerType;
 	
-	public void fillEmbed(EmbedBuilder builder){
+	public void fillEmbed(EmbedBuilder builder, Collection<WrappedOpponent<?>> opponents){
 		var name = "Game %d".formatted(getPosition());
 		var content = switch(getStatus()){
 			case NOT_STARTED -> "⏳ Not started";
 			case NOT_PLAYED -> "❌ Not played";
 			case RUNNING -> "▶ In progress";
-			case FINISHED -> "✔ Completed, winner : " + getWinnerName().orElse("Unknown winner");
+			case FINISHED -> "✔ Completed, winner : " + getWinnerName(opponents).orElse("Unknown winner");
 		};
 		
 		builder.addField(name, content, false);
 	}
 	
-	private Optional<String> getWinnerName(){
+	@Override
+	public int compareTo(@NotNull Game o){
+		return Integer.compare(getPosition(), o.getPosition());
+	}
+	
+	private Optional<String> getWinnerName(Collection<WrappedOpponent<?>> opponents){
 		return Optional.ofNullable(getWinner())
 				.map(GameWinner::getId)
-				.map(String::valueOf);
+				.map(id -> opponents.stream()
+						.filter(o -> Objects.equals(o.getOpponent().getId(), id))
+						.findFirst()
+						.map(WrappedOpponent::getOpponent)
+						.map(Opponent::getName)
+						.orElse(String.valueOf(id)));
 	}
 }
