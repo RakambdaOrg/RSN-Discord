@@ -70,7 +70,7 @@ public class R6Match {
     @JsonProperty("status")
     private Status status;
     @JsonProperty("streams_list")
-    private Streams streams;
+    private List<Streams> streams;
     @JsonProperty("tournament_id")
     private Integer tournamentId;
     @JsonProperty("tournament")
