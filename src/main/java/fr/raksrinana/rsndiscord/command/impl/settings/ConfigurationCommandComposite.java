@@ -28,6 +28,7 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		addSubCommand(new AutoTodoChannelsConfigurationCommand(this));
 		addSubCommand(new ReactionsConfigurationCommandComposite(this));
 		addSubCommand(new HermitcraftConfigurationCommandComposite(this));
+		addSubCommand(new RainbowSixConfigurationCommandComposite(this));
 		addSubCommand(new ParticipationConfigurationCommandComposite(this));
 		addSubCommand(new TrombinoscopeConfigurationCommandComposite(this));
 		addSubCommand(new ExternalTodosConfigurationCommandComposite(this));
