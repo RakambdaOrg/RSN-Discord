@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.net.URL;
+import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -30,4 +31,10 @@ public abstract class Opponent {
 	private String slug;
 	
 	public abstract OpponentType getType();
+	
+	@NotNull
+	public Optional<String> getImageUrlAsString(){
+		return Optional.ofNullable(getImageUrl())
+				.map(URL::toString);
+	}
 }

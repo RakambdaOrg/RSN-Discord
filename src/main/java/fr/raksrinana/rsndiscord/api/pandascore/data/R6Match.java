@@ -124,16 +124,27 @@ public class R6Match{
 				.flatMap(Stream::getUrlAsString)
 				.or(() -> getLeague().getUrlAsString())
 				.orElse(null);
-		var tier = Optional.ofNullable(getSerie().getTier()).map(" (%s)"::formatted).orElse("");
+		var thumbnail = Optional.ofNullable(getWinner())
+				.flatMap(Opponent::getImageUrlAsString)
+				.or(() -> getLeague().getImageUrlAsString())
+				.orElse(null);
+		var tier = Optional.ofNullable(getSerie().getTier())
+				.map(" (%s)"::formatted)
+				.orElse("");
 		var title = "%s%s".formatted(getLeague().getName(), tier);
 		
 		builder.setColor(getStatus().getColor())
 				.setTimestamp(date)
-				.setThumbnail(getLeague().getImageUrlAsString())
+				.setThumbnail(thumbnail)
 				.setTitle(title, url)
 				.setDescription(getName())
 				.addField("Match type", getMatchType().name(), true);
 		
+		Optional.ofNullable(getWinner())
+				.map(Opponent::getName)
+				.ifPresent(w -> builder.addField("Winner", w, true));
+		
+		builder.addBlankField(false);
 		getGames().forEach(game -> game.fillEmbed(builder));
 	}
 }

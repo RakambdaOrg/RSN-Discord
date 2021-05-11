@@ -40,10 +40,10 @@ public class League{
 	@Nullable
 	private URL url;
 	
-	public String getImageUrlAsString(){
+	@NotNull
+	public Optional<String> getImageUrlAsString(){
 		return Optional.ofNullable(getImageUrl())
-				.map(URL::toString)
-				.orElse(null);
+				.map(URL::toString);
 	}
 	
 	@NotNull
