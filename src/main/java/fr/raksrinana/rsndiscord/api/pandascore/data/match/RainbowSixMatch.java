@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.api.pandascore.data;
+package fr.raksrinana.rsndiscord.api.pandascore.data.match;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -6,11 +6,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.api.pandascore.data.game.Game;
 import fr.raksrinana.rsndiscord.api.pandascore.data.league.League;
-import fr.raksrinana.rsndiscord.api.pandascore.data.match.*;
 import fr.raksrinana.rsndiscord.api.pandascore.data.opponent.Opponent;
 import fr.raksrinana.rsndiscord.api.pandascore.data.opponent.WrappedOpponent;
 import fr.raksrinana.rsndiscord.api.pandascore.data.serie.Serie;
 import fr.raksrinana.rsndiscord.api.pandascore.data.tournament.Tournament;
+import fr.raksrinana.rsndiscord.api.pandascore.data.videogame.VideoGame;
+import fr.raksrinana.rsndiscord.api.pandascore.data.videogame.VideoGameVersion;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601ZonedDateTimeDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,7 @@ import static java.util.Optional.ofNullable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class R6Match{
+public class RainbowSixMatch{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 	@JsonProperty("begin_at")
 	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
@@ -127,9 +128,10 @@ public class R6Match{
 				.flatMap(Stream::getUrlAsString)
 				.or(() -> getLeague().getUrlAsString())
 				.orElse(null);
+		var leagueUrl = getLeague().getImageUrlAsString();
 		var thumbnail = getWinner()
 				.flatMap(Opponent::getImageUrlAsString)
-				.or(() -> getLeague().getImageUrlAsString())
+				.or(() -> leagueUrl)
 				.orElse(null);
 		var tier = ofNullable(getSerie().getTier())
 				.map(" (%s)"::formatted)
@@ -145,6 +147,7 @@ public class R6Match{
 		builder.setColor(getStatus().getColor())
 				.setTimestamp(ZonedDateTime.now())
 				.setThumbnail(thumbnail)
+				.setFooter(String.valueOf(getId()), leagueUrl.orElse(null))
 				.setTitle(title, url)
 				.setDescription(getName())
 				.addField("Match type", getMatchType().getValue(), true)

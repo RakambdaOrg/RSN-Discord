@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.runner.r6;
 
 import fr.raksrinana.rsndiscord.api.pandascore.PandaScoreApi;
-import fr.raksrinana.rsndiscord.api.pandascore.data.R6Match;
+import fr.raksrinana.rsndiscord.api.pandascore.data.match.RainbowSixMatch;
 import fr.raksrinana.rsndiscord.api.pandascore.request.GetR6MatchById;
 import fr.raksrinana.rsndiscord.api.pandascore.request.GetRunningR6Matches;
 import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
@@ -42,7 +42,7 @@ public class MatchesRunner implements IScheduledRunner{
 		});
 	}
 	
-	private void processNewMatches(List<R6Match> matches){
+	private void processNewMatches(List<RainbowSixMatch> matches){
 		matches.stream()
 				.filter(match -> !matchesInProgress.containsKey(match.getId()))
 				.forEach(match -> {
@@ -52,7 +52,7 @@ public class MatchesRunner implements IScheduledRunner{
 				});
 	}
 	
-	private void processOngoingMatches(List<R6Match> matches){
+	private void processOngoingMatches(List<RainbowSixMatch> matches){
 		matches.stream()
 				.filter(match -> matchesInProgress.containsKey(match.getId()))
 				.forEach(match -> {
@@ -62,7 +62,7 @@ public class MatchesRunner implements IScheduledRunner{
 				});
 	}
 	
-	private void processEndedMatches(List<R6Match> matches){
+	private void processEndedMatches(List<RainbowSixMatch> matches){
 		matchesInProgress.keySet().stream()
 				.filter(id -> matches.stream().noneMatch(m -> Objects.equals(m.getId(), id)))
 				.flatMap(slug -> {
@@ -107,7 +107,7 @@ public class MatchesRunner implements IScheduledRunner{
 				.thenCompose(originalMessage -> JDAWrappers.edit(originalMessage, embed).submit());
 	}
 	
-	private MessageEmbed createEmbed(R6Match match){
+	private MessageEmbed createEmbed(RainbowSixMatch match){
 		var selfUser = jda.getSelfUser();
 		
 		var builder = new EmbedBuilder().setAuthor(selfUser.getName(), null, selfUser.getAvatarUrl());

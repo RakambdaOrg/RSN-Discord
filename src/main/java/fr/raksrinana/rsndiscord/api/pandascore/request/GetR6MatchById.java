@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.api.pandascore.request;
 
 import fr.raksrinana.rsndiscord.api.pandascore.PandaScoreGetRequest;
-import fr.raksrinana.rsndiscord.api.pandascore.data.R6Match;
+import fr.raksrinana.rsndiscord.api.pandascore.data.match.RainbowSixMatch;
 import kong.unirest.GenericType;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class GetR6MatchById extends PandaScoreGetRequest<List<R6Match>> {
+public class GetR6MatchById extends PandaScoreGetRequest<List<RainbowSixMatch>> {
     private final int id;
 
     @Override
@@ -19,7 +19,7 @@ public class GetR6MatchById extends PandaScoreGetRequest<List<R6Match>> {
     }
 
     @Override
-    public @NotNull GenericType<List<R6Match>> getGenericType() {
+    public @NotNull GenericType<List<RainbowSixMatch>> getGenericType() {
         return new GenericType<>() {
         };
     }

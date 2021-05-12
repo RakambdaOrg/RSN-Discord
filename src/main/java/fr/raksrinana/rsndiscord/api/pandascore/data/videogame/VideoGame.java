@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.api.pandascore.data.match;
+package fr.raksrinana.rsndiscord.api.pandascore.data.videogame;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
