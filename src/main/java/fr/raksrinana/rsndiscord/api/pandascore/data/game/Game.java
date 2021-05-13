@@ -68,7 +68,7 @@ public class Game implements Comparable<Game>{
 			case NOT_STARTED -> "⏳ Not started";
 			case NOT_PLAYED -> "❌ Not played";
 			case RUNNING -> "▶ In progress";
-			case FINISHED -> "✔ Completed, winner : " + getWinnerName(opponents).orElse("Unknown winner");
+			case FINISHED -> "✅ Completed, winner : " + getWinnerName(opponents).orElse("Unknown winner");
 		};
 		
 		builder.addField(name, content, false);

@@ -136,7 +136,7 @@ public class RainbowSixMatch{
 		var tier = ofNullable(getSerie().getTier())
 				.map(" (%s)"::formatted)
 				.orElse("");
-		var title = "%s%s".formatted(getLeague().getName(), tier);
+		var title = "%s%s - %s".formatted(getLeague().getName(), tier, getTournament().getName());
 		var startDate = ofNullable(getStartDate())
 				.or(() -> ofNullable(getScheduledAt()))
 				.map(DF::format)
