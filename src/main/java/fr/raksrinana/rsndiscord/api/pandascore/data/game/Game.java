@@ -86,7 +86,7 @@ public class Game implements Comparable<Game>{
 						.filter(o -> Objects.equals(o.getOpponent().getId(), id))
 						.findFirst()
 						.map(WrappedOpponent::getOpponent)
-						.map(Opponent::getName)
+						.map(Opponent::getCompleteName)
 						.orElse(String.valueOf(id)));
 	}
 }

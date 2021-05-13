@@ -136,7 +136,7 @@ public class RainbowSixMatch{
 		var tier = ofNullable(getSerie().getTier())
 				.map(" (%s)"::formatted)
 				.orElse("");
-		var title = "%s%s - %s".formatted(getLeague().getName(), tier, getTournament().getName());
+		var description = "%s%s - %s".formatted(getLeague().getName(), tier, getTournament().getName());
 		var startDate = ofNullable(getStartDate())
 				.or(() -> ofNullable(getScheduledAt()))
 				.map(DF::format)
@@ -148,8 +148,8 @@ public class RainbowSixMatch{
 				.setTimestamp(ZonedDateTime.now())
 				.setThumbnail(thumbnail)
 				.setFooter(String.valueOf(getId()), leagueUrl.orElse(null))
-				.setTitle(title, url)
-				.setDescription(getName())
+				.setTitle(getName(), url)
+				.setDescription(description)
 				.addField("Match type", getMatchType().getValue(), true)
 				.addField("Started at", startDate, true);
 		
@@ -157,7 +157,7 @@ public class RainbowSixMatch{
 		
 		builder.addField("Score", scoreAsString(), true);
 		
-		getWinner().map(Opponent::getName)
+		getWinner().map(Opponent::getCompleteName)
 				.ifPresent(w -> builder.addField("Winner", w, true));
 		
 		getGames().stream()

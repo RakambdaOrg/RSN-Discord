@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.Locale;
+import java.util.Objects;
 import static fr.raksrinana.rsndiscord.api.pandascore.data.opponent.OpponentType.PLAYER;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -34,7 +37,25 @@ public class PlayerOpponent extends Opponent{
 	private String role;
 	
 	@Override
-	public OpponentType getType(){
+	public @NotNull String getCompleteName(){
+		var sb = new StringBuilder();
+		
+		if(Objects.nonNull(nationality)){
+			sb.append(":flag_").append(nationality.toLowerCase(Locale.ROOT)).append(": ");
+		}
+		
+		sb.append(getName());
+		
+		if(Objects.nonNull(getFirstname()) && Objects.nonNull(getLastname())){
+			sb.append(" (").append(getFirstname())
+					.append(" ").append(getLastname()).append(")");
+		}
+		
+		return sb.toString();
+	}
+	
+	@Override
+	public @NotNull OpponentType getType(){
 		return PLAYER;
 	}
 }

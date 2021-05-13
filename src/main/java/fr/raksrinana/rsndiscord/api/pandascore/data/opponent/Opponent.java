@@ -30,6 +30,10 @@ public abstract class Opponent {
 	@Nullable
 	private String slug;
 	
+	@NotNull
+	public abstract String getCompleteName();
+	
+	@NotNull
 	public abstract OpponentType getType();
 	
 	@NotNull

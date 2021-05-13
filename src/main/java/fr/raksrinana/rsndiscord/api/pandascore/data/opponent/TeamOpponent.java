@@ -9,6 +9,8 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
+import java.util.Locale;
+import java.util.Objects;
 import static fr.raksrinana.rsndiscord.api.pandascore.data.opponent.OpponentType.TEAM;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -26,7 +28,24 @@ public class TeamOpponent extends Opponent{
 	private ZonedDateTime modifiedAt;
 	
 	@Override
-	public OpponentType getType(){
+	public @NotNull String getCompleteName(){
+		var sb = new StringBuilder();
+		
+		if(Objects.nonNull(location)){
+			sb.append(":flag_").append(location.toLowerCase(Locale.ROOT)).append(": ");
+		}
+		
+		sb.append(getName());
+		
+		if(Objects.nonNull(getAcronym())){
+			sb.append(" (").append(getAcronym()).append(")");
+		}
+		
+		return sb.toString();
+	}
+	
+	@Override
+	public @NotNull OpponentType getType(){
 		return TEAM;
 	}
 }
