@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -31,6 +32,7 @@ import static java.util.Optional.ofNullable;
 @Getter
 @NoArgsConstructor
 public class RainbowSixMatch{
+	private static final ZoneId ZONE_ID = ZoneId.of("Europe/Paris");
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 	@JsonProperty("begin_at")
 	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
@@ -139,9 +141,11 @@ public class RainbowSixMatch{
 		var description = "%s%s - %s".formatted(getLeague().getName(), tier, getTournament().getName());
 		var startDate = ofNullable(getStartDate())
 				.or(() -> ofNullable(getScheduledAt()))
+				.map(d -> d.withZoneSameInstant(ZONE_ID))
 				.map(DF::format)
 				.orElse("Unknown");
 		var endDate = ofNullable(getEndDate())
+				.map(d -> d.withZoneSameInstant(ZONE_ID))
 				.map(DF::format);
 		
 		builder.setColor(getStatus().getColor())
