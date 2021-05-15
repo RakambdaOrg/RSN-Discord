@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TwitterApi implements IAPIEventListener{
 	private static TwitterClient twitteredClient;
-	private static String selfUserId;
 	private static Map<String, List<Long>> searches = new HashMap<>();
 	private static Map<String, List<Long>> searchesHash = new HashMap<>();
 	private static Future<Response> filteredStream;

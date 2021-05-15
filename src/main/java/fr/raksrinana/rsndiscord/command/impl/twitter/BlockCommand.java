@@ -35,9 +35,11 @@ public class BlockCommand extends BasicCommand{
 		if(args.isEmpty()){
 			return BAD_ARGUMENTS;
 		}
-		var result = TwitterApi.blockUser(args.poll());
-		JDAWrappers.message(event, "" + result.getData().isBlocking()).submit()
-				.thenAccept(ScheduleUtils.deleteMessage(date -> date.plusMinutes(5)));
+		args.forEach(user -> {
+			var result = TwitterApi.blockUser(args.poll());
+			JDAWrappers.message(event, "%s: %s".formatted(user, Boolean.toString(result.getData().isBlocking()))).submit()
+					.thenAccept(ScheduleUtils.deleteMessage(date -> date.plusMinutes(1)));
+		});
 		return SUCCESS;
 	}
 	
