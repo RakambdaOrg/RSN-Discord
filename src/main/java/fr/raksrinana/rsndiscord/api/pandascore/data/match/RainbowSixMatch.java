@@ -125,20 +125,20 @@ public class RainbowSixMatch{
 	private Integer winnerId;
 	
 	public void fillEmbed(EmbedBuilder builder){
-		var url = getStreams().stream()
+		var leagueUrl = getLeague().getImageUrlAsString();
+		var serieTier = ofNullable(getSerie().getTier())
+				.map(" (%s)"::formatted)
+				.orElse("");
+		var description = "%s%s - %s".formatted(getLeague().getName(), serieTier, getTournament().getName());
+		var streamUrl = getStreams().stream()
 				.sorted().findFirst()
 				.flatMap(Stream::getUrlAsString)
 				.or(() -> getLeague().getUrlAsString())
 				.orElse(null);
-		var leagueUrl = getLeague().getImageUrlAsString();
-		var thumbnail = getWinner()
+		var winnerImage = getWinner()
 				.flatMap(Opponent::getImageUrlAsString)
 				.or(() -> leagueUrl)
 				.orElse(null);
-		var tier = ofNullable(getSerie().getTier())
-				.map(" (%s)"::formatted)
-				.orElse("");
-		var description = "%s%s - %s".formatted(getLeague().getName(), tier, getTournament().getName());
 		var startDate = ofNullable(getStartDate())
 				.or(() -> ofNullable(getScheduledAt()))
 				.map(d -> d.withZoneSameInstant(ZONE_ID))
@@ -147,12 +147,16 @@ public class RainbowSixMatch{
 		var endDate = ofNullable(getEndDate())
 				.map(d -> d.withZoneSameInstant(ZONE_ID))
 				.map(DF::format);
+		var title = getOpponents().stream()
+				.map(WrappedOpponent::getOpponent)
+				.map(Opponent::getCompleteName)
+				.collect(Collectors.joining(" vs "));
 		
 		builder.setColor(getStatus().getColor())
 				.setTimestamp(ZonedDateTime.now())
-				.setThumbnail(thumbnail)
+				.setThumbnail(winnerImage)
 				.setFooter(String.valueOf(getId()), leagueUrl.orElse(null))
-				.setTitle(getName(), url)
+				.setTitle(title, streamUrl)
 				.setDescription(description)
 				.addField("Match type", getMatchType().getValue(), true)
 				.addField("Started at", startDate, true);
