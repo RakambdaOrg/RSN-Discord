@@ -136,7 +136,7 @@ public class MatchesRunner implements IScheduledRunner{
 	
 	@Override
 	public long getPeriod(){
-		return 5;
+		return 3;
 	}
 	
 	@NotNull
