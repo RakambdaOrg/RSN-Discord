@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import static fr.raksrinana.rsndiscord.api.pandascore.data.opponent.OpponentType.TEAM;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -28,7 +29,8 @@ public class TeamOpponent extends Opponent{
 	private ZonedDateTime modifiedAt;
 	
 	@Override
-	public @NotNull String getCompleteName(){
+	@NotNull
+	public String getCompleteName(){
 		var sb = new StringBuilder();
 		
 		if(Objects.nonNull(location)){
@@ -42,6 +44,13 @@ public class TeamOpponent extends Opponent{
 		}
 		
 		return sb.toString();
+	}
+	
+	@Override
+	@NotNull
+	public String getShortName(){
+		return Optional.ofNullable(getAcronym())
+				.orElse(getName());
 	}
 	
 	@Override

@@ -164,6 +164,7 @@ public class RainbowSixMatch{
 		getWinner().map(Opponent::getCompleteName)
 				.ifPresent(w -> builder.addField("Winner", w, true));
 		
+		builder.addBlankField(false);
 		getGames().stream()
 				.sorted()
 				.forEach(game -> game.fillEmbed(builder, getOpponents()));

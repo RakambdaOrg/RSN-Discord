@@ -34,6 +34,9 @@ public abstract class Opponent {
 	public abstract String getCompleteName();
 	
 	@NotNull
+	public abstract String getShortName();
+	
+	@NotNull
 	public abstract OpponentType getType();
 	
 	@NotNull

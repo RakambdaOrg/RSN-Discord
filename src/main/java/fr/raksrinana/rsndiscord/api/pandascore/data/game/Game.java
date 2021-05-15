@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.api.pandascore.data.opponent.Opponent;
 import fr.raksrinana.rsndiscord.api.pandascore.data.opponent.OpponentType;
 import fr.raksrinana.rsndiscord.api.pandascore.data.opponent.WrappedOpponent;
+import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.json.ISO8601ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.URLDeserializer;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.net.URL;
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Objects;
@@ -68,7 +70,13 @@ public class Game implements Comparable<Game>{
 			case NOT_STARTED -> "⏳ Not started";
 			case NOT_PLAYED -> "❌ Not played";
 			case RUNNING -> "▶ In progress";
-			case FINISHED -> "✅ Completed, winner : " + getWinnerName(opponents).orElse("Unknown winner");
+			case FINISHED -> {
+				var duration = getDuration().map(Utilities::durationToString).orElse("Unknown length");
+				var winner = getWinner(opponents)
+						.map(Opponent::getShortName)
+						.orElse("Unknown winner");
+				yield "✅ Completed (%s), winner : %s".formatted(duration, winner);
+			}
 		};
 		
 		builder.addField(name, content, false);
@@ -79,14 +87,17 @@ public class Game implements Comparable<Game>{
 		return Integer.compare(getPosition(), o.getPosition());
 	}
 	
-	private Optional<String> getWinnerName(Collection<WrappedOpponent<?>> opponents){
+	private Optional<Opponent> getWinner(Collection<WrappedOpponent<?>> opponents){
 		return Optional.ofNullable(getWinner())
 				.map(GameWinner::getId)
-				.map(id -> opponents.stream()
+				.flatMap(id -> opponents.stream()
 						.filter(o -> Objects.equals(o.getOpponent().getId(), id))
 						.findFirst()
-						.map(WrappedOpponent::getOpponent)
-						.map(Opponent::getCompleteName)
-						.orElse(String.valueOf(id)));
+						.map(WrappedOpponent::getOpponent));
+	}
+	
+	public Optional<Duration> getDuration(){
+		return Optional.ofNullable(getLength())
+				.map(Duration::ofSeconds);
 	}
 }

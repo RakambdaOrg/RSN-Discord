@@ -37,7 +37,8 @@ public class PlayerOpponent extends Opponent{
 	private String role;
 	
 	@Override
-	public @NotNull String getCompleteName(){
+	@NotNull
+	public String getCompleteName(){
 		var sb = new StringBuilder();
 		
 		if(Objects.nonNull(nationality)){
@@ -52,6 +53,12 @@ public class PlayerOpponent extends Opponent{
 		}
 		
 		return sb.toString();
+	}
+	
+	@Override
+	@NotNull
+	public String getShortName(){
+		return getName();
 	}
 	
 	@Override
