@@ -30,8 +30,6 @@ public class TwitchUtils{
 		
 		listener.addListener(ircChannelName, new GuildTwitchListener(guild.getIdLong(), channelId));
 		Log.getLogger(guild).info("Added Twitch listener for channel {} and guild {}", ircChannelName, guild);
-		
-		client.reconnect();
 	}
 	
 	public static void disconnect(Guild guild, String channel){
