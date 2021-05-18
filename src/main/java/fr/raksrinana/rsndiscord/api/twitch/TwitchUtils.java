@@ -19,18 +19,18 @@ public class TwitchUtils{
 	public static void connect(Guild guild, String channel){
 		var client = getIrcClient();
 		var ircChannelName = "#%s".formatted(channel.toLowerCase(Locale.ROOT));
+		var guildId = guild.getIdLong();
 		var channelId = Settings.get(guild).getTwitchConfiguration()
 				.getTwitchChannel()
 				.map(ChannelConfiguration::getChannelId)
 				.orElseThrow(() -> new RuntimeException("Twitch connection isn't enabled"));
 		
 		client.addChannel(ircChannelName);
-		if(listener.containsListener(ircChannelName, guild.getIdLong())){
-			return;
+		if(!listener.containsListener(ircChannelName, guildId)){
+			listener.addListener(ircChannelName, new GuildTwitchListener(guildId, channelId));
+			Log.getLogger(guild).info("Added Twitch listener for channel {} and guild {}", ircChannelName, guild);
 		}
 		
-		listener.addListener(ircChannelName, new GuildTwitchListener(guild.getIdLong(), channelId));
-		Log.getLogger(guild).info("Added Twitch listener for channel {} and guild {}", ircChannelName, guild);
 	}
 	
 	public static void disconnect(Guild guild, String channel){
