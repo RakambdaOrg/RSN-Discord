@@ -5,7 +5,6 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import net.dv8tion.jda.api.entities.Guild;
 import org.kitteh.irc.client.library.Client;
-import org.kitteh.irc.client.library.element.Channel;
 import org.kitteh.irc.client.library.feature.twitch.TwitchSupport;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,47 +24,24 @@ public class TwitchUtils{
 				.orElseThrow(() -> new RuntimeException("Twitch connection isn't enabled"));
 		
 		client.addChannel(ircChannelName);
-		var ircChannel = tryGettingChannel(ircChannelName, 40);
-		if(listener.containsListener(ircChannel, guild.getIdLong())){
+		if(listener.containsListener(ircChannelName, guild.getIdLong())){
 			return;
 		}
 		
-		Log.getLogger(guild).info("Added Twitch listener for channel {} and guild {}", ircChannel, guild);
-		listener.addListener(ircChannel, new GuildTwitchListener(guild.getIdLong(), channelId));
+		listener.addListener(ircChannelName, new GuildTwitchListener(guild.getIdLong(), channelId));
+		Log.getLogger(guild).info("Added Twitch listener for channel {} and guild {}", ircChannelName, guild);
 		
 		client.reconnect();
-	}
-	
-	private static Channel tryGettingChannel(String name, int attemptsLeft){
-		var channel = getIrcClient().getChannel(name);
-		if(channel.isPresent()){
-			return channel.get();
-		}
-		
-		if(attemptsLeft <= 0){
-			throw new RuntimeException("Couldn't get channel info");
-		}
-		
-		try{
-			Thread.sleep(250);
-		}
-		catch(InterruptedException e){
-			Log.getLogger().warn("Error while sleeping waiting for IRC channel", e);
-		}
-		
-		return tryGettingChannel(name, attemptsLeft - 1);
 	}
 	
 	public static void disconnect(Guild guild, String channel){
 		var client = getIrcClient();
 		var ircChannelName = "#%s".formatted(channel);
 		
-		var ircChannel = client.getChannel(ircChannelName)
-				.orElseThrow(() -> new RuntimeException("Couldn't get channel info"));
 		client.removeChannel(ircChannelName);
 		
 		Log.getLogger(guild).info("Removed Twitch listener for channel {}", ircChannelName);
-		listener.removeListener(ircChannel, guild.getIdLong());
+		listener.removeListener(ircChannelName, guild.getIdLong());
 	}
 	
 	public static void disconnectAll(){

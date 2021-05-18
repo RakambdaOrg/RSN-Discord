@@ -17,28 +17,32 @@ import org.kitteh.irc.client.library.feature.twitch.event.UserNoticeEvent;
 import java.util.*;
 
 public class TwitchIRCEventListener{
-	private final Map<Channel, Collection<GuildTwitchListener>> listeners;
+	private final Map<String, Collection<GuildTwitchListener>> listeners;
 	
 	public TwitchIRCEventListener(){
 		this.listeners = new HashMap<>();
 	}
 	
-	public void addListener(@NotNull Channel channel, @NotNull GuildTwitchListener listener){
+	public void addListener(@NotNull String channel, @NotNull GuildTwitchListener listener){
 		var channelListeners = getListeners(channel);
 		channelListeners.add(listener);
 		Log.getLogger().info("Loggers listening for channel {}: {}", channel, channelListeners);
 	}
 	
-	public boolean containsListener(@NotNull Channel channel, long guildId){
+	public boolean containsListener(@NotNull String channel, long guildId){
 		return getListeners(channel).stream()
 				.anyMatch(listeners -> Objects.equals(listeners.getGuildId(), guildId));
 	}
 	
-	public Collection<GuildTwitchListener> getListeners(@NotNull Channel channel){
+	private Collection<GuildTwitchListener> getListeners(@NotNull Channel channel){
+		return getListeners(channel.getName());
+	}
+	
+	public Collection<GuildTwitchListener> getListeners(@NotNull String channel){
 		return listeners.computeIfAbsent(channel, key -> new LinkedList<>());
 	}
 	
-	public void removeListener(@NotNull Channel channel, long guildId){
+	public void removeListener(@NotNull String channel, long guildId){
 		getListeners(channel).removeIf(listener -> Objects.equals(listener.getGuildId(), guildId));
 	}
 	
