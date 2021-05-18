@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import net.dv8tion.jda.api.entities.Guild;
 import org.kitteh.irc.client.library.Client;
 import org.kitteh.irc.client.library.feature.twitch.TwitchSupport;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import static org.kitteh.irc.client.library.Client.Builder.Server.SecurityType.SECURE;
@@ -17,7 +18,7 @@ public class TwitchUtils{
 	
 	public static void connect(Guild guild, String channel){
 		var client = getIrcClient();
-		var ircChannelName = "#%s".formatted(channel);
+		var ircChannelName = "#%s".formatted(channel.toLowerCase(Locale.ROOT));
 		var channelId = Settings.get(guild).getTwitchConfiguration()
 				.getTwitchChannel()
 				.map(ChannelConfiguration::getChannelId)
