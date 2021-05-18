@@ -1,6 +1,8 @@
 package fr.raksrinana.rsndiscord.api.twitch;
 
+import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.log.Log;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import net.engio.mbassy.listener.Handler;
 import org.jetbrains.annotations.NotNull;
 import org.kitteh.irc.client.library.element.Channel;
@@ -8,6 +10,7 @@ import org.kitteh.irc.client.library.event.channel.ChannelJoinEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelMessageEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelNoticeEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelPartEvent;
+import org.kitteh.irc.client.library.event.client.ClientNegotiationCompleteEvent;
 import org.kitteh.irc.client.library.event.connection.ClientConnectionClosedEvent;
 import org.kitteh.irc.client.library.feature.twitch.event.ClearChatEvent;
 import org.kitteh.irc.client.library.feature.twitch.event.UserNoticeEvent;
@@ -26,6 +29,11 @@ public class TwitchIRCEventListener{
 		Log.getLogger().info("Loggers listening for channel {}: {}", channel, channelListeners);
 	}
 	
+	public boolean containsListener(@NotNull Channel channel, long guildId){
+		return getListeners(channel).stream()
+				.anyMatch(listeners -> Objects.equals(listeners.getGuildId(), guildId));
+	}
+	
 	public Collection<GuildTwitchListener> getListeners(@NotNull Channel channel){
 		return listeners.computeIfAbsent(channel, key -> new LinkedList<>());
 	}
@@ -39,13 +47,31 @@ public class TwitchIRCEventListener{
 	}
 	
 	@Handler
+	private void onClientConnectionEstablishedEvent(ClientNegotiationCompleteEvent event){
+		Log.getLogger().info("IRC client negotiations ended, connecting to auto-connect channels");
+		Main.getJda().getGuilds()
+				.forEach(guild -> Settings.get(guild)
+						.getTwitchConfiguration()
+						.getTwitchAutoConnectUsers()
+						.forEach(user -> {
+							try{
+								Log.getLogger(guild).info("Auto-connecting to irc user {}", user);
+								TwitchUtils.connect(guild, user);
+							}
+							catch(Exception e){
+								Log.getLogger(guild).error("Failed to automatically connect to twitch user {}", user, e);
+							}
+						}));
+	}
+	
+	@Handler
 	public void onClientConnectionCLoseEvent(ClientConnectionClosedEvent event){
 		if(event.canAttemptReconnect()){
 			Log.getLogger().warn("IRC connection closed, attempting to reconnect");
 			event.setAttemptReconnect(true);
 		}
 		else{
-			Log.getLogger().info("IRC connection closed");
+			Log.getLogger().info("IRC connection closed, cannot reconnect");
 		}
 	}
 	

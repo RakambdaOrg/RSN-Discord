@@ -26,9 +26,14 @@ public class TwitchUtils{
 		
 		client.addChannel(ircChannelName);
 		var ircChannel = tryGettingChannel(ircChannelName, 40);
+		if(listener.containsListener(ircChannel, guild.getIdLong())){
+			return;
+		}
 		
 		Log.getLogger(guild).info("Added Twitch listener for channel {} and guild {}", ircChannel, guild);
 		listener.addListener(ircChannel, new GuildTwitchListener(guild.getIdLong(), channelId));
+		
+		client.reconnect();
 	}
 	
 	private static Channel tryGettingChannel(String name, int attemptsLeft){
@@ -92,6 +97,7 @@ public class TwitchUtils{
 			
 			TwitchSupport.addSupport(ircClient);
 			ircClient.connect();
+			ircClient.setExceptionListener(e -> Log.getLogger().error("Error from irc", e));
 			
 			listener = new TwitchIRCEventListener();
 			ircClient.getEventManager().registerEventListener(listener);
