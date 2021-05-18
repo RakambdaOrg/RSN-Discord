@@ -70,6 +70,7 @@ public class TwitchIRCEventListener{
 	
 	@Handler
 	public void onClientConnectionCLoseEvent(ClientConnectionClosedEvent event){
+		removeAllListeners();
 		if(event.canAttemptReconnect()){
 			Log.getLogger().warn("IRC connection closed, attempting to reconnect");
 			event.setAttemptReconnect(true);
