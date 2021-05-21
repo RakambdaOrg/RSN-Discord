@@ -26,6 +26,7 @@ open module fr.raksrinana.rsndiscord {
 	requires scribejava.core;
 	requires org.kitteh.irc.client.library;
 	requires mbassador;
+	
 	requires static lombok;
-	requires static org.jetbrains.annotations;
+	requires static annotations;
 }
