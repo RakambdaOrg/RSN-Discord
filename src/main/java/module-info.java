@@ -28,5 +28,5 @@ open module fr.raksrinana.rsndiscord {
 	requires mbassador;
 	
 	requires static lombok;
-	requires static annotations;
+	requires static org.jetbrains.annotations;
 }
