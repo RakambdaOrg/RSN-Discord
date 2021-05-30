@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
-import static fr.raksrinana.rsndiscord.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.CHANNEL;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
@@ -38,8 +37,7 @@ public class ClearCommand extends SubCommand{
 		var targetChannel = Optional.ofNullable(event.getOption(CHANNEL_OPTION_ID)).map(OptionMapping::getAsMessageChannel).orElse(channel);
 		
 		var message = translate(event.getGuild(), "clear.removing", messageCount, targetChannel.getId());
-		JDAWrappers.replyCommand(event, message).submit()
-				.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
+		JDAWrappers.replyCommand(event, message).submitAndDelete(5);
 		
 		targetChannel.getIterableHistory()
 				.takeAsync(messageCount)

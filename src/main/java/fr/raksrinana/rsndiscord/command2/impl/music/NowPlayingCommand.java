@@ -1,46 +1,41 @@
-package fr.raksrinana.rsndiscord.command.impl.music;
+package fr.raksrinana.rsndiscord.command2.impl.music;
 
-import fr.raksrinana.rsndiscord.command.BasicCommand;
-import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.CommandResult;
+import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.music.trackfields.ReplayTrackDataField;
 import fr.raksrinana.rsndiscord.music.trackfields.RequesterTrackDataField;
 import fr.raksrinana.rsndiscord.music.trackfields.TrackUserFields;
-import fr.raksrinana.rsndiscord.permission.IPermission;
-import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
-import java.util.LinkedList;
-import java.util.List;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.awt.Color.CYAN;
 import static java.awt.Color.RED;
 
-public class NowPlayingMusicCommand extends BasicCommand{
-	/**
-	 * Constructor.
-	 *
-	 * @param parent The parent command.
-	 */
-	NowPlayingMusicCommand(Command parent){
-		super(parent);
+public class NowPlayingCommand extends SubCommand{
+	@Override
+	@NotNull
+	public String getId(){
+		return "playing";
 	}
 	
-	@NotNull
 	@Override
-	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
-		super.execute(event, args);
+	@NotNull
+	public String getShortDescription(){
+		return "Displays the current playing music";
+	}
+	
+	@Override
+	@NotNull
+	public CommandResult execute(@NotNull SlashCommandEvent event){
 		var guild = event.getGuild();
 		
-		var builder = new EmbedBuilder().setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl())
-				.setColor(CYAN);
+		var builder = new EmbedBuilder().setColor(CYAN);
 		
 		RSNAudioManager.currentTrack(guild).ifPresentOrElse(track -> {
 			var userData = track.getUserData(TrackUserFields.class);
@@ -52,7 +47,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 					.map(Object::toString)
 					.orElse("False");
 			var progressBar = String.format("%s %s / %s",
-					NowPlayingMusicCommand.buildBar(track.getPosition(), track.getDuration()),
+					NowPlayingCommand.buildBar(track.getPosition(), track.getDuration()),
 					getDuration(track.getPosition()),
 					getDuration(track.getDuration()));
 			
@@ -66,7 +61,7 @@ public class NowPlayingMusicCommand extends BasicCommand{
 			builder.setDescription(translate(guild, "music.nothing-playing"));
 		});
 		
-		JDAWrappers.message(event, builder.build()).submit();
+		JDAWrappers.replyCommand(event, builder.build()).submit();
 		return SUCCESS;
 	}
 	
@@ -90,34 +85,11 @@ public class NowPlayingMusicCommand extends BasicCommand{
 	 * @return A readable version of this duration.
 	 */
 	@NotNull
-	static String getDuration(long time){
+	public static String getDuration(long time){
 		var duration = Duration.ofMillis(time);
 		if(duration.toHoursPart() > 0){
 			return String.format("%02d:%02d:%02d", duration.toHoursPart(), duration.toMinutesPart(), duration.toSecondsPart());
 		}
 		return String.format("%02d:%02d", duration.toMinutesPart(), duration.toSecondsPart());
-	}
-	
-	@Override
-	public @NotNull IPermission getPermission(){
-		return new SimplePermission("command.music.currently-playing", true);
-	}
-	
-	@NotNull
-	@Override
-	public String getName(@NotNull Guild guild){
-		return translate(guild, "command.music.now-playing.name");
-	}
-	
-	@NotNull
-	@Override
-	public String getDescription(@NotNull Guild guild){
-		return translate(guild, "command.music.now-playing.description");
-	}
-	
-	@NotNull
-	@Override
-	public List<String> getCommandStrings(){
-		return List.of("nowplaying", "np");
 	}
 }

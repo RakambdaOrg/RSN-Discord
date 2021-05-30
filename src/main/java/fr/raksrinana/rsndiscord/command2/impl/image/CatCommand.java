@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.stream.Collectors;
-import static fr.raksrinana.rsndiscord.schedule.ScheduleUtils.deleteMessageMins;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.awt.Color.GREEN;
 
@@ -48,7 +47,7 @@ public class CatCommand extends SubCommand{
 					
 					JDAWrappers.replyCommand(event, embed.build()).submit();
 				},
-				() -> JDAWrappers.replyCommand(event, translate(guild, "image.cat.error")).submit().thenAccept(deleteMessageMins(5)));
+				() -> JDAWrappers.replyCommand(event, translate(guild, "image.cat.error")).submitAndDelete(5));
 		
 		return CommandResult.SUCCESS;
 	}

@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
@@ -21,7 +20,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
-import static fr.raksrinana.rsndiscord.schedule.ScheduleUtils.deleteMessageMins;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static fr.raksrinana.rsndiscord.utils.Utilities.durationToString;
 import static java.awt.Color.*;
@@ -82,7 +80,7 @@ public class NicknameCommand extends SimpleCommand{
 			builder.setColor(ORANGE)
 					.setTitle(translate(guild, "nickname.no-changes"))
 					.addField(translate(guild, "nickname.reason"), translate(guild, "nickname.same-nickname"), false);
-			JDAWrappers.replyCommand(event, builder.build()).submit().thenAccept(deleteMessageMins(10));
+			JDAWrappers.replyCommand(event, builder.build()).submitAndDelete(10);
 			return SUCCESS;
 		}
 		
@@ -101,7 +99,7 @@ public class NicknameCommand extends SimpleCommand{
 					.addField(translate(guild, "nickname.reason"), translate(guild, "nickname.cooldown", durationToString(delay)), true)
 					.addField(translate(guild, "nickname.last-change"), lastChangeStr, true)
 					.addField(translate(guild, "nickname.next-allowed"), nextChange, true);
-			JDAWrappers.replyCommand(event, builder.build()).submit().thenAccept(deleteMessageMins(10));
+			JDAWrappers.replyCommand(event, builder.build()).submitAndDelete(10);
 			return SUCCESS;
 		}
 		
@@ -123,14 +121,14 @@ public class NicknameCommand extends SimpleCommand{
 						builder.setColor(RED)
 								.setTitle(translate(guild, "nickname.invalid"))
 								.addField(translate(guild, "nickname.reason"), errorMessage, false);
-						JDAWrappers.replyCommand(event, builder.build()).submit().thenAccept(deleteMessageMins(10));
+						JDAWrappers.replyCommand(event, builder.build()).submitAndDelete(10);
 						return null;
 					});
 		}
 		catch(HierarchyException e){
 			builder.setColor(RED)
 					.addField(translate(guild, "nickname.reason"), translate(guild, "nickname.target-error"), false);
-			JDAWrappers.replyCommand(event, builder.build()).submit().thenAccept(deleteMessageMins(10));
+			JDAWrappers.replyCommand(event, builder.build()).submitAndDelete(10);
 		}
 		return SUCCESS;
 	}

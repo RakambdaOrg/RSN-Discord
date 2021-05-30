@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.command2.impl.permission.role;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.SlashCommandService;
 import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
+import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.Member;
@@ -51,14 +52,22 @@ public class RemoveCommand extends SubCommand{
 		
 		var role = event.getOption(ROLE_OPTION_ID).getAsRole();
 		var name = event.getOption(NAME_OPTION_ID).getAsString();
-		var privilege = CommandPrivilege.disable(role);
 		
-		SlashCommandService.getRegistrableCommand(name).ifPresentOrElse(
-				command -> command.updateCommandPrivileges(event.getGuild(), privileges -> {
-					privileges.remove(privilege);
-					return privileges;
-				}).thenAccept(empty -> JDAWrappers.replyCommand(event, "Permission reset").submit()),
-				() -> JDAWrappers.replyCommand(event, "Permission not found").submit());
+		if(name.startsWith("$")){
+			Settings.get(event.getGuild()).getPermissionsConfiguration()
+					.grant(role, name.substring(1));
+			JDAWrappers.replyCommand(event, "Custom permission reset").submit();
+		}
+		else{
+			var privilege = CommandPrivilege.disable(role);
+			
+			SlashCommandService.getRegistrableCommand(name).ifPresentOrElse(
+					command -> command.updateCommandPrivileges(event.getGuild(), privileges -> {
+						privileges.remove(privilege);
+						return privileges;
+					}).thenAccept(empty -> JDAWrappers.replyCommand(event, "Command permission reset").submit()),
+					() -> JDAWrappers.replyCommand(event, "Command not found").submit());
+		}
 		
 		return SUCCESS;
 	}

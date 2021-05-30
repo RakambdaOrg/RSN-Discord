@@ -29,7 +29,7 @@ public class StopwatchReply extends BasicWaitingUserReply{
 	private Duration totalTime = ZERO;
 	
 	public StopwatchReply(@NotNull GuildMessageReceivedEvent event, @NotNull Message message){
-		super(event, event.getAuthor(), event.getChannel(), 1, DAYS, message);
+		super(event.getAuthor(), event.getChannel(), 1, DAYS, message);
 		executor = Executors.newSingleThreadScheduledExecutor();
 		executor.scheduleAtFixedRate(this::updateTimer, 5, 10, SECONDS);
 	}

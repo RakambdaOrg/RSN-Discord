@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.command.impl.music;
+package fr.raksrinana.rsndiscord.command2.impl.music;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
@@ -8,25 +8,25 @@ import fr.raksrinana.rsndiscord.music.trackfields.TrackUserFields;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import static fr.raksrinana.rsndiscord.command.impl.music.NowPlayingMusicCommand.getDuration;
+import static fr.raksrinana.rsndiscord.command2.impl.music.NowPlayingCommand.getDuration;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.awt.Color.GREEN;
 
 public class AddMusicTrackConsumer implements TrackConsumer{
 	private final Guild guild;
-	private final TextChannel channel;
+	private final SlashCommandEvent event;
 	private final boolean repeat;
 	private final User author;
 	
-	public AddMusicTrackConsumer(@NotNull Guild guild, @NotNull TextChannel channel, @NotNull User author, boolean repeat){
+	public AddMusicTrackConsumer(@NotNull Guild guild, @NotNull SlashCommandEvent event, @NotNull User author, boolean repeat){
 		this.guild = guild;
-		this.channel = channel;
+		this.event = event;
 		this.author = author;
 		this.repeat = repeat;
 	}
@@ -65,17 +65,17 @@ public class AddMusicTrackConsumer implements TrackConsumer{
 				.setTitle(translate(guild, "music.track.added"), track.getInfo().uri)
 				.setDescription(track.getInfo().title)
 				.addField(translate(guild, "music.requester"), author.getAsMention(), true)
-				.addField(translate(guild, "music.track.duration"), NowPlayingMusicCommand.getDuration(track.getDuration()), true)
+				.addField(translate(guild, "music.track.duration"), getDuration(track.getDuration()), true)
 				.addField(translate(guild, "music.track.eta"), getDuration(delay), true)
 				.addField(translate(guild, "music.repeating"), String.valueOf(repeat), true);
 		if(!isCurrentTrack){
 			builder.addField(translate(guild, "music.queue.position"), String.valueOf(1 + before.size()), true);
 		}
-		JDAWrappers.message(channel, builder.build()).submit();
+		JDAWrappers.replyCommandNewMessage(event, builder.build()).submit();
 	}
 	
 	@Override
 	public void onFailure(@NotNull String message){
-		JDAWrappers.message(channel, message).submit();
+		JDAWrappers.replyCommandNewMessage(event, message).submit();
 	}
 }

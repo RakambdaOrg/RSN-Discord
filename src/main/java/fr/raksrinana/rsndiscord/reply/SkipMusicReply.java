@@ -3,16 +3,15 @@ package fr.raksrinana.rsndiscord.reply;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
-import fr.raksrinana.rsndiscord.schedule.ScheduleUtils;
-import fr.raksrinana.rsndiscord.settings.guild.schedule.DeleteMessageScheduleConfiguration;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import org.jetbrains.annotations.NotNull;
-import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -26,8 +25,8 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 	private final int votesRequired;
 	private final AudioTrack audioTrack;
 	
-	public SkipMusicReply(GuildMessageReceivedEvent event, Message message, int votesRequired, AudioTrack audioTrack){
-		super(event, event.getAuthor(), event.getChannel(), 20, SECONDS, message);
+	public SkipMusicReply(SlashCommandEvent event, Message message, int votesRequired, AudioTrack audioTrack){
+		super(event.getUser(), (TextChannel) event.getChannel(), 20, SECONDS, message);
 		this.votesRequired = votesRequired;
 		this.audioTrack = audioTrack;
 	}
@@ -104,12 +103,8 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 		var channel = getWaitChannel();
 		var guild = channel.getGuild();
 		
-		Log.getLogger(guild).info("Vote note successful, music not skipped");
+		Log.getLogger(guild).info("Vote not successful, music not skipped");
 		
-		JDAWrappers.message(channel, translate(guild, "music.skip.timeout")).submit();
-		
-		var deleteMessageScheduleConfiguration = new DeleteMessageScheduleConfiguration(channel.getJDA().getSelfUser(),
-				ZonedDateTime.now().plusMinutes(5), channel, getOriginalMessageId());
-		ScheduleUtils.addSchedule(guild, deleteMessageScheduleConfiguration);
+		JDAWrappers.message(channel, translate(guild, "music.skip.timeout")).submitAndDelete(5);
 	}
 }

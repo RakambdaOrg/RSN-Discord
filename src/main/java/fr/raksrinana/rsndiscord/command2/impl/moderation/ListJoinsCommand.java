@@ -15,7 +15,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
-import static fr.raksrinana.rsndiscord.schedule.ScheduleUtils.deleteMessageMins;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
 
@@ -61,8 +60,7 @@ public class ListJoinsCommand extends SubCommand{
 				}))
 				.onError(error -> {
 					Log.getLogger(guild).error("Failed to load members", error);
-					JDAWrappers.replyCommand(event, translate(guild, "list-joins.error-members")).submit()
-							.thenAccept(deleteMessageMins(5));
+					JDAWrappers.replyCommand(event, translate(guild, "list-joins.error-members")).submitAndDelete(5);
 				});
 		return SUCCESS;
 	}

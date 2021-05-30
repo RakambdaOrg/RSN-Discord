@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import static fr.raksrinana.rsndiscord.schedule.ScheduleUtils.deleteMessageMins;
 
 public class MessageWrapper{
 	private final ISnowflake target;
@@ -93,5 +94,10 @@ public class MessageWrapper{
 					logger.info("Sent message to {} : {}", target, message.getContentRaw());
 					return message;
 				});
+	}
+	
+	@NotNull
+	public CompletableFuture<Void> submitAndDelete(int minutes){
+		return submit().thenAccept(deleteMessageMins(minutes));
 	}
 }

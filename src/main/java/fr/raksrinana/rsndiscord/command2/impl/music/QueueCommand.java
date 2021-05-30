@@ -1,56 +1,57 @@
-package fr.raksrinana.rsndiscord.command.impl.music;
+package fr.raksrinana.rsndiscord.command2.impl.music;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import fr.raksrinana.rsndiscord.command.BasicCommand;
-import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.CommandResult;
+import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.music.trackfields.ReplayTrackDataField;
 import fr.raksrinana.rsndiscord.music.trackfields.RequesterTrackDataField;
 import fr.raksrinana.rsndiscord.music.trackfields.TrackUserFields;
-import fr.raksrinana.rsndiscord.permission.IPermission;
-import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
-import java.util.LinkedList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.awt.Color.PINK;
+import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
 
-public class QueueMusicCommand extends BasicCommand{
-	/**
-	 * Constructor.
-	 *
-	 * @param parent The parent command.
-	 */
-	QueueMusicCommand(@NotNull Command parent){
-		super(parent);
-	}
+public class QueueCommand extends SubCommand{
+	private static final String PAGE_OPTION_ID = "page";
 	
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
-		super.addHelp(guild, builder);
-		builder.addField("<page>", translate(guild, "command.music.queue.help.page"), false);
-	}
-	
 	@NotNull
+	public String getId(){
+		return "queue";
+	}
+	
 	@Override
-	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
-		super.execute(event, args);
-		
+	@NotNull
+	public String getShortDescription(){
+		return "Displays the queue";
+	}
+	
+	@Override
+	@NotNull
+	protected Collection<? extends OptionData> getOptions(){
+		return List.of(new OptionData(INTEGER, PAGE_OPTION_ID, "Page to get"));
+	}
+	
+	@Override
+	@NotNull
+	public CommandResult execute(@NotNull SlashCommandEvent event){
 		var guild = event.getGuild();
-		var author = event.getAuthor();
+		var author = event.getUser();
 		var queue = RSNAudioManager.getQueue(guild);
 		var perPage = 10L;
 		var maxPageNumber = (int) Math.ceil(queue.size() / (double) perPage);
 		
-		long page = getArgumentAsLong(args)
+		long page = getOptionAsInt(event.getOption(PAGE_OPTION_ID))
 				.map(val -> val - 1L)
 				.orElse(0L);
 		var position = new AtomicLong(perPage * page);
@@ -82,43 +83,14 @@ public class QueueMusicCommand extends BasicCommand{
 					var trackInfo = track.getInfo().title +
 							"\n" + translate(guild, "music.requester") + ": " + requester +
 							"\n" + translate(guild, "music.repeating") + ": " + repeating +
-							"\n" + translate(guild, "music.track.duration") + ": " + NowPlayingMusicCommand.getDuration(track.getDuration()) +
-							"\n" + translate(guild, "music.track.eta") + ": " + NowPlayingMusicCommand.getDuration(beforeDuration.get());
+							"\n" + translate(guild, "music.track.duration") + ": " + NowPlayingCommand.getDuration(track.getDuration()) +
+							"\n" + translate(guild, "music.track.eta") + ": " + NowPlayingCommand.getDuration(beforeDuration.get());
 					
 					builder.addField("Position " + position.addAndGet(1), trackInfo, false);
 					beforeDuration.addAndGet(track.getDuration());
 				});
 		
-		JDAWrappers.message(event, builder.build()).submit();
+		JDAWrappers.replyCommand(event, builder.build()).submit();
 		return SUCCESS;
-	}
-	
-	@NotNull
-	@Override
-	public String getCommandUsage(){
-		return super.getCommandUsage() + " <page>";
-	}
-	
-	@Override
-	public @NotNull IPermission getPermission(){
-		return new SimplePermission("command.music.queue", true);
-	}
-	
-	@NotNull
-	@Override
-	public String getName(@NotNull Guild guild){
-		return translate(guild, "command.music.queue.name");
-	}
-	
-	@NotNull
-	@Override
-	public String getDescription(@NotNull Guild guild){
-		return translate(guild, "command.music.queue.description");
-	}
-	
-	@NotNull
-	@Override
-	public List<String> getCommandStrings(){
-		return List.of("queue", "q");
 	}
 }

@@ -265,11 +265,18 @@ public class JDAWrappers{
 		return new ReplySlashCommandEditMessageWrapper(event.getGuild(), event.getHook(), embed);
 	}
 	
+	@NotNull
 	public static ReplySlashCommandEditMessageWrapper replyCommand(@NotNull SlashCommandEvent event, @NotNull String messsage){
 		return new ReplySlashCommandEditMessageWrapper(event.getGuild(), event.getHook(), messsage);
 	}
 	
+	@NotNull
 	public static ReplySlashCommandNewMessageWrapper replyCommandNewMessage(@NotNull SlashCommandEvent event, @NotNull String messsage){
 		return new ReplySlashCommandNewMessageWrapper(event.getGuild(), event.getHook(), messsage);
+	}
+	
+	@NotNull
+	public static ReplySlashCommandNewMessageWrapper replyCommandNewMessage(@NotNull SlashCommandEvent event, @NotNull MessageEmbed embed){
+		return new ReplySlashCommandNewMessageWrapper(event.getGuild(), event.getHook(), embed);
 	}
 }

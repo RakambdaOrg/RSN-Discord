@@ -5,7 +5,6 @@ import lombok.Getter;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import org.jetbrains.annotations.NotNull;
@@ -24,17 +23,14 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 	private final TextChannel waitChannel;
 	@Getter
 	private final User waitUser;
-	@Getter
-	private final long originalMessageId;
 	private final Object lock;
 	@Getter
 	private boolean handled;
 	
-	protected BasicWaitingUserReply(@NotNull GenericGuildMessageEvent event, @NotNull User author, @NotNull TextChannel waitChannel, int delay, @NotNull TimeUnit unit, @NotNull Message... infoMessages){
+	protected BasicWaitingUserReply(@NotNull User author, @NotNull TextChannel waitChannel, int delay, @NotNull TimeUnit unit, @NotNull Message... infoMessages){
 		lock = new Object();
 		this.waitChannel = waitChannel;
 		waitUser = author;
-		originalMessageId = event.getMessageIdLong();
 		handled = false;
 		this.infoMessages = new ArrayList<>();
 		this.infoMessages.addAll(Arrays.asList(infoMessages));

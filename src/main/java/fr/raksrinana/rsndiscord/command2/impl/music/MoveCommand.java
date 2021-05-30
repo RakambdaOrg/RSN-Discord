@@ -1,64 +1,78 @@
-package fr.raksrinana.rsndiscord.command.impl.music;
+package fr.raksrinana.rsndiscord.command2.impl.music;
 
-import fr.raksrinana.rsndiscord.command.BasicCommand;
-import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.CommandResult;
+import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
+import fr.raksrinana.rsndiscord.command2.permission.IPermission;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.music.trackfields.ReplayTrackDataField;
 import fr.raksrinana.rsndiscord.music.trackfields.RequesterTrackDataField;
 import fr.raksrinana.rsndiscord.music.trackfields.TrackUserFields;
-import fr.raksrinana.rsndiscord.permission.IPermission;
-import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import static fr.raksrinana.rsndiscord.command.CommandResult.BAD_ARGUMENTS;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command2.permission.SimplePermission.FALSE_BY_DEFAULT;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.awt.Color.CYAN;
+import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
 
-public class MoveMusicCommand extends BasicCommand{
-	/**
-	 * Constructor.
-	 *
-	 * @param parent The parent command.
-	 */
-	MoveMusicCommand(Command parent){
-		super(parent);
-	}
+public class MoveCommand extends SubCommand{
+	private static final String FROM_OPTION_ID = "from";
+	private static final String TO_OPTION_ID = "to";
 	
 	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
-		super.addHelp(guild, builder);
-		builder.addField("from", translate(guild, "command.music.move.help.from"), false)
-				.addField("to", translate(guild, "command.music.move.help.to"), false);
-	}
-	
-	@SuppressWarnings("DuplicatedCode")
 	@NotNull
+	public String getId(){
+		return "move";
+	}
+	
 	@Override
-	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
-		super.execute(event, args);
-		if(args.isEmpty()){
-			return BAD_ARGUMENTS;
-		}
+	@NotNull
+	public String getShortDescription(){
+		return "Move a track in the queue";
+	}
+	
+	@Override
+	public boolean replyEphemeral(){
+		return false;
+	}
+	
+	@Override
+	@NotNull
+	public IPermission getPermission(){
+		return FALSE_BY_DEFAULT;
+	}
+	
+	@Override
+	@NotNull
+	protected Collection<? extends OptionData> getOptions(){
+		return List.of(
+				new OptionData(INTEGER, FROM_OPTION_ID, "The position of the track to move").setRequired(true),
+				new OptionData(INTEGER, TO_OPTION_ID, "The new position of the track (default: end of queue)")
+		);
+	}
+	
+	@Override
+	@NotNull
+	public CommandResult execute(@NotNull SlashCommandEvent event){
 		
-		var author = event.getAuthor();
-		
+		var author = event.getUser();
 		var queue = RSNAudioManager.getQueue(event.getGuild());
-		var moveFromPosition = getArgumentAsInteger(args)
+		
+		var moveFromPosition = getOptionAsInt(event.getOption(FROM_OPTION_ID))
 				.filter(value -> value > 0 && value <= queue.size())
 				.map(val -> val - 1)
 				.orElseThrow(() -> new IllegalArgumentException("Please give a valid position"));
-		var moveToPosition = -1 + Math.min(queue.size(), getArgumentAsInteger(args)
+		var moveToPosition = -1 + Math.min(queue.size(), getOptionAsInt(event.getOption(TO_OPTION_ID))
 				.filter(value -> value > 0)
 				.orElse(1));
+		
 		var track = queue.get(moveFromPosition);
 		var userData = track.getUserData(TrackUserFields.class);
 		
@@ -79,36 +93,7 @@ public class MoveMusicCommand extends BasicCommand{
 				.addField(translate(event.getGuild(), "music.requester"), requester, true)
 				.addField(translate(event.getGuild(), "music.repeating"), repeating, true)
 				.build();
-		JDAWrappers.message(event, embed).submit();
+		JDAWrappers.replyCommand(event, embed).submit();
 		return SUCCESS;
-	}
-	
-	@NotNull
-	@Override
-	public String getCommandUsage(){
-		return super.getCommandUsage() + " <from> [to]";
-	}
-	
-	@Override
-	public @NotNull IPermission getPermission(){
-		return new SimplePermission("command.music.move", false);
-	}
-	
-	@NotNull
-	@Override
-	public String getName(@NotNull Guild guild){
-		return translate(guild, "command.music.move.name");
-	}
-	
-	@NotNull
-	@Override
-	public String getDescription(@NotNull Guild guild){
-		return translate(guild, "command.music.move.description");
-	}
-	
-	@NotNull
-	@Override
-	public List<String> getCommandStrings(){
-		return List.of("move");
 	}
 }
