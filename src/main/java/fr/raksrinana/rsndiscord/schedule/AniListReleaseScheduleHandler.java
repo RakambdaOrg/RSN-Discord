@@ -4,6 +4,7 @@ import fr.raksrinana.rsndiscord.api.anilist.query.MediaPagedQuery;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.schedule.handler.IScheduleHandler;
 import fr.raksrinana.rsndiscord.settings.guild.schedule.ScheduleConfiguration;
+import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -27,23 +28,20 @@ public class AniListReleaseScheduleHandler implements IScheduleHandler{
 	}
 	
 	@Override
-	public boolean accept(@NotNull ScheduleConfiguration reminder){
+	public boolean accept(@NotNull Guild guild, @NotNull ScheduleConfiguration reminder){
 		var data = reminder.getData();
 		if(data.containsKey(MEDIA_ID_KEY)){
 			return reminder.getUser().getUser()
-					.flatMap(user -> reminder.getChannel().getChannel()
-							.flatMap(channel -> {
-								var guild = channel.getGuild();
-								return ofNullable(guild.getMember(user)).map(member -> {
-									try{
-										return sendNotification(reminder, data, user, channel, guild, member);
-									}
-									catch(Exception e){
-										Log.getLogger(member.getGuild()).error("Failed to get media", e);
-									}
-									return false;
-								});
-							}))
+					.flatMap(user -> reminder.getChannel().flatMap(ChannelConfiguration::getChannel)
+							.flatMap(channel -> ofNullable(guild.getMember(user)).map(member -> {
+								try{
+									return sendNotification(reminder, data, user, channel, guild, member);
+								}
+								catch(Exception e){
+									Log.getLogger(member.getGuild()).error("Failed to get media", e);
+								}
+								return false;
+							})))
 					.orElse(false);
 		}
 		return false;

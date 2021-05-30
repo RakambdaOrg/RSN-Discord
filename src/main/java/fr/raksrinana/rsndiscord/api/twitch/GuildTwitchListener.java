@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.api.twitch;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.raksrinana.rsndiscord.Main;
-import fr.raksrinana.rsndiscord.command.impl.RandomKick;
+import fr.raksrinana.rsndiscord.command2.impl.moderation.RandomKickCommand;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.music.TrackConsumer;
@@ -203,7 +203,7 @@ public class GuildTwitchListener{
 							.flatMap(pingRole -> pingRole.getRole().stream())
 							.collect(toSet());
 					var pingsStr = pings.stream().map(Role::getAsMention).collect(joining(" "));
-					var targetRole = RandomKick.getRandomRole(getGuild());
+					var targetRole = RandomKickCommand.getRandomRole(getGuild());
 					
 					var messageContent = pingsStr + " => " + translate(getGuild(), "random-kick.bought",
 							event.getActor().getNick(),
@@ -218,7 +218,7 @@ public class GuildTwitchListener{
 										event.getChannel().getName(),
 										event.getMessage());
 								
-								RandomKick.randomKick(channel, targetRole.orElse(null), reason, false);
+								RandomKickCommand.randomKick(channel, targetRole.orElse(null), reason, false);
 							}, 30, SECONDS));
 				});
 	}

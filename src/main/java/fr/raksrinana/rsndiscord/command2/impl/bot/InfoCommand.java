@@ -1,21 +1,14 @@
-package fr.raksrinana.rsndiscord.command.impl;
+package fr.raksrinana.rsndiscord.command2.impl.bot;
 
 import fr.raksrinana.rsndiscord.Main;
-import fr.raksrinana.rsndiscord.command.BasicCommand;
-import fr.raksrinana.rsndiscord.command.BotCommand;
-import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.CommandResult;
+import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.log.Log;
-import fr.raksrinana.rsndiscord.permission.IPermission;
-import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
@@ -25,17 +18,11 @@ import static java.awt.Color.GREEN;
 import static java.time.Duration.between;
 import static java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME;
 
-@BotCommand
-public class InfosCommand extends BasicCommand{
+public class InfoCommand extends SubCommand{
 	private String botVersion;
 	private String commitId;
 	
-	public InfosCommand(){
-		loadAllProperties();
-	}
-	
-	public InfosCommand(Command parent){
-		super(parent);
+	public InfoCommand(){
 		loadAllProperties();
 	}
 	
@@ -64,12 +51,20 @@ public class InfosCommand extends BasicCommand{
 		return properties;
 	}
 	
-	@NotNull
-	@Override
-	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
-		super.execute(event, args);
+	@Override@NotNull
+	public  String getId(){
+		return "info";
+	}
+	
+	@Override@NotNull
+	public String getShortDescription(){
+		return "Get generic infos about the bot";
+	}
+	
+	@Override@NotNull
+	public  CommandResult execute(@NotNull SlashCommandEvent event){
 		var guild = event.getGuild();
-		var author = event.getAuthor();
+		var author = event.getUser();
 		var now = ZonedDateTime.now();
 		
 		var embed = new EmbedBuilder().setAuthor(author.getName(), null, author.getAvatarUrl())
@@ -81,30 +76,7 @@ public class InfosCommand extends BasicCommand{
 				.addField(translate(guild, "infos.elapsed"), durationToString(between(Main.bootTime, now)), false)
 				.build();
 		
-		JDAWrappers.message(event, embed).submit();
+		JDAWrappers.replyCommand(event, embed).submit();
 		return SUCCESS;
-	}
-	
-	@Override
-	public @NotNull IPermission getPermission(){
-		return new SimplePermission("command.infos", true);
-	}
-	
-	@NotNull
-	@Override
-	public String getName(@NotNull Guild guild){
-		return translate(guild, "command.infos.name");
-	}
-	
-	@NotNull
-	@Override
-	public String getDescription(@NotNull Guild guild){
-		return translate(guild, "command.infos.description");
-	}
-	
-	@NotNull
-	@Override
-	public List<String> getCommandStrings(){
-		return List.of("info");
 	}
 }

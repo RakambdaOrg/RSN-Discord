@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.StringJoiner;
 import static fr.raksrinana.rsndiscord.schedule.ScheduleTag.NONE;
 
@@ -51,15 +52,15 @@ public class ScheduleConfiguration implements IAtomicConfiguration{
 	@JsonProperty("data")
 	private Map<String, String> data = new HashMap<>();
 	
-	protected ScheduleConfiguration(@NotNull User user, @NotNull TextChannel channel, @NotNull ZonedDateTime scheduleDate, @NotNull String message){
+	protected ScheduleConfiguration(@NotNull User user, @Nullable TextChannel channel, @NotNull ZonedDateTime scheduleDate, @NotNull String message){
 		this(user, channel, scheduleDate, message, NONE, null);
 	}
 	
-	protected ScheduleConfiguration(@NotNull User user, @NotNull TextChannel channel, @NotNull ZonedDateTime scheduleDate, @NotNull String message, @NotNull ScheduleTag tag, @Nullable Map<String, String> data){
-		this(new UserConfiguration(user), new ChannelConfiguration(channel), scheduleDate, message, tag, data);
+	protected ScheduleConfiguration(@NotNull User user, @Nullable TextChannel channel, @NotNull ZonedDateTime scheduleDate, @NotNull String message, @NotNull ScheduleTag tag, @Nullable Map<String, String> data){
+		this(new UserConfiguration(user), channel == null ? null : new ChannelConfiguration(channel), scheduleDate, message, tag, data);
 	}
 	
-	protected ScheduleConfiguration(@NotNull UserConfiguration user, @NotNull ChannelConfiguration channel, @NotNull ZonedDateTime scheduleDate, @NotNull String message, @NotNull ScheduleTag tag, @Nullable Map<String, String> data){
+	protected ScheduleConfiguration(@NotNull UserConfiguration user, @Nullable ChannelConfiguration channel, @NotNull ZonedDateTime scheduleDate, @NotNull String message, @NotNull ScheduleTag tag, @Nullable Map<String, String> data){
 		this.user = user;
 		this.channel = channel;
 		this.scheduleDate = scheduleDate;
@@ -72,9 +73,14 @@ public class ScheduleConfiguration implements IAtomicConfiguration{
 		this(new UserConfiguration(user), new ChannelConfiguration(channel), scheduleDate, message, tag, null);
 	}
 	
+	@NotNull
+	public Optional<ChannelConfiguration> getChannel(){
+		return Optional.ofNullable(channel);
+	}
+	
 	@Override
 	public boolean shouldBeRemoved(){
-		return getUser().shouldBeRemoved() || getChannel().shouldBeRemoved();
+		return getUser().shouldBeRemoved() || getChannel().map(ChannelConfiguration::shouldBeRemoved).orElse(false);
 	}
 	
 	@Override

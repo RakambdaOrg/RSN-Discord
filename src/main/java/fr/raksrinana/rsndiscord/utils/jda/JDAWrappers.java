@@ -11,6 +11,7 @@ import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.*;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.*;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.role.SetColorWrapper;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
@@ -254,7 +255,21 @@ public class JDAWrappers{
 		return new LeaveGuildWrapper(guild);
 	}
 	
+	@NotNull
 	public static EditPresenceWrapper editPresence(){
 		return new EditPresenceWrapper();
+	}
+	
+	@NotNull
+	public static ReplySlashCommandEditMessageWrapper replyCommand(@NotNull SlashCommandEvent event, @NotNull MessageEmbed embed){
+		return new ReplySlashCommandEditMessageWrapper(event.getGuild(), event.getHook(), embed);
+	}
+	
+	public static ReplySlashCommandEditMessageWrapper replyCommand(@NotNull SlashCommandEvent event, @NotNull String messsage){
+		return new ReplySlashCommandEditMessageWrapper(event.getGuild(), event.getHook(), messsage);
+	}
+	
+	public static ReplySlashCommandNewMessageWrapper replyCommandNewMessage(@NotNull SlashCommandEvent event, @NotNull String messsage){
+		return new ReplySlashCommandNewMessageWrapper(event.getGuild(), event.getHook(), messsage);
 	}
 }

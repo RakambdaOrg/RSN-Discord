@@ -2,6 +2,7 @@ package fr.raksrinana.rsndiscord;
 
 import fr.raksrinana.rsndiscord.api.twitch.TwitchUtils;
 import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
+import fr.raksrinana.rsndiscord.command2.SlashCommandService;
 import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
@@ -78,6 +79,8 @@ public class Main{
 					.setStatus(ONLINE)
 					.setActivity(Activity.of(Activity.ActivityType.DEFAULT, DEFAULT_PREFIX + "help for the help"));
 			Log.getLogger().info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
+			Log.getLogger().info("Registering slash commands");
+			SlashCommandService.registerGlobalCommands();
 			Log.getLogger().info("Adding handlers");
 			ReactionUtils.registerAllHandlers();
 			ScheduleUtils.registerAllHandlers();
@@ -85,7 +88,7 @@ public class Main{
 			RunnerUtils.registerAllScheduledRunners();
 			Log.getLogger().info("Started");
 			announceStart();
-			executorService.schedule(() -> TwitchUtils.connect(), 15, TimeUnit.SECONDS);
+			executorService.schedule((Runnable) TwitchUtils::connect, 15, TimeUnit.SECONDS);
 			
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 				Log.getLogger().info("Shutdown hook triggered");

@@ -31,7 +31,7 @@ public class SchedulesRunner implements IScheduledRunner{
 				if(currentDate.isAfter(schedule.getScheduleDate())){
 					for(var handler : ScheduleUtils.getHandlers()){
 						if(handler.acceptTag(schedule.getTag())){
-							if(handler.accept(schedule)){
+							if(handler.accept(guild, schedule)){
 								Settings.get(guild).removeSchedule(schedule);
 								break;
 							}

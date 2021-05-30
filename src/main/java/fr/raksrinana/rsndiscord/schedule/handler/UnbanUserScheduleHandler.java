@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.schedule.handler;
 import fr.raksrinana.rsndiscord.schedule.ScheduleTag;
 import fr.raksrinana.rsndiscord.settings.guild.schedule.ScheduleConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import static fr.raksrinana.rsndiscord.schedule.ScheduleTag.UNBAN_USER;
@@ -18,10 +18,8 @@ public class UnbanUserScheduleHandler implements IScheduleHandler{
 	}
 	
 	@Override
-	public boolean accept(@NotNull ScheduleConfiguration reminder){
-		reminder.getChannel().getChannel()
-				.map(TextChannel::getGuild)
-				.ifPresent(guild -> JDAWrappers.unban(guild, reminder.getData().get(USER_ID_KEY)).submit());
+	public boolean accept(@NotNull Guild guild, @NotNull ScheduleConfiguration reminder){
+		JDAWrappers.unban(guild, reminder.getData().get(USER_ID_KEY)).submit();
 		return true;
 	}
 	

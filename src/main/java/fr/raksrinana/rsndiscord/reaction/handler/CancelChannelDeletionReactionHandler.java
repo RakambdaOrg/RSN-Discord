@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.reaction.handler;
 import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
+import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
@@ -33,7 +34,7 @@ public class CancelChannelDeletionReactionHandler extends TodoReactionHandler{
 			Settings.get(message.getGuild())
 					.getSchedules().stream()
 					.filter(schedule -> schedule.getTag() == DELETE_CHANNEL && schedule.getChannel()
-							.getChannel()
+							.flatMap(ChannelConfiguration::getChannel)
 							.map(channel -> Objects.equals(channel, message.getChannel()))
 							.orElse(false))
 					.forEach(schedule -> Settings.get(message.getGuild()).removeSchedule(schedule));

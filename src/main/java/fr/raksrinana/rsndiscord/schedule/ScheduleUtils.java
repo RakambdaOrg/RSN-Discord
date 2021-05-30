@@ -110,6 +110,11 @@ public class ScheduleUtils{
 		return message -> deleteMessage(message, applyDelay);
 	}
 	
+	@NotNull
+	public static Consumer<Message> deleteMessageMins(int minutes){
+		return deleteMessage(date -> date.plusMinutes(minutes));
+	}
+	
 	public static void deleteMessage(@NotNull Message message, @NotNull Function<ZonedDateTime, ZonedDateTime> applyDelay){
 		addSchedule(message.getGuild(), new DeleteMessageScheduleConfiguration(
 				message.getAuthor(),

@@ -1,36 +1,77 @@
-package fr.raksrinana.rsndiscord.command.impl;
+package fr.raksrinana.rsndiscord.command2.impl.moderation;
 
 import fr.raksrinana.rsndiscord.Main;
-import fr.raksrinana.rsndiscord.command.BasicCommand;
-import fr.raksrinana.rsndiscord.command.BotCommand;
 import fr.raksrinana.rsndiscord.command.CommandResult;
+import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.log.Log;
-import fr.raksrinana.rsndiscord.permission.IPermission;
-import fr.raksrinana.rsndiscord.permission.SimplePermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.LinkedList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import static fr.raksrinana.rsndiscord.command.CommandResult.BAD_ARGUMENTS;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.schedule.ScheduleUtils.deleteMessageMins;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static net.dv8tion.jda.api.interactions.commands.OptionType.ROLE;
+import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
-@BotCommand
-public class RandomKick extends BasicCommand{
+public class RandomKickCommand extends SubCommand{
+	private static final String MESSAGE_OPTION_ID = "message";
+	private static final String ROLE_OPTION_ID = "role";
+	
+	@Override
+	@NotNull
+	public String getId(){
+		return "randomkick";
+	}
+	
+	@Override
+	@NotNull
+	public String getShortDescription(){
+		return "Randomly kick a person";
+	}
+	
+	@Override
+	@NotNull
+	protected Collection<? extends OptionData> getOptions(){
+		return List.of(
+				new OptionData(STRING, MESSAGE_OPTION_ID, "Random kick message").setRequired(true),
+				new OptionData(ROLE, ROLE_OPTION_ID, "Role in which to chose a person").setRequired(true));
+	}
+	
+	@Override
+	@NotNull
+	public CommandResult execute(@NotNull SlashCommandEvent event){
+		var targetRole = Optional.ofNullable(event.getOption(ROLE_OPTION_ID)).map(OptionMapping::getAsRole).orElse(null);
+		var reason = event.getOption(MESSAGE_OPTION_ID).getAsString();
+		
+		Settings.get(event.getGuild()).getGeneralChannel()
+				.flatMap(ChannelConfiguration::getChannel)
+				.ifPresentOrElse(
+						channel -> {
+							JDAWrappers.replyCommand(event, "Random kick started");
+							randomKick(channel, targetRole, reason, true);
+						},
+						() -> JDAWrappers.replyCommand(event, "No announce channel defined in configuration").submit().thenAccept(deleteMessageMins(2)));
+		
+		return SUCCESS;
+	}
+	
 	public static Optional<Role> getRandomRole(@NotNull Guild guild){
 		var chance = ThreadLocalRandom.current().nextDouble();
 		var randomKickConfiguration = Settings.get(guild).getRandomKick();
@@ -43,27 +84,6 @@ public class RandomKick extends BasicCommand{
 					.flatMap(RoleConfiguration::getRole);
 		}
 		return Optional.empty();
-	}
-	
-	@Override
-	public void addHelp(@NotNull Guild guild, @NotNull EmbedBuilder builder){
-		super.addHelp(guild, builder);
-		builder.addField("reason", translate(guild, "command.random-kick.help.reason"), false);
-	}
-	
-	@NotNull
-	@Override
-	public CommandResult execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
-		super.execute(event, args);
-		if(args.isEmpty()){
-			return BAD_ARGUMENTS;
-		}
-		
-		var targetRole = getFirstRoleMentioned(event).orElse(null);
-		var reason = String.join(" ", args);
-		
-		randomKick(event.getChannel(), targetRole, reason, true);
-		return SUCCESS;
 	}
 	
 	public static void randomKick(@NotNull TextChannel channel, @Nullable Role targetRole, @NotNull String reason, boolean allowReKick){
@@ -131,33 +151,5 @@ public class RandomKick extends BasicCommand{
 								return null;
 							});
 				}, 30, TimeUnit.SECONDS));
-	}
-	
-	@Override
-	public @NotNull String getCommandUsage(){
-		return super.getCommandUsage() + "[@role] <reason>";
-	}
-	
-	@Override
-	public @NotNull IPermission getPermission(){
-		return new SimplePermission("command.random-kick", false);
-	}
-	
-	@NotNull
-	@Override
-	public String getName(@NotNull Guild guild){
-		return translate(guild, "command.random-kick.name");
-	}
-	
-	@NotNull
-	@Override
-	public String getDescription(@NotNull Guild guild){
-		return translate(guild, "command.random-kick.description");
-	}
-	
-	@NotNull
-	@Override
-	public List<String> getCommandStrings(){
-		return List.of("randomKick");
 	}
 }

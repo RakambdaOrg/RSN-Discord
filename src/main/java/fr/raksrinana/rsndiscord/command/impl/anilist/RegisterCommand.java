@@ -54,7 +54,7 @@ class RegisterCommand extends BasicCommand{
 		catch(IllegalArgumentException e){
 			JDAWrappers.message(event, translate(guild, "anilist.api-code.invalid")).submit()
 					.thenAccept(deleteMessage(date -> date.plusMinutes(10)));
-			return NOT_HANDLED;
+			return SUCCESS;
 		}
 		catch(InvalidResponseException e){
 			Log.getLogger(guild).error("Error getting AniList access token", e);

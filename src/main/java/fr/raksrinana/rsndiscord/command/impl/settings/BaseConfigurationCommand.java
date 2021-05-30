@@ -54,7 +54,7 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 			if(!getAllowedOperations().contains(operation)){
 				JDAWrappers.message(event, translate(guild, "configuration.operation.not-supported")).submit()
 						.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
-				return NOT_HANDLED;
+				return SUCCESS;
 			}
 			Log.getLogger(guild).info("Executing configuration operation {}", operation);
 			switch(operation){

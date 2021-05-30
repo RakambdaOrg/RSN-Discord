@@ -34,7 +34,6 @@ public class AutoRolesEventListener extends ListenerAdapter{
 							.thenAccept(isBanned -> {
 								if(!isBanned){
 									var unbanScheduleConfiguration = new UnbanScheduleConfiguration(event.getJDA().getSelfUser(),
-											guild.getDefaultChannel(),
 											ZonedDateTime.now().plus(banDuration),
 											"Banned for: " + "Left server",
 											member.getId());
