@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord.command2.impl.moderation;
 
-import fr.raksrinana.rsndiscord.command.BotCommand;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.settings.guild.schedule.UnbanScheduleConfiguration;
@@ -19,7 +18,6 @@ import static fr.raksrinana.rsndiscord.utils.Utilities.durationToString;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
 
-@BotCommand
 public class SoftBanCommand extends SubCommand{
 	private static final String USER_OPTION_ID = "user";
 	private static final String DURATION_OPTION_ID = "duration";
