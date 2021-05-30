@@ -9,7 +9,6 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +19,7 @@ import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.command2.permission.SimplePermission.FALSE_BY_DEFAULT;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.Objects.isNull;
+import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
 public class SeekCommand extends SubCommand{
 	private static final Pattern TIME_PATTERN = Pattern.compile("((\\d{1,2}):)?((\\d{1,2}):)?(\\d{1,2})");
@@ -47,7 +47,7 @@ public class SeekCommand extends SubCommand{
 	@Override
 	@NotNull
 	protected Collection<? extends OptionData> getOptions(){
-		return List.of(new OptionData(OptionType.STRING, TIME_OPTION_ID, "Time to seek").setRequired(true));
+		return List.of(new OptionData(STRING, TIME_OPTION_ID, "Time to seek").setRequired(true));
 	}
 	
 	@Override

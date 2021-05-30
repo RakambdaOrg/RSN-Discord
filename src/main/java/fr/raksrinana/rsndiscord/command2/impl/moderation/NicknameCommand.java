@@ -22,7 +22,7 @@ import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
 
 public class NicknameCommand extends SubCommand{
-	private static final String USER_OPTION_ID = "nick";
+	private static final String USER_OPTION_ID = "user";
 	private static final String NICK_OPTION_ID = "nick";
 	
 	@Override
