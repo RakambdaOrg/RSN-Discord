@@ -12,6 +12,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public interface IRegistrableCommand extends ICommand{
+	Function<Collection<? extends CommandPrivilege>, ? extends Collection<? extends CommandPrivilege>> DISPLAY_PRIVILEGES = commandPrivileges -> {
+		commandPrivileges.forEach(commandPrivilege -> Log.getLogger().info("AFTER PRIVILEGE {} {} {}", commandPrivilege.getType(), commandPrivilege.getId(), commandPrivilege.isEnabled()));
+		return commandPrivileges;
+	};
+	Function<List<CommandPrivilege>, List<CommandPrivilege>> DISPLAY_PRIVILEGES2 = commandPrivileges -> {
+		commandPrivileges.forEach(commandPrivilege -> Log.getLogger().info("BEFORE PRIVILEGE {} {} {}", commandPrivilege.getType(), commandPrivilege.getId(), commandPrivilege.isEnabled()));
+		return commandPrivileges;
+	};
+	
 	default boolean getDefaultPermission(){
 		return true;
 	}
@@ -44,7 +53,9 @@ public interface IRegistrableCommand extends ICommand{
 									Log.getLogger(guild).error("Failed to retrieve privileges", e);
 									return new ArrayList<>();
 								})
+								.thenApply(DISPLAY_PRIVILEGES2)
 								.thenApply(commandUpdate)
+								.thenApply(DISPLAY_PRIVILEGES)
 								.thenCompose(commandPrivileges -> command.updatePrivileges(guild, commandPrivileges).submit()))
 						.orElse(CompletableFuture.completedFuture(null))
 		);
