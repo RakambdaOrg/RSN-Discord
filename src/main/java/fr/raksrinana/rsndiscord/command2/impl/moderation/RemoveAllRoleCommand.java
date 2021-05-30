@@ -36,7 +36,6 @@ public class RemoveAllRoleCommand extends SubCommand{
 	@Override
 	@NotNull
 	public CommandResult execute(@NotNull SlashCommandEvent event){
-		
 		var guild = event.getGuild();
 		var targetRole = event.getOption(ROLE_OPTION_ID).getAsRole();
 		
