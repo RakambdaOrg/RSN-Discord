@@ -111,7 +111,7 @@ public class Main{
 	
 	@NotNull
 	static CLIParameters loadEnv(@NotNull String[] args){
-		Log.getLogger().info("Starting bot version");
+		Log.getLogger().info("Starting bot");
 		if(DEVELOPMENT){
 			Log.getLogger().warn("Developer mode activated, shouldn't be used in production!");
 		}

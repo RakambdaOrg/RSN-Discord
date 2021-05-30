@@ -51,18 +51,21 @@ public class InfoCommand extends SubCommand{
 		return properties;
 	}
 	
-	@Override@NotNull
-	public  String getId(){
+	@Override
+	@NotNull
+	public String getId(){
 		return "info";
 	}
 	
-	@Override@NotNull
+	@Override
+	@NotNull
 	public String getShortDescription(){
 		return "Get generic infos about the bot";
 	}
 	
-	@Override@NotNull
-	public  CommandResult execute(@NotNull SlashCommandEvent event){
+	@Override
+	@NotNull
+	public CommandResult execute(@NotNull SlashCommandEvent event){
 		var guild = event.getGuild();
 		var author = event.getUser();
 		var now = ZonedDateTime.now();

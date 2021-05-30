@@ -1,35 +1,29 @@
-package fr.raksrinana.rsndiscord.command2.impl;
+package fr.raksrinana.rsndiscord.command2.impl.moderation;
 
 import fr.raksrinana.rsndiscord.command.CommandResult;
-import fr.raksrinana.rsndiscord.command2.BotSlashCommand;
-import fr.raksrinana.rsndiscord.command2.base.SimpleCommand;
+import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.log.Log;
-import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
-import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.schedule.ScheduleUtils.deleteMessageMins;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
-import static fr.raksrinana.rsndiscord.utils.Utilities.durationToString;
 import static java.awt.Color.*;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
+import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
 
-@BotSlashCommand
-public class NicknameCommand extends SimpleCommand{
-	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
+public class NicknameCommand extends SubCommand{
+	private static final String USER_OPTION_ID = "nick";
 	private static final String NICK_OPTION_ID = "nick";
 	
 	@Override
@@ -41,13 +35,15 @@ public class NicknameCommand extends SimpleCommand{
 	@Override
 	@NotNull
 	public String getShortDescription(){
-		return "Change your nickname";
+		return "Change the nickname of a user";
 	}
 	
 	@Override
 	@NotNull
 	protected Collection<? extends OptionData> getOptions(){
-		return List.of(new OptionData(STRING, NICK_OPTION_ID, "The nickname to set (leave empty to reset it)"));
+		return List.of(
+				new OptionData(USER, USER_OPTION_ID, "The user to change the nickname").setRequired(true),
+				new OptionData(STRING, NICK_OPTION_ID, "The nickname to set (leave empty to reset it)"));
 	}
 	
 	@Override
@@ -59,8 +55,10 @@ public class NicknameCommand extends SimpleCommand{
 	@NotNull
 	public CommandResult execute(@NotNull SlashCommandEvent event){
 		var guild = event.getGuild();
-		var member = event.getMember();
-		var user = event.getUser();
+		var author = event.getUser();
+		
+		var member = event.getOption(USER_OPTION_ID).getAsMember();
+		var user = member.getUser();
 		
 		var oldNickname = Optional.ofNullable(member.getNickname());
 		var newNickname = Optional.ofNullable(event.getOption(NICK_OPTION_ID))
@@ -68,15 +66,11 @@ public class NicknameCommand extends SimpleCommand{
 				.filter(val -> !val.isBlank());
 		
 		var builder = new EmbedBuilder()
-				.setAuthor(user.getName(), null, user.getAvatarUrl())
+				.setAuthor(author.getName(), null, author.getAvatarUrl())
 				.addField(translate(guild, "nickname.user"), user.getAsMention(), true)
 				.addField(translate(guild, "nickname.old-nick"), oldNickname.orElseGet(() -> translate(guild, "nickname.unknown")), true)
 				.addField(translate(guild, "nickname.new-nick"), newNickname.orElseGet(() -> translate(guild, "nickname.unknown")), true)
 				.setTimestamp(ZonedDateTime.now());
-		
-		var nicknameConfiguration = Settings.get(guild).getNicknameConfiguration();
-		var lastChange = nicknameConfiguration.getLastChange(user);
-		var delay = Duration.ofSeconds(nicknameConfiguration.getChangeDelay());
 		
 		if(newNickname.equals(oldNickname)){
 			builder.setColor(ORANGE)
@@ -86,35 +80,12 @@ public class NicknameCommand extends SimpleCommand{
 			return SUCCESS;
 		}
 		
-		var isStillInCooldown = lastChange.map(date -> date.plus(delay))
-				.map(date -> date.isAfter(ZonedDateTime.now()))
-				.orElse(false);
-		
-		if(newNickname.isPresent() && isStillInCooldown){
-			var lastChangeStr = lastChange.map(date -> date.format(DF))
-					.orElseGet(() -> translate(guild, "nickname.unknown"));
-			var nextChange = lastChange.map(date -> date.plus(delay))
-					.map(date -> date.format(DF))
-					.orElseGet(() -> translate(guild, "nickname.unknown"));
-			
-			builder.setColor(RED)
-					.addField(translate(guild, "nickname.reason"), translate(guild, "nickname.cooldown", durationToString(delay)), true)
-					.addField(translate(guild, "nickname.last-change"), lastChangeStr, true)
-					.addField(translate(guild, "nickname.next-allowed"), nextChange, true);
-			JDAWrappers.replyCommand(event, builder.build()).submit().thenAccept(deleteMessageMins(10));
-			return SUCCESS;
-		}
-		
 		try{
 			JDAWrappers.modifyNickname(member, newNickname.orElse(null)).submit()
 					.thenAccept(empty -> {
-						Log.getLogger(guild).info("{} renamed from `{}` to `{}`", member, oldNickname, newNickname);
+						Log.getLogger(guild).info("{} renamed {} from `{}` to `{}`", author, member, oldNickname, newNickname);
 						
-						var newLastChange = ZonedDateTime.now();
-						nicknameConfiguration.setLastChange(user, newLastChange);
-						
-						builder.setColor(GREEN)
-								.addField(translate(guild, "nickname.next-allowed"), newLastChange.plus(delay).format(DF), false);
+						builder.setColor(GREEN);
 						
 						JDAWrappers.replyCommand(event, builder.build()).submit();
 					})
