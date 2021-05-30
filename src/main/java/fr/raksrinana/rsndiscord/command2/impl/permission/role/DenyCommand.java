@@ -54,7 +54,7 @@ public class DenyCommand extends SubCommand{
 		var privilege = CommandPrivilege.disable(role);
 		
 		SlashCommandService.getRegistrableCommand(name).ifPresentOrElse(
-				command -> command.updateGuildCommandPrivileges(event.getGuild(), privileges -> {
+				command -> command.updateCommandPrivileges(event.getGuild(), privileges -> {
 					privileges.remove(privilege);
 					privileges.add(privilege);
 					return privileges;

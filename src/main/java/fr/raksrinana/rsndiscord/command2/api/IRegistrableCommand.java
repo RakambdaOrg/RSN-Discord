@@ -25,8 +25,21 @@ public interface IRegistrableCommand extends ICommand{
 		return true;
 	}
 	
+	default boolean isGuildSpecific(){
+		return false;
+	}
+	
 	@NotNull
 	CommandData getSlashCommand();
+	
+	@NotNull
+	default CompletableFuture<Void> updateCommandPrivileges(@NotNull Guild guild,
+			@NotNull Function<List<CommandPrivilege>, Collection<? extends CommandPrivilege>> commandUpdate){
+		if(isGuildSpecific()){
+			return updateGuildCommandPrivileges(guild, commandUpdate);
+		}
+		return updateGlobalCommandPrivileges(guild, commandUpdate);
+	}
 	
 	@NotNull
 	default CompletableFuture<Void> updateGuildCommandPrivileges(@NotNull Guild guild,
