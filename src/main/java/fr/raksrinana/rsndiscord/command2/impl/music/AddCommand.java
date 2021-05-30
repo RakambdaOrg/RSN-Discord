@@ -46,7 +46,7 @@ public class AddCommand extends SubCommand{
 		return List.of(
 				new OptionData(STRING, QUERY_OPTION_ID, "Query to add (link)").setRequired(true),
 				new OptionData(INTEGER, SKIP_OPTION_ID, "The number of items to skip if this is a playlist").setRequired(false),
-				new OptionData(STRING, QUERY_OPTION_ID, "The maximum number of tracks to import from a playlist").setRequired(false),
+				new OptionData(STRING, MAX_OPTION_ID, "The maximum number of tracks to import from a playlist").setRequired(false),
 				new OptionData(BOOLEAN, REPEAT_OPTION_ID, "If the tracks should be repeated in the queue").setRequired(false)
 		);
 	}
