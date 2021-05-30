@@ -16,7 +16,7 @@ import fr.raksrinana.rsndiscord.utils.RequestException;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
@@ -85,10 +85,10 @@ public class TraktApi{
 		return clientId;
 	}
 	
-	public static void pollDeviceToken(@NotNull GuildMessageReceivedEvent event, @NotNull DeviceCode deviceCode){
+	public static void pollDeviceToken(@NotNull SlashCommandEvent event, @NotNull DeviceCode deviceCode){
 		var guild = event.getGuild();
 		var channel = event.getChannel();
-		var userToken = Settings.getGeneral().getTrakt().getAccessToken(event.getAuthor().getIdLong()).orElse(null);
+		var userToken = Settings.getGeneral().getTrakt().getAccessToken(event.getUser().getIdLong()).orElse(null);
 		var expireDate = ZonedDateTime.now().plusSeconds(deviceCode.getExpiresIn());
 		var sleepTime = deviceCode.getInterval() * 1000L;
 		
@@ -108,11 +108,11 @@ public class TraktApi{
 				try{
 					var deviceToken = postQuery(userToken, deviceTokenQuery);
 					Settings.getGeneral().getTrakt()
-							.addAccessToken(new TraktAccessTokenConfiguration(event.getAuthor().getIdLong(),
+							.addAccessToken(new TraktAccessTokenConfiguration(event.getUser().getIdLong(),
 									ZonedDateTime.now().plusSeconds(deviceToken.getExpiresIn()),
 									deviceToken.getAccessToken(), deviceToken.getRefreshToken()));
 					
-					JDAWrappers.message(channel, translate(guild, "trakt.authenticated")).submit();
+					JDAWrappers.replyCommand(event, translate(guild, "trakt.authenticated")).submit();
 					return;
 				}
 				catch(RequestException e){
@@ -125,7 +125,7 @@ public class TraktApi{
 					}
 					retry = false;
 				}
-				JDAWrappers.message(channel, translate(guild, "trakt.authentication-failed")).submit();
+				JDAWrappers.replyCommand(event, translate(guild, "trakt.authentication-failed")).submit();
 			}
 		});
 	}

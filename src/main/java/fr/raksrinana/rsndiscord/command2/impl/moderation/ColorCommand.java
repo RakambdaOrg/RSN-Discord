@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS_NO_MESSAGE;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.ROLE;
@@ -53,7 +53,7 @@ public class ColorCommand extends SubCommand{
 		var time = getOptionAsInt(event.getOption(TIME_OPTION_ID)).orElseThrow();
 		
 		colorize(time, role);
-		return SUCCESS;
+		return SUCCESS_NO_MESSAGE;
 	}
 	
 	private void colorize(int time, Role role){

@@ -7,7 +7,6 @@ import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
@@ -26,7 +25,7 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 	private final AudioTrack audioTrack;
 	
 	public SkipMusicReply(SlashCommandEvent event, Message message, int votesRequired, AudioTrack audioTrack){
-		super(event.getUser(), (TextChannel) event.getChannel(), 20, SECONDS, message);
+		super(event.getUser(), event.getTextChannel(), 20, SECONDS, message);
 		this.votesRequired = votesRequired;
 		this.audioTrack = audioTrack;
 	}

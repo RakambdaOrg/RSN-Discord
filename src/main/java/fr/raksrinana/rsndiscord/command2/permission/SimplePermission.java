@@ -18,10 +18,13 @@ public record SimplePermission(boolean allowedByDefault) implements IPermission{
 		var permissions = Settings.get(member.getGuild())
 				.getPermissionsConfiguration()
 				.getAggregatedPermissions(member);
+		if(isPermissionInList(id, permissions.getGranted())){
+			return true;
+		}
 		if(isPermissionInList(id, permissions.getDenied())){
 			return false;
 		}
-		return allowedByDefault || isPermissionInList(id, permissions.getGranted());
+		return allowedByDefault;
 	}
 	
 	private static boolean isPermissionInList(@NotNull String commandId, @NotNull Collection<String> permissions){
@@ -31,6 +34,9 @@ public record SimplePermission(boolean allowedByDefault) implements IPermission{
 	private static boolean matches(@NotNull String permissionId, @NotNull String commandId){
 		if(permissionId.contains("*")){
 			var beginning = permissionId.substring(0, permissionId.indexOf("*"));
+			if(beginning.endsWith("/")){
+				beginning = beginning.substring(0, beginning.length() - 1);
+			}
 			return commandId.startsWith(beginning);
 		}
 		return commandId.equals(permissionId);

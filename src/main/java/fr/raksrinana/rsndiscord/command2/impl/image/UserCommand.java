@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Set;
-import static fr.raksrinana.rsndiscord.command.CommandResult.REPLIED;
+import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.awt.Color.GREEN;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
@@ -50,6 +50,6 @@ public class UserCommand extends SubCommand{
 				.build();
 		
 		JDAWrappers.replyCommand(event, embed).submit();
-		return REPLIED;
+		return SUCCESS;
 	}
 }

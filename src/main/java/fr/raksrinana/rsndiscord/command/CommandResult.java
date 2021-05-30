@@ -14,9 +14,9 @@ public enum CommandResult{
 	 */
 	SUCCESS,
 	/**
-	 * Indicates that a response has been sent.
+	 * Indicates that no response has been sent.
 	 */
-	REPLIED,
+	SUCCESS_NO_MESSAGE,
 	/**
 	 * Will send a predefined message.
 	 */

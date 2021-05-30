@@ -47,7 +47,6 @@ public class SoftBanCommand extends SubCommand{
 	@NotNull
 	public CommandResult execute(@NotNull SlashCommandEvent event){
 		var guild = event.getGuild();
-		var channel = event.getChannel();
 		
 		var target = event.getOption(USER_OPTION_ID).getAsMember();
 		var duration = getOptionAs(event.getOption(DURATION_OPTION_ID), Utilities::parseDuration).orElseThrow();

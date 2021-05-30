@@ -5,7 +5,6 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.Guild;
@@ -25,7 +24,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
-import static fr.raksrinana.rsndiscord.schedule.ScheduleUtils.deleteMessageMins;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.ROLE;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
@@ -60,14 +58,8 @@ public class RandomKickCommand extends SubCommand{
 		var targetRole = Optional.ofNullable(event.getOption(ROLE_OPTION_ID)).map(OptionMapping::getAsRole).orElse(null);
 		var reason = event.getOption(MESSAGE_OPTION_ID).getAsString();
 		
-		Settings.get(event.getGuild()).getGeneralChannel()
-				.flatMap(ChannelConfiguration::getChannel)
-				.ifPresentOrElse(
-						channel -> {
-							JDAWrappers.replyCommand(event, "Random kick started");
-							randomKick(channel, targetRole, reason, true);
-						},
-						() -> JDAWrappers.replyCommand(event, "No announce channel defined in configuration").submit().thenAccept(deleteMessageMins(2)));
+		JDAWrappers.replyCommand(event, "Random kick started");
+		randomKick(event.getTextChannel(), targetRole, reason, true);
 		
 		return SUCCESS;
 	}
