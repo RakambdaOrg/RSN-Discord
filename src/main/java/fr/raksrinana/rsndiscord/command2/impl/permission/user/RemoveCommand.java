@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.command2.impl.permission.role;
+package fr.raksrinana.rsndiscord.command2.impl.permission.user;
 
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.SlashCommandService;
@@ -16,23 +16,22 @@ import java.util.Collection;
 import java.util.Set;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
 import static fr.raksrinana.rsndiscord.command2.permission.SimplePermission.FALSE_BY_DEFAULT;
-import static net.dv8tion.jda.api.interactions.commands.OptionType.ROLE;
-import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
+import static net.dv8tion.jda.api.interactions.commands.OptionType.*;
 
-public class DenyCommand extends SubCommand{
-	public static final String ROLE_OPTION_ID = "role";
+public class RemoveCommand extends SubCommand{
+	public static final String USER_OPTION_ID = "user";
 	public static final String NAME_OPTION_ID = "name";
 	
 	@Override
 	@NotNull
 	public String getId(){
-		return "deny";
+		return "remove";
 	}
 	
 	@Override
 	@NotNull
 	public String getShortDescription(){
-		return "Deny permission to a role";
+		return "Reset a permission of user";
 	}
 	
 	@Override
@@ -50,7 +49,7 @@ public class DenyCommand extends SubCommand{
 	@NotNull
 	protected Collection<? extends OptionData> getOptions(){
 		return Set.of(
-				new OptionData(ROLE, ROLE_OPTION_ID, "Role").setRequired(true),
+				new OptionData(USER, USER_OPTION_ID, "User").setRequired(true),
 				new OptionData(STRING, NAME_OPTION_ID, "Permission name").setRequired(true)
 		);
 	}
@@ -58,23 +57,22 @@ public class DenyCommand extends SubCommand{
 	@Override
 	@NotNull
 	public CommandResult execute(@NotNull SlashCommandEvent event){
-		var role = event.getOption(ROLE_OPTION_ID).getAsRole();
+		var user = event.getOption(USER_OPTION_ID).getAsUser();
 		var name = event.getOption(NAME_OPTION_ID).getAsString();
 		
 		if(name.startsWith("$")){
 			Settings.get(event.getGuild()).getPermissionsConfiguration()
-					.deny(role, name.substring(1));
-			JDAWrappers.replyCommand(event, "Custom permission denied").submit();
+					.grant(user, name.substring(1));
+			JDAWrappers.replyCommand(event, "Custom permission reset").submit();
 		}
 		else{
-			var privilege = CommandPrivilege.disable(role);
+			var privilege = CommandPrivilege.disable(user);
 			
 			SlashCommandService.getRegistrableCommand(name).ifPresentOrElse(
 					command -> command.updateCommandPrivileges(event.getGuild(), privileges -> {
 						privileges.remove(privilege);
-						privileges.add(privilege);
 						return privileges;
-					}).thenAccept(empty -> JDAWrappers.replyCommand(event, "Command permission denied").submit()),
+					}).thenAccept(empty -> JDAWrappers.replyCommand(event, "Command permission reset").submit()),
 					() -> JDAWrappers.replyCommand(event, "Command not found").submit());
 		}
 		

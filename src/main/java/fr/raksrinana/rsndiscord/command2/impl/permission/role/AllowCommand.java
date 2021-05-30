@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.command2.impl.permission.role;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.SlashCommandService;
 import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
+import fr.raksrinana.rsndiscord.command2.permission.IPermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
@@ -13,8 +14,8 @@ import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Set;
-import static fr.raksrinana.rsndiscord.command.CommandResult.NOT_ALLOWED;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command2.permission.SimplePermission.FALSE_BY_DEFAULT;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.ROLE;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
@@ -35,7 +36,19 @@ public class AllowCommand extends SubCommand{
 	}
 	
 	@Override
-	protected @NotNull Collection<? extends OptionData> getOptions(){
+	@NotNull
+	public IPermission getPermission(){
+		return FALSE_BY_DEFAULT;
+	}
+	
+	@Override
+	public boolean isSpecificAllowed(@NotNull Member member){
+		return member.isOwner() || Utilities.isCreator(member);
+	}
+	
+	@Override
+	@NotNull
+	protected Collection<? extends OptionData> getOptions(){
 		return Set.of(
 				new OptionData(ROLE, ROLE_OPTION_ID, "Role").setRequired(true),
 				new OptionData(STRING, NAME_OPTION_ID, "Permission name").setRequired(true)
@@ -45,10 +58,6 @@ public class AllowCommand extends SubCommand{
 	@Override
 	@NotNull
 	public CommandResult execute(@NotNull SlashCommandEvent event){
-		if(!isAllowed(event.getMember())){
-			return NOT_ALLOWED;
-		}
-		
 		var role = event.getOption(ROLE_OPTION_ID).getAsRole();
 		var name = event.getOption(NAME_OPTION_ID).getAsString();
 		
@@ -70,9 +79,5 @@ public class AllowCommand extends SubCommand{
 		}
 		
 		return SUCCESS;
-	}
-	
-	private boolean isAllowed(Member member){
-		return member.isOwner() || Utilities.isCreator(member);
 	}
 }
