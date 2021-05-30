@@ -2,10 +2,10 @@ package fr.raksrinana.rsndiscord.command2.api;
 
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.permission.IPermission;
-import fr.raksrinana.rsndiscord.command2.permission.SimplePermission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
+import static fr.raksrinana.rsndiscord.command2.permission.SimplePermission.TRUE_BY_DEFAULT;
 
 public interface IExecutableCommand extends ICommand{
 	default boolean replyEphemeral(){
@@ -17,7 +17,7 @@ public interface IExecutableCommand extends ICommand{
 	
 	@NotNull
 	default IPermission getPermission(){
-		return SimplePermission.TRUE_BY_DEFAULT;
+		return TRUE_BY_DEFAULT;
 	}
 	
 	default boolean isSpecificAllowed(@NotNull Member member){

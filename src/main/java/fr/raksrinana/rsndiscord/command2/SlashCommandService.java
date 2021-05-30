@@ -5,6 +5,7 @@ import fr.raksrinana.rsndiscord.command2.api.ICommand;
 import fr.raksrinana.rsndiscord.command2.api.IExecutableCommand;
 import fr.raksrinana.rsndiscord.command2.api.IRegistrableCommand;
 import fr.raksrinana.rsndiscord.log.Log;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -24,7 +25,7 @@ public class SlashCommandService{
 				.collect(Collectors.toSet());
 		
 		action.addCommands(commands).submit()
-				.thenAccept(slashCommands -> Log.getLogger().info("Global slash commands registered"))
+				.thenAccept(slashCommands -> Log.getLogger().info("Global slash commands registered: {}", slashCommands.stream().map(Command::getName).collect(Collectors.joining(", "))))
 				.exceptionally(e -> {
 					Log.getLogger().error("Failed to register global slash commands", e);
 					return null;
