@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord.command2.impl.bot;
 
-import fr.raksrinana.rsndiscord.command.BotCommand;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.command2.permission.IPermission;
@@ -14,7 +13,6 @@ import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS_NO_MESSAGE;
 import static fr.raksrinana.rsndiscord.command2.permission.CreatorPermission.CREATOR_PERMISSION;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
-@BotCommand
 public class SayCommand extends SubCommand{
 	private static final String MESSAGE_OPTION_ID = "message";
 	
