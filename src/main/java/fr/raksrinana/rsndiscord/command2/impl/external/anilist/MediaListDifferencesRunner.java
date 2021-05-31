@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.command.impl.anilist;
+package fr.raksrinana.rsndiscord.command2.impl.external.anilist;
 
 import fr.raksrinana.rsndiscord.api.anilist.AniListApi;
 import fr.raksrinana.rsndiscord.api.anilist.data.list.MediaList;
