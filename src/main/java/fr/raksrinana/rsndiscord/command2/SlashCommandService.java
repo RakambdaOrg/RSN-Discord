@@ -16,22 +16,6 @@ public class SlashCommandService{
 	private static final Map<String, ICommand> commands;
 	private static final Map<String, IExecutableCommand> executableCommands;
 	private static final Map<String, IRegistrableCommand> registrableCommands;
-	
-	public static void registerGlobalCommands(){
-		var action = Main.getJda().updateCommands();
-		
-		var commands = registrableCommands.values().stream()
-				.map(IRegistrableCommand::getSlashCommand)
-				.collect(Collectors.toSet());
-		
-		action.addCommands(commands).submit()
-				.thenAccept(slashCommands -> Log.getLogger().info("Global slash commands registered: {}", slashCommands.stream().map(Command::getName).collect(Collectors.joining(", "))))
-				.exceptionally(e -> {
-					Log.getLogger().error("Failed to register global slash commands", e);
-					return null;
-				});
-	}
-	
 	static{
 		commands = getAllAnnotatedWith(BotSlashCommand.class, clazz -> (ICommand) clazz.getConstructor().newInstance())
 				.map(ICommand::getCommandMap)
@@ -49,6 +33,22 @@ public class SlashCommandService{
 				.map(entry -> Map.entry(entry.getKey(), (IRegistrableCommand) entry.getValue()))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
+	public static void registerGlobalCommands(){
+		Log.getLogger().info("Registering slash commands");
+		var action = Main.getJda().updateCommands();
+		
+		var commands = registrableCommands.values().stream()
+				.map(IRegistrableCommand::getSlashCommand)
+				.collect(Collectors.toSet());
+		
+		action.addCommands(commands).submit()
+				.thenAccept(slashCommands -> Log.getLogger().info("Global slash commands registered: {}", slashCommands.stream().map(Command::getName).collect(Collectors.joining(", "))))
+				.exceptionally(e -> {
+					Log.getLogger().error("Failed to register global slash commands", e);
+					return null;
+				});
+	}
+	
 	public static Optional<IExecutableCommand> getExecutableCommand(String path){
 		return Optional.ofNullable(executableCommands.get(path));
 	}

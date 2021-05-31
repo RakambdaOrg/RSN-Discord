@@ -7,6 +7,7 @@ import static fr.raksrinana.rsndiscord.utils.Utilities.getAllAnnotatedWith;
 
 public class RunnerUtils{
 	public static void registerAllScheduledRunners(){
+		Log.getLogger().info("Creating schedule runners");
 		getAllAnnotatedWith(ScheduledRunner.class, clazz -> (IScheduledRunner) clazz.getConstructor(JDA.class).newInstance(Main.getJda()))
 				.peek(c -> Log.getLogger().info("Loaded scheduled runner {}", c.getClass().getName()))
 				.forEach(scheduledRunner -> Main.getExecutorService().scheduleAtFixedRate(

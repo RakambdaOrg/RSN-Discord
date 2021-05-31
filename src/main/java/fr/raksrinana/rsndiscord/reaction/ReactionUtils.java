@@ -13,6 +13,7 @@ public class ReactionUtils{
 	private static final Collection<IReactionHandler> handlers = new SortedList<>();
 	
 	public static void registerAllHandlers(){
+		Log.getLogger().info("Adding reaction handlers");
 		getAllAnnotatedWith(ReactionHandler.class, clazz -> (IReactionHandler) clazz.getConstructor().newInstance())
 				.peek(c -> Log.getLogger().info("Loaded reaction handler {}", c.getClass().getName()))
 				.forEach(ReactionUtils::addHandler);

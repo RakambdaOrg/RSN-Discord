@@ -65,36 +65,41 @@ public class Main{
 				.connectTimeout(30000)
 				.enableCookieManagement(true)
 				.verifySsl(true);
+		
 		consoleHandler = new ConsoleHandler();
+		
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			Log.getLogger().info("Shutdown hook triggered");
+			Settings.close();
+		}));
+		Log.getLogger().info("Shutdown hook registered");
+		
 		try{
 			Log.getLogger().info("Building JDA");
 			var jdaBuilder = JDABuilder.createDefault(System.getProperty("RSN_TOKEN"))
 					.enableIntents(GatewayIntent.GUILD_MEMBERS)
 					.setMemberCachePolicy(MemberCachePolicy.ALL)
 					.setAutoReconnect(true);
+			
 			registerAllEventListeners(jdaBuilder);
+			
 			jda = jdaBuilder.build();
 			jda.awaitReady();
+			Log.getLogger().info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
+			
 			JDAWrappers.editPresence()
 					.setStatus(ONLINE)
 					.setActivity(Activity.of(Activity.ActivityType.DEFAULT, DEFAULT_PREFIX + "help for the help"));
-			Log.getLogger().info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
-			Log.getLogger().info("Registering slash commands");
+			
 			SlashCommandService.registerGlobalCommands();
-			Log.getLogger().info("Adding handlers");
 			ReactionUtils.registerAllHandlers();
 			ScheduleUtils.registerAllHandlers();
-			Log.getLogger().info("Creating runners");
 			RunnerUtils.registerAllScheduledRunners();
+			
 			Log.getLogger().info("Started");
 			announceStart();
-			executorService.schedule((Runnable) TwitchUtils::connect, 15, TimeUnit.SECONDS);
 			
-			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-				Log.getLogger().info("Shutdown hook triggered");
-				Settings.close();
-			}));
-			Log.getLogger().info("Shutdown hook registered");
+			executorService.schedule((Runnable) TwitchUtils::connect, 15, TimeUnit.SECONDS);
 			consoleHandler.start();
 		}
 		catch(LoginException | InterruptedException e){
