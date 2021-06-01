@@ -6,7 +6,7 @@ import fr.raksrinana.rsndiscord.api.themoviedb.model.MediaDetails;
 import fr.raksrinana.rsndiscord.api.trakt.TraktMediaType;
 import fr.raksrinana.rsndiscord.api.trakt.model.ITraktDatedObject;
 import fr.raksrinana.rsndiscord.api.trakt.model.ITraktObject;
-import fr.raksrinana.rsndiscord.utils.json.ISO8601ZonedDateTimeDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.converter.ISO8601ZonedDateTimeDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;

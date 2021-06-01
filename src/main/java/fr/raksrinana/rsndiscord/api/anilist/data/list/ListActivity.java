@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.api.anilist.data.IAniListDatedObject;
 import fr.raksrinana.rsndiscord.api.anilist.data.IAniListObject;
 import fr.raksrinana.rsndiscord.api.anilist.data.media.IMedia;
-import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.converter.SQLTimestampDeserializer;
 import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;

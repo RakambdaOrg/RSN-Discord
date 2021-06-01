@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.api.anilist.data.IAniListDatedObject;
 import fr.raksrinana.rsndiscord.api.anilist.data.IAniListObject;
-import fr.raksrinana.rsndiscord.utils.json.SQLTimestampDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.converter.SQLTimestampDeserializer;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;

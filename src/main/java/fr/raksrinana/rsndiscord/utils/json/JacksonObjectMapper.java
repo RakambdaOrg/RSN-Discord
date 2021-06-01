@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.utils;
+package fr.raksrinana.rsndiscord.utils.json;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.core.JsonFactoryBuilder;

@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.utils.json;
+package fr.raksrinana.rsndiscord.utils.json.converter;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

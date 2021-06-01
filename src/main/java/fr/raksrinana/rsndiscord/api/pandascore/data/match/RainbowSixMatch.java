@@ -12,7 +12,7 @@ import fr.raksrinana.rsndiscord.api.pandascore.data.serie.Serie;
 import fr.raksrinana.rsndiscord.api.pandascore.data.tournament.Tournament;
 import fr.raksrinana.rsndiscord.api.pandascore.data.videogame.VideoGame;
 import fr.raksrinana.rsndiscord.api.pandascore.data.videogame.VideoGameVersion;
-import fr.raksrinana.rsndiscord.utils.json.ISO8601ZonedDateTimeDeserializer;
+import fr.raksrinana.rsndiscord.utils.json.converter.ISO8601ZonedDateTimeDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
