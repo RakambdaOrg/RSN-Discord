@@ -34,7 +34,7 @@ public class StopCommand extends SubCommand{
 	@NotNull
 	public CommandResult execute(@NotNull SlashCommandEvent event){
 		Log.getLogger(event.getGuild()).info("BOT STOPPING");
-		JDAWrappers.replyCommand(event, "Stopping").submit();
+		JDAWrappers.edit(event, "Stopping").submit();
 		Main.close();
 		return SUCCESS;
 	}

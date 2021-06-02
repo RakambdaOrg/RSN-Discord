@@ -39,12 +39,12 @@ public class RegisterCommand extends SubCommand{
 		
 		Settings.getGeneral().getTrakt()
 				.getAccessToken(event.getUser().getIdLong())
-				.ifPresentOrElse(userToken -> JDAWrappers.replyCommand(event, translate(guild, "trakt.already-registered")).submit(),
+				.ifPresentOrElse(userToken -> JDAWrappers.edit(event, translate(guild, "trakt.already-registered")).submit(),
 						() -> {
 							try{
 								var deviceCode = TraktApi.postQuery(null, new DeviceCodePostRequest());
 								var content = translate(guild, "trakt.register-url", deviceCode.getVerificationUrl(), deviceCode.getUserCode());
-								JDAWrappers.replyCommand(event, content).submit();
+								JDAWrappers.edit(event, content).submit();
 								TraktApi.pollDeviceToken(event, deviceCode);
 							}
 							catch(Exception e){

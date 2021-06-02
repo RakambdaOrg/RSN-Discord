@@ -63,7 +63,7 @@ public class AddCommand extends SubCommand{
 				.map(GuildVoiceState::getChannel);
 		
 		if(voiceChannel.isEmpty()){
-			JDAWrappers.replyCommand(event, translate(guild, "music.voice-error")).submitAndDelete(5);
+			JDAWrappers.edit(event, translate(guild, "music.voice-error")).submitAndDelete(5);
 			return SUCCESS;
 		}
 		

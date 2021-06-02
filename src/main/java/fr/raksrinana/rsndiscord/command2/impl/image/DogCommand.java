@@ -21,7 +21,7 @@ public class DogCommand extends SubCommand{
 				.setImage(DogApi.getDogPictureURL(event.getGuild()))
 				.build();
 		
-		JDAWrappers.replyCommand(event, embed).submit();
+		JDAWrappers.edit(event, embed).submit();
 		return SUCCESS;
 	}
 	

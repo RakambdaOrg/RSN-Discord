@@ -49,11 +49,11 @@ public class InfoCommand extends SubCommand{
 				medias.forEach(media -> {
 					var builder = new EmbedBuilder();
 					media.fillEmbed(guild, builder);
-					JDAWrappers.replyCommand(event, builder.build()).submit();
+					JDAWrappers.edit(event, builder.build()).submit();
 				});
 			}
 			else{
-				JDAWrappers.replyCommand(event, translate(guild, "anilist.media-not-found")).submitAndDelete(5);
+				JDAWrappers.edit(event, translate(guild, "anilist.media-not-found")).submitAndDelete(5);
 			}
 		}
 		catch(Exception e){

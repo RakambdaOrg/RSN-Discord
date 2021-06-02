@@ -30,7 +30,7 @@ public class ColorCommand extends SubCommand{
 	@Override
 	@NotNull
 	public String getId(){
-		return "rolecolor";
+		return "role-color";
 	}
 	
 	@Override

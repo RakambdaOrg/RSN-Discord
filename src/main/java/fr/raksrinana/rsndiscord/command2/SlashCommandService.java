@@ -35,7 +35,8 @@ public class SlashCommandService{
 	}
 	public static void registerGlobalCommands(){
 		Log.getLogger().info("Registering slash commands");
-		var action = Main.getJda().updateCommands();
+		// var action = Main.getJda().updateCommands();
+		var action = Main.getJda().getGuildById(735921627631583394L).updateCommands();
 		
 		var commands = registrableCommands.values().stream()
 				.map(IRegistrableCommand::getSlashCommand)

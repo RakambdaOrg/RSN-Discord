@@ -59,11 +59,11 @@ public class ParticipationCommand extends SubCommand{
 		
 		var participationConfiguration = Settings.get(guild).getParticipationConfiguration();
 		participationConfiguration.getChatDay(day)
-				.ifPresentOrElse(chatParticipation -> sendMessagesReport(guild, maxUserCount, day, chatParticipation, embed -> JDAWrappers.replyCommand(event, embed).submit()),
-						() -> JDAWrappers.replyCommand(event, translate(guild, "participation.chat.no-data")).submit());
+				.ifPresentOrElse(chatParticipation -> sendMessagesReport(guild, maxUserCount, day, chatParticipation, embed -> JDAWrappers.edit(event, embed).submit()),
+						() -> JDAWrappers.edit(event, translate(guild, "participation.chat.no-data")).submit());
 		participationConfiguration.getVoiceDay(day)
-				.ifPresentOrElse(voiceParticipation -> sendVoiceReport(guild, maxUserCount, day, voiceParticipation, embed -> JDAWrappers.replyCommand(event, embed).submit()),
-						() -> JDAWrappers.replyCommand(event, translate(guild, "participation.voice.no-data")).submit());
+				.ifPresentOrElse(voiceParticipation -> sendVoiceReport(guild, maxUserCount, day, voiceParticipation, embed -> JDAWrappers.edit(event, embed).submit()),
+						() -> JDAWrappers.edit(event, translate(guild, "participation.voice.no-data")).submit());
 		return SUCCESS;
 	}
 	

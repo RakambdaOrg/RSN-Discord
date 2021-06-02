@@ -63,7 +63,7 @@ public class DenyCommand extends SubCommand{
 		if(name.startsWith("$")){
 			Settings.get(event.getGuild()).getPermissionsConfiguration()
 					.deny(user, name.substring(1));
-			JDAWrappers.replyCommand(event, "Custom permission denied").submit();
+			JDAWrappers.edit(event, "Custom permission denied").submit();
 		}
 		else{
 			var privilege = CommandPrivilege.disable(user);
@@ -73,8 +73,8 @@ public class DenyCommand extends SubCommand{
 						privileges.remove(privilege);
 						privileges.add(privilege);
 						return privileges;
-					}).thenAccept(empty -> JDAWrappers.replyCommand(event, "Command permission denied").submit()),
-					() -> JDAWrappers.replyCommand(event, "Command not found").submit());
+					}).thenAccept(empty -> JDAWrappers.edit(event, "Command permission denied").submit()),
+					() -> JDAWrappers.edit(event, "Command not found").submit());
 		}
 		
 		return SUCCESS;

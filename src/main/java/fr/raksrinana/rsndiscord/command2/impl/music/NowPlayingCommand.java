@@ -61,7 +61,7 @@ public class NowPlayingCommand extends SubCommand{
 			builder.setDescription(translate(guild, "music.nothing-playing"));
 		});
 		
-		JDAWrappers.replyCommand(event, builder.build()).submit();
+		JDAWrappers.edit(event, builder.build()).submit();
 		return SUCCESS;
 	}
 	

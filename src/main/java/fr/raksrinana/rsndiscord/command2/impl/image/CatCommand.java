@@ -45,9 +45,9 @@ public class CatCommand extends SubCommand{
 					embed.setImage(cat.getUrl().toString())
 							.setFooter(cat.getId());
 					
-					JDAWrappers.replyCommand(event, embed.build()).submit();
+					JDAWrappers.edit(event, embed.build()).submit();
 				},
-				() -> JDAWrappers.replyCommand(event, translate(guild, "image.cat.error")).submitAndDelete(5));
+				() -> JDAWrappers.edit(event, translate(guild, "image.cat.error")).submitAndDelete(5));
 		
 		return CommandResult.SUCCESS;
 	}

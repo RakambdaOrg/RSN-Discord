@@ -28,7 +28,7 @@ public class EventWinnerCommand extends SimpleCommand{
 	@Override
 	@NotNull
 	public String getId(){
-		return "eventwinner";
+		return "event-winner";
 	}
 	
 	@Override

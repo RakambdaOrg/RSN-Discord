@@ -37,7 +37,7 @@ public class ClearCommand extends SubCommand{
 		var targetChannel = Optional.ofNullable(event.getOption(CHANNEL_OPTION_ID)).map(OptionMapping::getAsMessageChannel).orElse(channel);
 		
 		var message = translate(event.getGuild(), "clear.removing", messageCount, targetChannel.getId());
-		JDAWrappers.replyCommand(event, message).submitAndDelete(5);
+		JDAWrappers.edit(event, message).submitAndDelete(5);
 		
 		targetChannel.getIterableHistory()
 				.takeAsync(messageCount)

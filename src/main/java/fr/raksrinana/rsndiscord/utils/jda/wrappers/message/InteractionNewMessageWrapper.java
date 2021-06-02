@@ -12,21 +12,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
-public class ReplySlashCommandNewMessageWrapper{
+public class InteractionNewMessageWrapper{
 	private final ISnowflake target;
 	private WebhookMessageAction<Message> action;
 	
-	public ReplySlashCommandNewMessageWrapper(@Nullable ISnowflake target, @NotNull InteractionHook hook, @NotNull MessageEmbed embed){
+	public InteractionNewMessageWrapper(@Nullable ISnowflake target, @NotNull InteractionHook hook, @NotNull MessageEmbed embed){
 		this.target = target;
 		this.action = hook.sendMessageEmbeds(embed);
 	}
 	
-	public ReplySlashCommandNewMessageWrapper(@Nullable ISnowflake target, @NotNull InteractionHook hook, @NotNull String message){
+	public InteractionNewMessageWrapper(@Nullable ISnowflake target, @NotNull InteractionHook hook, @NotNull String message){
 		this.target = target;
 		this.action = hook.sendMessage(message);
 	}
 	
-	public ReplySlashCommandNewMessageWrapper ephemeral(boolean state){
+	public InteractionNewMessageWrapper ephemeral(boolean state){
 		action = action.setEphemeral(state);
 		return this;
 	}

@@ -68,7 +68,7 @@ public class SeekCommand extends SubCommand{
 		var time = SeekCommand.parseTime(guild, event.getOption(TIME_OPTION_ID).getAsString());
 		
 		if(time < 0){
-			JDAWrappers.replyCommand(event, translate(guild, "music.invalid-format")).submitAndDelete(5);
+			JDAWrappers.edit(event, translate(guild, "music.invalid-format")).submitAndDelete(5);
 		}
 		else{
 			var message = switch(RSNAudioManager.seek(guild, time)){
@@ -76,7 +76,7 @@ public class SeekCommand extends SubCommand{
 				case OK -> "music.seeked";
 				case IMPOSSIBLE -> "music.seek-error";
 			};
-			JDAWrappers.replyCommand(event, translate(guild, message, event.getUser().getAsMention())).submitAndDelete(5);
+			JDAWrappers.edit(event, translate(guild, message, event.getUser().getAsMention())).submitAndDelete(5);
 		}
 		return SUCCESS;
 	}

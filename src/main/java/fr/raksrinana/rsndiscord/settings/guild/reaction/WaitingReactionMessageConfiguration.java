@@ -21,7 +21,7 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
-public class WaitingReactionMessageConfiguration implements IAtomicConfiguration{
+public class WaitingReactionMessageConfiguration implements IAtomicConfiguration, Comparable<WaitingReactionMessageConfiguration>{
 	@JsonProperty("message")
 	private MessageConfiguration message;
 	@JsonProperty("tag")
@@ -72,5 +72,10 @@ public class WaitingReactionMessageConfiguration implements IAtomicConfiguration
 				.append("tag", tag)
 				.append("data", data)
 				.toString();
+	}
+	
+	@Override
+	public int compareTo(@NotNull WaitingReactionMessageConfiguration o){
+		return Long.compare(getMessage().getMessageId(), o.getMessage().getMessageId());
 	}
 }

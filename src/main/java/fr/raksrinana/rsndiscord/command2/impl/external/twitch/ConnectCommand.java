@@ -50,11 +50,11 @@ public class ConnectCommand extends SubCommand{
 		
 		try{
 			TwitchUtils.connect(event.getGuild(), user);
-			JDAWrappers.replyCommand(event, "OK").submitAndDelete(5);
+			JDAWrappers.edit(event, "OK").submitAndDelete(5);
 		}
 		catch(Exception e){
 			Log.getLogger(event.getGuild()).warn("Missing configuration for IRC", e);
-			JDAWrappers.replyCommand(event, translate(event.getGuild(), "twitch.not-configured")).submitAndDelete(5);
+			JDAWrappers.edit(event, translate(event.getGuild(), "twitch.not-configured")).submitAndDelete(5);
 		}
 		return SUCCESS;
 	}

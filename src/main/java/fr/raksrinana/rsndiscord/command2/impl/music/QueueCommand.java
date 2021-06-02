@@ -90,7 +90,7 @@ public class QueueCommand extends SubCommand{
 					beforeDuration.addAndGet(track.getDuration());
 				});
 		
-		JDAWrappers.replyCommand(event, builder.build()).submit();
+		JDAWrappers.edit(event, builder.build()).submit();
 		return SUCCESS;
 	}
 }

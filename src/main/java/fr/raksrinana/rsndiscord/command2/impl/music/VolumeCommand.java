@@ -56,7 +56,7 @@ public class VolumeCommand extends SubCommand{
 		var volume = Math.min(100, Math.max(0, requestedVolume));
 		Settings.get(guild).setMusicVolume(volume);
 		RSNAudioManager.getFor(guild).ifPresent(audioManager -> audioManager.setVolume(volume));
-		JDAWrappers.replyCommand(event, translate(guild, "music.volume-set", volume)).submit();
+		JDAWrappers.edit(event, translate(guild, "music.volume-set", volume)).submit();
 		return SUCCESS;
 	}
 }

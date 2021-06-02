@@ -93,7 +93,7 @@ public class MoveCommand extends SubCommand{
 				.addField(translate(event.getGuild(), "music.requester"), requester, true)
 				.addField(translate(event.getGuild(), "music.repeating"), repeating, true)
 				.build();
-		JDAWrappers.replyCommand(event, embed).submit();
+		JDAWrappers.edit(event, embed).submit();
 		return SUCCESS;
 	}
 }

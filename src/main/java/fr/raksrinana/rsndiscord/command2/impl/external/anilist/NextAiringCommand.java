@@ -24,7 +24,7 @@ public class NextAiringCommand extends SubCommand{
 	@Override
 	@NotNull
 	public String getId(){
-		return "nextairing";
+		return "next-airing";
 	}
 	
 	@Override

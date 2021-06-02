@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.utils.jda;
 
 import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
-import fr.raksrinana.rsndiscord.utils.jda.wrappers.*;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.EditPresenceWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.CreateTextChannelWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.DeleteChannelWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.EditChannelWrapper;
@@ -11,10 +11,11 @@ import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.*;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.*;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.role.SetColorWrapper;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.components.ComponentLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.awt.Color;
@@ -261,22 +262,27 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static ReplySlashCommandEditMessageWrapper replyCommand(@NotNull SlashCommandEvent event, @NotNull MessageEmbed embed){
-		return new ReplySlashCommandEditMessageWrapper(event.getGuild(), event.getHook(), embed);
+	public static InteractionEditMessageWrapper edit(@NotNull GenericInteractionCreateEvent event, @NotNull String messsage){
+		return new InteractionEditMessageWrapper(event.getGuild(), event.getHook(), messsage);
 	}
 	
 	@NotNull
-	public static ReplySlashCommandEditMessageWrapper replyCommand(@NotNull SlashCommandEvent event, @NotNull String messsage){
-		return new ReplySlashCommandEditMessageWrapper(event.getGuild(), event.getHook(), messsage);
+	public static InteractionEditMessageWrapper edit(@NotNull GenericInteractionCreateEvent event, @NotNull MessageEmbed embed){
+		return new InteractionEditMessageWrapper(event.getGuild(), event.getHook(), embed);
 	}
 	
 	@NotNull
-	public static ReplySlashCommandNewMessageWrapper replyCommandNewMessage(@NotNull SlashCommandEvent event, @NotNull String messsage){
-		return new ReplySlashCommandNewMessageWrapper(event.getGuild(), event.getHook(), messsage);
+	public static InteractionEditMessageWrapper edit(@NotNull GenericInteractionCreateEvent event, @NotNull ComponentLayout... layouts){
+		return new InteractionEditMessageWrapper(event.getGuild(), event.getHook(), layouts);
 	}
 	
 	@NotNull
-	public static ReplySlashCommandNewMessageWrapper replyCommandNewMessage(@NotNull SlashCommandEvent event, @NotNull MessageEmbed embed){
-		return new ReplySlashCommandNewMessageWrapper(event.getGuild(), event.getHook(), embed);
+	public static InteractionNewMessageWrapper reply(@NotNull GenericInteractionCreateEvent event, @NotNull String messsage){
+		return new InteractionNewMessageWrapper(event.getGuild(), event.getHook(), messsage);
+	}
+	
+	@NotNull
+	public static InteractionNewMessageWrapper reply(@NotNull GenericInteractionCreateEvent event, @NotNull MessageEmbed embed){
+		return new InteractionNewMessageWrapper(event.getGuild(), event.getHook(), embed);
 	}
 }

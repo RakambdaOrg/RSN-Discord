@@ -112,7 +112,7 @@ public class TraktApi{
 									ZonedDateTime.now().plusSeconds(deviceToken.getExpiresIn()),
 									deviceToken.getAccessToken(), deviceToken.getRefreshToken()));
 					
-					JDAWrappers.replyCommand(event, translate(guild, "trakt.authenticated")).submit();
+					JDAWrappers.edit(event, translate(guild, "trakt.authenticated")).submit();
 					return;
 				}
 				catch(RequestException e){
@@ -125,7 +125,7 @@ public class TraktApi{
 					}
 					retry = false;
 				}
-				JDAWrappers.replyCommand(event, translate(guild, "trakt.authentication-failed")).submit();
+				JDAWrappers.edit(event, translate(guild, "trakt.authentication-failed")).submit();
 			}
 		});
 	}

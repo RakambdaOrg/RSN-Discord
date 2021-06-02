@@ -79,7 +79,7 @@ public class InfoCommand extends SubCommand{
 				.addField(translate(guild, "infos.elapsed"), durationToString(between(Main.bootTime, now)), false)
 				.build();
 		
-		JDAWrappers.replyCommand(event, embed).submit();
+		JDAWrappers.edit(event, embed).submit();
 		return SUCCESS;
 	}
 }

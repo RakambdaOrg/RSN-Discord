@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.command2.impl;
 
+import fr.raksrinana.rsndiscord.button.impl.ArchiveMediaReactionButtonHandler;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.BotSlashCommand;
 import fr.raksrinana.rsndiscord.command2.base.SimpleCommand;
@@ -10,7 +11,6 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.components.Button;
 import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -97,23 +97,25 @@ public class MediaReactionCommand extends SimpleCommand{
 				messageContent.append("\n\n").append(translate(guild, "media-reaction.archive", PACKAGE.getValue()));
 			}
 			
-			var messageAction = JDAWrappers.replyCommand(event, messageContent.toString());
+			var messageAction = JDAWrappers.edit(event, messageContent.toString());
 			
 			if(askArchive){
-				messageAction = messageAction.setActionRow(Button.danger("", "Archive"));
+				var buttonHandler = new ArchiveMediaReactionButtonHandler();
+				messageAction = messageAction.setActionRow(buttonHandler.asButton());
+				Settings.get(guild).addButtonHandler(buttonHandler);
 			}
 			
 			messageAction.submit()
 					.thenAccept(message -> Settings.get(guild).getMediaReactionMessages().add(new MessageConfiguration(message)))
 					.exceptionally(error -> {
-						JDAWrappers.replyCommand(event, "Failed to send message: " + error.getMessage()).submit();
+						JDAWrappers.edit(event, "Failed to send message: " + error.getMessage()).submit();
 						return null;
 					});
 			return SUCCESS;
 		}
 		catch(Exception e){
 			Log.getLogger(guild).error("Failed to parse anime reaction", e);
-			JDAWrappers.replyCommand(event, translate(guild, "media-reaction.parse-error")).submit();
+			JDAWrappers.edit(event, translate(guild, "media-reaction.parse-error")).submit();
 		}
 		return FAILED;
 	}

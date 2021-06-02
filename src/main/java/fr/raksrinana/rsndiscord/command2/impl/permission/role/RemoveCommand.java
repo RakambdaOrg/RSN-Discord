@@ -64,7 +64,7 @@ public class RemoveCommand extends SubCommand{
 		if(name.startsWith("$")){
 			Settings.get(event.getGuild()).getPermissionsConfiguration()
 					.grant(role, name.substring(1));
-			JDAWrappers.replyCommand(event, "Custom permission reset").submit();
+			JDAWrappers.edit(event, "Custom permission reset").submit();
 		}
 		else{
 			var privilege = CommandPrivilege.disable(role);
@@ -73,8 +73,8 @@ public class RemoveCommand extends SubCommand{
 					command -> command.updateCommandPrivileges(event.getGuild(), privileges -> {
 						privileges.remove(privilege);
 						return privileges;
-					}).thenAccept(empty -> JDAWrappers.replyCommand(event, "Command permission reset").submit()),
-					() -> JDAWrappers.replyCommand(event, "Command not found").submit());
+					}).thenAccept(empty -> JDAWrappers.edit(event, "Command permission reset").submit()),
+					() -> JDAWrappers.edit(event, "Command not found").submit());
 		}
 		
 		return SUCCESS;

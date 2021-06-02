@@ -40,7 +40,7 @@ public class ShuffleCommand extends SubCommand{
 		var guild = event.getGuild();
 		
 		RSNAudioManager.shuffle(guild);
-		JDAWrappers.replyCommand(event, translate(guild, "music.queue.shuffled", event.getUser().getAsMention())).submit();
+		JDAWrappers.edit(event, translate(guild, "music.queue.shuffled", event.getUser().getAsMention())).submit();
 		return CommandResult.SUCCESS;
 	}
 }

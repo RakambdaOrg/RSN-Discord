@@ -49,7 +49,7 @@ public class UserCommand extends SubCommand{
 				.setImage(target.getAvatarUrl())
 				.build();
 		
-		JDAWrappers.replyCommand(event, embed).submit();
+		JDAWrappers.edit(event, embed).submit();
 		return SUCCESS;
 	}
 }

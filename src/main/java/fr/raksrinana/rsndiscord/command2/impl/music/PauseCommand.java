@@ -45,7 +45,7 @@ public class PauseCommand extends SubCommand{
 			case OK -> "music.paused";
 			case IMPOSSIBLE -> "unknown";
 		};
-		JDAWrappers.replyCommand(event, translate(guild, message, event.getUser().getAsMention())).submitAndDelete(5);
+		JDAWrappers.edit(event, translate(guild, message, event.getUser().getAsMention())).submitAndDelete(5);
 		return SUCCESS;
 	}
 }

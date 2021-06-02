@@ -35,7 +35,7 @@ public class RandomKickCommand extends SubCommand{
 	@Override
 	@NotNull
 	public String getId(){
-		return "randomkick";
+		return "random-kick";
 	}
 	
 	@Override
@@ -58,7 +58,7 @@ public class RandomKickCommand extends SubCommand{
 		var targetRole = Optional.ofNullable(event.getOption(ROLE_OPTION_ID)).map(OptionMapping::getAsRole).orElse(null);
 		var reason = event.getOption(MESSAGE_OPTION_ID).getAsString();
 		
-		JDAWrappers.replyCommand(event, "Random kick started");
+		JDAWrappers.edit(event, "Random kick started");
 		randomKick(event.getTextChannel(), targetRole, reason, true);
 		
 		return SUCCESS;
@@ -136,8 +136,7 @@ public class RandomKickCommand extends SubCommand{
 				.tts(true).submit()
 				.thenAccept(kickStartMessage -> Main.getExecutorService().schedule(() -> {
 					JDAWrappers.kick(member, reason).submit()
-							.thenAccept(empty2 -> JDAWrappers.reply(kickStartMessage, kickMessage)
-									.mention(member).submit())
+							.thenAccept(empty2 -> JDAWrappers.reply(kickStartMessage, kickMessage).mention(member).submit())
 							.exceptionally(exception -> {
 								JDAWrappers.message(channel, translate(guild, "random-kick.error", exception.getMessage())).submit();
 								return null;

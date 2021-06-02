@@ -75,7 +75,7 @@ public class NicknameCommand extends SubCommand{
 			builder.setColor(ORANGE)
 					.setTitle(translate(guild, "nickname.no-changes"))
 					.addField(translate(guild, "nickname.reason"), translate(guild, "nickname.same-nickname"), false);
-			JDAWrappers.replyCommand(event, builder.build()).submitAndDelete(10);
+			JDAWrappers.edit(event, builder.build()).submitAndDelete(10);
 			return SUCCESS;
 		}
 		
@@ -86,21 +86,21 @@ public class NicknameCommand extends SubCommand{
 						
 						builder.setColor(GREEN);
 						
-						JDAWrappers.replyCommand(event, builder.build()).submit();
+						JDAWrappers.edit(event, builder.build()).submit();
 					})
 					.exceptionally(error -> {
 						var errorMessage = error instanceof ErrorResponseException ? ((ErrorResponseException) error).getMeaning() : error.getMessage();
 						builder.setColor(RED)
 								.setTitle(translate(guild, "nickname.invalid"))
 								.addField(translate(guild, "nickname.reason"), errorMessage, false);
-						JDAWrappers.replyCommand(event, builder.build()).submitAndDelete(10);
+						JDAWrappers.edit(event, builder.build()).submitAndDelete(10);
 						return null;
 					});
 		}
 		catch(HierarchyException e){
 			builder.setColor(RED)
 					.addField(translate(guild, "nickname.reason"), translate(guild, "nickname.target-error"), false);
-			JDAWrappers.replyCommand(event, builder.build()).submitAndDelete(10);
+			JDAWrappers.edit(event, builder.build()).submitAndDelete(10);
 		}
 		return SUCCESS;
 	}

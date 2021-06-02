@@ -26,7 +26,7 @@ public class ListJoinsCommand extends SubCommand{
 	@Override
 	@NotNull
 	public String getId(){
-		return "listjoins";
+		return "list-joins";
 	}
 	
 	@Override
@@ -56,11 +56,11 @@ public class ListJoinsCommand extends SubCommand{
 							joinPos.incrementAndGet(),
 							member.getTimeJoined().format(DF),
 							member.getAsMention());
-					JDAWrappers.replyCommandNewMessage(event, message).ephemeral(true).submit();
+					JDAWrappers.reply(event, message).ephemeral(true).submit();
 				}))
 				.onError(error -> {
 					Log.getLogger(guild).error("Failed to load members", error);
-					JDAWrappers.replyCommand(event, translate(guild, "list-joins.error-members")).submitAndDelete(5);
+					JDAWrappers.edit(event, translate(guild, "list-joins.error-members")).submitAndDelete(5);
 				});
 		return SUCCESS;
 	}

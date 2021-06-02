@@ -37,7 +37,7 @@ public class TimeCommand extends SubCommand{
 				.addField(translate(guild, "time.milliseconds"), String.valueOf(System.currentTimeMillis()), false)
 				.build();
 		
-		JDAWrappers.replyCommand(event, embed).submit();
+		JDAWrappers.edit(event, embed).submit();
 		return CommandResult.SUCCESS;
 	}
 }

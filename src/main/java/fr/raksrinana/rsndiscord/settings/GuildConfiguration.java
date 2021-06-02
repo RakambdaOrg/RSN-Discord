@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import fr.raksrinana.rsndiscord.button.api.IButtonHandler;
 import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.settings.guild.*;
 import fr.raksrinana.rsndiscord.settings.guild.anilist.AniListConfiguration;
@@ -31,6 +32,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.ConcurrentSkipListSet;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toSet;
 
@@ -97,7 +99,7 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	private CategoryConfiguration archiveCategory;
 	@JsonProperty("messagesAwaitingReaction")
 	@Setter
-	private Set<WaitingReactionMessageConfiguration> messagesAwaitingReaction = new HashSet<>();
+	private Set<WaitingReactionMessageConfiguration> messagesAwaitingReaction = new ConcurrentSkipListSet<>();
 	@JsonProperty("reactions")
 	@Getter
 	@Setter
@@ -165,6 +167,9 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@Getter
 	@Setter
 	private List<MessageConfiguration> mediaReactionMessages = new LinkedList<>();
+	@JsonProperty("buttonHandlers")
+	@Setter
+	private Map<String, IButtonHandler> buttonHandlers = new HashMap<>();
 	
 	GuildConfiguration(long guildId){
 		this.guildId = guildId;
@@ -182,6 +187,18 @@ public class GuildConfiguration implements ICompositeConfiguration{
 		return new HashSet<>(messagesAwaitingReaction).stream()
 				.filter(reaction -> Objects.equals(reaction.getTag(), tag))
 				.collect(toSet());
+	}
+	
+	public void addButtonHandler(@NotNull IButtonHandler buttonHandler){
+		buttonHandlers.put(buttonHandler.getButtonId(), buttonHandler);
+	}
+	
+	public Optional<IButtonHandler> getButtonHandler(@NotNull String id){
+		return Optional.ofNullable(buttonHandlers.get(id));
+	}
+	
+	public void removeButtonHandler(@NotNull String id){
+		buttonHandlers.remove(id);
 	}
 	
 	public void removeSchedule(ScheduleConfiguration schedule){

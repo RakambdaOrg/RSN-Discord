@@ -64,7 +64,7 @@ public class AllowCommand extends SubCommand{
 		if(name.startsWith("$")){
 			Settings.get(event.getGuild()).getPermissionsConfiguration()
 					.grant(user, name.substring(1));
-			JDAWrappers.replyCommand(event, "Custom permission allowed").submit();
+			JDAWrappers.edit(event, "Custom permission allowed").submit();
 		}
 		else{
 			var privilege = CommandPrivilege.enable(user);
@@ -74,8 +74,8 @@ public class AllowCommand extends SubCommand{
 						privileges.remove(privilege);
 						privileges.add(privilege);
 						return privileges;
-					}).thenAccept(empty -> JDAWrappers.replyCommand(event, "Command permission allowed").submit()),
-					() -> JDAWrappers.replyCommand(event, "Command not found").submit());
+					}).thenAccept(empty -> JDAWrappers.edit(event, "Command permission allowed").submit()),
+					() -> JDAWrappers.edit(event, "Command not found").submit());
 		}
 		
 		return SUCCESS;

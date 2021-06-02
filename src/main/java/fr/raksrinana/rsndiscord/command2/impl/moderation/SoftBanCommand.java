@@ -26,7 +26,7 @@ public class SoftBanCommand extends SubCommand{
 	@Override
 	@NotNull
 	public String getId(){
-		return "softban";
+		return "soft-ban";
 	}
 	
 	@Override
@@ -60,7 +60,7 @@ public class SoftBanCommand extends SubCommand{
 		JDAWrappers.ban(target, 0, reason).sumbit()
 				.thenAccept(empty -> {
 					addSchedule(guild, unbanScheduleConfiguration);
-					JDAWrappers.replyCommand(event, message).submit();
+					JDAWrappers.edit(event, message).submit();
 				});
 		return SUCCESS;
 	}

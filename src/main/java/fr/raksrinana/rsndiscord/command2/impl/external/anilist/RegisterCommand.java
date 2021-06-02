@@ -37,17 +37,17 @@ public class RegisterCommand extends SubCommand{
 		
 		try{
 			AniListApi.requestToken(event.getMember(), token);
-			JDAWrappers.replyCommand(event, translate(guild, "anilist.api-code.saved")).submitAndDelete(10);
+			JDAWrappers.edit(event, translate(guild, "anilist.api-code.saved")).submitAndDelete(10);
 		}
 		catch(IllegalArgumentException e){
-			JDAWrappers.replyCommand(event, translate(guild, "anilist.api-code.invalid")).submitAndDelete(10);
+			JDAWrappers.edit(event, translate(guild, "anilist.api-code.invalid")).submitAndDelete(10);
 			return SUCCESS;
 		}
 		catch(InvalidResponseException e){
 			Log.getLogger(guild).error("Error getting AniList access token", e);
 			Utilities.reportException("Error getting AniList Token", e);
 			
-			JDAWrappers.replyCommand(event, translate(guild, "anilist.api-code.save-error")).submitAndDelete(10);
+			JDAWrappers.edit(event, translate(guild, "anilist.api-code.save-error")).submitAndDelete(10);
 			return FAILED;
 		}
 		return SUCCESS;

@@ -71,11 +71,11 @@ public class AddMusicTrackConsumer implements TrackConsumer{
 		if(!isCurrentTrack){
 			builder.addField(translate(guild, "music.queue.position"), String.valueOf(1 + before.size()), true);
 		}
-		JDAWrappers.replyCommandNewMessage(event, builder.build()).submit();
+		JDAWrappers.reply(event, builder.build()).submit();
 	}
 	
 	@Override
 	public void onFailure(@NotNull String message){
-		JDAWrappers.replyCommandNewMessage(event, message).submit();
+		JDAWrappers.reply(event, message).submit();
 	}
 }

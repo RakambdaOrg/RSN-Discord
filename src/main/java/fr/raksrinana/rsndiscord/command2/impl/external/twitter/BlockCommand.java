@@ -45,7 +45,7 @@ public class BlockCommand extends SubCommand{
 	public CommandResult execute(@NotNull SlashCommandEvent event){
 		var username = event.getOption(USER_OPTION_ID).getAsString();
 		var result = TwitterApi.blockUser(username);
-		JDAWrappers.replyCommand(event, "%s: %s".formatted(username, Boolean.toString(result.getData().isBlocking()))).submitAndDelete(1);
+		JDAWrappers.edit(event, "%s: %s".formatted(username, Boolean.toString(result.getData().isBlocking()))).submitAndDelete(1);
 		return SUCCESS;
 	}
 }

@@ -50,18 +50,18 @@ public class SkipCommand extends SubCommand{
 		var track = RSNAudioManager.currentTrack(guild);
 		
 		if(track.isEmpty()){
-			JDAWrappers.replyCommand(event, translate(guild, "music.nothing-playing")).submit();
+			JDAWrappers.edit(event, translate(guild, "music.nothing-playing")).submit();
 			return SUCCESS;
 		}
 		
 		if(track.get().getDuration() - track.get().getPosition() < 30000){
-			JDAWrappers.replyCommand(event, translate(guild, "music.skip.soon-finish")).submit();
+			JDAWrappers.edit(event, translate(guild, "music.skip.soon-finish")).submit();
 			return SUCCESS;
 		}
 		
 		if(RSNAudioManager.isRequester(guild, author) || isModerator(event.getMember())){
 			var message = skip(guild);
-			JDAWrappers.replyCommand(event, translate(guild, translate(guild, message, event.getUser().getAsMention()))).submitAndDelete(5);
+			JDAWrappers.edit(event, translate(guild, translate(guild, message, event.getUser().getAsMention()))).submitAndDelete(5);
 			return SUCCESS;
 		}
 		
@@ -78,7 +78,7 @@ public class SkipCommand extends SubCommand{
 				.setTitle(translate(guild, "music.skip.title"))
 				.addField(translate(guild, "music.skip.votes-required"), "" + requiredVote, true)
 				.build();
-		JDAWrappers.replyCommand(event, embed).submit()
+		JDAWrappers.edit(event, embed).submit()
 				.thenAccept(message -> {
 					JDAWrappers.addReaction(message, CHECK_OK).submit();
 					UserReplyEventListener.handleReply(new SkipMusicReply(event, message, requiredVote, track.get()));

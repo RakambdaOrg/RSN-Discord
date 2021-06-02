@@ -45,7 +45,7 @@ public class ResumeCommand extends SubCommand{
 			case OK -> "music.resumed";
 			case IMPOSSIBLE -> "unknown";
 		};
-		JDAWrappers.replyCommand(event, translate(guild, message, event.getUser().getAsMention())).submitAndDelete(5);
+		JDAWrappers.edit(event, translate(guild, message, event.getUser().getAsMention())).submitAndDelete(5);
 		return SUCCESS;
 	}
 }

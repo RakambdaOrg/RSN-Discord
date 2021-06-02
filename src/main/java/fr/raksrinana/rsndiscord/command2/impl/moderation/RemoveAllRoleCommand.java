@@ -19,7 +19,7 @@ public class RemoveAllRoleCommand extends SubCommand{
 	@Override
 	@NotNull
 	public String getId(){
-		return "removerole";
+		return "remove-role";
 	}
 	
 	@Override
@@ -39,16 +39,16 @@ public class RemoveAllRoleCommand extends SubCommand{
 		var guild = event.getGuild();
 		var targetRole = event.getOption(ROLE_OPTION_ID).getAsRole();
 		
-		JDAWrappers.replyCommand(event, translate(guild, "remove-role.retrieving-with-role")).submit();
+		JDAWrappers.edit(event, translate(guild, "remove-role.retrieving-with-role")).submit();
 		
 		guild.findMembers(member -> member.getRoles().contains(targetRole))
 				.onSuccess(members -> {
-					JDAWrappers.replyCommand(event, translate(guild, "remove-role.removing", members.size())).submit();
+					JDAWrappers.edit(event, translate(guild, "remove-role.removing", members.size())).submit();
 					members.forEach(member -> JDAWrappers.removeRole(member, targetRole).submit());
 				})
 				.onError(e -> {
 					Log.getLogger(guild).error("Failed to load members", e);
-					JDAWrappers.replyCommand(event, translate(guild, "remove-role.error-members")).submit();
+					JDAWrappers.edit(event, translate(guild, "remove-role.error-members")).submit();
 				});
 		
 		return SUCCESS;
