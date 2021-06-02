@@ -48,8 +48,8 @@ public class MediaReactionCommand extends SimpleCommand{
 	@NotNull
 	protected Collection<? extends OptionData> getOptions(){
 		return List.of(
-				new OptionData(STRING, OPTIONS_OPTION_ID, "Options"),
-				new OptionData(STRING, CONTENT_OPTION_ID, "Content").setRequired(true));
+				new OptionData(STRING, CONTENT_OPTION_ID, "Content").setRequired(true),
+				new OptionData(STRING, OPTIONS_OPTION_ID, "Options"));
 	}
 	
 	@Override
