@@ -16,16 +16,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.command.CommandResult.FAILED;
 import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
-import static fr.raksrinana.rsndiscord.utils.BasicEmotes.PACKAGE;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.lang.Character.isDigit;
+import static net.dv8tion.jda.api.interactions.commands.OptionType.BOOLEAN;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
 @BotSlashCommand
 public class MediaReactionCommand extends SimpleCommand{
 	private static final String COMMENT_STR = "--";
-	private static final String OPTIONS_OPTION_ID = "options";
 	private static final String CONTENT_OPTION_ID = "content";
+	private static final String EPISODE_OPTION_ID = "episode";
+	private static final String LINK_OPTION_ID = "link";
+	private static final String ARCHIVE_OPTION_ID = "archive";
 	
 	@Override
 	@NotNull
@@ -49,32 +51,33 @@ public class MediaReactionCommand extends SimpleCommand{
 	protected Collection<? extends OptionData> getOptions(){
 		return List.of(
 				new OptionData(STRING, CONTENT_OPTION_ID, "Content").setRequired(true),
-				new OptionData(STRING, OPTIONS_OPTION_ID, "Options"));
+				new OptionData(STRING, EPISODE_OPTION_ID, "Episode"),
+				new OptionData(STRING, LINK_OPTION_ID, "Link"),
+				new OptionData(BOOLEAN, ARCHIVE_OPTION_ID, "Archive"));
 	}
 	
 	@Override
 	@NotNull
 	public CommandResult execute(@NotNull SlashCommandEvent event){
 		var guild = event.getGuild();
-		var options = Optional.ofNullable(event.getOption(OPTIONS_OPTION_ID)).map(OptionMapping::getAsString);
 		var content = event.getOption(CONTENT_OPTION_ID).getAsString();
+		var episode = Optional.ofNullable(event.getOption(EPISODE_OPTION_ID)).map(OptionMapping::getAsString);
+		var link = Optional.ofNullable(event.getOption(LINK_OPTION_ID)).map(OptionMapping::getAsString);
+		var archive = Optional.ofNullable(event.getOption(ARCHIVE_OPTION_ID)).map(OptionMapping::getAsBoolean).orElse(false);
 		
 		try{
-			var isMovie = options.map(o -> o.contains("m")).orElse(false);
-			var askArchive = options.map(o -> o.contains("a")).orElse(false);
-			var defaultDecorator = options.filter(o -> o.contains("c")).map(o -> "").orElse("||");
-			
 			var reactions = Arrays.stream(content.split("§")).collect(Collectors.toCollection(LinkedList::new));
 			var messageContent = new StringBuilder();
 			
-			if(!isMovie){
-				messageContent.append("__**EP ").append(reactions.pop()).append("**__");
+			if(episode.isPresent() || link.isPresent()){
+				episode.map(v -> "__**EP " + v + "**__").ifPresent(messageContent::append);
+				link.ifPresent(messageContent::append);
 			}
 			
 			reactions.stream()
 					.filter(reaction -> !reaction.isBlank())
 					.forEach(reaction -> {
-						var decorator = defaultDecorator;
+						var decorator = "||";
 						
 						if(reaction.startsWith(COMMENT_STR)){
 							reaction = reaction.substring(COMMENT_STR.length());
@@ -93,13 +96,9 @@ public class MediaReactionCommand extends SimpleCommand{
 						}
 					});
 			
-			if(askArchive){
-				messageContent.append("\n\n").append(translate(guild, "media-reaction.archive", PACKAGE.getValue()));
-			}
-			
 			var messageAction = JDAWrappers.edit(event, messageContent.toString());
 			
-			if(askArchive){
+			if(archive){
 				var buttonHandler = new ArchiveMediaReactionButtonHandler();
 				messageAction = messageAction.setActionRow(buttonHandler.asButton());
 				Settings.get(guild).addButtonHandler(buttonHandler);
