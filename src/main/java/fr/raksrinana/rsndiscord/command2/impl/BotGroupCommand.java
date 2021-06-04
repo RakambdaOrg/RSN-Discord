@@ -18,12 +18,14 @@ public class BotGroupCommand extends SubCommandsGroupCommand{
 	}
 	
 	@Override
-	public @NotNull String getId(){
+	@NotNull
+	public String getId(){
 		return "bot";
 	}
 	
 	@Override
-	public @NotNull String getShortDescription(){
+	@NotNull
+	public String getShortDescription(){
 		return "Infos about the bot";
 	}
 }
