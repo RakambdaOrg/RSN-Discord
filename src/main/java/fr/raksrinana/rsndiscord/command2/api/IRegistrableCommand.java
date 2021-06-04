@@ -33,7 +33,7 @@ public interface IRegistrableCommand extends ICommand{
 	CommandData getSlashCommand();
 	
 	@NotNull
-	default CompletableFuture<Void> updateCommandPrivileges(@NotNull Guild guild,
+	default CompletableFuture<List<CommandPrivilege>> updateCommandPrivileges(@NotNull Guild guild,
 			@NotNull Function<List<CommandPrivilege>, Collection<? extends CommandPrivilege>> commandUpdate){
 		if(isGuildSpecific()){
 			return updateGuildCommandPrivileges(guild, commandUpdate);
@@ -42,19 +42,19 @@ public interface IRegistrableCommand extends ICommand{
 	}
 	
 	@NotNull
-	default CompletableFuture<Void> updateGuildCommandPrivileges(@NotNull Guild guild,
+	default CompletableFuture<List<CommandPrivilege>> updateGuildCommandPrivileges(@NotNull Guild guild,
 			@NotNull Function<List<CommandPrivilege>, Collection<? extends CommandPrivilege>> commandUpdate){
 		return updateCommandPrivileges(guild, guild.retrieveCommands(), commandUpdate);
 	}
 	
 	@NotNull
-	default CompletableFuture<Void> updateGlobalCommandPrivileges(@NotNull Guild guild,
+	default CompletableFuture<List<CommandPrivilege>> updateGlobalCommandPrivileges(@NotNull Guild guild,
 			@NotNull Function<List<CommandPrivilege>, Collection<? extends CommandPrivilege>> commandUpdate){
 		return updateCommandPrivileges(guild, guild.getJDA().retrieveCommands(), commandUpdate);
 	}
 	
 	@NotNull
-	default CompletableFuture<Void> updateCommandPrivileges(@NotNull Guild guild,
+	default CompletableFuture<List<CommandPrivilege>> updateCommandPrivileges(@NotNull Guild guild,
 			@NotNull RestAction<List<Command>> commandsAction,
 			@NotNull Function<List<CommandPrivilege>, Collection<? extends CommandPrivilege>> commandUpdate){
 		return commandsAction.submit().thenCompose(commands ->
