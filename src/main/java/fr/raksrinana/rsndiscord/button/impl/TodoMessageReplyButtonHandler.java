@@ -27,7 +27,6 @@ public class TodoMessageReplyButtonHandler extends SimpleButtonHandler{
 		var guild = event.getGuild();
 		var user = event.getUser();
 		var message = event.getMessage();
-		var referenceMessage = message.getReferencedMessage();
 		
 		return JDAWrappers.createTextChannel(guild, "reply-" + event.getMessageIdLong()).submit()
 				.thenCompose(forwardChannel -> {
@@ -38,12 +37,11 @@ public class TodoMessageReplyButtonHandler extends SimpleButtonHandler{
 					
 					return JDAWrappers.message(forwardChannel, translate(guild, "reaction.original-from", message.getAuthor().getAsMention())).submit();
 				})
-				.thenCompose(sent -> JDAWrappers.message(sent.getTextChannel(), referenceMessage).submit())
+				.thenCompose(sent -> JDAWrappers.message(sent.getTextChannel(), message).submit())
 				.thenCompose(sent -> JDAWrappers.message(sent.getTextChannel(), translate(guild, "reaction.react-archive", user.getAsMention()))
 						.addActionRow(new ReplyChannelDeleteButtonHandler().asButton())
 						.submit())
 				.thenCompose(sent -> JDAWrappers.delete(message).submit())
-				.thenCompose(sent -> JDAWrappers.delete(referenceMessage).submit())
 				.thenApply(e -> HANDLED);
 	}
 	

@@ -28,20 +28,18 @@ public class TodoMessageKeepButtonHandler extends SimpleButtonHandler{
 	public CompletableFuture<ButtonResult> handle(@NotNull ButtonClickEvent event){
 		var guild = event.getGuild();
 		var message = event.getMessage();
-		var referenceMessage = message.getReferencedMessage();
 		var channel = event.getTextChannel();
 		
 		var forwardChannel = Settings.get(guild).getReactionsConfiguration().getSavedForwarding().get(new ChannelConfiguration(channel));
 		return Optional.ofNullable(forwardChannel)
 				.flatMap(ChannelConfiguration::getChannel)
-				.map(c -> JDAWrappers.message(c, referenceMessage).submit()
+				.map(c -> JDAWrappers.message(c, message).submit()
 						.thenApply(forwardedMessage -> true)
 						.exceptionally(e -> false))
 				.orElse(CompletableFuture.completedFuture(false))
 				.thenAccept(forwarded -> {
 					if(forwarded){
-						JDAWrappers.delete(message).submit()
-								.thenCompose(empty -> JDAWrappers.delete(referenceMessage).submit());
+						JDAWrappers.delete(message).submit();
 					}
 					else{
 						JDAWrappers.reply(event, translate(guild, "reaction.not-configured")).submit();

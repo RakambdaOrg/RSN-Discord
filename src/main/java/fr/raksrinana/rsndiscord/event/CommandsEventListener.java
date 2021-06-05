@@ -1,6 +1,9 @@
 package fr.raksrinana.rsndiscord.event;
 
 import fr.raksrinana.rsndiscord.Main;
+import fr.raksrinana.rsndiscord.button.impl.TodoMessageCompletedButtonHandler;
+import fr.raksrinana.rsndiscord.button.impl.TodoMessageKeepButtonHandler;
+import fr.raksrinana.rsndiscord.button.impl.TodoMessageReplyButtonHandler;
 import fr.raksrinana.rsndiscord.command.BotCommand;
 import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.NotAllowedException;
@@ -12,6 +15,7 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -86,20 +90,26 @@ public class CommandsEventListener extends ListenerAdapter{
 						JDAWrappers.delete(message).submit();
 					}
 					else{
-						// JDAWrappers.message(event, "-")
-						// 		.replyTo(event.getMessage())
-						// 		.addActionRow(
-						// 				new TodoMessageCompletedButtonHandler().asButton(),
-						// 				new TodoMessageKeepButtonHandler().asButton(),
-						// 				new TodoMessageReplyButtonHandler().asButton())
-						// 		.submit();
-						
-						var waitingReactionMessageConfiguration = new WaitingReactionMessageConfiguration(message, TODO, Map.of(DELETE_KEY, Boolean.toString(true)));
-						guildConfiguration.addMessagesAwaitingReaction(waitingReactionMessageConfiguration);
-						
-						JDAWrappers.addReaction(message, CHECK_OK).submit();
-						JDAWrappers.addReaction(message, PAPERCLIP).submit();
-						JDAWrappers.addReaction(message, RIGHT_ARROW_CURVING_LEFT).submit();
+						if(message.getAttachments().isEmpty()){
+							var forward = new MessageBuilder(message)
+									.setContent("From " + author.getAsMention() + "\n" + message.getContentRaw())
+									.build();
+							JDAWrappers.message(event.getChannel(), forward)
+									.addActionRow(
+											new TodoMessageCompletedButtonHandler().asButton(),
+											new TodoMessageKeepButtonHandler().asButton(),
+											new TodoMessageReplyButtonHandler().asButton())
+									.submit()
+									.thenCompose(m -> JDAWrappers.delete(event.getMessage()).submit());
+						}
+						else{
+							var waitingReactionMessageConfiguration = new WaitingReactionMessageConfiguration(message, TODO, Map.of(DELETE_KEY, Boolean.toString(true)));
+							guildConfiguration.addMessagesAwaitingReaction(waitingReactionMessageConfiguration);
+							
+							JDAWrappers.addReaction(message, CHECK_OK).submit();
+							JDAWrappers.addReaction(message, PAPERCLIP).submit();
+							JDAWrappers.addReaction(message, RIGHT_ARROW_CURVING_LEFT).submit();
+						}
 					}
 				}
 			}
