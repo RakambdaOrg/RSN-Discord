@@ -41,7 +41,7 @@ public class ArchiveMediaReactionButtonHandler extends SimpleButtonHandler{
 						.setParent(archiveCategory)
 						.sync(archiveCategory)
 						.submit()
-						.thenCompose(future -> JDAWrappers.edit(event, translate(guild, "reaction.archived", user.getAsMention())).setActionRow().submit())
+						.thenCompose(future -> JDAWrappers.edit(event, translate(guild, "reaction.archived", user.getAsMention())).clearActionRows().submit())
 						.thenAccept(m -> config.add(new DeleteChannelScheduleActionHandler(channel.getIdLong(), now().plusWeeks(2))))
 						.thenApply(empty -> HANDLED))
 				.orElseGet(() -> {

@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.interactions.components.ComponentLayout;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageUpdateAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import static fr.raksrinana.rsndiscord.scheduleaction.ScheduleActionService.deleteMessageMins;
 
@@ -33,7 +34,14 @@ public class InteractionEditMessageWrapper{
 		this.action = hook.editOriginalComponents(layouts);
 	}
 	
-	public InteractionEditMessageWrapper setActionRow(Button... button){
+	@NotNull
+	public InteractionEditMessageWrapper clearActionRows(){
+		action = action.setActionRows(List.of());
+		return this;
+	}
+	
+	@NotNull
+	public InteractionEditMessageWrapper addActionRow(Button... button){
 		action = action.setActionRow(button);
 		return this;
 	}

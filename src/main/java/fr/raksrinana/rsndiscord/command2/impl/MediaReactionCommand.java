@@ -101,7 +101,7 @@ public class MediaReactionCommand extends SimpleCommand{
 			
 			if(archive){
 				var buttonHandler = new ArchiveMediaReactionButtonHandler();
-				messageAction = messageAction.setActionRow(buttonHandler.asButton());
+				messageAction = messageAction.addActionRow(buttonHandler.asButton());
 			}
 			
 			messageAction.submit()

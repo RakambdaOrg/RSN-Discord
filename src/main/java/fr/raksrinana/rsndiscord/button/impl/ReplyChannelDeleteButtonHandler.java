@@ -38,7 +38,7 @@ public class ReplyChannelDeleteButtonHandler extends SimpleButtonHandler{
 						.setParent(archiveCategory)
 						.sync(archiveCategory)
 						.submit()
-						.thenCompose(future -> JDAWrappers.edit(event, translate(guild, "reaction.archived", event.getMember().getAsMention())).setActionRow().submit())
+						.thenCompose(future -> JDAWrappers.edit(event, translate(guild, "reaction.archived", event.getMember().getAsMention())).clearActionRows().submit())
 						.thenAccept(m -> guildConfiguration.add(new DeleteChannelScheduleActionHandler(channel.getIdLong(), ZonedDateTime.now().plusDays(4))))
 						.thenApply(e -> HANDLED))
 				.orElseGet(() -> JDAWrappers.delete(channel).submit().thenApply(e -> HANDLED));
@@ -47,6 +47,6 @@ public class ReplyChannelDeleteButtonHandler extends SimpleButtonHandler{
 	@Override
 	@NotNull
 	public Button asButton(){
-		return Button.danger(getButtonId(), "Discard").withEmoji(Emoji.fromUnicode("U+1F5D1"));
+		return Button.danger(getButtonId(), "Delete channel").withEmoji(Emoji.fromUnicode("U+1F5D1"));
 	}
 }
