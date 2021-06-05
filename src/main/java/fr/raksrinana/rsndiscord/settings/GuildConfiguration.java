@@ -149,6 +149,7 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@Setter
 	private List<MessageConfiguration> mediaReactionMessages = new LinkedList<>();
 	@JsonProperty("scheduleActionHandlers")
+	@Getter
 	private Map<String, IScheduleActionHandler> scheduleHandler = new ConcurrentHashMap<>();
 	
 	GuildConfiguration(long guildId){
