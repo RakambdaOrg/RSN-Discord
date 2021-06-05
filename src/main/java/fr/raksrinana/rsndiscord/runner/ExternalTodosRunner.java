@@ -1,19 +1,17 @@
 package fr.raksrinana.rsndiscord.runner;
 
 import fr.raksrinana.rsndiscord.api.externaltodos.ExternalTodosApi;
+import fr.raksrinana.rsndiscord.button.impl.ExternalTodoCompletedButtonHandler;
+import fr.raksrinana.rsndiscord.button.impl.ExternalTodoDiscardedButtonHandler;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.interactions.components.Component;
 import org.jetbrains.annotations.NotNull;
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import static fr.raksrinana.rsndiscord.api.externaltodos.data.Status.EXTERNAL;
-import static fr.raksrinana.rsndiscord.reaction.ReactionTag.EXTERNAL_TODO;
-import static fr.raksrinana.rsndiscord.reaction.ReactionUtils.DELETE_KEY;
-import static fr.raksrinana.rsndiscord.utils.BasicEmotes.CHECK_OK;
-import static fr.raksrinana.rsndiscord.utils.BasicEmotes.CROSS_NO;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 @ScheduledRunner
@@ -46,19 +44,20 @@ public class ExternalTodosRunner implements IScheduledRunner{
 						.ifPresent(channel -> {
 							var response = ExternalTodosApi.getTodos(endpoint, token);
 							
-							response.ifPresent(todos -> todos.getTodos().forEach(todo -> JDAWrappers.message(channel, "`" + todo.getKind().name() + "` => " + todo.getDescription()).submit()
-									.thenAccept(message -> {
-										JDAWrappers.addReaction(message, CHECK_OK).submit();
+							response.ifPresent(todos -> todos.getTodos()
+									.forEach(todo -> {
+										var components = new ArrayList<Component>();
+										components.add(new ExternalTodoCompletedButtonHandler().asButton());
+										
 										if(todo.getKind().isCancellable()){
-											JDAWrappers.addReaction(message, CROSS_NO).submit();
+											components.add(new ExternalTodoDiscardedButtonHandler().asButton());
 										}
 										
-										var waitingReactionMessageConfiguration = new WaitingReactionMessageConfiguration(message,
-												EXTERNAL_TODO, Map.of(DELETE_KEY, Boolean.toString(false)));
-										Settings.get(guild).addMessagesAwaitingReaction(waitingReactionMessageConfiguration);
-										
-										ExternalTodosApi.setStatus(endpoint, token, todo, EXTERNAL);
-									})));
+										JDAWrappers.message(channel, "`" + todo.getKind().name() + "` => " + todo.getDescription())
+												.addActionRow(components)
+												.submit()
+												.thenAccept(message -> ExternalTodosApi.setStatus(endpoint, token, todo, EXTERNAL));
+									}));
 						});
 			});
 		});

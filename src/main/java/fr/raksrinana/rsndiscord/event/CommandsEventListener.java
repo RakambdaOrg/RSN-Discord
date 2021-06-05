@@ -1,6 +1,7 @@
 package fr.raksrinana.rsndiscord.event;
 
 import fr.raksrinana.rsndiscord.Main;
+import fr.raksrinana.rsndiscord.button.impl.ExternalTodoCompletedButtonHandler;
 import fr.raksrinana.rsndiscord.command.BotCommand;
 import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.NotAllowedException;
@@ -27,7 +28,6 @@ import static fr.raksrinana.rsndiscord.command.CommandResult.BAD_ARGUMENTS;
 import static fr.raksrinana.rsndiscord.command.CommandResult.FAILED;
 import static fr.raksrinana.rsndiscord.command.DeleteMode.AFTER;
 import static fr.raksrinana.rsndiscord.command.DeleteMode.BEFORE;
-import static fr.raksrinana.rsndiscord.reaction.ReactionTag.EXTERNAL_TODO;
 import static fr.raksrinana.rsndiscord.reaction.ReactionTag.TODO;
 import static fr.raksrinana.rsndiscord.reaction.ReactionUtils.DELETE_KEY;
 import static fr.raksrinana.rsndiscord.utils.BasicEmotes.*;
@@ -100,11 +100,7 @@ public class CommandsEventListener extends ListenerAdapter{
 					}
 				}
 				else if(isExternalTodoChannel(guildConfiguration, channel)){
-					var waitingReactionMessageConfiguration = new WaitingReactionMessageConfiguration(message,
-							EXTERNAL_TODO, Map.of(DELETE_KEY, Boolean.toString(false)));
-					guildConfiguration.addMessagesAwaitingReaction(waitingReactionMessageConfiguration);
-					
-					JDAWrappers.addReaction(message, CHECK_OK).submit();
+					JDAWrappers.edit(event.getMessage(), new ExternalTodoCompletedButtonHandler().asButton());
 				}
 			}
 		}

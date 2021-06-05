@@ -1,10 +1,12 @@
 package fr.raksrinana.rsndiscord.runner;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.guild.birthday.BirthdaysConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 import java.util.concurrent.TimeUnit;
@@ -22,27 +24,30 @@ public class BirthdayRunner implements IScheduledRunner{
 	
 	@Override
 	public void execute(){
-		var day = LocalDate.now();
 		jda.getGuilds().forEach(guild -> {
 			log.info("Processing guild {}", guild);
 			var birthdaysConfiguration = Settings.get(guild).getBirthdays();
+			
 			birthdaysConfiguration.getNotificationChannel()
 					.flatMap(ChannelConfiguration::getChannel)
-					.ifPresent(textChannel ->
-							birthdaysConfiguration.getBirthdays().forEach((userConfiguration, birthday) -> {
-								if(birthday.isAt(day) && !birthday.isNotified(day)){
-									birthday.setNotified(day);
-									
-									userConfiguration.getUser()
-											.ifPresent(user -> {
-												var message = translate(guild, "birthday.today",
-														user.getAsMention(),
-														birthday.getDate().until(day).normalized().getYears());
-												
-												JDAWrappers.message(textChannel, message).submit();
-											});
-								}
-							}));
+					.ifPresent(textChannel -> sendBirthdays(textChannel, birthdaysConfiguration));
+		});
+	}
+	
+	private void sendBirthdays(@NotNull TextChannel channel, @NotNull BirthdaysConfiguration birthdays){
+		var day = LocalDate.now();
+		
+		birthdays.getBirthdays().forEach((userConfiguration, birthday) -> {
+			if(birthday.isAt(day) && !birthday.isNotified(day)){
+				birthday.setNotified(day);
+				
+				userConfiguration.getUser().ifPresent(user -> {
+					var years = birthday.getDate().until(day).normalized().getYears();
+					var message = translate(channel.getGuild(), "birthday.today", user.getAsMention(), years);
+					
+					JDAWrappers.message(channel, message).submit();
+				});
+			}
 		});
 	}
 	

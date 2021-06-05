@@ -94,6 +94,12 @@ public class MessageWrapper{
 	}
 	
 	@NotNull
+	public MessageWrapper addActionRow(@NotNull Collection<Component> components){
+		action = action.setActionRow(components);
+		return this;
+	}
+	
+	@NotNull
 	public MessageWrapper addActionRow(@NotNull Component... components){
 		action = action.setActionRow(components);
 		return this;

@@ -8,9 +8,7 @@ import picocli.CommandLine.Option;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/**
- * Contains the elements passed through the CLI.
- */
+@SuppressWarnings("FieldMayBeFinal")
 @NoArgsConstructor
 @Getter
 @Command(name = "rsndiscord", mixinStandardHelpOptions = true)

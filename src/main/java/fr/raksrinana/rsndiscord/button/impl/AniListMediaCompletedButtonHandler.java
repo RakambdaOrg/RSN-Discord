@@ -1,8 +1,5 @@
 package fr.raksrinana.rsndiscord.button.impl;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import fr.raksrinana.rsndiscord.button.ButtonHandler;
 import fr.raksrinana.rsndiscord.button.ButtonResult;
 import fr.raksrinana.rsndiscord.button.base.SimpleButtonHandler;
@@ -19,9 +16,6 @@ import java.util.concurrent.CompletableFuture;
 import static fr.raksrinana.rsndiscord.button.ButtonResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.Utilities.MAIN_RAKSRINANA_ACCOUNT;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonTypeName("AniListMediaCompleted")
 @Log4j2
 @ButtonHandler
 public class AniListMediaCompletedButtonHandler extends SimpleButtonHandler{

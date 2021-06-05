@@ -18,9 +18,9 @@ import static fr.raksrinana.rsndiscord.utils.Utilities.MAIN_RAKSRINANA_ACCOUNT;
 
 @Log4j2
 @ButtonHandler
-public class AniListMediaDiscardedButtonHandler extends SimpleButtonHandler{
-	public AniListMediaDiscardedButtonHandler(){
-		super("anilist-media-discarded");
+public class ExternalTodoCompletedButtonHandler extends SimpleButtonHandler{
+	public ExternalTodoCompletedButtonHandler(){
+		super("external-todo-completed");
 	}
 	
 	@NotNull
@@ -32,16 +32,16 @@ public class AniListMediaDiscardedButtonHandler extends SimpleButtonHandler{
 		return Optional.ofNullable(event.getJDA().getUserById(MAIN_RAKSRINANA_ACCOUNT))
 				.map(User::openPrivateChannel)
 				.map(RestAction::submit)
-				.map(future -> future.thenCompose(privateChannel -> JDAWrappers.message(privateChannel, user.getAsMention() + " discarded").submit())
+				.map(future -> future.thenCompose(privateChannel -> JDAWrappers.message(privateChannel, user.getAsMention() + " completed").submit()
 						.thenCompose(m -> JDAWrappers.message(m.getPrivateChannel(), message).setActionRows().submit())
 						.thenCompose(m -> JDAWrappers.delete(message).submit())
-						.thenApply(m -> HANDLED))
+						.thenApply(m -> HANDLED)))
 				.orElseGet(() -> CompletableFuture.completedFuture(HANDLED));
 	}
 	
 	@Override
 	@NotNull
 	public Button asButton(){
-		return Button.danger(getButtonId(), "Discard").withEmoji(Emoji.fromUnicode("U+1F5D1"));
+		return Button.success(getButtonId(), "Complete").withEmoji(Emoji.fromUnicode("U+1F44C"));
 	}
 }

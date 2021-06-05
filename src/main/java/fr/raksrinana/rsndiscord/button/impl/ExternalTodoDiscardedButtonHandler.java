@@ -18,9 +18,9 @@ import static fr.raksrinana.rsndiscord.utils.Utilities.MAIN_RAKSRINANA_ACCOUNT;
 
 @Log4j2
 @ButtonHandler
-public class AniListMediaDiscardedButtonHandler extends SimpleButtonHandler{
-	public AniListMediaDiscardedButtonHandler(){
-		super("anilist-media-discarded");
+public class ExternalTodoDiscardedButtonHandler extends SimpleButtonHandler{
+	public ExternalTodoDiscardedButtonHandler(){
+		super("external-todo-discarded");
 	}
 	
 	@NotNull

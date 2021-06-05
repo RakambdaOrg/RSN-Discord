@@ -2,16 +2,17 @@ package fr.raksrinana.rsndiscord;
 
 import fr.raksrinana.rsndiscord.api.twitch.TwitchUtils;
 import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
+import fr.raksrinana.rsndiscord.button.impl.ExternalTodoCompletedButtonHandler;
 import fr.raksrinana.rsndiscord.command2.SlashCommandService;
 import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
+import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.reaction.ReactionUtils;
 import fr.raksrinana.rsndiscord.reply.UserReplyEventListener;
 import fr.raksrinana.rsndiscord.runner.RunnerUtils;
 import fr.raksrinana.rsndiscord.schedule.ScheduleUtils;
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.guild.TwitchConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
@@ -52,7 +53,6 @@ public class Main{
 	private static CLIParameters parameters;
 	@Getter
 	private static JDA jda;
-	private static ConsoleHandler consoleHandler;
 	
 	/**
 	 * Main entry point.
@@ -66,8 +66,6 @@ public class Main{
 				.connectTimeout(30000)
 				.enableCookieManagement(true)
 				.verifySsl(true);
-		
-		consoleHandler = new ConsoleHandler();
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			log.info("Shutdown hook triggered");
@@ -100,8 +98,18 @@ public class Main{
 			log.info("Started");
 			announceStart();
 			
+			jda.getGuilds().forEach(g -> {
+				Settings.get(g).getMessagesAwaitingReaction(ReactionTag.EXTERNAL_TODO)
+						.removeIf(r -> {
+							return r.getMessage().getMessage().map(m -> {
+								JDAWrappers.edit(m, new ExternalTodoCompletedButtonHandler().asButton()).submit();
+								m.clearReactions().submit();
+								return true;
+							}).orElse(true);
+						});
+			});
+			
 			executorService.schedule((Runnable) TwitchUtils::connect, 15, TimeUnit.SECONDS);
-			consoleHandler.start();
 		}
 		catch(LoginException | InterruptedException e){
 			log.error("Couldn't start bot", e);
@@ -168,15 +176,6 @@ public class Main{
 	}
 	
 	/**
-	 * Connects to IRC channels defined in the configuration.
-	 *
-	 * @see TwitchConfiguration#getTwitchAutoConnectUsers()
-	 */
-	private static void restartTwitchIRCConnections(){
-		TwitchUtils.connect();
-	}
-	
-	/**
 	 * Close the bot.
 	 */
 	public static void close(){
@@ -185,7 +184,6 @@ public class Main{
 		RSNAudioManager.stopAll();
 		TwitchUtils.close();
 		executorService.shutdownNow();
-		consoleHandler.close();
 		Settings.close();
 		Main.getJda().shutdown();
 		

@@ -21,8 +21,6 @@ import fr.raksrinana.rsndiscord.settings.types.CategoryConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
-import fr.raksrinana.rsndiscord.utils.json.converter.ChannelConfigurationKeyDeserializer;
-import fr.raksrinana.rsndiscord.utils.json.converter.ChannelConfigurationKeySerializer;
 import fr.raksrinana.rsndiscord.utils.json.converter.DurationDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.converter.DurationSerializer;
 import lombok.Getter;
@@ -146,12 +144,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@Getter
 	@Setter
 	private JoinLeaveConfiguration joinLeaveConfiguration = new JoinLeaveConfiguration();
-	@JsonProperty("autoDeleteChannels")
-	@Getter
-	@Setter
-	@JsonSerialize(keyUsing = ChannelConfigurationKeySerializer.class)
-	@JsonDeserialize(keyUsing = ChannelConfigurationKeyDeserializer.class)
-	private Map<ChannelConfiguration, Integer> autoDeleteChannels = new HashMap<>();
 	@JsonProperty("mediaReactionMessages")
 	@Getter
 	@Setter
