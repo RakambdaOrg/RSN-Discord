@@ -39,7 +39,7 @@ public class AniListMediaDiscardedButtonHandler extends SimpleButtonHandler{
 				.map(User::openPrivateChannel)
 				.map(RestAction::submit)
 				.map(future -> future.thenCompose(privateChannel -> JDAWrappers.message(privateChannel, user.getAsMention() + " discarded").submit()))
-				.map(future -> future.thenCompose(m -> JDAWrappers.message(m.getPrivateChannel(), message).submit()))
+				.map(future -> future.thenCompose(m -> JDAWrappers.message(m.getPrivateChannel(), message).setActionRows().submit()))
 				.map(future -> future.thenApply(m -> HANDLED_NO_MESSAGE))
 				.orElseGet(() -> CompletableFuture.completedFuture(HANDLED_NO_MESSAGE));
 	}

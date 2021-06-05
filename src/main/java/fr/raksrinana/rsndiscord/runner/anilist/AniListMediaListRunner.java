@@ -41,7 +41,7 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 		
 		JDAWrappers.message(channel, member.getAsMention())
 				.embed(buildMessage(channel.getGuild(), member.getUser(), mediaList))
-				.addComponent(completedButton.asButton(), discardedButton.asButton())
+				.addActionRow(completedButton.asButton(), discardedButton.asButton())
 				.submit();
 	}
 	
