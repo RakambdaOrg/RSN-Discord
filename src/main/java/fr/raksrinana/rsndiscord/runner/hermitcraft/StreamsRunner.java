@@ -82,6 +82,6 @@ public class StreamsRunner implements IScheduledRunner{
 				.addField(translate(channel.getGuild(), "hermitcraft.hermit"), hermit.getDisplayName(), true)
 				.setThumbnail(hermit.getProfilePicture().toString())
 				.build();
-		JDAWrappers.message(channel, embed).submit();
+		JDAWrappers.message(channel, embed).submitAndDelete(12 * 60);
 	}
 }

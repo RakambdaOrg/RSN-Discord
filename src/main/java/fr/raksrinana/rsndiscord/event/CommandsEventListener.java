@@ -1,23 +1,19 @@
 package fr.raksrinana.rsndiscord.event;
 
 import fr.raksrinana.rsndiscord.Main;
-import fr.raksrinana.rsndiscord.button.impl.ExternalTodoCompletedButtonHandler;
 import fr.raksrinana.rsndiscord.command.BotCommand;
 import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.NotAllowedException;
 import fr.raksrinana.rsndiscord.command.NotHandledException;
 import fr.raksrinana.rsndiscord.log.LogContext;
-import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
-import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageType;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -98,9 +94,6 @@ public class CommandsEventListener extends ListenerAdapter{
 						JDAWrappers.addReaction(message, PAPERCLIP).submit();
 						JDAWrappers.addReaction(message, RIGHT_ARROW_CURVING_LEFT).submit();
 					}
-				}
-				else if(isExternalTodoChannel(guildConfiguration, channel)){
-					JDAWrappers.editComponents(event.getMessage(), new ExternalTodoCompletedButtonHandler().asButton());
 				}
 			}
 		}
@@ -184,14 +177,6 @@ public class CommandsEventListener extends ListenerAdapter{
 			JDAWrappers.message(event, embed).submitAndDelete(5);
 			JDAWrappers.delete(message).submit();
 		});
-	}
-	
-	private boolean isExternalTodoChannel(@NotNull GuildConfiguration guildConfiguration, @NotNull TextChannel channel){
-		return guildConfiguration.getExternalTodos()
-				.getNotificationChannel()
-				.map(ChannelConfiguration::getChannelId)
-				.map(id -> Objects.equals(id, channel.getIdLong()))
-				.orElse(false);
 	}
 	
 	/**

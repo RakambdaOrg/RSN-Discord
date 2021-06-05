@@ -28,8 +28,6 @@ public class ReplyChannelDeleteButtonHandler extends SimpleButtonHandler{
 	@Override
 	public CompletableFuture<ButtonResult> handle(@NotNull ButtonClickEvent event){
 		var guild = event.getGuild();
-		var user = event.getUser();
-		var message = event.getMessage();
 		var channel = event.getTextChannel();
 		
 		var guildConfiguration = Settings.get(guild);
@@ -40,7 +38,7 @@ public class ReplyChannelDeleteButtonHandler extends SimpleButtonHandler{
 						.setParent(archiveCategory)
 						.sync(archiveCategory)
 						.submit()
-						.thenCompose(future -> JDAWrappers.message(channel, translate(guild, "reaction.archived", event.getMember().getAsMention())).submit())
+						.thenCompose(future -> JDAWrappers.edit(event, translate(guild, "reaction.archived", event.getMember().getAsMention())).setActionRow().submit())
 						.thenAccept(m -> guildConfiguration.add(new DeleteChannelScheduleActionHandler(channel.getIdLong(), ZonedDateTime.now().plusDays(4))))
 						.thenApply(e -> HANDLED))
 				.orElseGet(() -> JDAWrappers.delete(channel).submit().thenApply(e -> HANDLED));

@@ -131,7 +131,7 @@ public class TodoReactionHandler implements IReactionHandler{
 										.submit());
 						JDAWrappers.message(forwardChannel, translate(guild, "reaction.original-from", message.getAuthor().getAsMention())).submit()
 								.thenCompose(sent -> JDAWrappers.message(forwardChannel, message).submit())
-								.thenCompose(sent -> JDAWrappers.message(forwardChannel, translate(guild, "reaction.react-archive", user.getAsMention(), CROSS_NO.getValue()))
+								.thenCompose(sent -> JDAWrappers.message(forwardChannel, translate(guild, "reaction.react-archive", user.getAsMention()))
 										.addActionRow(new ReplyChannelDeleteButtonHandler().asButton())
 										.submit())
 								.thenCompose(sent -> JDAWrappers.delete(message).submit());

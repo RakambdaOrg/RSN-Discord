@@ -242,10 +242,19 @@ public class JDAWrappers{
 	@NotNull
 	public static EditMessageWrapper editComponents(@NotNull Message message, @NotNull Component... components){
 		if(message.isFromGuild()){
-			return new EditMessageWrapper(message.getGuild(), message, components);
+			return new EditMessageWrapper(message.getGuild(), message).addActionRow(components);
 		}
 		
-		return new EditMessageWrapper(null, message, components);
+		return new EditMessageWrapper(null, message).addActionRow(components);
+	}
+	
+	@NotNull
+	public static EditMessageWrapper removeComponents(@NotNull Message message){
+		if(message.isFromGuild()){
+			return new EditMessageWrapper(message.getGuild(), message).setActionRows();
+		}
+		
+		return new EditMessageWrapper(null, message).setActionRows();
 	}
 	
 	@NotNull
