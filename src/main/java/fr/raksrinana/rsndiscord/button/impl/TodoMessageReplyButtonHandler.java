@@ -37,7 +37,9 @@ public class TodoMessageReplyButtonHandler extends SimpleButtonHandler{
 					
 					return JDAWrappers.message(forwardChannel, translate(guild, "reaction.original-from", message.getAuthor().getAsMention())).submit();
 				})
-				.thenCompose(sent -> JDAWrappers.message(sent.getTextChannel(), message).submit())
+				.thenCompose(sent -> JDAWrappers.message(sent.getTextChannel(), message)
+						.clearActionRows()
+						.submit())
 				.thenCompose(sent -> JDAWrappers.message(sent.getTextChannel(), translate(guild, "reaction.react-archive", user.getAsMention()))
 						.addActionRow(new ReplyChannelDeleteButtonHandler().asButton())
 						.submit())

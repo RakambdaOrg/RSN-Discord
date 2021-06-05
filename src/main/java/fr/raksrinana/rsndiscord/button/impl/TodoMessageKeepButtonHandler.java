@@ -33,7 +33,9 @@ public class TodoMessageKeepButtonHandler extends SimpleButtonHandler{
 		var forwardChannel = Settings.get(guild).getReactionsConfiguration().getSavedForwarding().get(new ChannelConfiguration(channel));
 		return Optional.ofNullable(forwardChannel)
 				.flatMap(ChannelConfiguration::getChannel)
-				.map(c -> JDAWrappers.message(c, message).submit()
+				.map(c -> JDAWrappers.message(c, message)
+						.clearActionRows()
+						.submit()
 						.thenApply(forwardedMessage -> true)
 						.exceptionally(e -> false))
 				.orElse(CompletableFuture.completedFuture(false))

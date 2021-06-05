@@ -33,7 +33,7 @@ public class ExternalTodoDiscardedButtonHandler extends SimpleButtonHandler{
 				.map(User::openPrivateChannel)
 				.map(RestAction::submit)
 				.map(future -> future.thenCompose(privateChannel -> JDAWrappers.message(privateChannel, user.getAsMention() + " discarded").submit())
-						.thenCompose(m -> JDAWrappers.message(m.getPrivateChannel(), message).setActionRows().submit())
+						.thenCompose(m -> JDAWrappers.message(m.getPrivateChannel(), message).clearActionRows().submit())
 						.thenCompose(m -> JDAWrappers.delete(message).submit())
 						.thenApply(m -> HANDLED))
 				.orElseGet(() -> CompletableFuture.completedFuture(HANDLED));

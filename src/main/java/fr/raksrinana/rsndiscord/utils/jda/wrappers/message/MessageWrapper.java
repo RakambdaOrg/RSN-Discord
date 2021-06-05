@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import static fr.raksrinana.rsndiscord.scheduleaction.ScheduleActionService.deleteMessageMins;
@@ -96,6 +97,12 @@ public class MessageWrapper{
 	@NotNull
 	public MessageWrapper addActionRow(@NotNull Component... components){
 		action = action.setActionRow(components);
+		return this;
+	}
+	
+	@NotNull
+	public MessageWrapper clearActionRows(){
+		action = action.setActionRows(List.of());
 		return this;
 	}
 	
