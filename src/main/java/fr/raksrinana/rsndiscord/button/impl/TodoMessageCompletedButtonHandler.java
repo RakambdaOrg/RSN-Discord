@@ -30,12 +30,7 @@ public class TodoMessageCompletedButtonHandler extends SimpleButtonHandler{
 				.map(m -> JDAWrappers.delete(m).submit())
 				.orElseGet(() -> CompletableFuture.completedFuture(null))
 				.thenCompose(empty -> JDAWrappers.delete(message).submit())
-				.thenCompose(empty -> {
-					if(referenceMessage == null){
-						return CompletableFuture.completedFuture(null);
-					}
-					return JDAWrappers.delete(referenceMessage).submit();
-				})
+				.thenCompose(empty -> JDAWrappers.delete(referenceMessage).submit())
 				.thenApply(empty -> HANDLED);
 	}
 	
