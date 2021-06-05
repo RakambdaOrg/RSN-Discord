@@ -16,8 +16,6 @@ import fr.raksrinana.rsndiscord.utils.json.converter.ZonedDateTimeSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
@@ -63,6 +61,11 @@ public class ScheduleConfiguration implements IAtomicConfiguration{
 	@NotNull
 	public Optional<ChannelConfiguration> getChannel(){
 		return Optional.ofNullable(channel);
+	}
+	
+	@NotNull
+	public Optional<Long> getChannelId(){
+		return Optional.ofNullable(channel).map(ChannelConfiguration::getChannelId);
 	}
 	
 	@Override

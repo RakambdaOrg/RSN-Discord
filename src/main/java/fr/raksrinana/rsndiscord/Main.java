@@ -2,15 +2,15 @@ package fr.raksrinana.rsndiscord;
 
 import fr.raksrinana.rsndiscord.api.twitch.TwitchUtils;
 import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
-import fr.raksrinana.rsndiscord.button.impl.ReplyChannelDeleteButtonHandler;
 import fr.raksrinana.rsndiscord.command2.SlashCommandService;
 import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
-import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.reaction.ReactionUtils;
 import fr.raksrinana.rsndiscord.reply.UserReplyEventListener;
 import fr.raksrinana.rsndiscord.runner.RunnerUtils;
+import fr.raksrinana.rsndiscord.schedule.ScheduleTag;
 import fr.raksrinana.rsndiscord.schedule.ScheduleUtils;
+import fr.raksrinana.rsndiscord.scheduleaction.impl.DeleteChannelScheduleActionHandler;
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
@@ -100,14 +100,13 @@ public class Main{
 			
 			jda.getGuilds().forEach(g -> {
 				var guildConfiguration = Settings.get(g);
-				guildConfiguration.getMessagesAwaitingReaction(ReactionTag.SCHEDULED_DELETE_CHANNEL)
-						.forEach(r -> {
-							guildConfiguration.removeMessagesAwaitingReaction(r);
-						});
-				guildConfiguration.getMessagesAwaitingReaction(ReactionTag.DELETE_CHANNEL)
-						.forEach(r -> {
-							r.getMessage().getMessage().ifPresent(message -> JDAWrappers.editComponents(message, new ReplyChannelDeleteButtonHandler().asButton()).submit());
-							guildConfiguration.removeMessagesAwaitingReaction(r);
+				guildConfiguration.getSchedules()
+						.removeIf(c -> {
+							if(c.getTag() == ScheduleTag.DELETE_CHANNEL){
+								guildConfiguration.add(new DeleteChannelScheduleActionHandler(c.getChannelId().get(), c.getScheduleDate()));
+								return true;
+							}
+							return false;
 						});
 			});
 			

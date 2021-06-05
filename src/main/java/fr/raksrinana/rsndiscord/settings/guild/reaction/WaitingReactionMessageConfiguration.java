@@ -25,7 +25,7 @@ public class WaitingReactionMessageConfiguration implements IAtomicConfiguration
 	@JsonProperty("message")
 	private MessageConfiguration message;
 	@JsonProperty("tag")
-	private ReactionTag tag = ReactionTag.NONE;
+	private ReactionTag tag;
 	@JsonProperty("data")
 	private Map<String, String> data = new HashMap<>();
 	
