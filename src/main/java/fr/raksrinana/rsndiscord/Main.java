@@ -101,12 +101,11 @@ public class Main{
 			jda.getGuilds().forEach(g -> {
 				var guildConfiguration = Settings.get(g);
 				guildConfiguration.getSchedules()
-						.removeIf(c -> {
+						.forEach(c -> {
 							if(c.getTag() == ScheduleTag.DELETE_CHANNEL){
 								guildConfiguration.add(new DeleteChannelScheduleActionHandler(c.getChannelId().get(), c.getScheduleDate()));
-								return true;
+								guildConfiguration.removeSchedule(c);
 							}
-							return false;
 						});
 			});
 			
