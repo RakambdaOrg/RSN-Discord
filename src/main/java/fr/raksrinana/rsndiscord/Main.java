@@ -2,7 +2,6 @@ package fr.raksrinana.rsndiscord;
 
 import fr.raksrinana.rsndiscord.api.twitch.TwitchUtils;
 import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
-import fr.raksrinana.rsndiscord.button.impl.ExternalTodoCompletedButtonHandler;
 import fr.raksrinana.rsndiscord.command2.SlashCommandService;
 import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
@@ -99,13 +98,14 @@ public class Main{
 			announceStart();
 			
 			jda.getGuilds().forEach(g -> {
-				Settings.get(g).getMessagesAwaitingReaction(ReactionTag.EXTERNAL_TODO)
-						.removeIf(r -> {
-							return r.getMessage().getMessage().map(m -> {
-								JDAWrappers.edit(m, new ExternalTodoCompletedButtonHandler().asButton()).submit();
-								m.clearReactions().submit();
-								return true;
-							}).orElse(true);
+				var guildConfiguration = Settings.get(g);
+				guildConfiguration.getMessagesAwaitingReaction(ReactionTag.EXTERNAL_TODO)
+						.forEach(r -> {
+							guildConfiguration.removeMessagesAwaitingReaction(r);
+						});
+				guildConfiguration.getMessagesAwaitingReaction(ReactionTag.ANILIST_TODO)
+						.forEach(r -> {
+							guildConfiguration.removeMessagesAwaitingReaction(r);
 						});
 			});
 			
