@@ -240,7 +240,7 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static EditMessageWrapper edit(@NotNull Message message, @NotNull Component... components){
+	public static EditMessageWrapper editComponents(@NotNull Message message, @NotNull Component... components){
 		if(message.isFromGuild()){
 			return new EditMessageWrapper(message.getGuild(), message, components);
 		}

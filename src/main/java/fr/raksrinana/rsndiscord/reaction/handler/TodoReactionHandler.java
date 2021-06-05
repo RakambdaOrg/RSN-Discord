@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.reaction.handler;
 
+import fr.raksrinana.rsndiscord.button.impl.ReplyChannelDeleteButtonHandler;
 import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
@@ -15,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
-import static fr.raksrinana.rsndiscord.reaction.ReactionTag.DELETE_CHANNEL;
 import static fr.raksrinana.rsndiscord.reaction.ReactionTag.TODO;
 import static fr.raksrinana.rsndiscord.reaction.ReactionUtils.DELETE_KEY;
 import static fr.raksrinana.rsndiscord.reaction.handler.ReactionHandlerResult.*;
@@ -131,12 +131,10 @@ public class TodoReactionHandler implements IReactionHandler{
 										.submit());
 						JDAWrappers.message(forwardChannel, translate(guild, "reaction.original-from", message.getAuthor().getAsMention())).submit()
 								.thenCompose(sent -> JDAWrappers.message(forwardChannel, message).submit())
-								.thenCompose(sent -> JDAWrappers.message(forwardChannel, translate(guild, "reaction.react-archive", user.getAsMention(), CROSS_NO.getValue())).submit()
-										.thenAccept(forwarded -> {
-											JDAWrappers.addReaction(forwarded, CROSS_NO).submit();
-											Settings.get(guild).addMessagesAwaitingReaction(new WaitingReactionMessageConfiguration(forwarded, DELETE_CHANNEL));
-											JDAWrappers.delete(message).submit();
-										}));
+								.thenCompose(sent -> JDAWrappers.message(forwardChannel, translate(guild, "reaction.react-archive", user.getAsMention(), CROSS_NO.getValue()))
+										.addActionRow(new ReplyChannelDeleteButtonHandler().asButton())
+										.submit())
+								.thenCompose(sent -> JDAWrappers.delete(message).submit());
 						return PROCESSED_DELETE;
 					})
 					.exceptionally(ex -> PROCESSED)

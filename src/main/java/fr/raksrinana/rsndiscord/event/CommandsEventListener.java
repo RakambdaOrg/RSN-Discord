@@ -100,7 +100,7 @@ public class CommandsEventListener extends ListenerAdapter{
 					}
 				}
 				else if(isExternalTodoChannel(guildConfiguration, channel)){
-					JDAWrappers.edit(event.getMessage(), new ExternalTodoCompletedButtonHandler().asButton());
+					JDAWrappers.editComponents(event.getMessage(), new ExternalTodoCompletedButtonHandler().asButton());
 				}
 			}
 		}
