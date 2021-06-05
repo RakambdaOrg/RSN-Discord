@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
+import static fr.raksrinana.rsndiscord.scheduleaction.ScheduleActionService.deleteMessageMins;
 
 @Log4j2
 public class InteractionNewMessageWrapper{
@@ -25,6 +26,7 @@ public class InteractionNewMessageWrapper{
 		this.action = hook.sendMessage(message);
 	}
 	
+	@NotNull
 	public InteractionNewMessageWrapper ephemeral(boolean state){
 		action = action.setEphemeral(state);
 		return this;
@@ -37,5 +39,10 @@ public class InteractionNewMessageWrapper{
 					log.info("Replied with new message to slash command in {} : {}", target, message.getContentRaw());
 					return message;
 				});
+	}
+	
+	@NotNull
+	public CompletableFuture<Message> submitAndDelete(int minutes){
+		return submit().thenApply(deleteMessageMins(minutes));
 	}
 }

@@ -30,19 +30,15 @@ public class ButtonListener extends ListenerAdapter{
 	
 	private void handleClick(@NotNull ButtonClickEvent event, @NotNull IButtonHandler handler){
 		try{
-			handler.handle(event).thenAccept(result -> {
-				if(result == ButtonResult.HANDLED_NO_MESSAGE){
-					JDAWrappers.edit(event).submit();
-				}
-			}).exceptionally(e -> {
+			handler.handle(event).exceptionally(e -> {
 				log.error("Failed during button execution {}", handler, e);
-				JDAWrappers.edit(event, "Error executing button (%s)".formatted(e.getClass().getName())).submitAndDelete(5);
+				JDAWrappers.reply(event, "Error executing button (%s)".formatted(e.getClass().getName())).submitAndDelete(5);
 				return null;
 			});
 		}
 		catch(Exception e){
 			log.error("Failed to execute button {}", handler, e);
-			JDAWrappers.edit(event, "Error executing button (%s)".formatted(e.getClass().getName())).submitAndDelete(5);
+			JDAWrappers.reply(event, "Error executing button (%s)".formatted(e.getClass().getName())).submitAndDelete(5);
 		}
 	}
 }

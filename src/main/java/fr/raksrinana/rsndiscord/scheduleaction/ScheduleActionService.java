@@ -5,7 +5,6 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import net.dv8tion.jda.api.entities.Message;
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ScheduleActionService{
@@ -15,12 +14,15 @@ public class ScheduleActionService{
 	}
 	
 	@NotNull
-	public static Consumer<Message> deleteMessage(@NotNull Function<ZonedDateTime, ZonedDateTime> applyDelay){
-		return message -> deleteMessage(message, applyDelay);
+	public static Function<Message, Message> deleteMessage(@NotNull Function<ZonedDateTime, ZonedDateTime> applyDelay){
+		return message -> {
+			deleteMessage(message, applyDelay);
+			return message;
+		};
 	}
 	
 	@NotNull
-	public static Consumer<Message> deleteMessageMins(int minutes){
+	public static Function<Message, Message> deleteMessageMins(int minutes){
 		return deleteMessage(date -> date.plusMinutes(minutes));
 	}
 }

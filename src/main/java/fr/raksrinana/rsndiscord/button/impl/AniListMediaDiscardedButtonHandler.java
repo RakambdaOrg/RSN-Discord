@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import static fr.raksrinana.rsndiscord.button.ButtonResult.HANDLED_NO_MESSAGE;
+import static fr.raksrinana.rsndiscord.button.ButtonResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.Utilities.MAIN_RAKSRINANA_ACCOUNT;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -40,8 +40,8 @@ public class AniListMediaDiscardedButtonHandler extends SimpleButtonHandler{
 				.map(RestAction::submit)
 				.map(future -> future.thenCompose(privateChannel -> JDAWrappers.message(privateChannel, user.getAsMention() + " discarded").submit()))
 				.map(future -> future.thenCompose(m -> JDAWrappers.message(m.getPrivateChannel(), message).setActionRows().submit()))
-				.map(future -> future.thenApply(m -> HANDLED_NO_MESSAGE))
-				.orElseGet(() -> CompletableFuture.completedFuture(HANDLED_NO_MESSAGE));
+				.map(future -> future.thenApply(m -> HANDLED))
+				.orElseGet(() -> CompletableFuture.completedFuture(HANDLED));
 	}
 	
 	@Override

@@ -49,7 +49,7 @@ public class ArchiveMediaReactionButtonHandler extends SimpleButtonHandler{
 						.submit()
 						.thenCompose(future -> JDAWrappers.edit(event, translate(guild, "reaction.archived", user.getAsMention())).setActionRow().submit())
 						.thenAccept(m -> config.add(new DeleteChannelScheduleActionHandler(channel.getIdLong(), now().plusWeeks(2))))
-						.thenApply(empty -> HANDLED_NO_MESSAGE))
+						.thenApply(empty -> HANDLED))
 				.orElseGet(() -> {
 					JDAWrappers.edit(event, translate(guild, "reaction.no-archive")).submitAndDelete(5);
 					return CompletableFuture.completedFuture(HANDLED);

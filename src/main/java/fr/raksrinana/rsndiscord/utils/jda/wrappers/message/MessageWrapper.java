@@ -109,7 +109,7 @@ public class MessageWrapper{
 	}
 	
 	@NotNull
-	public CompletableFuture<Void> submitAndDelete(int minutes){
-		return submit().thenAccept(deleteMessageMins(minutes));
+	public CompletableFuture<Message> submitAndDelete(int minutes){
+		return submit().thenApply(deleteMessageMins(minutes));
 	}
 }
