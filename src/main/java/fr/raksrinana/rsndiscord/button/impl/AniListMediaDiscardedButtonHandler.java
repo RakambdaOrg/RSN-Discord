@@ -47,6 +47,6 @@ public class AniListMediaDiscardedButtonHandler extends SimpleButtonHandler{
 	@Override
 	@NotNull
 	public Button asButton(){
-		return Button.danger(getButtonId(), "Discard").withEmoji(Emoji.fromUnicode("U+274E"));
+		return Button.danger(getButtonId(), "Discard").withEmoji(Emoji.fromUnicode("U+1F5D1"));
 	}
 }

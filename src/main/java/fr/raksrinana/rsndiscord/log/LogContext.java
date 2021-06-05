@@ -20,7 +20,7 @@ public class LogContext implements AutoCloseable{
 					.put(GUILD_NAME_KEY, guild.getName());
 		}
 		else{
-			ctc = null;
+			ctc = CloseableThreadContext.push(GUILD_ID_KEY, "-1");
 		}
 	}
 	

@@ -47,6 +47,6 @@ public class AniListMediaCompletedButtonHandler extends SimpleButtonHandler{
 	@Override
 	@NotNull
 	public Button asButton(){
-		return Button.success(getButtonId(), "Completed").withEmoji(Emoji.fromUnicode("U+2705"));
+		return Button.success(getButtonId(), "Complete").withEmoji(Emoji.fromUnicode("U+1F44C"));
 	}
 }

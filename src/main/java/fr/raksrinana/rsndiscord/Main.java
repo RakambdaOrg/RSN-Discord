@@ -2,12 +2,9 @@ package fr.raksrinana.rsndiscord;
 
 import fr.raksrinana.rsndiscord.api.twitch.TwitchUtils;
 import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
-import fr.raksrinana.rsndiscord.button.impl.AniListMediaCompletedButtonHandler;
-import fr.raksrinana.rsndiscord.button.impl.AniListMediaDiscardedButtonHandler;
 import fr.raksrinana.rsndiscord.command2.SlashCommandService;
 import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
-import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.reaction.ReactionUtils;
 import fr.raksrinana.rsndiscord.reply.UserReplyEventListener;
 import fr.raksrinana.rsndiscord.runner.RunnerUtils;
@@ -102,17 +99,6 @@ public class Main{
 			
 			log.info("Started");
 			announceStart();
-			
-			jda.getGuilds().forEach(g -> {
-				Settings.get(g).getMessagesAwaitingReaction(ReactionTag.ANILIST_TODO)
-						.removeIf(r -> {
-							return r.getMessage().getMessage().map(m -> {
-								JDAWrappers.edit(m, new AniListMediaCompletedButtonHandler().asButton(), new AniListMediaDiscardedButtonHandler().asButton()).submit();
-								m.clearReactions().submit();
-								return true;
-							}).orElse(true);
-						});
-			});
 			
 			executorService.schedule((Runnable) TwitchUtils::connect, 15, TimeUnit.SECONDS);
 			consoleHandler.start();
