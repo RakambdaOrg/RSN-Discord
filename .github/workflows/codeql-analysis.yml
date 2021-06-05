@@ -2,9 +2,9 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
   schedule:
     - cron: '0 13 * * 1'
 
@@ -14,25 +14,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2.3.4
-      with:
-        fetch-depth: 2
-    - run: git checkout HEAD^2
-      if: ${{ github.event_name == 'pull_request' }}
-    - name: Setup Java JDK
-      uses: actions/setup-java@v2
-      with:
-        distribution: 'adopt'
-        java-version: 16
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
-      with:
-        languages: java
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v1
-      env:
-        GITHUB_USER: RakSrinaNa
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
+      - name: Checkout repository
+        uses: actions/checkout@v2.3.4
+      - name: Setup Java JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: 16
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          languages: java
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v1
+        env:
+          GITHUB_USER: RakSrinaNa
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1

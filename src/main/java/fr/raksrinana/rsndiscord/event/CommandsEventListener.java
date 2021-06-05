@@ -68,10 +68,11 @@ public class CommandsEventListener extends ListenerAdapter{
 	@Override
 	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
+		var author = event.getAuthor();
+		
 		try(var context = LogContext.with(event.getGuild()).with(event.getAuthor())){
 			var guildConfiguration = Settings.get(event.getGuild());
 			var message = event.getMessage();
-			var author = event.getAuthor();
 			var channel = event.getChannel();
 			
 			if(message.getType() != MessageType.DEFAULT){
@@ -91,6 +92,10 @@ public class CommandsEventListener extends ListenerAdapter{
 					}
 					else{
 						if(message.getAttachments().isEmpty()){
+							if(Objects.equals(author, event.getJDA().getSelfUser())){
+								return;
+							}
+							
 							var forward = new MessageBuilder(message)
 									.setContent("From " + author.getAsMention() + "\n" + message.getContentRaw())
 									.build();
