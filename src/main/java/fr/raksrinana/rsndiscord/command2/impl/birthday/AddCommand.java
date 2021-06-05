@@ -2,9 +2,9 @@ package fr.raksrinana.rsndiscord.command2.impl.birthday;
 
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -15,11 +15,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.List;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import java.util.Objects;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
-import static java.util.Objects.isNull;
 
+@Log4j2
 public class AddCommand extends SubCommand{
 	private static final String USER_OPTION_ID = "user";
 	private static final String DATE_OPTION_ID = "date";
@@ -51,23 +52,26 @@ public class AddCommand extends SubCommand{
 		var user = event.getOption(USER_OPTION_ID).getAsUser();
 		var date = getOptionAs(event.getOption(DATE_OPTION_ID), v -> parseDate(guild, v));
 		
-		date.ifPresentOrElse(birthday -> {
-			Settings.get(guild).getBirthdays().setBirthday(user, birthday);
-			JDAWrappers.reply(event, translate(guild, "birthday.saved")).submit();
-		}, () -> JDAWrappers.reply(event, translate(guild, "birthday.bad-date")).submit());
-		return SUCCESS;
+		date.ifPresentOrElse(
+						birthday -> {
+							Settings.get(guild).getBirthdays().setBirthday(user, birthday);
+							JDAWrappers.reply(event, translate(guild, "birthday.saved")).submit();
+						},
+						() -> JDAWrappers.reply(event, translate(guild, "birthday.bad-date")).submit());
+		return HANDLED;
 	}
 	
 	@Nullable
 	private LocalDate parseDate(@NotNull Guild guild, @Nullable String string){
-		if(isNull(string)){
+		if(Objects.isNull(string)){
 			return null;
 		}
+		
 		try{
 			return LocalDate.parse(string, ISO_LOCAL_DATE);
 		}
 		catch(DateTimeParseException e){
-			Log.getLogger(guild).error("Failed to parse date {}", string, e);
+			log.error("Failed to parse date {}", string, e);
 		}
 		return null;
 	}

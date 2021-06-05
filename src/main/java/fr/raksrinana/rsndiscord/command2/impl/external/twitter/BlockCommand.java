@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.command2.permission.CreatorPermission.CREATOR_PERMISSION;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
@@ -46,6 +46,6 @@ public class BlockCommand extends SubCommand{
 		var username = event.getOption(USER_OPTION_ID).getAsString();
 		var result = TwitterApi.blockUser(username);
 		JDAWrappers.edit(event, "%s: %s".formatted(username, Boolean.toString(result.getData().isBlocking()))).submitAndDelete(1);
-		return SUCCESS;
+		return HANDLED;
 	}
 }

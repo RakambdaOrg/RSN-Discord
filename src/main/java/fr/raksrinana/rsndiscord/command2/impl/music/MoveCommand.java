@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.command2.permission.SimplePermission.FALSE_BY_DEFAULT;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.awt.Color.CYAN;
@@ -94,6 +94,6 @@ public class MoveCommand extends SubCommand{
 				.addField(translate(event.getGuild(), "music.repeating"), repeating, true)
 				.build();
 		JDAWrappers.edit(event, embed).submit();
-		return SUCCESS;
+		return HANDLED;
 	}
 }

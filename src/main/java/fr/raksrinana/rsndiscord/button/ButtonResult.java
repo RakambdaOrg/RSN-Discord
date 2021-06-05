@@ -2,11 +2,11 @@ package fr.raksrinana.rsndiscord.button;
 
 public enum ButtonResult{
 	/**
-	 * Button id will be removed from database
+	 * A message was sent
 	 */
 	HANDLED,
 	/**
-	 * Success but button id won't be removed from database
+	 * No message were sent, buttons will be removed
 	 */
-	SUCCESS
+	HANDLED_NO_MESSAGE
 }

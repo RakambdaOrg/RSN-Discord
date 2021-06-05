@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.json.converter.URLDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,6 +18,7 @@ import static java.util.Optional.empty;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
+@Log4j2
 public class Hermit{
 	@JsonProperty("id")
 	private int id;
@@ -69,7 +70,7 @@ public class Hermit{
 			}
 		}
 		catch(MalformedURLException e){
-			Log.getLogger().error("Failed to build hermit livestream url", e);
+			log.error("Failed to build hermit livestream url", e);
 		}
 		return empty();
 	}

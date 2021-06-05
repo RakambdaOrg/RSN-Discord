@@ -2,10 +2,10 @@ package fr.raksrinana.rsndiscord.api.hermitcraft;
 
 import fr.raksrinana.rsndiscord.api.hermitcraft.data.Hermit;
 import fr.raksrinana.rsndiscord.api.hermitcraft.data.HermitcraftVideo;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import kong.unirest.GenericType;
 import kong.unirest.Unirest;
+import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.ZoneId;
@@ -17,13 +17,14 @@ import java.util.Map;
 import java.util.Optional;
 import static java.util.Optional.empty;
 
+@Log4j2
 public class HermitcraftApi{
 	private static final DateTimeFormatter DF = DateTimeFormatter.RFC_1123_DATE_TIME.localizedBy(Locale.ENGLISH);
 	private static final String ENDPOINT = "https://hermitcraft.com/api";
 	
 	@NotNull
 	public static Optional<List<Hermit>> getHermits(){
-		Log.getLogger().debug("Fetching hermitcraft streams");
+		log.debug("Fetching hermitcraft streams");
 		return getRequestResult(new GenericType<>(){}, "/hermit", Map.of());
 	}
 	
@@ -33,7 +34,7 @@ public class HermitcraftApi{
 		if(!request.isSuccess()){
 			request.getParsingError().ifPresent(error -> {
 				Utilities.reportException("Failed to parse Hermitcraft response", error);
-				Log.getLogger().warn("Failed to parse Hermitcraft response", error);
+				log.warn("Failed to parse Hermitcraft response", error);
 			});
 			return empty();
 		}
@@ -43,7 +44,7 @@ public class HermitcraftApi{
 	
 	@NotNull
 	public static Optional<List<HermitcraftVideo>> getVideos(){
-		Log.getLogger().debug("Fetching hermitcraft videos");
+		log.debug("Fetching Hermitcraft videos");
 		return getRequestResult(new GenericType<>(){}, "/videos", Map.of(
 				"type", "HermitCraft",
 				"start", ZonedDateTime.now(ZoneId.of("UTC")).format(DF)

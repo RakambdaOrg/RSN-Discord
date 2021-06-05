@@ -38,6 +38,6 @@ public class TimeCommand extends SubCommand{
 				.build();
 		
 		JDAWrappers.edit(event, embed).submit();
-		return CommandResult.SUCCESS;
+		return CommandResult.HANDLED;
 	}
 }

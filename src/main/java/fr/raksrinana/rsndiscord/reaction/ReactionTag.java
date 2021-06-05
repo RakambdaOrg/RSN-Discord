@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import org.jetbrains.annotations.NotNull;
 
 public enum ReactionTag{
+	@Deprecated
 	ANILIST_TODO,
 	DELETE_CHANNEL,
 	EXTERNAL_TODO,

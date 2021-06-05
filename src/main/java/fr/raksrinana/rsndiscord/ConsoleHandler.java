@@ -1,15 +1,13 @@
 package fr.raksrinana.rsndiscord;
 
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Activity;
 import java.util.*;
 import static net.dv8tion.jda.api.entities.Activity.ActivityType.DEFAULT;
 
-/**
- * Handles commands sent in the standard input.
- */
+@Log4j2
 class ConsoleHandler extends Thread{
 	private static final int WAIT_DELAY = 10000;
 	private boolean stop;
@@ -19,12 +17,12 @@ class ConsoleHandler extends Thread{
 		stop = false;
 		setDaemon(true);
 		setName("Console watcher");
-		Log.getLogger().info("Console handler created");
+		log.info("Console handler created");
 	}
 	
 	@Override
 	public void run(){
-		Log.getLogger().info("Console handler started");
+		log.info("Console handler started");
 		var quitList = List.of("stop", "quit", "exit");
 		try(var sc = new Scanner(System.in)){
 			while(!stop){
@@ -48,38 +46,38 @@ class ConsoleHandler extends Thread{
 					}
 					else if("leave".equalsIgnoreCase(command)){
 						if(args.isEmpty()){
-							Log.getLogger().warn("Please pass the guild as an argument");
+							log.warn("Please pass the guild as an argument");
 						}
 						else{
 							var guildId = args.poll();
 							Optional.ofNullable(Main.getJda().getGuildById(guildId)).ifPresentOrElse(guild -> {
 								JDAWrappers.leave(guild).submit();
-							}, () -> Log.getLogger().warn("Guild with id {} not found", guildId));
+							}, () -> log.warn("Guild with id {} not found", guildId));
 						}
 					}
 					else if("gid".equalsIgnoreCase(command)){
 						if(args.isEmpty()){
-							Log.getLogger().warn("Please pass the guild name as an argument");
+							log.warn("Please pass the guild name as an argument");
 						}
 						else{
 							var guilds = Main.getJda().getGuildsByName(args.pop(), true);
-							Log.getLogger().info("Guilds matched : {}", guilds);
+							log.info("Guilds matched : {}", guilds);
 						}
 					}
 					else if("listMembers".equalsIgnoreCase(command)){
 						if(args.isEmpty()){
-							Log.getLogger().warn("Please pass the guild id as an argument");
+							log.warn("Please pass the guild id as an argument");
 						}
 						else{
 							var guildId = args.poll();
 							Optional.ofNullable(Main.getJda().getGuildById(guildId))
-									.ifPresentOrElse(guild -> Log.getLogger(guild).info("Members of {}: {}", guild, guild.getMembers()),
-											() -> Log.getLogger().warn("Guild with id {} not found", guildId));
+									.ifPresentOrElse(guild -> log.info("Members of {}: {}", guild, guild.getMembers()),
+											() -> log.warn("Guild with id {} not found", guildId));
 						}
 					}
 					else if("listGuilds".equalsIgnoreCase(command)){
 						Main.getJda().getGuilds()
-								.forEach(guild -> Log.getLogger(guild).info("Guild ID:{}, name: {}, members:{}, owner:{}",
+								.forEach(guild -> log.info("Guild ID:{}, name: {}, members:{}, owner:{}",
 										guild.getId(),
 										guild.getName(),
 										guild.loadMembers().get().size(),
@@ -87,7 +85,7 @@ class ConsoleHandler extends Thread{
 					}
 					else if("activity".equalsIgnoreCase(command)){
 						if(args.isEmpty()){
-							Log.getLogger().warn("Please pass the game");
+							log.warn("Please pass the game");
 						}
 						else{
 							JDAWrappers.editPresence().setActivity(Activity.of(DEFAULT, String.join(" ", args)));
@@ -98,7 +96,7 @@ class ConsoleHandler extends Thread{
 					}
 				}
 				catch(Exception e){
-					Log.getLogger().warn("Error executing console command", e);
+					log.warn("Error executing console command", e);
 				}
 			}
 		}

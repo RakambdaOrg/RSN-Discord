@@ -1,8 +1,8 @@
 package fr.raksrinana.rsndiscord.settings;
 
-import fr.raksrinana.rsndiscord.log.Log;
 import net.dv8tion.jda.api.entities.Guild;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.logging.log4j.LogManager;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -11,7 +11,7 @@ public interface ICompositeConfiguration{
 		for(var field : getClass().getDeclaredFields()){
 			var fieldValue = FieldUtils.readField(field, this, true);
 			if(cleanObject(guild, fieldValue, fieldName + "." + field.getName())){
-				Log.getLogger(guild).debug("Setting field {}.{} to null", fieldName, field);
+				LogManager.getLogger(ICompositeConfiguration.class).debug("Setting field {}.{} to null", fieldName, field);
 				field.set(this, null);
 			}
 		}
@@ -36,7 +36,7 @@ public interface ICompositeConfiguration{
 						.filter(this::atomicShouldBeRemoved)
 						.collect(Collectors.toList());
 				if(!toRemove.isEmpty()){
-					Log.getLogger(guild).debug("Removing values {} from collection {}", toRemove, fieldName);
+					LogManager.getLogger(ICompositeConfiguration.class).debug("Removing values {} from collection {}", toRemove, fieldName);
 				}
 				collection.removeAll(toRemove);
 				collection.forEach(elem -> {
@@ -44,7 +44,7 @@ public interface ICompositeConfiguration{
 						cleanObject(guild, elem, fieldName);
 					}
 					catch(Exception e){
-						Log.getLogger(guild).error("Failed to clean settings object {}", getClass(), e);
+						LogManager.getLogger(ICompositeConfiguration.class).error("Failed to clean settings object {}", getClass(), e);
 					}
 				});
 			}
@@ -61,7 +61,7 @@ public interface ICompositeConfiguration{
 					.map(Map.Entry::getKey)
 					.collect(Collectors.toSet());
 			if(!toRemove.isEmpty()){
-				Log.getLogger(guild).debug("Removing keys {} from map {}", toRemove, fieldName);
+				LogManager.getLogger(ICompositeConfiguration.class).debug("Removing keys {} from map {}", toRemove, fieldName);
 			}
 			toRemove.forEach(map::remove);
 			map.values().forEach(elem -> {
@@ -69,7 +69,7 @@ public interface ICompositeConfiguration{
 					cleanObject(guild, elem, fieldName);
 				}
 				catch(Exception e){
-					Log.getLogger(guild).error("Failed to clean settings object {}", getClass(), e);
+					LogManager.getLogger(ICompositeConfiguration.class).error("Failed to clean settings object {}", getClass(), e);
 				}
 			});
 			return false;

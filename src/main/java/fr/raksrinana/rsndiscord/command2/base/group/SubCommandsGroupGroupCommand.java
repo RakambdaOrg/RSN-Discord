@@ -26,7 +26,9 @@ public abstract class SubCommandsGroupGroupCommand extends GroupCommand implemen
 		var command = new CommandData(getId(), getShortDescription())
 				.setDefaultEnabled(getDefaultPermission());
 		
-		command.addSubcommandGroups(subcommandGroups.values().stream().map(ISubCommandGroup::getSlashCommand).collect(Collectors.toList()));
+		command.addSubcommandGroups(subcommandGroups.values().stream()
+				.map(ISubCommandGroup::getSlashCommand)
+				.collect(Collectors.toList()));
 		
 		return command;
 	}

@@ -6,13 +6,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import fr.raksrinana.rsndiscord.button.api.IButtonHandler;
 import fr.raksrinana.rsndiscord.reaction.ReactionTag;
+import fr.raksrinana.rsndiscord.scheduleaction.api.IScheduleActionHandler;
 import fr.raksrinana.rsndiscord.settings.guild.*;
 import fr.raksrinana.rsndiscord.settings.guild.anilist.AniListConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.autoroles.LeavingRolesConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.birthday.BirthdaysConfiguration;
-import fr.raksrinana.rsndiscord.settings.guild.participation.ParticipationConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.permission.PermissionsConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.ReactionsConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
@@ -32,6 +31,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toSet;
@@ -80,10 +80,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@Getter
 	@Setter
 	private Set<ChannelConfiguration> autoThumbsChannels = new HashSet<>();
-	@JsonProperty("autoReactionsChannels")
-	@Getter
-	@Setter
-	private Set<ChannelConfiguration> autoReactionsChannels = new HashSet<>();
 	@JsonProperty("guildId")
 	@Getter
 	private long guildId;
@@ -104,9 +100,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@Getter
 	@Setter
 	private ReactionsConfiguration reactionsConfiguration = new ReactionsConfiguration();
-	@JsonProperty("participation")
-	@Getter
-	private final ParticipationConfiguration participationConfiguration = new ParticipationConfiguration();
 	@JsonProperty("trombinoscope")
 	@Getter
 	private final TrombinoscopeConfiguration trombinoscope = new TrombinoscopeConfiguration();
@@ -116,10 +109,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@JsonProperty("leavingRoles")
 	@Getter
 	private final LeavingRolesConfiguration leavingRolesConfiguration = new LeavingRolesConfiguration();
-	@JsonProperty("onlyMediaChannels")
-	@Getter
-	@Setter
-	private Set<ChannelConfiguration> onlyMediaChannels = new HashSet<>();
 	@JsonProperty("generalChannel")
 	@Setter
 	private ChannelConfiguration generalChannel;
@@ -167,9 +156,8 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@Getter
 	@Setter
 	private List<MessageConfiguration> mediaReactionMessages = new LinkedList<>();
-	@JsonProperty("buttonHandlers")
-	@Setter
-	private Map<String, IButtonHandler> buttonHandlers = new HashMap<>();
+	@JsonProperty("scheduleActionHandlers")
+	private Map<String, IScheduleActionHandler> scheduleHandler = new ConcurrentHashMap<>();
 	
 	GuildConfiguration(long guildId){
 		this.guildId = guildId;
@@ -189,16 +177,16 @@ public class GuildConfiguration implements ICompositeConfiguration{
 				.collect(toSet());
 	}
 	
-	public void addButtonHandler(@NotNull IButtonHandler buttonHandler){
-		buttonHandlers.put(buttonHandler.getButtonId(), buttonHandler);
+	public void add(@NotNull IScheduleActionHandler scheduleHandler){
+		this.scheduleHandler.put(scheduleHandler.getSchedulerId(), scheduleHandler);
 	}
 	
-	public Optional<IButtonHandler> getButtonHandler(@NotNull String id){
-		return Optional.ofNullable(buttonHandlers.get(id));
+	public Optional<IScheduleActionHandler> getScheduleActionHandler(@NotNull String id){
+		return Optional.ofNullable(scheduleHandler.get(id));
 	}
 	
-	public void removeButtonHandler(@NotNull String id){
-		buttonHandlers.remove(id);
+	public void removeScheduleActionHandler(@NotNull String id){
+		scheduleHandler.remove(id);
 	}
 	
 	public void removeSchedule(ScheduleConfiguration schedule){

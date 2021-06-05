@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.utils.json.converter;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import fr.raksrinana.rsndiscord.log.Log;
+import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import static java.util.Objects.nonNull;
 
+@Log4j2
 public class URLDeserializer extends JsonDeserializer<URL>{
 	@Override
 	@Nullable
@@ -22,7 +23,7 @@ public class URLDeserializer extends JsonDeserializer<URL>{
 			}
 		}
 		catch(MalformedURLException e){
-			Log.getLogger().warn("Failed to parse URL: {}", jsonParser.getValueAsString());
+			log.warn("Failed to parse URL: {}", jsonParser.getValueAsString());
 		}
 		return null;
 	}

@@ -1,7 +1,6 @@
 package fr.raksrinana.rsndiscord.utils.jda.wrappers.role;
 
-import fr.raksrinana.rsndiscord.log.Log;
-import net.dv8tion.jda.api.entities.Guild;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.managers.RoleManager;
 import org.jetbrains.annotations.NotNull;
@@ -9,14 +8,13 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.Color;
 import java.util.concurrent.CompletableFuture;
 
+@Log4j2
 public class SetColorWrapper{
-	private final Guild guild;
 	private final Role role;
 	private final Color color;
 	private final RoleManager action;
 	
-	public SetColorWrapper(@NotNull Guild guild, @NotNull Role role, @Nullable Color color){
-		this.guild = guild;
+	public SetColorWrapper(@NotNull Role role, @Nullable Color color){
 		this.role = role;
 		this.color = color;
 		this.action = role.getManager().setColor(color);
@@ -24,7 +22,6 @@ public class SetColorWrapper{
 	
 	@NotNull
 	public CompletableFuture<Void> submit(){
-		return action.submit()
-				.thenAccept(empty -> Log.getLogger(guild).info("Setting {} color to {}", role, color));
+		return action.submit().thenAccept(empty -> log.info("Setting {} color to {}", role, color));
 	}
 }

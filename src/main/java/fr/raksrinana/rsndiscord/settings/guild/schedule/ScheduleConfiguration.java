@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
-import static fr.raksrinana.rsndiscord.schedule.ScheduleTag.NONE;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -33,7 +32,7 @@ import static fr.raksrinana.rsndiscord.schedule.ScheduleTag.NONE;
 @NoArgsConstructor
 public class ScheduleConfiguration implements IAtomicConfiguration{
 	@JsonProperty("tag")
-	private ScheduleTag tag = NONE;
+	private ScheduleTag tag;
 	@JsonProperty("user")
 	private UserConfiguration user;
 	@JsonProperty("channel")
@@ -52,14 +51,6 @@ public class ScheduleConfiguration implements IAtomicConfiguration{
 	@JsonProperty("data")
 	private Map<String, String> data = new HashMap<>();
 	
-	protected ScheduleConfiguration(@NotNull User user, @Nullable TextChannel channel, @NotNull ZonedDateTime scheduleDate, @NotNull String message){
-		this(user, channel, scheduleDate, message, NONE, null);
-	}
-	
-	protected ScheduleConfiguration(@NotNull User user, @Nullable TextChannel channel, @NotNull ZonedDateTime scheduleDate, @NotNull String message, @NotNull ScheduleTag tag, @Nullable Map<String, String> data){
-		this(new UserConfiguration(user), channel == null ? null : new ChannelConfiguration(channel), scheduleDate, message, tag, data);
-	}
-	
 	protected ScheduleConfiguration(@NotNull UserConfiguration user, @Nullable ChannelConfiguration channel, @NotNull ZonedDateTime scheduleDate, @NotNull String message, @NotNull ScheduleTag tag, @Nullable Map<String, String> data){
 		this.user = user;
 		this.channel = channel;
@@ -67,10 +58,6 @@ public class ScheduleConfiguration implements IAtomicConfiguration{
 		this.message = message;
 		this.tag = tag;
 		this.data = data;
-	}
-	
-	protected ScheduleConfiguration(@NotNull User user, @NotNull TextChannel channel, @NotNull ZonedDateTime scheduleDate, @NotNull String message, @NotNull ScheduleTag tag){
-		this(new UserConfiguration(user), new ChannelConfiguration(channel), scheduleDate, message, tag, null);
 	}
 	
 	@NotNull

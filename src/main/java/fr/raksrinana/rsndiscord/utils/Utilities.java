@@ -1,11 +1,11 @@
 package fr.raksrinana.rsndiscord.utils;
 
 import fr.raksrinana.rsndiscord.Main;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -24,10 +24,10 @@ import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+@Log4j2
 public class Utilities{
 	public static final long MAIN_RAKSRINANA_ACCOUNT = 170119951498084352L;
 	public static final long SECOND_RAKSRINANA_ACCOUNT = 432628353024131085L;
@@ -67,8 +67,8 @@ public class Utilities{
 	 * @return True if admin, false otherwise.
 	 */
 	public static boolean isAdmin(@NotNull Member member){
-		return member.getRoles().stream()
-				.anyMatch(role -> role.hasPermission(Permission.ADMINISTRATOR)) || isCreator(member);
+		return isCreator(member) || member.getRoles().stream()
+				.anyMatch(role -> role.hasPermission(Permission.ADMINISTRATOR));
 	}
 	
 	/**
@@ -100,16 +100,18 @@ public class Utilities{
 	@NotNull
 	public static Duration parseDuration(@NotNull String period){
 		period = period.toLowerCase(Locale.ENGLISH);
-		Matcher matcher = PERIOD_PATTERN.matcher(period);
-		Duration duration = Duration.ZERO;
+		var matcher = PERIOD_PATTERN.matcher(period);
+		var duration = Duration.ZERO;
+		
 		while(matcher.find()){
 			int amount = Integer.parseInt(matcher.group(1));
-			String type = matcher.group(2);
-			switch(type){
-				case "m" -> duration = duration.plus(Duration.ofMinutes(amount));
-				case "h" -> duration = duration.plus(Duration.ofHours(amount));
-				case "d" -> duration = duration.plus(Duration.ofDays(amount));
-			}
+			
+			duration = duration.plus(switch(matcher.group(2)){
+				case "m" -> duration.plus(Duration.ofMinutes(amount));
+				case "h" -> duration.plus(Duration.ofHours(amount));
+				case "d" -> duration.plus(Duration.ofDays(amount));
+				default -> Duration.ZERO;
+			});
 		}
 		return duration;
 	}
@@ -150,7 +152,7 @@ public class Utilities{
 						return instantiator.apply(clazz);
 					}
 					catch(InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e){
-						Log.getLogger().error("Failed to create instance of {}", annotationClazz.getName(), e);
+						log.error("Failed to create instance of {}", annotationClazz.getName(), e);
 					}
 					return null;
 				})

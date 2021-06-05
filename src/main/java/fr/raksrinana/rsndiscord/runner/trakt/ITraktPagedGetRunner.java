@@ -4,7 +4,6 @@ import fr.raksrinana.rsndiscord.api.trakt.TraktApi;
 import fr.raksrinana.rsndiscord.api.trakt.model.ITraktDatedObject;
 import fr.raksrinana.rsndiscord.api.trakt.model.ITraktObject;
 import fr.raksrinana.rsndiscord.api.trakt.requests.ITraktPagedGetRequest;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
@@ -15,6 +14,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -37,12 +37,12 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 					return getElements(member);
 				}
 				catch(Exception e){
-					Log.getLogger(member.getGuild()).error("Error fetching user {} on Trakt", member, e);
+					LogManager.getLogger(ITraktPagedGetRunner.class).error("Error fetching user {} on Trakt", member, e);
 				}
 				return null;
 			});
 		}
-		Log.getLogger().debug("Trakt API done");
+		LogManager.getLogger(ITraktPagedGetRunner.class).debug("Trakt API done");
 		sendMessages(channels, userElements);
 	}
 	
@@ -65,7 +65,7 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 		var guild = member.getGuild();
 		var user = member.getUser();
 		
-		Log.getLogger(guild).debug("Fetching user {}", member);
+		LogManager.getLogger(ITraktPagedGetRunner.class).debug("Fetching user {}", member);
 		var elementList = TraktApi.getPagedQuery(Settings.getGeneral()
 						.getTrakt()
 						.getAccessToken(member.getIdLong())
@@ -90,7 +90,7 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 				.map(ITraktDatedObject::getDate)
 				.max(ZonedDateTime::compareTo)
 				.ifPresent(val -> {
-					Log.getLogger(guild).debug("New last fetched date for {} on section {}: {} (last was {})", member, getFetcherID(), val, baseDate);
+					LogManager.getLogger(ITraktPagedGetRunner.class).debug("New last fetched date for {} on section {}: {} (last was {})", member, getFetcherID(), val, baseDate);
 					Settings.getGeneral().getTrakt().setLastAccess(user, getFetcherID(), val);
 				});
 		return elementList;
@@ -146,7 +146,7 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 			change.fillEmbed(guild, builder);
 		}
 		catch(Exception e){
-			Log.getLogger().error("Error building message for {}", getName(), e);
+			LogManager.getLogger(ITraktPagedGetRunner.class).error("Error building message for {}", getName(), e);
 			builder.addField("Error", e.getClass().getName() + " => " + e.getMessage(), false);
 			builder.setColor(RED);
 		}

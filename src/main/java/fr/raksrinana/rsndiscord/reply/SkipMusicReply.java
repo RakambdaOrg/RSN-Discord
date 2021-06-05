@@ -1,10 +1,10 @@
 package fr.raksrinana.rsndiscord.reply;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -20,6 +20,7 @@ import static fr.raksrinana.rsndiscord.utils.BasicEmotes.CHECK_OK;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+@Log4j2
 public class SkipMusicReply extends BasicWaitingUserReply{
 	private final int votesRequired;
 	private final AudioTrack audioTrack;
@@ -45,7 +46,7 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 		
 		try{
 			if(count(event)){
-				Log.getLogger(guild).info("Vote successful, skipping");
+				log.info("Vote successful, skipping");
 				if(isSameTrack(event)){
 					RSNAudioManager.skip(guild);
 					JDAWrappers.message(event, translate(guild, "music.skipped", "@everyone"))
@@ -53,7 +54,7 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 							.submit();
 				}
 				else{
-					Log.getLogger(guild).info("Music isn't the same anymore, didn't skip");
+					log.info("Music isn't the same anymore, didn't skip");
 				}
 				return true;
 			}
@@ -71,7 +72,7 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 						.mapToInt(MessageReaction::getCount)
 						.sum())
 				.get(30, SECONDS);
-		Log.getLogger(event.getGuild()).debug("{}/{} votes to skip current music", count, votesRequired);
+		log.debug("{}/{} votes to skip current music", count, votesRequired);
 		return count >= votesRequired;
 	}
 	
@@ -102,7 +103,7 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 		var channel = getWaitChannel();
 		var guild = channel.getGuild();
 		
-		Log.getLogger(guild).info("Vote not successful, music not skipped");
+		log.info("Vote not successful, music not skipped");
 		
 		JDAWrappers.message(channel, translate(guild, "music.skip.timeout")).submitAndDelete(5);
 	}

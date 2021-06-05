@@ -1,12 +1,13 @@
 package fr.raksrinana.rsndiscord.utils.jda.wrappers.member;
 
-import fr.raksrinana.rsndiscord.log.Log;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
 import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.CompletableFuture;
 
+@Log4j2
 public class DeafenWrapper{
 	private final Guild guild;
 	private final Member member;
@@ -23,6 +24,6 @@ public class DeafenWrapper{
 	@NotNull
 	public CompletableFuture<Void> submit(){
 		return action.submit()
-				.thenAccept(empty -> Log.getLogger(guild).info("Setting deaf state of {} to {}", member, state));
+				.thenAccept(empty -> log.info("Setting deaf state of {} to {}", member, state));
 	}
 }

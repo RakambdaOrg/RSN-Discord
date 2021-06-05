@@ -2,28 +2,26 @@ package fr.raksrinana.rsndiscord.runner.anilist;
 
 import fr.raksrinana.rsndiscord.api.anilist.AniListApi;
 import fr.raksrinana.rsndiscord.api.anilist.data.list.MediaList;
-import fr.raksrinana.rsndiscord.api.anilist.data.media.IMedia;
 import fr.raksrinana.rsndiscord.api.anilist.query.MediaListPagedQuery;
+import fr.raksrinana.rsndiscord.button.impl.AniListMediaCompletedButtonHandler;
+import fr.raksrinana.rsndiscord.button.impl.AniListMediaDiscardedButtonHandler;
 import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.anilist.AniListConfiguration;
-import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import static fr.raksrinana.rsndiscord.reaction.ReactionTag.ANILIST_TODO;
-import static fr.raksrinana.rsndiscord.reaction.ReactionUtils.DELETE_KEY;
-import static fr.raksrinana.rsndiscord.utils.BasicEmotes.CHECK_OK;
-import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.stream.Collectors.toList;
 
@@ -37,39 +35,14 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 		this.jda = jda;
 	}
 	
-	private static Collection<WaitingReactionMessageConfiguration> getSimilarWaitingReactions(@NotNull TextChannel channel, @NotNull IMedia media){
-		var footer = "ID: " + media.getId();
-		return Settings.get(channel.getGuild()).getMessagesAwaitingReaction(ANILIST_TODO).stream()
-				.filter(reaction -> {
-					if(Objects.equals(reaction.getMessage().getChannel().getChannelId(), channel.getIdLong())){
-						return reaction.getMessage().getMessage()
-								.map(message -> isSameMedia(footer, reaction, message))
-								.orElse(false);
-					}
-					return false;
-				}).collect(toList());
-	}
-	
-	@NotNull
-	private static Boolean isSameMedia(String footer, WaitingReactionMessageConfiguration reaction, Message message){
-		var isDeleteMode = ofNullable(reaction.getData().get(DELETE_KEY)).map(Boolean::parseBoolean).orElse(false);
-		var isSameMedia = message.getEmbeds().stream()
-				.anyMatch(embed -> Objects.equals(embed.getTitle(), "User list information")
-						&& Objects.equals(ofNullable(embed.getFooter()).map(MessageEmbed.Footer::getText).orElse(null), footer));
-		return isSameMedia && isDeleteMode;
-	}
-	
 	private void sendMediaList(TextChannel channel, Member member, MediaList mediaList){
+		var completedButton = new AniListMediaCompletedButtonHandler();
+		var discardedButton = new AniListMediaDiscardedButtonHandler();
+		
 		JDAWrappers.message(channel, member.getAsMention())
 				.embed(buildMessage(channel.getGuild(), member.getUser(), mediaList))
-				.submit()
-				.thenAccept(message -> {
-					JDAWrappers.addReaction(message, CHECK_OK).submit();
-					
-					var reactionMessageConfiguration = new WaitingReactionMessageConfiguration(message, ANILIST_TODO,
-							Map.of(DELETE_KEY, Boolean.toString(true)));
-					Settings.get(channel.getGuild()).addMessagesAwaitingReaction(reactionMessageConfiguration);
-				});
+				.addComponent(completedButton.asButton(), discardedButton.asButton())
+				.submit();
 	}
 	
 	@Override

@@ -3,7 +3,6 @@ package fr.raksrinana.rsndiscord.runner.anilist;
 import fr.raksrinana.rsndiscord.api.anilist.data.IAniListDatedObject;
 import fr.raksrinana.rsndiscord.api.anilist.data.IAniListObject;
 import fr.raksrinana.rsndiscord.api.anilist.query.IPagedQuery;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
@@ -11,6 +10,7 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
+import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -33,12 +33,12 @@ public interface IAniListRunner<T extends IAniListObject, U extends IPagedQuery<
 					return getElements(member);
 				}
 				catch(Exception e){
-					Log.getLogger(member.getGuild()).error("Error fetching user {} on AniList", member, e);
+					LogManager.getLogger(IAniListRunner.class).error("Error fetching user {} on AniList", member, e);
 				}
 				return null;
 			});
 		}
-		Log.getLogger().debug("AniList API done");
+		LogManager.getLogger(IAniListRunner.class).debug("AniList API done");
 		sendMessages(channels, userElements);
 	}
 	
@@ -46,7 +46,7 @@ public interface IAniListRunner<T extends IAniListObject, U extends IPagedQuery<
 	default Set<T> getElements(@NotNull Member member) throws Exception{
 		var guild = member.getGuild();
 		var user = member.getUser();
-		Log.getLogger(guild).debug("Fetching user {}", member);
+		LogManager.getLogger(IAniListRunner.class).debug("Fetching user {}", member);
 		
 		var elementList = initQuery(member).getResult(member);
 		if(!isKeepOnlyNew()){
@@ -66,7 +66,7 @@ public interface IAniListRunner<T extends IAniListObject, U extends IPagedQuery<
 				.map(IAniListDatedObject::getDate)
 				.max(ZonedDateTime::compareTo)
 				.ifPresent(val -> {
-					Log.getLogger(guild).debug("New last fetched date for {} on section {}: {} (last was {})", member, getFetcherID(), val, baseDate);
+					LogManager.getLogger(IAniListRunner.class).debug("New last fetched date for {} on section {}: {} (last was {})", member, getFetcherID(), val, baseDate);
 					aniListGeneral.setLastAccess(user, getFetcherID(), val);
 				});
 		return elementList;
@@ -103,7 +103,7 @@ public interface IAniListRunner<T extends IAniListObject, U extends IPagedQuery<
 			change.fillEmbed(guild, builder);
 		}
 		catch(Exception e){
-			Log.getLogger().error("Error building message for {}", getName(), e);
+			LogManager.getLogger(IAniListRunner.class).error("Error building message for {}", getName(), e);
 			builder.addField("Error", e.getClass().getName() + " => " + e.getMessage(), false)
 					.setColor(RED);
 		}

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import fr.raksrinana.rsndiscord.Main;
-import fr.raksrinana.rsndiscord.log.Log;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 
+@Log4j2
 public class Settings{
 	public static final String GENERAL_CONF_NAME = "general";
 	private static final Object cleaningLock = new Object();
@@ -45,7 +46,7 @@ public class Settings{
 				return ofNullable(guildConfigurationReader.readValue(fis));
 			}
 			catch(IOException e){
-				Log.getLogger(guild).error("Failed to read settings in {}", guildConfPath, e);
+				log.error("Failed to read settings in {}", guildConfPath, e);
 				return Optional.empty();
 			}
 		}
@@ -70,10 +71,10 @@ public class Settings{
 			Files.createDirectories(guildConfPath.getParent());
 			guildConfigurationWriter.writeValueAsString(value);
 			guildConfigurationWriter.writeValue(guildConfPath.toFile(), value);
-			Log.getLogger().info("Wrote settings to {}", guildConfPath);
+			log.info("Wrote settings to {}", guildConfPath);
 		}
 		catch(IOException e){
-			Log.getLogger().error("Failed to write settings to {}", guildConfPath, e);
+			log.error("Failed to write settings to {}", guildConfPath, e);
 		}
 	}
 	
@@ -87,23 +88,23 @@ public class Settings{
 			Files.createDirectories(guildConfPath.getParent());
 			generalConfigurationWriter.writeValueAsString(value);
 			generalConfigurationWriter.writeValue(guildConfPath.toFile(), value);
-			Log.getLogger().info("Wrote settings to {}", guildConfPath);
+			log.info("Wrote settings to {}", guildConfPath);
 		}
 		catch(IOException e){
-			Log.getLogger().error("Failed to write settings to {}", guildConfPath, e);
+			log.error("Failed to write settings to {}", guildConfPath, e);
 		}
 	}
 	
 	public static void clean(@NotNull JDA jda){
 		synchronized(cleaningLock){
-			Log.getLogger().info("Cleaning settings");
+			log.info("Cleaning settings");
 			configurations.forEach((guildId, configuration) -> {
 				var guild = jda.getGuildById(guildId);
 				try{
 					configuration.cleanFields(guild, "[root]");
 				}
 				catch(Exception e){
-					Log.getLogger(guild).error("Failed to clean guild configuration", e);
+					log.error("Failed to clean guild configuration", e);
 				}
 			});
 			if(nonNull(generalConfiguration)){
@@ -111,10 +112,10 @@ public class Settings{
 					generalConfiguration.cleanFields(null, "[root]");
 				}
 				catch(Exception e){
-					Log.getLogger().error("Failed to clean guild configuration", e);
+					log.error("Failed to clean guild configuration", e);
 				}
 			}
-			Log.getLogger().info("Done cleaning settings");
+			log.info("Done cleaning settings");
 		}
 	}
 	
@@ -135,7 +136,7 @@ public class Settings{
 				return ofNullable(generalConfigurationReader.readValue(fis));
 			}
 			catch(IOException e){
-				Log.getLogger().error("Failed to read settings in {}", generalConfPath, e);
+				log.error("Failed to read settings in {}", generalConfPath, e);
 				return Optional.empty();
 			}
 		}

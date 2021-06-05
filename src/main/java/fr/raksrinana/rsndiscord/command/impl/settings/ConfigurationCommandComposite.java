@@ -18,7 +18,6 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		addSubCommand(new AutoRolesConfigurationCommand(this));
 		addSubCommand(new ModeratorRolesConfigurationCommand(this));
 		addSubCommand(new AutoThumbsChannelsConfigurationCommand(this));
-		addSubCommand(new AutoReactionsChannelsConfigurationCommand(this));
 		addSubCommand(new PrefixConfigurationCommand(this));
 		addSubCommand(new NicknameConfigurationCommandComposite(this));
 		addSubCommand(new TwitchConfigurationCommandComposite(this));
@@ -29,11 +28,9 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		addSubCommand(new ReactionsConfigurationCommandComposite(this));
 		addSubCommand(new HermitcraftConfigurationCommandComposite(this));
 		addSubCommand(new RainbowSixConfigurationCommandComposite(this));
-		addSubCommand(new ParticipationConfigurationCommandComposite(this));
 		addSubCommand(new TrombinoscopeConfigurationCommandComposite(this));
 		addSubCommand(new ExternalTodosConfigurationCommandComposite(this));
 		addSubCommand(new LocaleConfigurationCommand(this));
-		addSubCommand(new OnlyMediaChannelsConfigurationCommand(this));
 		addSubCommand(new GeneralChannelConfigurationCommand(this));
 		addSubCommand(new RandomKickConfigurationCommandComposite(this));
 		addSubCommand(new LogChannelConfigurationCommand(this));

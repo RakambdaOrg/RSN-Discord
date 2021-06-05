@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS_NO_MESSAGE;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED_NO_MESSAGE;
 
 @BotSlashCommand
 public class EventWinnerCommand extends SimpleCommand{
@@ -73,6 +73,6 @@ public class EventWinnerCommand extends SimpleCommand{
 						eventConfiguration.setLooseRoleTime(member, looseRoleTime);
 					});
 				});
-		return SUCCESS_NO_MESSAGE;
+		return HANDLED_NO_MESSAGE;
 	}
 }

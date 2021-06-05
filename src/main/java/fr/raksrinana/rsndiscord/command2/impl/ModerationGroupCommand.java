@@ -13,7 +13,6 @@ public class ModerationGroupCommand extends SubCommandsGroupCommand{
 		addSubcommand(new ColorCommand());
 		addSubcommand(new ListJoinsCommand());
 		addSubcommand(new NicknameCommand());
-		addSubcommand(new ParticipationCommand());
 		addSubcommand(new RandomKickCommand());
 		addSubcommand(new RemoveAllRoleCommand());
 		addSubcommand(new SoftBanCommand());

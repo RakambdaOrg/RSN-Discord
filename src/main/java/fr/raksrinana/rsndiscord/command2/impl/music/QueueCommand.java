@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.awt.Color.PINK;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
@@ -91,6 +91,6 @@ public class QueueCommand extends SubCommand{
 				});
 		
 		JDAWrappers.edit(event, builder.build()).submit();
-		return SUCCESS;
+		return HANDLED;
 	}
 }

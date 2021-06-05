@@ -9,7 +9,7 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.command2.permission.SimplePermission.FALSE_BY_DEFAULT;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
@@ -39,7 +39,8 @@ public class RegisterCommand extends SubCommand{
 		
 		Settings.getGeneral().getTrakt()
 				.getAccessToken(event.getUser().getIdLong())
-				.ifPresentOrElse(userToken -> JDAWrappers.edit(event, translate(guild, "trakt.already-registered")).submit(),
+				.ifPresentOrElse(
+						userToken -> JDAWrappers.edit(event, translate(guild, "trakt.already-registered")).submit(),
 						() -> {
 							try{
 								var deviceCode = TraktApi.postQuery(null, new DeviceCodePostRequest());
@@ -51,6 +52,6 @@ public class RegisterCommand extends SubCommand{
 								throw new RuntimeException("Failed to get an authentication device code", e);
 							}
 						});
-		return SUCCESS;
+		return HANDLED;
 	}
 }

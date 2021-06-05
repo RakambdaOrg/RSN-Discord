@@ -4,18 +4,18 @@ import fr.raksrinana.rsndiscord.api.externaltodos.data.GetTodoResponse;
 import fr.raksrinana.rsndiscord.api.externaltodos.data.SetStatusResponse;
 import fr.raksrinana.rsndiscord.api.externaltodos.data.Status;
 import fr.raksrinana.rsndiscord.api.externaltodos.data.Todo;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import kong.unirest.GenericType;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
+import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static kong.unirest.HeaderNames.AUTHORIZATION;
-
+@Log4j2
 public class ExternalTodosApi{
 	@NotNull
 	public static Optional<GetTodoResponse> getTodos(@NotNull String endpoint, @Nullable String token){
@@ -25,7 +25,7 @@ public class ExternalTodosApi{
 		
 		request.getParsingError().ifPresent(error -> {
 			Utilities.reportException("Failed to parse external todos response", error);
-			Log.getLogger().warn("Failed to parse external todos response", error);
+			log.warn("Failed to parse external todos response", error);
 		});
 		if(!request.isSuccess()){
 			return empty();
@@ -46,7 +46,7 @@ public class ExternalTodosApi{
 		
 		request.getParsingError().ifPresent(error -> {
 			Utilities.reportException("Failed to parse external todos response", error);
-			Log.getLogger().warn("Failed to parse external todos response", error);
+			log.warn("Failed to parse external todos response", error);
 		});
 		if(!request.isSuccess()){
 			return empty();

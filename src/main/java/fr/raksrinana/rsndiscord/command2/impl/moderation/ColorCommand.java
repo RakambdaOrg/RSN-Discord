@@ -3,8 +3,8 @@ package fr.raksrinana.rsndiscord.command2.impl.moderation;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -13,11 +13,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS_NO_MESSAGE;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED_NO_MESSAGE;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.ROLE;
 
+@Log4j2
 public class ColorCommand extends SubCommand{
 	private static final String ROLE_OPTION_ID = "role";
 	private static final String TIME_OPTION_ID = "time";
@@ -53,7 +54,7 @@ public class ColorCommand extends SubCommand{
 		var time = getOptionAsInt(event.getOption(TIME_OPTION_ID)).orElseThrow();
 		
 		colorize(time, role);
-		return SUCCESS_NO_MESSAGE;
+		return HANDLED_NO_MESSAGE;
 	}
 	
 	private void colorize(int time, Role role){
@@ -66,7 +67,7 @@ public class ColorCommand extends SubCommand{
 		}, 0, 15, TimeUnit.SECONDS);
 		
 		executorService.schedule(() -> {
-			Log.getLogger(role.getGuild()).info("Stopping color change for {}", role);
+			log.info("Stopping color change for {}", role);
 			changeColorTask.cancel(false);
 			executorService.schedule(() -> {
 				JDAWrappers.setColor(role, originalColor).submit();

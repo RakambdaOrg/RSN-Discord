@@ -3,21 +3,22 @@ package fr.raksrinana.rsndiscord.command2.impl.bot;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.Properties;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static fr.raksrinana.rsndiscord.utils.Utilities.durationToString;
 import static java.awt.Color.GREEN;
 import static java.time.Duration.between;
 import static java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME;
 
+@Log4j2
 public class InfoCommand extends SubCommand{
 	private String botVersion;
 	private String commitId;
@@ -46,7 +47,7 @@ public class InfoCommand extends SubCommand{
 			}
 		}
 		catch(Exception e){
-			Log.getLogger().warn("Error reading properties from {}", resource, e);
+			log.warn("Error reading properties from {}", resource, e);
 		}
 		return properties;
 	}
@@ -80,6 +81,6 @@ public class InfoCommand extends SubCommand{
 				.build();
 		
 		JDAWrappers.edit(event, embed).submit();
-		return SUCCESS;
+		return HANDLED;
 	}
 }

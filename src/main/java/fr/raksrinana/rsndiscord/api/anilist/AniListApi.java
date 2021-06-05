@@ -1,13 +1,13 @@
 package fr.raksrinana.rsndiscord.api.anilist;
 
 import fr.raksrinana.rsndiscord.api.anilist.data.TokenResponse;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.general.anilist.AniListAccessTokenConfiguration;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Member;
 import org.jetbrains.annotations.NotNull;
 import java.net.MalformedURLException;
@@ -23,6 +23,7 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+@Log4j2
 public class AniListApi{
 	private static final String API_URL = "https://anilist.co/api/v2";
 	private static final String REDIRECT_URI = "https://anilist.co/api/v2/oauth/pin";
@@ -36,7 +37,7 @@ public class AniListApi{
 	public static URL FALLBACK_URL;
 	
 	public static void requestToken(@NotNull Member member, @NotNull String code) throws InvalidResponseException{
-		Log.getLogger(member.getGuild()).debug("Getting access token for {}", member);
+		log.debug("Getting access token for {}", member);
 		
 		var accessToken = getAccessToken(member);
 		if(accessToken.isPresent()){
@@ -73,16 +74,16 @@ public class AniListApi{
 	@NotNull
 	private static Optional<AniListAccessTokenConfiguration> getAccessToken(@NotNull Member member){
 		var guild = member.getGuild();
-		Log.getLogger(guild).trace("Getting previous access token for {}", member);
+		log.trace("Getting previous access token for {}", member);
 		
 		var accessToken = Settings.getGeneral()
 				.getAniList()
 				.getAccessToken(member.getUser().getIdLong());
 		if(accessToken.isPresent()){
-			Log.getLogger(guild).trace("Found previous access token for {}", member);
+			log.trace("Found previous access token for {}", member);
 			return accessToken;
 		}
-		Log.getLogger(guild).debug("No access token found for {}", member);
+		log.debug("No access token found for {}", member);
 		return Optional.empty();
 	}
 	
@@ -101,7 +102,7 @@ public class AniListApi{
 						return Optional.of(userId);
 					}
 					catch(Exception e){
-						Log.getLogger(member.getGuild()).error("Failed to get AniList user id for {}", member);
+						log.error("Failed to get AniList user id for {}", member);
 					}
 					return Optional.empty();
 				});
@@ -111,7 +112,7 @@ public class AniListApi{
 	public static JSONObject postQuery(@NotNull Member member, @NotNull String query, @NotNull JSONObject variables) throws Exception{
 		var guild = member.getGuild();
 		var user = member.getUser();
-		Log.getLogger(guild).debug("Sending query to AniList for user {}", user);
+		log.debug("Sending query to AniList for user {}", user);
 		
 		var token = AniListApi.getAccessToken(member).orElseThrow(() -> {
 			Settings.getGeneral().getAniList().removeUser(user);
@@ -165,7 +166,7 @@ public class AniListApi{
 			FALLBACK_URL = new URL("https://anilist.co");
 		}
 		catch(MalformedURLException e){
-			Log.getLogger().error("Failed to create default URL", e);
+			log.error("Failed to create default URL", e);
 		}
 	}
 }

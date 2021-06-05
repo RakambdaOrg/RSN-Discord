@@ -12,11 +12,11 @@ public enum CommandResult{
 	/**
 	 * Indicates the command was successful but no message were sent.
 	 */
-	SUCCESS,
+	HANDLED,
 	/**
 	 * Indicates that no response has been sent.
 	 */
-	SUCCESS_NO_MESSAGE,
+	HANDLED_NO_MESSAGE,
 	/**
 	 * Will send a predefined message.
 	 */

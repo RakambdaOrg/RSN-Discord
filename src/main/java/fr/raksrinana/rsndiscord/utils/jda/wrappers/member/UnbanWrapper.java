@@ -1,11 +1,12 @@
 package fr.raksrinana.rsndiscord.utils.jda.wrappers.member;
 
-import fr.raksrinana.rsndiscord.log.Log;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
 import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.CompletableFuture;
 
+@Log4j2
 public class UnbanWrapper{
 	private final Guild guild;
 	private final String userId;
@@ -20,6 +21,6 @@ public class UnbanWrapper{
 	@NotNull
 	public CompletableFuture<Void> submit(){
 		return action.submit()
-				.thenAccept(empty -> Log.getLogger(guild).info("Unbanned member {}", userId));
+				.thenAccept(empty -> log.info("Unbanned member {}", userId));
 	}
 }

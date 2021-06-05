@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord.reaction.handler;
 
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
@@ -40,7 +39,7 @@ public class ExternalTodoReactionHandler implements IReactionHandler{
 				}
 				catch(InterruptedException | ExecutionException | TimeoutException e){
 					Utilities.reportException("Failed to handle reaction", e);
-					Log.getLogger(event.getGuild()).error("Failed to handle reaction", e);
+					log.error("Failed to handle reaction", e);
 					return FAIL;
 				}
 			}

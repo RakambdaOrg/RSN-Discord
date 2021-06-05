@@ -10,12 +10,7 @@ import org.jetbrains.annotations.NotNull;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 public enum ScheduleTag{
-	ANILIST_AIRING_SCHEDULE,
-	DELETE_CHANNEL,
-	DELETE_MESSAGE,
-	NONE,
-	REMOVE_ROLE,
-	UNBAN_USER;
+	DELETE_CHANNEL;
 	
 	@JsonCreator
 	@NotNull

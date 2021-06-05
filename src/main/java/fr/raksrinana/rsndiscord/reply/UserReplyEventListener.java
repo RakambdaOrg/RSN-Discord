@@ -1,8 +1,8 @@
 package fr.raksrinana.rsndiscord.reply;
 
 import fr.raksrinana.rsndiscord.event.EventListener;
-import fr.raksrinana.rsndiscord.log.Log;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.utils.Utilities.reportException;
 
 @EventListener
+@Log4j2
 public class UserReplyEventListener extends ListenerAdapter{
 	@Getter
 	private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -36,7 +37,7 @@ public class UserReplyEventListener extends ListenerAdapter{
 				reply.close();
 			}
 			catch(IOException e){
-				Log.getLogger().error("Failed to close reply handler", e);
+				log.error("Failed to close reply handler", e);
 			}
 		});
 	}
@@ -50,7 +51,7 @@ public class UserReplyEventListener extends ListenerAdapter{
 					.collect(Collectors.toCollection(LinkedList::new)))));
 		}
 		catch(Exception e){
-			Log.getLogger(event.getGuild()).error("Failed to handle user reply", e);
+			log.error("Failed to handle user reply", e);
 		}
 	}
 	
@@ -64,13 +65,13 @@ public class UserReplyEventListener extends ListenerAdapter{
 				}
 				catch(InterruptedException | ExecutionException | TimeoutException e){
 					reportException("Failed to handle reaction", e);
-					Log.getLogger(event.getGuild()).error("Failed to handle reaction");
+					log.error("Failed to handle reaction");
 				}
 				return false;
 			});
 		}
 		catch(Exception e){
-			Log.getLogger(event.getGuild()).error("Failed to handle user reply", e);
+			log.error("Failed to handle user reply", e);
 		}
 	}
 }

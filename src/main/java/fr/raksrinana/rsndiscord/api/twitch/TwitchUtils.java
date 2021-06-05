@@ -1,8 +1,8 @@
 package fr.raksrinana.rsndiscord.api.twitch;
 
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import org.kitteh.irc.client.library.Client;
 import org.kitteh.irc.client.library.feature.twitch.TwitchSupport;
@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 import static org.kitteh.irc.client.library.Client.Builder.Server.SecurityType.SECURE;
 
+@Log4j2
 public class TwitchUtils{
 	private static final String TWITCH_IRC_HOST = "irc.chat.twitch.tv";
 	private static TwitchIRCEventListener listener;
@@ -28,7 +29,7 @@ public class TwitchUtils{
 		client.addChannel(ircChannelName);
 		if(!listener.containsListener(ircChannelName, guildId)){
 			listener.addListener(ircChannelName, new GuildTwitchListener(guildId, channelId));
-			Log.getLogger(guild).info("Added Twitch listener for channel {} and guild {}", ircChannelName, guild);
+			log.info("Added Twitch listener for channel {} and guild {}", ircChannelName, guild);
 		}
 		
 	}
@@ -39,7 +40,7 @@ public class TwitchUtils{
 		
 		client.removeChannel(ircChannelName);
 		
-		Log.getLogger(guild).info("Removed Twitch listener for channel {}", ircChannelName);
+		log.info("Removed Twitch listener for channel {}", ircChannelName);
 		listener.removeListener(ircChannelName, guild.getIdLong());
 	}
 	
@@ -47,7 +48,7 @@ public class TwitchUtils{
 		var client = getIrcClient();
 		client.getChannels().forEach(channel -> client.removeChannel(channel.getName()));
 		
-		Log.getLogger().info("Removed all Twitch listeners for channel");
+		log.info("Removed all Twitch listeners for channel");
 		listener.removeAllListeners();
 	}
 	
@@ -61,7 +62,7 @@ public class TwitchUtils{
 	
 	private static Client getIrcClient(){
 		if(Objects.isNull(ircClient)){
-			Log.getLogger().info("Creating new Twitch IRC client");
+			log.info("Creating new Twitch IRC client");
 			
 			ircClient = Client.builder()
 					.server()
@@ -72,11 +73,11 @@ public class TwitchUtils{
 			
 			TwitchSupport.addSupport(ircClient);
 			ircClient.connect();
-			ircClient.setExceptionListener(e -> Log.getLogger().error("Error from irc", e));
+			ircClient.setExceptionListener(e -> log.error("Error from irc", e));
 			
 			listener = new TwitchIRCEventListener();
 			ircClient.getEventManager().registerEventListener(listener);
-			Log.getLogger().info("IRC Client created");
+			log.info("IRC Client created");
 		}
 		
 		return ircClient;

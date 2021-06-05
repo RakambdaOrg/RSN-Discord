@@ -6,7 +6,7 @@ import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.command2.permission.IPermission;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS_NO_MESSAGE;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED_NO_MESSAGE;
 import static fr.raksrinana.rsndiscord.command2.permission.CreatorPermission.CREATOR_PERMISSION;
 
 public class QuitCommand extends SubCommand{
@@ -32,6 +32,6 @@ public class QuitCommand extends SubCommand{
 	@NotNull
 	public CommandResult execute(@NotNull SlashCommandEvent event){
 		TwitchUtils.disconnectAll();
-		return SUCCESS_NO_MESSAGE;
+		return HANDLED_NO_MESSAGE;
 	}
 }

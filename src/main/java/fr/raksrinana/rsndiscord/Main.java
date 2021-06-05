@@ -2,10 +2,12 @@ package fr.raksrinana.rsndiscord;
 
 import fr.raksrinana.rsndiscord.api.twitch.TwitchUtils;
 import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
+import fr.raksrinana.rsndiscord.button.impl.AniListMediaCompletedButtonHandler;
+import fr.raksrinana.rsndiscord.button.impl.AniListMediaDiscardedButtonHandler;
 import fr.raksrinana.rsndiscord.command2.SlashCommandService;
 import fr.raksrinana.rsndiscord.event.EventListener;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
+import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.reaction.ReactionUtils;
 import fr.raksrinana.rsndiscord.reply.UserReplyEventListener;
 import fr.raksrinana.rsndiscord.runner.RunnerUtils;
@@ -19,6 +21,7 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import fr.raksrinana.rsndiscord.utils.json.JacksonObjectMapper;
 import kong.unirest.Unirest;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -42,6 +45,7 @@ import static fr.raksrinana.rsndiscord.event.CommandsEventListener.DEFAULT_PREFI
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.OnlineStatus.ONLINE;
 
+@Log4j2
 public class Main{
 	public static final ZonedDateTime bootTime = ZonedDateTime.now();
 	public static final boolean DEVELOPMENT = Boolean.parseBoolean(System.getProperty("rsndev", "false"));
@@ -69,13 +73,13 @@ public class Main{
 		consoleHandler = new ConsoleHandler();
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			Log.getLogger().info("Shutdown hook triggered");
+			log.info("Shutdown hook triggered");
 			Settings.close();
 		}));
-		Log.getLogger().info("Shutdown hook registered");
+		log.info("Shutdown hook registered");
 		
 		try{
-			Log.getLogger().info("Building JDA");
+			log.info("Building JDA");
 			var jdaBuilder = JDABuilder.createDefault(System.getProperty("RSN_TOKEN"))
 					.enableIntents(GatewayIntent.GUILD_MEMBERS)
 					.setMemberCachePolicy(MemberCachePolicy.ALL)
@@ -85,7 +89,7 @@ public class Main{
 			
 			jda = jdaBuilder.build();
 			jda.awaitReady();
-			Log.getLogger().info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
+			log.info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
 			
 			JDAWrappers.editPresence()
 					.setStatus(ONLINE)
@@ -96,19 +100,30 @@ public class Main{
 			ScheduleUtils.registerAllHandlers();
 			RunnerUtils.registerAllScheduledRunners();
 			
-			Log.getLogger().info("Started");
+			log.info("Started");
 			announceStart();
+			
+			jda.getGuilds().forEach(g -> {
+				Settings.get(g).getMessagesAwaitingReaction(ReactionTag.ANILIST_TODO)
+						.removeIf(r -> {
+							return r.getMessage().getMessage().map(m -> {
+								JDAWrappers.edit(m, new AniListMediaCompletedButtonHandler().asButton(), new AniListMediaDiscardedButtonHandler().asButton()).submit();
+								m.clearReactions().submit();
+								return true;
+							}).orElse(true);
+						});
+			});
 			
 			executorService.schedule((Runnable) TwitchUtils::connect, 15, TimeUnit.SECONDS);
 			consoleHandler.start();
 		}
 		catch(LoginException | InterruptedException e){
-			Log.getLogger().error("Couldn't start bot", e);
+			log.error("Couldn't start bot", e);
 			new ForceShutdownThread().start();
 			close();
 		}
 		catch(Exception e){
-			Log.getLogger().error("Bot error", e);
+			log.error("Bot error", e);
 			new ForceShutdownThread().start();
 			close();
 		}
@@ -116,9 +131,9 @@ public class Main{
 	
 	@NotNull
 	static CLIParameters loadEnv(@NotNull String[] args){
-		Log.getLogger().info("Starting bot");
+		log.info("Starting bot");
 		if(DEVELOPMENT){
-			Log.getLogger().warn("Developer mode activated, shouldn't be used in production!");
+			log.warn("Developer mode activated, shouldn't be used in production!");
 		}
 		
 		var parameters = new CLIParameters();
@@ -129,7 +144,7 @@ public class Main{
 			cli.parseArgs(args);
 		}
 		catch(CommandLine.ParameterException e){
-			Log.getLogger().error("Failed to parse arguments", e);
+			log.error("Failed to parse arguments", e);
 			cli.usage(System.out);
 			throw new IllegalStateException("Failed to load environment");
 		}
@@ -139,10 +154,10 @@ public class Main{
 			prop.load(is);
 		}
 		catch(IOException e){
-			Log.getLogger().warn("Failed to read file {}", parameters.getConfigurationFile());
+			log.warn("Failed to read file {}", parameters.getConfigurationFile());
 		}
 		prop.forEach((key, value) -> System.setProperty(key.toString(), value.toString()));
-		Log.getLogger().debug("Loaded {} properties from file", prop.keySet().size());
+		log.debug("Loaded {} properties from file", prop.keySet().size());
 		return parameters;
 	}
 	

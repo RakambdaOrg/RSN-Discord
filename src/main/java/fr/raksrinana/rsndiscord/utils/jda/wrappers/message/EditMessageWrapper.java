@@ -1,16 +1,16 @@
 package fr.raksrinana.rsndiscord.utils.jda.wrappers.message;
 
-import fr.raksrinana.rsndiscord.log.Log;
-import net.dv8tion.jda.api.entities.Guild;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.interactions.components.Component;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
+@Log4j2
 public class EditMessageWrapper{
 	private final ISnowflake target;
 	private final Message message;
@@ -28,19 +28,17 @@ public class EditMessageWrapper{
 		this.action = message.editMessage(embed);
 	}
 	
+	public EditMessageWrapper(@Nullable ISnowflake target, @NotNull Message message, @NotNull Component... components){
+		this.target = target;
+		this.message = message;
+		this.action = message.editMessage(message).setActionRow(components);
+	}
+	
 	@NotNull
 	public CompletableFuture<Message> submit(){
 		return action.submit()
 				.thenApply(m -> {
-					Logger logger;
-					if(target instanceof Guild g){
-						logger = Log.getLogger(g);
-					}
-					else{
-						logger = Log.getLogger();
-					}
-					
-					logger.info("Edited message {} with content: {}", message, message.getContentRaw());
+					log.info("Edited message {} with content: {}", message, message.getContentRaw());
 					
 					return m;
 				});

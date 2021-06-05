@@ -1,10 +1,8 @@
 package fr.raksrinana.rsndiscord;
 
-import fr.raksrinana.rsndiscord.log.Log;
+import lombok.extern.log4j.Log4j2;
 
-/**
- * Thread used to force the shutdown of the application after a delay.
- */
+@Log4j2
 public class ForceShutdownThread extends Thread{
 	private static final int TIMEOUT_SHUTDOWN = 30000;
 	
@@ -17,11 +15,11 @@ public class ForceShutdownThread extends Thread{
 	public void run(){
 		try{
 			Thread.sleep(TIMEOUT_SHUTDOWN);
-			Log.getLogger().warn("Forcing shutdown");
+			log.warn("Forcing shutdown");
 			System.exit(0);
 		}
 		catch(InterruptedException e){
-			Log.getLogger().warn("Failed to wait for forced shutdown", e);
+			log.warn("Failed to wait for forced shutdown", e);
 		}
 	}
 }

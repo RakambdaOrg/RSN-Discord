@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.utils.jda.wrappers.channel;
 
-import fr.raksrinana.rsndiscord.log.Log;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
+@Log4j2
 public class EditChannelWrapper{
 	private final Guild guild;
 	private final TextChannel channel;
@@ -21,14 +22,14 @@ public class EditChannelWrapper{
 	}
 	@NotNull
 	public EditChannelWrapper sync(@NotNull Category category){
-		Log.getLogger(guild).info("Will sync permissions of {} with {}", channel, category);
+		log.info("Will sync permissions of {} with {}", channel, category);
 		action = action.sync(category);
 		return this;
 	}
 	
 	@NotNull
 	public EditChannelWrapper setParent(@Nullable Category category){
-		Log.getLogger(guild).info("Will set {} in category {}", channel, category);
+		log.info("Will set {} in category {}", channel, category);
 		action = action.setParent(category);
 		return this;
 	}
@@ -36,6 +37,6 @@ public class EditChannelWrapper{
 	@NotNull
 	public CompletableFuture<Void> submit(){
 		return action.submit()
-				.thenAccept(empty -> Log.getLogger(guild).info("Edited channel {}", channel));
+				.thenAccept(empty -> log.info("Edited channel {}", channel));
 	}
 }

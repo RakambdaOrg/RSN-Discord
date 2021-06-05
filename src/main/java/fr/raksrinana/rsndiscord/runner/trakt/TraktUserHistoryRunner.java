@@ -10,13 +10,13 @@ import fr.raksrinana.rsndiscord.api.trakt.model.users.history.MediaIds;
 import fr.raksrinana.rsndiscord.api.trakt.model.users.history.UserHistory;
 import fr.raksrinana.rsndiscord.api.trakt.model.users.history.UserMovieHistory;
 import fr.raksrinana.rsndiscord.api.trakt.requests.users.UserHistoryPagedGetRequest;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
 import fr.raksrinana.rsndiscord.utils.RequestException;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -34,6 +34,7 @@ import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.stream.Collectors.toSet;
 
 @ScheduledRunner
+@Log4j2
 public class TraktUserHistoryRunner implements ITraktPagedGetRunner<UserHistory, UserHistoryPagedGetRequest>{
 	@Getter
 	private final JDA jda;
@@ -121,7 +122,7 @@ public class TraktUserHistoryRunner implements ITraktPagedGetRunner<UserHistory,
 						return TheMovieDBApi.getQuery(query);
 					}
 					catch(RequestException e){
-						Log.getLogger().error("Failed to get extra movie infos for {}", change, e);
+						log.error("Failed to get extra movie infos for {}", change, e);
 					}
 					return null;
 				});

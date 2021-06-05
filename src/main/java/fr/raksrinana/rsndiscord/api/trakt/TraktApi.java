@@ -8,13 +8,13 @@ import fr.raksrinana.rsndiscord.api.trakt.requests.ITraktPostRequest;
 import fr.raksrinana.rsndiscord.api.trakt.requests.oauth.DeviceTokenPostRequest;
 import fr.raksrinana.rsndiscord.api.trakt.requests.oauth.OAuthRenewTokenPostRequest;
 import fr.raksrinana.rsndiscord.api.trakt.requests.users.UserSettingsGetRequest;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.general.trakt.TraktAccessTokenConfiguration;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import fr.raksrinana.rsndiscord.utils.RequestException;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +26,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 
+@Log4j2
 public class TraktApi{
 	public static final String API_URL = "https://api.trakt.tv";
 	private static String clientId;
@@ -40,12 +41,12 @@ public class TraktApi{
 			var handler = traktRequest.getRequest().headers(headers).asObject(traktRequest.getOutputType());
 			if(!handler.isSuccess()){
 				if(handler.getStatus() == 503 || handler.getStatus() == 521){
-					Log.getLogger().warn("Trakt replied with {} status", handler.getStatus());
+					log.warn("Trakt replied with {} status", handler.getStatus());
 					return Set.of();
 				}
 				handler.getParsingError().ifPresent(error -> {
 					Utilities.reportException("Failed to parse Trakt response, http status " + handler.getStatus(), error);
-					Log.getLogger().warn("Failed to parse Trakt response", error);
+					log.warn("Failed to parse Trakt response", error);
 				});
 				throw new RequestException("Error sending API request, HTTP code " + handler.getStatus() + " => " + handler.getBody() + "(" + handler.getParsingError() + ")", handler.getStatus());
 			}
@@ -102,7 +103,7 @@ public class TraktApi{
 					Thread.sleep(sleepTime + additionalDelay);
 				}
 				catch(InterruptedException e){
-					Log.getLogger().warn("Failed to sleep while waiting to pull device token");
+					log.warn("Failed to sleep while waiting to pull device token");
 				}
 				
 				try{
@@ -155,7 +156,7 @@ public class TraktApi{
 						return username;
 					}
 					catch(RequestException e){
-						Log.getLogger().error("Failed to renew token", e);
+						log.error("Failed to renew token", e);
 					}
 					return null;
 				}));
@@ -166,13 +167,13 @@ public class TraktApi{
 		var request = traktRequest.getRequest().headers(getHeaders(token)).asObject(traktRequest.getOutputType());
 		if(!request.isSuccess()){
 			if(request.getStatus() == 503 || request.getStatus() == 521){
-				Log.getLogger().warn("Trakt replied with {} status", request.getStatus());
+				log.warn("Trakt replied with {} status", request.getStatus());
 				return Optional.empty();
 			}
 			
 			request.getParsingError().ifPresent(error -> {
 				Utilities.reportException("Failed to parse Trakt response, http status " + request.getStatus(), error);
-				Log.getLogger().warn("Failed to parse Trakt response", error);
+				log.warn("Failed to parse Trakt response", error);
 			});
 			throw new RequestException("Error sending API request, HTTP code " + request.getStatus() + " => " + request.getBody(), request.getStatus());
 		}
@@ -182,16 +183,16 @@ public class TraktApi{
 	@NotNull
 	private static Optional<TraktAccessTokenConfiguration> getAccessToken(@NotNull Member member){
 		var guild = member.getGuild();
-		Log.getLogger(guild).debug("Getting previous access token for {}", member);
+		log.debug("Getting previous access token for {}", member);
 		var traktConfig = Settings.getGeneral().getTrakt();
 		var accessTokenOptional = traktConfig.getAccessToken(member.getUser().getIdLong());
 		
 		if(!accessTokenOptional.isPresent()){
-			Log.getLogger(guild).debug("No access token found for {}", member);
+			log.debug("No access token found for {}", member);
 			return Optional.empty();
 		}
 		
-		Log.getLogger(guild).debug("Found previous access token for {}", member);
+		log.debug("Found previous access token for {}", member);
 		var accessToken = accessTokenOptional.get();
 		if(accessToken.isExpired()){
 			var newTokenOptional = renewToken(accessToken, member);
@@ -214,7 +215,7 @@ public class TraktApi{
 			return Optional.of(newToken);
 		}
 		catch(RequestException e){
-			Log.getLogger().error("Failed to renew token", e);
+			log.error("Failed to renew token", e);
 		}
 		return Optional.empty();
 	}

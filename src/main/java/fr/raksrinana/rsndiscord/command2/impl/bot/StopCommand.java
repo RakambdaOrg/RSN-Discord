@@ -4,13 +4,14 @@ import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.command2.permission.IPermission;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.command2.permission.CreatorPermission.CREATOR_PERMISSION;
 
+@Log4j2
 public class StopCommand extends SubCommand{
 	@Override
 	@NotNull
@@ -33,9 +34,9 @@ public class StopCommand extends SubCommand{
 	@Override
 	@NotNull
 	public CommandResult execute(@NotNull SlashCommandEvent event){
-		Log.getLogger(event.getGuild()).info("BOT STOPPING");
+		log.info("BOT STOPPING");
 		JDAWrappers.edit(event, "Stopping").submit();
 		Main.close();
-		return SUCCESS;
+		return HANDLED;
 	}
 }

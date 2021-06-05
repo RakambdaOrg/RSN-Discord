@@ -7,7 +7,7 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static java.awt.Color.GREEN;
 
 public class DogCommand extends SubCommand{
@@ -22,7 +22,7 @@ public class DogCommand extends SubCommand{
 				.build();
 		
 		JDAWrappers.edit(event, embed).submit();
-		return SUCCESS;
+		return HANDLED;
 	}
 	
 	@Override

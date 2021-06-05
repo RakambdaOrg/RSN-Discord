@@ -1,11 +1,11 @@
 package fr.raksrinana.rsndiscord.api.thecatapi;
 
 import fr.raksrinana.rsndiscord.api.thecatapi.data.Cat;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.RequestException;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import kong.unirest.GenericType;
 import kong.unirest.Unirest;
+import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
@@ -15,6 +15,7 @@ import java.util.Optional;
 import static java.util.Objects.isNull;
 import static java.util.Optional.empty;
 
+@Log4j2
 public class TheCatApi{
 	public static final String API_URL = "https://api.thecatapi.com/v1";
 	private static String accessToken;
@@ -25,7 +26,7 @@ public class TheCatApi{
 			return getRandomCats().stream().findFirst();
 		}
 		catch(RequestException e){
-			Log.getLogger().error("Failed to get a random cat", e);
+			log.error("Failed to get a random cat", e);
 		}
 		return empty();
 	}
@@ -39,7 +40,7 @@ public class TheCatApi{
 		
 		request.getParsingError().ifPresent(error -> {
 			Utilities.reportException("Failed to parse TheCatAPI response", error);
-			Log.getLogger().warn("Failed to parse TheCatAPI response", error);
+			log.warn("Failed to parse TheCatAPI response", error);
 		});
 		
 		if(!request.isSuccess()){

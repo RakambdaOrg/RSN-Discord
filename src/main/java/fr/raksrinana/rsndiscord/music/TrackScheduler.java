@@ -7,13 +7,14 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import fr.raksrinana.rsndiscord.music.trackfields.ReplayTrackDataField;
 import fr.raksrinana.rsndiscord.music.trackfields.TrackUserFields;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import static fr.raksrinana.rsndiscord.log.Log.getLogger;
 
+@Log4j2
 class TrackScheduler extends AudioEventAdapter{
 	private final AudioPlayer player;
 	@Getter
@@ -44,12 +45,12 @@ class TrackScheduler extends AudioEventAdapter{
 		super.onTrackEnd(player, track, endReason);
 		if(track.getUserData() instanceof TrackUserFields){
 			if(track.getUserData(TrackUserFields.class).get(new ReplayTrackDataField()).orElse(false)){
-				getLogger(guild).info("Putting back {} into queue: repeat is enabled", track.getInfo().identifier);
+				log.info("Putting back {} into queue: repeat is enabled", track.getInfo().identifier);
 				queue(track.makeClone());
 			}
 		}
 		listeners.forEach(listener -> listener.onTrackEnd(track));
-		getLogger(getGuild()).info("Track ended ({}): {}", endReason.name(), track.getIdentifier());
+		log.info("Track ended ({}): {}", endReason.name(), track.getIdentifier());
 		if(endReason.mayStartNext){
 			tryStartNext();
 		}
@@ -66,13 +67,13 @@ class TrackScheduler extends AudioEventAdapter{
 		}
 		if(player.startTrack(queue.peek(), true)){
 			queue.poll();
-			getLogger(guild).info("Playing track {}", track.getInfo().identifier);
+			log.info("Playing track {}", track.getInfo().identifier);
 		}
 	}
 	
 	private void tryStartNext(){
 		if(Objects.isNull(player.getPlayingTrack()) && !nextTrack()){
-			getLogger(getGuild()).info("Playlist ended, listeners: {}", listeners.size());
+			log.info("Playlist ended, listeners: {}", listeners.size());
 			var executor = Executors.newSingleThreadScheduledExecutor();
 			executor.schedule(() -> listeners.forEach(IStatusTrackSchedulerListener::onTrackSchedulerEmpty), 5, TimeUnit.SECONDS);
 		}
@@ -84,10 +85,10 @@ class TrackScheduler extends AudioEventAdapter{
 	 * @return True if a track is available, false else.
 	 */
 	private boolean nextTrack(){
-		getLogger(getGuild()).info("Playing next track");
+		log.info("Playing next track");
 		var next = queue.poll();
 		if(Objects.nonNull(next)){
-			getLogger(guild).info("Playing track {}", next.getInfo().identifier);
+			log.info("Playing track {}", next.getInfo().identifier);
 			return player.startTrack(next, false);
 		}
 		return false;
@@ -117,7 +118,7 @@ class TrackScheduler extends AudioEventAdapter{
 	}
 	
 	void foundNothing(){
-		getLogger(getGuild()).info("Scheduler nothing found (track: {}, queue: {})", player.getPlayingTrack(), queue.size());
+		log.info("Scheduler nothing found (track: {}, queue: {})", player.getPlayingTrack(), queue.size());
 		if(Objects.isNull(player.getPlayingTrack()) && queue.isEmpty()){
 			listeners.forEach(IStatusTrackSchedulerListener::onTrackSchedulerEmpty);
 		}

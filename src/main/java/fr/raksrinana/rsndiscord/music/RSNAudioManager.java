@@ -8,12 +8,12 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.music.trackfields.ReplayTrackDataField;
 import fr.raksrinana.rsndiscord.music.trackfields.RequesterTrackDataField;
 import fr.raksrinana.rsndiscord.music.trackfields.TrackUserFields;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
@@ -30,6 +30,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 
+@Log4j2
 public class RSNAudioManager implements IStatusTrackSchedulerListener{
 	private static final HashMap<Guild, RSNAudioManager> managers = new HashMap<>();
 	@Getter
@@ -64,34 +65,34 @@ public class RSNAudioManager implements IStatusTrackSchedulerListener{
 			gunterAudioManager.getAudioPlayerManager().loadItem(identifier, new AudioLoadResultHandler(){
 				@Override
 				public void trackLoaded(@NotNull AudioTrack track){
-					Log.getLogger(guild).debug("Added `{}` to the audio queue on channel `{}`", identifier, channelName);
+					log.debug("Added `{}` to the audio queue on channel `{}`", identifier, channelName);
 					setTrackData(track, requester);
 					try{
 						gunterAudioManager.getTrackScheduler().queue(track);
 						listener.onTrack(track);
 					}
 					catch(Exception e){
-						Log.getLogger(guild).warn("Error loading song", e);
+						log.warn("Error loading song", e);
 					}
 					gunterAudioManager.isSearchingTracks = false;
 				}
 				
 				@Override
 				public void playlistLoaded(@NotNull AudioPlaylist playlist){
-					Log.getLogger(guild).debug("Added `{}`(size: {}) to the audio queue on channel `{}`", identifier, playlist.getTracks().size(), channelName);
+					log.debug("Added `{}`(size: {}) to the audio queue on channel `{}`", identifier, playlist.getTracks().size(), channelName);
 					var tracks = playlist.getTracks().stream()
 							.skip(skipCount)
 							.limit(maxTracks)
 							.collect(toList());
 					
 					tracks.forEach(track -> {
-						Log.getLogger(guild).debug("Added `{}` to the audio queue on channel `{}`", identifier, channelName);
+						log.debug("Added `{}` to the audio queue on channel `{}`", identifier, channelName);
 						setTrackData(track, requester);
 						try{
 							gunterAudioManager.getTrackScheduler().queue(track);
 						}
 						catch(Exception e){
-							Log.getLogger(guild).warn("Error loading song", e);
+							log.warn("Error loading song", e);
 						}
 					});
 					listener.onPlaylist(tracks);
@@ -100,7 +101,7 @@ public class RSNAudioManager implements IStatusTrackSchedulerListener{
 				
 				@Override
 				public void noMatches(){
-					Log.getLogger(guild).warn("Player found nothing for channel `{}`", channelName);
+					log.warn("Player found nothing for channel `{}`", channelName);
 					gunterAudioManager.isSearchingTracks = false;
 					gunterAudioManager.getTrackScheduler().foundNothing();
 					listener.onFailure(translate(guild, "music.not-found"));
@@ -108,7 +109,7 @@ public class RSNAudioManager implements IStatusTrackSchedulerListener{
 				
 				@Override
 				public void loadFailed(@NotNull FriendlyException throwable){
-					Log.getLogger(guild).warn("Failed to load audio for channel `{}`", channelName, throwable);
+					log.warn("Failed to load audio for channel `{}`", channelName, throwable);
 					gunterAudioManager.isSearchingTracks = false;
 					gunterAudioManager.getTrackScheduler().foundNothing();
 					listener.onFailure(translate(guild, "music.load-error"));
@@ -148,7 +149,7 @@ public class RSNAudioManager implements IStatusTrackSchedulerListener{
 		var manager = new RSNAudioManager(channel, audioManager, audioPlayerManager, audioPlayer, trackScheduler);
 		trackScheduler.addStatusTrackSchedulerListener(manager);
 		
-		Log.getLogger(guild).info("Audio manager Created");
+		log.info("Audio manager Created");
 		return manager;
 	}
 	
@@ -192,7 +193,7 @@ public class RSNAudioManager implements IStatusTrackSchedulerListener{
 				}
 				
 				managers.remove(guild);
-				Log.getLogger(guild).info("Audio manager shutdown");
+				log.info("Audio manager shutdown");
 			}, 2, SECONDS);
 			
 			executor.shutdown();
@@ -284,7 +285,7 @@ public class RSNAudioManager implements IStatusTrackSchedulerListener{
 	
 	@Override
 	public void onTrackSchedulerEmpty(){
-		Log.getLogger(getChannel().getGuild()).info("Scheduler is empty");
+		log.info("Scheduler is empty");
 		close();
 	}
 	

@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Set;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.command2.permission.SimplePermission.FALSE_BY_DEFAULT;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
@@ -78,6 +78,6 @@ public class AllowCommand extends SubCommand{
 					() -> JDAWrappers.edit(event, "Command not found").submit());
 		}
 		
-		return SUCCESS;
+		return HANDLED;
 	}
 }

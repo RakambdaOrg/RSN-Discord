@@ -2,23 +2,24 @@ package fr.raksrinana.rsndiscord.command2.impl.music;
 
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.reply.SkipMusicReply;
 import fr.raksrinana.rsndiscord.reply.UserReplyEventListener;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.BasicEmotes.CHECK_OK;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static fr.raksrinana.rsndiscord.utils.Utilities.isModerator;
 import static java.awt.Color.ORANGE;
 import static java.util.Optional.ofNullable;
 
+@Log4j2
 public class SkipCommand extends SubCommand{
 	@Override
 	@NotNull
@@ -51,18 +52,18 @@ public class SkipCommand extends SubCommand{
 		
 		if(track.isEmpty()){
 			JDAWrappers.edit(event, translate(guild, "music.nothing-playing")).submit();
-			return SUCCESS;
+			return HANDLED;
 		}
 		
 		if(track.get().getDuration() - track.get().getPosition() < 30000){
 			JDAWrappers.edit(event, translate(guild, "music.skip.soon-finish")).submit();
-			return SUCCESS;
+			return HANDLED;
 		}
 		
 		if(RSNAudioManager.isRequester(guild, author) || isModerator(event.getMember())){
 			var message = skip(guild);
 			JDAWrappers.edit(event, translate(guild, translate(guild, message, event.getUser().getAsMention()))).submitAndDelete(5);
-			return SUCCESS;
+			return HANDLED;
 		}
 		
 		var requiredVote = ofNullable(guild.getAudioManager().getConnectedChannel())
@@ -71,7 +72,7 @@ public class SkipCommand extends SubCommand{
 				.map(count -> (int) Math.ceil(count / 2.0))
 				.orElse(1);
 		
-		Log.getLogger(guild).info("Will start vote to skip music, will require {} votes", requiredVote);
+		log.info("Will start vote to skip music, will require {} votes", requiredVote);
 		
 		var embed = new EmbedBuilder().setAuthor(author.getName(), null, author.getAvatarUrl())
 				.setColor(ORANGE)
@@ -84,7 +85,7 @@ public class SkipCommand extends SubCommand{
 					UserReplyEventListener.handleReply(new SkipMusicReply(event, message, requiredVote, track.get()));
 				});
 		
-		return SUCCESS;
+		return HANDLED;
 	}
 	
 	private String skip(@NotNull Guild guild){

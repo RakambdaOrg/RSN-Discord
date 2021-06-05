@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.event;
 
+import fr.raksrinana.rsndiscord.log.LogContext;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
@@ -20,24 +21,27 @@ public class JoinLeaveListener extends ListenerAdapter{
 		super.onGuildMemberRemove(event);
 		var guild = event.getGuild();
 		var user = event.getUser();
-		var joinLeaveConfiguration = Settings.get(guild).getJoinLeaveConfiguration();
 		
-		joinLeaveConfiguration.getChannel()
-				.flatMap(ChannelConfiguration::getChannel)
-				.ifPresent(channel -> {
-					var title = translate(guild, "joinLeave.leave.title", user.getName() + "#" + user.getDiscriminator());
-					var description = translate(guild, "joinLeave.leave.description", guild.getMemberCount());
-					var image = getImage(joinLeaveConfiguration.getLeaveImages()).orElse(null);
-					
-					var embed = new EmbedBuilder()
-							.setTitle(title)
-							.setDescription(description)
-							.setThumbnail(user.getAvatarUrl())
-							.setImage(image)
-							.build();
-					
-					JDAWrappers.message(channel, embed).submit();
-				});
+		try(var context = LogContext.with(guild).with(user)){
+			var joinLeaveConfiguration = Settings.get(guild).getJoinLeaveConfiguration();
+			
+			joinLeaveConfiguration.getChannel()
+					.flatMap(ChannelConfiguration::getChannel)
+					.ifPresent(channel -> {
+						var title = translate(guild, "joinLeave.leave.title", user.getName() + "#" + user.getDiscriminator());
+						var description = translate(guild, "joinLeave.leave.description", guild.getMemberCount());
+						var image = getImage(joinLeaveConfiguration.getLeaveImages()).orElse(null);
+						
+						var embed = new EmbedBuilder()
+								.setTitle(title)
+								.setDescription(description)
+								.setThumbnail(user.getAvatarUrl())
+								.setImage(image)
+								.build();
+						
+						JDAWrappers.message(channel, embed).submit();
+					});
+		}
 	}
 	
 	@Override
@@ -45,25 +49,28 @@ public class JoinLeaveListener extends ListenerAdapter{
 		super.onGuildMemberJoin(event);
 		var guild = event.getGuild();
 		var user = event.getUser();
-		var joinLeaveConfiguration = Settings.get(guild).getJoinLeaveConfiguration();
 		
-		joinLeaveConfiguration.getChannel()
-				.flatMap(ChannelConfiguration::getChannel)
-				.ifPresent(channel -> {
-					var title = translate(guild, "joinLeave.join.title", user.getName() + "#" + user.getDiscriminator());
-					var description = translate(guild, "joinLeave.join.description", guild.getMemberCount());
-					var image = getImage(joinLeaveConfiguration.getJoinImages()).orElse(null);
-					
-					var embed = new EmbedBuilder()
-							.setTitle(title)
-							.setDescription(description)
-							.setThumbnail(user.getAvatarUrl())
-							.setImage(image)
-							.addField("Mention", user.getAsMention(), true)
-							.build();
-					
-					JDAWrappers.message(channel, embed).submit();
-				});
+		try(var context = LogContext.with(guild).with(user)){
+			var joinLeaveConfiguration = Settings.get(guild).getJoinLeaveConfiguration();
+			
+			joinLeaveConfiguration.getChannel()
+					.flatMap(ChannelConfiguration::getChannel)
+					.ifPresent(channel -> {
+						var title = translate(guild, "joinLeave.join.title", user.getName() + "#" + user.getDiscriminator());
+						var description = translate(guild, "joinLeave.join.description", guild.getMemberCount());
+						var image = getImage(joinLeaveConfiguration.getJoinImages()).orElse(null);
+						
+						var embed = new EmbedBuilder()
+								.setTitle(title)
+								.setDescription(description)
+								.setThumbnail(user.getAvatarUrl())
+								.setImage(image)
+								.addField("Mention", user.getAsMention(), true)
+								.build();
+						
+						JDAWrappers.message(channel, embed).submit();
+					});
+		}
 	}
 	
 	@NotNull

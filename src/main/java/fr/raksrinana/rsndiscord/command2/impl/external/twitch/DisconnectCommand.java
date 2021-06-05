@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS_NO_MESSAGE;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED_NO_MESSAGE;
 import static fr.raksrinana.rsndiscord.command2.permission.SimplePermission.FALSE_BY_DEFAULT;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
@@ -45,6 +45,6 @@ public class DisconnectCommand extends SubCommand{
 	public CommandResult execute(@NotNull SlashCommandEvent event){
 		var user = event.getOption(USER_OPTION_ID).getAsString();
 		TwitchUtils.disconnect(event.getGuild(), user);
-		return SUCCESS_NO_MESSAGE;
+		return HANDLED_NO_MESSAGE;
 	}
 }

@@ -103,7 +103,7 @@ public abstract class CommandComposite extends BasicCommand{
 		else{
 			sendErrorMessage(guild, event.getChannel(), author, RED, translate(guild, "commands.error.required-argument"));
 		}
-		return CommandResult.SUCCESS;
+		return CommandResult.HANDLED;
 	}
 	
 	private void sendErrorMessage(@NotNull Guild guild, @NotNull TextChannel channel, @NotNull User author, @NotNull Color color, @NotNull String reason){
@@ -115,8 +115,7 @@ public abstract class CommandComposite extends BasicCommand{
 				.addField(translate(guild, "commands.error.sub-commands"), getSubCommandsList(), false)
 				.build();
 		
-		JDAWrappers.message(channel, embed).submit()
-				.thenAccept(message -> ScheduleUtils.deleteMessage(message, date -> date.plusMinutes(2)));
+		JDAWrappers.message(channel, embed).submitAndDelete(2);
 	}
 	
 	@NotNull

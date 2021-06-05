@@ -1,9 +1,9 @@
 package fr.raksrinana.rsndiscord.runner;
 
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.JDA;
 import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
@@ -12,6 +12,7 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.concurrent.TimeUnit.HOURS;
 
 @ScheduledRunner
+@Log4j2
 public class BirthdayRunner implements IScheduledRunner{
 	private final JDA jda;
 	
@@ -23,7 +24,7 @@ public class BirthdayRunner implements IScheduledRunner{
 	public void execute(){
 		var day = LocalDate.now();
 		jda.getGuilds().forEach(guild -> {
-			Log.getLogger(guild).info("Processing guild {}", guild);
+			log.info("Processing guild {}", guild);
 			var birthdaysConfiguration = Settings.get(guild).getBirthdays();
 			birthdaysConfiguration.getNotificationChannel()
 					.flatMap(ChannelConfiguration::getChannel)

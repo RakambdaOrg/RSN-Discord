@@ -3,11 +3,11 @@ package fr.raksrinana.rsndiscord.settings.types;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.IAtomicConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.requests.ErrorResponse;
@@ -24,6 +24,7 @@ import static java.util.Optional.ofNullable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
+@Log4j2
 public class MessageConfiguration implements IAtomicConfiguration{
 	@JsonProperty("channel")
 	private ChannelConfiguration channel;
@@ -76,7 +77,7 @@ public class MessageConfiguration implements IAtomicConfiguration{
 						return future.get();
 					}
 					catch(InterruptedException | ExecutionException e){
-						Log.getLogger().error("Failed to get message", e);
+						log.error("Failed to get message", e);
 					}
 					return null;
 				}).orElse(false);
@@ -92,7 +93,7 @@ public class MessageConfiguration implements IAtomicConfiguration{
 						return ofNullable(future.get());
 					}
 					catch(InterruptedException | ExecutionException e){
-						Log.getLogger().error("Failed to get message from configuration", e);
+						log.error("Failed to get message from configuration", e);
 					}
 					return Optional.empty();
 				});

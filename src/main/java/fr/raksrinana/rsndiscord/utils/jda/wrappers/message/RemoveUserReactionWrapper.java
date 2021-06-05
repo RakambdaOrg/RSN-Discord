@@ -1,16 +1,15 @@
 package fr.raksrinana.rsndiscord.utils.jda.wrappers.message;
 
-import fr.raksrinana.rsndiscord.log.Log;
-import net.dv8tion.jda.api.entities.Guild;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.RestAction;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
+@Log4j2
 public class RemoveUserReactionWrapper{
 	private final ISnowflake target;
 	private final MessageReaction messageReaction;
@@ -28,15 +27,7 @@ public class RemoveUserReactionWrapper{
 	public CompletableFuture<Void> submit(){
 		return action.submit()
 				.thenAccept(empty -> {
-					Logger logger;
-					if(target instanceof Guild g){
-						logger = Log.getLogger(g);
-					}
-					else{
-						logger = Log.getLogger();
-					}
-					
-					logger.info("Removed reaction {} of {} from message {}", messageReaction.getReactionEmote(), user, messageReaction.getMessageIdLong());
+					log.info("Removed reaction {} of {} from message {}", messageReaction.getReactionEmote(), user, messageReaction.getMessageIdLong());
 				});
 	}
 }

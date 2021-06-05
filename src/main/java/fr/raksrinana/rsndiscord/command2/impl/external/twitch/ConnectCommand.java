@@ -4,18 +4,19 @@ import fr.raksrinana.rsndiscord.api.twitch.TwitchUtils;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.command2.permission.IPermission;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.command2.permission.SimplePermission.FALSE_BY_DEFAULT;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
+@Log4j2
 public class ConnectCommand extends SubCommand{
 	private static final String USER_OPTION_ID = "user";
 	
@@ -53,9 +54,9 @@ public class ConnectCommand extends SubCommand{
 			JDAWrappers.edit(event, "OK").submitAndDelete(5);
 		}
 		catch(Exception e){
-			Log.getLogger(event.getGuild()).warn("Missing configuration for IRC", e);
+			log.warn("Missing configuration for IRC", e);
 			JDAWrappers.edit(event, translate(event.getGuild(), "twitch.not-configured")).submitAndDelete(5);
 		}
-		return SUCCESS;
+		return HANDLED;
 	}
 }

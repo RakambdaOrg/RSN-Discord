@@ -6,7 +6,7 @@ import fr.raksrinana.rsndiscord.command2.permission.IPermission;
 import fr.raksrinana.rsndiscord.runner.twitter.UserTweetsRunner;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS_NO_MESSAGE;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED_NO_MESSAGE;
 import static fr.raksrinana.rsndiscord.command2.permission.SimplePermission.FALSE_BY_DEFAULT;
 
 public class FetchCommand extends SubCommand{
@@ -32,6 +32,6 @@ public class FetchCommand extends SubCommand{
 	@NotNull
 	public CommandResult execute(@NotNull SlashCommandEvent event){
 		new UserTweetsRunner(event.getJDA()).execute();
-		return SUCCESS_NO_MESSAGE;
+		return HANDLED_NO_MESSAGE;
 	}
 }

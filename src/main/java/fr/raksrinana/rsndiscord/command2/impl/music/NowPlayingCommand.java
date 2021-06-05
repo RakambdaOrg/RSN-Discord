@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.awt.Color.CYAN;
 import static java.awt.Color.RED;
@@ -62,7 +62,7 @@ public class NowPlayingCommand extends SubCommand{
 		});
 		
 		JDAWrappers.edit(event, builder.build()).submit();
-		return SUCCESS;
+		return HANDLED;
 	}
 	
 	@NotNull

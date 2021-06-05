@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS_NO_MESSAGE;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED_NO_MESSAGE;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
 
@@ -38,6 +38,7 @@ public class MediaListDifferencesCommand extends SubCommand{
 		var types = Arrays.stream(MediaType.values())
 				.map(type -> new Command.Choice(type.getValue(), type.name()))
 				.collect(Collectors.toSet());
+		
 		return List.of(
 				new OptionData(STRING, TYPE_OPTION_ID, "Media type").setRequired(true).addChoices(types),
 				new OptionData(USER, USER_OPTION_ID, "First user").setRequired(true),
@@ -54,6 +55,6 @@ public class MediaListDifferencesCommand extends SubCommand{
 		var type = MediaType.valueOf(typeStr);
 		
 		new MediaListDifferencesRunner(event.getJDA(), type, event.getTextChannel(), member1, member2).runQueryOnDefaultUsersChannels();
-		return SUCCESS_NO_MESSAGE;
+		return HANDLED_NO_MESSAGE;
 	}
 }

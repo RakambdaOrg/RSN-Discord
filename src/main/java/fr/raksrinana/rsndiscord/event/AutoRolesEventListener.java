@@ -1,11 +1,13 @@
 package fr.raksrinana.rsndiscord.event;
 
-import fr.raksrinana.rsndiscord.log.Log;
+import fr.raksrinana.rsndiscord.log.LogContext;
+import fr.raksrinana.rsndiscord.scheduleaction.impl.UnbanMemberScheduleActionHandler;
+import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.autoroles.LeaverRoles;
-import fr.raksrinana.rsndiscord.settings.guild.schedule.UnbanScheduleConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -16,43 +18,17 @@ import static fr.raksrinana.rsndiscord.schedule.ScheduleUtils.addSchedule;
 import static java.util.Optional.ofNullable;
 
 @EventListener
+@Log4j2
 public class AutoRolesEventListener extends ListenerAdapter{
-	@Override
-	public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event){
-		super.onGuildMemberRemove(event);
-		
-		var guild = event.getGuild();
-		var user = event.getUser();
-		ofNullable(event.getMember()).ifPresent(member -> {
-			var leavingRolesConfiguration = Settings.get(guild).getLeavingRolesConfiguration();
-			leavingRolesConfiguration.addLeaver(new LeaverRoles(user, member.getRoles()));
-			
-			Settings.get(guild).getLeaveServerBanDuration()
-					.ifPresent(banDuration -> guild.retrieveBan(user).submit()
-							.thenApply(ban -> true)
-							.exceptionally(exception -> false)
-							.thenAccept(isBanned -> {
-								if(!isBanned){
-									var unbanScheduleConfiguration = new UnbanScheduleConfiguration(event.getJDA().getSelfUser(),
-											ZonedDateTime.now().plus(banDuration),
-											"Banned for: " + "Left server",
-											member.getId());
-									addSchedule(guild, unbanScheduleConfiguration);
-									
-									JDAWrappers.ban(member, 0, "Left server").sumbit();
-								}
-							}));
-		});
-	}
-	
 	@Override
 	public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event){
 		super.onGuildMemberJoin(event);
 		
 		var guild = event.getGuild();
-		try{
+		var user = event.getUser();
+		
+		try(var context = LogContext.with(guild).with(user)){
 			var member = event.getMember();
-			var user = event.getUser();
 			
 			Settings.get(guild).getAutoRoles().stream()
 					.flatMap(roleConfiguration -> roleConfiguration.getRole().stream())
@@ -68,7 +44,35 @@ public class AutoRolesEventListener extends ListenerAdapter{
 			});
 		}
 		catch(Exception e){
-			Log.getLogger(guild).error("Error on user join", e);
+			log.error("Error on user join", e);
+		}
+	}
+	
+	@Override
+	public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event){
+		super.onGuildMemberRemove(event);
+		
+		var guild = event.getGuild();
+		var user = event.getUser();
+		
+		try(var context = LogContext.with(guild).with(user)){
+			var guildSettings = Settings.get(guild);
+			
+			ofNullable(event.getMember()).ifPresent(member -> {
+				var leavingRolesConfiguration = guildSettings.getLeavingRolesConfiguration();
+				leavingRolesConfiguration.addLeaver(new LeaverRoles(user, member.getRoles()));
+				
+				guildSettings.getLeaveServerBanDuration()
+						.ifPresent(banDuration -> guild.retrieveBan(user).submit()
+								.thenApply(ban -> true)
+								.exceptionally(exception -> false)
+								.thenAccept(isBanned -> {
+									if(!isBanned){
+										guildSettings.add(new UnbanMemberScheduleActionHandler(member.getIdLong(), ZonedDateTime.now().plus(banDuration)));
+										JDAWrappers.ban(member, 0, "Left server").sumbit();
+									}
+								}));
+			});
 		}
 	}
 }

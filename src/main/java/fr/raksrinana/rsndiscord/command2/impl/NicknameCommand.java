@@ -3,9 +3,9 @@ package fr.raksrinana.rsndiscord.command2.impl;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.BotSlashCommand;
 import fr.raksrinana.rsndiscord.command2.base.SimpleCommand;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
@@ -19,13 +19,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static fr.raksrinana.rsndiscord.utils.Utilities.durationToString;
 import static java.awt.Color.*;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
 @BotSlashCommand
+@Log4j2
 public class NicknameCommand extends SimpleCommand{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
 	private static final String NICK_OPTION_ID = "nick";
@@ -81,7 +82,7 @@ public class NicknameCommand extends SimpleCommand{
 					.setTitle(translate(guild, "nickname.no-changes"))
 					.addField(translate(guild, "nickname.reason"), translate(guild, "nickname.same-nickname"), false);
 			JDAWrappers.edit(event, builder.build()).submitAndDelete(10);
-			return SUCCESS;
+			return HANDLED;
 		}
 		
 		var isStillInCooldown = lastChange.map(date -> date.plus(delay))
@@ -100,13 +101,13 @@ public class NicknameCommand extends SimpleCommand{
 					.addField(translate(guild, "nickname.last-change"), lastChangeStr, true)
 					.addField(translate(guild, "nickname.next-allowed"), nextChange, true);
 			JDAWrappers.edit(event, builder.build()).submitAndDelete(10);
-			return SUCCESS;
+			return HANDLED;
 		}
 		
 		try{
 			JDAWrappers.modifyNickname(member, newNickname.orElse(null)).submit()
 					.thenAccept(empty -> {
-						Log.getLogger(guild).info("{} renamed from `{}` to `{}`", member, oldNickname, newNickname);
+						log.info("{} renamed from `{}` to `{}`", member, oldNickname, newNickname);
 						
 						var newLastChange = ZonedDateTime.now();
 						nicknameConfiguration.setLastChange(user, newLastChange);
@@ -130,6 +131,6 @@ public class NicknameCommand extends SimpleCommand{
 					.addField(translate(guild, "nickname.reason"), translate(guild, "nickname.target-error"), false);
 			JDAWrappers.edit(event, builder.build()).submitAndDelete(10);
 		}
-		return SUCCESS;
+		return HANDLED;
 	}
 }

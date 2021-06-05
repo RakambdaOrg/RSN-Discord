@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.reaction.handler;
 
-import fr.raksrinana.rsndiscord.command.impl.schedule.delete.ChannelCommand;
 import fr.raksrinana.rsndiscord.reaction.ReactionTag;
+import fr.raksrinana.rsndiscord.scheduleaction.impl.DeleteChannelScheduleActionHandler;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.CategoryConfiguration;
@@ -11,14 +11,11 @@ import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEve
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 import static fr.raksrinana.rsndiscord.reaction.ReactionTag.DELETE_CHANNEL;
 import static fr.raksrinana.rsndiscord.reaction.handler.ReactionHandlerResult.PROCESSED;
 import static fr.raksrinana.rsndiscord.reaction.handler.ReactionHandlerResult.PROCESSED_DELETE;
 import static fr.raksrinana.rsndiscord.utils.BasicEmotes.CROSS_NO;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 @ReactionHandler
 public class ChannelDeletionReactionHandler extends TodoReactionHandler{
@@ -34,14 +31,15 @@ public class ChannelDeletionReactionHandler extends TodoReactionHandler{
 	
 	@Override
 	@NotNull
-	protected ReactionHandlerResult processTodoCompleted(@NotNull GuildMessageReactionAddEvent event, @NotNull BasicEmotes emote, @NotNull WaitingReactionMessageConfiguration todo) throws InterruptedException, ExecutionException, TimeoutException{
+	protected ReactionHandlerResult processTodoCompleted(@NotNull GuildMessageReactionAddEvent event, @NotNull BasicEmotes emote, @NotNull WaitingReactionMessageConfiguration todo){
 		var guild = event.getGuild();
-		var user = event.retrieveUser().submit().get(30, SECONDS);
 		
 		return todo.getMessage().getMessage()
 				.map(message -> {
 					var channel = message.getTextChannel();
-					Settings.get(guild).getArchiveCategory()
+					var guildConfiguration = Settings.get(guild);
+					
+					guildConfiguration.getArchiveCategory()
 							.flatMap(CategoryConfiguration::getCategory)
 							.ifPresentOrElse(archiveCategory -> {
 										JDAWrappers.edit(channel)
@@ -49,7 +47,8 @@ public class ChannelDeletionReactionHandler extends TodoReactionHandler{
 												.sync(archiveCategory)
 												.submit()
 												.thenAccept(future -> JDAWrappers.message(channel, translate(guild, "reaction.archived", event.getMember().getAsMention())).submit());
-										ChannelCommand.scheduleDeletion(ZonedDateTime.now().plusDays(4), channel, user);
+										
+										guildConfiguration.add(new DeleteChannelScheduleActionHandler(channel.getIdLong(), ZonedDateTime.now().plusDays(4)));
 									},
 									() -> JDAWrappers.delete(channel).submit());
 					return PROCESSED_DELETE;

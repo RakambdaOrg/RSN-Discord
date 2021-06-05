@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.Optional.ofNullable;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.*;
@@ -64,7 +64,7 @@ public class AddCommand extends SubCommand{
 		
 		if(voiceChannel.isEmpty()){
 			JDAWrappers.edit(event, translate(guild, "music.voice-error")).submitAndDelete(5);
-			return SUCCESS;
+			return HANDLED;
 		}
 		
 		var identifier = event.getOption(QUERY_OPTION_ID).getAsString().trim();
@@ -80,6 +80,6 @@ public class AddCommand extends SubCommand{
 		
 		var trackConsumer = new AddMusicTrackConsumer(guild, event, user, repeat);
 		RSNAudioManager.play(user, voiceChannel.get(), trackConsumer, skipCount, maxTracks, identifier);
-		return SUCCESS;
+		return HANDLED;
 	}
 }

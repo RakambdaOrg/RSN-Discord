@@ -1,17 +1,9 @@
 package fr.raksrinana.rsndiscord.runner;
 
 import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
-import fr.raksrinana.rsndiscord.log.Log;
-import fr.raksrinana.rsndiscord.settings.Settings;
 import net.dv8tion.jda.api.JDA;
 import org.jetbrains.annotations.NotNull;
-import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 @ScheduledRunner

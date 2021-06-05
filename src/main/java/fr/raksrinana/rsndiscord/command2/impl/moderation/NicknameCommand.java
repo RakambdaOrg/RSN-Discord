@@ -2,8 +2,8 @@ package fr.raksrinana.rsndiscord.command2.impl.moderation;
 
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
@@ -15,12 +15,13 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.awt.Color.*;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
 
+@Log4j2
 public class NicknameCommand extends SubCommand{
 	private static final String USER_OPTION_ID = "user";
 	private static final String NICK_OPTION_ID = "nick";
@@ -76,13 +77,13 @@ public class NicknameCommand extends SubCommand{
 					.setTitle(translate(guild, "nickname.no-changes"))
 					.addField(translate(guild, "nickname.reason"), translate(guild, "nickname.same-nickname"), false);
 			JDAWrappers.edit(event, builder.build()).submitAndDelete(10);
-			return SUCCESS;
+			return HANDLED;
 		}
 		
 		try{
 			JDAWrappers.modifyNickname(member, newNickname.orElse(null)).submit()
 					.thenAccept(empty -> {
-						Log.getLogger(guild).info("{} renamed {} from `{}` to `{}`", author, member, oldNickname, newNickname);
+						log.info("{} renamed {} from `{}` to `{}`", author, member, oldNickname, newNickname);
 						
 						builder.setColor(GREEN);
 						
@@ -102,6 +103,6 @@ public class NicknameCommand extends SubCommand{
 					.addField(translate(guild, "nickname.reason"), translate(guild, "nickname.target-error"), false);
 			JDAWrappers.edit(event, builder.build()).submitAndDelete(10);
 		}
-		return SUCCESS;
+		return HANDLED;
 	}
 }

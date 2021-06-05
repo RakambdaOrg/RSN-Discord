@@ -7,7 +7,7 @@ import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.command2.permission.SimplePermission.FALSE_BY_DEFAULT;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
@@ -46,6 +46,6 @@ public class StopCommand extends SubCommand{
 			case IMPOSSIBLE -> "unknown";
 		};
 		JDAWrappers.edit(event, translate(guild, message, event.getUser().getAsMention())).submitAndDelete(5);
-		return SUCCESS;
+		return HANDLED;
 	}
 }

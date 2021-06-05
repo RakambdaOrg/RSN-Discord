@@ -1,32 +1,35 @@
 package fr.raksrinana.rsndiscord.event;
 
-import fr.raksrinana.rsndiscord.Main;
-import fr.raksrinana.rsndiscord.log.Log;
+import fr.raksrinana.rsndiscord.log.LogContext;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
-import net.dv8tion.jda.api.entities.MessageType;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import static java.util.Objects.isNull;
+import static net.dv8tion.jda.api.entities.MessageType.INLINE_REPLY;
 
 @EventListener
 @Getter
+@Log4j2
 public class InlineReplyEventListener extends ListenerAdapter{
 	@Override
 	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event){
 		super.onGuildMessageReceived(event);
-		try{
+		
+		var guild = event.getGuild();
+		var author = event.getAuthor();
+		
+		try(var context = LogContext.with(guild).with(author)){
 			var message = event.getMessage();
-			var author = event.getAuthor();
 			
-			if(message.getType() != MessageType.INLINE_REPLY || author.isBot()){
+			if(message.getType() != INLINE_REPLY || author.isBot()){
 				return;
 			}
 			
@@ -35,9 +38,9 @@ public class InlineReplyEventListener extends ListenerAdapter{
 				return;
 			}
 			
-			if(Objects.equals(reference.getAuthor(), Main.getJda().getSelfUser()) && Settings.get(event.getGuild()).getMediaReactionMessages().contains(new MessageConfiguration(reference))){
+			if(Settings.get(guild).getMediaReactionMessages().contains(new MessageConfiguration(reference))){
 				var original = Arrays.stream(reference.getContentRaw().split("\n"))
-						.filter(line -> !line.startsWith("__**EP "))
+						.filter(line -> Character.isDigit(line.charAt(0)) || line.startsWith("N/A"))
 						.map(line -> line.split(" ", 2)[0])
 						.collect(Collectors.toList());
 				var received = Arrays.stream(message.getContentRaw().split("\n")).collect(Collectors.toList());
@@ -51,10 +54,13 @@ public class InlineReplyEventListener extends ListenerAdapter{
 					JDAWrappers.reply(reference, content).submit()
 							.thenAccept(sent -> JDAWrappers.delete(message).submit());
 				}
+				else{
+					JDAWrappers.message(event.getChannel(), String.format("Expected %d lines, got %d", original.size(), received.size())).submitAndDelete(2);
+				}
 			}
 		}
 		catch(Exception e){
-			Log.getLogger(event.getGuild()).error("Error handling message", e);
+			log.error("Error handling message", e);
 		}
 	}
 }

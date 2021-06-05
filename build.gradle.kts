@@ -3,7 +3,7 @@ plugins {
     java
     application
     id("com.github.johnrengelman.shadow").version("7.0.0")
-    id("com.github.ben-manes.versions").version("0.38.0")
+    id("com.github.ben-manes.versions").version("0.39.0")
     id("io.freefair.lombok").version("6.0.0-m2")
     id("com.google.cloud.tools.jib").version("3.0.0")
     id("com.gorylenko.gradle-git-properties").version("2.3.1")
@@ -97,7 +97,6 @@ application {
     val moduleName: String by project
     val className: String by project
 
-    mainClassName = className
     mainModule.set(moduleName)
     mainClass.set(className)
 }

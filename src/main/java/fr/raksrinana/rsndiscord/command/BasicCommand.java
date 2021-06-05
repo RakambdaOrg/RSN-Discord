@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.function.Function;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
@@ -45,7 +45,7 @@ public abstract class BasicCommand implements Command{
 		if(!isAllowed(requireNonNull(event.getMember()))){
 			throw new NotAllowedException("You're not allowed to execute this command");
 		}
-		return SUCCESS;
+		return HANDLED;
 	}
 	
 	@NotNull

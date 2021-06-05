@@ -1,11 +1,11 @@
 package fr.raksrinana.rsndiscord.runner;
 
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.schedule.ScheduleUtils;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.JDA;
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
@@ -14,6 +14,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 @ScheduledRunner
+@Log4j2
 public class SchedulesRunner implements IScheduledRunner{
 	@Getter
 	private final JDA jda;
@@ -26,7 +27,7 @@ public class SchedulesRunner implements IScheduledRunner{
 	public void execute(){
 		var currentDate = ZonedDateTime.now();
 		for(var guild : getJda().getGuilds()){
-			Log.getLogger(guild).debug("Processing guild {}", guild);
+			log.debug("Processing guild {}", guild);
 			for(var schedule : Settings.get(guild).getSchedules()){
 				if(currentDate.isAfter(schedule.getScheduleDate())){
 					for(var handler : ScheduleUtils.getHandlers()){

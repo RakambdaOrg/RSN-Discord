@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.awt.Color.GREEN;
 
@@ -30,7 +31,7 @@ public class CatCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public  CommandResult execute(@NotNull SlashCommandEvent event){
+	public CommandResult execute(@NotNull SlashCommandEvent event){
 		var guild = event.getGuild();
 		var author = event.getUser();
 		
@@ -39,9 +40,14 @@ public class CatCommand extends SubCommand{
 					var embed = new EmbedBuilder()
 							.setAuthor(author.getName(), null, author.getAvatarUrl())
 							.setColor(GREEN);
+					
 					if(!cat.getBreeds().isEmpty()){
-						embed.setDescription(cat.getBreeds().stream().map(Breed::getName).collect(Collectors.joining(" ")));
+						var breeds = cat.getBreeds().stream()
+								.map(Breed::getName)
+								.collect(Collectors.joining(" "));
+						embed.setDescription(breeds);
 					}
+					
 					embed.setImage(cat.getUrl().toString())
 							.setFooter(cat.getId());
 					
@@ -49,6 +55,6 @@ public class CatCommand extends SubCommand{
 				},
 				() -> JDAWrappers.edit(event, translate(guild, "image.cat.error")).submitAndDelete(5));
 		
-		return CommandResult.SUCCESS;
+		return HANDLED;
 	}
 }

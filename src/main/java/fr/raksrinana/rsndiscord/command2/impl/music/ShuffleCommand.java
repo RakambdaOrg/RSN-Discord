@@ -41,6 +41,6 @@ public class ShuffleCommand extends SubCommand{
 		
 		RSNAudioManager.shuffle(guild);
 		JDAWrappers.edit(event, translate(guild, "music.queue.shuffled", event.getUser().getAsMention())).submit();
-		return CommandResult.SUCCESS;
+		return CommandResult.HANDLED;
 	}
 }

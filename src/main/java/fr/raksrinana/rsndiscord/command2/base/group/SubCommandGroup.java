@@ -25,7 +25,9 @@ public abstract class SubCommandGroup extends GroupCommand implements ISubComman
 	public SubcommandGroupData getSlashCommand(){
 		var command = new SubcommandGroupData(getId(), getShortDescription());
 		
-		command.addSubcommands(subcommands.values().stream().map(ISubCommand::getSlashCommand).collect(Collectors.toList()));
+		command.addSubcommands(subcommands.values().stream()
+				.map(ISubCommand::getSlashCommand)
+				.collect(Collectors.toList()));
 		
 		return command;
 	}

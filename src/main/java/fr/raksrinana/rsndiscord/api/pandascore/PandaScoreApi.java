@@ -1,14 +1,15 @@
 package fr.raksrinana.rsndiscord.api.pandascore;
 
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import kong.unirest.HeaderNames;
 import kong.unirest.Unirest;
+import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
+@Log4j2
 public class PandaScoreApi {
     private static final String ENDPOINT = "https://api.pandascore.co";
     private static String BEARER;
@@ -31,9 +32,9 @@ public class PandaScoreApi {
         if (!response.isSuccess()) {
             response.getParsingError().ifPresent(error -> {
                 Utilities.reportException("Failed to parse PandaScore response", error);
-                Log.getLogger().warn("Failed to parse PandaScore response", error);
+                log.warn("Failed to parse PandaScore response", error);
             });
-            Log.getLogger().error("Failed to perform request on PandaScore with status {}", response.getStatus());
+            log.error("Failed to perform request on PandaScore with status {}", response.getStatus());
             return Optional.empty();
         }
 

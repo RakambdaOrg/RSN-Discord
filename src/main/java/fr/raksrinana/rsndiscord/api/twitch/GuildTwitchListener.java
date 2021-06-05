@@ -3,7 +3,6 @@ package fr.raksrinana.rsndiscord.api.twitch;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.command2.impl.moderation.RandomKickCommand;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.music.TrackConsumer;
 import fr.raksrinana.rsndiscord.settings.Settings;
@@ -11,6 +10,7 @@ import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +30,7 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
 import static org.kitteh.irc.client.library.feature.twitch.messagetag.Badges.KnownNames.*;
 
+@Log4j2
 public class GuildTwitchListener{
 	private static final Set<String> ACCEPTED_NOTICES = Set.of(
 			FOLLOWERS_OFF.getValue(),
@@ -124,7 +125,7 @@ public class GuildTwitchListener{
 				onPotentialCommand(event);
 			}
 			catch(Exception e){
-				Log.getLogger(getGuild()).error("Failed to process IRC command", e);
+				log.error("Failed to process IRC command", e);
 			}
 		}
 	}

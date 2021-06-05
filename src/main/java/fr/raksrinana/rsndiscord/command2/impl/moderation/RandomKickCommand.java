@@ -3,10 +3,10 @@ package fr.raksrinana.rsndiscord.command2.impl.moderation;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -23,11 +23,12 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.ROLE;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
+@Log4j2
 public class RandomKickCommand extends SubCommand{
 	private static final String MESSAGE_OPTION_ID = "message";
 	private static final String ROLE_OPTION_ID = "role";
@@ -61,7 +62,7 @@ public class RandomKickCommand extends SubCommand{
 		JDAWrappers.edit(event, "Random kick started");
 		randomKick(event.getTextChannel(), targetRole, reason, true);
 		
-		return SUCCESS;
+		return HANDLED;
 	}
 	
 	public static Optional<Role> getRandomRole(@NotNull Guild guild){
@@ -93,7 +94,7 @@ public class RandomKickCommand extends SubCommand{
 					}
 				})
 				.onError(e -> {
-					Log.getLogger(guild).error("Failed to load members", e);
+					log.error("Failed to load members", e);
 					JDAWrappers.message(channel, translate(guild, "random-kick.error-members")).submit();
 				});
 	}

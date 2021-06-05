@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord.utils.jda;
 
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.EditPresenceWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.CreateTextChannelWrapper;
@@ -10,11 +9,13 @@ import fr.raksrinana.rsndiscord.utils.jda.wrappers.guild.LeaveGuildWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.*;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.*;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.role.SetColorWrapper;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.components.Component;
 import net.dv8tion.jda.api.interactions.components.ComponentLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +23,7 @@ import java.awt.Color;
 import java.util.Objects;
 import static net.dv8tion.jda.api.entities.ChannelType.TEXT;
 
+@Log4j2
 public class JDAWrappers{
 	@NotNull
 	public static MessageWrapper message(@NotNull TextChannel channel, @NotNull String message){
@@ -35,6 +37,11 @@ public class JDAWrappers{
 	
 	@NotNull
 	public static MessageWrapper message(@NotNull PrivateChannel channel, @NotNull String message){
+		return new MessageWrapper(channel.getUser(), channel, message);
+	}
+	
+	@NotNull
+	public static MessageWrapper message(@NotNull PrivateChannel channel, @NotNull Message message){
 		return new MessageWrapper(channel.getUser(), channel, message);
 	}
 	
@@ -93,7 +100,7 @@ public class JDAWrappers{
 			return new MessageWrapper(privateChannel.getUser(), privateChannel, message).replyTo(replyToMessage);
 		}
 		
-		Log.getLogger().warn("Replying to a message with channel type {}", replyToMessage.getChannelType());
+		log.warn("Replying to a message with channel type {}", replyToMessage.getChannelType());
 		return new MessageWrapper(null, replyToMessage.getChannel(), message).replyTo(replyToMessage);
 	}
 	
@@ -146,12 +153,12 @@ public class JDAWrappers{
 	
 	@NotNull
 	public static SetColorWrapper setColor(@NotNull Role role, int color){
-		return new SetColorWrapper(role.getGuild(), role, new Color(color));
+		return new SetColorWrapper(role, new Color(color));
 	}
 	
 	@NotNull
 	public static SetColorWrapper setColor(@NotNull Role role, @Nullable Color color){
-		return new SetColorWrapper(role.getGuild(), role, color);
+		return new SetColorWrapper(role, color);
 	}
 	
 	@NotNull
@@ -230,6 +237,15 @@ public class JDAWrappers{
 		}
 		
 		return new EditMessageWrapper(null, message, embed);
+	}
+	
+	@NotNull
+	public static EditMessageWrapper edit(@NotNull Message message, @NotNull Component... components){
+		if(message.isFromGuild()){
+			return new EditMessageWrapper(message.getGuild(), message, components);
+		}
+		
+		return new EditMessageWrapper(null, message, components);
 	}
 	
 	@NotNull

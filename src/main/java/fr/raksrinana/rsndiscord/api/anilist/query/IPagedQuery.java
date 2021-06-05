@@ -1,9 +1,10 @@
 package fr.raksrinana.rsndiscord.api.anilist.query;
 
 import fr.raksrinana.rsndiscord.api.anilist.AniListApi;
-import fr.raksrinana.rsndiscord.log.Log;
+import fr.raksrinana.rsndiscord.settings.ICompositeConfiguration;
 import kong.unirest.json.JSONObject;
 import net.dv8tion.jda.api.entities.Member;
+import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
@@ -69,11 +70,11 @@ public interface IPagedQuery<T>{
 					ofNullable(buildChange(changeJSONObj)).ifPresent(changes::add);
 				}
 				else{
-					Log.getLogger().trace("Skipped AniList object, json: {}", change);
+					LogManager.getLogger(IPagedQuery.class).trace("Skipped AniList object, json: {}", change);
 				}
 			}
 			catch(Exception e){
-				Log.getLogger().error("Error building {} object, json was {}", getPageElementName(), change, e);
+				LogManager.getLogger(IPagedQuery.class).error("Error building {} object, json was {}", getPageElementName(), change, e);
 			}
 		}
 		return changes;

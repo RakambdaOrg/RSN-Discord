@@ -1,9 +1,9 @@
 package fr.raksrinana.rsndiscord.utils.jda.wrappers.message;
 
-import fr.raksrinana.rsndiscord.log.Log;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.interactions.components.Component;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.io.InputStream;
@@ -11,8 +11,9 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import static fr.raksrinana.rsndiscord.schedule.ScheduleUtils.deleteMessageMins;
+import static fr.raksrinana.rsndiscord.scheduleaction.ScheduleActionService.deleteMessageMins;
 
+@Log4j2
 public class MessageWrapper{
 	private final ISnowflake target;
 	private MessageAction action;
@@ -25,6 +26,11 @@ public class MessageWrapper{
 	public MessageWrapper(@Nullable ISnowflake target, @NotNull MessageChannel channel, @NotNull MessageEmbed embed){
 		this.target = target;
 		this.action = channel.sendMessage(embed);
+	}
+	
+	public MessageWrapper(@Nullable ISnowflake target, @NotNull MessageChannel channel, @NotNull Message message){
+		this.target = target;
+		this.action = channel.sendMessage(message);
 	}
 	
 	public MessageWrapper(@Nullable ISnowflake target, @NotNull TextChannel channel, @NotNull Message message){
@@ -80,18 +86,16 @@ public class MessageWrapper{
 		return this;
 	}
 	
+	public MessageWrapper addComponent(@NotNull Component... components){
+		action = action.setActionRow(components);
+		return this;
+	}
+	
 	@NotNull
 	public CompletableFuture<Message> submit(){
 		return action.submit()
 				.thenApply(message -> {
-					Logger logger;
-					if(target instanceof Guild g){
-						logger = Log.getLogger(g);
-					}
-					else{
-						logger = Log.getLogger();
-					}
-					logger.info("Sent message to {} : {}", target, message.getContentRaw());
+					log.info("Sent message to {} : {}", target, message.getContentRaw());
 					return message;
 				});
 	}

@@ -3,10 +3,10 @@ package fr.raksrinana.rsndiscord.command.impl.settings;
 import fr.raksrinana.rsndiscord.command.BasicCommand;
 import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.CommandResult;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.ConfigurationOperation;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -16,9 +16,9 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.command.CommandResult.*;
-import static fr.raksrinana.rsndiscord.schedule.ScheduleUtils.deleteMessage;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
+@Log4j2
 public abstract class BaseConfigurationCommand extends BasicCommand{
 	protected BaseConfigurationCommand(Command parent){
 		super(parent);
@@ -52,11 +52,10 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 		try{
 			var operation = ConfigurationOperation.valueOf(operationStr.toUpperCase());
 			if(!getAllowedOperations().contains(operation)){
-				JDAWrappers.message(event, translate(guild, "configuration.operation.not-supported")).submit()
-						.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
-				return SUCCESS;
+				JDAWrappers.message(event, translate(guild, "configuration.operation.not-supported")).submitAndDelete(5);
+				return HANDLED;
 			}
-			Log.getLogger(guild).info("Executing configuration operation {}", operation);
+			log.info("Executing configuration operation {}", operation);
 			switch(operation){
 				case ADD -> onAdd(event, args);
 				case SET -> onSet(event, args);
@@ -65,17 +64,15 @@ public abstract class BaseConfigurationCommand extends BasicCommand{
 			}
 		}
 		catch(IllegalArgumentException e){
-			JDAWrappers.message(event, translate(guild, "configuration.operation.unknown")).submit()
-					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
+			JDAWrappers.message(event, translate(guild, "configuration.operation.unknown")).submitAndDelete(5);
 		}
 		catch(RuntimeException e){
-			Log.getLogger(guild).warn("Failed to update configuration", e);
+			log.warn("Failed to update configuration", e);
 			Utilities.reportException("Error updating configuration", e);
-			JDAWrappers.message(event, translate(guild, "configuration.update-failed", e.getMessage())).submit()
-					.thenAccept(deleteMessage(date -> date.plusMinutes(5)));
+			JDAWrappers.message(event, translate(guild, "configuration.update-failed", e.getMessage())).submitAndDelete(5);
 			return FAILED;
 		}
-		return SUCCESS;
+		return HANDLED;
 	}
 	
 	protected void onAdd(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){}

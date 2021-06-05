@@ -2,17 +2,18 @@ package fr.raksrinana.rsndiscord.command2.impl.moderation;
 
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.ROLE;
 
+@Log4j2
 public class RemoveAllRoleCommand extends SubCommand{
 	private static final String ROLE_OPTION_ID = "role";
 	
@@ -47,10 +48,10 @@ public class RemoveAllRoleCommand extends SubCommand{
 					members.forEach(member -> JDAWrappers.removeRole(member, targetRole).submit());
 				})
 				.onError(e -> {
-					Log.getLogger(guild).error("Failed to load members", e);
+					log.error("Failed to load members", e);
 					JDAWrappers.edit(event, translate(guild, "remove-role.error-members")).submit();
 				});
 		
-		return SUCCESS;
+		return HANDLED;
 	}
 }

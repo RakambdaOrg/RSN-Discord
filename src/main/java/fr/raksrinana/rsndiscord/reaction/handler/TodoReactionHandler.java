@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord.reaction.handler;
 
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
@@ -8,6 +7,7 @@ import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
@@ -25,6 +25,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @ReactionHandler
+@Log4j2
 public class TodoReactionHandler implements IReactionHandler{
 	@Override
 	public boolean acceptTag(@NotNull ReactionTag tag){
@@ -44,7 +45,7 @@ public class TodoReactionHandler implements IReactionHandler{
 				}
 				catch(InterruptedException | ExecutionException | TimeoutException e){
 					Utilities.reportException("Failed to handle reaction", e);
-					Log.getLogger(event.getGuild()).error("Failed to handle reaction", e);
+					log.error("Failed to handle reaction", e);
 					return FAIL;
 				}
 			}
@@ -100,7 +101,7 @@ public class TodoReactionHandler implements IReactionHandler{
 								.get(30, SECONDS);
 					}
 					catch(InterruptedException | ExecutionException | TimeoutException e){
-						Log.getLogger(guild).error("Failed to forward message", e);
+						log.error("Failed to forward message", e);
 					}
 					return false;
 				}).orElse(false);
@@ -142,7 +143,7 @@ public class TodoReactionHandler implements IReactionHandler{
 					.get(30, SECONDS);
 		}
 		catch(InterruptedException | ExecutionException | TimeoutException e){
-			Log.getLogger(guild).error("Failed to create reply channel", e);
+			log.error("Failed to create reply channel", e);
 		}
 		return PROCESSED;
 	}

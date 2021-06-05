@@ -4,10 +4,10 @@ import fr.raksrinana.rsndiscord.button.impl.ArchiveMediaReactionButtonHandler;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.BotSlashCommand;
 import fr.raksrinana.rsndiscord.command2.base.SimpleCommand;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -15,13 +15,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.command.CommandResult.FAILED;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.lang.Character.isDigit;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.BOOLEAN;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
 @BotSlashCommand
+@Log4j2
 public class MediaReactionCommand extends SimpleCommand{
 	private static final String COMMENT_STR = "--";
 	private static final String CONTENT_OPTION_ID = "content";
@@ -101,7 +102,6 @@ public class MediaReactionCommand extends SimpleCommand{
 			if(archive){
 				var buttonHandler = new ArchiveMediaReactionButtonHandler();
 				messageAction = messageAction.setActionRow(buttonHandler.asButton());
-				Settings.get(guild).addButtonHandler(buttonHandler);
 			}
 			
 			messageAction.submit()
@@ -110,10 +110,10 @@ public class MediaReactionCommand extends SimpleCommand{
 						JDAWrappers.edit(event, "Failed to send message: " + error.getMessage()).submit();
 						return null;
 					});
-			return SUCCESS;
+			return HANDLED;
 		}
 		catch(Exception e){
-			Log.getLogger(guild).error("Failed to parse anime reaction", e);
+			log.error("Failed to parse anime reaction", e);
 			JDAWrappers.edit(event, translate(guild, "media-reaction.parse-error")).submit();
 		}
 		return FAILED;

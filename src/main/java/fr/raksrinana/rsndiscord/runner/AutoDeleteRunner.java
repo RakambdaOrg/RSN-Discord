@@ -1,8 +1,8 @@
 package fr.raksrinana.rsndiscord.runner;
 
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.JDA;
 import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 @ScheduledRunner
+@Log4j2
 public class AutoDeleteRunner implements IScheduledRunner{
 	private final JDA jda;
 	
@@ -24,7 +25,7 @@ public class AutoDeleteRunner implements IScheduledRunner{
 	@Override
 	public void execute(){
 		jda.getGuilds().forEach(guild -> {
-			Log.getLogger(guild).info("Processing guild {}", guild);
+			log.info("Processing guild {}", guild);
 			Settings.get(guild).getAutoDeleteChannels()
 					.entrySet().stream()
 					.map(entry -> {

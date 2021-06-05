@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.command2.permission.SimplePermission.FALSE_BY_DEFAULT;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
@@ -57,6 +57,6 @@ public class VolumeCommand extends SubCommand{
 		Settings.get(guild).setMusicVolume(volume);
 		RSNAudioManager.getFor(guild).ifPresent(audioManager -> audioManager.setVolume(volume));
 		JDAWrappers.edit(event, translate(guild, "music.volume-set", volume)).submit();
-		return SUCCESS;
+		return HANDLED;
 	}
 }

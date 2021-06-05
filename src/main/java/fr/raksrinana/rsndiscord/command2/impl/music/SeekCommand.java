@@ -3,9 +3,9 @@ package fr.raksrinana.rsndiscord.command2.impl.music;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.command2.permission.IPermission;
-import fr.raksrinana.rsndiscord.log.Log;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -15,12 +15,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.command2.permission.SimplePermission.FALSE_BY_DEFAULT;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.Objects.isNull;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
+@Log4j2
 public class SeekCommand extends SubCommand{
 	private static final Pattern TIME_PATTERN = Pattern.compile("((\\d{1,2}):)?((\\d{1,2}):)?(\\d{1,2})");
 	private static final long SECOND_PER_MINUTE = 60;
@@ -78,7 +79,7 @@ public class SeekCommand extends SubCommand{
 			};
 			JDAWrappers.edit(event, translate(guild, message, event.getUser().getAsMention())).submitAndDelete(5);
 		}
-		return SUCCESS;
+		return HANDLED;
 	}
 	
 	private static long parseTime(@NotNull Guild guild, @NotNull String time){
@@ -101,7 +102,7 @@ public class SeekCommand extends SubCommand{
 			return Long.parseLong(str);
 		}
 		catch(Exception e){
-			Log.getLogger(guild).error("Error parsing {} into long", str, e);
+			log.error("Error parsing {} into long", str, e);
 		}
 		return 0;
 	}

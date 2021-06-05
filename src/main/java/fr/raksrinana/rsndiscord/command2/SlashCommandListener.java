@@ -2,8 +2,9 @@ package fr.raksrinana.rsndiscord.command2;
 
 import fr.raksrinana.rsndiscord.command2.api.IExecutableCommand;
 import fr.raksrinana.rsndiscord.event.EventListener;
-import fr.raksrinana.rsndiscord.log.Log;
+import fr.raksrinana.rsndiscord.log.LogContext;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -12,17 +13,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @EventListener
+@Log4j2
 public class SlashCommandListener extends ListenerAdapter{
 	@Override
 	public void onSlashCommand(@NotNull SlashCommandEvent event){
 		super.onSlashCommand(event);
 		
-		if(event.isFromGuild()){
-			Log.getLogger(event.getGuild()).info("Received slash-command {} from {} with args {}", event.getCommandPath(), event.getUser(), getArgsForLogs(event.getOptions()));
-			
-			SlashCommandService.getExecutableCommand(event.getCommandPath()).ifPresentOrElse(
-					command -> event.deferReply(command.replyEphemeral()).submit().thenAccept(empty -> performCommand(event, command)),
-					() -> event.reply("Unknown command " + event.getCommandPath()).setEphemeral(true).submit());
+		try(var context = LogContext.with(event.getGuild()).with(event.getUser())){
+			if(event.isFromGuild()){
+				log.info("Received slash-command {} from {} with args {}", event.getCommandPath(), event.getUser(), getArgsForLogs(event.getOptions()));
+				
+				SlashCommandService.getExecutableCommand(event.getCommandPath()).ifPresentOrElse(
+						command -> event.deferReply(command.replyEphemeral()).submit().thenAccept(empty -> performCommand(event, command)),
+						() -> event.reply("Unknown command " + event.getCommandPath()).setEphemeral(true).submit());
+			}
 		}
 	}
 	
@@ -41,7 +45,7 @@ public class SlashCommandListener extends ListenerAdapter{
 					case FAILED -> JDAWrappers.edit(event, "Failed to execute command " + event.getCommandPath()).submitAndDelete(5);
 					case BAD_ARGUMENTS -> JDAWrappers.edit(event, "Bad arguments").submitAndDelete(5);
 					case NOT_ALLOWED -> JDAWrappers.edit(event, "You're not allowed to use this command").submitAndDelete(5);
-					case SUCCESS_NO_MESSAGE -> JDAWrappers.edit(event, "OK").submitAndDelete(5);
+					case HANDLED -> JDAWrappers.edit(event, "OK").submitAndDelete(5);
 				}
 			}
 			else{
@@ -49,7 +53,7 @@ public class SlashCommandListener extends ListenerAdapter{
 			}
 		}
 		catch(Exception e){
-			Log.getLogger(event.getGuild()).error("Failed to execute command {}", command, e);
+			log.error("Failed to execute command {}", command, e);
 			JDAWrappers.edit(event, "Error executing command (%s)".formatted(e.getClass().getName())).submitAndDelete(5);
 		}
 	}

@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import static fr.raksrinana.rsndiscord.command.CommandResult.SUCCESS;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 public class ListCommand extends SubCommand{
@@ -31,15 +31,17 @@ public class ListCommand extends SubCommand{
 	public CommandResult execute(@NotNull SlashCommandEvent event){
 		var guild = event.getGuild();
 		
-		Settings.get(guild).getBirthdays().getBirthdays()
+		Settings.get(guild).getBirthdays()
+				.getBirthdays()
 				.forEach((key, birthday) -> key.getUser()
 						.ifPresent(user -> {
 							var message = translate(guild, "birthday.birthday",
 									user.getAsMention(),
 									birthday.getDate().format(DF),
 									birthday.getDate().until(LocalDate.now()).normalized().getYears());
+							
 							JDAWrappers.reply(event, message).submit();
 						}));
-		return SUCCESS;
+		return HANDLED;
 	}
 }

@@ -1,24 +1,26 @@
 package fr.raksrinana.rsndiscord.button.base;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.raksrinana.rsndiscord.button.api.IButtonHandler;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Getter
 public abstract class SimpleButtonHandler implements IButtonHandler{
-	private final UUID id;
+	@JsonProperty("id")
+	private String id;
 	
 	public SimpleButtonHandler(){
-		this(UUID.randomUUID());
+		this(UUID.randomUUID().toString());
 	}
 	
 	@Override
 	@NotNull
 	public String getButtonId(){
-		return getId().toString();
+		return getId();
 	}
 }
 
