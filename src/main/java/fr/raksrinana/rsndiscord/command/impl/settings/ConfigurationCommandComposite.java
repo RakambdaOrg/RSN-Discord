@@ -28,7 +28,6 @@ public class ConfigurationCommandComposite extends CommandComposite{
 		addSubCommand(new ReactionsConfigurationCommandComposite(this));
 		addSubCommand(new HermitcraftConfigurationCommandComposite(this));
 		addSubCommand(new RainbowSixConfigurationCommandComposite(this));
-		addSubCommand(new TrombinoscopeConfigurationCommandComposite(this));
 		addSubCommand(new ExternalTodosConfigurationCommandComposite(this));
 		addSubCommand(new LocaleConfigurationCommand(this));
 		addSubCommand(new GeneralChannelConfigurationCommand(this));

@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.command2.impl.moderation;
 
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
-import fr.raksrinana.rsndiscord.scheduleaction.impl.UnbanMemberScheduleActionHandler;
+import fr.raksrinana.rsndiscord.schedule.impl.UnbanMemberScheduleHandler;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
@@ -13,7 +13,6 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
-import static fr.raksrinana.rsndiscord.schedule.ScheduleUtils.addSchedule;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static fr.raksrinana.rsndiscord.utils.Utilities.durationToString;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
@@ -54,7 +53,7 @@ public class SoftBanCommand extends SubCommand{
 		var reason = event.getOption(REASON_OPTION_ID).getAsString();
 		
 		var message = translate(guild, "softban.banned", target.getAsMention(), durationToString(duration), reason);
-		var unbanSchedule = new UnbanMemberScheduleActionHandler(target.getIdLong(), ZonedDateTime.now().plus(duration));
+		var unbanSchedule = new UnbanMemberScheduleHandler(target.getIdLong(), ZonedDateTime.now().plus(duration));
 		
 		JDAWrappers.ban(target, 0, reason).sumbit()
 				.thenAccept(empty -> {

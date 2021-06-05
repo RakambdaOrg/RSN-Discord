@@ -1,15 +1,15 @@
-package fr.raksrinana.rsndiscord.scheduleaction;
+package fr.raksrinana.rsndiscord.schedule;
 
-import fr.raksrinana.rsndiscord.scheduleaction.impl.DeleteMessageScheduleActionHandler;
+import fr.raksrinana.rsndiscord.schedule.impl.DeleteMessageScheduleHandler;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import net.dv8tion.jda.api.entities.Message;
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.function.Function;
 
-public class ScheduleActionService{
+public class ScheduleService{
 	public static void deleteMessage(@NotNull Message message, @NotNull Function<ZonedDateTime, ZonedDateTime> applyDelay){
-		var schedule = new DeleteMessageScheduleActionHandler(message.getChannel().getIdLong(), message.getIdLong(), applyDelay.apply(ZonedDateTime.now()));
+		var schedule = new DeleteMessageScheduleHandler(message.getChannel().getIdLong(), message.getIdLong(), applyDelay.apply(ZonedDateTime.now()));
 		Settings.get(message.getGuild()).add(schedule);
 	}
 	

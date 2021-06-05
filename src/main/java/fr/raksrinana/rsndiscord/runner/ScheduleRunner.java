@@ -6,16 +6,16 @@ import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.JDA;
 import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.TimeUnit;
-import static fr.raksrinana.rsndiscord.scheduleaction.ScheduleActionResult.COMPLETED;
+import static fr.raksrinana.rsndiscord.schedule.ScheduleResult.COMPLETED;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 @ScheduledRunner
 @Log4j2
-public class ScheduleActionRunner implements IScheduledRunner{
+public class ScheduleRunner implements IScheduledRunner{
 	@Getter
 	private final JDA jda;
 	
-	public ScheduleActionRunner(JDA jda){
+	public ScheduleRunner(JDA jda){
 		this.jda = jda;
 	}
 	
@@ -25,10 +25,10 @@ public class ScheduleActionRunner implements IScheduledRunner{
 			log.debug("Processing guild {}", guild);
 			
 			var guildConfiguration = Settings.get(guild);
-			for(var schedule : guildConfiguration.getScheduleHandler().values()){
+			for(var schedule : guildConfiguration.getScheduleHandlers().values()){
 				schedule.process(guild).thenAccept(result -> {
 					if(result == COMPLETED){
-						guildConfiguration.removeScheduleActionHandler(schedule.getSchedulerId());
+						guildConfiguration.removeScheduleHandler(schedule.getSchedulerId());
 					}
 				});
 			}

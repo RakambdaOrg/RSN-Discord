@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.reaction.ReactionTag;
-import fr.raksrinana.rsndiscord.scheduleaction.api.IScheduleActionHandler;
+import fr.raksrinana.rsndiscord.schedule.api.IScheduleHandler;
 import fr.raksrinana.rsndiscord.settings.guild.*;
 import fr.raksrinana.rsndiscord.settings.guild.anilist.AniListConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.autoroles.LeavingRolesConfiguration;
@@ -15,8 +15,6 @@ import fr.raksrinana.rsndiscord.settings.guild.birthday.BirthdaysConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.permission.PermissionsConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.ReactionsConfiguration;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
-import fr.raksrinana.rsndiscord.settings.guild.schedule.ScheduleConfiguration;
-import fr.raksrinana.rsndiscord.settings.guild.trombinoscope.TrombinoscopeConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.CategoryConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
@@ -41,9 +39,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@JsonProperty("locale")
 	@Setter
 	private Locale locale;
-	@JsonProperty("schedules")
-	@JsonAlias({"reminders"})
-	private final List<ScheduleConfiguration> schedules = new ArrayList<>();
 	@JsonProperty("aniList")
 	@Getter
 	private final AniListConfiguration aniListConfiguration = new AniListConfiguration();
@@ -98,9 +93,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@Getter
 	@Setter
 	private ReactionsConfiguration reactionsConfiguration = new ReactionsConfiguration();
-	@JsonProperty("trombinoscope")
-	@Getter
-	private final TrombinoscopeConfiguration trombinoscope = new TrombinoscopeConfiguration();
 	@JsonProperty("externalTodos")
 	@Getter
 	private final ExternalTodosConfiguration externalTodos = new ExternalTodosConfiguration();
@@ -148,9 +140,10 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@Getter
 	@Setter
 	private List<MessageConfiguration> mediaReactionMessages = new LinkedList<>();
-	@JsonProperty("scheduleActionHandlers")
+	@JsonProperty("scheduleHandlers")
+	@JsonAlias("scheduleActionHandlers")
 	@Getter
-	private Map<String, IScheduleActionHandler> scheduleHandler = new ConcurrentHashMap<>();
+	private Map<String, IScheduleHandler> scheduleHandlers = new ConcurrentHashMap<>();
 	
 	GuildConfiguration(long guildId){
 		this.guildId = guildId;
@@ -170,24 +163,12 @@ public class GuildConfiguration implements ICompositeConfiguration{
 				.collect(toSet());
 	}
 	
-	public void add(@NotNull IScheduleActionHandler scheduleHandler){
-		this.scheduleHandler.put(scheduleHandler.getSchedulerId(), scheduleHandler);
+	public void add(@NotNull IScheduleHandler scheduleHandler){
+		this.scheduleHandlers.put(scheduleHandler.getSchedulerId(), scheduleHandler);
 	}
 	
-	public Optional<IScheduleActionHandler> getScheduleActionHandler(@NotNull String id){
-		return Optional.ofNullable(scheduleHandler.get(id));
-	}
-	
-	public void removeScheduleActionHandler(@NotNull String id){
-		scheduleHandler.remove(id);
-	}
-	
-	public void removeSchedule(ScheduleConfiguration schedule){
-		schedules.remove(schedule);
-	}
-	
-	public void addSchedule(@NotNull ScheduleConfiguration schedule){
-		schedules.add(schedule);
+	public void removeScheduleHandler(@NotNull String id){
+		scheduleHandlers.remove(id);
 	}
 	
 	@NotNull
@@ -233,10 +214,5 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@NotNull
 	public Optional<String> getPrefix(){
 		return ofNullable(prefix);
-	}
-	
-	@NotNull
-	public List<ScheduleConfiguration> getSchedules(){
-		return new LinkedList<>(schedules);
 	}
 }

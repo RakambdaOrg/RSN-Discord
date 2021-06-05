@@ -1,7 +1,7 @@
-package fr.raksrinana.rsndiscord.scheduleaction.base;
+package fr.raksrinana.rsndiscord.schedule.base;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fr.raksrinana.rsndiscord.scheduleaction.api.IScheduleActionHandler;
+import fr.raksrinana.rsndiscord.schedule.api.IScheduleHandler;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -9,11 +9,11 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @Getter
-public abstract class SimpleScheduleActionHandler implements IScheduleActionHandler{
+public abstract class SimpleScheduleHandler implements IScheduleHandler{
 	@JsonProperty("id")
 	private UUID id;
 	
-	public SimpleScheduleActionHandler(){
+	public SimpleScheduleHandler(){
 		this(UUID.randomUUID());
 	}
 	

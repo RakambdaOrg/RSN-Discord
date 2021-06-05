@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.button.impl;
 import fr.raksrinana.rsndiscord.button.ButtonHandler;
 import fr.raksrinana.rsndiscord.button.ButtonResult;
 import fr.raksrinana.rsndiscord.button.base.SimpleButtonHandler;
-import fr.raksrinana.rsndiscord.scheduleaction.impl.DeleteChannelScheduleActionHandler;
+import fr.raksrinana.rsndiscord.schedule.impl.DeleteChannelScheduleHandler;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.CategoryConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
@@ -39,7 +39,7 @@ public class ReplyChannelDeleteButtonHandler extends SimpleButtonHandler{
 						.sync(archiveCategory)
 						.submit()
 						.thenCompose(future -> JDAWrappers.edit(event, translate(guild, "reaction.archived", event.getMember().getAsMention())).clearActionRows().submit())
-						.thenAccept(m -> guildConfiguration.add(new DeleteChannelScheduleActionHandler(channel.getIdLong(), ZonedDateTime.now().plusDays(4))))
+						.thenAccept(m -> guildConfiguration.add(new DeleteChannelScheduleHandler(channel.getIdLong(), ZonedDateTime.now().plusDays(4))))
 						.thenApply(e -> HANDLED))
 				.orElseGet(() -> JDAWrappers.delete(channel).submit().thenApply(e -> HANDLED));
 	}

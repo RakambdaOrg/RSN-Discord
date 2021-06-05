@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
-import static fr.raksrinana.rsndiscord.scheduleaction.ScheduleActionService.deleteMessageMins;
+import static fr.raksrinana.rsndiscord.schedule.ScheduleService.deleteMessageMins;
 
 @Log4j2
 public class InteractionNewMessageWrapper{

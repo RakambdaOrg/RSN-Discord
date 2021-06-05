@@ -8,9 +8,6 @@ import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.reaction.ReactionUtils;
 import fr.raksrinana.rsndiscord.reply.UserReplyEventListener;
 import fr.raksrinana.rsndiscord.runner.RunnerUtils;
-import fr.raksrinana.rsndiscord.schedule.ScheduleTag;
-import fr.raksrinana.rsndiscord.schedule.ScheduleUtils;
-import fr.raksrinana.rsndiscord.scheduleaction.impl.DeleteChannelScheduleActionHandler;
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
@@ -92,22 +89,10 @@ public class Main{
 			
 			SlashCommandService.registerGlobalCommands();
 			ReactionUtils.registerAllHandlers();
-			ScheduleUtils.registerAllHandlers();
 			RunnerUtils.registerAllScheduledRunners();
 			
 			log.info("Started");
 			announceStart();
-			
-			jda.getGuilds().forEach(g -> {
-				var guildConfiguration = Settings.get(g);
-				guildConfiguration.getSchedules()
-						.forEach(c -> {
-							if(c.getTag() == ScheduleTag.DELETE_CHANNEL){
-								guildConfiguration.add(new DeleteChannelScheduleActionHandler(c.getChannelId().get(), c.getScheduleDate()));
-								guildConfiguration.removeSchedule(c);
-							}
-						});
-			});
 			
 			executorService.schedule((Runnable) TwitchUtils::connect, 15, TimeUnit.SECONDS);
 		}

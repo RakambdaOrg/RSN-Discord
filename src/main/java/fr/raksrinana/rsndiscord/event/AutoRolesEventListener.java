@@ -1,8 +1,7 @@
 package fr.raksrinana.rsndiscord.event;
 
 import fr.raksrinana.rsndiscord.log.LogContext;
-import fr.raksrinana.rsndiscord.scheduleaction.impl.UnbanMemberScheduleActionHandler;
-import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
+import fr.raksrinana.rsndiscord.schedule.impl.UnbanMemberScheduleHandler;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.autoroles.LeaverRoles;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
@@ -14,7 +13,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.Optional;
-import static fr.raksrinana.rsndiscord.schedule.ScheduleUtils.addSchedule;
 import static java.util.Optional.ofNullable;
 
 @EventListener
@@ -68,7 +66,7 @@ public class AutoRolesEventListener extends ListenerAdapter{
 								.exceptionally(exception -> false)
 								.thenAccept(isBanned -> {
 									if(!isBanned){
-										guildSettings.add(new UnbanMemberScheduleActionHandler(member.getIdLong(), ZonedDateTime.now().plus(banDuration)));
+										guildSettings.add(new UnbanMemberScheduleHandler(member.getIdLong(), ZonedDateTime.now().plus(banDuration)));
 										JDAWrappers.ban(member, 0, "Left server").sumbit();
 									}
 								}));

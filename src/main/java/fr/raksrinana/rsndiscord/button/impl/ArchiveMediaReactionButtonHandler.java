@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.button.impl;
 import fr.raksrinana.rsndiscord.button.ButtonHandler;
 import fr.raksrinana.rsndiscord.button.ButtonResult;
 import fr.raksrinana.rsndiscord.button.base.SimpleButtonHandler;
-import fr.raksrinana.rsndiscord.scheduleaction.impl.DeleteChannelScheduleActionHandler;
+import fr.raksrinana.rsndiscord.schedule.impl.DeleteChannelScheduleHandler;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.CategoryConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
@@ -42,7 +42,7 @@ public class ArchiveMediaReactionButtonHandler extends SimpleButtonHandler{
 						.sync(archiveCategory)
 						.submit()
 						.thenCompose(future -> JDAWrappers.edit(event, translate(guild, "reaction.archived", user.getAsMention())).clearActionRows().submit())
-						.thenAccept(m -> config.add(new DeleteChannelScheduleActionHandler(channel.getIdLong(), now().plusWeeks(2))))
+						.thenAccept(m -> config.add(new DeleteChannelScheduleHandler(channel.getIdLong(), now().plusWeeks(2))))
 						.thenApply(empty -> HANDLED))
 				.orElseGet(() -> {
 					JDAWrappers.edit(event, translate(guild, "reaction.no-archive")).submitAndDelete(5);

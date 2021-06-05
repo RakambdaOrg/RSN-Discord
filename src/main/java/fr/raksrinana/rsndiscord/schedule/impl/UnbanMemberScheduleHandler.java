@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.scheduleaction.impl;
+package fr.raksrinana.rsndiscord.schedule.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import fr.raksrinana.rsndiscord.scheduleaction.ScheduleActionResult;
-import fr.raksrinana.rsndiscord.scheduleaction.base.SimpleScheduleActionHandler;
+import fr.raksrinana.rsndiscord.schedule.ScheduleResult;
+import fr.raksrinana.rsndiscord.schedule.base.SimpleScheduleHandler;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import fr.raksrinana.rsndiscord.utils.json.converter.ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.converter.ZonedDateTimeSerializer;
@@ -17,11 +17,9 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import static fr.raksrinana.rsndiscord.scheduleaction.ScheduleActionResult.*;
+import static fr.raksrinana.rsndiscord.schedule.ScheduleResult.*;
 import static java.util.concurrent.CompletableFuture.completedFuture;
-import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_CHANNEL;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_USER;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -29,7 +27,7 @@ import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_USER;
 @JsonTypeName("UnbanMember")
 @AllArgsConstructor
 @NoArgsConstructor
-public class UnbanMemberScheduleActionHandler extends SimpleScheduleActionHandler{
+public class UnbanMemberScheduleHandler extends SimpleScheduleHandler{
 	@JsonProperty("userId")
 	private long userId;
 	@JsonProperty("requestDeletionDate")
@@ -38,7 +36,7 @@ public class UnbanMemberScheduleActionHandler extends SimpleScheduleActionHandle
 	private ZonedDateTime requestUnbanDate;
 	
 	@Override
-	public CompletableFuture<ScheduleActionResult> process(@NotNull Guild guild){
+	public CompletableFuture<ScheduleResult> process(@NotNull Guild guild){
 		if(ZonedDateTime.now().isBefore(requestUnbanDate)){
 			return completedFuture(DELAYED);
 		}
