@@ -22,7 +22,7 @@ public class ButtonListener extends ListenerAdapter{
 				log.info("Received button interaction {} from {}", componentId, event.getUser());
 				
 				ButtonService.getHandler(componentId).ifPresentOrElse(
-						handler -> event.deferReply().submit().thenAccept(empty -> handleClick(event, handler)),
+						handler -> event.deferEdit().submit().thenAccept(empty -> handleClick(event, handler)),
 						() -> JDAWrappers.reply(event, "Didn't find the interaction id " + componentId));
 			}
 		}
