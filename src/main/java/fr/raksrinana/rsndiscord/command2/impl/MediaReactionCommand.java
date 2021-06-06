@@ -33,7 +33,7 @@ public class MediaReactionCommand extends SimpleCommand{
 	@Override
 	@NotNull
 	public String getId(){
-		return "media-reaction";
+		return "time-reaction";
 	}
 	
 	@Override
@@ -72,7 +72,7 @@ public class MediaReactionCommand extends SimpleCommand{
 			
 			if(episode.isPresent() || link.isPresent()){
 				episode.map(v -> "__**EP " + v + "**__").ifPresent(messageContent::append);
-				link.ifPresent(messageContent::append);
+				link.ifPresent(l -> messageContent.append("\n").append(link));
 			}
 			
 			reactions.stream()
