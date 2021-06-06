@@ -1,10 +1,10 @@
-package fr.raksrinana.rsndiscord.runner.trakt;
+package fr.raksrinana.rsndiscord.runner.impl.trakt;
 
 import fr.raksrinana.rsndiscord.api.trakt.TraktApi;
 import fr.raksrinana.rsndiscord.api.trakt.model.ITraktDatedObject;
 import fr.raksrinana.rsndiscord.api.trakt.model.ITraktObject;
 import fr.raksrinana.rsndiscord.api.trakt.requests.ITraktPagedGetRequest;
-import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
+import fr.raksrinana.rsndiscord.runner.api.IScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
@@ -24,12 +24,21 @@ import java.util.Set;
 import static java.awt.Color.RED;
 import static java.util.stream.Collectors.toSet;
 
-public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPagedGetRequest<T>> extends IScheduledRunner{
-	default void runQueryOnDefaultUsersChannels(){
-		runQuery(getMembers(), getChannels());
+public abstract class ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPagedGetRequest<T>> implements IScheduledRunner{
+	@Override
+	public void executeGlobal(@NotNull JDA jda){
+		runQueryOnDefaultUsersChannels(jda);
 	}
 	
-	default void runQuery(@NotNull Set<Member> members, @NotNull Set<TextChannel> channels){
+	@Override
+	public void executeGuild(@NotNull Guild guild){
+	}
+	
+	public void runQueryOnDefaultUsersChannels(@NotNull JDA jda){
+		runQuery(getMembers(jda), getChannels(jda));
+	}
+	
+	public void runQuery(@NotNull Set<Member> members, @NotNull Set<TextChannel> channels){
 		var userElements = new HashMap<User, Set<T>>();
 		for(var member : members){
 			userElements.computeIfAbsent(member.getUser(), user -> {
@@ -47,22 +56,21 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 	}
 	
 	@NotNull
-	default Set<Member> getMembers(){
-		return getChannels().stream().flatMap(channel -> Settings.getGeneral()
-				.getTrakt()
-				.getRegisteredUsers()
-				.stream()
-				.map(user -> channel.getGuild().retrieveMember(user).complete()))
+	protected Set<Member> getMembers(@NotNull JDA jda){
+		return getChannels(jda).stream().flatMap(channel -> Settings.getGeneral()
+						.getTrakt()
+						.getRegisteredUsers()
+						.stream()
+						.map(user -> channel.getGuild().retrieveMember(user).complete()))
 				.filter(Objects::nonNull)
 				.collect(toSet());
 	}
 	
 	@NotNull
-	Set<TextChannel> getChannels();
+	protected abstract Set<TextChannel> getChannels(@NotNull JDA jda);
 	
 	@NotNull
-	default Set<T> getElements(@NotNull Member member) throws Exception{
-		var guild = member.getGuild();
+	protected Set<T> getElements(@NotNull Member member) throws Exception{
 		var user = member.getUser();
 		
 		LogManager.getLogger(ITraktPagedGetRunner.class).debug("Fetching user {}", member);
@@ -81,12 +89,12 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 				.getLastAccess(getFetcherID(), user.getIdLong())
 				.map(UserDateConfiguration::getDate);
 		elementList = elementList.stream()
-				.filter(e -> e instanceof ITraktDatedObject)
+				.filter(ITraktDatedObject.class::isInstance)
 				.filter(e -> baseDate.map(date -> ((ITraktDatedObject) e).getDate().isAfter(date)).orElse(true))
 				.collect(toSet());
 		elementList.stream()
-				.filter(e -> e instanceof ITraktDatedObject)
-				.map(e -> (ITraktDatedObject) e)
+				.filter(ITraktDatedObject.class::isInstance)
+				.map(ITraktDatedObject.class::cast)
 				.map(ITraktDatedObject::getDate)
 				.max(ZonedDateTime::compareTo)
 				.ifPresent(val -> {
@@ -96,7 +104,7 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 		return elementList;
 	}
 	
-	default void sendMessages(@NotNull Set<TextChannel> channels, @NotNull Map<User, Set<T>> userElements){
+	protected void sendMessages(@NotNull Set<TextChannel> channels, @NotNull Map<User, Set<T>> userElements){
 		if(isSortedByUser()){
 			for(var entry : userElements.entrySet()){
 				var user = entry.getKey();
@@ -125,22 +133,23 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 		}
 	}
 	
-	@NotNull U initQuery(@NotNull Member member);
+	@NotNull
+	protected abstract U initQuery(@NotNull Member member);
 	
-	boolean isKeepOnlyNew();
+	protected abstract boolean isKeepOnlyNew();
 	
 	@NotNull
-	String getFetcherID();
+	protected abstract String getFetcherID();
 	
-	default boolean isSortedByUser(){
+	protected boolean isSortedByUser(){
 		return false;
 	}
 	
-	default boolean sendToChannel(@NotNull TextChannel channel, @NotNull User user){
+	protected boolean sendToChannel(@NotNull TextChannel channel, @NotNull User user){
 		return Settings.getGeneral().getTrakt().isRegisteredOn(channel.getGuild(), user);
 	}
 	
-	default void buildMessage(@NotNull Guild guild, @NotNull EmbedBuilder builder, @NotNull User user, @NotNull T change){
+	protected void buildMessage(@NotNull Guild guild, @NotNull EmbedBuilder builder, @NotNull User user, @NotNull T change){
 		try{
 			builder.setAuthor(user.getName(), null, user.getAvatarUrl());
 			change.fillEmbed(guild, builder);
@@ -151,6 +160,4 @@ public interface ITraktPagedGetRunner<T extends ITraktObject, U extends ITraktPa
 			builder.setColor(RED);
 		}
 	}
-	
-	@NotNull JDA getJda();
 }

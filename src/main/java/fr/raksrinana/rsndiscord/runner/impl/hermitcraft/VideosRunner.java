@@ -1,9 +1,9 @@
-package fr.raksrinana.rsndiscord.runner.hermitcraft;
+package fr.raksrinana.rsndiscord.runner.impl.hermitcraft;
 
 import fr.raksrinana.rsndiscord.api.hermitcraft.HermitcraftApi;
 import fr.raksrinana.rsndiscord.api.hermitcraft.data.HermitcraftVideo;
-import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
-import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
+import fr.raksrinana.rsndiscord.runner.api.IScheduledRunner;
+import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.HermitcraftConfiguration;
@@ -11,6 +11,8 @@ import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
@@ -24,12 +26,6 @@ import static java.util.stream.Collectors.toList;
 
 @ScheduledRunner
 public class VideosRunner implements IScheduledRunner{
-	private final JDA jda;
-	
-	public VideosRunner(@NotNull JDA jda){
-		this.jda = jda;
-	}
-	
 	@Override
 	public long getDelay(){
 		return 2;
@@ -41,7 +37,7 @@ public class VideosRunner implements IScheduledRunner{
 	}
 	
 	@Override
-	public void execute(){
+	public void executeGlobal(@NotNull JDA jda){
 		var hermitcraftGeneral = Settings.getGeneral().getHermitcraft();
 		var channels = jda.getGuilds().stream()
 				.map(Settings::get)
@@ -57,13 +53,16 @@ public class VideosRunner implements IScheduledRunner{
 				.filter(video -> !hermitcraftGeneral.isVideoNotified(video.getId()))
 				.sorted(comparing(HermitcraftVideo::getUploaded))
 				.forEach(video -> {
-					channels.forEach(channel -> sendVideo(video, channel));
+					channels.forEach(channel -> sendVideo(jda.getSelfUser(), video, channel));
 					hermitcraftGeneral.setVideoNotified(video.getId());
 				});
 	}
 	
-	private void sendVideo(@NotNull HermitcraftVideo video, @NotNull TextChannel channel){
-		var selfUser = jda.getSelfUser();
+	@Override
+	public void executeGuild(@NotNull Guild guild){
+	}
+	
+	private void sendVideo(@NotNull SelfUser selfUser, @NotNull HermitcraftVideo video, @NotNull TextChannel channel){
 		var guild = channel.getGuild();
 		
 		var embed = new EmbedBuilder().setAuthor(selfUser.getName(), null, selfUser.getAvatarUrl())

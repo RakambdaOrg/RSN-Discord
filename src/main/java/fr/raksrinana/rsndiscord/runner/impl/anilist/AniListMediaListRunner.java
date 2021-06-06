@@ -1,18 +1,17 @@
-package fr.raksrinana.rsndiscord.runner.anilist;
+package fr.raksrinana.rsndiscord.runner.impl.anilist;
 
 import fr.raksrinana.rsndiscord.api.anilist.AniListApi;
 import fr.raksrinana.rsndiscord.api.anilist.data.list.MediaList;
 import fr.raksrinana.rsndiscord.api.anilist.query.MediaListPagedQuery;
 import fr.raksrinana.rsndiscord.button.impl.AniListMediaCompletedButtonHandler;
 import fr.raksrinana.rsndiscord.button.impl.AniListMediaDiscardedButtonHandler;
-import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
+import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.anilist.AniListConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
-import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -26,14 +25,8 @@ import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.stream.Collectors.toList;
 
 @ScheduledRunner
-public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaListPagedQuery>{
+public class AniListMediaListRunner extends IAniListRunner<MediaList, MediaListPagedQuery>{
 	private static final Collection<String> acceptedThaLists = Set.of("Tha");
-	@Getter
-	private final JDA jda;
-	
-	public AniListMediaListRunner(@NotNull JDA jda){
-		this.jda = jda;
-	}
 	
 	private void sendMediaList(TextChannel channel, Member member, MediaList mediaList){
 		var completedButton = new AniListMediaCompletedButtonHandler();
@@ -43,11 +36,6 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 				.embed(buildMessage(channel.getGuild(), member.getUser(), mediaList))
 				.addActionRow(completedButton.asButton(), discardedButton.asButton())
 				.submit();
-	}
-	
-	@Override
-	public void execute(){
-		runQueryOnDefaultUsersChannels();
 	}
 	
 	@NotNull
@@ -64,8 +52,8 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 	
 	@Override
 	@NotNull
-	public Set<TextChannel> getChannels(){
-		return getJda().getGuilds().stream()
+	public Set<TextChannel> getChannels(@NotNull JDA jda){
+		return jda.getGuilds().stream()
 				.flatMap(g -> Settings.get(g).getAniListConfiguration()
 						.getMediaChangeChannel()
 						.flatMap(ChannelConfiguration::getChannel)
@@ -86,9 +74,9 @@ public class AniListMediaListRunner implements IAniListRunner<MediaList, MediaLi
 	}
 	
 	@Override
-	public void sendMessages(@NotNull Set<TextChannel> channels, @NotNull Map<User, Set<MediaList>> userElements){
-		IAniListRunner.super.sendMessages(channels, userElements);
-		var thaChannels = getJda().getGuilds().stream()
+	public void sendMessages(@NotNull JDA jda, @NotNull Set<TextChannel> channels, @NotNull Map<User, Set<MediaList>> userElements){
+		super.sendMessages(jda, channels, userElements);
+		var thaChannels = jda.getGuilds().stream()
 				.map(Settings::get)
 				.map(GuildConfiguration::getAniListConfiguration)
 				.map(AniListConfiguration::getThaChannel)

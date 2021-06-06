@@ -1,9 +1,11 @@
-package fr.raksrinana.rsndiscord.runner;
+package fr.raksrinana.rsndiscord.runner.impl;
 
+import fr.raksrinana.rsndiscord.runner.api.IScheduledRunner;
+import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.TimeUnit;
 import static fr.raksrinana.rsndiscord.schedule.ScheduleResult.COMPLETED;
@@ -12,26 +14,21 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 @ScheduledRunner
 @Log4j2
 public class ScheduleRunner implements IScheduledRunner{
-	@Getter
-	private final JDA jda;
-	
-	public ScheduleRunner(JDA jda){
-		this.jda = jda;
+	@Override
+	public void executeGlobal(@NotNull JDA jda){
 	}
 	
 	@Override
-	public void execute(){
-		for(var guild : getJda().getGuilds()){
-			log.debug("Processing guild {}", guild);
-			
-			var guildConfiguration = Settings.get(guild);
-			for(var schedule : guildConfiguration.getScheduleHandlers().values()){
-				schedule.process(guild).thenAccept(result -> {
-					if(result == COMPLETED){
-						guildConfiguration.removeScheduleHandler(schedule.getSchedulerId());
-					}
-				});
-			}
+	public void executeGuild(@NotNull Guild guild) throws Exception{
+		log.debug("Processing guild {}", guild);
+		
+		var guildConfiguration = Settings.get(guild);
+		for(var schedule : guildConfiguration.getScheduleHandlers().values()){
+			schedule.process(guild).thenAccept(result -> {
+				if(result == COMPLETED){
+					guildConfiguration.removeScheduleHandler(schedule.getSchedulerId());
+				}
+			});
 		}
 	}
 	

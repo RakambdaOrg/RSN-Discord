@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.runner.trakt;
+package fr.raksrinana.rsndiscord.runner.impl.trakt;
 
 import fr.raksrinana.rsndiscord.api.themoviedb.TheMovieDBApi;
 import fr.raksrinana.rsndiscord.api.themoviedb.model.MediaDetails;
@@ -10,12 +10,11 @@ import fr.raksrinana.rsndiscord.api.trakt.model.users.history.MediaIds;
 import fr.raksrinana.rsndiscord.api.trakt.model.users.history.UserHistory;
 import fr.raksrinana.rsndiscord.api.trakt.model.users.history.UserMovieHistory;
 import fr.raksrinana.rsndiscord.api.trakt.requests.users.UserHistoryPagedGetRequest;
-import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
+import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
 import fr.raksrinana.rsndiscord.utils.RequestException;
-import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -35,17 +34,7 @@ import static java.util.stream.Collectors.toSet;
 
 @ScheduledRunner
 @Log4j2
-public class TraktUserHistoryRunner implements ITraktPagedGetRunner<UserHistory, UserHistoryPagedGetRequest>{
-	@Getter
-	private final JDA jda;
-	
-	public TraktUserHistoryRunner(@NotNull JDA jda){this.jda = jda;}
-	
-	@Override
-	public void execute(){
-		runQueryOnDefaultUsersChannels();
-	}
-	
+public class TraktUserHistoryRunner extends ITraktPagedGetRunner<UserHistory, UserHistoryPagedGetRequest>{
 	@NotNull
 	@Override
 	public String getName(){
@@ -64,8 +53,9 @@ public class TraktUserHistoryRunner implements ITraktPagedGetRunner<UserHistory,
 	}
 	
 	@Override
-	public @NotNull Set<TextChannel> getChannels(){
-		return getJda().getGuilds().stream()
+	@NotNull
+	public Set<TextChannel> getChannels(@NotNull JDA jda){
+		return jda.getGuilds().stream()
 				.flatMap(g -> Settings.get(g).getTraktConfiguration()
 						.getMediaChangeChannel()
 						.flatMap(ChannelConfiguration::getChannel)

@@ -4,7 +4,7 @@ import fr.raksrinana.rsndiscord.api.anilist.AniListApi;
 import fr.raksrinana.rsndiscord.api.anilist.data.list.MediaList;
 import fr.raksrinana.rsndiscord.api.anilist.data.media.MediaType;
 import fr.raksrinana.rsndiscord.api.anilist.query.MediaListPagedQuery;
-import fr.raksrinana.rsndiscord.runner.anilist.IAniListRunner;
+import fr.raksrinana.rsndiscord.runner.impl.anilist.IAniListRunner;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
-class MediaListDifferencesRunner implements IAniListRunner<MediaList, MediaListPagedQuery>{
+class MediaListDifferencesRunner extends IAniListRunner<MediaList, MediaListPagedQuery>{
 	@Getter
 	private final JDA jda;
 	private final MediaType type;
@@ -34,8 +34,8 @@ class MediaListDifferencesRunner implements IAniListRunner<MediaList, MediaListP
 	}
 	
 	@Override
-	public void execute(){
-		runQueryOnDefaultUsersChannels();
+	public void executeGlobal(@NotNull JDA jda){
+		runQueryOnDefaultUsersChannels(jda);
 	}
 	
 	@Override
@@ -55,17 +55,20 @@ class MediaListDifferencesRunner implements IAniListRunner<MediaList, MediaListP
 	}
 	
 	@Override
-	public @NotNull TimeUnit getPeriodUnit(){
+	@NotNull
+	public TimeUnit getPeriodUnit(){
 		return MINUTES;
 	}
 	
 	@Override
-	public @NotNull Set<TextChannel> getChannels(){
+	@NotNull
+	public Set<TextChannel> getChannels(@NotNull JDA jda){
 		return Set.of(channel);
 	}
 	
 	@Override
-	public @NotNull Set<Member> getMembers(){
+	@NotNull
+	public Set<Member> getMembers(@NotNull JDA jda){
 		return Set.of(member1, member2);
 	}
 	
@@ -76,7 +79,7 @@ class MediaListDifferencesRunner implements IAniListRunner<MediaList, MediaListP
 	}
 	
 	@Override
-	public void sendMessages(@NotNull Set<TextChannel> channels, @NotNull Map<User, Set<MediaList>> userMedias){
+	public void sendMessages(@NotNull JDA jda, @NotNull Set<TextChannel> channels, @NotNull Map<User, Set<MediaList>> userMedias){
 		if(userMedias.containsKey(member1.getUser()) && userMedias.containsKey(member2.getUser())){
 			var user2Medias = userMedias.get(member2.getUser());
 			userMedias.get(member1.getUser()).stream()

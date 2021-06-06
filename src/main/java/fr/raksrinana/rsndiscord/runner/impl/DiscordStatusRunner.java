@@ -1,15 +1,19 @@
-package fr.raksrinana.rsndiscord.runner;
+package fr.raksrinana.rsndiscord.runner.impl;
 
 import fr.raksrinana.rsndiscord.api.discordstatus.DiscordStatusApi;
 import fr.raksrinana.rsndiscord.api.discordstatus.data.unresolvedincidents.Incident;
 import fr.raksrinana.rsndiscord.api.discordstatus.data.unresolvedincidents.IncidentUpdate;
+import fr.raksrinana.rsndiscord.runner.api.IScheduledRunner;
+import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.SelfUser;
 import org.jetbrains.annotations.NotNull;
 import java.net.URL;
 import java.time.ZonedDateTime;
@@ -24,22 +28,22 @@ import static java.util.stream.Collectors.toList;
 
 @ScheduledRunner
 public class DiscordStatusRunner implements IScheduledRunner{
-	private final JDA jda;
 	private ZonedDateTime lastData;
 	
-	public DiscordStatusRunner(@NotNull JDA jda){
-		this.jda = jda;
+	public DiscordStatusRunner(){
 		lastData = ZonedDateTime.now();
 	}
 	
 	@Override
-	public void execute(){
+	public void executeGlobal(@NotNull JDA jda){
+		var selfUser = jda.getSelfUser();
+		
 		DiscordStatusApi.getIncidents().ifPresent(unresolvedIncidents -> {
 			if(!unresolvedIncidents.getIncidents().isEmpty()){
 				var embeds = unresolvedIncidents.getIncidents().stream()
 						.filter(incident -> incident.getIncidentUpdates().stream()
 								.anyMatch(update -> update.getUpdatedAt().isAfter(lastData)))
-						.map(this::buildEmbed)
+						.map(incident -> buildEmbed(selfUser, incident))
 						.collect(toList());
 				
 				if(!embeds.isEmpty()){
@@ -62,9 +66,12 @@ public class DiscordStatusRunner implements IScheduledRunner{
 		});
 	}
 	
+	@Override
+	public void executeGuild(@NotNull Guild guild){
+	}
+	
 	@NotNull
-	private MessageEmbed buildEmbed(@NotNull Incident incident){
-		var selfUser = jda.getSelfUser();
+	private MessageEmbed buildEmbed(@NotNull SelfUser selfUser, @NotNull Incident incident){
 		var link = Optional.ofNullable(incident.getShortLink())
 				.map(URL::toString)
 				.orElse(null);

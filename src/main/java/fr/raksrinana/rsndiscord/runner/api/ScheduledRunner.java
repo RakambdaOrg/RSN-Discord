@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.runner;
+package fr.raksrinana.rsndiscord.runner.api;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

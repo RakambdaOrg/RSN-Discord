@@ -1,12 +1,11 @@
-package fr.raksrinana.rsndiscord.runner.anilist;
+package fr.raksrinana.rsndiscord.runner.impl.anilist;
 
 import fr.raksrinana.rsndiscord.api.anilist.data.notifications.INotification;
 import fr.raksrinana.rsndiscord.api.anilist.query.NotificationsPagedQuery;
-import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
+import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
-import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -20,19 +19,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 @ScheduledRunner
-public class AniListNotificationRunner implements IAniListRunner<INotification, NotificationsPagedQuery>{
-	@Getter
-	private final JDA jda;
-	
-	public AniListNotificationRunner(@NotNull JDA jda){
-		this.jda = jda;
-	}
-	
-	@Override
-	public void execute(){
-		runQueryOnDefaultUsersChannels();
-	}
-	
+public class AniListNotificationRunner extends IAniListRunner<INotification, NotificationsPagedQuery>{
 	@NotNull
 	@Override
 	public String getName(){
@@ -52,8 +39,8 @@ public class AniListNotificationRunner implements IAniListRunner<INotification, 
 	
 	@Override
 	@NotNull
-	public Set<TextChannel> getChannels(){
-		return getJda().getGuilds().stream()
+	public Set<TextChannel> getChannels(@NotNull JDA jda){
+		return jda.getGuilds().stream()
 				.flatMap(g -> Settings.get(g).getAniListConfiguration()
 						.getNotificationsChannel()
 						.map(ChannelConfiguration::getChannel)
@@ -75,7 +62,7 @@ public class AniListNotificationRunner implements IAniListRunner<INotification, 
 	}
 	
 	@Override
-	public void sendMessages(@NotNull Set<TextChannel> channels, @NotNull Map<User, Set<INotification>> userElements){
+	public void sendMessages(@NotNull JDA jda, @NotNull Set<TextChannel> channels, @NotNull Map<User, Set<INotification>> userElements){
 		var notifications = new HashMap<INotification, List<User>>();
 		for(var entry : userElements.entrySet()){
 			for(var notification : entry.getValue()){

@@ -1,14 +1,16 @@
-package fr.raksrinana.rsndiscord.runner.hermitcraft;
+package fr.raksrinana.rsndiscord.runner.impl.hermitcraft;
 
 import fr.raksrinana.rsndiscord.api.hermitcraft.HermitcraftApi;
 import fr.raksrinana.rsndiscord.api.hermitcraft.data.Hermit;
-import fr.raksrinana.rsndiscord.runner.IScheduledRunner;
-import fr.raksrinana.rsndiscord.runner.ScheduledRunner;
+import fr.raksrinana.rsndiscord.runner.api.IScheduledRunner;
+import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
@@ -21,16 +23,14 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 
 @ScheduledRunner
 public class StreamsRunner implements IScheduledRunner{
-	private final JDA jda;
 	private final Set<String> hermitAlreadyNotified;
 	
-	public StreamsRunner(@NotNull JDA jda){
-		this.jda = jda;
+	public StreamsRunner(){
 		hermitAlreadyNotified = new HashSet<>();
 	}
 	
 	@Override
-	public void execute(){
+	public void executeGlobal(@NotNull JDA jda){
 		HermitcraftApi.getHermits().ifPresent(hermits -> {
 			for(var hermit : hermits){
 				if(hermit.isLive()){
@@ -40,7 +40,7 @@ public class StreamsRunner implements IScheduledRunner{
 								.getHermitcraftConfiguration()
 								.getStreamingNotificationChannel()
 								.flatMap(ChannelConfiguration::getChannel)
-								.ifPresent(channel -> sendStream(hermit, channel)));
+								.ifPresent(channel -> sendStream(jda.getSelfUser(), hermit, channel)));
 					}
 				}
 				else{
@@ -48,6 +48,10 @@ public class StreamsRunner implements IScheduledRunner{
 				}
 			}
 		});
+	}
+	
+	@Override
+	public void executeGuild(@NotNull Guild guild){
 	}
 	
 	@Override
@@ -72,8 +76,7 @@ public class StreamsRunner implements IScheduledRunner{
 		return MINUTES;
 	}
 	
-	private void sendStream(@NotNull Hermit hermit, @NotNull TextChannel channel){
-		var selfUser = jda.getSelfUser();
+	private void sendStream(@NotNull SelfUser selfUser, @NotNull Hermit hermit, @NotNull TextChannel channel){
 		var url = hermit.getLiveUrl().map(URL::toString).orElse(null);
 		
 		var embed = new EmbedBuilder().setAuthor(selfUser.getName(), null, selfUser.getAvatarUrl())
