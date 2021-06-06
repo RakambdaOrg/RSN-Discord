@@ -91,11 +91,15 @@ public class CommandsEventListener extends ListenerAdapter{
 						JDAWrappers.delete(message).submit();
 					}
 					else{
+						if(Objects.equals(author, event.getJDA().getSelfUser())){
+							JDAWrappers.editComponents(event.getMessage(),
+											new TodoMessageCompletedButtonHandler().asButton(),
+											new TodoMessageKeepButtonHandler().asButton(),
+											new TodoMessageReplyButtonHandler().asButton())
+									.submit();
+							return;
+						}
 						if(message.getAttachments().isEmpty()){
-							if(Objects.equals(author, event.getJDA().getSelfUser())){
-								return;
-							}
-							
 							var forward = new MessageBuilder(message)
 									.setContent("From " + author.getAsMention() + "\n" + message.getContentRaw())
 									.build();
