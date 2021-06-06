@@ -45,7 +45,7 @@ public class SlashCommandListener extends ListenerAdapter{
 					case FAILED -> JDAWrappers.edit(event, "Failed to execute command " + event.getCommandPath()).submitAndDelete(5);
 					case BAD_ARGUMENTS -> JDAWrappers.edit(event, "Bad arguments").submitAndDelete(5);
 					case NOT_ALLOWED -> JDAWrappers.edit(event, "You're not allowed to use this command").submitAndDelete(5);
-					case HANDLED -> JDAWrappers.edit(event, "OK").submitAndDelete(5);
+					case HANDLED_NO_MESSAGE -> JDAWrappers.edit(event, "OK").submitAndDelete(5);
 				}
 			}
 			else{
