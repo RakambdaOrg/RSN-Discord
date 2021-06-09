@@ -72,7 +72,7 @@ public class MediaReactionCommand extends SimpleCommand{
 			
 			if(episode.isPresent() || link.isPresent()){
 				episode.map(v -> "__**EP " + v + "**__").ifPresent(messageContent::append);
-				link.ifPresent(l -> messageContent.append("\n").append(link));
+				link.ifPresent(l -> messageContent.append("\n").append(l));
 			}
 			
 			reactions.stream()
