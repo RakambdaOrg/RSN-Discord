@@ -4,12 +4,12 @@ import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.Component;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Log4j2
@@ -37,8 +37,8 @@ public class EditMessageWrapper{
 	}
 	
 	@NotNull
-	public EditMessageWrapper setActionRows(@NotNull ActionRow... actionRows){
-		action = action.setActionRows(actionRows);
+	public EditMessageWrapper clearActionRows(){
+		action = action.setActionRows(List.of());
 		return this;
 	}
 	

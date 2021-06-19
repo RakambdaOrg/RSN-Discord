@@ -38,7 +38,8 @@ public class ReplyChannelDeleteButtonHandler extends SimpleButtonHandler{
 						.setParent(archiveCategory)
 						.sync(archiveCategory)
 						.submit()
-						.thenCompose(future -> JDAWrappers.edit(event, translate(guild, "reaction.archived", event.getMember().getAsMention())).clearActionRows().submit())
+						.thenCompose(future -> JDAWrappers.removeComponents(event).submit())
+						.thenCompose(future -> JDAWrappers.reply(event, translate(guild, "reaction.archived", event.getMember().getAsMention())).submit())
 						.thenAccept(m -> guildConfiguration.add(new DeleteChannelScheduleHandler(channel.getIdLong(), ZonedDateTime.now().plusDays(4))))
 						.thenApply(e -> HANDLED))
 				.orElseGet(() -> JDAWrappers.delete(channel).submit().thenApply(e -> HANDLED));
