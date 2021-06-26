@@ -27,7 +27,7 @@ public class MessageWrapper{
 	
 	public MessageWrapper(@Nullable ISnowflake target, @NotNull MessageChannel channel, @NotNull MessageEmbed embed){
 		this.target = target;
-		this.action = channel.sendMessage(embed);
+		this.action = channel.sendMessageEmbeds(embed);
 	}
 	
 	public MessageWrapper(@Nullable ISnowflake target, @NotNull MessageChannel channel, @NotNull Message message){
@@ -84,7 +84,7 @@ public class MessageWrapper{
 	
 	@NotNull
 	public MessageWrapper embed(@Nullable MessageEmbed embed){
-		action = action.embed(embed);
+		action = action.setEmbeds(embed);
 		return this;
 	}
 	

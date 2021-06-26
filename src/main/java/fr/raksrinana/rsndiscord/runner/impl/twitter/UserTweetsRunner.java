@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.runner.impl.twitter;
 
-import com.github.redouane59.twitter.dto.tweet.Tweet;
+import io.github.redouane59.twitter.dto.tweet.Tweet;
 import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
 import fr.raksrinana.rsndiscord.runner.api.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;

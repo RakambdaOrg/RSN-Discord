@@ -1,12 +1,12 @@
 package fr.raksrinana.rsndiscord.api.twitter;
 
-import com.github.redouane59.twitter.IAPIEventListener;
-import com.github.redouane59.twitter.TwitterClient;
-import com.github.redouane59.twitter.dto.others.BlockResponse;
-import com.github.redouane59.twitter.dto.stream.StreamRules;
-import com.github.redouane59.twitter.dto.tweet.Tweet;
-import com.github.redouane59.twitter.dto.tweet.TweetV2;
-import com.github.redouane59.twitter.signature.TwitterCredentials;
+import io.github.redouane59.twitter.IAPIEventListener;
+import io.github.redouane59.twitter.TwitterClient;
+import io.github.redouane59.twitter.dto.others.BlockResponse;
+import io.github.redouane59.twitter.dto.stream.StreamRules;
+import io.github.redouane59.twitter.dto.tweet.Tweet;
+import io.github.redouane59.twitter.dto.tweet.TweetV2;
+import io.github.redouane59.twitter.signature.TwitterCredentials;
 import com.github.scribejava.core.model.Response;
 import fr.raksrinana.rsndiscord.Main;
 import fr.raksrinana.rsndiscord.settings.Settings;

@@ -27,7 +27,7 @@ public class EditMessageWrapper{
 	public EditMessageWrapper(@Nullable ISnowflake target, @NotNull Message message, @NotNull MessageEmbed embed){
 		this.target = target;
 		this.message = message;
-		this.action = message.editMessage(embed);
+		this.action = message.editMessageEmbeds(embed);
 	}
 	
 	public EditMessageWrapper(@Nullable ISnowflake target, @NotNull Message message){

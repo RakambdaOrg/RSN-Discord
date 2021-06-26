@@ -1,5 +1,5 @@
 [versions]
-jda-version = "4.3.0_277"
+jda-version = "4.3.0_283"
 lavaplayer-version = "1.3.77"
 lp_cross-version = "0.1.1"
 slf4j-version = "2.0.0-alpha1"
@@ -15,7 +15,7 @@ jump3r-version = "1.0.5"
 emoji_java-version = "5.1.1"
 imgscalr-version = "4.2"
 thumbnailator-version = "0.4.14"
-twittered-version = "1.26"
+twittered-version = "1.27"
 jetbrains-annotations-version = "21.0.1"
 kitteh-irc-version = "8.0.0"
 
@@ -38,7 +38,7 @@ reflections = { group = "org.reflections", name = "reflections", version.ref = "
 emojiJava = { group = "com.vdurmont", name = "emoji-java", version.ref = "emoji_java-version" }
 imgscalr = { group = "org.imgscalr", name = "imgscalr-lib", version.ref = "imgscalr-version" }
 thumbnailator = { group = "net.coobird", name = "thumbnailator", version.ref = "thumbnailator-version" }
-twittered = { group = "com.github.redouane59.twitter", name = "twittered", version.ref = "twittered-version" }
+twittered = { group = "io.github.redouane59.twitter", name = "twittered", version.ref = "twittered-version" }
 jetbrainsAnnotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations-version" }
 kittehIrc = { group = "org.kitteh.irc", name = "client-lib", version.ref = "kitteh-irc-version" }
 
