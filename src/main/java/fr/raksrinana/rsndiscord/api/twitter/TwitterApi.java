@@ -2,9 +2,11 @@ package fr.raksrinana.rsndiscord.api.twitter;
 
 import io.github.redouane59.twitter.IAPIEventListener;
 import io.github.redouane59.twitter.TwitterClient;
+import io.github.redouane59.twitter.dto.endpoints.AdditionalParameters;
 import io.github.redouane59.twitter.dto.others.BlockResponse;
 import io.github.redouane59.twitter.dto.stream.StreamRules;
 import io.github.redouane59.twitter.dto.tweet.Tweet;
+import io.github.redouane59.twitter.dto.tweet.TweetList;
 import io.github.redouane59.twitter.dto.tweet.TweetV2;
 import io.github.redouane59.twitter.signature.TwitterCredentials;
 import com.github.scribejava.core.model.Response;
@@ -73,19 +75,23 @@ public class TwitterApi implements IAPIEventListener{
 					.filter(Objects::nonNull)
 					.forEach(channel -> JDAWrappers.message(channel, tweetUrl).submit());
 		}
-		else {
+		else{
 			log.error("Tweet isn't a tweet V2");
 		}
 	}
 	
 	@NotNull
-	public static List<Tweet> getUserLastTweets(String userId){
+	public static TweetList getUserLastTweets(String userId){
 		return getUserLastTweets(userId, null);
 	}
 	
 	@NotNull
-	public static List<Tweet> getUserLastTweets(String userId, String maxId){
-		return getTwitteredClient().getUserTimeline(userId, Integer.MAX_VALUE, null, null, maxId, null);
+	public static TweetList getUserLastTweets(String userId, String maxId){
+		var additionalParams = AdditionalParameters.builder()
+				.maxResults(Integer.MAX_VALUE)
+				.sinceId(maxId)
+				.build();
+		return getTwitteredClient().getUserTimeline(userId, additionalParams);
 	}
 	
 	public static String getUrl(Tweet tweet){

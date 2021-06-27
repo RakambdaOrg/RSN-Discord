@@ -26,7 +26,8 @@ public class UserTweetsRunner implements IScheduledRunner{
 		conf.getUsersChannel().flatMap(ChannelConfiguration::getChannel).ifPresent(channel ->
 				conf.getUserIds().forEach(userId -> conf.getLastUserTweet(userId)
 						.map(lastTweet -> TwitterApi.getUserLastTweets(userId, lastTweet))
-						.orElseGet(() -> TwitterApi.getUserLastTweets(userId)).stream()
+						.orElseGet(() -> TwitterApi.getUserLastTweets(userId))
+						.getData().stream()
 						.sorted(comparing(Tweet::getCreatedAt))
 						.forEach(tweet -> {
 							JDAWrappers.message(channel, TwitterApi.getUrl(tweet)).submit();
