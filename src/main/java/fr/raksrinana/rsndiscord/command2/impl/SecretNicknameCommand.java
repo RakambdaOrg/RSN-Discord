@@ -35,7 +35,7 @@ public class SecretNicknameCommand extends SimpleCommand{
 	@Override
 	@NotNull
 	public String getId(){
-		return "secretNick";
+		return "secretnick";
 	}
 	
 	@Override
