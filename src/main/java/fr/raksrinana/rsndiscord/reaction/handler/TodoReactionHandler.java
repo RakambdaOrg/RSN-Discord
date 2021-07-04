@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.reaction.handler;
 
-import fr.raksrinana.rsndiscord.button.impl.ReplyChannelDeleteButtonHandler;
+import fr.raksrinana.rsndiscord.button.impl.button.ReplyChannelDeleteButtonHandler;
 import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
@@ -132,7 +132,7 @@ public class TodoReactionHandler implements IReactionHandler{
 						JDAWrappers.message(forwardChannel, translate(guild, "reaction.original-from", message.getAuthor().getAsMention())).submit()
 								.thenCompose(sent -> JDAWrappers.message(forwardChannel, message).submit())
 								.thenCompose(sent -> JDAWrappers.message(forwardChannel, translate(guild, "reaction.react-archive", user.getAsMention()))
-										.addActionRow(new ReplyChannelDeleteButtonHandler().asButton())
+										.addActionRow(new ReplyChannelDeleteButtonHandler().asComponent())
 										.submit())
 								.thenCompose(sent -> JDAWrappers.delete(message).submit());
 						return PROCESSED_DELETE;

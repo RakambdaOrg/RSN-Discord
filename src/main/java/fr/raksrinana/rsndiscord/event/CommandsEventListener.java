@@ -1,9 +1,9 @@
 package fr.raksrinana.rsndiscord.event;
 
 import fr.raksrinana.rsndiscord.Main;
-import fr.raksrinana.rsndiscord.button.impl.TodoMessageCompletedButtonHandler;
-import fr.raksrinana.rsndiscord.button.impl.TodoMessageKeepButtonHandler;
-import fr.raksrinana.rsndiscord.button.impl.TodoMessageReplyButtonHandler;
+import fr.raksrinana.rsndiscord.button.impl.button.TodoMessageCompletedButtonHandler;
+import fr.raksrinana.rsndiscord.button.impl.button.TodoMessageKeepButtonHandler;
+import fr.raksrinana.rsndiscord.button.impl.button.TodoMessageReplyButtonHandler;
 import fr.raksrinana.rsndiscord.command.BotCommand;
 import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.NotAllowedException;
@@ -93,9 +93,9 @@ public class CommandsEventListener extends ListenerAdapter{
 					else{
 						if(Objects.equals(author, event.getJDA().getSelfUser())){
 							JDAWrappers.editComponents(event.getMessage(),
-											new TodoMessageCompletedButtonHandler().asButton(),
-											new TodoMessageKeepButtonHandler().asButton(),
-											new TodoMessageReplyButtonHandler().asButton())
+											new TodoMessageCompletedButtonHandler().asComponent(),
+											new TodoMessageKeepButtonHandler().asComponent(),
+											new TodoMessageReplyButtonHandler().asComponent())
 									.submit();
 							return;
 						}
@@ -105,9 +105,9 @@ public class CommandsEventListener extends ListenerAdapter{
 									.build();
 							JDAWrappers.message(event.getChannel(), forward)
 									.addActionRow(
-											new TodoMessageCompletedButtonHandler().asButton(),
-											new TodoMessageKeepButtonHandler().asButton(),
-											new TodoMessageReplyButtonHandler().asButton())
+											new TodoMessageCompletedButtonHandler().asComponent(),
+											new TodoMessageKeepButtonHandler().asComponent(),
+											new TodoMessageReplyButtonHandler().asComponent())
 									.submit()
 									.thenCompose(m -> JDAWrappers.delete(event.getMessage()).submit());
 						}

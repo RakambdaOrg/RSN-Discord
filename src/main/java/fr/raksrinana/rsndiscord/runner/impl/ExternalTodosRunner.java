@@ -1,8 +1,8 @@
 package fr.raksrinana.rsndiscord.runner.impl;
 
 import fr.raksrinana.rsndiscord.api.externaltodos.ExternalTodosApi;
-import fr.raksrinana.rsndiscord.button.impl.ExternalTodoCompletedButtonHandler;
-import fr.raksrinana.rsndiscord.button.impl.ExternalTodoDiscardedButtonHandler;
+import fr.raksrinana.rsndiscord.button.impl.button.ExternalTodoCompletedButtonHandler;
+import fr.raksrinana.rsndiscord.button.impl.button.ExternalTodoDiscardedButtonHandler;
 import fr.raksrinana.rsndiscord.runner.api.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
@@ -47,10 +47,10 @@ public class ExternalTodosRunner implements IScheduledRunner{
 						response.ifPresent(todos -> todos.getTodos()
 								.forEach(todo -> {
 									var components = new ArrayList<Component>();
-									components.add(new ExternalTodoCompletedButtonHandler().asButton());
+									components.add(new ExternalTodoCompletedButtonHandler().asComponent());
 									
 									if(todo.getKind().isCancellable()){
-										components.add(new ExternalTodoDiscardedButtonHandler().asButton());
+										components.add(new ExternalTodoDiscardedButtonHandler().asComponent());
 									}
 									
 									JDAWrappers.message(channel, "`" + todo.getKind().name() + "` => " + todo.getDescription())

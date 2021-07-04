@@ -1,13 +1,13 @@
 package fr.raksrinana.rsndiscord.button.base;
 
-import fr.raksrinana.rsndiscord.button.api.IButtonHandler;
+import fr.raksrinana.rsndiscord.button.api.ISelectionMenuHandler;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor
 @Getter
-public abstract class SimpleButtonHandler implements IButtonHandler{
+public abstract class SimpleSelectionMenuHandler implements ISelectionMenuHandler{
 	private String id;
 	
 	@Override

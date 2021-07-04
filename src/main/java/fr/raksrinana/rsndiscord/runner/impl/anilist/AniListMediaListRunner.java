@@ -3,8 +3,8 @@ package fr.raksrinana.rsndiscord.runner.impl.anilist;
 import fr.raksrinana.rsndiscord.api.anilist.AniListApi;
 import fr.raksrinana.rsndiscord.api.anilist.data.list.MediaList;
 import fr.raksrinana.rsndiscord.api.anilist.query.MediaListPagedQuery;
-import fr.raksrinana.rsndiscord.button.impl.AniListMediaCompletedButtonHandler;
-import fr.raksrinana.rsndiscord.button.impl.AniListMediaDiscardedButtonHandler;
+import fr.raksrinana.rsndiscord.button.impl.button.AniListMediaCompletedButtonHandler;
+import fr.raksrinana.rsndiscord.button.impl.button.AniListMediaDiscardedButtonHandler;
 import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
@@ -34,7 +34,7 @@ public class AniListMediaListRunner extends IAniListRunner<MediaList, MediaListP
 		
 		JDAWrappers.message(channel, member.getAsMention())
 				.embed(buildMessage(channel.getGuild(), member.getUser(), mediaList))
-				.addActionRow(completedButton.asButton(), discardedButton.asButton())
+				.addActionRow(completedButton.asComponent(), discardedButton.asComponent())
 				.submit();
 	}
 	

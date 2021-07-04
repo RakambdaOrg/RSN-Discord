@@ -1,7 +1,7 @@
-package fr.raksrinana.rsndiscord.button.impl;
+package fr.raksrinana.rsndiscord.button.impl.button;
 
 import fr.raksrinana.rsndiscord.button.ButtonHandler;
-import fr.raksrinana.rsndiscord.button.ButtonResult;
+import fr.raksrinana.rsndiscord.button.ComponentResult;
 import fr.raksrinana.rsndiscord.button.base.SimpleButtonHandler;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.interactions.components.Button;
 import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import static fr.raksrinana.rsndiscord.button.ButtonResult.HANDLED;
+import static fr.raksrinana.rsndiscord.button.ComponentResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @Log4j2
@@ -23,7 +23,7 @@ public class TodoMessageReplyButtonHandler extends SimpleButtonHandler{
 	
 	@NotNull
 	@Override
-	public CompletableFuture<ButtonResult> handle(@NotNull ButtonClickEvent event){
+	public CompletableFuture<ComponentResult> handle(@NotNull ButtonClickEvent event){
 		var guild = event.getGuild();
 		var user = event.getUser();
 		var message = event.getMessage();
@@ -41,7 +41,7 @@ public class TodoMessageReplyButtonHandler extends SimpleButtonHandler{
 						.clearActionRows()
 						.submit())
 				.thenCompose(sent -> JDAWrappers.message(sent.getTextChannel(), translate(guild, "reaction.react-archive", user.getAsMention()))
-						.addActionRow(new ReplyChannelDeleteButtonHandler().asButton())
+						.addActionRow(new ReplyChannelDeleteButtonHandler().asComponent())
 						.submit())
 				.thenCompose(sent -> JDAWrappers.delete(message).submit())
 				.thenApply(e -> HANDLED);
@@ -49,7 +49,7 @@ public class TodoMessageReplyButtonHandler extends SimpleButtonHandler{
 	
 	@Override
 	@NotNull
-	public Button asButton(){
-		return Button.success(getButtonId(), "Reply").withEmoji(Emoji.fromUnicode("U+21A9"));
+	public Button asComponent(){
+		return Button.success(getComponentId(), "Reply").withEmoji(Emoji.fromUnicode("U+21A9"));
 	}
 }

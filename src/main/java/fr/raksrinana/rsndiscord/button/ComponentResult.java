@@ -1,5 +1,5 @@
 package fr.raksrinana.rsndiscord.button;
 
-public enum ButtonResult{
+public enum ComponentResult{
 	HANDLED
 }

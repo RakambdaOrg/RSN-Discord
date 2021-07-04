@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.command2.impl;
 
-import fr.raksrinana.rsndiscord.button.impl.ArchiveMediaReactionButtonHandler;
+import fr.raksrinana.rsndiscord.button.impl.button.ArchiveMediaReactionButtonHandler;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.BotSlashCommand;
 import fr.raksrinana.rsndiscord.command2.base.SimpleCommand;
@@ -101,7 +101,7 @@ public class MediaReactionCommand extends SimpleCommand{
 			
 			if(archive){
 				var buttonHandler = new ArchiveMediaReactionButtonHandler();
-				messageAction = messageAction.addActionRow(buttonHandler.asButton());
+				messageAction = messageAction.addActionRow(buttonHandler.asComponent());
 			}
 			
 			messageAction.submit()
