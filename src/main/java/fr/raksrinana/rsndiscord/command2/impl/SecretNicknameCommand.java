@@ -17,7 +17,7 @@ public class SecretNicknameCommand extends SimpleCommand{
 	@Override
 	@NotNull
 	public CommandResult execute(@NotNull SlashCommandEvent event){
-		JDAWrappers.modifyNickname(event.getMember(), "Please ping me :cat:").submit()
+		JDAWrappers.modifyNickname(event.getMember(), "Please ping me 😺").submit()
 				.thenAccept(empty -> Settings.get(event.getGuild()).getNicknameConfiguration().setLastChange(event.getUser(), ZonedDateTime.now()));
 		
 		JDAWrappers.reply(event, "Choose your new nickname:")

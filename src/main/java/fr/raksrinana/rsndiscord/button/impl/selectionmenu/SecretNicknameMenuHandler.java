@@ -23,7 +23,7 @@ public class SecretNicknameMenuHandler extends SimpleSelectionMenuHandler{
 	@NotNull
 	@Override
 	public CompletableFuture<ComponentResult> handle(@NotNull SelectionMenuEvent event){
-		return JDAWrappers.removeComponents(event).submit()
+		return JDAWrappers.edit(event, "Nickname chosen").clearActionRows().submit()
 				.thenCompose(message -> switch(event.getSelectedOptions().get(0).getValue()){
 					case "1" -> JDAWrappers.modifyNickname(event.getMember(), "I got fucked").submit();
 					case "2" -> JDAWrappers.modifyNickname(event.getMember(), "I got fucked really hard").submit();
