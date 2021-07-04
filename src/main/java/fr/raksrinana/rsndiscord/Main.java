@@ -88,6 +88,7 @@ public class Main{
 					.setActivity(Activity.of(Activity.ActivityType.DEFAULT, DEFAULT_PREFIX + "help for the help"));
 			
 			SlashCommandService.registerGlobalCommands();
+			SlashCommandService.registerGuildCommands(jda.getGuildById(735921627631583394L));
 			ReactionUtils.registerAllHandlers();
 			RunnerUtils.registerAllScheduledRunners();
 			

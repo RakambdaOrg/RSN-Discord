@@ -38,15 +38,33 @@ public class SlashCommandService{
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 	public static void registerGlobalCommands(){
-		log.info("Registering slash commands");
+		log.info("Registering global slash commands");
 		var action = Main.getJda().updateCommands();
 		
 		var commands = registrableCommands.values().stream()
+				.filter(cmd -> !cmd.isGuildOnly())
 				.map(IRegistrableCommand::getSlashCommand)
 				.collect(Collectors.toSet());
 		
 		action.addCommands(commands).submit()
 				.thenAccept(slashCommands -> log.info("Global slash commands registered: {}", slashCommands.stream().map(Command::getName).collect(Collectors.joining(", "))))
+				.exceptionally(e -> {
+					log.error("Failed to register global slash commands", e);
+					return null;
+				});
+	}
+	
+	public static void registerGuildCommands(@NotNull Guild guild){
+		log.info("Registering guild slash commands for {}", guild);
+		var action = guild.updateCommands();
+		
+		var commands = registrableCommands.values().stream()
+				.filter(IRegistrableCommand::isGuildOnly)
+				.map(IRegistrableCommand::getSlashCommand)
+				.collect(Collectors.toList());
+		
+		action.addCommands(commands).submit()
+				.thenAccept(slashCommands -> log.info("{} slash commands registered: {}", guild, slashCommands.stream().map(Command::getName).collect(Collectors.joining(", "))))
 				.exceptionally(e -> {
 					log.error("Failed to register global slash commands", e);
 					return null;

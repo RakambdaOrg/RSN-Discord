@@ -26,4 +26,8 @@ public interface IRegistrableCommand extends ICommand{
 	default CompletableFuture<List<CommandPrivilege>> updateCommandPrivileges(@NotNull Guild guild, @NotNull Function<List<CommandPrivilege>, Collection<? extends CommandPrivilege>> commandUpdate){
 		return SlashCommandService.updateCommandPrivileges(this, guild, commandUpdate);
 	}
+	
+	default boolean isGuildOnly(){
+		return false;
+	}
 }
