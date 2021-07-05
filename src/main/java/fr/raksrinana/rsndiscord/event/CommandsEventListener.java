@@ -100,8 +100,9 @@ public class CommandsEventListener extends ListenerAdapter{
 							return;
 						}
 						if(message.getAttachments().isEmpty()){
+							var authorName = event.isWebhookMessage() ? (author.getName() + " (webhook)") : author.getAsMention();
 							var forward = new MessageBuilder(message)
-									.setContent("From " + author.getAsMention() + "\n" + message.getContentRaw())
+									.setContent("From: %s\n%s".formatted(authorName, message.getContentRaw()))
 									.build();
 							JDAWrappers.message(event.getChannel(), forward)
 									.addActionRow(
