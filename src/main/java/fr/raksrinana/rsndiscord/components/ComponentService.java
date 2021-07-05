@@ -1,7 +1,7 @@
-package fr.raksrinana.rsndiscord.button;
+package fr.raksrinana.rsndiscord.components;
 
-import fr.raksrinana.rsndiscord.button.api.IButtonHandler;
-import fr.raksrinana.rsndiscord.button.api.ISelectionMenuHandler;
+import fr.raksrinana.rsndiscord.components.api.IButtonHandler;
+import fr.raksrinana.rsndiscord.components.api.ISelectionMenuHandler;
 import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.Optional;

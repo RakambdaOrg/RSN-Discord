@@ -1,9 +1,9 @@
 package fr.raksrinana.rsndiscord.event;
 
 import fr.raksrinana.rsndiscord.Main;
-import fr.raksrinana.rsndiscord.button.impl.button.TodoMessageCompletedButtonHandler;
-import fr.raksrinana.rsndiscord.button.impl.button.TodoMessageKeepButtonHandler;
-import fr.raksrinana.rsndiscord.button.impl.button.TodoMessageReplyButtonHandler;
+import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageCompletedButtonHandler;
+import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageKeepButtonHandler;
+import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageReplyButtonHandler;
 import fr.raksrinana.rsndiscord.command.BotCommand;
 import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.NotAllowedException;

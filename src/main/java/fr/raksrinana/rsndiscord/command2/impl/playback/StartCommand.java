@@ -29,7 +29,7 @@ public class StartCommand extends SubCommand{
 		var voiceState = member.getVoiceState();
 		
 		if(!voiceState.inVoiceChannel()){
-			JDAWrappers.edit(event, "You're not in a voice channel...");
+			JDAWrappers.edit(event, "You're not in a voice channel...").submit();
 			return HANDLED;
 		}
 		

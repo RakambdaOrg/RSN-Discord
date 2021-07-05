@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.command2.impl;
 
-import fr.raksrinana.rsndiscord.button.impl.button.ArchiveMediaReactionButtonHandler;
+import fr.raksrinana.rsndiscord.components.impl.button.ArchiveMediaReactionButtonHandler;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command2.BotSlashCommand;
 import fr.raksrinana.rsndiscord.command2.base.SimpleCommand;

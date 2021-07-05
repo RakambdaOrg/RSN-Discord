@@ -5,7 +5,7 @@ import fr.raksrinana.rsndiscord.command2.base.group.SubCommand;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
-import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED_NO_MESSAGE;
 
 @Log4j2
 public class StopCommand extends SubCommand{
@@ -31,6 +31,6 @@ public class StopCommand extends SubCommand{
 			audioManager.setReceivingHandler(null);
 		}
 		
-		return HANDLED;
+		return HANDLED_NO_MESSAGE;
 	}
 }

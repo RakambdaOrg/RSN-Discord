@@ -1,8 +1,8 @@
 package fr.raksrinana.rsndiscord.runner.impl;
 
 import fr.raksrinana.rsndiscord.api.externaltodos.ExternalTodosApi;
-import fr.raksrinana.rsndiscord.button.impl.button.ExternalTodoCompletedButtonHandler;
-import fr.raksrinana.rsndiscord.button.impl.button.ExternalTodoDiscardedButtonHandler;
+import fr.raksrinana.rsndiscord.components.impl.button.ExternalTodoCompletedButtonHandler;
+import fr.raksrinana.rsndiscord.components.impl.button.ExternalTodoDiscardedButtonHandler;
 import fr.raksrinana.rsndiscord.runner.api.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;

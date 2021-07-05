@@ -1,8 +1,8 @@
-package fr.raksrinana.rsndiscord.button.impl.button;
+package fr.raksrinana.rsndiscord.components.impl.button;
 
-import fr.raksrinana.rsndiscord.button.ButtonHandler;
-import fr.raksrinana.rsndiscord.button.ComponentResult;
-import fr.raksrinana.rsndiscord.button.base.SimpleButtonHandler;
+import fr.raksrinana.rsndiscord.components.ButtonHandler;
+import fr.raksrinana.rsndiscord.components.ComponentResult;
+import fr.raksrinana.rsndiscord.components.base.SimpleButtonHandler;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Emoji;
@@ -13,14 +13,14 @@ import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import static fr.raksrinana.rsndiscord.button.ComponentResult.HANDLED;
+import static fr.raksrinana.rsndiscord.components.ComponentResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.Utilities.MAIN_RAKSRINANA_ACCOUNT;
 
 @Log4j2
 @ButtonHandler
-public class ExternalTodoDiscardedButtonHandler extends SimpleButtonHandler{
-	public ExternalTodoDiscardedButtonHandler(){
-		super("external-todo-discarded");
+public class AniListMediaDiscardedButtonHandler extends SimpleButtonHandler{
+	public AniListMediaDiscardedButtonHandler(){
+		super("anilist-media-discarded");
 	}
 	
 	@NotNull

@@ -1,6 +1,6 @@
-package fr.raksrinana.rsndiscord.button;
+package fr.raksrinana.rsndiscord.components;
 
-import fr.raksrinana.rsndiscord.button.api.IButtonHandler;
+import fr.raksrinana.rsndiscord.components.api.IButtonHandler;
 import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.log.LogContext;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
