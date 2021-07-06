@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
+import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED_NO_MESSAGE;
 
 @Log4j2
 public class StartCommand extends SubCommand{
@@ -40,6 +41,6 @@ public class StartCommand extends SubCommand{
 		audioManager.setReceivingHandler(echoHandler);
 		audioManager.openAudioConnection(voiceState.getChannel());
 		
-		return HANDLED;
+		return HANDLED_NO_MESSAGE;
 	}
 }

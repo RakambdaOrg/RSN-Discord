@@ -1,13 +1,13 @@
 package fr.raksrinana.rsndiscord.event;
 
 import fr.raksrinana.rsndiscord.Main;
-import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageCompletedButtonHandler;
-import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageKeepButtonHandler;
-import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageReplyButtonHandler;
 import fr.raksrinana.rsndiscord.command.BotCommand;
 import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.NotAllowedException;
 import fr.raksrinana.rsndiscord.command.NotHandledException;
+import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageCompletedButtonHandler;
+import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageKeepButtonHandler;
+import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageReplyButtonHandler;
 import fr.raksrinana.rsndiscord.log.LogContext;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
@@ -99,10 +99,17 @@ public class CommandsEventListener extends ListenerAdapter{
 									.submit();
 							return;
 						}
-						if(message.getAttachments().isEmpty()){
-							var authorName = event.isWebhookMessage() ? (author.getName() + " (webhook)") : author.getAsMention();
+						if(!message.getAttachments().isEmpty() || event.isWebhookMessage()){
+							var waitingReactionMessageConfiguration = new WaitingReactionMessageConfiguration(message, TODO, Map.of(DELETE_KEY, Boolean.toString(true)));
+							guildConfiguration.addMessagesAwaitingReaction(waitingReactionMessageConfiguration);
+							
+							JDAWrappers.addReaction(message, CHECK_OK).submit();
+							JDAWrappers.addReaction(message, PAPERCLIP).submit();
+							JDAWrappers.addReaction(message, RIGHT_ARROW_CURVING_LEFT).submit();
+						}
+						else{
 							var forward = new MessageBuilder(message)
-									.setContent("From: %s\n%s".formatted(authorName, message.getContentRaw()))
+									.setContent("From: %s\n%s".formatted(author.getAsMention(), message.getContentRaw()))
 									.build();
 							JDAWrappers.message(event.getChannel(), forward)
 									.addActionRow(
@@ -111,14 +118,6 @@ public class CommandsEventListener extends ListenerAdapter{
 											new TodoMessageReplyButtonHandler().asComponent())
 									.submit()
 									.thenCompose(m -> JDAWrappers.delete(event.getMessage()).submit());
-						}
-						else{
-							var waitingReactionMessageConfiguration = new WaitingReactionMessageConfiguration(message, TODO, Map.of(DELETE_KEY, Boolean.toString(true)));
-							guildConfiguration.addMessagesAwaitingReaction(waitingReactionMessageConfiguration);
-							
-							JDAWrappers.addReaction(message, CHECK_OK).submit();
-							JDAWrappers.addReaction(message, PAPERCLIP).submit();
-							JDAWrappers.addReaction(message, RIGHT_ARROW_CURVING_LEFT).submit();
 						}
 					}
 				}
