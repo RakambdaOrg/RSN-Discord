@@ -18,10 +18,7 @@ open module fr.raksrinana.rsndiscord {
 	requires lavaplayer;
 	requires okhttp3;
 	requires com.google.gson;
-	requires emoji.java;
-	requires imgscalr.lib;
 	requires jump3r;
-	requires thumbnailator;
 	requires twittered;
 	requires scribejava.core;
 	requires org.kitteh.irc.client.library;

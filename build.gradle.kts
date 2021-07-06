@@ -13,9 +13,7 @@ group = "fr.raksrinana"
 description = "RSNDiscord"
 
 dependencies {
-    implementation(libs.jda) {
-        exclude(module = "opus-java")
-    }
+    implementation(libs.jda)
     implementation(libs.lavaplayer)
     implementation(libs.lpCross)
     implementation(libs.jump3r)
@@ -29,9 +27,6 @@ dependencies {
     implementation(libs.httpclient)
     implementation(libs.lang3)
     implementation(libs.reflections)
-    implementation(libs.emojiJava)
-    implementation(libs.imgscalr)
-    implementation(libs.thumbnailator)
     implementation(libs.twittered)
     implementation(libs.kittehIrc)
 
@@ -65,8 +60,12 @@ tasks {
 
         doFirst {
             val compilerArgs = options.compilerArgs
+
+            val path = classpath.asPath.split(";")
+                .filter { it.endsWith(".jar") }
+                .joinToString(";")
             compilerArgs.add("--module-path")
-            compilerArgs.add(classpath.asPath)
+            compilerArgs.add(path)
             classpath = files()
         }
     }
@@ -104,6 +103,8 @@ application {
 java {
     sourceCompatibility = JavaVersion.VERSION_16
     targetCompatibility = JavaVersion.VERSION_16
+
+    modularity.inferModulePath.set(false)
 }
 
 jib {

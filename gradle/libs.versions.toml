@@ -12,9 +12,6 @@ httpclient-version = "4.5.13"
 lang3-version = "3.12.0"
 reflections-version = "0.9.12"
 jump3r-version = "1.0.5"
-emoji_java-version = "5.1.1"
-imgscalr-version = "4.2"
-thumbnailator-version = "0.4.14"
 twittered-version = "2.4"
 jetbrains-annotations-version = "21.0.1"
 kitteh-irc-version = "8.0.0"
@@ -35,9 +32,6 @@ jackson-databind = { group = "com.fasterxml.jackson.core", name = "jackson-datab
 httpclient = { group = "org.apache.httpcomponents", name = "httpclient", version.ref = "httpclient-version" }
 lang3 = { group = "org.apache.commons", name = "commons-lang3", version.ref = "lang3-version" }
 reflections = { group = "org.reflections", name = "reflections", version.ref = "reflections-version" }
-emojiJava = { group = "com.vdurmont", name = "emoji-java", version.ref = "emoji_java-version" }
-imgscalr = { group = "org.imgscalr", name = "imgscalr-lib", version.ref = "imgscalr-version" }
-thumbnailator = { group = "net.coobird", name = "thumbnailator", version.ref = "thumbnailator-version" }
 twittered = { group = "io.github.redouane59.twitter", name = "twittered", version.ref = "twittered-version" }
 jetbrainsAnnotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations-version" }
 kittehIrc = { group = "org.kitteh.irc", name = "client-lib", version.ref = "kitteh-irc-version" }
