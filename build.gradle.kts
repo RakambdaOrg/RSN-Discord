@@ -5,8 +5,9 @@ plugins {
     id("com.github.johnrengelman.shadow").version("7.0.0")
     id("com.github.ben-manes.versions").version("0.39.0")
     id("io.freefair.lombok").version("6.0.0-m2")
-    id("com.google.cloud.tools.jib").version("3.1.1")
+    id("com.google.cloud.tools.jib").version("3.1.2")
     id("com.gorylenko.gradle-git-properties").version("2.3.1")
+    id("de.jjohannes.extra-java-module-info").version("0.9")
 }
 
 group = "fr.raksrinana"
@@ -98,6 +99,10 @@ application {
 
     mainModule.set(moduleName)
     mainClass.set(className)
+}
+
+extraJavaModuleInfo {
+    failOnMissingModuleInfo.set(false)
 }
 
 java {

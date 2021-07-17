@@ -32,10 +32,12 @@ public class AniListMediaCompletedButtonHandler extends SimpleButtonHandler{
 		return Optional.ofNullable(event.getJDA().getUserById(MAIN_RAKSRINANA_ACCOUNT))
 				.map(User::openPrivateChannel)
 				.map(RestAction::submit)
-				.map(future -> future.thenCompose(privateChannel -> JDAWrappers.message(privateChannel, user.getAsMention() + " completed").submit()
-						.thenCompose(m -> JDAWrappers.message(m.getPrivateChannel(), message).clearActionRows().submit())
+				.map(future -> future.thenCompose(privateChannel -> JDAWrappers.message(privateChannel, message)
+								.content(user.getAsMention() + " completed")
+								.clearActionRows()
+								.submit())
 						.thenCompose(m -> JDAWrappers.delete(message).submit())
-						.thenApply(m -> HANDLED)))
+						.thenApply(m -> HANDLED))
 				.orElseGet(() -> CompletableFuture.completedFuture(HANDLED));
 	}
 	

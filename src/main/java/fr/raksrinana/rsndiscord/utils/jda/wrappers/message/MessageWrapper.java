@@ -107,6 +107,12 @@ public class MessageWrapper{
 	}
 	
 	@NotNull
+	public MessageWrapper content(String content){
+		action = action.content(content);
+		return this;
+	}
+	
+	@NotNull
 	public MessageWrapper setActionRows(@NotNull ActionRow... actionRows){
 		action = action.setActionRows(actionRows);
 		return this;

@@ -32,8 +32,10 @@ public class AniListMediaDiscardedButtonHandler extends SimpleButtonHandler{
 		return Optional.ofNullable(event.getJDA().getUserById(MAIN_RAKSRINANA_ACCOUNT))
 				.map(User::openPrivateChannel)
 				.map(RestAction::submit)
-				.map(future -> future.thenCompose(privateChannel -> JDAWrappers.message(privateChannel, user.getAsMention() + " discarded").submit())
-						.thenCompose(m -> JDAWrappers.message(m.getPrivateChannel(), message).clearActionRows().submit())
+				.map(future -> future.thenCompose(privateChannel -> JDAWrappers.message(privateChannel, message)
+								.content(user.getAsMention() + " discarded")
+								.clearActionRows()
+								.submit())
 						.thenCompose(m -> JDAWrappers.delete(message).submit())
 						.thenApply(m -> HANDLED))
 				.orElseGet(() -> CompletableFuture.completedFuture(HANDLED));

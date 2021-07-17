@@ -111,13 +111,18 @@ public class CommandsEventListener extends ListenerAdapter{
 							var forward = new MessageBuilder(message)
 									.setContent("From: %s\n%s".formatted(author.getAsMention(), message.getContentRaw()))
 									.build();
-							JDAWrappers.message(event.getChannel(), forward)
+							var action = JDAWrappers.message(event.getChannel(), forward)
 									.addActionRow(
 											new TodoMessageCompletedButtonHandler().asComponent(),
 											new TodoMessageKeepButtonHandler().asComponent(),
-											new TodoMessageReplyButtonHandler().asComponent())
-									.submit()
-									.thenCompose(m -> JDAWrappers.delete(event.getMessage()).submit());
+											new TodoMessageReplyButtonHandler().asComponent());
+							
+							var referenceMessage = message.getReferencedMessage();
+							if(Objects.nonNull(referenceMessage)){
+								action = action.replyTo(referenceMessage);
+							}
+							
+							action.submit().thenCompose(m -> JDAWrappers.delete(event.getMessage()).submit());
 						}
 					}
 				}
