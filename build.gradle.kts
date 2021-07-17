@@ -14,7 +14,12 @@ group = "fr.raksrinana"
 description = "RSNDiscord"
 
 dependencies {
-    implementation(libs.jda)
+    implementation(libs.jda) {
+        exclude(module = "opus-java")
+    }
+    implementation("club.minnced:opus-java:1.1.0@pom") {
+        isTransitive = true
+    }
     implementation(libs.lavaplayer)
     implementation(libs.lpCross)
     implementation(libs.jump3r)
