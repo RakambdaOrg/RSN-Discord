@@ -25,8 +25,9 @@ public class TodoMessageCompletedButtonHandler extends SimpleButtonHandler{
 	public CompletableFuture<ComponentResult> handle(@NotNull ButtonClickEvent event){
 		var message = event.getMessage();
 		
-		return Optional.ofNullable(message.getReferencedMessage())
-				.map(m -> JDAWrappers.delete(m).submit())
+		return Optional.ofNullable(message.getMessageReference())
+				.map(r -> r.resolve().submit()
+						.thenApply(m -> JDAWrappers.delete(m).submit()))
 				.orElseGet(() -> CompletableFuture.completedFuture(null))
 				.thenCompose(empty -> JDAWrappers.delete(message).submit())
 				.thenApply(empty -> HANDLED);

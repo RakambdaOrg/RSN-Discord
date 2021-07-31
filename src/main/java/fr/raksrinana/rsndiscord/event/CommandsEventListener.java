@@ -117,9 +117,9 @@ public class CommandsEventListener extends ListenerAdapter{
 											new TodoMessageKeepButtonHandler().asComponent(),
 											new TodoMessageReplyButtonHandler().asComponent());
 							
-							var referenceMessage = message.getReferencedMessage();
-							if(Objects.nonNull(referenceMessage)){
-								action = action.replyTo(referenceMessage);
+							var messageReference = message.getMessageReference();
+							if(Objects.nonNull(messageReference)){
+								action = action.replyTo(messageReference);
 							}
 							
 							action.submit().thenCompose(m -> JDAWrappers.delete(event.getMessage()).submit());

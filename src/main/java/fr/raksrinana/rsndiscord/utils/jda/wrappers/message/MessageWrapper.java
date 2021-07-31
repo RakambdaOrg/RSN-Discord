@@ -71,6 +71,12 @@ public class MessageWrapper{
 	}
 	
 	@NotNull
+	public MessageWrapper replyTo(@NotNull MessageReference messageReference){
+		action = action.referenceById(messageReference.getMessageIdLong());
+		return this;
+	}
+	
+	@NotNull
 	public MessageWrapper addFile(@NotNull Path path){
 		action = action.addFile(path.toFile());
 		return this;

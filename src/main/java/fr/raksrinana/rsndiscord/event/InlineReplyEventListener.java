@@ -33,30 +33,32 @@ public class InlineReplyEventListener extends ListenerAdapter{
 				return;
 			}
 			
-			var reference = message.getReferencedMessage();
-			if(isNull(reference)){
+			var messageReference = message.getMessageReference();
+			if(isNull(messageReference)){
 				return;
 			}
 			
-			if(Settings.get(guild).getMediaReactionMessages().contains(new MessageConfiguration(reference))){
-				var original = Arrays.stream(reference.getContentRaw().split("\n"))
-						.filter(line -> Character.isDigit(line.charAt(0)) || line.startsWith("N/A"))
-						.map(line -> line.split(" ", 2)[0])
-						.collect(Collectors.toList());
-				var received = Arrays.stream(message.getContentRaw().split("\n")).collect(Collectors.toList());
-				
-				if(original.size() == received.size()){
-					var content = author.getAsMention() + " replied:\n\n" +
-							IntStream.range(0, original.size())
-									.mapToObj(index -> original.get(index) + " " + received.get(index))
-									.collect(Collectors.joining("\n"));
+			if(Settings.get(guild).getMediaReactionMessages().contains(new MessageConfiguration(messageReference.getChannelIdLong(), messageReference.getMessageIdLong()))){
+				messageReference.resolve().submit().thenAccept(reference -> {
+					var original = Arrays.stream(reference.getContentRaw().split("\n"))
+							.filter(line -> Character.isDigit(line.charAt(0)) || line.startsWith("N/A"))
+							.map(line -> line.split(" ", 2)[0])
+							.collect(Collectors.toList());
+					var received = Arrays.stream(message.getContentRaw().split("\n")).collect(Collectors.toList());
 					
-					JDAWrappers.reply(reference, content).submit()
-							.thenAccept(sent -> JDAWrappers.delete(message).submit());
-				}
-				else{
-					JDAWrappers.message(event.getChannel(), String.format("Expected %d lines, got %d", original.size(), received.size())).submitAndDelete(2);
-				}
+					if(original.size() == received.size()){
+						var content = author.getAsMention() + " replied:\n\n" +
+								IntStream.range(0, original.size())
+										.mapToObj(index -> original.get(index) + " " + received.get(index))
+										.collect(Collectors.joining("\n"));
+						
+						JDAWrappers.reply(reference, content).submit()
+								.thenAccept(sent -> JDAWrappers.delete(message).submit());
+					}
+					else{
+						JDAWrappers.message(event.getChannel(), String.format("Expected %d lines, got %d", original.size(), received.size())).submitAndDelete(2);
+					}
+				});
 			}
 		}
 		catch(Exception e){
