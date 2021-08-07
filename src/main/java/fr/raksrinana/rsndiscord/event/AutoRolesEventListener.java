@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.event;
 import fr.raksrinana.rsndiscord.log.LogContext;
 import fr.raksrinana.rsndiscord.schedule.impl.UnbanMemberScheduleHandler;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.guild.autoroles.LeaverRoles;
+import fr.raksrinana.rsndiscord.settings.impl.guild.autoroles.LeaverRoles;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;

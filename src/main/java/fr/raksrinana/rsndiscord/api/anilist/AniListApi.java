@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.api.anilist;
 
 import fr.raksrinana.rsndiscord.api.anilist.data.TokenResponse;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.general.anilist.AniListAccessTokenConfiguration;
+import fr.raksrinana.rsndiscord.settings.impl.general.anilist.AniListAccessTokenConfiguration;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;

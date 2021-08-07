@@ -5,7 +5,7 @@ import fr.raksrinana.rsndiscord.api.discordstatus.data.unresolvedincidents.Incid
 import fr.raksrinana.rsndiscord.api.discordstatus.data.unresolvedincidents.IncidentUpdate;
 import fr.raksrinana.rsndiscord.runner.api.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
-import fr.raksrinana.rsndiscord.settings.GuildConfiguration;
+import fr.raksrinana.rsndiscord.settings.impl.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;

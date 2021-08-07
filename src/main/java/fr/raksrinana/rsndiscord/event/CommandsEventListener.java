@@ -5,17 +5,12 @@ import fr.raksrinana.rsndiscord.command.BotCommand;
 import fr.raksrinana.rsndiscord.command.Command;
 import fr.raksrinana.rsndiscord.command.NotAllowedException;
 import fr.raksrinana.rsndiscord.command.NotHandledException;
-import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageCompletedButtonHandler;
-import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageKeepButtonHandler;
-import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageReplyButtonHandler;
 import fr.raksrinana.rsndiscord.log.LogContext;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -28,15 +23,10 @@ import static fr.raksrinana.rsndiscord.command.CommandResult.BAD_ARGUMENTS;
 import static fr.raksrinana.rsndiscord.command.CommandResult.FAILED;
 import static fr.raksrinana.rsndiscord.command.DeleteMode.AFTER;
 import static fr.raksrinana.rsndiscord.command.DeleteMode.BEFORE;
-import static fr.raksrinana.rsndiscord.reaction.ReactionTag.TODO;
-import static fr.raksrinana.rsndiscord.reaction.ReactionUtils.DELETE_KEY;
-import static fr.raksrinana.rsndiscord.utils.BasicEmotes.*;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
-import static fr.raksrinana.rsndiscord.utils.Utilities.containsChannel;
 import static fr.raksrinana.rsndiscord.utils.Utilities.getAllAnnotatedWith;
 import static java.awt.Color.ORANGE;
 import static java.awt.Color.RED;
-import static net.dv8tion.jda.api.entities.MessageType.CHANNEL_PINNED_ADD;
 
 @EventListener
 @Getter
@@ -84,48 +74,6 @@ public class CommandsEventListener extends ListenerAdapter{
 					return;
 				}
 				processCommand(event);
-			}
-			else{
-				if(containsChannel(guildConfiguration.getReactionsConfiguration().getAutoTodoChannels(), channel)){
-					if(message.getType() == CHANNEL_PINNED_ADD){
-						JDAWrappers.delete(message).submit();
-					}
-					else{
-						if(Objects.equals(author, event.getJDA().getSelfUser())){
-							JDAWrappers.editComponents(event.getMessage(),
-											new TodoMessageCompletedButtonHandler().asComponent(),
-											new TodoMessageKeepButtonHandler().asComponent(),
-											new TodoMessageReplyButtonHandler().asComponent())
-									.submit();
-							return;
-						}
-						if(!message.getAttachments().isEmpty() || event.isWebhookMessage()){
-							var waitingReactionMessageConfiguration = new WaitingReactionMessageConfiguration(message, TODO, Map.of(DELETE_KEY, Boolean.toString(true)));
-							guildConfiguration.addMessagesAwaitingReaction(waitingReactionMessageConfiguration);
-							
-							JDAWrappers.addReaction(message, CHECK_OK).submit();
-							JDAWrappers.addReaction(message, PAPERCLIP).submit();
-							JDAWrappers.addReaction(message, RIGHT_ARROW_CURVING_LEFT).submit();
-						}
-						else{
-							var forward = new MessageBuilder(message)
-									.setContent("From: %s\n%s".formatted(author.getAsMention(), message.getContentRaw()))
-									.build();
-							var action = JDAWrappers.message(event.getChannel(), forward)
-									.addActionRow(
-											new TodoMessageCompletedButtonHandler().asComponent(),
-											new TodoMessageKeepButtonHandler().asComponent(),
-											new TodoMessageReplyButtonHandler().asComponent());
-							
-							var messageReference = message.getMessageReference();
-							if(Objects.nonNull(messageReference)){
-								action = action.replyTo(messageReference);
-							}
-							
-							action.submit().thenCompose(m -> JDAWrappers.delete(event.getMessage()).submit());
-						}
-					}
-				}
 			}
 		}
 		catch(Exception e){

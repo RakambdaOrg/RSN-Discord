@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import fr.raksrinana.rsndiscord.settings.IAtomicConfiguration;
+import fr.raksrinana.rsndiscord.settings.api.IAtomicConfiguration;
 import fr.raksrinana.rsndiscord.utils.json.converter.ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.converter.ZonedDateTimeSerializer;
 import lombok.Getter;

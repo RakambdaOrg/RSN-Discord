@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.reaction.handler;
 
 import fr.raksrinana.rsndiscord.reaction.ReactionTag;
-import fr.raksrinana.rsndiscord.settings.guild.reaction.WaitingReactionMessageConfiguration;
+import fr.raksrinana.rsndiscord.settings.impl.guild.reaction.WaitingReactionMessageConfiguration;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import org.jetbrains.annotations.NotNull;
 import static fr.raksrinana.rsndiscord.reaction.handler.ReactionHandlerResult.PROCESSED_DELETE;

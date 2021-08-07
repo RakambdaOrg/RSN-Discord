@@ -1,7 +1,6 @@
 package fr.raksrinana.rsndiscord.api.anilist.query;
 
 import fr.raksrinana.rsndiscord.api.anilist.AniListApi;
-import fr.raksrinana.rsndiscord.settings.ICompositeConfiguration;
 import kong.unirest.json.JSONObject;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.logging.log4j.LogManager;

@@ -15,28 +15,16 @@ import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 public class ConfigurationCommandComposite extends CommandComposite{
 	public ConfigurationCommandComposite(){
 		addSubCommand(new AniListConfigurationCommandComposite(this));
-		addSubCommand(new AutoRolesConfigurationCommand(this));
-		addSubCommand(new ModeratorRolesConfigurationCommand(this));
-		addSubCommand(new AutoThumbsChannelsConfigurationCommand(this));
-		addSubCommand(new PrefixConfigurationCommand(this));
 		addSubCommand(new NicknameConfigurationCommandComposite(this));
 		addSubCommand(new TwitchConfigurationCommandComposite(this));
-		addSubCommand(new AnnounceStartChannelConfigurationCommand(this));
 		addSubCommand(new TraktConfigurationCommandComposite(this));
-		addSubCommand(new ArchiveCategoryConfigurationCommand(this));
 		addSubCommand(new AutoTodoChannelsConfigurationCommand(this));
 		addSubCommand(new ReactionsConfigurationCommandComposite(this));
 		addSubCommand(new HermitcraftConfigurationCommandComposite(this));
 		addSubCommand(new RainbowSixConfigurationCommandComposite(this));
 		addSubCommand(new ExternalTodosConfigurationCommandComposite(this));
-		addSubCommand(new LocaleConfigurationCommand(this));
-		addSubCommand(new GeneralChannelConfigurationCommand(this));
 		addSubCommand(new RandomKickConfigurationCommandComposite(this));
-		addSubCommand(new LogChannelConfigurationCommand(this));
 		addSubCommand(new BirthdayConfigurationCommandComposite(this));
-		addSubCommand(new EventWinnerRoleConfigurationCommand(this));
-		addSubCommand(new DiscordIncidentsChannelChannelConfigurationCommand(this));
-		addSubCommand(new LeaveServerBanDurationConfigurationCommand(this));
 		addSubCommand(new TwitterConfigurationCommandComposite(this));
 		addSubCommand(new JoinLeaveConfigurationCommandComposite(this));
 	}

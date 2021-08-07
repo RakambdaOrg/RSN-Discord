@@ -9,7 +9,7 @@ import fr.raksrinana.rsndiscord.api.trakt.requests.oauth.DeviceTokenPostRequest;
 import fr.raksrinana.rsndiscord.api.trakt.requests.oauth.OAuthRenewTokenPostRequest;
 import fr.raksrinana.rsndiscord.api.trakt.requests.users.UserSettingsGetRequest;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.general.trakt.TraktAccessTokenConfiguration;
+import fr.raksrinana.rsndiscord.settings.impl.general.trakt.TraktAccessTokenConfiguration;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import fr.raksrinana.rsndiscord.utils.RequestException;
 import fr.raksrinana.rsndiscord.utils.Utilities;

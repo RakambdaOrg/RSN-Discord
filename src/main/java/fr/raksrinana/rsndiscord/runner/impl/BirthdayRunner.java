@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.runner.impl;
 import fr.raksrinana.rsndiscord.runner.api.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.guild.birthday.BirthdaysConfiguration;
+import fr.raksrinana.rsndiscord.settings.impl.guild.birthday.BirthdaysConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;

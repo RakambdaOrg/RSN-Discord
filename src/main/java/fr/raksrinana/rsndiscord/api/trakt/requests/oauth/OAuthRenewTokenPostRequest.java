@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.api.trakt.requests.oauth;
 import fr.raksrinana.rsndiscord.api.trakt.TraktApi;
 import fr.raksrinana.rsndiscord.api.trakt.model.auth.AccessToken;
 import fr.raksrinana.rsndiscord.api.trakt.requests.ITraktPostRequest;
-import fr.raksrinana.rsndiscord.settings.general.trakt.TraktAccessTokenConfiguration;
+import fr.raksrinana.rsndiscord.settings.impl.general.trakt.TraktAccessTokenConfiguration;
 import kong.unirest.GenericType;
 import kong.unirest.RequestBodyEntity;
 import kong.unirest.Unirest;
