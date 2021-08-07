@@ -88,8 +88,9 @@ public class TwitterApi implements IAPIEventListener{
 	@NotNull
 	public static TweetList getUserLastTweets(String userId, String maxId){
 		var additionalParams = AdditionalParameters.builder()
-				.maxResults(Integer.MAX_VALUE)
+				.maxResults(100)
 				.sinceId(maxId)
+				.recursiveCall(true)
 				.build();
 		return getTwitteredClient().getUserTimeline(userId, additionalParams);
 	}
