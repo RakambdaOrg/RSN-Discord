@@ -48,7 +48,6 @@ repositories {
         name = "jitpack"
         url = uri("https://jitpack.io")
     }
-    jcenter()
     mavenCentral()
 }
 
