@@ -8,12 +8,12 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class RoleSetConfigurationAccessor extends SetConfigurationAccessor<RoleConfiguration>{
-	public RoleSetConfigurationAccessor(Function<GuildConfiguration, Set<RoleConfiguration>> getter){
-		super(getter);
+	public RoleSetConfigurationAccessor(String name, Function<GuildConfiguration, Set<RoleConfiguration>> getter){
+		super(name, getter);
 	}
 	
-	public RoleSetConfigurationAccessor(Function<GuildConfiguration, Set<RoleConfiguration>> getter, BiConsumer<GuildConfiguration, RoleConfiguration> setter){
-		super(getter, setter);
+	public RoleSetConfigurationAccessor(String name, Function<GuildConfiguration, Set<RoleConfiguration>> getter, BiConsumer<GuildConfiguration, RoleConfiguration> setter){
+		super(name, getter, setter);
 	}
 	
 	@Override

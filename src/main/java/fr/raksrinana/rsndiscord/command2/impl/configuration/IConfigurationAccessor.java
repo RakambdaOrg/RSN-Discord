@@ -26,4 +26,7 @@ public interface IConfigurationAccessor{
 	default Optional<MessageEmbed> show(@NotNull GuildConfiguration configuration){
 		throw new UnsupportedOperationException("Show operation not available");
 	}
+	
+	@NotNull
+	String getName();
 }

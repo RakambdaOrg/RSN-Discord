@@ -8,8 +8,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class CategoryConfigurationAccessor extends ValueConfigurationAccessor<CategoryConfiguration>{
-	public CategoryConfigurationAccessor(Function<GuildConfiguration, Optional<CategoryConfiguration>> getter, BiConsumer<GuildConfiguration, CategoryConfiguration> setter){
-		super(getter, setter);
+	public CategoryConfigurationAccessor(String name, Function<GuildConfiguration, Optional<CategoryConfiguration>> getter, BiConsumer<GuildConfiguration, CategoryConfiguration> setter){
+		super(name, getter, setter);
 	}
 	
 	@Override

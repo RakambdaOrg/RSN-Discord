@@ -13,6 +13,8 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED_NO_MESSAGE;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
@@ -33,18 +35,20 @@ public class ConfigurationCommand extends SimpleCommand{
 	private final Map<String, IConfigurationAccessor> accessors;
 	
 	public ConfigurationCommand(){
-		this.accessors = new HashMap<>();
-		accessors.put("announceStartChannel", new ChannelConfigurationAccessor(GuildConfiguration::getAnnounceStartChannel, GuildConfiguration::setAnnounceStartChannel));
-		accessors.put("archiveCategory", new CategoryConfigurationAccessor(GuildConfiguration::getArchiveCategory, GuildConfiguration::setArchiveCategory));
-		accessors.put("autoRoles", new RoleSetConfigurationAccessor(GuildConfiguration::getAutoRoles));
-		accessors.put("autoThumbsChannels", new ChannelSetConfigurationAccessor(GuildConfiguration::getAutoThumbsChannels));
-		accessors.put("discordIncidentsChannel", new ChannelConfigurationAccessor(GuildConfiguration::getDiscordIncidentsChannel, GuildConfiguration::setDiscordIncidentsChannel));
-		accessors.put("eventWinnerRole", new RoleConfigurationAccessor(s -> s.getEventConfiguration().getWinnerRole(), (s, v) -> s.getEventConfiguration().setWinnerRole(v)));
-		accessors.put("generalChannel", new ChannelConfigurationAccessor(GuildConfiguration::getGeneralChannel, GuildConfiguration::setGeneralChannel));
-		accessors.put("leaveServerBanDuration", new DurationConfigurationAccessor(GuildConfiguration::getLeaveServerBanDuration, GuildConfiguration::setLeaveServerBanDuration));
-		accessors.put("locale", new LocaleConfigurationAccessor(GuildConfiguration::getLocale, GuildConfiguration::setLocale));
-		accessors.put("logChannel", new ChannelConfigurationAccessor(GuildConfiguration::getLogChannel, GuildConfiguration::setLogChannel));
-		accessors.put("moderatorRoles", new RoleSetConfigurationAccessor(GuildConfiguration::getModeratorRoles));
+		var accessors = new LinkedList<IConfigurationAccessor>();
+		accessors.add(new ChannelConfigurationAccessor("announceStartChannel", GuildConfiguration::getAnnounceStartChannel, GuildConfiguration::setAnnounceStartChannel));
+		accessors.add(new CategoryConfigurationAccessor("archiveCategory", GuildConfiguration::getArchiveCategory, GuildConfiguration::setArchiveCategory));
+		accessors.add(new RoleSetConfigurationAccessor("autoRoles", GuildConfiguration::getAutoRoles));
+		accessors.add(new ChannelSetConfigurationAccessor("autoThumbsChannels", GuildConfiguration::getAutoThumbsChannels));
+		accessors.add(new ChannelConfigurationAccessor("discordIncidentsChannel", GuildConfiguration::getDiscordIncidentsChannel, GuildConfiguration::setDiscordIncidentsChannel));
+		accessors.add(new RoleConfigurationAccessor("eventWinnerRole", s -> s.getEventConfiguration().getWinnerRole(), (s, v) -> s.getEventConfiguration().setWinnerRole(v)));
+		accessors.add(new ChannelConfigurationAccessor("generalChannel", GuildConfiguration::getGeneralChannel, GuildConfiguration::setGeneralChannel));
+		accessors.add(new DurationConfigurationAccessor("leaveServerBanDuration", GuildConfiguration::getLeaveServerBanDuration, GuildConfiguration::setLeaveServerBanDuration));
+		accessors.add(new LocaleConfigurationAccessor("locale", GuildConfiguration::getLocale, GuildConfiguration::setLocale));
+		accessors.add(new ChannelConfigurationAccessor("logChannel", GuildConfiguration::getLogChannel, GuildConfiguration::setLogChannel));
+		accessors.add(new RoleSetConfigurationAccessor("moderatorRoles", GuildConfiguration::getModeratorRoles));
+		
+		this.accessors = accessors.stream().collect(Collectors.toMap(IConfigurationAccessor::getName, Function.identity()));
 	}
 	
 	@Override
@@ -67,8 +71,9 @@ public class ConfigurationCommand extends SimpleCommand{
 						.addChoice("reset", RESET_OPERATION_TYPE)
 						.addChoice("add", ADD_OPERATION_TYPE)
 						.addChoice("remove", REMOVE_OPERATION_TYPE)
-						.addChoice("show", SHOW_OPERATION_TYPE),
-				new OptionData(STRING, NAME_OPTION_ID, "Name of the configuration to change"),
+						.addChoice("show", SHOW_OPERATION_TYPE)
+						.setRequired(true),
+				new OptionData(STRING, NAME_OPTION_ID, "Name of the configuration to change").setRequired(true),
 				new OptionData(STRING, VALUE_OPTION_ID, "Value to set").setRequired(false));
 	}
 	

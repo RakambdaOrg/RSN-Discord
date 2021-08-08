@@ -8,8 +8,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class DurationConfigurationAccessor extends ValueConfigurationAccessor<Duration>{
-	public DurationConfigurationAccessor(Function<GuildConfiguration, Optional<Duration>> getter, BiConsumer<GuildConfiguration, Duration> setter){
-		super(getter, setter);
+	public DurationConfigurationAccessor(String name, Function<GuildConfiguration, Optional<Duration>> getter, BiConsumer<GuildConfiguration, Duration> setter){
+		super(name, getter, setter);
 	}
 	
 	@Override

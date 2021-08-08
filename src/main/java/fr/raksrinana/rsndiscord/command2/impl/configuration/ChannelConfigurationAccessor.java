@@ -8,8 +8,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class ChannelConfigurationAccessor extends ValueConfigurationAccessor<ChannelConfiguration>{
-	public ChannelConfigurationAccessor(Function<GuildConfiguration, Optional<ChannelConfiguration>> getter, BiConsumer<GuildConfiguration, ChannelConfiguration> setter){
-		super(getter, setter);
+	public ChannelConfigurationAccessor(String name, Function<GuildConfiguration, Optional<ChannelConfiguration>> getter, BiConsumer<GuildConfiguration, ChannelConfiguration> setter){
+		super(name, getter, setter);
 	}
 	
 	@Override

@@ -8,8 +8,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class LocaleConfigurationAccessor extends ValueConfigurationAccessor<Locale>{
-	public LocaleConfigurationAccessor(Function<GuildConfiguration, Optional<Locale>> getter, BiConsumer<GuildConfiguration, Locale> setter){
-		super(getter, setter);
+	public LocaleConfigurationAccessor(String name, Function<GuildConfiguration, Optional<Locale>> getter, BiConsumer<GuildConfiguration, Locale> setter){
+		super(name, getter, setter);
 	}
 	
 	@Override
