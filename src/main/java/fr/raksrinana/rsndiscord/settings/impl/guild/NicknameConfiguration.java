@@ -30,7 +30,12 @@ public class NicknameConfiguration implements ICompositeConfiguration{
 	private final Map<Long, ZonedDateTime> lastChange = new HashMap<>();
 	@JsonProperty("changeDelay")
 	@Setter
-	private long changeDelay = 3600;
+	private Long changeDelay;
+	
+	@NotNull
+	public Optional<Long> getChangeDelay(){
+		return Optional.ofNullable(changeDelay);
+	}
 	
 	@NotNull
 	public Optional<ZonedDateTime> getLastChange(@NotNull User user){

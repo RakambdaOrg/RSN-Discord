@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -35,6 +36,11 @@ public class TwitchConfiguration implements ICompositeConfiguration{
 	@JsonProperty("randomKickRewardId")
 	@Setter
 	private String randomKickRewardId;
+	
+	@NotNull
+	public Optional<Boolean> getIrcForward(){
+		return of(ircForward);
+	}
 	
 	@NotNull
 	public Optional<String> getRandomKickRewardId(){

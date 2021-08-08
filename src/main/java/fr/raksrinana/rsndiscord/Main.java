@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord;
 
 import fr.raksrinana.rsndiscord.api.twitch.TwitchUtils;
 import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
-import fr.raksrinana.rsndiscord.command2.SlashCommandService;
+import fr.raksrinana.rsndiscord.command.SlashCommandService;
 import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.reaction.ReactionUtils;
@@ -36,7 +36,6 @@ import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import static fr.raksrinana.rsndiscord.event.CommandsEventListener.DEFAULT_PREFIX;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.OnlineStatus.ONLINE;
 
@@ -85,7 +84,7 @@ public class Main{
 			
 			JDAWrappers.editPresence()
 					.setStatus(ONLINE)
-					.setActivity(Activity.of(Activity.ActivityType.DEFAULT, DEFAULT_PREFIX + "help for the help"));
+					.setActivity(Activity.of(Activity.ActivityType.DEFAULT, "Bip bip"));
 			
 			SlashCommandService.registerGlobalCommands();
 			SlashCommandService.registerGuildCommands(jda.getGuildById(735921627631583394L));

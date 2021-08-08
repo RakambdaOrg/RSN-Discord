@@ -18,7 +18,6 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
-import static fr.raksrinana.rsndiscord.event.CommandsEventListener.DEFAULT_PREFIX;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -116,7 +115,7 @@ public class AniListApi{
 		
 		var token = AniListApi.getAccessToken(member).orElseThrow(() -> {
 			Settings.getGeneral().getAniList().removeUser(user);
-			var message = translate(guild, "anilist.token-expired", guild.getName(), Settings.get(guild).getPrefix().orElse(DEFAULT_PREFIX));
+			var message = translate(guild, "anilist.token-expired", guild.getName(), "");
 			user.openPrivateChannel().submit()
 					.thenAccept(privateChannel -> privateChannel.sendMessage(message).submit());
 			return new IllegalStateException("No valid token found, please register again");

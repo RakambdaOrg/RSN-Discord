@@ -31,9 +31,13 @@ public class RandomKickConfiguration implements ICompositeConfiguration {
     @Setter
     private Set<RoleConfiguration> kickableRoles = new HashSet<>();
     @JsonProperty("kickRoleProbability")
-    @Getter
     @Setter
-    private double kickRoleProbability = 0.25;
+    private Double kickRoleProbability;
+    
+    @NotNull
+    public Optional<Double> getKickRoleProbability(){
+        return ofNullable(kickRoleProbability);
+    }
     
     @NotNull
     public Optional<RoleConfiguration> getKickedRole(){

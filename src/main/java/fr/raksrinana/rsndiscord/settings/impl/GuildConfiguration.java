@@ -58,9 +58,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@JsonProperty("rainbowSix")
 	@Getter
 	private final RainbowSixConfiguration rainbowSixConfiguration = new RainbowSixConfiguration();
-	@JsonProperty("prefix")
-	@Setter
-	private String prefix;
 	@JsonProperty("autoRoles")
 	@Getter
 	@Setter
@@ -210,10 +207,5 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@NotNull
 	public Iterator<WaitingReactionMessageConfiguration> getMessagesAwaitingReaction(){
 		return messagesAwaitingReaction.iterator();
-	}
-	
-	@NotNull
-	public Optional<String> getPrefix(){
-		return ofNullable(prefix);
 	}
 }
