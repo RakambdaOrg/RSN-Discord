@@ -141,7 +141,7 @@ public class ConfigurationCommand extends SimpleCommand{
 	public CommandResult execute(@NotNull SlashCommandEvent event){
 		var accessor = accessors.get(event.getOption(NAME_OPTION_ID).getAsString());
 		if(Objects.isNull(accessor)){
-			JDAWrappers.reply(event, "Unknown configuration. Available: " + accessors.keySet()).submit();
+			JDAWrappers.reply(event, "Unknown configuration. Available: " + accessors.keySet().stream().sorted().collect(Collectors.joining(",")).submit();
 			return HANDLED;
 		}
 		
