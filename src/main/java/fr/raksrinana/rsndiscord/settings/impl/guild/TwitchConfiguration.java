@@ -30,7 +30,6 @@ public class TwitchConfiguration implements ICompositeConfiguration{
 	@Setter
 	private ChannelConfiguration twitchChannel;
 	@JsonProperty("ircForward")
-	@Getter
 	@Setter
 	private boolean ircForward = false;
 	@JsonProperty("randomKickRewardId")
