@@ -17,9 +17,7 @@ dependencies {
     implementation(libs.jda) {
         exclude(module = "opus-java")
     }
-    implementation("club.minnced:opus-java:1.1.0@pom") {
-        isTransitive = true
-    }
+    implementation(libs.bundles.opus)
     implementation(libs.lavaplayer)
     implementation(libs.lpCross)
     implementation(libs.jump3r)
