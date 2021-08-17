@@ -17,6 +17,13 @@ jetbrains-annotations-version = "21.0.1"
 kitteh-irc-version = "8.0.0"
 opus-version = "1.1.0"
 
+shadow-version = "7.0.0"
+names-version = "0.39.0"
+lombok-version = "6.1.0-m3"
+jib-version = "3.1.2"
+git-properties-version = "2.3.1"
+java-modules-version = "0.9"
+
 [libraries]
 jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda-version" }
 #jda = { group = "com.github.DV8FromTheWorld", name = "JDA", version.ref = "jda-version" }
@@ -44,3 +51,11 @@ opus-natives = { group = "club.minnced", name = "opus-java-natives", version.ref
 jackson = ["jackson-core", "jackson-annotations", "jackson-databind"]
 log4j2 = ["log4j2-core", "log4j2-slf4j"]
 opus = ["opus-api", "opus-natives"]
+
+[plugins]
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow-version" }
+names = { id = "com.github.ben-manes.versions", version.ref = "names-version" }
+lombok = { id = "io.freefair.lombok", version.ref = "lombok-version" }
+jib = { id = "com.google.cloud.tools.jib", version.ref = "jib-version" }
+gitProperties = { id = "com.gorylenko.gradle-git-properties", version.ref = "git-properties-version" }
+javaModules = { id = "de.jjohannes.extra-java-module-info", version.ref = "java-modules-version" }

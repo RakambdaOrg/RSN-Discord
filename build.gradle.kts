@@ -2,12 +2,12 @@ plugins {
     idea
     java
     application
-    id("com.github.johnrengelman.shadow").version("7.0.0")
-    id("com.github.ben-manes.versions").version("0.39.0")
-    id("io.freefair.lombok").version("6.1.0-m3")
-    id("com.google.cloud.tools.jib").version("3.1.2")
-    id("com.gorylenko.gradle-git-properties").version("2.3.1")
-    id("de.jjohannes.extra-java-module-info").version("0.9")
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.names)
+    alias(libs.plugins.lombok)
+    alias(libs.plugins.jib)
+    alias(libs.plugins.gitProperties)
+    alias(libs.plugins.javaModules)
 }
 
 group = "fr.raksrinana"
@@ -121,6 +121,10 @@ jib {
             platform {
                 os = "linux"
                 architecture = "arm64"
+            }
+            platform {
+                os = "linux"
+                architecture = "amd64"
             }
         }
     }
