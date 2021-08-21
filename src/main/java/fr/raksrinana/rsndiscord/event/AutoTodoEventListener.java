@@ -52,36 +52,60 @@ public class AutoTodoEventListener extends ListenerAdapter{
 	}
 	
 	private void handleTodo(@NotNull GuildMessageReceivedEvent event){
-		var guildConfiguration = Settings.get(event.getGuild());
-		var author = event.getAuthor();
-		var message = event.getMessage();
-		
-		if(Objects.equals(author, event.getJDA().getSelfUser())){
+		if(Objects.equals(event.getAuthor(), event.getJDA().getSelfUser())){
 			JDAWrappers.editComponents(event.getMessage(), buttons).submit();
 			return;
 		}
 		
-		if(!message.getAttachments().isEmpty() || event.isWebhookMessage()){
-			var waitingReactionMessageConfiguration = new WaitingReactionMessageConfiguration(message, TODO, Map.of(DELETE_KEY, Boolean.toString(true)));
-			guildConfiguration.addMessagesAwaitingReaction(waitingReactionMessageConfiguration);
-			
-			JDAWrappers.addReaction(message, CHECK_OK).submit();
-			JDAWrappers.addReaction(message, PAPERCLIP).submit();
-			JDAWrappers.addReaction(message, RIGHT_ARROW_CURVING_LEFT).submit();
+		if(canForward(event)){
+			forward(event);
 		}
 		else{
-			var forward = new MessageBuilder(message)
-					.setContent("From: %s\n%s".formatted(author.getAsMention(), message.getContentRaw()))
-					.build();
-			var action = JDAWrappers.message(event.getChannel(), forward)
-					.addActionRow(buttons);
-			
-			var messageReference = message.getMessageReference();
-			if(Objects.nonNull(messageReference)){
-				action = action.replyTo(messageReference);
-			}
-			
-			action.submit().thenCompose(m -> JDAWrappers.delete(event.getMessage()).submit());
+			addReactions(event);
 		}
+	}
+	
+	private boolean canForward(@NotNull GuildMessageReceivedEvent event){
+		if(event.isWebhookMessage()){
+			return false;
+		}
+		var message = event.getMessage();
+		if(!message.getAttachments().isEmpty()){
+			return false;
+		}
+		if(!message.getEmotes().stream().allMatch(emote -> emote.canInteract(event.getGuild().getSelfMember()))){
+			return false;
+		}
+		return true;
+	}
+	
+	private void forward(@NotNull GuildMessageReceivedEvent event){
+		var author = event.getAuthor();
+		var message = event.getMessage();
+		
+		var forward = new MessageBuilder(message)
+				.setContent("From: %s\n%s".formatted(author.getAsMention(), message.getContentRaw()))
+				.build();
+		var action = JDAWrappers.message(event.getChannel(), forward)
+				.addActionRow(buttons);
+		
+		var messageReference = message.getMessageReference();
+		if(Objects.nonNull(messageReference)){
+			action = action.replyTo(messageReference);
+		}
+		
+		action.submit().thenCompose(m -> JDAWrappers.delete(event.getMessage()).submit());
+	}
+	
+	private void addReactions(@NotNull GuildMessageReceivedEvent event){
+		var guildConfiguration = Settings.get(event.getGuild());
+		var message = event.getMessage();
+		
+		var waitingReactionMessageConfiguration = new WaitingReactionMessageConfiguration(message, TODO, Map.of(DELETE_KEY, Boolean.toString(true)));
+		guildConfiguration.addMessagesAwaitingReaction(waitingReactionMessageConfiguration);
+		
+		JDAWrappers.addReaction(message, CHECK_OK).submit();
+		JDAWrappers.addReaction(message, PAPERCLIP).submit();
+		JDAWrappers.addReaction(message, RIGHT_ARROW_CURVING_LEFT).submit();
 	}
 }
