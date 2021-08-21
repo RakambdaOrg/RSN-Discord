@@ -85,7 +85,8 @@ public class AniListMediaListRunner extends IAniListRunner<MediaList, MediaListP
 				.flatMap(Optional::stream)
 				.collect(Collectors.toSet());
 		var mediaListsToSend = userElements.values().stream().flatMap(Set::stream)
-				.filter(mediaList -> mediaList.getCustomLists()
+				.filter(mediaList -> Optional.ofNullable(mediaList.getCustomLists())
+						.orElse(new HashMap<>())
 						.entrySet().stream()
 						.filter(Map.Entry::getValue)
 						.map(Map.Entry::getKey)
