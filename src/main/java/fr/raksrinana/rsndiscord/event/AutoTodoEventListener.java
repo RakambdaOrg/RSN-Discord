@@ -69,13 +69,18 @@ public class AutoTodoEventListener extends ListenerAdapter{
 		if(event.isWebhookMessage()){
 			return false;
 		}
+		
+		var jda = event.getJDA();
 		var message = event.getMessage();
 		if(!message.getAttachments().isEmpty()){
 			return false;
 		}
 		if(!message.getEmotes().stream()
-				.filter(emote -> emote.getGuild().isMember(event.getGuild().getJDA().getSelfUser()))
-				.allMatch(emote -> emote.canInteract(event.getGuild().getSelfMember()))){
+				.map(emote -> jda.getEmoteById(emote.getId()))
+				.allMatch(emote -> emote != null
+						&& emote.getGuild() != null
+						&& emote.getGuild().isMember(jda.getSelfUser())
+						&& emote.canInteract(event.getGuild().getSelfMember()))){
 			return false;
 		}
 		return true;
