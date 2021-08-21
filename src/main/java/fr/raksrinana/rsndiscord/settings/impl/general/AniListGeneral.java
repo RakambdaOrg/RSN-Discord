@@ -7,10 +7,10 @@ import fr.raksrinana.rsndiscord.settings.impl.general.anilist.AniListAccessToken
 import fr.raksrinana.rsndiscord.settings.types.UserDateConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -22,6 +22,7 @@ import static java.util.stream.Collectors.toSet;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @NoArgsConstructor
+@Log4j2
 public class AniListGeneral{
 	@JsonProperty("accessToken")
 	private final Set<AniListAccessTokenConfiguration> tokens = new HashSet<>();
@@ -91,8 +92,17 @@ public class AniListGeneral{
 	
 	@NotNull
 	public Set<Member> getRegisteredMembers(@NotNull Guild guild){
-		return tokens.stream().map(token -> guild.retrieveMemberById(token.getUserId()))
-				.map(RestAction::complete)
+		return tokens.stream()
+				.map(token -> {
+					var userId = token.getUserId();
+					try{
+						return guild.retrieveMemberById(userId).complete();
+					}
+					catch(Exception e){
+						log.error("Failed to get member {}", userId, e);
+						return null;
+					}
+				})
 				.filter(Objects::nonNull)
 				.collect(toSet());
 	}
