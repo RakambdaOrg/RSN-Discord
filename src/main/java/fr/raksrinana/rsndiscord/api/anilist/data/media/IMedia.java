@@ -56,13 +56,13 @@ public abstract class IMedia implements IAniListObject{
 	private final MediaType type;
 	
 	@JsonProperty("startDate")
-	private final FuzzyDate startDate = new FuzzyDate();
+	private FuzzyDate startDate = new FuzzyDate();
 	@JsonProperty("endDate")
-	private final FuzzyDate endDate = new FuzzyDate();
+	private FuzzyDate endDate = new FuzzyDate();
 	@JsonProperty("genres")
-	private final Set<String> genres = new HashSet<>();
+	private Set<String> genres = new HashSet<>();
 	@JsonProperty("synonyms")
-	private final Set<String> synonyms = new HashSet<>();
+	private Set<String> synonyms = new HashSet<>();
 	@JsonProperty("title")
 	private MediaTitle title;
 	@JsonProperty("season")

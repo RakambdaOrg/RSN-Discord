@@ -73,7 +73,9 @@ public class AutoTodoEventListener extends ListenerAdapter{
 		if(!message.getAttachments().isEmpty()){
 			return false;
 		}
-		if(!message.getEmotes().stream().allMatch(emote -> emote.canInteract(event.getGuild().getSelfMember()))){
+		if(!message.getEmotes().stream()
+				.filter(emote -> emote.getGuild().isMember(event.getGuild().getJDA().getSelfUser()))
+				.allMatch(emote -> emote.canInteract(event.getGuild().getSelfMember()))){
 			return false;
 		}
 		return true;

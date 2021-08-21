@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.lang.Boolean.TRUE;
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -58,15 +59,15 @@ public class MediaList implements IAniListDatedObject{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	
 	@JsonProperty("status")
-	private final MediaListStatus status = MediaListStatus.UNKNOWN;
+	private MediaListStatus status = MediaListStatus.UNKNOWN;
 	@JsonProperty("private")
-	private final boolean privateItem = false;
+	private boolean privateItem = false;
 	@JsonProperty("startedAt")
-	private final FuzzyDate startedAt = new FuzzyDate();
+	private FuzzyDate startedAt = new FuzzyDate();
 	@JsonProperty("completedAt")
-	private final FuzzyDate completedAt = new FuzzyDate();
+	private FuzzyDate completedAt = new FuzzyDate();
 	@JsonProperty("customLists")
-	private final Map<String, Boolean> customLists = new HashMap<>();
+	private Map<String, Boolean> customLists = new HashMap<>();
 	@JsonProperty("id")
 	private int id;
 	@JsonProperty("media")
@@ -126,7 +127,9 @@ public class MediaList implements IAniListDatedObject{
 			builder.addField(translate(guild, "anilist.list-repeat"), Integer.toString(getRepeat()), true);
 		}
 		
-		var lists = customLists.entrySet().stream()
+		var lists = Optional.ofNullable(customLists)
+				.orElse(new HashMap<>())
+				.entrySet().stream()
 				.filter(k -> nonNull(k.getValue()) && k.getValue())
 				.map(Map.Entry::getKey)
 				.collect(joining(", "));

@@ -21,7 +21,7 @@ public abstract class INotification implements IAniListDatedObject{
 	private final NotificationType type;
 	@JsonProperty("createdAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
-	private final ZonedDateTime createdAt = ZonedDateTime.now();
+	private ZonedDateTime createdAt = ZonedDateTime.now();
 	@JsonProperty("id")
 	private int id;
 	

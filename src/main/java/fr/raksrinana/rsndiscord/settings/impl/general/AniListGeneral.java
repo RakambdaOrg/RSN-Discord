@@ -93,16 +93,9 @@ public class AniListGeneral{
 	@NotNull
 	public Set<Member> getRegisteredMembers(@NotNull Guild guild){
 		return tokens.stream()
-				.map(token -> {
-					var userId = token.getUserId();
-					try{
-						return guild.retrieveMemberById(userId).complete();
-					}
-					catch(Exception e){
-						log.error("Failed to get member {}", userId, e);
-						return null;
-					}
-				})
+				.map(token -> guild.getJDA().retrieveUserById(token.getUserId()).complete())
+				.filter(guild::isMember)
+				.map(user -> guild.retrieveMember(user).complete())
 				.filter(Objects::nonNull)
 				.collect(toSet());
 	}
