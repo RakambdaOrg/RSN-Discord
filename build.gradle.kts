@@ -116,7 +116,7 @@ java {
 
 jib {
     from {
-        image = "openjdk:16-jre-slim"
+        image = "openjdk:16-slim"
         platforms {
             platform {
                 os = "linux"
@@ -134,5 +134,8 @@ jib {
             username = project.findProperty("dockerUsername").toString()
             password = project.findProperty("dockerPassword").toString()
         }
+    }
+    container {
+        creationTime = "USE_CURRENT_TIMESTAMP"
     }
 }
