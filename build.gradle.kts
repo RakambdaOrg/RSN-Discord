@@ -118,10 +118,10 @@ jib {
     from {
         image = "adoptopenjdk:16-jre"
         platforms {
-            platform {
-                os = "linux"
-                architecture = "arm64"
-            }
+//            platform {
+//                os = "linux"
+//                architecture = "arm64"
+//            }
             platform {
                 os = "linux"
                 architecture = "amd64"
