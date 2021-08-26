@@ -116,7 +116,7 @@ java {
 
 jib {
     from {
-        image = "adoptopenjdk:16-jre"
+        image = "openjdk:16-jre-slim"
         platforms {
             platform {
                 os = "linux"
