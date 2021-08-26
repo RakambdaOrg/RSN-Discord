@@ -38,21 +38,3 @@ jobs:
       - name: Push on Docker Hub
         if: success() && github.ref == 'refs/heads/main'
         run: ./gradlew jib -PdockerUsername=${{ secrets.DOCKER_USERNAME }} -PdockerPassword=${{ secrets.DOCKER_TOKEN }}
-
-  deploy:
-    name: Deploy
-    needs: [build]
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    environment: 
-      name: Raspberry
-      url: 'https://google.com/'
-    steps:
-      - name: Updating service
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
-          script: docker service update --force --image mrcraftcod/rsn-discord:latest rsn-discord_bot
