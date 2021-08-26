@@ -74,8 +74,10 @@ jobs:
           password: ${{ secrets.DOCKER_TOKEN }}
       - name: Set gradle permissions
         run: chmod +x gradlew
-      - name: Push on Docker Hub
+      - name: Build Docker image
         run: ./gradlew jibDockerBuild -PdockerUsername=${{ secrets.DOCKER_USERNAME }} -PdockerPassword=${{ secrets.DOCKER_TOKEN }}
+      - name: Push on Docker Hub
+        run: docker push mrcraftcod/rsn-discord
 
   deploy:
     name: Deploy
