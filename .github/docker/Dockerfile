@@ -2,6 +2,8 @@ FROM gradle:7.2-jdk16-hotspot AS build
 
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
+
+RUN ls -R .
 RUN gradle build --no-daemon
 
 FROM adoptopenjdk:16-jre
