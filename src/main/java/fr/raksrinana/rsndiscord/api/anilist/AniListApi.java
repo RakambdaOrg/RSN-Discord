@@ -115,7 +115,7 @@ public class AniListApi{
 		
 		var token = AniListApi.getAccessToken(member).orElseThrow(() -> {
 			Settings.getGeneral().getAniList().removeUser(user);
-			var message = translate(guild, "anilist.token-expired", guild.getName(), "");
+			var message = translate(guild, "anilist.token-expired", guild.getName(), "/external anilist register");
 			user.openPrivateChannel().submit()
 					.thenAccept(privateChannel -> privateChannel.sendMessage(message).submit());
 			return new IllegalStateException("No valid token found, please register again");
