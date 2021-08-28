@@ -83,10 +83,9 @@ public class AniListGeneral{
 		tokens.add(value);
 	}
 	
-	public void removeUser(@NotNull User user){
+	public void removeUserToken(@NotNull User user){
 		tokens.removeIf(t -> Objects.equals(t.getUserId(), user.getIdLong()));
 		refreshTokens.remove(user.getIdLong());
-		lastAccess.values().forEach(l -> l.removeIf(v -> Objects.equals(v.getUser().getUserId(), user.getIdLong())));
 		userIds.remove(user.getIdLong());
 	}
 	

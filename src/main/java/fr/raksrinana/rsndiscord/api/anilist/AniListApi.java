@@ -72,7 +72,6 @@ public class AniListApi{
 	
 	@NotNull
 	private static Optional<AniListAccessTokenConfiguration> getAccessToken(@NotNull Member member){
-		var guild = member.getGuild();
 		log.trace("Getting previous access token for {}", member);
 		
 		var accessToken = Settings.getGeneral()
@@ -114,7 +113,7 @@ public class AniListApi{
 		log.debug("Sending query to AniList for user {}", user);
 		
 		var token = AniListApi.getAccessToken(member).orElseThrow(() -> {
-			Settings.getGeneral().getAniList().removeUser(user);
+			Settings.getGeneral().getAniList().removeUserToken(user);
 			var message = translate(guild, "anilist.token-expired", guild.getName(), "/external anilist register");
 			user.openPrivateChannel().submit()
 					.thenAccept(privateChannel -> privateChannel.sendMessage(message).submit());
