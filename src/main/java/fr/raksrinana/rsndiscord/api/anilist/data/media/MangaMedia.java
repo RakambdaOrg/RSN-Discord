@@ -18,7 +18,7 @@ import static java.util.Optional.ofNullable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonTypeName("MANGA")
 @Getter
-public class MangaMedia extends IMedia{
+public class MangaMedia extends Media{
 	@JsonProperty("chapters")
 	private Integer chapters;
 	@JsonProperty("volumes")

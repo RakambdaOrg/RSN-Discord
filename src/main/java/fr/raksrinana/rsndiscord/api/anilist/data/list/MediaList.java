@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.api.anilist.data.FuzzyDate;
 import fr.raksrinana.rsndiscord.api.anilist.data.IAniListDatedObject;
 import fr.raksrinana.rsndiscord.api.anilist.data.IAniListObject;
-import fr.raksrinana.rsndiscord.api.anilist.data.media.IMedia;
+import fr.raksrinana.rsndiscord.api.anilist.data.media.Media;
 import fr.raksrinana.rsndiscord.api.anilist.data.media.MangaMedia;
 import fr.raksrinana.rsndiscord.utils.json.converter.SQLTimestampDeserializer;
 import lombok.Getter;
@@ -53,7 +53,7 @@ public class MediaList implements IAniListDatedObject{
 			}""".formatted(
 			FuzzyDate.getQuery("startedAt"),
 			FuzzyDate.getQuery("completedAt"),
-			IMedia.QUERY
+			Media.QUERY
 	);
 	
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -71,7 +71,7 @@ public class MediaList implements IAniListDatedObject{
 	@JsonProperty("id")
 	private int id;
 	@JsonProperty("media")
-	private IMedia media;
+	private Media media;
 	@JsonProperty("priority")
 	private Integer priority;
 	@JsonProperty("progress")

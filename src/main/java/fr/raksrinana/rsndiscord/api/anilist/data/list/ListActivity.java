@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.api.anilist.data.IAniListDatedObject;
 import fr.raksrinana.rsndiscord.api.anilist.data.IAniListObject;
-import fr.raksrinana.rsndiscord.api.anilist.data.media.IMedia;
+import fr.raksrinana.rsndiscord.api.anilist.data.media.Media;
 import fr.raksrinana.rsndiscord.utils.json.converter.SQLTimestampDeserializer;
 import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -37,7 +37,7 @@ public abstract class ListActivity implements IAniListDatedObject{
 			    progress
 			    siteUrl
 			    %s
-			}""".formatted(IMedia.QUERY);
+			}""".formatted(Media.QUERY);
 	@JsonProperty("createdAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
 	private ZonedDateTime createdAt;
@@ -46,7 +46,7 @@ public abstract class ListActivity implements IAniListDatedObject{
 	@JsonProperty("progress")
 	private String progress;
 	@JsonProperty("media")
-	private IMedia media;
+	private Media media;
 	@JsonProperty("id")
 	private int id;
 	

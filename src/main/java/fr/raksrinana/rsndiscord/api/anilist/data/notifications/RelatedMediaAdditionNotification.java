@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import fr.raksrinana.rsndiscord.api.anilist.data.media.IMedia;
+import fr.raksrinana.rsndiscord.api.anilist.data.media.Media;
 import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -21,7 +21,7 @@ import static java.awt.Color.PINK;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonTypeName("RELATED_MEDIA_ADDITION")
 @Getter
-public class RelatedMediaNotification extends INotification{
+public class RelatedMediaAdditionNotification extends Notification{
 	public static final String QUERY = """
 			RelatedMediaAdditionNotification {
 			    id
@@ -29,12 +29,12 @@ public class RelatedMediaNotification extends INotification{
 			    createdAt
 			    %s
 			}
-			""".formatted(IMedia.QUERY);
+			""".formatted(Media.QUERY);
 	
 	@JsonProperty("media")
-	private IMedia media;
+	private Media media;
 	
-	public RelatedMediaNotification(){
+	public RelatedMediaAdditionNotification(){
 		super(RELATED_MEDIA_ADDITION);
 	}
 	
@@ -52,7 +52,7 @@ public class RelatedMediaNotification extends INotification{
 	@NotNull
 	public URL getUrl(){
 		return Optional.of(getMedia())
-				.map(IMedia::getUrl)
+				.map(Media::getUrl)
 				.orElse(FALLBACK_URL);
 	}
 	

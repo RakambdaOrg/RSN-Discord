@@ -14,40 +14,44 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.Optional;
 import static fr.raksrinana.rsndiscord.api.anilist.AniListApi.FALLBACK_URL;
-import static fr.raksrinana.rsndiscord.api.anilist.data.notifications.NotificationType.AIRING;
+import static fr.raksrinana.rsndiscord.api.anilist.data.notifications.NotificationType.MEDIA_DATA_CHANGE;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
-import static java.awt.Color.GREEN;
+import static java.awt.Color.ORANGE;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonTypeName("AIRING")
+@JsonTypeName("MEDIA_DATA_CHANGE")
 @Getter
-public class AiringNotification extends Notification{
+public class MediaDataChangeNotification extends Notification{
 	public static final String QUERY = """
-			AiringNotification {
+			MediaDataChangeNotification {
 			    id
 			    type
-			    episode
+			    context
+			    reason
 			    createdAt
 			    %s
 			}
 			""".formatted(Media.QUERY);
 	
-	@JsonProperty("episode")
-	private int episode;
+	@JsonProperty("context")
+	private String context;
+	@JsonProperty("reason")
+	private String reason;
 	@JsonProperty("media")
 	private Media media;
 	
-	public AiringNotification(){
-		super(AIRING);
+	public MediaDataChangeNotification(){
+		super(MEDIA_DATA_CHANGE);
 	}
 	
 	@Override
 	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		builder.setTimestamp(getDate())
-				.setColor(GREEN)
-				.setTitle(translate(guild, "anilist.release"), getMedia().getUrl().toString())
-				.addField(translate(guild, "anilist.episode"), String.valueOf(getEpisode()), true)
+				.setColor(ORANGE)
+				.setTitle("Media data changed", getMedia().getUrl().toString())
+				.addField("Context", getContext(), true)
+				.addField("Reason", getReason(), true)
 				.addBlankField(false)
 				.addField(translate(guild, "anilist.media"), "", false);
 		getMedia().fillEmbed(guild, builder);
@@ -62,16 +66,20 @@ public class AiringNotification extends Notification{
 	}
 	
 	@Override
-	public int hashCode(){
-		return getEpisode();
+	public boolean equals(Object o){
+		if(this == o){
+			return true;
+		}
+		if(o == null || getClass() != o.getClass()){
+			return false;
+		}
+		MediaDataChangeNotification that = (MediaDataChangeNotification) o;
+		return Objects.equals(context, that.context) && Objects.equals(reason, that.reason) && Objects.equals(media, that.media);
 	}
 	
 	@Override
-	public boolean equals(Object obj){
-		if(!(obj instanceof AiringNotification notification)){
-			return false;
-		}
-		return Objects.equals(notification.getEpisode(), getEpisode()) && Objects.equals(notification.getMedia(), getMedia());
+	public int hashCode(){
+		return Objects.hash(context, reason, media);
 	}
 	
 	@Override

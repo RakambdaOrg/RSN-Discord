@@ -14,10 +14,13 @@ import java.time.ZonedDateTime;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes(value = {
 		@JsonSubTypes.Type(value = AiringNotification.class, name = "AIRING"),
-		@JsonSubTypes.Type(value = RelatedMediaNotification.class, name = "RELATED_MEDIA_ADDITION")
+		@JsonSubTypes.Type(value = RelatedMediaAdditionNotification.class, name = "RELATED_MEDIA_ADDITION"),
+		@JsonSubTypes.Type(value = MediaDataChangeNotification.class, name = "MEDIA_DATA_CHANGE"),
+		@JsonSubTypes.Type(value = MediaMergeNotification.class, name = "MEDIA_MERGE"),
+		@JsonSubTypes.Type(value = MediaDeletionNotification.class, name = "MEDIA_DELETION")
 })
 @Getter
-public abstract class INotification implements IAniListDatedObject{
+public abstract class Notification implements IAniListDatedObject{
 	private final NotificationType type;
 	@JsonProperty("createdAt")
 	@JsonDeserialize(using = SQLTimestampDeserializer.class)
@@ -25,7 +28,7 @@ public abstract class INotification implements IAniListDatedObject{
 	@JsonProperty("id")
 	private int id;
 	
-	public INotification(NotificationType type){
+	public Notification(NotificationType type){
 		this.type = type;
 	}
 	
@@ -48,6 +51,16 @@ public abstract class INotification implements IAniListDatedObject{
 				notifications(type_in: $type_in){
 					... on %s
 					... on %s
-				}""".formatted(AiringNotification.QUERY, RelatedMediaNotification.QUERY);
+					... on %s
+					... on %s
+					... on %s
+				}"""
+				.formatted(
+						AiringNotification.QUERY,
+						RelatedMediaAdditionNotification.QUERY,
+						MediaDataChangeNotification.QUERY,
+						MediaMergeNotification.QUERY,
+						MediaDeletionNotification.QUERY
+				);
 	}
 }

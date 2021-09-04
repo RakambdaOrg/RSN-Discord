@@ -1,13 +1,13 @@
 package fr.raksrinana.rsndiscord.api.anilist.query;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.raksrinana.rsndiscord.api.anilist.data.media.IMedia;
+import fr.raksrinana.rsndiscord.api.anilist.data.media.Media;
 import kong.unirest.json.JSONObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MediaPagedQuery implements IPagedQuery<IMedia>{
-	private static final String QUERY = IPagedQuery.pagedQuery(", $mediaId: Int", IMedia.getQueryWithId());
+public class MediaPagedQuery implements IPagedQuery<Media>{
+	private static final String QUERY = IPagedQuery.pagedQuery(", $mediaId: Int", Media.getQueryWithId());
 	
 	private final JSONObject variables;
 	private int currentPage = 0;
@@ -44,7 +44,7 @@ public class MediaPagedQuery implements IPagedQuery<IMedia>{
 	}
 	
 	@Nullable
-	public IMedia buildChange(@NotNull JSONObject change) throws Exception{
-		return new ObjectMapper().readerFor(IMedia.class).readValue(change.toString());
+	public Media buildChange(@NotNull JSONObject change) throws Exception{
+		return new ObjectMapper().readerFor(Media.class).readValue(change.toString());
 	}
 }

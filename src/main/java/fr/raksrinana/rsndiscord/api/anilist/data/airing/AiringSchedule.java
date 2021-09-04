@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fr.raksrinana.rsndiscord.api.anilist.data.IAniListDatedObject;
 import fr.raksrinana.rsndiscord.api.anilist.data.IAniListObject;
-import fr.raksrinana.rsndiscord.api.anilist.data.media.IMedia;
+import fr.raksrinana.rsndiscord.api.anilist.data.media.Media;
 import fr.raksrinana.rsndiscord.utils.json.converter.SQLTimestampDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +30,7 @@ public class AiringSchedule implements IAniListDatedObject{
 			    episode
 			    timeUntilAiring
 			    %s
-			}""".formatted(IMedia.QUERY);
+			}""".formatted(Media.QUERY);
 	
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
 	
@@ -42,7 +42,7 @@ public class AiringSchedule implements IAniListDatedObject{
 	@JsonProperty("episode")
 	private int episode;
 	@JsonProperty("media")
-	private IMedia media;
+	private Media media;
 	@JsonProperty("timeUntilAiring")
 	private int timeUntilAiring;
 	

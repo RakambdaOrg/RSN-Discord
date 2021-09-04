@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.api.anilist.query;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.raksrinana.rsndiscord.api.anilist.data.notifications.INotification;
+import fr.raksrinana.rsndiscord.api.anilist.data.notifications.Notification;
 import kong.unirest.json.JSONObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,8 +9,8 @@ import java.util.List;
 import static fr.raksrinana.rsndiscord.api.anilist.data.notifications.NotificationType.AIRING;
 import static fr.raksrinana.rsndiscord.api.anilist.data.notifications.NotificationType.RELATED_MEDIA_ADDITION;
 
-public class NotificationsPagedQuery implements IPagedQuery<INotification>{
-	private static final String QUERY = IPagedQuery.pagedQuery(", $type_in: [NotificationType]", INotification.getQuery());
+public class NotificationsPagedQuery implements IPagedQuery<Notification>{
+	private static final String QUERY = IPagedQuery.pagedQuery(", $type_in: [NotificationType]", Notification.getQuery());
 	
 	private final JSONObject variables;
 	private int currentPage = 0;
@@ -52,7 +52,7 @@ public class NotificationsPagedQuery implements IPagedQuery<INotification>{
 	}
 	
 	@Nullable
-	public INotification buildChange(@NotNull JSONObject change) throws Exception{
-		return new ObjectMapper().readerFor(INotification.class).readValue(change.toString());
+	public Notification buildChange(@NotNull JSONObject change) throws Exception{
+		return new ObjectMapper().readerFor(Notification.class).readValue(change.toString());
 	}
 }

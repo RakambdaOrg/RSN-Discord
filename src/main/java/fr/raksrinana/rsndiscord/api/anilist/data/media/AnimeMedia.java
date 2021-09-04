@@ -20,7 +20,7 @@ import static java.util.Optional.ofNullable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonTypeName("ANIME")
 @Getter
-public class AnimeMedia extends IMedia{
+public class AnimeMedia extends Media{
 	@JsonProperty("episodes")
 	private Integer episodes;
 	

@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.runner.impl.anilist;
 
-import fr.raksrinana.rsndiscord.api.anilist.data.notifications.INotification;
+import fr.raksrinana.rsndiscord.api.anilist.data.notifications.Notification;
 import fr.raksrinana.rsndiscord.api.anilist.query.NotificationsPagedQuery;
 import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 @ScheduledRunner
-public class AniListNotificationRunner extends IAniListRunner<INotification, NotificationsPagedQuery>{
+public class AniListNotificationRunner extends IAniListRunner<Notification, NotificationsPagedQuery>{
 	@NotNull
 	@Override
 	public String getName(){
@@ -62,8 +62,8 @@ public class AniListNotificationRunner extends IAniListRunner<INotification, Not
 	}
 	
 	@Override
-	public void sendMessages(@NotNull JDA jda, @NotNull Set<TextChannel> channels, @NotNull Map<User, Set<INotification>> userElements){
-		var notifications = new HashMap<INotification, List<User>>();
+	public void sendMessages(@NotNull JDA jda, @NotNull Set<TextChannel> channels, @NotNull Map<User, Set<Notification>> userElements){
+		var notifications = new HashMap<Notification, List<User>>();
 		for(var entry : userElements.entrySet()){
 			for(var notification : entry.getValue()){
 				notifications.putIfAbsent(notification, new LinkedList<>());

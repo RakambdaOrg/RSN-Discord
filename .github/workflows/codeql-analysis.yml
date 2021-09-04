@@ -19,7 +19,7 @@ jobs:
       - name: Setup Java JDK
         uses: actions/setup-java@v2
         with:
-          distribution: 'adopt'
+          distribution: 'temurin'
           java-version: 16
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v1
@@ -27,8 +27,5 @@ jobs:
           languages: java
       - name: Autobuild
         uses: github/codeql-action/autobuild@v1
-        env:
-          GITHUB_USER: RakSrinaNa
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1

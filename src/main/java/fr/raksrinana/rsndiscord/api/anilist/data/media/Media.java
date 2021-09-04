@@ -13,6 +13,7 @@ import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.Optional.ofNullable;
@@ -25,7 +26,7 @@ import static java.util.Optional.ofNullable;
 		@JsonSubTypes.Type(value = MangaMedia.class, name = "MANGA")
 })
 @Getter
-public abstract class IMedia implements IAniListObject{
+public abstract class Media implements IAniListObject{
 	public static final String QUERY = """
 			media {
 			    id
@@ -40,6 +41,7 @@ public abstract class IMedia implements IAniListObject{
 			    synonyms
 			    isAdult
 			    siteUrl
+			    source(version: 3)
 			    %s
 			    %s
 			    %s
@@ -75,12 +77,16 @@ public abstract class IMedia implements IAniListObject{
 	private URL url;
 	@JsonProperty("coverImage")
 	private MediaCoverImage coverImage;
+	@JsonProperty("source")
+	private MediaSource source;
+	@JsonProperty("rankings")
+	private Set<MediaRank> rankings = new HashSet<>();
 	@JsonProperty("isAdult")
 	private boolean isAdult;
 	@JsonProperty("id")
 	private int id;
 	
-	protected IMedia(@NotNull MediaType type){
+	protected Media(@NotNull MediaType type){
 		this.type = type;
 	}
 	
@@ -100,6 +106,7 @@ public abstract class IMedia implements IAniListObject{
 		
 		getStartDate().asDate().ifPresent(startDate -> builder.addField(translate(guild, "anilist.started"), startDate.format(DF), true));
 		getEndDate().asDate().ifPresent(startDate -> builder.addField(translate(guild, "anilist.ended"), startDate.format(DF), true));
+		rankings.forEach(ranking -> ranking.fillEmbed(guild, builder));
 		
 		if(!genres.isEmpty()){
 			builder.addField(translate(guild, "anilist.genres"), String.join(", ", getGenres()), true);
@@ -107,6 +114,7 @@ public abstract class IMedia implements IAniListObject{
 		if(!synonyms.isEmpty()){
 			builder.addField(translate(guild, "anilist.synonyms"), String.join(", ", getSynonyms()), true);
 		}
+		Optional.ofNullable(getSource()).ifPresent(source -> builder.addField("Source", source.toString(), true));
 		builder.setThumbnail(getCoverImage().getLarge().toString())
 				.setFooter("ID: " + getId());
 	}
@@ -123,7 +131,7 @@ public abstract class IMedia implements IAniListObject{
 	
 	@Override
 	public boolean equals(Object obj){
-		return obj instanceof IMedia && Objects.equals(((IMedia) obj).getId(), getId());
+		return obj instanceof Media && Objects.equals(((Media) obj).getId(), getId());
 	}
 	
 	@Override
