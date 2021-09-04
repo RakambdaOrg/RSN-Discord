@@ -24,7 +24,7 @@ public class MediaDeletionNotification extends Notification{
 			MediaDeletionNotification {
 			    id
 			    type
-			    deletedMediaTitles
+			    deletedMediaTitle
 			    context
 			    reason
 			    createdAt
