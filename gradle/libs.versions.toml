@@ -16,6 +16,7 @@ twittered-version = "2.8"
 jetbrains-annotations-version = "22.0.0"
 kitteh-irc-version = "8.0.0"
 opus-version = "1.1.0"
+rssreader-version = "v2.5.0"
 
 shadow-version = "7.0.0"
 names-version = "0.39.0"
@@ -46,6 +47,7 @@ jetbrainsAnnotations = { group = "org.jetbrains", name = "annotations", version.
 kittehIrc = { group = "org.kitteh.irc", name = "client-lib", version.ref = "kitteh-irc-version" }
 opus-api = { group = "club.minnced", name = "opus-java-api", version.ref = "opus-version" }
 opus-natives = { group = "club.minnced", name = "opus-java-natives", version.ref = "opus-version" }
+rssreader = { group ="com.github.w3stling", name = "rssreader", version.ref = "rssreader-version" }
 
 [bundles]
 jackson = ["jackson-core", "jackson-annotations", "jackson-databind"]

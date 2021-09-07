@@ -1,13 +1,14 @@
 package fr.raksrinana.rsndiscord.command.impl;
 
-import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command.BotSlashCommand;
+import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command.base.SimpleCommand;
 import fr.raksrinana.rsndiscord.command.impl.configuration.IConfigurationAccessor;
 import fr.raksrinana.rsndiscord.command.impl.configuration.map.ChannelMapConfigurationAccessor;
 import fr.raksrinana.rsndiscord.command.impl.configuration.set.ChannelSetConfigurationAccessor;
 import fr.raksrinana.rsndiscord.command.impl.configuration.set.RoleSetConfigurationAccessor;
 import fr.raksrinana.rsndiscord.command.impl.configuration.set.StringSetConfigurationAccessor;
+import fr.raksrinana.rsndiscord.command.impl.configuration.set.URLSetConfigurationAccessor;
 import fr.raksrinana.rsndiscord.command.impl.configuration.value.*;
 import fr.raksrinana.rsndiscord.settings.ConfigurationOperation;
 import fr.raksrinana.rsndiscord.settings.Settings;
@@ -20,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.command.CommandResult.BAD_ARGUMENTS;
 import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
-import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED_NO_MESSAGE;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
 @BotSlashCommand
@@ -71,31 +72,34 @@ public class ConfigurationCommand extends SimpleCommand{
 		accessors.add(new StringSetConfigurationAccessor("joinleave.joinImages", s -> s.getJoinLeaveConfiguration().getJoinImages()));
 		accessors.add(new StringSetConfigurationAccessor("joinleave.leaveImages", s -> s.getJoinLeaveConfiguration().getLeaveImages()));
 		
-		accessors.add(new LongConfigurationAccessor("nickname.changeDelay", s -> s.getNicknameConfiguration().getChangeDelay(), (s,v) -> s.getNicknameConfiguration().setChangeDelay(v)));
+		accessors.add(new LongConfigurationAccessor("nickname.changeDelay", s -> s.getNicknameConfiguration().getChangeDelay(), (s, v) -> s.getNicknameConfiguration().setChangeDelay(v)));
 		
-		accessors.add(new ChannelConfigurationAccessor("rainbow6.matchChannel", s -> s.getRainbowSixConfiguration().getMatchNotificationChannel(), (s,v) -> s.getRainbowSixConfiguration().setMatchNotificationChannel(v)));
+		accessors.add(new ChannelConfigurationAccessor("rainbow6.matchChannel", s -> s.getRainbowSixConfiguration().getMatchNotificationChannel(), (s, v) -> s.getRainbowSixConfiguration().setMatchNotificationChannel(v)));
 		
 		accessors.add(new RoleSetConfigurationAccessor("randomkick.kickableRoles", s -> s.getRandomKick().getKickableRoles()));
-		accessors.add(new RoleConfigurationAccessor("randomkick.kickedRole", s -> s.getRandomKick().getKickedRole(), (s,v) -> s.getRandomKick().setKickedRole(v)));
-		accessors.add(new DoubleConfigurationAccessor("randomkick.kickRoleProbability", s -> s.getRandomKick().getKickRoleProbability(), (s,v) -> s.getRandomKick().setKickRoleProbability(v)));
+		accessors.add(new RoleConfigurationAccessor("randomkick.kickedRole", s -> s.getRandomKick().getKickedRole(), (s, v) -> s.getRandomKick().setKickedRole(v)));
+		accessors.add(new DoubleConfigurationAccessor("randomkick.kickRoleProbability", s -> s.getRandomKick().getKickRoleProbability(), (s, v) -> s.getRandomKick().setKickRoleProbability(v)));
 		accessors.add(new RoleSetConfigurationAccessor("randomkick.randomKickRolesPing", s -> s.getRandomKick().getRandomKickRolesPing()));
 		
 		accessors.add(new ChannelSetConfigurationAccessor("reactions.autoTodoChannels", s -> s.getReactionsConfiguration().getAutoTodoChannels()));
 		accessors.add(new ChannelMapConfigurationAccessor("reactions.savedForwardingChannels", s -> s.getReactionsConfiguration().getSavedForwarding()));
 		
-		accessors.add(new ChannelConfigurationAccessor("trakt.mediaChangeChannel", s -> s.getTraktConfiguration().getMediaChangeChannel(), (s,v) -> s.getTraktConfiguration().setMediaChangeChannel(v)));
-		accessors.add(new ChannelConfigurationAccessor("trakt.thaChannel", s -> s.getTraktConfiguration().getThaChannel(), (s,v) -> s.getTraktConfiguration().setThaChannel(v)));
-		accessors.add(new UserConfigurationAccessor("trakt.thaUser", s -> s.getTraktConfiguration().getThaUser(), (s,v) -> s.getTraktConfiguration().setThaUser(v)));
+		accessors.add(new ChannelConfigurationAccessor("trakt.mediaChangeChannel", s -> s.getTraktConfiguration().getMediaChangeChannel(), (s, v) -> s.getTraktConfiguration().setMediaChangeChannel(v)));
+		accessors.add(new ChannelConfigurationAccessor("trakt.thaChannel", s -> s.getTraktConfiguration().getThaChannel(), (s, v) -> s.getTraktConfiguration().setThaChannel(v)));
+		accessors.add(new UserConfigurationAccessor("trakt.thaUser", s -> s.getTraktConfiguration().getThaUser(), (s, v) -> s.getTraktConfiguration().setThaUser(v)));
 		
 		accessors.add(new StringSetConfigurationAccessor("twitch.autoReconnect", s -> s.getTwitchConfiguration().getTwitchAutoConnectUsers()));
-		accessors.add(new BooleanConfigurationAccessor("twitch.forward", s -> s.getTwitchConfiguration().getIrcForward(), (s,v) -> s.getTwitchConfiguration().setIrcForward(v)));
-		accessors.add(new StringConfigurationAccessor("twitch.randomKickRewardId", s -> s.getTwitchConfiguration().getRandomKickRewardId(), (s,v) -> s.getTwitchConfiguration().setRandomKickRewardId(v)));
-		accessors.add(new ChannelConfigurationAccessor("twitch.channel", s -> s.getTwitchConfiguration().getTwitchChannel(), (s,v) -> s.getTwitchConfiguration().setTwitchChannel(v)));
+		accessors.add(new BooleanConfigurationAccessor("twitch.forward", s -> s.getTwitchConfiguration().getIrcForward(), (s, v) -> s.getTwitchConfiguration().setIrcForward(v)));
+		accessors.add(new StringConfigurationAccessor("twitch.randomKickRewardId", s -> s.getTwitchConfiguration().getRandomKickRewardId(), (s, v) -> s.getTwitchConfiguration().setRandomKickRewardId(v)));
+		accessors.add(new ChannelConfigurationAccessor("twitch.channel", s -> s.getTwitchConfiguration().getTwitchChannel(), (s, v) -> s.getTwitchConfiguration().setTwitchChannel(v)));
 		
-		accessors.add(new ChannelConfigurationAccessor("twitter.searchChannel", s -> s.getTwitterConfiguration().getSearchChannel(), (s,v) -> s.getTwitterConfiguration().setSearchChannel(v)));
+		accessors.add(new ChannelConfigurationAccessor("twitter.searchChannel", s -> s.getTwitterConfiguration().getSearchChannel(), (s, v) -> s.getTwitterConfiguration().setSearchChannel(v)));
 		accessors.add(new StringSetConfigurationAccessor("twitter.searches", s -> s.getTwitterConfiguration().getSearches()));
-		accessors.add(new ChannelConfigurationAccessor("twitter.usersChannel", s -> s.getTwitterConfiguration().getUsersChannel(), (s,v) -> s.getTwitterConfiguration().setUsersChannel(v)));
+		accessors.add(new ChannelConfigurationAccessor("twitter.usersChannel", s -> s.getTwitterConfiguration().getUsersChannel(), (s, v) -> s.getTwitterConfiguration().setUsersChannel(v)));
 		accessors.add(new StringSetConfigurationAccessor("twitter.users", s -> s.getTwitterConfiguration().getUserIds()));
+		
+		accessors.add(new ChannelConfigurationAccessor("rss.channel", s -> s.getRss().getChannel(), (s, v) -> s.getRss().setChannel(v)));
+		accessors.add(new URLSetConfigurationAccessor("rss.feed", s -> s.getRss().getFeeds()));
 		
 		this.accessors = accessors.stream().collect(Collectors.toMap(IConfigurationAccessor::getName, Function.identity()));
 	}
@@ -163,6 +167,10 @@ public class ConfigurationCommand extends SimpleCommand{
 			JDAWrappers.reply(event, "Unsupported operation " + operation).submit();
 			return HANDLED;
 		}
+		catch(RuntimeException e){
+			log.error("Failed to apply configuration change", e);
+			return BAD_ARGUMENTS;
+		}
 	}
 	
 	private CommandResult handleSetOperation(SlashCommandEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
@@ -186,11 +194,23 @@ public class ConfigurationCommand extends SimpleCommand{
 	}
 	
 	private CommandResult handleAddOperation(SlashCommandEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
-		return HANDLED_NO_MESSAGE;
+		if(accessor.add(configuration, event.getOption(VALUE_OPTION_ID).getAsString())){
+			JDAWrappers.reply(event, "Value added").submit();
+		}
+		else{
+			JDAWrappers.reply(event, "Failed to add value").submit();
+		}
+		return HANDLED;
 	}
 	
 	private CommandResult handleRemoveOperation(SlashCommandEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
-		return HANDLED_NO_MESSAGE;
+		if(accessor.remove(configuration, event.getOption(VALUE_OPTION_ID).getAsString())){
+			JDAWrappers.reply(event, "Value removed").submit();
+		}
+		else{
+			JDAWrappers.reply(event, "Failed to remove value").submit();
+		}
+		return HANDLED;
 	}
 	
 	private CommandResult handleShowOperation(SlashCommandEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
