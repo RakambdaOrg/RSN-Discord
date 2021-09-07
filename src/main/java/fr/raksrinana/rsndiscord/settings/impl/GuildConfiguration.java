@@ -142,6 +142,10 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@JsonAlias("scheduleActionHandlers")
 	@Getter
 	private Map<String, IScheduleHandler> scheduleHandlers = new ConcurrentHashMap<>();
+	@JsonProperty("rss")
+	@Getter
+	@Setter
+	private RSSConfiguration rss = new RSSConfiguration();
 	
 	public GuildConfiguration(long guildId){
 		this.guildId = guildId;

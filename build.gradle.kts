@@ -33,6 +33,7 @@ dependencies {
     implementation(libs.reflections)
     implementation(libs.twittered)
     implementation(libs.kittehIrc)
+    implementation(libs.rssreader)
 
     compileOnly(libs.jetbrainsAnnotations)
 }
