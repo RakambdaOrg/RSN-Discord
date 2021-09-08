@@ -66,7 +66,7 @@ public class RSSRunner implements IScheduledRunner{
 		item.getLink().ifPresent(link -> builder.addField("Link", link, true));
 		item.getPubDateZonedDateTime().ifPresent(builder::setTimestamp);
 		
-		JDAWrappers.message(channel, builder.build());
+		JDAWrappers.message(channel, builder.build()).submit();
 	}
 	
 	@Override
