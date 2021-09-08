@@ -18,7 +18,7 @@ import static fr.raksrinana.rsndiscord.api.anilist.AniListApi.FALLBACK_URL;
 @NoArgsConstructor
 public class MediaRank implements IAniListObject{
 	public static final String QUERY = """
-			media {
+			rankings {
 			    id
 			    rank
 			    type

@@ -46,11 +46,13 @@ public abstract class Media implements IAniListObject{
 			    %s
 			    %s
 			    %s
+			    %s
 			}""".formatted(
 			MediaTitle.QUERY,
 			FuzzyDate.getQuery("startDate"),
 			FuzzyDate.getQuery("endDate"),
-			MediaCoverImage.QUERY
+			MediaCoverImage.QUERY,
+			MediaRank.QUERY
 	);
 	
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
