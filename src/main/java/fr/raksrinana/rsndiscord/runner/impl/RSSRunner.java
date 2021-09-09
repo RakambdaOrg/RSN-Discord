@@ -1,12 +1,13 @@
 package fr.raksrinana.rsndiscord.runner.impl;
 
+import com.apptastic.rssreader.Channel;
 import com.apptastic.rssreader.DateTime;
 import com.apptastic.rssreader.Item;
 import com.apptastic.rssreader.RssReader;
 import fr.raksrinana.rsndiscord.runner.api.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.impl.guild.RSSConfiguration;
+import fr.raksrinana.rsndiscord.settings.impl.guild.rss.RSSConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -40,7 +41,8 @@ public class RSSRunner implements IScheduledRunner{
 	}
 	
 	private void processFeed(@NotNull RSSConfiguration rssConfiguration, @NotNull TextChannel channel, @NotNull URL url){
-		var lastDate = rssConfiguration.getLastPublicationDate(url.toString());
+		var feedInfo = rssConfiguration.getFeedInfo(url.toString());
+		var lastDate = feedInfo.getLastPublicationDate();
 		reader.readAsync(url.toString())
 				.thenAccept(items -> {
 					var newItems = items.sorted()
@@ -53,7 +55,12 @@ public class RSSRunner implements IScheduledRunner{
 							.flatMap(item -> item.getPubDate().map(DateTime::toEpochMilli).stream())
 							.mapToLong(l -> l)
 							.max()
-							.ifPresent(maxDate -> rssConfiguration.setLastPublicationDate(url.toString(), maxDate));
+							.ifPresent(feedInfo::setLastPublicationDate);
+					
+					newItems.stream().findAny()
+							.map(Item::getChannel)
+							.map(Channel::getTitle)
+							.ifPresent(feedInfo::setTitle);
 				});
 	}
 	

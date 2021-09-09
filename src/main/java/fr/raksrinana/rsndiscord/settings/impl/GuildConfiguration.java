@@ -16,6 +16,7 @@ import fr.raksrinana.rsndiscord.settings.impl.guild.birthday.BirthdaysConfigurat
 import fr.raksrinana.rsndiscord.settings.impl.guild.permission.PermissionsConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.reaction.ReactionsConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.reaction.WaitingReactionMessageConfiguration;
+import fr.raksrinana.rsndiscord.settings.impl.guild.rss.RSSConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.CategoryConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;

@@ -1,4 +1,4 @@
-package fr.raksrinana.rsndiscord.settings.impl.guild;
+package fr.raksrinana.rsndiscord.settings.impl.guild.rss;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -34,16 +34,15 @@ public class RSSConfiguration implements ICompositeConfiguration{
 	@JsonDeserialize(contentUsing = URLDeserializer.class)
 	@JsonSerialize(contentUsing = URLSerializer.class)
 	private Set<URL> feeds = new HashSet<>();
-	@JsonProperty("lastDate")
-	private Map<String, Long> lastPublicationDate = new ConcurrentHashMap<>();
+	@JsonProperty("feedInfo")
+	@Getter
+	@JsonDeserialize(contentUsing = URLDeserializer.class)
+	@JsonSerialize(contentUsing = URLSerializer.class)
+	private Map<String, FeedInfo> feedInfo = new ConcurrentHashMap<>();
 	
 	@NotNull
-	public Optional<Long> getLastPublicationDate(@NotNull String key){
-		return Optional.ofNullable(lastPublicationDate.get(key));
-	}
-	
-	public void setLastPublicationDate(@NotNull String key, long value){
-		lastPublicationDate.put(key, value);
+	public FeedInfo getFeedInfo(@NotNull String key){
+		return feedInfo.computeIfAbsent(key, k -> new FeedInfo());
 	}
 	
 	@NotNull
