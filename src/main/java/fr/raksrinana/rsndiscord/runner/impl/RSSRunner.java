@@ -18,7 +18,9 @@ import org.jetbrains.annotations.NotNull;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import static java.awt.Color.GREEN;
 import static java.util.concurrent.TimeUnit.HOURS;
+import static net.dv8tion.jda.api.entities.MessageEmbed.DESCRIPTION_MAX_LENGTH;
 
 @ScheduledRunner
 public class RSSRunner implements IScheduledRunner{
@@ -66,8 +68,11 @@ public class RSSRunner implements IScheduledRunner{
 	
 	private void publish(@NotNull TextChannel channel, @NotNull Item item){
 		var builder = new EmbedBuilder();
-		builder.setTitle("New RSS entry in " + item.getChannel().getTitle());
-		item.getDescription().ifPresent(builder::setDescription);
+		builder.setColor(GREEN);
+		builder.setTitle("RSS: " + item.getChannel().getTitle());
+		item.getDescription()
+				.map(desc -> desc.substring(0, Math.min(desc.length(), DESCRIPTION_MAX_LENGTH)))
+				.ifPresent(builder::setDescription);
 		item.getAuthor().ifPresent(builder::setAuthor);
 		item.getCategory().ifPresent(category -> builder.addField("Category", category, true));
 		item.getLink().ifPresent(link -> builder.addField("Link", link, true));
