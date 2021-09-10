@@ -3,19 +3,20 @@ package fr.raksrinana.rsndiscord.api.anilist.data.media;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@RequiredArgsConstructor
+@Getter
 public enum MediaRankType{
-	RATED("Rated"),
-	POPULAR("Popular");
+	RATED("Rated", "❤️"),
+	POPULAR("Popular", "⭐");
 	
 	private final String value;
-	
-	MediaRankType(String value){
-		this.value = value;
-	}
+	private final String icon;
 	
 	@JsonCreator
 	@NotNull

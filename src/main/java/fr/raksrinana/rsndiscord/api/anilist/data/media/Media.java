@@ -12,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import static fr.raksrinana.rsndiscord.api.anilist.data.media.MediaRankType.POPULAR;
+import static fr.raksrinana.rsndiscord.api.anilist.data.media.MediaRankType.RATED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.Optional.ofNullable;
 
@@ -105,7 +107,6 @@ public abstract class Media implements IAniListObject{
 		
 		getStartDate().asDate().ifPresent(startDate -> builder.addField(translate(guild, "anilist.started"), startDate.format(DF), true));
 		getEndDate().asDate().ifPresent(startDate -> builder.addField(translate(guild, "anilist.ended"), startDate.format(DF), true));
-		Optional.ofNullable(rankings).stream().flatMap(Collection::stream).forEach(ranking -> ranking.fillEmbed(guild, builder));
 		
 		if(!genres.isEmpty()){
 			builder.addField(translate(guild, "anilist.genres"), String.join(", ", getGenres()), true);
@@ -114,6 +115,20 @@ public abstract class Media implements IAniListObject{
 			builder.addField(translate(guild, "anilist.synonyms"), String.join(", ", getSynonyms()), true);
 		}
 		Optional.ofNullable(getSource()).ifPresent(source -> builder.addField(translate(guild, "anilist.source"), source.toString(), true));
+		
+		Optional.ofNullable(rankings).stream()
+				.flatMap(Collection::stream)
+				.filter(rank -> rank.getType() == RATED)
+				.sorted()
+				.findFirst()
+				.ifPresent(ranking -> ranking.fillEmbed(guild, builder));
+		Optional.ofNullable(rankings).stream()
+				.flatMap(Collection::stream)
+				.filter(rank -> rank.getType() == POPULAR)
+				.sorted()
+				.findFirst()
+				.ifPresent(ranking -> ranking.fillEmbed(guild, builder));
+		
 		builder.setThumbnail(getCoverImage().getLarge().toString())
 				.setFooter("ID: " + getId());
 	}

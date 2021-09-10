@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 import java.net.URL;
+import java.util.Objects;
 import static fr.raksrinana.rsndiscord.api.anilist.AniListApi.FALLBACK_URL;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
@@ -43,17 +44,51 @@ public class MediaRank implements IAniListObject{
 	@JsonProperty("season")
 	private MediaSeason season;
 	@JsonProperty("allTime")
-	private Boolean allTime;
+	private boolean allTime;
 	@JsonProperty("context")
 	private String context;
 	
 	@Override
 	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder){
-		builder.addField(translate(guild, "anilist.ranking"), getContext(), true);
+		var sb = new StringBuilder(getType().getIcon())
+				.append(" ")
+				.append("#")
+				.append(getRank())
+				.append(" ")
+				.append(getContext());
+		
+		if(Objects.nonNull(getYear())){
+			sb.append(" ").append(getYear());
+		}
+		
+		builder.addField(translate(guild, "anilist.ranking"), "#%d %s".formatted(getRank(), getContext()), true);
 	}
 	
 	@Override
 	public int compareTo(@NotNull IAniListObject o){
+		if(o instanceof MediaRank mr){
+			if(isAllTime() && mr.isAllTime()){
+				return 0;
+			}
+			if(isAllTime()){
+				return -1;
+			}
+			if(mr.isAllTime()){
+				return 1;
+			}
+			
+			var y1 = getYear() == null ? 0 : getYear();
+			var y2 = mr.getYear() == null ? 0 : mr.getYear();
+			if(y1 != y2){
+				return Integer.compare(y1, y2);
+			}
+			
+			var s1 = getSeason() == null ? 0 : getSeason().getIndex();
+			var s2 = getSeason() == null ? 0 : getSeason().getIndex();
+			if(s1 != s2){
+				return Integer.compare(s1, s2);
+			}
+		}
 		return Integer.compare(getId(), o.getId());
 	}
 	
