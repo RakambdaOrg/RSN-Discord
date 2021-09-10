@@ -45,21 +45,21 @@ public class MatchesRunner implements IScheduledRunner{
 	private void processNewMatches(@NotNull JDA jda, @NotNull List<RainbowSixMatch> matches){
 		matches.stream()
 				.filter(match -> !matchesInProgress.containsKey(match.getId()))
-				.forEach(match -> {
-					var embed = createEmbed(jda.getSelfUser(), match);
-					sendToChannels(jda, channel -> newMatch(embed, channel)
-							.thenAccept(message -> setMessageId(match.getId(), channel.getIdLong(), message.getIdLong())));
-				});
+				.forEach(match -> sendToChannels(jda, channel -> {
+					var embed = createEmbed(channel.getGuild(), jda.getSelfUser(), match);
+					newMatch(embed, channel)
+							.thenAccept(message -> setMessageId(match.getId(), channel.getIdLong(), message.getIdLong()));
+				}));
 	}
 	
 	private void processOngoingMatches(@NotNull JDA jda, @NotNull List<RainbowSixMatch> matches){
 		matches.stream()
 				.filter(match -> matchesInProgress.containsKey(match.getId()))
-				.forEach(match -> {
-					var embed = createEmbed(jda.getSelfUser(), match);
-					sendToChannels(jda, channel -> updateMatch(embed, channel, getMessageId(match.getId(), channel.getIdLong()).orElseThrow())
-							.thenAccept(message -> setMessageId(match.getId(), channel.getIdLong(), message.getIdLong())));
-				});
+				.forEach(match -> sendToChannels(jda, channel -> {
+					var embed = createEmbed(channel.getGuild(), jda.getSelfUser(), match);
+					updateMatch(embed, channel, getMessageId(match.getId(), channel.getIdLong()).orElseThrow())
+							.thenAccept(message -> setMessageId(match.getId(), channel.getIdLong(), message.getIdLong()));
+				}));
 	}
 	
 	private void processEndedMatches(@NotNull JDA jda, @NotNull List<RainbowSixMatch> matches){
@@ -71,11 +71,11 @@ public class MatchesRunner implements IScheduledRunner{
 							.stream()
 							.flatMap(List::stream);
 				})
-				.forEach(match -> {
-					var embed = createEmbed(jda.getSelfUser(), match);
-					sendToChannels(jda, channel -> updateMatch(embed, channel, getMessageId(match.getId(), channel.getIdLong()).orElseThrow())
-							.thenAccept(message -> removeIdForMatch(match.getId(), channel.getIdLong())));
-				});
+				.forEach(match -> sendToChannels(jda, channel -> {
+					var embed = createEmbed(channel.getGuild(), jda.getSelfUser(), match);
+					updateMatch(embed, channel, getMessageId(match.getId(), channel.getIdLong()).orElseThrow())
+							.thenAccept(message -> removeIdForMatch(match.getId(), channel.getIdLong()));
+				}));
 	}
 	
 	private Optional<Long> getMessageId(int matchId, long channelId){
@@ -110,9 +110,9 @@ public class MatchesRunner implements IScheduledRunner{
 	}
 	
 	@NotNull
-	private MessageEmbed createEmbed(@NotNull SelfUser selfUser, @NotNull RainbowSixMatch match){
+	private MessageEmbed createEmbed(@NotNull Guild guild, @NotNull SelfUser selfUser, @NotNull RainbowSixMatch match){
 		var builder = new EmbedBuilder().setAuthor(selfUser.getName(), null, selfUser.getAvatarUrl());
-		match.fillEmbed(builder);
+		match.fillEmbed(guild, builder);
 		return builder.build();
 	}
 	
