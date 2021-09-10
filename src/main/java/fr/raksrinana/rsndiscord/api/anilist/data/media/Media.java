@@ -11,10 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.Optional.ofNullable;
 
@@ -108,7 +105,7 @@ public abstract class Media implements IAniListObject{
 		
 		getStartDate().asDate().ifPresent(startDate -> builder.addField(translate(guild, "anilist.started"), startDate.format(DF), true));
 		getEndDate().asDate().ifPresent(startDate -> builder.addField(translate(guild, "anilist.ended"), startDate.format(DF), true));
-		rankings.forEach(ranking -> ranking.fillEmbed(guild, builder));
+		Optional.ofNullable(rankings).stream().flatMap(Collection::stream).forEach(ranking -> ranking.fillEmbed(guild, builder));
 		
 		if(!genres.isEmpty()){
 			builder.addField(translate(guild, "anilist.genres"), String.join(", ", getGenres()), true);
