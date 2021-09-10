@@ -36,8 +36,6 @@ public class RSSConfiguration implements ICompositeConfiguration{
 	private Set<URL> feeds = new HashSet<>();
 	@JsonProperty("feedInfo")
 	@Getter
-	@JsonDeserialize(contentUsing = URLDeserializer.class)
-	@JsonSerialize(contentUsing = URLSerializer.class)
 	private Map<String, FeedInfo> feedInfo = new ConcurrentHashMap<>();
 	
 	@NotNull
