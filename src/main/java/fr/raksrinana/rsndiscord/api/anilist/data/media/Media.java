@@ -116,7 +116,7 @@ public abstract class Media implements IAniListObject{
 		if(!synonyms.isEmpty()){
 			builder.addField(translate(guild, "anilist.synonyms"), String.join(", ", getSynonyms()), true);
 		}
-		Optional.ofNullable(getSource()).ifPresent(source -> builder.addField("Source", source.toString(), true));
+		Optional.ofNullable(getSource()).ifPresent(source -> builder.addField(translate(guild, "anilist.source"), source.toString(), true));
 		builder.setThumbnail(getCoverImage().getLarge().toString())
 				.setFooter("ID: " + getId());
 	}

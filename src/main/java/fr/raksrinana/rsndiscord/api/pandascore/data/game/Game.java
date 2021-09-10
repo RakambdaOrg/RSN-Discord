@@ -13,6 +13,7 @@ import fr.raksrinana.rsndiscord.utils.json.converter.URLDeserializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.net.URL;
@@ -21,6 +22,7 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -64,18 +66,18 @@ public class Game implements Comparable<Game>{
 	@Nullable
 	private OpponentType winnerType;
 	
-	public void fillEmbed(EmbedBuilder builder, Collection<WrappedOpponent<?>> opponents){
-		var name = "Game %d".formatted(getPosition());
+	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder, @NotNull Collection<WrappedOpponent<?>> opponents){
+		var name = translate(guild, "pandascore.game", getPosition());
 		var content = switch(getStatus()){
-			case NOT_STARTED -> "⏳ Not started";
-			case NOT_PLAYED -> "❌ Not played";
-			case RUNNING -> "▶ In progress";
+			case NOT_STARTED -> translate(guild, "pandascore.game.not-started", "⏳");
+			case NOT_PLAYED -> translate(guild, "pandascore.game.not-played", "❌");
+			case RUNNING -> translate(guild, "pandascore.game.in-progress", "▶");
 			case FINISHED -> {
 				var duration = getDuration().map(Utilities::durationToString).orElse("Unknown length");
 				var winner = getWinner(opponents)
 						.map(Opponent::getShortName)
 						.orElse("Unknown winner");
-				yield "✅ Completed (%s), winner : %s".formatted(duration, winner);
+				yield translate(guild, "pandascore.game.finished", "✅", duration, winner);
 			}
 		};
 		
@@ -87,7 +89,8 @@ public class Game implements Comparable<Game>{
 		return Integer.compare(getPosition(), o.getPosition());
 	}
 	
-	private Optional<Opponent> getWinner(Collection<WrappedOpponent<?>> opponents){
+	@NotNull
+	private Optional<Opponent> getWinner(@NotNull Collection<WrappedOpponent<?>> opponents){
 		return Optional.ofNullable(getWinner())
 				.map(GameWinner::getId)
 				.flatMap(id -> opponents.stream()
@@ -96,6 +99,7 @@ public class Game implements Comparable<Game>{
 						.map(WrappedOpponent::getOpponent));
 	}
 	
+	@NotNull
 	public Optional<Duration> getDuration(){
 		return Optional.ofNullable(getLength())
 				.map(Duration::ofSeconds);

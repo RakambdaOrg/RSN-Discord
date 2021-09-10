@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 import java.net.URL;
 import static fr.raksrinana.rsndiscord.api.anilist.AniListApi.FALLBACK_URL;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -48,7 +49,7 @@ public class MediaRank implements IAniListObject{
 	
 	@Override
 	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder){
-		builder.addField("Ranking", getContext(), true);
+		builder.addField(translate(guild, "anilist.ranking"), getContext(), true);
 	}
 	
 	@Override

@@ -4,15 +4,20 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.text.MessageFormat;
 import java.util.*;
 
 @Slf4j
 public class LangUtils{
 	private static final Map<Locale, ResourceBundle> bundles = new HashMap<>();
+	private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 	
 	@NotNull
-	public static String translate(@NotNull Guild guild, @NotNull String key, Object... args){
+	public static String translate(@Nullable Guild guild, @NotNull String key, Object... args){
+		if(Objects.isNull(guild)){
+			return translate(DEFAULT_LOCALE, key, args);
+		}
 		return translate(Settings.get(guild).getLocale().orElseGet(guild::getLocale), key, args);
 	}
 	

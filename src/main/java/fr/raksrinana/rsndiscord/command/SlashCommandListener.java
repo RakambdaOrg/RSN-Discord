@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @EventListener
 @Log4j2
@@ -25,7 +26,7 @@ public class SlashCommandListener extends ListenerAdapter{
 				
 				SlashCommandService.getExecutableCommand(event.getCommandPath()).ifPresentOrElse(
 						command -> event.deferReply(command.replyEphemeral()).submit().thenAccept(empty -> performCommand(event, command)),
-						() -> event.reply("Unknown command " + event.getCommandPath()).setEphemeral(true).submit());
+						() -> event.reply(translate(event.getGuild(), "command.unknown", event.getCommandPath())).setEphemeral(true).submit());
 			}
 		}
 	}

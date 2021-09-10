@@ -16,6 +16,7 @@ import fr.raksrinana.rsndiscord.utils.json.converter.ISO8601ZonedDateTimeDeseria
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.ZoneId;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.Optional.ofNullable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -124,7 +126,7 @@ public class RainbowSixMatch{
 	@Nullable
 	private Integer winnerId;
 	
-	public void fillEmbed(EmbedBuilder builder){
+	public void fillEmbed(@NotNull Guild guild, @NotNull EmbedBuilder builder){
 		var leagueUrl = getLeague().getImageUrlAsString();
 		var serieTier = ofNullable(getSerie().getTier())
 				.map(" (%s)"::formatted)
@@ -158,22 +160,23 @@ public class RainbowSixMatch{
 				.setFooter(String.valueOf(getId()), leagueUrl.orElse(null))
 				.setTitle(title, streamUrl)
 				.setDescription(description)
-				.addField("Match type", getMatchType().getValue(), true)
-				.addField("Started at", startDate, true);
+				.addField(translate(guild, "pandascore.r6.match-type"), getMatchType().getValue(), true)
+				.addField(translate(guild, "pandascore.r6.started-at"), startDate, true);
 		
-		endDate.ifPresent(d -> builder.addField("End date", d, true));
+		endDate.ifPresent(d -> builder.addField(translate(guild, "pandascore.r6.ended-at"), d, true));
 		
-		builder.addField("Score", scoreAsString(), true);
+		builder.addField(translate(guild, "pandascore.r6.score"), scoreAsString(), true);
 		
 		getWinner().map(Opponent::getCompleteName)
-				.ifPresent(w -> builder.addField("Winner", w, true));
+				.ifPresent(w -> builder.addField(translate(guild, "pandascore.r6.winner"), w, true));
 		
 		builder.addBlankField(false);
 		getGames().stream()
 				.sorted()
-				.forEach(game -> game.fillEmbed(builder, getOpponents()));
+				.forEach(game -> game.fillEmbed(guild, builder, getOpponents()));
 	}
 	
+	@NotNull
 	private String scoreAsString(){
 		return getResults().stream()
 				.map(Result::getScore)
@@ -181,6 +184,7 @@ public class RainbowSixMatch{
 				.collect(Collectors.joining(" - "));
 	}
 	
+	@NotNull
 	private Optional<Opponent> getWinner(){
 		return Optional.ofNullable(getWinnerId())
 				.flatMap(id -> getOpponents().stream()

@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.kitteh.irc.client.library.element.MessageTag;
 import org.kitteh.irc.client.library.event.channel.ChannelMessageEvent;
 import org.kitteh.irc.client.library.event.channel.ChannelNoticeEvent;
@@ -252,14 +251,14 @@ public class GuildTwitchListener{
 		}
 	}
 	
-	@Nullable
+	@NotNull
 	private Guild getGuild(){
-		return Main.getJda().getGuildById(guildId);
+		return Objects.requireNonNull(Main.getJda().getGuildById(guildId));
 	}
 	
-	@Nullable
+	@NotNull
 	private TextChannel getChannel(){
-		return Main.getJda().getTextChannelById(channelId);
+		return Objects.requireNonNull(Main.getJda().getTextChannelById(channelId));
 	}
 	
 	@NotNull
