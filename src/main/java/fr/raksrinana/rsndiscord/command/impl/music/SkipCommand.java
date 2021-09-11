@@ -62,7 +62,7 @@ public class SkipCommand extends SubCommand{
 		
 		if(RSNAudioManager.isRequester(guild, author) || isModerator(event.getMember())){
 			var message = skip(guild);
-			JDAWrappers.edit(event, translate(guild, translate(guild, message, event.getUser().getAsMention()))).submitAndDelete(5);
+			JDAWrappers.edit(event, translate(guild, message, event.getUser().getAsMention())).submitAndDelete(5);
 			return HANDLED;
 		}
 		
