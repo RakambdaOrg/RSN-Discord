@@ -57,11 +57,15 @@ public class MediaRank implements IAniListObject{
 				.append(" ")
 				.append(getContext());
 		
+		if(Objects.nonNull(getSeason())){
+			sb.append(" ").append(getSeason());
+		}
+		
 		if(Objects.nonNull(getYear())){
 			sb.append(" ").append(getYear());
 		}
 		
-		builder.addField(translate(guild, "anilist.ranking"), "#%d %s".formatted(getRank(), getContext()), true);
+		builder.addField(translate(guild, "anilist.ranking"), sb.toString(), true);
 	}
 	
 	@Override
