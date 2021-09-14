@@ -41,7 +41,9 @@ public class RSSRunner implements IScheduledRunner{
 		var rssConfiguration = Settings.get(guild).getRss();
 		rssConfiguration.getChannel()
 				.flatMap(ChannelConfiguration::getChannel)
-				.ifPresent(channel -> rssConfiguration.getFeeds().forEach(url -> processFeed(rssConfiguration, channel, url)));
+				.ifPresentOrElse(
+						channel -> rssConfiguration.getFeeds().forEach(url -> processFeed(rssConfiguration, channel, url)),
+						() -> log.warn("No RSS channel defined for {}", guild));
 	}
 	
 	private void processFeed(@NotNull RSSConfiguration rssConfiguration, @NotNull TextChannel channel, @NotNull URL url){
