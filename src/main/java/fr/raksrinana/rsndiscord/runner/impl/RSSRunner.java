@@ -10,6 +10,7 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.impl.guild.rss.RSSConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -23,6 +24,7 @@ import static java.util.concurrent.TimeUnit.HOURS;
 import static net.dv8tion.jda.api.entities.MessageEmbed.DESCRIPTION_MAX_LENGTH;
 
 @ScheduledRunner
+@Log4j2
 public class RSSRunner implements IScheduledRunner{
 	private final RssReader reader;
 	
@@ -43,13 +45,18 @@ public class RSSRunner implements IScheduledRunner{
 	}
 	
 	private void processFeed(@NotNull RSSConfiguration rssConfiguration, @NotNull TextChannel channel, @NotNull URL url){
-		var feedInfo = rssConfiguration.getFeedInfo(url.toString());
+		var key = url.toString();
+		log.info("Processing feed {} ({})", url, rssConfiguration.getFeedInfo(key).getTitle());
+		
+		var feedInfo = rssConfiguration.getFeedInfo(key);
 		var lastDate = feedInfo.getLastPublicationDate();
-		reader.readAsync(url.toString())
+		reader.readAsync(key)
 				.thenAccept(items -> {
 					var newItems = items.sorted()
 							.filter(item -> lastDate.map(date -> date < item.getPubDate().map(DateTime::toEpochMilli).orElse(0L)).orElse(true))
 							.collect(Collectors.toList());
+					
+					log.info("Found {} new items in feed {}", newItems.size(), key);
 					
 					newItems.forEach(item -> publish(channel, item));
 					
