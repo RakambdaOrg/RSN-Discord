@@ -42,7 +42,11 @@ public class RSSRunner implements IScheduledRunner{
 		rssConfiguration.getChannel()
 				.flatMap(ChannelConfiguration::getChannel)
 				.ifPresentOrElse(
-						channel -> rssConfiguration.getFeeds().forEach(url -> processFeed(rssConfiguration, channel, url)),
+						channel -> {
+							var feeds = rssConfiguration.getFeeds();
+							log.info("Processing {} RSS feeds for {}", feeds.size(), guild);
+							feeds.forEach(url -> processFeed(rssConfiguration, channel, url));
+						},
 						() -> log.warn("No RSS channel defined for {}", guild));
 	}
 	
