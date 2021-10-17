@@ -15,7 +15,7 @@ import java.awt.Color;
 public enum MatchStatus{
 	NOT_STARTED(Color.GRAY),
 	POSTPONED(Color.ORANGE),
-	CANCELLED(Color.RED),
+	CANCELED(Color.RED),
 	RUNNING(Color.GREEN),
 	FINISHED(Color.BLUE);
 	
