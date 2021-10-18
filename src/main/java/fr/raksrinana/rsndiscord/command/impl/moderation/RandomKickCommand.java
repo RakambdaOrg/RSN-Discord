@@ -50,14 +50,14 @@ public class RandomKickCommand extends SubCommand{
 	protected Collection<? extends OptionData> getOptions(){
 		return List.of(
 				new OptionData(STRING, MESSAGE_OPTION_ID, "Random kick message").setRequired(true),
-				new OptionData(ROLE, ROLE_OPTION_ID, "Role in which to chose a person").setRequired(true));
+				new OptionData(ROLE, ROLE_OPTION_ID, "Role in which to chose a person"));
 	}
 	
 	@Override
 	@NotNull
 	public CommandResult execute(@NotNull SlashCommandEvent event){
-		var targetRole = Optional.ofNullable(event.getOption(ROLE_OPTION_ID)).map(OptionMapping::getAsRole).orElse(null);
 		var reason = event.getOption(MESSAGE_OPTION_ID).getAsString();
+		var targetRole = Optional.ofNullable(event.getOption(ROLE_OPTION_ID)).map(OptionMapping::getAsRole).orElse(null);
 		
 		JDAWrappers.edit(event, "Random kick started");
 		randomKick(event.getTextChannel(), targetRole, reason, true);
