@@ -59,7 +59,7 @@ public class RandomKickCommand extends SubCommand{
 		var reason = event.getOption(MESSAGE_OPTION_ID).getAsString();
 		var targetRole = Optional.ofNullable(event.getOption(ROLE_OPTION_ID)).map(OptionMapping::getAsRole).or(() -> getRandomRole(event.getGuild()));
 		
-		JDAWrappers.edit(event, "Random kick started");
+		JDAWrappers.reply(event, "Random kick started").submit();
 		randomKick(event.getTextChannel(), targetRole.orElse(null), reason, true);
 		
 		return HANDLED;
