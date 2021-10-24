@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.command.impl.moderation;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -23,7 +24,8 @@ public class ClearCommand extends SubCommand{
 	@NotNull
 	protected Collection<? extends OptionData> getOptions(){
 		return Set.of(
-				new OptionData(CHANNEL, CHANNEL_OPTION_ID, "Channel to delete the message in (default: current channel)"),
+				new OptionData(CHANNEL, CHANNEL_OPTION_ID, "Channel to delete the message in (default: current channel)")
+						.setChannelTypes(ChannelType.TEXT),
 				new OptionData(INTEGER, MESSAGE_COUNT_OPTION_ID, "Number of messages to delete"));
 	}
 	
