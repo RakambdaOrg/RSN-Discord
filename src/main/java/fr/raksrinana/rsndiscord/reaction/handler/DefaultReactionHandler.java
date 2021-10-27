@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.reaction.handler;
 
 import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.settings.impl.guild.reaction.WaitingReactionMessageConfiguration;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import org.jetbrains.annotations.NotNull;
 import static fr.raksrinana.rsndiscord.reaction.handler.ReactionHandlerResult.PROCESSED_DELETE;
 import static java.lang.Integer.MAX_VALUE;
@@ -16,7 +16,7 @@ public class DefaultReactionHandler implements IReactionHandler{
 	
 	@Override
 	@NotNull
-	public ReactionHandlerResult accept(@NotNull GuildMessageReactionAddEvent event, @NotNull WaitingReactionMessageConfiguration reaction){
+	public ReactionHandlerResult accept(@NotNull MessageReactionAddEvent event, @NotNull WaitingReactionMessageConfiguration reaction){
 		return PROCESSED_DELETE;
 	}
 	

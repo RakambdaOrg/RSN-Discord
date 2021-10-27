@@ -4,7 +4,7 @@ import fr.raksrinana.rsndiscord.log.LogContext;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import static fr.raksrinana.rsndiscord.utils.BasicEmotes.THUMB_DOWN;
@@ -15,8 +15,11 @@ import static fr.raksrinana.rsndiscord.utils.Utilities.containsChannel;
 @Log4j2
 public class AutoReactionsEventListener extends ListenerAdapter{
 	@Override
-	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event){
-		super.onGuildMessageReceived(event);
+	public void onMessageReceived(@NotNull MessageReceivedEvent event){
+		super.onMessageReceived(event);
+		if(!event.isFromGuild()){
+			return;
+		}
 		
 		var guild = event.getGuild();
 		try(var context = LogContext.with(guild).with(event.getAuthor())){

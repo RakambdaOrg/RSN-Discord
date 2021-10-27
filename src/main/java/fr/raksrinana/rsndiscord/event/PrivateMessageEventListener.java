@@ -5,7 +5,8 @@ import fr.raksrinana.rsndiscord.log.LogContext;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import static java.awt.Color.GREEN;
@@ -14,8 +15,11 @@ import static java.awt.Color.GREEN;
 @Log4j2
 public class PrivateMessageEventListener extends ListenerAdapter{
 	@Override
-	public void onPrivateMessageReceived(@NotNull PrivateMessageReceivedEvent event){
-		super.onPrivateMessageReceived(event);
+	public void onMessageReceived(@NotNull MessageReceivedEvent event){
+		super.onMessageReceived(event);
+		if(event.isFromType(ChannelType.PRIVATE)){
+			return;
+		}
 		
 		var author = event.getAuthor();
 		

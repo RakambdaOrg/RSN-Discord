@@ -6,7 +6,7 @@ import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
@@ -20,8 +20,11 @@ import static net.dv8tion.jda.api.entities.MessageType.INLINE_REPLY;
 @Log4j2
 public class TimeReactionsReplyEventListener extends ListenerAdapter{
 	@Override
-	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event){
-		super.onGuildMessageReceived(event);
+	public void onMessageReceived(@NotNull MessageReceivedEvent event){
+		super.onMessageReceived(event);
+		if(!event.isFromGuild()){
+			return;
+		}
 		
 		var guild = event.getGuild();
 		var author = event.getAuthor();
@@ -48,9 +51,9 @@ public class TimeReactionsReplyEventListener extends ListenerAdapter{
 					
 					if(original.size() == received.size()){
 						var content = author.getAsMention() + " replied:\n\n" +
-								IntStream.range(0, original.size())
-										.mapToObj(index -> original.get(index) + " " + received.get(index))
-										.collect(Collectors.joining("\n"));
+						              IntStream.range(0, original.size())
+								              .mapToObj(index -> original.get(index) + " " + received.get(index))
+								              .collect(Collectors.joining("\n"));
 						
 						JDAWrappers.reply(reference, content).submit()
 								.thenAccept(sent -> JDAWrappers.delete(message).submit());

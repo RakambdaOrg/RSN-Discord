@@ -11,7 +11,7 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -34,7 +34,7 @@ public class TodoReactionHandler implements IReactionHandler{
 	
 	@Override
 	@NotNull
-	public ReactionHandlerResult accept(@NotNull GuildMessageReactionAddEvent event, @NotNull WaitingReactionMessageConfiguration reaction){
+	public ReactionHandlerResult accept(@NotNull MessageReactionAddEvent event, @NotNull WaitingReactionMessageConfiguration reaction){
 		var reactionEmote = event.getReactionEmote();
 		
 		if(reactionEmote.isEmoji()){
@@ -58,7 +58,7 @@ public class TodoReactionHandler implements IReactionHandler{
 	}
 	
 	@NotNull
-	protected ReactionHandlerResult processTodoCompleted(@NotNull GuildMessageReactionAddEvent event, @NotNull BasicEmotes emote, @NotNull WaitingReactionMessageConfiguration todo) throws InterruptedException, ExecutionException, TimeoutException{
+	protected ReactionHandlerResult processTodoCompleted(@NotNull MessageReactionAddEvent event, @NotNull BasicEmotes emote, @NotNull WaitingReactionMessageConfiguration todo) throws InterruptedException, ExecutionException, TimeoutException{
 		var user = event.retrieveUser().submit().get(30, SECONDS);
 		return todo.getMessage().getMessage()
 				.map(message -> {
@@ -85,7 +85,7 @@ public class TodoReactionHandler implements IReactionHandler{
 	}
 	
 	@NotNull
-	private ReactionHandlerResult handleArchive(@NotNull GuildMessageReactionAddEvent event, @NotNull User user, @NotNull Message message){
+	private ReactionHandlerResult handleArchive(@NotNull MessageReactionAddEvent event, @NotNull User user, @NotNull Message message){
 		var guild = event.getGuild();
 		
 		var forwarded = ofNullable(Settings.get(guild)
@@ -118,13 +118,13 @@ public class TodoReactionHandler implements IReactionHandler{
 	}
 	
 	@NotNull
-	private ReactionHandlerResult handleReply(@NotNull GuildMessageReactionAddEvent event, @NotNull User user, @NotNull Message message){
+	private ReactionHandlerResult handleReply(@NotNull MessageReactionAddEvent event, @NotNull User user, @NotNull Message message){
 		var guild = event.getGuild();
 		
 		try{
 			return JDAWrappers.createTextChannel(guild, "reply-" + event.getMessageIdLong()).submit()
 					.thenApply(forwardChannel -> {
-						ofNullable(message.getTextChannel().getParent())
+						ofNullable(message.getTextChannel().getParentCategory())
 								.ifPresent(category -> JDAWrappers.edit(forwardChannel)
 										.setParent(category)
 										.sync(category)

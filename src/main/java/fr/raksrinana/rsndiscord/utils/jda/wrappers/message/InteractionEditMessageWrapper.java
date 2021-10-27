@@ -21,17 +21,17 @@ public class InteractionEditMessageWrapper{
 	
 	public InteractionEditMessageWrapper(@Nullable ISnowflake target, @NotNull InteractionHook hook, @NotNull MessageEmbed embed){
 		this.target = target;
-		this.action = hook.editOriginalEmbeds(embed);
+		action = hook.editOriginalEmbeds(embed);
 	}
 	
 	public InteractionEditMessageWrapper(@Nullable ISnowflake target, @NotNull InteractionHook hook, @NotNull String message){
 		this.target = target;
-		this.action = hook.editOriginal(message);
+		action = hook.editOriginal(message);
 	}
 	
 	public InteractionEditMessageWrapper(@Nullable ISnowflake target, @NotNull InteractionHook hook, @NotNull ComponentLayout... layouts){
 		this.target = target;
-		this.action = hook.editOriginalComponents(layouts);
+		action = hook.editOriginalComponents(layouts);
 	}
 	
 	@NotNull

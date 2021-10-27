@@ -4,7 +4,7 @@ import fr.raksrinana.rsndiscord.log.LogContext;
 import fr.raksrinana.rsndiscord.reaction.ReactionUtils;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import lombok.extern.log4j.Log4j2;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
@@ -14,8 +14,11 @@ import static fr.raksrinana.rsndiscord.reaction.handler.ReactionHandlerResult.PR
 @Log4j2
 public class ReactionEventListener extends ListenerAdapter{
 	@Override
-	public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event){
-		super.onGuildMessageReactionAdd(event);
+	public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event){
+		super.onMessageReactionAdd(event);
+		if(!event.isFromGuild()){
+			return;
+		}
 		
 		var guild = event.getGuild();
 		var user = event.getUser();

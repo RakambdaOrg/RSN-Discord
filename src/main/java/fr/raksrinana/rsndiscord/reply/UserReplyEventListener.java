@@ -3,8 +3,8 @@ package fr.raksrinana.rsndiscord.reply;
 import fr.raksrinana.rsndiscord.event.EventListener;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
@@ -43,11 +43,14 @@ public class UserReplyEventListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event){
-		super.onGuildMessageReceived(event);
+	public void onMessageReceived(@NotNull MessageReceivedEvent event){
+		super.onMessageReceived(event);
+		if(!event.isFromGuild()){
+			return;
+		}
 		try{
 			replies.removeIf(reply -> reply.isHandled()
-					|| (reply.handleEvent(event) && reply.execute(event, Arrays.stream(event.getMessage().getContentRaw().split(" "))
+			                          || (reply.handleEvent(event) && reply.execute(event, Arrays.stream(event.getMessage().getContentRaw().split(" "))
 					.collect(Collectors.toCollection(LinkedList::new)))));
 		}
 		catch(Exception e){
@@ -56,8 +59,11 @@ public class UserReplyEventListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event){
-		super.onGuildMessageReactionAdd(event);
+	public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event){
+		super.onMessageReactionAdd(event);
+		if(!event.isFromGuild()){
+			return;
+		}
 		try{
 			replies.removeIf(reply -> {
 				try{

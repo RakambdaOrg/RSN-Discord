@@ -14,9 +14,9 @@ import fr.raksrinana.rsndiscord.music.trackfields.TrackUserFields;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
@@ -42,10 +42,10 @@ public class RSNAudioManager implements IStatusTrackSchedulerListener{
 	@Getter
 	private final TrackScheduler trackScheduler;
 	@Getter
-	private final VoiceChannel channel;
+	private final AudioChannel channel;
 	private boolean isSearchingTracks;
 	
-	private RSNAudioManager(@NotNull VoiceChannel channel, @NotNull AudioManager audioManager, @NotNull AudioPlayerManager audioPlayerManager, @NotNull AudioPlayer audioPlayer, @NotNull TrackScheduler trackScheduler){
+	private RSNAudioManager(@NotNull AudioChannel channel, @NotNull AudioManager audioManager, @NotNull AudioPlayerManager audioPlayerManager, @NotNull AudioPlayer audioPlayer, @NotNull TrackScheduler trackScheduler){
 		this.channel = channel;
 		this.audioManager = audioManager;
 		this.audioPlayerManager = audioPlayerManager;
@@ -54,7 +54,7 @@ public class RSNAudioManager implements IStatusTrackSchedulerListener{
 		isSearchingTracks = false;
 	}
 	
-	public static void play(@NotNull User requester, @NotNull VoiceChannel channel, @NotNull TrackConsumer listener, int skipCount, int maxTracks, @NotNull String... identifiers){
+	public static void play(@NotNull User requester, @NotNull AudioChannel channel, @NotNull TrackConsumer listener, int skipCount, int maxTracks, @NotNull String... identifiers){
 		var guild = channel.getGuild();
 		var channelName = channel.getName();
 		
@@ -119,7 +119,7 @@ public class RSNAudioManager implements IStatusTrackSchedulerListener{
 	}
 	
 	@NotNull
-	private static RSNAudioManager getOrCreatePlayerManager(@NotNull VoiceChannel channel){
+	private static RSNAudioManager getOrCreatePlayerManager(@NotNull AudioChannel channel){
 		return managers.computeIfAbsent(channel.getGuild(), g -> createAudioManager(channel));
 	}
 	
@@ -130,7 +130,7 @@ public class RSNAudioManager implements IStatusTrackSchedulerListener{
 	}
 	
 	@NotNull
-	private static RSNAudioManager createAudioManager(@NotNull VoiceChannel channel){
+	private static RSNAudioManager createAudioManager(@NotNull AudioChannel channel){
 		var guild = channel.getGuild();
 		
 		var audioManager = guild.getAudioManager();

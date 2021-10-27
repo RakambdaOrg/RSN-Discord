@@ -10,8 +10,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
@@ -159,7 +159,7 @@ public class Utilities{
 				.filter(Objects::nonNull);
 	}
 	
-	public static boolean containsChannel(@NotNull Collection<ChannelConfiguration> channels, @NotNull TextChannel channel){
+	public static boolean containsChannel(@NotNull Collection<ChannelConfiguration> channels, @NotNull MessageChannel channel){
 		return channels.stream().anyMatch(c -> Objects.equals(c.getChannelId(), channel.getIdLong()));
 	}
 }

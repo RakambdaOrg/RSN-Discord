@@ -95,7 +95,7 @@ public class Main{
 			
 			JDAWrappers.editPresence()
 					.setStatus(ONLINE)
-					.setActivity(Activity.of(Activity.ActivityType.DEFAULT, "Bip bip"));
+					.setActivity(Activity.of(Activity.ActivityType.PLAYING, "Bip bip"));
 			
 			SlashCommandService.registerGlobalCommands();
 			SlashCommandService.registerGuildCommands(jda.getGuildById(735921627631583394L));

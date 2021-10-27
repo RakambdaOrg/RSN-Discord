@@ -8,8 +8,8 @@ import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 	}
 	
 	@Override
-	protected boolean onExecute(@NotNull GuildMessageReactionAddEvent event){
+	protected boolean onExecute(@NotNull MessageReactionAddEvent event){
 		if(Objects.equals(event.getUser(), event.getJDA().getSelfUser())){
 			return false;
 		}
@@ -65,7 +65,7 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 		return false;
 	}
 	
-	private boolean count(@NotNull GuildMessageReactionAddEvent event) throws InterruptedException, ExecutionException, TimeoutException{
+	private boolean count(@NotNull MessageReactionAddEvent event) throws InterruptedException, ExecutionException, TimeoutException{
 		var count = event.retrieveMessage().submit()
 				.thenApply(message -> message.getReactions().stream()
 						.filter(r -> BasicEmotes.getEmote(r.getReactionEmote().getName()) == CHECK_OK)
@@ -77,7 +77,7 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 	}
 	
 	@NotNull
-	private Boolean isSameTrack(@NotNull GuildMessageReactionAddEvent event){
+	private Boolean isSameTrack(@NotNull MessageReactionAddEvent event){
 		return RSNAudioManager.currentTrack(event.getGuild())
 				.map(track -> Objects.equals(track, audioTrack))
 				.orElse(false);
@@ -90,12 +90,12 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 	}
 	
 	@Override
-	public boolean handleEvent(@NotNull GuildMessageReactionAddEvent event){
+	public boolean handleEvent(@NotNull MessageReactionAddEvent event){
 		return Objects.equals(getWaitChannel(), event.getChannel()) && Objects.equals(getEmoteMessageId(), event.getMessageIdLong());
 	}
 	
 	@Override
-	protected boolean onExecute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
+	protected boolean onExecute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args){
 		return false;
 	}
 	

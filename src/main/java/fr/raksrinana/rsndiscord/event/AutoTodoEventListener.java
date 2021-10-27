@@ -10,7 +10,7 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.Component;
 import org.jetbrains.annotations.NotNull;
@@ -32,8 +32,11 @@ public class AutoTodoEventListener extends ListenerAdapter{
 	};
 	
 	@Override
-	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event){
-		super.onGuildMessageReceived(event);
+	public void onMessageReceived(@NotNull MessageReceivedEvent event){
+		super.onMessageReceived(event);
+		if(!event.isFromGuild()){
+			return;
+		}
 		
 		try(var context = LogContext.with(event.getGuild()).with(event.getAuthor())){
 			var guildConfiguration = Settings.get(event.getGuild());
@@ -51,7 +54,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 		}
 	}
 	
-	private void handleTodo(@NotNull GuildMessageReceivedEvent event){
+	private void handleTodo(@NotNull MessageReceivedEvent event){
 		if(Objects.equals(event.getAuthor(), event.getJDA().getSelfUser())){
 			JDAWrappers.editComponents(event.getMessage(), buttons).submit();
 			return;
@@ -65,7 +68,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 		}
 	}
 	
-	private boolean canForward(@NotNull GuildMessageReceivedEvent event){
+	private boolean canForward(@NotNull MessageReceivedEvent event){
 		if(event.isWebhookMessage()){
 			return false;
 		}
@@ -86,7 +89,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 		return true;
 	}
 	
-	private void forward(@NotNull GuildMessageReceivedEvent event){
+	private void forward(@NotNull MessageReceivedEvent event){
 		var author = event.getAuthor();
 		var message = event.getMessage();
 		
@@ -104,7 +107,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 		action.submit().thenCompose(m -> JDAWrappers.delete(event.getMessage()).submit());
 	}
 	
-	private void addReactions(@NotNull GuildMessageReceivedEvent event){
+	private void addReactions(@NotNull MessageReceivedEvent event){
 		var guildConfiguration = Settings.get(event.getGuild());
 		var message = event.getMessage();
 		

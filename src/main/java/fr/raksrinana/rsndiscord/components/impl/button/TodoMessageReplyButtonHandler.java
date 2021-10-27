@@ -30,7 +30,7 @@ public class TodoMessageReplyButtonHandler extends SimpleButtonHandler{
 		
 		return JDAWrappers.createTextChannel(guild, "reply-" + event.getMessageIdLong()).submit()
 				.thenCompose(forwardChannel -> {
-					Optional.ofNullable(message.getTextChannel().getParent()).ifPresent(category -> JDAWrappers.edit(forwardChannel)
+					Optional.ofNullable(message.getTextChannel().getParentCategory()).ifPresent(category -> JDAWrappers.edit(forwardChannel)
 							.setParent(category)
 							.sync(category)
 							.submit());
