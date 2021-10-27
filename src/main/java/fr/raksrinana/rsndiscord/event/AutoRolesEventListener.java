@@ -67,7 +67,7 @@ public class AutoRolesEventListener extends ListenerAdapter{
 								.thenAccept(isBanned -> {
 									if(!isBanned){
 										guildSettings.add(new UnbanMemberScheduleHandler(member.getIdLong(), ZonedDateTime.now().plus(banDuration)));
-										JDAWrappers.ban(member, 0, "Left server").sumbit();
+										JDAWrappers.ban(member, 0, "Left server").submit();
 									}
 								}));
 			});

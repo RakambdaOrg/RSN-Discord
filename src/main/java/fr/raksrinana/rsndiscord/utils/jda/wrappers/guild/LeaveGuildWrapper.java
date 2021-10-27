@@ -13,7 +13,7 @@ public class LeaveGuildWrapper{
 	
 	public LeaveGuildWrapper(@NotNull Guild guild){
 		this.guild = guild;
-		this.action = guild.leave();
+		action = guild.leave();
 	}
 	
 	@NotNull

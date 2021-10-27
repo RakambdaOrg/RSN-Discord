@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.interactions.components.Component;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Log4j2
@@ -28,12 +27,6 @@ public class EditMessageWrapper{
 	public EditMessageWrapper(@NotNull Message message){
 		this.message = message;
 		action = message.editMessage(message);
-	}
-	
-	@NotNull
-	public EditMessageWrapper clearActionRows(){
-		action = action.setActionRows(List.of());
-		return this;
 	}
 	
 	@NotNull

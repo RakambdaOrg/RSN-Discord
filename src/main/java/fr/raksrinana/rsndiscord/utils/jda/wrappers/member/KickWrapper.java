@@ -10,16 +10,14 @@ import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 public class KickWrapper{
-	private final Guild guild;
 	private final Member member;
 	private final String reason;
 	private final AuditableRestAction<Void> action;
 	
 	public KickWrapper(@NotNull Guild guild, @NotNull Member member, @Nullable String reason){
-		this.guild = guild;
 		this.member = member;
 		this.reason = reason;
-		this.action = guild.kick(member, reason);
+		action = guild.kick(member, reason);
 	}
 	
 	@NotNull

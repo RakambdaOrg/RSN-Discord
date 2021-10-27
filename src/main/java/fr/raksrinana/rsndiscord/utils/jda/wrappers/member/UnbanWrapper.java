@@ -8,14 +8,12 @@ import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 public class UnbanWrapper{
-	private final Guild guild;
 	private final String userId;
 	private final AuditableRestAction<Void> action;
 	
 	public UnbanWrapper(@NotNull Guild guild, @NotNull String userId){
-		this.guild = guild;
 		this.userId = userId;
-		this.action = guild.unban(userId);
+		action = guild.unban(userId);
 	}
 	
 	@NotNull

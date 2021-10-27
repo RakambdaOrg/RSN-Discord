@@ -57,11 +57,6 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static EditMessageWrapper removeComponents(@NotNull Message message){
-		return new EditMessageWrapper(message).clearActionRows();
-	}
-	
-	@NotNull
 	public static MessageWrapper reply(@NotNull Message replyToMessage, @NotNull String message){
 		return new MessageWrapper(replyToMessage.getChannel(), message).replyTo(replyToMessage);
 	}
@@ -72,18 +67,8 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static AddReactionWrapper addReaction(@NotNull Message message, @NotNull Emote emote){
-		return new AddReactionWrapper(message, emote);
-	}
-	
-	@NotNull
 	public static AddReactionWrapper addReaction(@NotNull Message message, @NotNull BasicEmotes emote){
 		return addReaction(message, emote.getValue());
-	}
-	
-	@NotNull
-	public static RemoveReactionWrapper removeReaction(@NotNull Message message, @NotNull String emote){
-		return new RemoveReactionWrapper(message, emote);
 	}
 	
 	@NotNull
@@ -92,18 +77,8 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static RemoveUserReactionWrapper removeReaction(@NotNull MessageReaction messageReaction, @NotNull User user){
-		return new RemoveUserReactionWrapper(messageReaction, user);
-	}
-	
-	@NotNull
 	public static ClearReactionsWrapper clearReactions(@NotNull Message message){
 		return new ClearReactionsWrapper(message);
-	}
-	
-	@NotNull
-	public static PinMessageWrapper pin(@NotNull Message message){
-		return new PinMessageWrapper(message);
 	}
 	
 	@NotNull
@@ -153,7 +128,7 @@ public class JDAWrappers{
 	
 	@NotNull
 	public static EditChannelWrapper edit(@NotNull TextChannel channel){
-		return new EditChannelWrapper(channel.getGuild(), channel);
+		return new EditChannelWrapper(channel);
 	}
 	
 	@NotNull

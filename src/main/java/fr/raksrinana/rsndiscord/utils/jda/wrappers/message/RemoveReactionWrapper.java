@@ -1,7 +1,6 @@
 package fr.raksrinana.rsndiscord.utils.jda.wrappers.message;
 
 import lombok.extern.log4j.Log4j2;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
@@ -13,12 +12,6 @@ public class RemoveReactionWrapper{
 	private final String reaction;
 	private final RestAction<Void> action;
 	
-	public RemoveReactionWrapper(@NotNull Message message, @NotNull String reaction){
-		this.message = message.toString();
-		this.reaction = reaction;
-		action = message.removeReaction(reaction);
-	}
-	
 	public RemoveReactionWrapper(@NotNull MessageReaction reaction){
 		message = reaction.getMessageId();
 		this.reaction = reaction.getReactionEmote().toString();
@@ -28,8 +21,6 @@ public class RemoveReactionWrapper{
 	@NotNull
 	public CompletableFuture<Void> submit(){
 		return action.submit()
-				.thenAccept(empty -> {
-					log.info("Removed reaction {} from message {}", reaction, message);
-				});
+				.thenAccept(empty -> log.info("Removed reaction {} from message {}", reaction, message));
 	}
 }

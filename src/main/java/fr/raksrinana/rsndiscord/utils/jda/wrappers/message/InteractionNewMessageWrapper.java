@@ -19,12 +19,12 @@ public class InteractionNewMessageWrapper{
 	
 	public InteractionNewMessageWrapper(@Nullable ISnowflake target, @NotNull InteractionHook hook, @NotNull MessageEmbed embed){
 		this.target = target;
-		this.action = hook.sendMessageEmbeds(embed);
+		action = hook.sendMessageEmbeds(embed);
 	}
 	
 	public InteractionNewMessageWrapper(@Nullable ISnowflake target, @NotNull InteractionHook hook, @NotNull String message){
 		this.target = target;
-		this.action = hook.sendMessage(message);
+		action = hook.sendMessage(message);
 	}
 	
 	@NotNull

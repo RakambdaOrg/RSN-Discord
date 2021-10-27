@@ -13,7 +13,7 @@ public class DeleteChannelWrapper{
 	
 	public DeleteChannelWrapper(@NotNull TextChannel channel){
 		this.channel = channel;
-		this.action = channel.delete();
+		action = channel.delete();
 	}
 	
 	@NotNull

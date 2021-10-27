@@ -9,12 +9,10 @@ import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 public class CreateTextChannelWrapper{
-	private final Guild guild;
 	private final ChannelAction<TextChannel> action;
 	
 	public CreateTextChannelWrapper(@NotNull Guild guild, @NotNull String name){
-		this.guild = guild;
-		this.action = guild.createTextChannel(name);
+		action = guild.createTextChannel(name);
 	}
 	
 	public CompletableFuture<TextChannel> submit(){

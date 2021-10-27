@@ -10,16 +10,14 @@ import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 public class RemoveRoleWrapper{
-	private final Guild guild;
 	private final Member member;
 	private final Role role;
 	private final AuditableRestAction<Void> action;
 	
 	public RemoveRoleWrapper(@NotNull Guild guild, @NotNull Member member, @NotNull Role role){
-		this.guild = guild;
 		this.member = member;
 		this.role = role;
-		this.action = guild.removeRoleFromMember(member, role);
+		action = guild.removeRoleFromMember(member, role);
 	}
 	
 	@NotNull

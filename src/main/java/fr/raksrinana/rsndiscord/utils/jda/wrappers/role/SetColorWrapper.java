@@ -17,7 +17,7 @@ public class SetColorWrapper{
 	public SetColorWrapper(@NotNull Role role, @Nullable Color color){
 		this.role = role;
 		this.color = color;
-		this.action = role.getManager().setColor(color);
+		action = role.getManager().setColor(color);
 	}
 	
 	@NotNull

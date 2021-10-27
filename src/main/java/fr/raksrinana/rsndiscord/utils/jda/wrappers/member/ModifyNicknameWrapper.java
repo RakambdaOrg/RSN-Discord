@@ -10,16 +10,14 @@ import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 public class ModifyNicknameWrapper{
-	private final Guild guild;
 	private final Member target;
 	private final String nickname;
 	private final AuditableRestAction<Void> action;
 	
 	public ModifyNicknameWrapper(@NotNull Guild guild, @NotNull Member target, @Nullable String nickname){
-		this.guild = guild;
 		this.target = target;
 		this.nickname = nickname;
-		this.action = guild.modifyNickname(target, nickname);
+		action = guild.modifyNickname(target, nickname);
 	}
 	
 	public CompletableFuture<Void> submit(){

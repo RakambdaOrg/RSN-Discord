@@ -12,7 +12,7 @@ public class EditPresenceWrapper{
 	private final Presence action;
 	
 	public EditPresenceWrapper(){
-		this.action = Main.getJda().getPresence();
+		action = Main.getJda().getPresence();
 	}
 	
 	@NotNull

@@ -16,20 +16,18 @@ public class AddReactionWrapper{
 	public AddReactionWrapper(@NotNull Message message, @NotNull String reaction){
 		this.message = message;
 		this.reaction = reaction;
-		this.action = message.addReaction(reaction);
+		action = message.addReaction(reaction);
 	}
 	
 	public AddReactionWrapper(@NotNull Message message, @NotNull Emote reaction){
 		this.message = message;
 		this.reaction = reaction.toString();
-		this.action = message.addReaction(reaction);
+		action = message.addReaction(reaction);
 	}
 	
 	@NotNull
 	public CompletableFuture<Void> submit(){
 		return action.submit()
-				.thenAccept(empty -> {
-					log.info("Added reaction {} to message {}", reaction, message);
-				});
+				.thenAccept(empty -> log.info("Added reaction {} to message {}", reaction, message));
 	}
 }

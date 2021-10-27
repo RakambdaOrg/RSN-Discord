@@ -2,7 +2,6 @@ package fr.raksrinana.rsndiscord.utils.jda.wrappers.channel;
 
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Category;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.managers.ChannelManager;
 import org.jetbrains.annotations.NotNull;
@@ -11,14 +10,12 @@ import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 public class EditChannelWrapper{
-	private final Guild guild;
 	private final TextChannel channel;
-	private ChannelManager action;
+	private ChannelManager<TextChannel> action;
 	
-	public EditChannelWrapper(@NotNull Guild guild, @NotNull TextChannel channel){
-		this.guild = guild;
+	public EditChannelWrapper(@NotNull TextChannel channel){
 		this.channel = channel;
-		this.action = channel.getManager();
+		action = channel.getManager();
 	}
 	@NotNull
 	public EditChannelWrapper sync(@NotNull Category category){
