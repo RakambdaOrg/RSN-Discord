@@ -89,8 +89,12 @@ public class Main{
 			
 			registerAllEventListeners(jdaBuilder);
 			
+			log.info("Building JDA");
 			jda = jdaBuilder.build();
+			log.info("JDA built, waiting to be ready");
 			jda.awaitReady();
+			log.info("JDA ready");
+			
 			log.info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
 			
 			JDAWrappers.editPresence()
@@ -152,6 +156,7 @@ public class Main{
 	}
 	
 	private static void registerAllEventListeners(@NotNull JDABuilder jdaBuilder){
+		log.info("Registering event listeners");
 		Utilities.getAllAnnotatedWith(EventListener.class, clazz -> (ListenerAdapter) clazz.getConstructor().newInstance())
 				.forEach(jdaBuilder::addEventListeners);
 	}

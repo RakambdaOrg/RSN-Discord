@@ -23,7 +23,7 @@ public class SlashCommandListener extends ListenerAdapter{
 			return;
 		}
 		
-		try(var context = LogContext.with(event.getGuild()).with(event.getUser())){
+		try(var ignored = LogContext.with(event.getGuild()).with(event.getUser())){
 			log.info("Received slash-command {} from {} with args {}", event.getCommandPath(), event.getUser(), getArgsForLogs(event.getOptions()));
 			
 			SlashCommandService.getExecutableCommand(event.getCommandPath()).ifPresentOrElse(
