@@ -19,15 +19,16 @@ public class SlashCommandListener extends ListenerAdapter{
 	@Override
 	public void onSlashCommand(@NotNull SlashCommandEvent event){
 		super.onSlashCommand(event);
+		if(!event.isFromGuild()){
+			return;
+		}
 		
 		try(var context = LogContext.with(event.getGuild()).with(event.getUser())){
-			if(event.isFromGuild()){
-				log.info("Received slash-command {} from {} with args {}", event.getCommandPath(), event.getUser(), getArgsForLogs(event.getOptions()));
-				
-				SlashCommandService.getExecutableCommand(event.getCommandPath()).ifPresentOrElse(
-						command -> event.deferReply(command.replyEphemeral()).submit().thenAccept(empty -> performCommand(event, command)),
-						() -> event.reply(translate(event.getGuild(), "command.unknown", event.getCommandPath())).setEphemeral(true).submit());
-			}
+			log.info("Received slash-command {} from {} with args {}", event.getCommandPath(), event.getUser(), getArgsForLogs(event.getOptions()));
+			
+			SlashCommandService.getExecutableCommand(event.getCommandPath()).ifPresentOrElse(
+					command -> event.deferReply(command.replyEphemeral()).submit().thenAccept(empty -> performCommand(event, command)),
+					() -> event.reply(translate(event.getGuild(), "command.unknown", event.getCommandPath())).setEphemeral(true).submit());
 		}
 	}
 	
