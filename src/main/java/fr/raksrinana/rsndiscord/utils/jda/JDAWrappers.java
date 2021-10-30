@@ -9,6 +9,9 @@ import fr.raksrinana.rsndiscord.utils.jda.wrappers.guild.LeaveGuildWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.*;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.*;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.role.SetColorWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.thread.AddThreadMemberWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.thread.CreateThreadWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.thread.DeleteThreadWrapper;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
@@ -18,6 +21,7 @@ import net.dv8tion.jda.api.interactions.components.ComponentLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.awt.Color;
+import java.util.List;
 
 @Log4j2
 public class JDAWrappers{
@@ -53,7 +57,12 @@ public class JDAWrappers{
 	
 	@NotNull
 	public static EditMessageWrapper editComponents(@NotNull Message message, @NotNull Component... components){
-		return new EditMessageWrapper(message).addActionRow(components);
+		return new EditMessageWrapper(message).setActionRow(components);
+	}
+	
+	@NotNull
+	public static EditMessageWrapper editComponents(@NotNull Message message, @NotNull List<Component> components){
+		return new EditMessageWrapper(message).setActionRow(components);
 	}
 	
 	@NotNull
@@ -77,6 +86,16 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
+	public static RemoveAllReactionWrapper removeAllReactions(@NotNull MessageReaction messageReaction){
+		return new RemoveAllReactionWrapper(messageReaction);
+	}
+	
+	@NotNull
+	public static RemoveAllReactionWrapper removeAllReactions(@NotNull Message message, @NotNull String emote){
+		return new RemoveAllReactionWrapper(message, emote);
+	}
+	
+	@NotNull
 	public static ClearReactionsWrapper clearReactions(@NotNull Message message){
 		return new ClearReactionsWrapper(message);
 	}
@@ -94,6 +113,26 @@ public class JDAWrappers{
 	@NotNull
 	public static DeleteMessageWrapper delete(@NotNull MessageChannel channel, long messageId){
 		return new DeleteMessageWrapper(channel, messageId);
+	}
+	
+	@NotNull
+	public static CreateThreadWrapper createThread(@NotNull Message message, @NotNull String name){
+		return new CreateThreadWrapper(message, name);
+	}
+	
+	@NotNull
+	public static AddThreadMemberWrapper addThreadMember(@NotNull GuildThread thread, @NotNull User user){
+		return new AddThreadMemberWrapper(thread, user);
+	}
+	
+	@NotNull
+	public static AddThreadMemberWrapper addThreadMember(@NotNull GuildThread thread, @NotNull Member member){
+		return new AddThreadMemberWrapper(thread, member);
+	}
+	
+	@NotNull
+	public static DeleteThreadWrapper delete(@NotNull GuildThread thread){
+		return new DeleteThreadWrapper(thread);
 	}
 	
 	@NotNull

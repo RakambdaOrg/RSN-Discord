@@ -30,13 +30,13 @@ public class EditMessageWrapper{
 	}
 	
 	@NotNull
-	public EditMessageWrapper addActionRow(@NotNull Collection<Component> components){
+	public EditMessageWrapper setActionRow(@NotNull Collection<Component> components){
 		action = action.setActionRow(components);
 		return this;
 	}
 	
 	@NotNull
-	public EditMessageWrapper addActionRow(@NotNull Component... components){
+	public EditMessageWrapper setActionRow(@NotNull Component... components){
 		action = action.setActionRow(components);
 		return this;
 	}

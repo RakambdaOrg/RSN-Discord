@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.event;
 
-import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageCompletedButtonHandler;
+import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageDeleteButtonHandler;
 import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageKeepButtonHandler;
 import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageReplyButtonHandler;
 import fr.raksrinana.rsndiscord.log.LogContext;
@@ -26,7 +26,7 @@ import static fr.raksrinana.rsndiscord.utils.Utilities.containsChannel;
 @Log4j2
 public class AutoTodoEventListener extends ListenerAdapter{
 	private static final Component[] buttons = {
-			new TodoMessageCompletedButtonHandler().asComponent(),
+			new TodoMessageDeleteButtonHandler().asComponent(),
 			new TodoMessageKeepButtonHandler().asComponent(),
 			new TodoMessageReplyButtonHandler().asComponent()
 	};
