@@ -7,6 +7,7 @@ import fr.raksrinana.rsndiscord.command.permission.IPermission;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -57,12 +58,12 @@ public class AllowCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
 		var user = event.getOption(USER_OPTION_ID).getAsUser();
 		var name = event.getOption(NAME_OPTION_ID).getAsString();
 		
 		if(name.startsWith("$")){
-			Settings.get(event.getGuild()).getPermissionsConfiguration()
+			Settings.get(guild).getPermissionsConfiguration()
 					.grant(user, name.substring(1));
 			JDAWrappers.edit(event, "Custom permission allowed").submit();
 		}
@@ -70,7 +71,7 @@ public class AllowCommand extends SubCommand{
 			var privilege = CommandPrivilege.enable(user);
 			
 			SlashCommandService.getRegistrableCommand(name).ifPresentOrElse(
-					command -> command.updateCommandPrivileges(event.getGuild(), privileges -> {
+					command -> command.updateCommandPrivileges(guild, privileges -> {
 						privileges.remove(privilege);
 						privileges.add(privilege);
 						return privileges;

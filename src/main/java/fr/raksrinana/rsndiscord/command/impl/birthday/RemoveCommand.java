@@ -4,6 +4,8 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -36,11 +38,10 @@ public class RemoveCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
-		var guild = event.getGuild();
-		var user = event.getOption(USER_OPTION_ID).getAsUser();
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
+		var target = event.getOption(USER_OPTION_ID).getAsUser();
 		
-		Settings.get(guild).getBirthdays().removeBirthday(user);
+		Settings.get(guild).getBirthdays().removeBirthday(target);
 		JDAWrappers.reply(event, translate(guild, "birthday.removed")).submit();
 		return HANDLED;
 	}

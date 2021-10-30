@@ -15,6 +15,8 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.impl.GuildConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
@@ -142,7 +144,7 @@ public class ConfigurationCommand extends SimpleCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
 		var accessor = accessors.get(event.getOption(NAME_OPTION_ID).getAsString());
 		if(Objects.isNull(accessor)){
 			JDAWrappers.reply(event, "Unknown configuration. Available: " + accessors.keySet().stream().sorted().collect(Collectors.joining("\n"))).submit();

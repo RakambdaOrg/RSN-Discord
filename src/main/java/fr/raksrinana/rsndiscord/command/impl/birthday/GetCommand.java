@@ -5,6 +5,8 @@ import fr.raksrinana.rsndiscord.command.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.impl.guild.birthday.Birthday;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -40,17 +42,16 @@ public class GetCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
-		var guild = event.getGuild();
-		var user = event.getOption(USER_OPTION_ID).getAsUser();
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
+		var target = event.getOption(USER_OPTION_ID).getAsUser();
 		
 		Settings.get(guild).getBirthdays()
-				.getBirthday(user)
+				.getBirthday(target)
 				.map(Birthday::getDate)
 				.ifPresentOrElse(
 						date -> {
 							var message = translate(guild, "birthday.birthday",
-									user.getAsMention(),
+									target.getAsMention(),
 									date.format(DF),
 									date.until(LocalDate.now()).normalized().getYears());
 							JDAWrappers.reply(event, message).submit();

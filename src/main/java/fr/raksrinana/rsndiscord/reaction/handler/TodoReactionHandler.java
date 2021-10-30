@@ -121,7 +121,7 @@ public class TodoReactionHandler implements IReactionHandler{
 		try{
 			return JDAWrappers.createThread(message, replyName).submit()
 					.thenCompose(thread -> {
-						var authorFuture = Stream.of(JDAWrappers.addThreadMember(thread, event.getUser()).submit());
+						var authorFuture = Stream.of(JDAWrappers.addThreadMember(thread, user).submit());
 						var mentionedFutures = message.getMentionedMembers().stream()
 								.map(u -> JDAWrappers.addThreadMember(thread, u).submit());
 						

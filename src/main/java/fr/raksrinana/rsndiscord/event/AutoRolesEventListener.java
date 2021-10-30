@@ -25,7 +25,7 @@ public class AutoRolesEventListener extends ListenerAdapter{
 		var guild = event.getGuild();
 		var user = event.getUser();
 		
-		try(var context = LogContext.with(guild).with(user)){
+		try(var ignored = LogContext.with(guild).with(user)){
 			var member = event.getMember();
 			
 			Settings.get(guild).getAutoRoles().stream()
@@ -53,7 +53,7 @@ public class AutoRolesEventListener extends ListenerAdapter{
 		var guild = event.getGuild();
 		var user = event.getUser();
 		
-		try(var context = LogContext.with(guild).with(user)){
+		try(var ignored = LogContext.with(guild).with(user)){
 			var guildSettings = Settings.get(guild);
 			
 			ofNullable(event.getMember()).ifPresent(member -> {

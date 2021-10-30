@@ -8,6 +8,8 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -59,8 +61,7 @@ public class MediaReactionCommand extends SimpleCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
-		var guild = event.getGuild();
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
 		var content = event.getOption(CONTENT_OPTION_ID).getAsString();
 		var episode = Optional.ofNullable(event.getOption(EPISODE_OPTION_ID)).map(OptionMapping::getAsString);
 		var link = Optional.ofNullable(event.getOption(LINK_OPTION_ID)).map(OptionMapping::getAsString);

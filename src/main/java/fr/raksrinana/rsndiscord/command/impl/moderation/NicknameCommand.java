@@ -5,6 +5,8 @@ import fr.raksrinana.rsndiscord.command.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
@@ -53,14 +55,13 @@ public class NicknameCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
-		var guild = event.getGuild();
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
 		var author = event.getUser();
 		
-		var member = event.getOption(USER_OPTION_ID).getAsMember();
-		var user = member.getUser();
+		var target = event.getOption(USER_OPTION_ID).getAsMember();
+		var user = target.getUser();
 		
-		var oldNickname = Optional.ofNullable(member.getNickname());
+		var oldNickname = Optional.ofNullable(target.getNickname());
 		var newNickname = Optional.ofNullable(event.getOption(NICK_OPTION_ID))
 				.map(OptionMapping::getAsString)
 				.filter(val -> !val.isBlank());
@@ -81,9 +82,9 @@ public class NicknameCommand extends SubCommand{
 		}
 		
 		try{
-			JDAWrappers.modifyNickname(member, newNickname.orElse(null)).submit()
+			JDAWrappers.modifyNickname(target, newNickname.orElse(null)).submit()
 					.thenAccept(empty -> {
-						log.info("{} renamed {} from `{}` to `{}`", author, member, oldNickname, newNickname);
+						log.info("{} renamed {} from `{}` to `{}`", author, target, oldNickname, newNickname);
 						
 						builder.setColor(GREEN);
 						

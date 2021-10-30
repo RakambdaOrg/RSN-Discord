@@ -20,5 +20,9 @@ public enum CommandResult{
 	/**
 	 * Will send a predefined message.
 	 */
-	NOT_ALLOWED
+	NOT_ALLOWED,
+	/**
+	 * Command is not defined.
+	 */
+	NOT_IMPLEMENTED;
 }

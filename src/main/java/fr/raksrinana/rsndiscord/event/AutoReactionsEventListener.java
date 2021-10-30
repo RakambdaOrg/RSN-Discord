@@ -22,7 +22,7 @@ public class AutoReactionsEventListener extends ListenerAdapter{
 		}
 		
 		var guild = event.getGuild();
-		try(var context = LogContext.with(guild).with(event.getAuthor())){
+		try(var ignored = LogContext.with(guild).with(event.getAuthor())){
 			var guildConfiguration = Settings.get(guild);
 			var message = event.getMessage();
 			var channel = event.getChannel();

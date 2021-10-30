@@ -29,7 +29,7 @@ public class TimeReactionsReplyEventListener extends ListenerAdapter{
 		var guild = event.getGuild();
 		var author = event.getAuthor();
 		
-		try(var context = LogContext.with(guild).with(author)){
+		try(var ignored = LogContext.with(guild).with(author)){
 			var message = event.getMessage();
 			
 			if(message.getType() != INLINE_REPLY || author.isBot()){
@@ -46,8 +46,8 @@ public class TimeReactionsReplyEventListener extends ListenerAdapter{
 					var original = Arrays.stream(reference.getContentRaw().split("\n"))
 							.filter(line -> Character.isDigit(line.charAt(0)) || line.startsWith("N/A"))
 							.map(line -> line.split(" ", 2)[0])
-							.collect(Collectors.toList());
-					var received = Arrays.stream(message.getContentRaw().split("\n")).collect(Collectors.toList());
+							.toList();
+					var received = Arrays.stream(message.getContentRaw().split("\n")).toList();
 					
 					if(original.size() == received.size()){
 						var content = author.getAsMention() + " replied:\n\n" +

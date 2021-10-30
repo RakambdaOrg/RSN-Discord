@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.command.base.SimpleCommand;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -52,8 +53,7 @@ public class EventWinnerCommand extends SimpleCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
-		var guild = event.getGuild();
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
 		var members = new LinkedList<Member>();
 		members.add(event.getOption(WINNER_OPTION_ID).getAsMember());
 		Optional.ofNullable(event.getOption(SECOND_WINNER_OPTION_ID)).map(OptionMapping::getAsMember).ifPresent(members::add);
@@ -65,12 +65,12 @@ public class EventWinnerCommand extends SimpleCommand{
 				.ifPresent(winnerRole -> {
 					guild.findMembersWithRoles(winnerRole)
 							.onSuccess(previousWinners -> previousWinners.stream()
-									.filter(member -> !members.contains(member))
-									.forEach(member -> JDAWrappers.removeRole(member, winnerRole).submit()));
+									.filter(m -> !members.contains(m))
+									.forEach(m -> JDAWrappers.removeRole(m, winnerRole).submit()));
 					
-					members.forEach(member -> {
-						JDAWrappers.addRole(member, winnerRole).submit();
-						eventConfiguration.setLooseRoleTime(member, looseRoleTime);
+					members.forEach(m -> {
+						JDAWrappers.addRole(m, winnerRole).submit();
+						eventConfiguration.setLooseRoleTime(m, looseRoleTime);
 					});
 				});
 		return HANDLED_NO_MESSAGE;

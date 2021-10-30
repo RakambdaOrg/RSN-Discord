@@ -38,7 +38,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 			return;
 		}
 		
-		try(var context = LogContext.with(event.getGuild()).with(event.getAuthor())){
+		try(var ignored = LogContext.with(event.getGuild()).with(event.getAuthor())){
 			var guildConfiguration = Settings.get(event.getGuild());
 			var message = event.getMessage();
 			
@@ -78,15 +78,12 @@ public class AutoTodoEventListener extends ListenerAdapter{
 		if(!message.getAttachments().isEmpty()){
 			return false;
 		}
-		if(!message.getEmotes().stream()
+		return message.getEmotes().stream()
 				.map(emote -> jda.getEmoteById(emote.getId()))
 				.allMatch(emote -> emote != null
-						&& emote.getGuild() != null
-						&& emote.getGuild().isMember(jda.getSelfUser())
-						&& emote.canInteract(event.getGuild().getSelfMember()))){
-			return false;
-		}
-		return true;
+				                   && emote.getGuild() != null
+				                   && emote.getGuild().isMember(jda.getSelfUser())
+				                   && emote.canInteract(event.getGuild().getSelfMember()));
 	}
 	
 	private void forward(@NotNull MessageReceivedEvent event){

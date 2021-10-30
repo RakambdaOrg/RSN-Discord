@@ -23,7 +23,7 @@ public class PrivateMessageEventListener extends ListenerAdapter{
 		
 		var author = event.getAuthor();
 		
-		try(var context = LogContext.empty().with(author)){
+		try(var ignored = LogContext.empty().with(author)){
 			var self = event.getJDA().getSelfUser();
 			if(author.isBot()){
 				return;

@@ -45,8 +45,7 @@ public class SkipCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
-		var guild = event.getGuild();
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
 		var author = event.getUser();
 		var track = RSNAudioManager.currentTrack(guild);
 		
@@ -60,7 +59,7 @@ public class SkipCommand extends SubCommand{
 			return HANDLED;
 		}
 		
-		if(RSNAudioManager.isRequester(guild, author) || isModerator(event.getMember())){
+		if(RSNAudioManager.isRequester(guild, author) || isModerator(member)){
 			var message = skip(guild);
 			JDAWrappers.edit(event, translate(guild, message, event.getUser().getAsMention())).submitAndDelete(5);
 			return HANDLED;

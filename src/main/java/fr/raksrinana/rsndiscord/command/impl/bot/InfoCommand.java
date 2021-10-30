@@ -6,13 +6,14 @@ import fr.raksrinana.rsndiscord.command.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.Properties;
 import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
-import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static fr.raksrinana.rsndiscord.utils.Utilities.durationToString;
 import static java.awt.Color.GREEN;
 import static java.time.Duration.between;
@@ -66,18 +67,27 @@ public class InfoCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
-		var guild = event.getGuild();
-		var author = event.getUser();
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
+		return execute(event);
+	}
+	
+	@Override
+	@NotNull
+	public CommandResult executeUser(@NotNull SlashCommandEvent event){
+		return execute(event);
+	}
+	
+	@NotNull
+	private CommandResult execute(@NotNull SlashCommandEvent event){
 		var now = ZonedDateTime.now();
 		
-		var embed = new EmbedBuilder().setAuthor(author.getName(), null, author.getAvatarUrl())
+		var embed = new EmbedBuilder()
 				.setColor(GREEN)
-				.addField(translate(guild, "infos.version"), botVersion, false)
-				.addField(translate(guild, "infos.commit"), commitId, false)
-				.addField(translate(guild, "infos.time"), now.format(ISO_ZONED_DATE_TIME), false)
-				.addField(translate(guild, "infos.last-boot"), Main.bootTime.format(ISO_ZONED_DATE_TIME), false)
-				.addField(translate(guild, "infos.elapsed"), durationToString(between(Main.bootTime, now)), false)
+				.addField("Bot version", botVersion, false)
+				.addField("Commit id", commitId, false)
+				.addField("Current time", now.format(ISO_ZONED_DATE_TIME), false)
+				.addField("Last start", Main.bootTime.format(ISO_ZONED_DATE_TIME), false)
+				.addField("Time elapsed", durationToString(between(Main.bootTime, now)), false)
 				.build();
 		
 		JDAWrappers.edit(event, embed).submit();

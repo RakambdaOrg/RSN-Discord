@@ -23,7 +23,7 @@ public class ReactionEventListener extends ListenerAdapter{
 		var guild = event.getGuild();
 		var user = event.getUser();
 		
-		try(var context = LogContext.with(guild).with(user)){
+		try(var ignored = LogContext.with(guild).with(user)){
 			if(user.isBot()){
 				return;
 			}

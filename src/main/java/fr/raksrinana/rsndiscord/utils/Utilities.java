@@ -76,8 +76,19 @@ public class Utilities{
 	 * @return True if the creator, false otherwise.
 	 */
 	public static boolean isCreator(@NotNull Member member){
+		return isCreator(member.getUser());
+	}
+	
+	/**
+	 * Tell if a user is this bot creator.
+	 *
+	 * @param user The user to test.
+	 *
+	 * @return True if the creator, false otherwise.
+	 */
+	public static boolean isCreator(@NotNull User user){
 		return RAKSRINANA_ACCOUNTS.stream()
-				.anyMatch(id -> Objects.equals(member.getIdLong(), id));
+				.anyMatch(id -> Objects.equals(user.getIdLong(), id));
 	}
 	
 	@NotNull

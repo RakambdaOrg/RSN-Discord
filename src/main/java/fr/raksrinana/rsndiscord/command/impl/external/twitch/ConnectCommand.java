@@ -6,6 +6,8 @@ import fr.raksrinana.rsndiscord.command.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.command.permission.IPermission;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
@@ -46,16 +48,16 @@ public class ConnectCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
 		var user = event.getOption(USER_OPTION_ID).getAsString();
 		
 		try{
-			TwitchUtils.connect(event.getGuild(), user);
+			TwitchUtils.connect(guild, user);
 			JDAWrappers.edit(event, "OK").submitAndDelete(5);
 		}
 		catch(Exception e){
 			log.warn("Missing configuration for IRC", e);
-			JDAWrappers.edit(event, translate(event.getGuild(), "twitch.not-configured")).submitAndDelete(5);
+			JDAWrappers.edit(event, translate(guild, "twitch.not-configured")).submitAndDelete(5);
 		}
 		return HANDLED;
 	}
