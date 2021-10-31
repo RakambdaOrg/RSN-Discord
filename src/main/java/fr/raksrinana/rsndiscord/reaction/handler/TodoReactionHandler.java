@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -87,10 +86,7 @@ public class TodoReactionHandler implements IReactionHandler{
 		var threadName = "reply-" + message.getIdLong();
 		
 		try{
-			return Optional.ofNullable(message.getMessageReference())
-					.map(reference -> reference.resolve().submit().thenApply(m -> JDAWrappers.delete(m).submit()))
-					.orElseGet(() -> CompletableFuture.completedFuture(null))
-					.thenCompose(empty -> Utilities.getThreadByName(event.getGuild(), threadName))
+			return Utilities.getThreadByName(event.getGuild(), threadName)
 					.thenCompose(thread -> JDAWrappers.delete(thread).submit())
 					.exceptionally(throwable -> {
 						log.error("Failed to deleted thread {}", threadName, throwable);
