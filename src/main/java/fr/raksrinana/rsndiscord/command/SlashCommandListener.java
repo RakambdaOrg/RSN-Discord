@@ -41,13 +41,14 @@ public class SlashCommandListener extends ListenerAdapter{
 			boolean allowed;
 			if(event.isFromGuild()){
 				allowed = command.getPermission().isGuildAllowed(event.getCommandPath(), event.getMember())
-				          && command.isSpecificAllowed(event.getMember());
+				          || command.isSpecificAllowed(event.getMember());
 			}
 			else{
 				allowed = true;
 			}
 			if(!allowed){
 				JDAWrappers.edit(event, "You're not allowed to use this command").submitAndDelete(5);
+				return;
 			}
 			
 			CommandResult result;

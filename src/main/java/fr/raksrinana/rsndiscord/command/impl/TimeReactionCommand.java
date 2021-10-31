@@ -25,7 +25,7 @@ import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
 @BotSlashCommand
 @Log4j2
-public class MediaReactionCommand extends SimpleCommand{
+public class TimeReactionCommand extends SimpleCommand{
 	private static final String COMMENT_STR = "--";
 	private static final String CONTENT_OPTION_ID = "content";
 	private static final String EPISODE_OPTION_ID = "episode";
@@ -41,7 +41,7 @@ public class MediaReactionCommand extends SimpleCommand{
 	@Override
 	@NotNull
 	public String getShortDescription(){
-		return "Media reaction";
+		return "Time reaction";
 	}
 	
 	@Override
