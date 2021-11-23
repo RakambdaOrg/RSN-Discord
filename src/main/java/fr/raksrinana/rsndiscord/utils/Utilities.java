@@ -172,7 +172,7 @@ public class Utilities{
 	}
 	
 	@NotNull
-	public static CompletableFuture<GuildThread> getThreadByName(@NotNull Guild guild, @NotNull String name){
+	public static CompletableFuture<ThreadChannel> getThreadByName(@NotNull Guild guild, @NotNull String name){
 		return guild.retrieveActiveThreads().submit()
 				.thenApply(threads -> threads.stream()
 						.filter(thread -> Objects.equals(thread.getName(), name))

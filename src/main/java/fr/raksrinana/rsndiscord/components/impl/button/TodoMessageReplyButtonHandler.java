@@ -7,8 +7,8 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.GuildThread;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.ThreadChannel;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.interactions.components.Button;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ public class TodoMessageReplyButtonHandler extends SimpleButtonHandler{
 	}
 	
 	@NotNull
-	private CompletableFuture<Void> addMembersToThread(@NotNull ButtonClickEvent event, @NotNull GuildThread thread){
+	private CompletableFuture<Void> addMembersToThread(@NotNull ButtonClickEvent event, @NotNull ThreadChannel thread){
 		var authorFuture = Stream.of(JDAWrappers.addThreadMember(thread, event.getUser()).submit());
 		var mentionedFutures = event.getMessage().getMentionedMembers().stream()
 				.map(u -> JDAWrappers.addThreadMember(thread, u).submit());

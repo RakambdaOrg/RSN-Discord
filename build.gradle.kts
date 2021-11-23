@@ -16,6 +16,7 @@ description = "RSNDiscord"
 dependencies {
     implementation(libs.jda) {
         exclude(module = "opus-java")
+        setChanging(true)
     }
     implementation(libs.bundles.opus)
     implementation(libs.lavaplayer)

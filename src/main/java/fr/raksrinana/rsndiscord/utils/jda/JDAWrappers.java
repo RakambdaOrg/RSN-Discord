@@ -121,17 +121,17 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static AddThreadMemberWrapper addThreadMember(@NotNull GuildThread thread, @NotNull User user){
+	public static AddThreadMemberWrapper addThreadMember(@NotNull ThreadChannel thread, @NotNull User user){
 		return new AddThreadMemberWrapper(thread, user);
 	}
 	
 	@NotNull
-	public static AddThreadMemberWrapper addThreadMember(@NotNull GuildThread thread, @NotNull Member member){
+	public static AddThreadMemberWrapper addThreadMember(@NotNull ThreadChannel thread, @NotNull Member member){
 		return new AddThreadMemberWrapper(thread, member);
 	}
 	
 	@NotNull
-	public static DeleteThreadWrapper delete(@NotNull GuildThread thread){
+	public static DeleteThreadWrapper delete(@NotNull ThreadChannel thread){
 		return new DeleteThreadWrapper(thread);
 	}
 	
