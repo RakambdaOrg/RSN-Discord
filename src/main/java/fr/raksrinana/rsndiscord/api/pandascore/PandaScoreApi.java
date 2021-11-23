@@ -30,10 +30,12 @@ public class PandaScoreApi {
                 .asObject(request.getGenericType());
 
         if (!response.isSuccess()) {
-            response.getParsingError().ifPresent(error -> {
-                Utilities.reportException("Failed to parse PandaScore response", error);
-                log.warn("Failed to parse PandaScore response", error);
-            });
+            if(response.getStatus() != 500){
+                response.getParsingError().ifPresent(error -> {
+                    Utilities.reportException("Failed to parse PandaScore response", error);
+                    log.warn("Failed to parse PandaScore response", error);
+                });
+            }
             log.error("Failed to perform request on PandaScore with status {}", response.getStatus());
             return Optional.empty();
         }
