@@ -1,5 +1,5 @@
 [versions]
-jda-version = "v5-threads-SNAPSHOT"
+jda-version = "5.0.0-alpha.1"
 lavaplayer-version = "1.3.78"
 lp_cross-version = "0.1.1"
 slf4j-version = "2.0.0-alpha5"
@@ -15,7 +15,7 @@ jump3r-version = "1.0.5"
 twittered-version = "2.12"
 jetbrains-annotations-version = "23.0.0"
 kitteh-irc-version = "8.0.0"
-opus-version = "1.1.0"
+opus-version = "1.1.1"
 rssreader-version = "2.5.0"
 
 shadow-version = "7.1.0"
@@ -26,8 +26,8 @@ git-properties-version = "2.4.0-rc1"
 java-modules-version = "0.9"
 
 [libraries]
-#jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda-version" }
-jda = { group = "com.github.DV8FromTheWorld", name = "JDA", version.ref = "jda-version" }
+jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda-version" }
+#jda = { group = "com.github.DV8FromTheWorld", name = "JDA", version.ref = "jda-version" }
 lavaplayer = { group = "com.sedmelluq", name = "lavaplayer", version.ref = "lavaplayer-version" }
 lpCross = { group = "com.github.natanbc", name = "lp-cross", version.ref = "lp_cross-version" }
 jump3r = { group = "de.sciss", name = "jump3r", version.ref = "jump3r-version" }
