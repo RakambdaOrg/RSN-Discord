@@ -19,6 +19,7 @@ import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
 import java.io.ByteArrayInputStream;
@@ -32,7 +33,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import static java.awt.Color.GREEN;
 import static java.util.concurrent.TimeUnit.HOURS;
-import static net.dv8tion.jda.api.entities.MessageEmbed.DESCRIPTION_MAX_LENGTH;
 
 @NoArgsConstructor
 @ScheduledRunner
@@ -113,13 +113,18 @@ public class RSSRunner implements IScheduledRunner{
 	}
 	
 	private void publish(@NotNull TextChannel channel, @NotNull SyndFeed feed, @NotNull SyndEntry entry){
+		var title = Optional.ofNullable(entry.getTitle())
+				.map(tit -> tit.substring(0, Math.min(tit.length(), MessageEmbed.TITLE_MAX_LENGTH)))
+				.orElse("Empty");
+		
 		var builder = new EmbedBuilder();
 		builder.setColor(GREEN);
-		builder.setTitle("RSS: " + feed.getTitle());
+		builder.setTitle(title, entry.getLink());
+		builder.setDescription("RSS: " + feed.getTitle());
 		Optional.ofNullable(entry.getDescription())
 				.map(SyndContent::getValue)
-				.map(desc -> desc.substring(0, Math.min(desc.length(), DESCRIPTION_MAX_LENGTH)))
-				.ifPresent(builder::setDescription);
+				.map(desc -> desc.substring(0, Math.min(desc.length(), MessageEmbed.VALUE_MAX_LENGTH)))
+				.ifPresent(desc -> builder.addField("Content", desc, false));
 		Optional.ofNullable(entry.getAuthor()).ifPresent(builder::setAuthor);
 		var categories = entry.getCategories().stream()
 				.map(SyndCategory::getName)
@@ -127,7 +132,6 @@ public class RSSRunner implements IScheduledRunner{
 		if(!categories.isBlank()){
 			builder.addField("Category", categories, true);
 		}
-		Optional.ofNullable(entry.getLink()).ifPresent(link -> builder.addField("Link", link, true));
 		Optional.ofNullable(entry.getPublishedDate())
 				.map(Date::toInstant)
 				.ifPresent(builder::setTimestamp);
