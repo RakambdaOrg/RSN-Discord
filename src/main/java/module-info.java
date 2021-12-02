@@ -23,7 +23,7 @@ open module fr.raksrinana.rsndiscord {
 	requires scribejava.core;
 	requires org.kitteh.irc.client.library;
 	requires mbassador;
-	requires com.apptastic.rssreader;
+	requires com.rometools.rome;
 	
 	requires static lombok;
 	requires static org.jetbrains.annotations;
