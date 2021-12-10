@@ -15,7 +15,7 @@ jump3r-version = "1.0.5"
 twittered-version = "2.10"
 jetbrains-annotations-version = "22.0.0"
 kitteh-irc-version = "8.0.0"
-opus-version = "1.1.0"
+opus-version = "1.1.1"
 rssreader-version = "2.5.0"
 
 shadow-version = "7.1.0"
