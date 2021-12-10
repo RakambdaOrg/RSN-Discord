@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.settings.api.IAtomicConfiguration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -26,7 +27,7 @@ public class ChannelConfiguration implements IAtomicConfiguration{
 	@Setter
 	private long channelId;
 	
-	public ChannelConfiguration(@NotNull TextChannel channel){
+	public ChannelConfiguration(@NotNull MessageChannel channel){
 		this(channel.getIdLong());
 	}
 	

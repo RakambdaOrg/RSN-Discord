@@ -9,6 +9,8 @@ import fr.raksrinana.rsndiscord.settings.types.CategoryConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Emoji;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.interactions.components.Button;
 import org.jetbrains.annotations.NotNull;
@@ -26,8 +28,7 @@ public class ArchiveMediaReactionButtonHandler extends SimpleButtonHandler{
 	
 	@NotNull
 	@Override
-	public CompletableFuture<ComponentResult> handle(@NotNull ButtonClickEvent event){
-		var guild = event.getGuild();
+	public CompletableFuture<ComponentResult> handleGuild(@NotNull ButtonClickEvent event, @NotNull Guild guild, @NotNull Member member){
 		var channel = event.getTextChannel();
 		var user = event.getUser();
 		

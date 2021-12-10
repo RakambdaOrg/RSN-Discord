@@ -64,8 +64,7 @@ public class SeekCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
-		var guild = event.getGuild();
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
 		var time = SeekCommand.parseTime(guild, event.getOption(TIME_OPTION_ID).getAsString());
 		
 		if(time < 0){

@@ -3,6 +3,8 @@ package fr.raksrinana.rsndiscord.command.impl.playback;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command.base.group.SubCommand;
 import lombok.extern.log4j.Log4j2;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED_NO_MESSAGE;
@@ -23,8 +25,8 @@ public class StopCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
-		var audioManager = event.getGuild().getAudioManager();
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
+		var audioManager = guild.getAudioManager();
 		if(audioManager.isConnected()){
 			audioManager.closeAudioConnection();
 			audioManager.setSendingHandler(null);

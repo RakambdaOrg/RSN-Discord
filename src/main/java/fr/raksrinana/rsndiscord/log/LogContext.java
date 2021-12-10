@@ -16,11 +16,11 @@ public class LogContext implements AutoCloseable{
 	private LogContext(@Nullable Guild guild){
 		if(Objects.nonNull(guild)){
 			ctc = CloseableThreadContext
-					.push(GUILD_ID_KEY, guild.getId())
+					.put(GUILD_ID_KEY, guild.getId())
 					.put(GUILD_NAME_KEY, guild.getName());
 		}
 		else{
-			ctc = CloseableThreadContext.push(GUILD_ID_KEY, "-1");
+			ctc = CloseableThreadContext.put(GUILD_ID_KEY, "-1");
 		}
 	}
 	

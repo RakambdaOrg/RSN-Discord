@@ -6,11 +6,12 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
-import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.awt.Color.GREEN;
 
 public class CatCommand extends SubCommand{
@@ -31,8 +32,18 @@ public class CatCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
-		var guild = event.getGuild();
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
+		return execute(event);
+	}
+	
+	@Override
+	@NotNull
+	public CommandResult executeUser(@NotNull SlashCommandEvent event){
+		return execute(event);
+	}
+	
+	@NotNull
+	private CommandResult execute(@NotNull SlashCommandEvent event){
 		var author = event.getUser();
 		
 		TheCatApi.getRandomCat().ifPresentOrElse(
@@ -53,7 +64,7 @@ public class CatCommand extends SubCommand{
 					
 					JDAWrappers.edit(event, embed.build()).submit();
 				},
-				() -> JDAWrappers.edit(event, translate(guild, "image.cat.error")).submitAndDelete(5));
+				() -> JDAWrappers.edit(event, "Failed to get a cat").submitAndDelete(5));
 		
 		return HANDLED;
 	}

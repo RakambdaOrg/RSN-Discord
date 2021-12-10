@@ -7,6 +7,8 @@ import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -42,14 +44,12 @@ public class RegisterCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
-		var guild = event.getGuild();
-		
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
 		var token = Optional.ofNullable(event.getOption(TOKEN_OPTION_ID)).map(OptionMapping::getAsString);
 		
 		try{
 			token.ifPresentOrElse(code -> {
-				AniListApi.requestToken(event.getMember(), code);
+				AniListApi.requestToken(member, code);
 				JDAWrappers.edit(event, translate(guild, "anilist.api-code.saved")).submitAndDelete(10);
 			}, () -> JDAWrappers.edit(event, "API token can be obtained from: %s".formatted(AniListApi.getCODE_LINK())).submit());
 		}

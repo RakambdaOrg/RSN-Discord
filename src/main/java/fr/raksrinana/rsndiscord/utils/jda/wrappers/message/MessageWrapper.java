@@ -17,27 +17,22 @@ import static fr.raksrinana.rsndiscord.schedule.ScheduleService.deleteMessageMin
 
 @Log4j2
 public class MessageWrapper{
-	private final ISnowflake target;
+	private final MessageChannel channel;
 	private MessageAction action;
 	
-	public MessageWrapper(@Nullable ISnowflake target, @NotNull MessageChannel channel, @NotNull String message){
-		this.target = target;
-		this.action = channel.sendMessage(message);
+	public MessageWrapper(@NotNull MessageChannel channel, @NotNull String message){
+		this.channel = channel;
+		action = channel.sendMessage(message);
 	}
 	
-	public MessageWrapper(@Nullable ISnowflake target, @NotNull MessageChannel channel, @NotNull MessageEmbed embed){
-		this.target = target;
-		this.action = channel.sendMessageEmbeds(embed);
+	public MessageWrapper(@NotNull MessageChannel channel, @NotNull MessageEmbed embed){
+		this.channel = channel;
+		action = channel.sendMessageEmbeds(embed);
 	}
 	
-	public MessageWrapper(@Nullable ISnowflake target, @NotNull MessageChannel channel, @NotNull Message message){
-		this.target = target;
-		this.action = channel.sendMessage(message);
-	}
-	
-	public MessageWrapper(@Nullable ISnowflake target, @NotNull TextChannel channel, @NotNull Message message){
-		this.target = target;
-		this.action = channel.sendMessage(message);
+	public MessageWrapper(@NotNull MessageChannel channel, @NotNull Message message){
+		this.channel = channel;
+		action = channel.sendMessage(message);
 	}
 	
 	@NotNull
@@ -128,7 +123,7 @@ public class MessageWrapper{
 	public CompletableFuture<Message> submit(){
 		return action.submit()
 				.thenApply(message -> {
-					log.info("Sent message to {} : {}", target, message.getContentRaw());
+					log.info("Sent message to {} : {}", channel, message.getContentRaw());
 					return message;
 				});
 	}

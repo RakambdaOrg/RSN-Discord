@@ -1,5 +1,5 @@
 package fr.raksrinana.rsndiscord.components;
 
 public enum ComponentResult{
-	HANDLED
+	NOT_IMPLEMENTED, HANDLED
 }

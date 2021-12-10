@@ -6,6 +6,8 @@ import fr.raksrinana.rsndiscord.command.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.command.permission.IPermission;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
@@ -33,7 +35,18 @@ public class StopCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
+		return execute(event);
+	}
+	
+	@Override
+	@NotNull
+	public CommandResult executeUser(@NotNull SlashCommandEvent event){
+		return execute(event);
+	}
+	
+	@NotNull
+	private CommandResult execute(@NotNull SlashCommandEvent event){
 		log.info("BOT STOPPING");
 		JDAWrappers.edit(event, "Stopping").submit();
 		Main.close();

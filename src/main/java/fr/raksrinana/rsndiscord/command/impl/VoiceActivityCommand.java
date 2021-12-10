@@ -1,13 +1,9 @@
 package fr.raksrinana.rsndiscord.command.impl;
 
-import fr.raksrinana.rsndiscord.command.BotSlashCommand;
 import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command.base.SimpleCommand;
-import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
-import net.dv8tion.jda.api.entities.ChannelType;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -16,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED;
 
-@BotSlashCommand
+// @BotSlashCommand
 @Log4j2
 public class VoiceActivityCommand extends SimpleCommand{
 	private static final String APPLICATION_OPTION_ID = "application";
@@ -62,12 +58,12 @@ public class VoiceActivityCommand extends SimpleCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
 		var applicationId = event.getOption(APPLICATION_OPTION_ID).getAsString();
 		var voiceChannel = event.getOption(VOICE_CHANNEL_OPTION_ID).getAsGuildChannel();
 		var announceChannel = event.getOption(ANNOUNCE_CHANNEL_OPTION_ID).getAsGuildChannel();
 		
-		if(!(voiceChannel instanceof VoiceChannel voiceApplicationChannel)){
+		if(!(voiceChannel instanceof AudioChannel voiceApplicationChannel)){
 			log.error("Application channel cannot be used {}", voiceChannel);
 			return CommandResult.FAILED;
 		}
@@ -77,13 +73,13 @@ public class VoiceActivityCommand extends SimpleCommand{
 			return CommandResult.FAILED;
 		}
 		
-		voiceApplicationChannel.createInvite()
-				.setTargetApplication(applicationId)
-				.submit()
-				.thenAccept(invite -> {
-					JDAWrappers.edit(event, "Invitation sent").submit();
-					JDAWrappers.message(textAnnounceChannel, invite.getUrl()).submit();
-				});
+		// voiceApplicationChannel.createInvite()
+		// 		.setTargetApplication(applicationId)
+		// 		.submit()
+		// 		.thenAccept(invite -> {
+		// 			JDAWrappers.edit(event, "Invitation sent").submit();
+		// 			JDAWrappers.message(textAnnounceChannel, invite.getUrl()).submit();
+		// 		});
 		return HANDLED;
 	}
 }

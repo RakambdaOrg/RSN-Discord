@@ -6,6 +6,8 @@ import fr.raksrinana.rsndiscord.command.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
@@ -40,12 +42,11 @@ public class InfoCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
-		var guild = event.getGuild();
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
 		var mediaId = getOptionAsInt(event.getOption(MEDIA_OPTION_ID)).orElseThrow();
 		
 		try{
-			var medias = new MediaPagedQuery(mediaId).getResult(event.getMember());
+			var medias = new MediaPagedQuery(mediaId).getResult(member);
 			if(!medias.isEmpty()){
 				medias.forEach(media -> {
 					var builder = new EmbedBuilder();

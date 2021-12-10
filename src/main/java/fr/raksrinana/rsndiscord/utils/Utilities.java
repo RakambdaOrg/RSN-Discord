@@ -8,10 +8,7 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
@@ -79,8 +76,19 @@ public class Utilities{
 	 * @return True if the creator, false otherwise.
 	 */
 	public static boolean isCreator(@NotNull Member member){
+		return isCreator(member.getUser());
+	}
+	
+	/**
+	 * Tell if a user is this bot creator.
+	 *
+	 * @param user The user to test.
+	 *
+	 * @return True if the creator, false otherwise.
+	 */
+	public static boolean isCreator(@NotNull User user){
 		return RAKSRINANA_ACCOUNTS.stream()
-				.anyMatch(id -> Objects.equals(member.getIdLong(), id));
+				.anyMatch(id -> Objects.equals(user.getIdLong(), id));
 	}
 	
 	@NotNull
@@ -159,7 +167,16 @@ public class Utilities{
 				.filter(Objects::nonNull);
 	}
 	
-	public static boolean containsChannel(@NotNull Collection<ChannelConfiguration> channels, @NotNull TextChannel channel){
+	public static boolean containsChannel(@NotNull Collection<ChannelConfiguration> channels, @NotNull MessageChannel channel){
 		return channels.stream().anyMatch(c -> Objects.equals(c.getChannelId(), channel.getIdLong()));
+	}
+	
+	@NotNull
+	public static CompletableFuture<ThreadChannel> getThreadByName(@NotNull Guild guild, @NotNull String name){
+		return guild.retrieveActiveThreads().submit()
+				.thenApply(threads -> threads.stream()
+						.filter(thread -> Objects.equals(thread.getName(), name))
+						.findFirst()
+						.orElseThrow(() -> new RuntimeException("Thread with name " + name + " not found in " + guild)));
 	}
 }

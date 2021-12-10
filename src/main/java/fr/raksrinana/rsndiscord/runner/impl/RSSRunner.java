@@ -1,36 +1,43 @@
 package fr.raksrinana.rsndiscord.runner.impl;
 
-import com.apptastic.rssreader.Channel;
-import com.apptastic.rssreader.DateTime;
-import com.apptastic.rssreader.Item;
-import com.apptastic.rssreader.RssReader;
+import com.rometools.rome.feed.synd.SyndCategory;
+import com.rometools.rome.feed.synd.SyndContent;
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.io.FeedException;
+import com.rometools.rome.io.SyndFeedInput;
+import com.rometools.rome.io.XmlReader;
 import fr.raksrinana.rsndiscord.runner.api.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.impl.guild.rss.RSSConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import kong.unirest.Unirest;
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URL;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import static java.awt.Color.GREEN;
 import static java.util.concurrent.TimeUnit.HOURS;
-import static net.dv8tion.jda.api.entities.MessageEmbed.DESCRIPTION_MAX_LENGTH;
 
+@NoArgsConstructor
 @ScheduledRunner
 @Log4j2
 public class RSSRunner implements IScheduledRunner{
-	private final RssReader reader;
-	
-	public RSSRunner(){
-		reader = new RssReader();
-	}
 	
 	@Override
 	public void executeGlobal(@NotNull JDA jda) throws Exception{
@@ -56,42 +63,96 @@ public class RSSRunner implements IScheduledRunner{
 		
 		var feedInfo = rssConfiguration.getFeedInfo(key);
 		var lastDate = feedInfo.getLastPublicationDate();
-		reader.readAsync(key)
-				.thenAccept(items -> {
-					var newItems = items.sorted()
-							.filter(item -> lastDate.map(date -> date < item.getPubDate().map(DateTime::toEpochMilli).orElse(0L)).orElse(true))
-							.collect(Collectors.toList());
-					
-					log.info("Found {} new items in feed {}", newItems.size(), key);
-					
-					newItems.forEach(item -> publish(channel, item));
-					
-					newItems.stream()
-							.flatMap(item -> item.getPubDate().map(DateTime::toEpochMilli).stream())
-							.mapToLong(l -> l)
-							.max()
-							.ifPresent(feedInfo::setLastPublicationDate);
-					
-					newItems.stream().findAny()
-							.map(Item::getChannel)
-							.map(Channel::getTitle)
-							.ifPresent(feedInfo::setTitle);
-				});
+		getFeed(url).ifPresent(feed -> {
+			var entries = feed.getEntries();
+			var newEntries = entries.stream()
+					.sorted(this::sortByPublishDate)
+					.filter(entry -> lastDate.map(date -> {
+								var entryTimestamp = Optional.ofNullable(entry.getPublishedDate())
+										.map(Date::toInstant)
+										.map(Instant::toEpochMilli)
+										.orElse(0L);
+								return date < entryTimestamp;
+							})
+							.orElse(true))
+					.toList();
+			
+			log.info("Found {} new entries in feed {}", newEntries.size(), key);
+			
+			newEntries.forEach(entry -> publish(channel, feed, entry));
+			
+			newEntries.stream()
+					.flatMap(entry -> Optional.ofNullable(entry.getPublishedDate())
+							.map(Date::toInstant)
+							.map(Instant::toEpochMilli)
+							.stream())
+					.mapToLong(l -> l)
+					.max()
+					.ifPresent(feedInfo::setLastPublicationDate);
+			
+			Optional.ofNullable(feed.getTitle()).ifPresent(feedInfo::setTitle);
+		});
 	}
 	
-	private void publish(@NotNull TextChannel channel, @NotNull Item item){
+	@NotNull
+	private Optional<SyndFeed> getFeed(@NotNull URL url){
+		var response = Unirest.get(url.toString()).asBytes();
+		if(!response.isSuccess()){
+			return Optional.empty();
+		}
+		
+		try{
+			var reader = new XmlReader(new ByteArrayInputStream(response.getBody()));
+			var feed = new SyndFeedInput().build(reader);
+			return Optional.ofNullable(feed);
+		}
+		catch(IOException | FeedException e){
+			log.error("Failed to parse RSS feed", e);
+			return Optional.empty();
+		}
+	}
+	
+	private void publish(@NotNull TextChannel channel, @NotNull SyndFeed feed, @NotNull SyndEntry entry){
+		var title = Optional.ofNullable(entry.getTitle())
+				.map(tit -> tit.substring(0, Math.min(tit.length(), MessageEmbed.TITLE_MAX_LENGTH)))
+				.orElse("Empty");
+		
 		var builder = new EmbedBuilder();
 		builder.setColor(GREEN);
-		builder.setTitle("RSS: " + item.getChannel().getTitle());
-		item.getDescription()
-				.map(desc -> desc.substring(0, Math.min(desc.length(), DESCRIPTION_MAX_LENGTH)))
-				.ifPresent(builder::setDescription);
-		item.getAuthor().ifPresent(builder::setAuthor);
-		item.getCategory().ifPresent(category -> builder.addField("Category", category, true));
-		item.getLink().ifPresent(link -> builder.addField("Link", link, true));
-		item.getPubDateZonedDateTime().ifPresent(builder::setTimestamp);
+		builder.setTitle(title, entry.getLink());
+		builder.setDescription("RSS: " + feed.getTitle());
+		Optional.ofNullable(entry.getDescription())
+				.map(SyndContent::getValue)
+				.map(desc -> desc.substring(0, Math.min(desc.length(), MessageEmbed.VALUE_MAX_LENGTH)))
+				.ifPresent(desc -> builder.addField("Content", desc, false));
+		Optional.ofNullable(entry.getAuthor()).ifPresent(builder::setAuthor);
+		var categories = entry.getCategories().stream()
+				.map(SyndCategory::getName)
+				.collect(Collectors.joining(", "));
+		if(!categories.isBlank()){
+			builder.addField("Category", categories, true);
+		}
+		Optional.ofNullable(entry.getPublishedDate())
+				.map(Date::toInstant)
+				.ifPresent(builder::setTimestamp);
 		
 		JDAWrappers.message(channel, builder.build()).submit();
+	}
+	
+	private int sortByPublishDate(@NotNull SyndEntry entry1, @NotNull SyndEntry entry2){
+		var date1 = entry1.getPublishedDate();
+		var date2 = entry2.getPublishedDate();
+		
+		if(Objects.nonNull(date1) && Objects.nonNull(date2)){
+			return date1.compareTo(date2);
+		}
+		if(Objects.nonNull(date1)){
+			return 1;
+		}
+		if(Objects.nonNull(date2)){
+			return -1;
+		}
+		return 0;
 	}
 	
 	@Override

@@ -6,6 +6,8 @@ import fr.raksrinana.rsndiscord.schedule.impl.UnbanMemberScheduleHandler;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
@@ -45,9 +47,7 @@ public class SoftBanCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
-		var guild = event.getGuild();
-		
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
 		var target = event.getOption(USER_OPTION_ID).getAsMember();
 		var duration = getOptionAs(event.getOption(DURATION_OPTION_ID), Utilities::parseDuration).orElseThrow();
 		var reason = event.getOption(REASON_OPTION_ID).getAsString();
@@ -55,7 +55,7 @@ public class SoftBanCommand extends SubCommand{
 		var message = translate(guild, "softban.banned", target.getAsMention(), durationToString(duration), reason);
 		var unbanSchedule = new UnbanMemberScheduleHandler(target.getIdLong(), ZonedDateTime.now().plus(duration));
 		
-		JDAWrappers.ban(target, 0, reason).sumbit()
+		JDAWrappers.ban(target, 0, reason).submit()
 				.thenAccept(empty -> {
 					Settings.get(guild).add(unbanSchedule);
 					JDAWrappers.edit(event, message).submit();

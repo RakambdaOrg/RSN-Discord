@@ -9,16 +9,14 @@ import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 public class MuteWrapper{
-	private final Guild guild;
 	private final Member member;
 	private final boolean state;
 	private final AuditableRestAction<Void> action;
 	
 	public MuteWrapper(@NotNull Guild guild, @NotNull Member member, boolean state){
-		this.guild = guild;
 		this.member = member;
 		this.state = state;
-		this.action = guild.mute(member, state);
+		action = guild.mute(member, state);
 	}
 	
 	@NotNull

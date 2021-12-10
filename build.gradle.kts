@@ -16,6 +16,7 @@ description = "RSNDiscord"
 dependencies {
     implementation(libs.jda) {
         exclude(module = "opus-java")
+        setChanging(true)
     }
     implementation(libs.bundles.opus)
     implementation(libs.lavaplayer)
@@ -33,7 +34,7 @@ dependencies {
     implementation(libs.reflections)
     implementation(libs.twittered)
     implementation(libs.kittehIrc)
-    implementation(libs.rssreader)
+    implementation(libs.rome)
 
     compileOnly(libs.jetbrainsAnnotations)
 }
@@ -109,15 +110,15 @@ extraJavaModuleInfo {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 
     modularity.inferModulePath.set(false)
 }
 
 jib {
     from {
-        image = "openjdk:16-slim"
+        image = "openjdk:17-slim"
         platforms {
             platform {
                 os = "linux"

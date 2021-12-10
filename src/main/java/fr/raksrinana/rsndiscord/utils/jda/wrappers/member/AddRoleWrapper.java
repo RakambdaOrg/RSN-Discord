@@ -10,16 +10,14 @@ import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 public class AddRoleWrapper{
-	private final Guild guild;
 	private final Member member;
 	private final Role role;
 	private final AuditableRestAction<Void> action;
 	
 	public AddRoleWrapper(@NotNull Guild guild, @NotNull Member member, @NotNull Role role){
-		this.guild = guild;
 		this.member = member;
 		this.role = role;
-		this.action = guild.addRoleToMember(member, role);
+		action = guild.addRoleToMember(member, role);
 	}
 	
 	@NotNull

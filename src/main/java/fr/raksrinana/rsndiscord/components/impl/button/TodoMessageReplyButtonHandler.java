@@ -6,11 +6,14 @@ import fr.raksrinana.rsndiscord.components.base.SimpleButtonHandler;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Emoji;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.ThreadChannel;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.interactions.components.Button;
 import org.jetbrains.annotations.NotNull;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 import static fr.raksrinana.rsndiscord.components.ComponentResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
@@ -23,28 +26,28 @@ public class TodoMessageReplyButtonHandler extends SimpleButtonHandler{
 	
 	@NotNull
 	@Override
-	public CompletableFuture<ComponentResult> handle(@NotNull ButtonClickEvent event){
-		var guild = event.getGuild();
+	public CompletableFuture<ComponentResult> handleGuild(@NotNull ButtonClickEvent event, @NotNull Guild guild, @NotNull Member member){
 		var user = event.getUser();
 		var message = event.getMessage();
+		var replyName = "reply-" + event.getMessageIdLong();
 		
-		return JDAWrappers.createTextChannel(guild, "reply-" + event.getMessageIdLong()).submit()
-				.thenCompose(forwardChannel -> {
-					Optional.ofNullable(message.getTextChannel().getParent()).ifPresent(category -> JDAWrappers.edit(forwardChannel)
-							.setParent(category)
-							.sync(category)
-							.submit());
-					
-					return JDAWrappers.message(forwardChannel, translate(guild, "reaction.original-from", message.getAuthor().getAsMention())).submit();
-				})
-				.thenCompose(sent -> JDAWrappers.message(sent.getTextChannel(), message)
-						.clearActionRows()
-						.submit())
-				.thenCompose(sent -> JDAWrappers.message(sent.getTextChannel(), translate(guild, "reaction.react-archive", user.getAsMention()))
-						.addActionRow(new ReplyChannelDeleteButtonHandler().asComponent())
-						.submit())
-				.thenCompose(sent -> JDAWrappers.delete(message).submit())
+		return JDAWrappers.createThread(message, replyName).submit()
+				.thenCompose(thread -> CompletableFuture.allOf(
+						addMembersToThread(event, thread),
+						JDAWrappers.message(thread, translate(guild, "reaction.react-archive", user.getAsMention())).submit(),
+						event.editButton(asComponent().withLabel("Already replied").asDisabled()).submit()
+				))
 				.thenApply(e -> HANDLED);
+	}
+	
+	@NotNull
+	private CompletableFuture<Void> addMembersToThread(@NotNull ButtonClickEvent event, @NotNull ThreadChannel thread){
+		var authorFuture = Stream.of(JDAWrappers.addThreadMember(thread, event.getUser()).submit());
+		var mentionedFutures = event.getMessage().getMentionedMembers().stream()
+				.map(u -> JDAWrappers.addThreadMember(thread, u).submit());
+		
+		var futures = Stream.concat(authorFuture, mentionedFutures).toArray(CompletableFuture[]::new);
+		return CompletableFuture.allOf(futures);
 	}
 	
 	@Override

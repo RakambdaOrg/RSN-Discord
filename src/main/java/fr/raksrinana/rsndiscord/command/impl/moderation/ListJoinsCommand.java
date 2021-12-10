@@ -4,6 +4,7 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command.base.group.SubCommand;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -42,8 +43,7 @@ public class ListJoinsCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult execute(@NotNull SlashCommandEvent event){
-		var guild = event.getGuild();
+	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
 		var limit = getOptionAsInt(event.getOption(USER_COUNT_OPTION_ID)).orElse(50);
 		var joinPos = new AtomicInteger(0);
 		
@@ -51,11 +51,11 @@ public class ListJoinsCommand extends SubCommand{
 				.onSuccess(members -> members.stream()
 						.sorted(Comparator.comparing(Member::getTimeJoined))
 						.limit(limit)
-						.forEachOrdered(member -> {
+						.forEachOrdered(m -> {
 							var message = translate(guild, "list-joins.user-joined",
 									joinPos.incrementAndGet(),
-									member.getTimeJoined().format(DF),
-									member.getAsMention());
+									m.getTimeJoined().format(DF),
+									m.getAsMention());
 							JDAWrappers.reply(event, message).ephemeral(true).submit();
 						}))
 				.onError(error -> {

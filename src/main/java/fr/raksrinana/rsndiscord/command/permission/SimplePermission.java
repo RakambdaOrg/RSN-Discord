@@ -2,6 +2,7 @@ package fr.raksrinana.rsndiscord.command.permission;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import static fr.raksrinana.rsndiscord.utils.Utilities.isCreator;
@@ -11,7 +12,7 @@ public record SimplePermission(boolean allowedByDefault) implements IPermission{
 	public static final SimplePermission FALSE_BY_DEFAULT = new SimplePermission(false);
 	
 	@Override
-	public boolean isAllowed(@NotNull String id, @NotNull Member member){
+	public boolean isGuildAllowed(@NotNull String id, @NotNull Member member){
 		if(isCreator(member)){
 			return true;
 		}
@@ -25,6 +26,11 @@ public record SimplePermission(boolean allowedByDefault) implements IPermission{
 			return false;
 		}
 		return allowedByDefault;
+	}
+	
+	@Override
+	public boolean isUserAllowed(@NotNull String id, @NotNull User user){
+		return true;
 	}
 	
 	private static boolean isPermissionInList(@NotNull String commandId, @NotNull Collection<String> permissions){

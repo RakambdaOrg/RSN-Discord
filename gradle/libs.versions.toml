@@ -1,28 +1,28 @@
 [versions]
-jda-version = "4.3.0_339"
+jda-version = "5.0.0-alpha.2"
 lavaplayer-version = "1.3.78"
 lp_cross-version = "0.1.1"
 slf4j-version = "2.0.0-alpha5"
 log4j2-version = "2.14.1"
 log4j2-slf4j-version = "2.14.1"
 unirest-version = "4.0.0-RC1"
-picocli-version = "4.6.1"
+picocli-version = "4.6.2"
 jackson-version = "2.13.0"
 httpclient-version = "4.5.13"
 lang3-version = "3.12.0"
-reflections-version = "0.10.1"
+reflections-version = "0.10.2"
 jump3r-version = "1.0.5"
-twittered-version = "2.10"
-jetbrains-annotations-version = "22.0.0"
+twittered-version = "2.12"
+jetbrains-annotations-version = "23.0.0"
 kitteh-irc-version = "8.0.0"
-opus-version = "1.1.0"
-rssreader-version = "2.5.0"
+opus-version = "1.1.1"
+rome-version = "1.16.0"
 
 shadow-version = "7.1.0"
 names-version = "0.39.0"
-lombok-version = "6.2.0"
+lombok-version = "6.3.0"
 jib-version = "3.1.4"
-git-properties-version = "2.3.2"
+git-properties-version = "2.4.0-rc2"
 java-modules-version = "0.9"
 
 [libraries]
@@ -47,7 +47,7 @@ jetbrainsAnnotations = { group = "org.jetbrains", name = "annotations", version.
 kittehIrc = { group = "org.kitteh.irc", name = "client-lib", version.ref = "kitteh-irc-version" }
 opus-api = { group = "club.minnced", name = "opus-java-api", version.ref = "opus-version" }
 opus-natives = { group = "club.minnced", name = "opus-java-natives", version.ref = "opus-version" }
-rssreader = { group ="com.github.w3stling", name = "rssreader", version.ref = "rssreader-version" }
+rome = { group ="com.rometools", name = "rome", version.ref = "rome-version" }
 
 [bundles]
 jackson = ["jackson-core", "jackson-annotations", "jackson-databind"]

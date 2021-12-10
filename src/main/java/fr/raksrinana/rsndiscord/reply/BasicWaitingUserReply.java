@@ -5,10 +5,9 @@ import lombok.Getter;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import org.jetbrains.annotations.NotNull;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -44,11 +43,11 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 	}
 	
 	@Override
-	public void close() throws IOException{
+	public void close(){
 	}
 	
 	@Override
-	public boolean execute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args){
+	public boolean execute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args){
 		synchronized(lock){
 			if(!isHandled()){
 				handled = onExecute(event, args);
@@ -61,7 +60,7 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 	}
 	
 	@Override
-	public boolean execute(@NotNull GuildMessageReactionAddEvent event){
+	public boolean execute(@NotNull MessageReactionAddEvent event){
 		synchronized(lock){
 			if(!isHandled()){
 				handled = onExecute(event);
@@ -73,7 +72,7 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 		return isHandled();
 	}
 	
-	protected abstract boolean onExecute(@NotNull GuildMessageReactionAddEvent event);
+	protected abstract boolean onExecute(@NotNull MessageReactionAddEvent event);
 	
 	@Override
 	public boolean onExpire(){
@@ -83,12 +82,12 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 	}
 	
 	@Override
-	public boolean handleEvent(@NotNull GuildMessageReceivedEvent event){
+	public boolean handleEvent(@NotNull MessageReceivedEvent event){
 		return Objects.equals(getUser(), event.getAuthor()) && Objects.equals(getWaitChannel(), event.getChannel());
 	}
 	
 	@Override
-	public boolean handleEvent(@NotNull GuildMessageReactionAddEvent event) throws InterruptedException, ExecutionException, TimeoutException{
+	public boolean handleEvent(@NotNull MessageReactionAddEvent event) throws InterruptedException, ExecutionException, TimeoutException{
 		return event.retrieveUser().submit()
 				.thenApply(user -> Objects.equals(getUser(), event.getUser())
 						&& Objects.equals(getWaitChannel(), event.getChannel())
@@ -107,5 +106,5 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 		return waitUser;
 	}
 	
-	protected abstract boolean onExecute(@NotNull GuildMessageReceivedEvent event, @NotNull LinkedList<String> args);
+	protected abstract boolean onExecute(@NotNull MessageReceivedEvent event, @NotNull LinkedList<String> args);
 }

@@ -3,7 +3,7 @@ name: CI
 on: [ push ]
 
 env:
-  APP_JAVA_VERSION: 16
+  APP_JAVA_VERSION: 17
 
 jobs:
   build:
@@ -22,6 +22,8 @@ jobs:
         run: chmod +x gradlew
       - name: Check project
         run: ./gradlew check
-      - name: Push on Docker Hub
+      - name: Push branch on Docker Hub
+        run: ./gradlew jib -PdockerUsername=${{ secrets.DOCKER_USERNAME }} -PdockerPassword=${{ secrets.DOCKER_TOKEN }} -Djib.to.image=mrcraftcod/rsn-discord:${GITHUB_REF##*/}
+      - name: Push latest on Docker Hub
         if: success() && github.ref == 'refs/heads/main'
         run: ./gradlew jib -PdockerUsername=${{ secrets.DOCKER_USERNAME }} -PdockerPassword=${{ secrets.DOCKER_TOKEN }}

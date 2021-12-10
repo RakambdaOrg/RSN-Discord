@@ -22,7 +22,7 @@ public class JoinLeaveListener extends ListenerAdapter{
 		var guild = event.getGuild();
 		var user = event.getUser();
 		
-		try(var context = LogContext.with(guild).with(user)){
+		try(var ignored = LogContext.with(guild).with(user)){
 			var joinLeaveConfiguration = Settings.get(guild).getJoinLeaveConfiguration();
 			
 			joinLeaveConfiguration.getChannel()
@@ -50,7 +50,7 @@ public class JoinLeaveListener extends ListenerAdapter{
 		var guild = event.getGuild();
 		var user = event.getUser();
 		
-		try(var context = LogContext.with(guild).with(user)){
+		try(var ignored = LogContext.with(guild).with(user)){
 			var joinLeaveConfiguration = Settings.get(guild).getJoinLeaveConfiguration();
 			
 			joinLeaveConfiguration.getChannel()

@@ -89,13 +89,17 @@ public class Main{
 			
 			registerAllEventListeners(jdaBuilder);
 			
+			log.info("Building JDA");
 			jda = jdaBuilder.build();
+			log.info("JDA built, waiting to be ready");
 			jda.awaitReady();
+			log.info("JDA ready");
+			
 			log.info("Loaded {} guild settings", jda.getGuilds().stream().map(Settings::get).count());
 			
 			JDAWrappers.editPresence()
 					.setStatus(ONLINE)
-					.setActivity(Activity.of(Activity.ActivityType.DEFAULT, "Bip bip"));
+					.setActivity(Activity.of(Activity.ActivityType.PLAYING, "Bip bip"));
 			
 			SlashCommandService.registerGlobalCommands();
 			SlashCommandService.registerGuildCommands(jda.getGuildById(735921627631583394L));
@@ -152,6 +156,7 @@ public class Main{
 	}
 	
 	private static void registerAllEventListeners(@NotNull JDABuilder jdaBuilder){
+		log.info("Registering event listeners");
 		Utilities.getAllAnnotatedWith(EventListener.class, clazz -> (ListenerAdapter) clazz.getConstructor().newInstance())
 				.forEach(jdaBuilder::addEventListeners);
 	}

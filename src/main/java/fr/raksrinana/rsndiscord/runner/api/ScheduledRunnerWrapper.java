@@ -30,7 +30,7 @@ public class ScheduledRunnerWrapper implements Runnable{
 				}
 			}
 		}
-		catch(Exception e){
+		catch(Throwable e){
 			log.error("Error while executing {} scheduled runner", getRunner().getName(), e);
 		}
 		log.info("{} scheduled runner done", getRunner().getName());

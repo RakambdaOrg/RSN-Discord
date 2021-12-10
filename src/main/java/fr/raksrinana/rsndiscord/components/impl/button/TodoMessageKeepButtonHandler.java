@@ -3,50 +3,48 @@ package fr.raksrinana.rsndiscord.components.impl.button;
 import fr.raksrinana.rsndiscord.components.ButtonHandler;
 import fr.raksrinana.rsndiscord.components.ComponentResult;
 import fr.raksrinana.rsndiscord.components.base.SimpleButtonHandler;
-import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Emoji;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.interactions.components.Button;
 import org.jetbrains.annotations.NotNull;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import static fr.raksrinana.rsndiscord.components.ComponentResult.HANDLED;
-import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @Log4j2
 @ButtonHandler
 public class TodoMessageKeepButtonHandler extends SimpleButtonHandler{
+	private static final String TODO_MESSAGE_ID = new TodoMessageDeleteButtonHandler().getId();
+	
 	public TodoMessageKeepButtonHandler(){
 		super("todo-message-keep");
 	}
 	
 	@NotNull
 	@Override
-	public CompletableFuture<ComponentResult> handle(@NotNull ButtonClickEvent event){
-		var guild = event.getGuild();
+	public CompletableFuture<ComponentResult> handleGuild(@NotNull ButtonClickEvent event, @NotNull Guild guild, @NotNull Member member){
 		var message = event.getMessage();
-		var channel = event.getTextChannel();
 		
-		var forwardChannel = Settings.get(guild).getReactionsConfiguration().getSavedForwarding().get(new ChannelConfiguration(channel));
-		return Optional.ofNullable(forwardChannel)
-				.flatMap(ChannelConfiguration::getChannel)
-				.map(c -> JDAWrappers.message(c, message)
-						.clearActionRows()
-						.submit()
-						.thenApply(forwardedMessage -> true)
-						.exceptionally(e -> false))
-				.orElse(CompletableFuture.completedFuture(false))
-				.thenAccept(forwarded -> {
-					if(forwarded){
-						JDAWrappers.delete(message).submit();
+		var buttons = message.getActionRows().stream()
+				.findFirst().stream()
+				.flatMap(a -> a.getComponents().stream())
+				.map(c -> {
+					if(c instanceof Button b){
+						if(Objects.equals(b.getId(), TODO_MESSAGE_ID)){
+							return b.asDisabled();
+						}
+						if(Objects.equals(b.getId(), getId())){
+							return b.withLabel("Message archived").asDisabled();
+						}
 					}
-					else{
-						JDAWrappers.reply(event, translate(guild, "reaction.not-configured")).submit();
-					}
+					return c;
 				})
+				.toList();
+		return JDAWrappers.editComponents(message, buttons).submit()
 				.thenApply(empty -> HANDLED);
 	}
 	

@@ -13,7 +13,6 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.command.impl.music.NowPlayingCommand.getDuration;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.awt.Color.GREEN;
@@ -46,7 +45,7 @@ public class AddMusicTrackConsumer implements TrackConsumer{
 		var queue = RSNAudioManager.getQueue(guild);
 		var before = queue.stream()
 				.takeWhile(t -> !Objects.equals(track, t))
-				.collect(Collectors.toList());
+				.toList();
 		var isCurrentTrack = RSNAudioManager.currentTrack(guild)
 				.map(trk -> Objects.equals(trk, track))
 				.orElse(false);
