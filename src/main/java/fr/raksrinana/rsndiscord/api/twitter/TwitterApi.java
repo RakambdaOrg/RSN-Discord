@@ -65,7 +65,7 @@ public class TwitterApi implements IAPIEventListener{
 		var tweetUrl = getUrl(tweet);
 		
 		if(tweet instanceof TweetV2 tweetV2){
-			Arrays.stream(tweetV2.getMatchingRules())
+			tweetV2.getMatchingRules().stream()
 					.map(StreamRules.StreamRule::getTag)
 					.map(hash -> searchesHash.get(hash))
 					.filter(Objects::nonNull)
