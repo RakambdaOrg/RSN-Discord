@@ -118,7 +118,7 @@ java {
 
 jib {
     from {
-        image = "openjdk:17-slim"
+        image = "eclipse-temurin:17-jdk"
         platforms {
             platform {
                 os = "linux"
