@@ -23,7 +23,7 @@ names-version = "0.39.0"
 lombok-version = "6.3.0"
 jib-version = "3.1.4"
 git-properties-version = "2.4.0-rc2"
-java-modules-version = "0.9"
+java-modules-version = "0.10"
 
 [libraries]
 jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda-version" }
