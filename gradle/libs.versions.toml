@@ -23,7 +23,6 @@ names-version = "0.39.0"
 lombok-version = "6.3.0"
 jib-version = "3.1.4"
 git-properties-version = "2.4.0-rc2"
-java-modules-version = "0.9"
 
 [libraries]
 jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda-version" }
@@ -60,4 +59,3 @@ names = { id = "com.github.ben-manes.versions", version.ref = "names-version" }
 lombok = { id = "io.freefair.lombok", version.ref = "lombok-version" }
 jib = { id = "com.google.cloud.tools.jib", version.ref = "jib-version" }
 gitProperties = { id = "com.gorylenko.gradle-git-properties", version.ref = "git-properties-version" }
-javaModules = { id = "de.jjohannes.extra-java-module-info", version.ref = "java-modules-version" }

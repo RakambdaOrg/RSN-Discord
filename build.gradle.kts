@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.lombok)
     alias(libs.plugins.jib)
     alias(libs.plugins.gitProperties)
-    alias(libs.plugins.javaModules)
 }
 
 group = "fr.raksrinana"
@@ -103,10 +102,6 @@ application {
 
     mainModule.set(moduleName)
     mainClass.set(className)
-}
-
-extraJavaModuleInfo {
-    failOnMissingModuleInfo.set(false)
 }
 
 java {
