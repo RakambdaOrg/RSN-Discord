@@ -34,7 +34,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import static java.awt.Color.GREEN;
-import static java.util.concurrent.TimeUnit.HOURS;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 @NoArgsConstructor
 @ScheduledRunner
@@ -177,7 +177,7 @@ public class RSSRunner implements IScheduledRunner{
 	
 	@Override
 	public long getPeriod(){
-		return 1;
+		return 15;
 	}
 	
 	@Override
@@ -189,6 +189,6 @@ public class RSSRunner implements IScheduledRunner{
 	@Override
 	@NotNull
 	public TimeUnit getPeriodUnit(){
-		return HOURS;
+		return MINUTES;
 	}
 }
