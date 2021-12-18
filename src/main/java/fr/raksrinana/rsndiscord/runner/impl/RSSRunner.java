@@ -22,6 +22,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jsoup.Jsoup;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -122,7 +124,7 @@ public class RSSRunner implements IScheduledRunner{
 		builder.setTitle(title, entry.getLink());
 		builder.setDescription("RSS: " + feed.getTitle());
 		Optional.ofNullable(entry.getDescription())
-				.map(SyndContent::getValue)
+				.map(this::getContent)
 				.map(desc -> desc.substring(0, Math.min(desc.length(), MessageEmbed.VALUE_MAX_LENGTH)))
 				.ifPresent(desc -> builder.addField("Content", desc, false));
 		Optional.ofNullable(entry.getAuthor()).ifPresent(builder::setAuthor);
@@ -137,6 +139,19 @@ public class RSSRunner implements IScheduledRunner{
 				.ifPresent(builder::setTimestamp);
 		
 		JDAWrappers.message(channel, builder.build()).submit();
+	}
+	
+	@Nullable
+	private String getContent(@NotNull SyndContent content){
+		var value = content.getValue();
+		if(Objects.isNull(value)){
+			return null;
+		}
+		
+		if(Objects.nonNull(content.getType()) && content.getType().contains("html")){
+			return Jsoup.parse(value).text();
+		}
+		return value;
 	}
 	
 	private int sortByPublishDate(@NotNull SyndEntry entry1, @NotNull SyndEntry entry2){

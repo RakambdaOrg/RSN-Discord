@@ -25,6 +25,7 @@ open module fr.raksrinana.rsndiscord {
 	requires mbassador;
 	requires com.rometools.rome;
 	requires java.net.http;
+	requires org.jsoup;
 	
 	requires static lombok;
 	requires static org.jetbrains.annotations;

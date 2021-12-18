@@ -34,6 +34,7 @@ dependencies {
     implementation(libs.twittered)
     implementation(libs.kittehIrc)
     implementation(libs.rome)
+    implementation(libs.jsoup)
 
     compileOnly(libs.jetbrainsAnnotations)
 }

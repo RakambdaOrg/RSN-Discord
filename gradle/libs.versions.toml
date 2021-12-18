@@ -17,6 +17,7 @@ jetbrains-annotations-version = "23.0.0"
 kitteh-irc-version = "8.0.0"
 opus-version = "1.1.1"
 rome-version = "1.16.0"
+jsoup-version = "1.14.3"
 
 shadow-version = "7.1.1"
 names-version = "0.39.0"
@@ -47,6 +48,7 @@ kittehIrc = { group = "org.kitteh.irc", name = "client-lib", version.ref = "kitt
 opus-api = { group = "club.minnced", name = "opus-java-api", version.ref = "opus-version" }
 opus-natives = { group = "club.minnced", name = "opus-java-natives", version.ref = "opus-version" }
 rome = { group ="com.rometools", name = "rome", version.ref = "rome-version" }
+jsoup = { group ="org.jsoup", name = "jsoup", version.ref = "jsoup-version" }
 
 [bundles]
 jackson = ["jackson-core", "jackson-annotations", "jackson-databind"]
