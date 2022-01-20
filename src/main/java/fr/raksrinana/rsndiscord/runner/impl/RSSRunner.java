@@ -68,10 +68,9 @@ public class RSSRunner implements IScheduledRunner{
 		getFeed(url).ifPresent(feed -> {
 			var entries = feed.getEntries();
 			var newEntries = entries.stream()
-					.sorted(this::sortByPublishDate)
+					.sorted(this::sortByDate)
 					.filter(entry -> lastDate.map(date -> {
-								var entryTimestamp = Optional.ofNullable(entry.getPublishedDate())
-										.map(Date::toInstant)
+								var entryTimestamp = extractDate(entry)
 										.map(Instant::toEpochMilli)
 										.orElse(0L);
 								return date < entryTimestamp;
@@ -84,8 +83,7 @@ public class RSSRunner implements IScheduledRunner{
 			newEntries.forEach(entry -> publish(channel, feed, entry));
 			
 			newEntries.stream()
-					.flatMap(entry -> Optional.ofNullable(entry.getPublishedDate())
-							.map(Date::toInstant)
+					.flatMap(entry -> extractDate(entry)
 							.map(Instant::toEpochMilli)
 							.stream())
 					.mapToLong(l -> l)
@@ -94,6 +92,13 @@ public class RSSRunner implements IScheduledRunner{
 			
 			Optional.ofNullable(feed.getTitle()).ifPresent(feedInfo::setTitle);
 		});
+	}
+	
+	@NotNull
+	private Optional<Instant> extractDate(@NotNull SyndEntry entry){
+		return Optional.ofNullable(entry.getPublishedDate())
+				.or(() -> Optional.ofNullable(entry.getUpdatedDate()))
+				.map(Date::toInstant);
 	}
 	
 	@NotNull
@@ -134,9 +139,7 @@ public class RSSRunner implements IScheduledRunner{
 		if(!categories.isBlank()){
 			builder.addField("Category", categories, true);
 		}
-		Optional.ofNullable(entry.getPublishedDate())
-				.map(Date::toInstant)
-				.ifPresent(builder::setTimestamp);
+		extractDate(entry).ifPresent(builder::setTimestamp);
 		
 		JDAWrappers.message(channel, builder.build()).submit();
 	}
@@ -154,17 +157,17 @@ public class RSSRunner implements IScheduledRunner{
 		return value;
 	}
 	
-	private int sortByPublishDate(@NotNull SyndEntry entry1, @NotNull SyndEntry entry2){
-		var date1 = entry1.getPublishedDate();
-		var date2 = entry2.getPublishedDate();
+	private int sortByDate(@NotNull SyndEntry entry1, @NotNull SyndEntry entry2){
+		var date1 = extractDate(entry1);
+		var date2 = extractDate(entry2);
 		
-		if(Objects.nonNull(date1) && Objects.nonNull(date2)){
-			return date1.compareTo(date2);
+		if(date1.isPresent() && date2.isPresent()){
+			return date1.get().compareTo(date2.get());
 		}
-		if(Objects.nonNull(date1)){
+		if(date1.isPresent()){
 			return 1;
 		}
-		if(Objects.nonNull(date2)){
+		if(date2.isPresent()){
 			return -1;
 		}
 		return 0;
