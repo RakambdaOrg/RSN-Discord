@@ -1,32 +1,37 @@
 package fr.raksrinana.rsndiscord.utils.json;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.core.JsonFactoryBuilder;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import kong.unirest.GenericType;
 import kong.unirest.ObjectMapper;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static com.fasterxml.jackson.annotation.PropertyAccessor.CREATOR;
+import static com.fasterxml.jackson.annotation.PropertyAccessor.FIELD;
+import static com.fasterxml.jackson.annotation.PropertyAccessor.GETTER;
+import static com.fasterxml.jackson.annotation.PropertyAccessor.SETTER;
+import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_COMMENTS;
+import static com.fasterxml.jackson.core.json.JsonReadFeature.ALLOW_TRAILING_COMMA;
+import static com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS;
 
 public class JacksonObjectMapper implements ObjectMapper{
 	private final com.fasterxml.jackson.databind.ObjectMapper mapper;
 	
 	public JacksonObjectMapper(){
-		var factoryBuilder = new JsonFactoryBuilder();
-		factoryBuilder.enable(JsonReadFeature.ALLOW_TRAILING_COMMA);
-		mapper = new com.fasterxml.jackson.databind.ObjectMapper(factoryBuilder.build());
-		mapper.setVisibility(mapper.getSerializationConfig()
-				.getDefaultVisibilityChecker()
-				.withFieldVisibility(JsonAutoDetect.Visibility.ANY)
-				.withGetterVisibility(JsonAutoDetect.Visibility.NONE)
-				.withSetterVisibility(JsonAutoDetect.Visibility.NONE)
-				.withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
-		mapper.enable(JsonParser.Feature.ALLOW_COMMENTS);
-		mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
+		mapper = JsonMapper.builder()
+				.enable(ALLOW_TRAILING_COMMA)
+				.enable(ACCEPT_CASE_INSENSITIVE_ENUMS)
+				.enable(ALLOW_COMMENTS)
+				.visibility(FIELD, ANY)
+				.visibility(GETTER, NONE)
+				.visibility(SETTER, NONE)
+				.visibility(CREATOR, NONE)
+				.serializationInclusion(NON_NULL)
+				.build();
 	}
 	
 	@Override
