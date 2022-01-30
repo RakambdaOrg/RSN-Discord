@@ -6,18 +6,43 @@ import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.CreateTextChannelWrap
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.DeleteChannelWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.EditChannelWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.guild.LeaveGuildWrapper;
-import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.*;
-import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.*;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.AddRoleWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.BanWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.DeafenWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.KickWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.ModifyNicknameWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.MuteWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.RemoveRoleWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.UnbanWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.AddReactionWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.ClearReactionsWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.DeleteMessageWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.EditMessageWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.InteractionEditMessageWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.InteractionNewMessageWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.MessageWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.RemoveAllReactionWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.RemoveReactionWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.UnpinMessageWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.role.SetColorWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.thread.AddThreadMemberWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.thread.CreateThreadWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.thread.DeleteThreadWrapper;
 import lombok.extern.log4j.Log4j2;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.MessageReaction;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.ThreadChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
-import net.dv8tion.jda.api.interactions.components.Component;
-import net.dv8tion.jda.api.interactions.components.ComponentLayout;
+import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
+import net.dv8tion.jda.api.interactions.components.ItemComponent;
+import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.awt.Color;
@@ -56,12 +81,12 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static EditMessageWrapper editComponents(@NotNull Message message, @NotNull Component... components){
+	public static EditMessageWrapper editComponents(@NotNull Message message, @NotNull ItemComponent... components){
 		return new EditMessageWrapper(message).setActionRow(components);
 	}
 	
 	@NotNull
-	public static EditMessageWrapper editComponents(@NotNull Message message, @NotNull List<Component> components){
+	public static EditMessageWrapper editComponents(@NotNull Message message, @NotNull List<ItemComponent> components){
 		return new EditMessageWrapper(message).setActionRow(components);
 	}
 	
@@ -136,32 +161,32 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static InteractionEditMessageWrapper edit(@NotNull GenericInteractionCreateEvent event, @NotNull String messsage){
+	public static InteractionEditMessageWrapper edit(@NotNull IReplyCallback event, @NotNull String messsage){
 		return new InteractionEditMessageWrapper(event.getGuild(), event.getHook(), messsage);
 	}
 	
 	@NotNull
-	public static InteractionEditMessageWrapper edit(@NotNull GenericInteractionCreateEvent event, @NotNull MessageEmbed embed){
+	public static InteractionEditMessageWrapper edit(@NotNull IReplyCallback event, @NotNull MessageEmbed embed){
 		return new InteractionEditMessageWrapper(event.getGuild(), event.getHook(), embed);
 	}
 	
 	@NotNull
-	public static InteractionEditMessageWrapper edit(@NotNull GenericInteractionCreateEvent event, @NotNull ComponentLayout... layouts){
+	public static InteractionEditMessageWrapper edit(@NotNull IReplyCallback event, @NotNull LayoutComponent... layouts){
 		return new InteractionEditMessageWrapper(event.getGuild(), event.getHook(), layouts);
 	}
 	
 	@NotNull
-	public static InteractionNewMessageWrapper reply(@NotNull GenericInteractionCreateEvent event, @NotNull String messsage){
+	public static InteractionNewMessageWrapper reply(@NotNull IReplyCallback event, @NotNull String messsage){
 		return new InteractionNewMessageWrapper(event.getGuild(), event.getHook(), messsage);
 	}
 	
 	@NotNull
-	public static InteractionNewMessageWrapper reply(@NotNull GenericInteractionCreateEvent event, @NotNull MessageEmbed embed){
+	public static InteractionNewMessageWrapper reply(@NotNull IReplyCallback event, @NotNull MessageEmbed embed){
 		return new InteractionNewMessageWrapper(event.getGuild(), event.getHook(), embed);
 	}
 	
 	@NotNull
-	public static InteractionEditMessageWrapper removeComponents(@NotNull GenericInteractionCreateEvent event){
+	public static InteractionEditMessageWrapper removeComponents(@NotNull IReplyCallback event){
 		return new InteractionEditMessageWrapper(event.getGuild(), event.getHook()).clearActionRows();
 	}
 	

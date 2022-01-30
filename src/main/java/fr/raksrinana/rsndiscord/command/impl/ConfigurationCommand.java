@@ -17,7 +17,7 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import java.util.*;
@@ -144,7 +144,7 @@ public class ConfigurationCommand extends SimpleCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
+	public CommandResult executeGuild(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
 		var accessor = accessors.get(event.getOption(NAME_OPTION_ID).getAsString());
 		if(Objects.isNull(accessor)){
 			JDAWrappers.reply(event, "Unknown configuration. Available: " + accessors.keySet().stream().sorted().collect(Collectors.joining("\n"))).submit();
@@ -175,7 +175,7 @@ public class ConfigurationCommand extends SimpleCommand{
 		}
 	}
 	
-	private CommandResult handleSetOperation(SlashCommandEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
+	private CommandResult handleSetOperation(SlashCommandInteractionEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
 		if(accessor.set(configuration, event.getOption(VALUE_OPTION_ID).getAsString())){
 			JDAWrappers.reply(event, "Value modified").submit();
 		}
@@ -185,7 +185,7 @@ public class ConfigurationCommand extends SimpleCommand{
 		return HANDLED;
 	}
 	
-	private CommandResult handleResetOperation(SlashCommandEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
+	private CommandResult handleResetOperation(SlashCommandInteractionEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
 		if(accessor.reset(configuration)){
 			JDAWrappers.reply(event, "Value reset").submit();
 		}
@@ -195,7 +195,7 @@ public class ConfigurationCommand extends SimpleCommand{
 		return HANDLED;
 	}
 	
-	private CommandResult handleAddOperation(SlashCommandEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
+	private CommandResult handleAddOperation(SlashCommandInteractionEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
 		if(accessor.add(configuration, event.getOption(VALUE_OPTION_ID).getAsString())){
 			JDAWrappers.reply(event, "Value added").submit();
 		}
@@ -205,7 +205,7 @@ public class ConfigurationCommand extends SimpleCommand{
 		return HANDLED;
 	}
 	
-	private CommandResult handleRemoveOperation(SlashCommandEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
+	private CommandResult handleRemoveOperation(SlashCommandInteractionEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
 		if(accessor.remove(configuration, event.getOption(VALUE_OPTION_ID).getAsString())){
 			JDAWrappers.reply(event, "Value removed").submit();
 		}
@@ -215,14 +215,14 @@ public class ConfigurationCommand extends SimpleCommand{
 		return HANDLED;
 	}
 	
-	private CommandResult handleShowOperation(SlashCommandEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
+	private CommandResult handleShowOperation(SlashCommandInteractionEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
 		accessor.show(configuration)
 				.map(embed -> JDAWrappers.reply(event, embed).submit())
 				.orElseGet(() -> JDAWrappers.reply(event, "Failed to get value").submit());
 		return HANDLED;
 	}
 	
-	private CommandResult handleUnknownOperation(SlashCommandEvent event){
+	private CommandResult handleUnknownOperation(SlashCommandInteractionEvent event){
 		JDAWrappers.reply(event, "Unknown operation type").submit();
 		return HANDLED;
 	}

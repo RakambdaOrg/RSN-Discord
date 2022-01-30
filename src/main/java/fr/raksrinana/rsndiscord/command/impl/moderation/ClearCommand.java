@@ -6,7 +6,8 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
@@ -33,11 +34,14 @@ public class ClearCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
+	public CommandResult executeGuild(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
 		var channel = event.getChannel();
 		
 		var messageCount = getOptionAsInt(event.getOption(MESSAGE_COUNT_OPTION_ID)).orElse(100);
-		var targetChannel = Optional.ofNullable(event.getOption(CHANNEL_OPTION_ID)).map(OptionMapping::getAsMessageChannel).orElse(channel);
+		var targetChannel = Optional.ofNullable(event.getOption(CHANNEL_OPTION_ID))
+				.map(OptionMapping::getAsMessageChannel)
+				.map(MessageChannel.class::cast)
+				.orElse(channel);
 		
 		var message = translate(event.getGuild(), "clear.removing", messageCount, targetChannel.getId());
 		JDAWrappers.edit(event, message).submitAndDelete(5);

@@ -10,7 +10,7 @@ import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.interactions.components.Component;
+import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -46,7 +46,7 @@ public class ExternalTodosRunner implements IScheduledRunner{
 						
 						response.ifPresent(todos -> todos.getTodos()
 								.forEach(todo -> {
-									var components = new ArrayList<Component>();
+									var components = new ArrayList<ItemComponent>();
 									components.add(new ExternalTodoCompletedButtonHandler().asComponent());
 									
 									if(todo.getKind().isCancellable()){

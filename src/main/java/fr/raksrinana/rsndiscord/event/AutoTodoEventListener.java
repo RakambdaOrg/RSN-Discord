@@ -12,20 +12,22 @@ import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.Component;
+import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.Objects;
 import static fr.raksrinana.rsndiscord.reaction.ReactionTag.TODO;
 import static fr.raksrinana.rsndiscord.reaction.ReactionUtils.DELETE_KEY;
-import static fr.raksrinana.rsndiscord.utils.BasicEmotes.*;
+import static fr.raksrinana.rsndiscord.utils.BasicEmotes.CHECK_OK;
+import static fr.raksrinana.rsndiscord.utils.BasicEmotes.PAPERCLIP;
+import static fr.raksrinana.rsndiscord.utils.BasicEmotes.RIGHT_ARROW_CURVING_LEFT;
 import static fr.raksrinana.rsndiscord.utils.Utilities.containsChannel;
 
 @EventListener
 @Getter
 @Log4j2
 public class AutoTodoEventListener extends ListenerAdapter{
-	private static final Component[] buttons = {
+	private static final ItemComponent[] buttons = {
 			new TodoMessageDeleteButtonHandler().asComponent(),
 			new TodoMessageKeepButtonHandler().asComponent(),
 			new TodoMessageReplyButtonHandler().asComponent()

@@ -5,7 +5,7 @@ import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.log.LogContext;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 @Log4j2
 public class SlashCommandListener extends ListenerAdapter{
 	@Override
-	public void onSlashCommand(@NotNull SlashCommandEvent event){
-		super.onSlashCommand(event);
+	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event){
+		super.onSlashCommandInteraction(event);
 		
 		try(var ignored = LogContext.with(event.getGuild()).with(event.getUser())){
 			log.info("Received slash-command {} from {} with args {}", event.getCommandPath(), event.getUser(), getArgsForLogs(event.getOptions()));
@@ -36,7 +36,7 @@ public class SlashCommandListener extends ListenerAdapter{
 				.collect(Collectors.joining(", "));
 	}
 	
-	private void performCommand(@NotNull SlashCommandEvent event, @NotNull IExecutableCommand command){
+	private void performCommand(@NotNull SlashCommandInteractionEvent event, @NotNull IExecutableCommand command){
 		try{
 			boolean allowed;
 			if(event.isFromGuild()){
