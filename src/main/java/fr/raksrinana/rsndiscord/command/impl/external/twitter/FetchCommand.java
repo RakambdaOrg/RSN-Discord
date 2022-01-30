@@ -7,7 +7,7 @@ import fr.raksrinana.rsndiscord.runner.impl.twitter.UserTweetsRunner;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 import static fr.raksrinana.rsndiscord.command.CommandResult.FAILED;
 import static fr.raksrinana.rsndiscord.command.CommandResult.HANDLED_NO_MESSAGE;
@@ -35,7 +35,7 @@ public class FetchCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
+	public CommandResult executeGuild(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
 		try{
 			new UserTweetsRunner().executeGuild(guild);
 			return HANDLED_NO_MESSAGE;

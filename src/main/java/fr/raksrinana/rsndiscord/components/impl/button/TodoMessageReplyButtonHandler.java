@@ -9,8 +9,8 @@ import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.ThreadChannel;
-import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
-import net.dv8tion.jda.api.interactions.components.Button;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
@@ -26,7 +26,7 @@ public class TodoMessageReplyButtonHandler extends SimpleButtonHandler{
 	
 	@NotNull
 	@Override
-	public CompletableFuture<ComponentResult> handleGuild(@NotNull ButtonClickEvent event, @NotNull Guild guild, @NotNull Member member){
+	public CompletableFuture<ComponentResult> handleGuild(@NotNull ButtonInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
 		var user = event.getUser();
 		var message = event.getMessage();
 		var replyName = "reply-" + event.getMessageIdLong();
@@ -41,7 +41,7 @@ public class TodoMessageReplyButtonHandler extends SimpleButtonHandler{
 	}
 	
 	@NotNull
-	private CompletableFuture<Void> addMembersToThread(@NotNull ButtonClickEvent event, @NotNull ThreadChannel thread){
+	private CompletableFuture<Void> addMembersToThread(@NotNull ButtonInteractionEvent event, @NotNull ThreadChannel thread){
 		var authorFuture = Stream.of(JDAWrappers.addThreadMember(thread, event.getUser()).submit());
 		var mentionedFutures = event.getMessage().getMentionedMembers().stream()
 				.map(u -> JDAWrappers.addThreadMember(thread, u).submit());

@@ -9,7 +9,7 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
@@ -19,11 +19,11 @@ import static java.awt.Color.GREEN;
 
 public class AddMusicTrackConsumer implements TrackConsumer{
 	private final Guild guild;
-	private final SlashCommandEvent event;
+	private final SlashCommandInteractionEvent event;
 	private final boolean repeat;
 	private final User author;
 	
-	public AddMusicTrackConsumer(@NotNull Guild guild, @NotNull SlashCommandEvent event, @NotNull User author, boolean repeat){
+	public AddMusicTrackConsumer(@NotNull Guild guild, @NotNull SlashCommandInteractionEvent event, @NotNull User author, boolean repeat){
 		this.guild = guild;
 		this.event = event;
 		this.author = author;

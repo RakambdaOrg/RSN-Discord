@@ -4,7 +4,7 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command.permission.IPermission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 import static fr.raksrinana.rsndiscord.command.permission.SimplePermission.TRUE_BY_DEFAULT;
 
@@ -14,12 +14,12 @@ public interface IExecutableCommand extends ICommand{
 	}
 	
 	@NotNull
-	default CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
+	default CommandResult executeGuild(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
 		return CommandResult.NOT_IMPLEMENTED;
 	}
 	
 	@NotNull
-	default CommandResult executeUser(@NotNull SlashCommandEvent event){
+	default CommandResult executeUser(@NotNull SlashCommandInteractionEvent event){
 		return CommandResult.NOT_IMPLEMENTED;
 	}
 	

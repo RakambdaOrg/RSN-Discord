@@ -5,11 +5,11 @@ import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.log.LogContext;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
-import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
-import net.dv8tion.jda.api.events.interaction.GenericComponentInteractionCreateEvent;
-import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.Component;
+import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.Optional;
@@ -20,18 +20,18 @@ import java.util.function.Function;
 @Log4j2
 public class InteractionListener extends ListenerAdapter{
 	@Override
-	public void onButtonClick(@NotNull ButtonClickEvent event){
-		super.onButtonClick(event);
+	public void onButtonInteraction(@NotNull ButtonInteractionEvent event){
+		super.onButtonInteraction(event);
 		onInteraction(event, ComponentService::getButtonHandler);
 	}
 	
 	@Override
-	public void onSelectionMenu(@NotNull SelectionMenuEvent event){
-		super.onSelectionMenu(event);
+	public void onSelectMenuInteraction(@NotNull SelectMenuInteractionEvent event){
+		super.onSelectMenuInteraction(event);
 		onInteraction(event, ComponentService::getSelectionMenuHandler);
 	}
 	
-	private <T extends Component, E extends GenericComponentInteractionCreateEvent> void onInteraction(@NotNull E event, @NotNull Function<String, Optional<? extends IComponentHandler<T, E>>> handlerSupplier){
+	private <T extends Component, E extends ComponentInteraction> void onInteraction(@NotNull E event, @NotNull Function<String, Optional<? extends IComponentHandler<T, E>>> handlerSupplier){
 		try(var ignored = LogContext.with(event.getGuild()).with(event.getUser())){
 			var componentId = event.getComponentId();
 			log.info("Received interaction {} from {}", componentId, event.getUser());
@@ -42,7 +42,7 @@ public class InteractionListener extends ListenerAdapter{
 		}
 	}
 	
-	private <E extends GenericComponentInteractionCreateEvent> void handleInteraction(@NotNull E event, @NotNull IComponentHandler<?, E> handler){
+	private <E extends ComponentInteraction> void handleInteraction(@NotNull E event, @NotNull IComponentHandler<?, E> handler){
 		try{
 			CompletableFuture<ComponentResult> result;
 			if(event.isFromGuild()){

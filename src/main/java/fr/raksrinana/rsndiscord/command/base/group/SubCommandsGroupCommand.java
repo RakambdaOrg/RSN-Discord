@@ -4,6 +4,7 @@ import fr.raksrinana.rsndiscord.command.api.ICommand;
 import fr.raksrinana.rsndiscord.command.api.IGroupCommand;
 import fr.raksrinana.rsndiscord.command.api.ISubCommand;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +23,7 @@ public abstract class SubCommandsGroupCommand extends GroupCommand implements IG
 	
 	@Override
 	public @NotNull CommandData getSlashCommand(){
-		var command = new CommandData(getId(), getShortDescription())
+		var command = Commands.slash(getId(), getShortDescription())
 				.setDefaultEnabled(getDefaultPermission());
 		
 		command.addSubcommands(subcommands.values().stream()

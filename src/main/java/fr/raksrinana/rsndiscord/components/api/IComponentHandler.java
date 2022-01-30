@@ -3,12 +3,12 @@ package fr.raksrinana.rsndiscord.components.api;
 import fr.raksrinana.rsndiscord.components.ComponentResult;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.interaction.GenericComponentInteractionCreateEvent;
 import net.dv8tion.jda.api.interactions.components.Component;
+import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.CompletableFuture;
 
-public interface IComponentHandler<T extends Component, E extends GenericComponentInteractionCreateEvent>{
+public interface IComponentHandler<T extends Component, E extends ComponentInteraction>{
 	@NotNull
 	String getComponentId();
 	

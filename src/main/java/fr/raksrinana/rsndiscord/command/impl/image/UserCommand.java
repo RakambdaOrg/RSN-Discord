@@ -6,7 +6,7 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
@@ -38,18 +38,18 @@ public class UserCommand extends SubCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
+	public CommandResult executeGuild(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
 		return execute(event);
 	}
 	
 	@Override
 	@NotNull
-	public CommandResult executeUser(@NotNull SlashCommandEvent event){
+	public CommandResult executeUser(@NotNull SlashCommandInteractionEvent event){
 		return execute(event);
 	}
 	
 	@NotNull
-	private CommandResult execute(@NotNull SlashCommandEvent event){
+	private CommandResult execute(@NotNull SlashCommandInteractionEvent event){
 		var target = event.getOption(USER_PARAMETER_ID).getAsUser();
 		
 		var author = event.getUser();

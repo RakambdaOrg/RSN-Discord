@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.utils.jda.wrappers.message;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.interactions.components.Component;
+import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
@@ -30,13 +30,13 @@ public class EditMessageWrapper{
 	}
 	
 	@NotNull
-	public EditMessageWrapper setActionRow(@NotNull Collection<Component> components){
+	public EditMessageWrapper setActionRow(@NotNull Collection<ItemComponent> components){
 		action = action.setActionRow(components);
 		return this;
 	}
 	
 	@NotNull
-	public EditMessageWrapper setActionRow(@NotNull Component... components){
+	public EditMessageWrapper setActionRow(@NotNull ItemComponent... components){
 		action = action.setActionRow(components);
 		return this;
 	}

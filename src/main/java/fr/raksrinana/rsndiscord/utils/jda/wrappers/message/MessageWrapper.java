@@ -1,9 +1,13 @@
 package fr.raksrinana.rsndiscord.utils.jda.wrappers.message;
 
 import lombok.extern.log4j.Log4j2;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.IMentionable;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.MessageReference;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.Component;
+import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -90,13 +94,13 @@ public class MessageWrapper{
 	}
 	
 	@NotNull
-	public MessageWrapper addActionRow(@NotNull Collection<Component> components){
+	public MessageWrapper addActionRow(@NotNull Collection<ItemComponent> components){
 		action = action.setActionRow(components);
 		return this;
 	}
 	
 	@NotNull
-	public MessageWrapper addActionRow(@NotNull Component... components){
+	public MessageWrapper addActionRow(@NotNull ItemComponent... components){
 		action = action.setActionRow(components);
 		return this;
 	}

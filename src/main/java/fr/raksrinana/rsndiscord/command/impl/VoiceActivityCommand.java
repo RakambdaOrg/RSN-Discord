@@ -4,7 +4,7 @@ import fr.raksrinana.rsndiscord.command.CommandResult;
 import fr.raksrinana.rsndiscord.command.base.SimpleCommand;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +58,7 @@ public class VoiceActivityCommand extends SimpleCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult executeGuild(@NotNull SlashCommandEvent event, @NotNull Guild guild, @NotNull Member member){
+	public CommandResult executeGuild(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
 		var applicationId = event.getOption(APPLICATION_OPTION_ID).getAsString();
 		var voiceChannel = event.getOption(VOICE_CHANNEL_OPTION_ID).getAsGuildChannel();
 		var announceChannel = event.getOption(ANNOUNCE_CHANNEL_OPTION_ID).getAsGuildChannel();
