@@ -1,8 +1,8 @@
 package fr.raksrinana.rsndiscord.event;
 
-import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageDeleteButtonHandler;
-import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageKeepButtonHandler;
-import fr.raksrinana.rsndiscord.components.impl.button.TodoMessageReplyButtonHandler;
+import fr.raksrinana.rsndiscord.interaction.component.button.impl.TodoMessageDeleteButtonHandler;
+import fr.raksrinana.rsndiscord.interaction.component.button.impl.TodoMessageKeepButtonHandler;
+import fr.raksrinana.rsndiscord.interaction.component.button.impl.TodoMessageReplyButtonHandler;
 import fr.raksrinana.rsndiscord.log.LogContext;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.impl.guild.reaction.WaitingReactionMessageConfiguration;

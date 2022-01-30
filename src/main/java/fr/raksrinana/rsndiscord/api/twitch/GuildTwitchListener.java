@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.api.twitch;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.raksrinana.rsndiscord.Main;
-import fr.raksrinana.rsndiscord.command.impl.moderation.RandomKickCommand;
+import fr.raksrinana.rsndiscord.interaction.command.slash.impl.moderation.RandomKickCommand;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.music.TrackConsumer;
 import fr.raksrinana.rsndiscord.settings.Settings;

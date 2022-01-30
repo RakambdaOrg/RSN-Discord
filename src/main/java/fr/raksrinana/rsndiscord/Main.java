@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord;
 
 import fr.raksrinana.rsndiscord.api.twitch.TwitchUtils;
 import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
-import fr.raksrinana.rsndiscord.command.SlashCommandService;
+import fr.raksrinana.rsndiscord.interaction.command.CommandService;
 import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.reaction.ReactionUtils;
@@ -101,8 +101,8 @@ public class Main{
 					.setStatus(ONLINE)
 					.setActivity(Activity.of(Activity.ActivityType.PLAYING, "Bip bip"));
 			
-			SlashCommandService.registerGlobalCommands();
-			SlashCommandService.registerGuildCommands(jda.getGuildById(735921627631583394L));
+			CommandService.registerGlobalCommands();
+			CommandService.registerGuildCommands(jda.getGuildById(735921627631583394L));
 			ReactionUtils.registerAllHandlers();
 			RunnerUtils.registerAllScheduledRunners();
 			
