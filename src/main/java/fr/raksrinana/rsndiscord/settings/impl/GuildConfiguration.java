@@ -167,7 +167,7 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	}
 	
 	public void add(@NotNull IScheduleHandler scheduleHandler){
-		this.scheduleHandlers.put(scheduleHandler.getSchedulerId(), scheduleHandler);
+		scheduleHandlers.put(scheduleHandler.getSchedulerId(), scheduleHandler);
 	}
 	
 	public void removeScheduleHandler(@NotNull String id){

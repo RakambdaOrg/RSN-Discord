@@ -191,7 +191,7 @@ public class TraktApi{
 		var traktConfig = Settings.getGeneral().getTrakt();
 		var accessTokenOptional = traktConfig.getAccessToken(member.getUser().getIdLong());
 		
-		if(!accessTokenOptional.isPresent()){
+		if(accessTokenOptional.isEmpty()){
 			log.debug("No access token found for {}", member);
 			return Optional.empty();
 		}

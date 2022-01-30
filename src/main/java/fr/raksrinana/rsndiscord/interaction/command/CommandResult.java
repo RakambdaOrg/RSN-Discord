@@ -24,5 +24,5 @@ public enum CommandResult{
 	/**
 	 * Command is not defined.
 	 */
-	NOT_IMPLEMENTED;
+	NOT_IMPLEMENTED
 }

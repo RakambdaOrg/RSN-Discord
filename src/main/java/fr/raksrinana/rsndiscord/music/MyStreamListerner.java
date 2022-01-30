@@ -20,24 +20,24 @@ public class MyStreamListerner implements AudioReceiveHandler{
 	//Called once per 20 milliseconds
 	@Override
 	public void handleCombinedAudio(CombinedAudio combinedAudio){
-		this.currentFrame++;
-		this.audioBytes = this.concatByteArrays(this.audioBytes, combinedAudio.getAudioData(1.0));
+		currentFrame++;
+		audioBytes = concatByteArrays(audioBytes, combinedAudio.getAudioData(1.0));
 		
 		//If we don't have enough data captured yet, exit the method to wait for more.
-		if(this.currentFrame < this.totalCaptureFrames){
+		if(currentFrame < totalCaptureFrames){
 			return;
 		}
 		
-		ByteArrayInputStream rawInputStream = new ByteArrayInputStream(this.audioBytes);
+		ByteArrayInputStream rawInputStream = new ByteArrayInputStream(audioBytes);
 		AudioInputStream audioInputStream = new AudioInputStream(
 				rawInputStream,
 				AudioReceiveHandler.OUTPUT_FORMAT,
-				this.audioBytes.length
+				audioBytes.length
 		);
 		
 		//Reset to capture another 10 seconds.
-		this.currentFrame = 0;
-		this.audioBytes = new byte[0];
+		currentFrame = 0;
+		audioBytes = new byte[0];
 		
 		//Do something with the audioInputStream
 		// myCoolLibrary.processAudio(audioInputStream);

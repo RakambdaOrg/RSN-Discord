@@ -59,7 +59,7 @@ public class Main{
 	public static void main(@NotNull String[] args){
 		// #############################
 		// Fix for JDK 17 : https://bugs.openjdk.java.net/browse/JDK-8274349?focusedCommentId=14450437&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#comment-14450437
-		final int cores = Runtime.getRuntime().availableProcessors();
+		int cores = Runtime.getRuntime().availableProcessors();
 		if (cores <= 1) {
 			System.out.println("Available Cores \"" + cores + "\", setting Parallelism Flag");
 			System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "1");

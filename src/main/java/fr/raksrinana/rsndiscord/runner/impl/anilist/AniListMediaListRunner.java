@@ -6,8 +6,8 @@ import fr.raksrinana.rsndiscord.api.anilist.query.MediaListPagedQuery;
 import fr.raksrinana.rsndiscord.interaction.component.button.impl.AniListMediaCompletedButtonHandler;
 import fr.raksrinana.rsndiscord.interaction.component.button.impl.AniListMediaDiscardedButtonHandler;
 import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
-import fr.raksrinana.rsndiscord.settings.impl.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.impl.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.anilist.AniListConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.UserConfiguration;
@@ -18,11 +18,15 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import static java.util.concurrent.TimeUnit.HOURS;
-import static java.util.stream.Collectors.toList;
 
 @ScheduledRunner
 public class AniListMediaListRunner extends IAniListRunner<MediaList, MediaListPagedQuery>{
@@ -91,7 +95,7 @@ public class AniListMediaListRunner extends IAniListRunner<MediaList, MediaListP
 						.filter(Map.Entry::getValue)
 						.map(Map.Entry::getKey)
 						.anyMatch(acceptedThaLists::contains))
-				.collect(toList());
+				.toList();
 		thaChannels.forEach(channelToSend -> Settings.get(channelToSend.getGuild())
 				.getAniListConfiguration()
 				.getThaUser()

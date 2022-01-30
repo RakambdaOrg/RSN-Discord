@@ -4,8 +4,8 @@ import fr.raksrinana.rsndiscord.api.hermitcraft.HermitcraftApi;
 import fr.raksrinana.rsndiscord.api.hermitcraft.data.HermitcraftVideo;
 import fr.raksrinana.rsndiscord.runner.api.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
-import fr.raksrinana.rsndiscord.settings.impl.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.impl.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.HermitcraftConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.Comparator.comparing;
 import static java.util.concurrent.TimeUnit.MINUTES;
-import static java.util.stream.Collectors.toList;
 
 @ScheduledRunner
 public class VideosRunner implements IScheduledRunner{
@@ -46,7 +45,7 @@ public class VideosRunner implements IScheduledRunner{
 				.flatMap(Optional::stream)
 				.map(ChannelConfiguration::getChannel)
 				.flatMap(Optional::stream)
-				.collect(toList());
+				.toList();
 		
 		HermitcraftApi.getVideos().stream()
 				.flatMap(List::stream)

@@ -5,8 +5,8 @@ import fr.raksrinana.rsndiscord.api.discordstatus.data.unresolvedincidents.Incid
 import fr.raksrinana.rsndiscord.api.discordstatus.data.unresolvedincidents.IncidentUpdate;
 import fr.raksrinana.rsndiscord.runner.api.IScheduledRunner;
 import fr.raksrinana.rsndiscord.runner.api.ScheduledRunner;
-import fr.raksrinana.rsndiscord.settings.impl.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.impl.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -24,7 +24,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static fr.raksrinana.rsndiscord.utils.Utilities.DATE_TIME_MINUTE_FORMATTER;
 import static java.util.Comparator.comparing;
 import static java.util.concurrent.TimeUnit.MINUTES;
-import static java.util.stream.Collectors.toList;
 
 @ScheduledRunner
 public class DiscordStatusRunner implements IScheduledRunner{
@@ -44,7 +43,7 @@ public class DiscordStatusRunner implements IScheduledRunner{
 						.filter(incident -> incident.getIncidentUpdates().stream()
 								.anyMatch(update -> update.getUpdatedAt().isAfter(lastData)))
 						.map(incident -> buildEmbed(selfUser, incident))
-						.collect(toList());
+						.toList();
 				
 				if(!embeds.isEmpty()){
 					jda.getGuilds().stream()

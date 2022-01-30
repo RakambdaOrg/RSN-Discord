@@ -21,7 +21,7 @@ public class TwitchIRCEventListener{
 	private final Map<String, Collection<GuildTwitchListener>> listeners;
 	
 	public TwitchIRCEventListener(){
-		this.listeners = new HashMap<>();
+		listeners = new HashMap<>();
 	}
 	
 	public void addListener(@NotNull String channel, @NotNull GuildTwitchListener listener){

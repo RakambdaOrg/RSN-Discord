@@ -14,7 +14,7 @@ public abstract class SubCommandsGroupSlashCommand extends GroupSlashCommand imp
 	private final Map<String, ISubSlashCommand> subcommands;
 	
 	protected SubCommandsGroupSlashCommand(){
-		this.subcommands = new HashMap<>();
+		subcommands = new HashMap<>();
 	}
 	
 	public void addSubcommand(@NotNull ISubSlashCommand subcommand){

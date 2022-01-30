@@ -83,7 +83,7 @@ public class GuildTwitchListener{
 		var badges = event.getTag(Badges.NAME, Badges.class).stream()
 				.map(Badges::getBadges)
 				.flatMap(Collection::stream)
-				.collect(Collectors.toList());
+				.toList();
 		
 		var isAdmin = badges.stream().anyMatch(b -> Objects.equals(b.getName(), ADMIN));
 		var isMod = badges.stream().anyMatch(b -> Objects.equals(b.getName(), MODERATOR));
@@ -135,7 +135,7 @@ public class GuildTwitchListener{
 		var badges = event.getTag(Badges.NAME, Badges.class).stream()
 				.map(Badges::getBadges)
 				.flatMap(Collection::stream)
-				.collect(Collectors.toList());
+				.toList();
 		
 		var isAdmin = badges.stream().anyMatch(b -> Objects.equals(b.getName(), ADMIN));
 		var isMod = badges.stream().anyMatch(b -> Objects.equals(b.getName(), MODERATOR));

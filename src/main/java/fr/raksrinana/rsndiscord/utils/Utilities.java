@@ -30,7 +30,7 @@ public class Utilities{
 	public static final long SECOND_RAKSRINANA_ACCOUNT = 432628353024131085L;
 	public static final Set<Long> RAKSRINANA_ACCOUNTS = Set.of(MAIN_RAKSRINANA_ACCOUNT, SECOND_RAKSRINANA_ACCOUNT);
 	public static final DateTimeFormatter DATE_TIME_MINUTE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
-	private static final Pattern PERIOD_PATTERN = Pattern.compile("([0-9]+)([mhd])");
+	private static final Pattern PERIOD_PATTERN = Pattern.compile("(\\d+)([mhd])");
 	
 	@FunctionalInterface
 	public interface ClassInstantiator<T>{

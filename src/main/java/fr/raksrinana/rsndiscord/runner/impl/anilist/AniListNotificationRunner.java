@@ -44,6 +44,7 @@ public class AniListNotificationRunner extends IAniListRunner<Notification, Noti
 				.flatMap(g -> Settings.get(g).getAniListConfiguration()
 						.getNotificationsChannel()
 						.map(ChannelConfiguration::getChannel)
+						.filter(Optional::isPresent)
 						.map(Optional::get)
 						.stream())
 				.filter(Objects::nonNull)

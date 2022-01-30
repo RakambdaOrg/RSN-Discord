@@ -15,7 +15,7 @@ public interface IConfiguration{
 		var name = paths.pop();
 		var path = "%s.%s".formatted(currentPath, name);
 		
-		var declaredFields = Arrays.asList(this.getClass().getDeclaredFields());
+		var declaredFields = Arrays.asList(getClass().getDeclaredFields());
 		var value = declaredFields.stream()
 				.filter(f -> Objects.equals(name, f.getName()))
 				.findFirst()
