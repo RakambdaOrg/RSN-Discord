@@ -6,7 +6,7 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
@@ -38,7 +38,7 @@ public class RemoveAllRoleCommand extends SubSlashCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult executeGuild(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
+	public CommandResult executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
 		var targetRole = event.getOption(ROLE_OPTION_ID).getAsRole();
 		
 		JDAWrappers.edit(event, translate(guild, "remove-role.retrieving-with-role")).submit();

@@ -16,7 +16,7 @@ import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
@@ -90,7 +90,7 @@ public class TraktApi{
 		return clientId;
 	}
 	
-	public static void pollDeviceToken(@NotNull SlashCommandInteractionEvent event, @NotNull DeviceCode deviceCode){
+	public static void pollDeviceToken(@NotNull SlashCommandInteraction event, @NotNull DeviceCode deviceCode){
 		var guild = event.getGuild();
 		var channel = event.getChannel();
 		var userToken = Settings.getGeneral().getTrakt().getAccessToken(event.getUser().getIdLong()).orElse(null);

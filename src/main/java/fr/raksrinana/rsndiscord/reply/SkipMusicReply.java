@@ -7,9 +7,9 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 	private final int votesRequired;
 	private final AudioTrack audioTrack;
 	
-	public SkipMusicReply(SlashCommandInteractionEvent event, Message message, int votesRequired, AudioTrack audioTrack){
+	public SkipMusicReply(SlashCommandInteraction event, Message message, int votesRequired, AudioTrack audioTrack){
 		super(event.getUser(), event.getTextChannel(), 20, SECONDS, message);
 		this.votesRequired = votesRequired;
 		this.audioTrack = audioTrack;

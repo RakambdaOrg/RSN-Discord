@@ -27,7 +27,7 @@ import static fr.raksrinana.rsndiscord.utils.Utilities.getAllAnnotatedWith;
 @Log4j2
 public class CommandService{
 	private static final Map<String, ICommand> commands;
-	private static final Map<String, IExecutableCommand> executableCommands;
+	private static final Map<String, IExecutableCommand<?>> executableCommands;
 	private static final Map<String, IRegistrableCommand> registrableCommands;
 	static{
 		commands = getAllCommands()
@@ -38,7 +38,7 @@ public class CommandService{
 		
 		executableCommands = commands.entrySet().stream()
 				.filter(entry -> entry.getValue() instanceof IExecutableCommand)
-				.map(entry -> Map.entry(entry.getKey(), (IExecutableCommand) entry.getValue()))
+				.map(entry -> Map.entry(entry.getKey(), (IExecutableCommand<?>) entry.getValue()))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 		
 		registrableCommands = commands.entrySet().stream()
@@ -89,8 +89,10 @@ public class CommandService{
 	}
 	
 	@NotNull
-	public static Optional<IExecutableCommand> getExecutableCommand(@NotNull String path){
-		return Optional.ofNullable(executableCommands.get(path));
+	public static <T extends IExecutableCommand<?>> Optional<T> getExecutableCommand(@NotNull String path, Class<T> clazz){
+		return Optional.ofNullable(executableCommands.get(path))
+				.filter(clazz::isInstance)
+				.map(clazz::cast);
 	}
 	
 	@NotNull

@@ -35,7 +35,8 @@ public abstract class SubCommandsGroupGroupSlashCommand extends GroupSlashComman
 	}
 	
 	@Override
-	public @NotNull Map<String, ? extends ICommand> getCommandMap(){
+	@NotNull
+	public Map<String, ? extends ICommand> getCommandMap(){
 		return getCommandMap(subcommandGroups.values());
 	}
 }

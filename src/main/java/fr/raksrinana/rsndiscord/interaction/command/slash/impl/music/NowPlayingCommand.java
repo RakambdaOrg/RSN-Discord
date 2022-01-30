@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import static fr.raksrinana.rsndiscord.interaction.command.CommandResult.HANDLED;
@@ -34,7 +34,7 @@ public class NowPlayingCommand extends SubSlashCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult executeGuild(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
+	public CommandResult executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
 		var builder = new EmbedBuilder().setColor(CYAN);
 		
 		RSNAudioManager.currentTrack(guild).ifPresentOrElse(track -> {

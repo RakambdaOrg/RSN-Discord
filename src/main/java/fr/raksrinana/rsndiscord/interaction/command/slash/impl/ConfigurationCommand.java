@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.interaction.command.slash.impl;
 
-import fr.raksrinana.rsndiscord.interaction.command.slash.api.BotSlashCommand;
 import fr.raksrinana.rsndiscord.interaction.command.CommandResult;
+import fr.raksrinana.rsndiscord.interaction.command.slash.api.BotSlashCommand;
 import fr.raksrinana.rsndiscord.interaction.command.slash.base.SimpleSlashCommand;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.IConfigurationAccessor;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.map.ChannelMapConfigurationAccessor;
@@ -9,7 +9,16 @@ import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.set
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.set.RoleSetConfigurationAccessor;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.set.StringSetConfigurationAccessor;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.set.URLSetConfigurationAccessor;
-import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.*;
+import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.BooleanConfigurationAccessor;
+import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.CategoryConfigurationAccessor;
+import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.ChannelConfigurationAccessor;
+import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.DoubleConfigurationAccessor;
+import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.DurationConfigurationAccessor;
+import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.LocaleConfigurationAccessor;
+import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.LongConfigurationAccessor;
+import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.RoleConfigurationAccessor;
+import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.StringConfigurationAccessor;
+import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.UserConfigurationAccessor;
 import fr.raksrinana.rsndiscord.settings.ConfigurationOperation;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.impl.GuildConfiguration;
@@ -17,10 +26,14 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.interaction.command.CommandResult.BAD_ARGUMENTS;
@@ -144,7 +157,7 @@ public class ConfigurationCommand extends SimpleSlashCommand{
 	
 	@Override
 	@NotNull
-	public CommandResult executeGuild(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
+	public CommandResult executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
 		var accessor = accessors.get(event.getOption(NAME_OPTION_ID).getAsString());
 		if(Objects.isNull(accessor)){
 			JDAWrappers.reply(event, "Unknown configuration. Available: " + accessors.keySet().stream().sorted().collect(Collectors.joining("\n"))).submit();
@@ -175,7 +188,8 @@ public class ConfigurationCommand extends SimpleSlashCommand{
 		}
 	}
 	
-	private CommandResult handleSetOperation(SlashCommandInteractionEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
+	@NotNull
+	private CommandResult handleSetOperation(@NotNull SlashCommandInteraction event, @NotNull IConfigurationAccessor accessor, @NotNull GuildConfiguration configuration){
 		if(accessor.set(configuration, event.getOption(VALUE_OPTION_ID).getAsString())){
 			JDAWrappers.reply(event, "Value modified").submit();
 		}
@@ -185,7 +199,8 @@ public class ConfigurationCommand extends SimpleSlashCommand{
 		return HANDLED;
 	}
 	
-	private CommandResult handleResetOperation(SlashCommandInteractionEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
+	@NotNull
+	private CommandResult handleResetOperation(@NotNull SlashCommandInteraction event, @NotNull IConfigurationAccessor accessor, @NotNull GuildConfiguration configuration){
 		if(accessor.reset(configuration)){
 			JDAWrappers.reply(event, "Value reset").submit();
 		}
@@ -195,7 +210,8 @@ public class ConfigurationCommand extends SimpleSlashCommand{
 		return HANDLED;
 	}
 	
-	private CommandResult handleAddOperation(SlashCommandInteractionEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
+	@NotNull
+	private CommandResult handleAddOperation(@NotNull SlashCommandInteraction event, @NotNull IConfigurationAccessor accessor, @NotNull GuildConfiguration configuration){
 		if(accessor.add(configuration, event.getOption(VALUE_OPTION_ID).getAsString())){
 			JDAWrappers.reply(event, "Value added").submit();
 		}
@@ -205,7 +221,8 @@ public class ConfigurationCommand extends SimpleSlashCommand{
 		return HANDLED;
 	}
 	
-	private CommandResult handleRemoveOperation(SlashCommandInteractionEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
+	@NotNull
+	private CommandResult handleRemoveOperation(@NotNull SlashCommandInteraction event, @NotNull IConfigurationAccessor accessor, @NotNull GuildConfiguration configuration){
 		if(accessor.remove(configuration, event.getOption(VALUE_OPTION_ID).getAsString())){
 			JDAWrappers.reply(event, "Value removed").submit();
 		}
@@ -215,14 +232,16 @@ public class ConfigurationCommand extends SimpleSlashCommand{
 		return HANDLED;
 	}
 	
-	private CommandResult handleShowOperation(SlashCommandInteractionEvent event, IConfigurationAccessor accessor, GuildConfiguration configuration){
+	@NotNull
+	private CommandResult handleShowOperation(@NotNull SlashCommandInteraction event, @NotNull IConfigurationAccessor accessor, @NotNull GuildConfiguration configuration){
 		accessor.show(configuration)
 				.map(embed -> JDAWrappers.reply(event, embed).submit())
 				.orElseGet(() -> JDAWrappers.reply(event, "Failed to get value").submit());
 		return HANDLED;
 	}
 	
-	private CommandResult handleUnknownOperation(SlashCommandInteractionEvent event){
+	@NotNull
+	private CommandResult handleUnknownOperation(@NotNull SlashCommandInteraction event){
 		JDAWrappers.reply(event, "Unknown operation type").submit();
 		return HANDLED;
 	}

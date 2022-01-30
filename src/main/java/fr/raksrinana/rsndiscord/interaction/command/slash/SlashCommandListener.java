@@ -1,14 +1,18 @@
 package fr.raksrinana.rsndiscord.interaction.command.slash;
 
+import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.interaction.command.CommandResult;
 import fr.raksrinana.rsndiscord.interaction.command.CommandService;
 import fr.raksrinana.rsndiscord.interaction.command.api.IExecutableCommand;
-import fr.raksrinana.rsndiscord.event.EventListener;
+import fr.raksrinana.rsndiscord.interaction.command.slash.base.ExecutableSlashCommand;
+import fr.raksrinana.rsndiscord.interaction.command.user.base.ExecutableUserCommand;
 import fr.raksrinana.rsndiscord.log.LogContext;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
@@ -25,8 +29,21 @@ public class SlashCommandListener extends ListenerAdapter{
 		try(var ignored = LogContext.with(event.getGuild()).with(event.getUser())){
 			log.info("Received slash-command {} from {} with args {}", event.getCommandPath(), event.getUser(), getArgsForLogs(event.getOptions()));
 			
-			CommandService.getExecutableCommand(event.getCommandPath()).ifPresentOrElse(
-					command -> event.deferReply(command.replyEphemeral()).submit().thenAccept(empty -> performCommand(event, command)),
+			CommandService.getExecutableCommand(event.getCommandPath(), ExecutableSlashCommand.class).ifPresentOrElse(
+					command -> event.deferReply(command.replyEphemeral()).submit().thenAccept(empty -> performInteraction(event, command)),
+					() -> event.reply("Unknown command {%s".formatted(event.getCommandPath())).setEphemeral(true).submit());
+		}
+	}
+	
+	@Override
+	public void onUserContextInteraction(@NotNull UserContextInteractionEvent event){
+		super.onUserContextInteraction(event);
+		
+		try(var ignored = LogContext.with(event.getGuild()).with(event.getUser())){
+			log.info("Received user-context {} from {}", event.getCommandPath(), event.getUser());
+			
+			CommandService.getExecutableCommand(event.getCommandPath(), ExecutableUserCommand.class).ifPresentOrElse(
+					command -> event.deferReply(command.replyEphemeral()).submit().thenAccept(empty -> performInteraction(event, command)),
 					() -> event.reply("Unknown command {%s".formatted(event.getCommandPath())).setEphemeral(true).submit());
 		}
 	}
@@ -38,18 +55,9 @@ public class SlashCommandListener extends ListenerAdapter{
 				.collect(Collectors.joining(", "));
 	}
 	
-	private void performCommand(@NotNull SlashCommandInteractionEvent event, @NotNull IExecutableCommand command){
+	private <T extends CommandInteraction> void performInteraction(@NotNull T event, @NotNull IExecutableCommand<T> command){
 		try{
-			boolean allowed;
-			if(event.isFromGuild()){
-				allowed = command.getPermission().isGuildAllowed(event.getCommandPath(), event.getMember())
-				          || command.isSpecificAllowed(event.getMember());
-			}
-			else{
-				allowed = true;
-			}
-			if(!allowed){
-				JDAWrappers.edit(event, "You're not allowed to use this command").submitAndDelete(5);
+			if(!checkPermission(event, command)){
 				return;
 			}
 			
@@ -73,5 +81,19 @@ public class SlashCommandListener extends ListenerAdapter{
 			log.error("Failed to execute command {}", command, e);
 			JDAWrappers.edit(event, "Error executing command (%s)".formatted(e.getClass().getName())).submitAndDelete(5);
 		}
+	}
+	
+	private boolean checkPermission(@NotNull CommandInteraction interaction, @NotNull IExecutableCommand<?> command){
+		if(!interaction.isFromGuild()){
+			return true;
+		}
+		
+		if(command.getPermission().isGuildAllowed(interaction.getCommandPath(), interaction.getMember())
+		   || command.isSpecificAllowed(interaction.getMember())){
+			return true;
+		}
+		
+		JDAWrappers.edit(interaction, "You're not allowed to use this command").submitAndDelete(5);
+		return false;
 	}
 }

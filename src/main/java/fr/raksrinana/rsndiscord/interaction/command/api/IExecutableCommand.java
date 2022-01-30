@@ -4,22 +4,22 @@ import fr.raksrinana.rsndiscord.interaction.command.CommandResult;
 import fr.raksrinana.rsndiscord.interaction.command.permission.IPermission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
 import org.jetbrains.annotations.NotNull;
 import static fr.raksrinana.rsndiscord.interaction.command.permission.SimplePermission.TRUE_BY_DEFAULT;
 
-public interface IExecutableCommand extends ICommand{
+public interface IExecutableCommand<T extends CommandInteraction> extends ICommand{
 	default boolean replyEphemeral(){
 		return true;
 	}
 	
 	@NotNull
-	default CommandResult executeGuild(@NotNull SlashCommandInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
+	default CommandResult executeGuild(@NotNull T event, @NotNull Guild guild, @NotNull Member member){
 		return CommandResult.NOT_IMPLEMENTED;
 	}
 	
 	@NotNull
-	default CommandResult executeUser(@NotNull SlashCommandInteractionEvent event){
+	default CommandResult executeUser(@NotNull T event){
 		return CommandResult.NOT_IMPLEMENTED;
 	}
 	

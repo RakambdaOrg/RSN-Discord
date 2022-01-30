@@ -2,6 +2,7 @@ package fr.raksrinana.rsndiscord.interaction.command.slash.base;
 
 import fr.raksrinana.rsndiscord.interaction.command.api.IExecutableCommand;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-public abstract class ExecutableSlashCommand implements IExecutableCommand{
+public abstract class ExecutableSlashCommand implements IExecutableCommand<SlashCommandInteraction>{
 	@NotNull
 	protected Collection<? extends OptionData> getOptions(){
 		return Set.of();
@@ -19,7 +20,7 @@ public abstract class ExecutableSlashCommand implements IExecutableCommand{
 	
 	@Override
 	@NotNull
-	public Map<String, IExecutableCommand> getCommandMap(){
+	public Map<String, IExecutableCommand<SlashCommandInteraction>> getCommandMap(){
 		return Map.of(getId(), this);
 	}
 	
