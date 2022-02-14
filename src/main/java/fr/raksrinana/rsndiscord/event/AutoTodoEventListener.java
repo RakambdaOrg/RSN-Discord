@@ -85,7 +85,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 				.allMatch(emote -> emote != null
 				                   && emote.getGuild() != null
 				                   && emote.getGuild().isMember(jda.getSelfUser())
-				                   && emote.canInteract(event.getGuild().getSelfMember()));
+				                   && emote.canInteract(emote.getGuild().getSelfMember()));
 	}
 	
 	private void forward(@NotNull MessageReceivedEvent event){
