@@ -2,8 +2,8 @@ package fr.raksrinana.rsndiscord.api.uselessfacts;
 
 import fr.raksrinana.rsndiscord.api.uselessfacts.data.UselessFact;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import kong.unirest.GenericType;
-import kong.unirest.Unirest;
+import kong.unirest.core.GenericType;
+import kong.unirest.core.Unirest;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import java.util.Optional;

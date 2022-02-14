@@ -2,9 +2,9 @@ package fr.raksrinana.rsndiscord.api.themoviedb.requests;
 
 import fr.raksrinana.rsndiscord.api.themoviedb.TheMovieDBApi;
 import fr.raksrinana.rsndiscord.api.themoviedb.model.MovieDetails;
-import kong.unirest.GenericType;
-import kong.unirest.GetRequest;
-import kong.unirest.Unirest;
+import kong.unirest.core.GenericType;
+import kong.unirest.core.GetRequest;
+import kong.unirest.core.Unirest;
 import org.jetbrains.annotations.NotNull;
 
 public class MovieDetailsGetRequest implements ITMDBGetRequest<MovieDetails>{

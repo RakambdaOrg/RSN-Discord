@@ -1,8 +1,8 @@
 package fr.raksrinana.rsndiscord.api.pandascore;
 
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import kong.unirest.HeaderNames;
-import kong.unirest.Unirest;
+import kong.unirest.core.HeaderNames;
+import kong.unirest.core.Unirest;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

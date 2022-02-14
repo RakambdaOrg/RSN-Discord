@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.api.anilist.query;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.raksrinana.rsndiscord.api.anilist.data.list.MediaList;
-import kong.unirest.json.JSONObject;
+import kong.unirest.core.json.JSONObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

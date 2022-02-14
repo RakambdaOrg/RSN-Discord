@@ -25,7 +25,7 @@ dependencies {
     implementation(libs.slf4j)
     implementation(libs.bundles.log4j2)
 
-    implementation(libs.unirest)
+    implementation(libs.bundles.unirest)
     implementation(libs.picocli)
     implementation(libs.bundles.jackson)
     implementation(libs.httpclient)

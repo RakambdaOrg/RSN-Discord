@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.api.dog;
 
 import fr.raksrinana.rsndiscord.api.dog.data.DogResponse;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
-import kong.unirest.Unirest;
+import kong.unirest.core.Unirest;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;

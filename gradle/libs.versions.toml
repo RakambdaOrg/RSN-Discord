@@ -5,7 +5,7 @@ lp_cross-version = "0.1.1"
 slf4j-version = "2.0.0-alpha6"
 log4j2-version = "2.17.1"
 log4j2-slf4j-version = "2.17.1"
-unirest-version = "4.0.0-RC2"
+unirest-version = "4.0.0-RC4"
 picocli-version = "4.6.3"
 jackson-version = "2.13.1"
 httpclient-version = "4.5.13"
@@ -34,7 +34,8 @@ jump3r = { group = "de.sciss", name = "jump3r", version.ref = "jump3r-version" }
 slf4j = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j-version" }
 log4j2-core = { group = "org.apache.logging.log4j", name = "log4j-core", version.ref = "log4j2-version" }
 log4j2-slf4j = { group = "org.apache.logging.log4j", name = "log4j-slf4j18-impl", version.ref = "log4j2-slf4j-version" }
-unirest = { group = "com.konghq", name = "unirest-java", version.ref = "unirest-version" }
+unirest-java = { group = "com.konghq", name = "unirest-java-core", version.ref = "unirest-version" }
+unirest-objectmapper-jackson = { group = "com.konghq", name = "unirest-objectmapper-jackson", version.ref = "unirest-version" }
 picocli = { group = "info.picocli", name = "picocli", version.ref = "picocli-version" }
 jackson-core = { group = "com.fasterxml.jackson.core", name = "jackson-core", version.ref = "jackson-version" }
 jackson-annotations = { group = "com.fasterxml.jackson.core", name = "jackson-annotations", version.ref = "jackson-version" }
@@ -54,6 +55,7 @@ jsoup = { group ="org.jsoup", name = "jsoup", version.ref = "jsoup-version" }
 jackson = ["jackson-core", "jackson-annotations", "jackson-databind"]
 log4j2 = ["log4j2-core", "log4j2-slf4j"]
 opus = ["opus-api", "opus-natives"]
+unirest = ["unirest-java", "unirest-objectmapper-jackson"]
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow-version" }

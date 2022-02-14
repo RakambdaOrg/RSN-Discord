@@ -2,10 +2,9 @@ package fr.raksrinana.rsndiscord.api.pandascore.request;
 
 import fr.raksrinana.rsndiscord.api.pandascore.PandaScoreGetRequest;
 import fr.raksrinana.rsndiscord.api.pandascore.data.match.RainbowSixMatch;
-import kong.unirest.GenericType;
+import kong.unirest.core.GenericType;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Map;
 

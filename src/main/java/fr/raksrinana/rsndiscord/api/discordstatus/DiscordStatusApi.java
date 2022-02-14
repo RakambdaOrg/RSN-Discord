@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.api.discordstatus;
 
 import fr.raksrinana.rsndiscord.api.discordstatus.data.status.StatusResponse;
 import fr.raksrinana.rsndiscord.api.discordstatus.data.unresolvedincidents.IncidentsResponse;
-import kong.unirest.Unirest;
+import kong.unirest.core.Unirest;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import java.util.Optional;

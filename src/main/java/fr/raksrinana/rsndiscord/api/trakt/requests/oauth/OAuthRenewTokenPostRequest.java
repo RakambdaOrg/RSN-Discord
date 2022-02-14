@@ -4,10 +4,10 @@ import fr.raksrinana.rsndiscord.api.trakt.TraktApi;
 import fr.raksrinana.rsndiscord.api.trakt.model.auth.AccessToken;
 import fr.raksrinana.rsndiscord.api.trakt.requests.ITraktPostRequest;
 import fr.raksrinana.rsndiscord.settings.impl.general.trakt.TraktAccessTokenConfiguration;
-import kong.unirest.GenericType;
-import kong.unirest.RequestBodyEntity;
-import kong.unirest.Unirest;
-import kong.unirest.json.JSONObject;
+import kong.unirest.core.GenericType;
+import kong.unirest.core.RequestBodyEntity;
+import kong.unirest.core.Unirest;
+import kong.unirest.core.json.JSONObject;
 import org.jetbrains.annotations.NotNull;
 
 public class OAuthRenewTokenPostRequest implements ITraktPostRequest<AccessToken>{

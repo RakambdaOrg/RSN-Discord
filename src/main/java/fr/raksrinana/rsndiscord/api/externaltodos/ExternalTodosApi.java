@@ -5,16 +5,17 @@ import fr.raksrinana.rsndiscord.api.externaltodos.data.SetStatusResponse;
 import fr.raksrinana.rsndiscord.api.externaltodos.data.Status;
 import fr.raksrinana.rsndiscord.api.externaltodos.data.Todo;
 import fr.raksrinana.rsndiscord.utils.Utilities;
-import kong.unirest.GenericType;
-import kong.unirest.Unirest;
-import kong.unirest.json.JSONObject;
+import kong.unirest.core.GenericType;
+import kong.unirest.core.Unirest;
+import kong.unirest.core.json.JSONObject;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
-import static kong.unirest.HeaderNames.AUTHORIZATION;
+import static kong.unirest.core.HeaderNames.AUTHORIZATION;
+
 @Log4j2
 public class ExternalTodosApi{
 	@NotNull

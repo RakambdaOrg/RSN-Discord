@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.api.themoviedb.requests;
 
-import kong.unirest.GenericType;
+import kong.unirest.core.GenericType;
 import org.jetbrains.annotations.NotNull;
 
 public interface ITMDBRequest<T>{

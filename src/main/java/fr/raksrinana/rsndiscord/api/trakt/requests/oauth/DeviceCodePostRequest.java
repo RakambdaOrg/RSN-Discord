@@ -3,10 +3,10 @@ package fr.raksrinana.rsndiscord.api.trakt.requests.oauth;
 import fr.raksrinana.rsndiscord.api.trakt.TraktApi;
 import fr.raksrinana.rsndiscord.api.trakt.model.auth.DeviceCode;
 import fr.raksrinana.rsndiscord.api.trakt.requests.ITraktPostRequest;
-import kong.unirest.GenericType;
-import kong.unirest.RequestBodyEntity;
-import kong.unirest.Unirest;
-import kong.unirest.json.JSONObject;
+import kong.unirest.core.GenericType;
+import kong.unirest.core.RequestBodyEntity;
+import kong.unirest.core.Unirest;
+import kong.unirest.core.json.JSONObject;
 import org.jetbrains.annotations.NotNull;
 
 public class DeviceCodePostRequest implements ITraktPostRequest<DeviceCode>{

@@ -2,9 +2,8 @@ package fr.raksrinana.rsndiscord.api.pandascore.request;
 
 import fr.raksrinana.rsndiscord.api.pandascore.PandaScoreGetRequest;
 import fr.raksrinana.rsndiscord.api.pandascore.data.match.RainbowSixMatch;
-import kong.unirest.GenericType;
+import kong.unirest.core.GenericType;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 
 public class GetRunningR6Matches extends PandaScoreGetRequest<List<RainbowSixMatch>> {

@@ -1,8 +1,7 @@
 package fr.raksrinana.rsndiscord.api.pandascore;
 
-import kong.unirest.GenericType;
+import kong.unirest.core.GenericType;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Map;
 
 public interface PandaScoreRequest<T> {

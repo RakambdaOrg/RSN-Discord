@@ -2,19 +2,20 @@ package fr.raksrinana.rsndiscord;
 
 import fr.raksrinana.rsndiscord.api.twitch.TwitchUtils;
 import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
-import fr.raksrinana.rsndiscord.interaction.command.CommandService;
 import fr.raksrinana.rsndiscord.event.EventListener;
+import fr.raksrinana.rsndiscord.interaction.command.CommandService;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.reaction.ReactionUtils;
 import fr.raksrinana.rsndiscord.reply.UserReplyEventListener;
 import fr.raksrinana.rsndiscord.runner.RunnerUtils;
-import fr.raksrinana.rsndiscord.settings.impl.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.Settings;
+import fr.raksrinana.rsndiscord.settings.impl.GuildConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
-import fr.raksrinana.rsndiscord.utils.json.JacksonObjectMapper;
-import kong.unirest.Unirest;
+import fr.raksrinana.rsndiscord.utils.json.JacksonUtils;
+import kong.unirest.core.Unirest;
+import kong.unirest.jackson.JacksonObjectMapper;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.JDA;
@@ -68,7 +69,7 @@ public class Main{
 		
 		parameters = loadEnv(args);
 		Unirest.config()
-				.setObjectMapper(new JacksonObjectMapper())
+				.setObjectMapper(new JacksonObjectMapper(JacksonUtils.getMapper()))
 				.connectTimeout(30000)
 				.enableCookieManagement(true)
 				.verifySsl(true);
