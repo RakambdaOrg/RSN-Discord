@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.CreateTextChannelWrap
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.DeleteChannelWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.EditChannelWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.guild.LeaveGuildWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.interaction.AutoCompleteWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.AddRoleWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.BanWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.DeafenWrapper;
@@ -39,13 +40,16 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.ThreadChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.awt.Color;
+import java.util.Collection;
 import java.util.List;
 
 @Log4j2
@@ -263,5 +267,10 @@ public class JDAWrappers{
 	@NotNull
 	public static EditPresenceWrapper editPresence(){
 		return new EditPresenceWrapper();
+	}
+	
+	@NotNull
+	public static AutoCompleteWrapper reply(@NotNull CommandAutoCompleteInteractionEvent event, @NotNull Collection<Command.Choice> choices){
+		return new AutoCompleteWrapper(event, choices);
 	}
 }

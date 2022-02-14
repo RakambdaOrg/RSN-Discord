@@ -1,8 +1,6 @@
 package fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration;
 
 import fr.raksrinana.rsndiscord.settings.impl.GuildConfiguration;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -14,12 +12,15 @@ import java.util.Optional;
 import java.util.function.Function;
 
 @Slf4j
-@RequiredArgsConstructor
-public abstract class MapConfigurationAccessor<K, V> implements IConfigurationAccessor{
-	@Getter
-	private final String name;
+public abstract class MapConfigurationAccessor<K, V> extends BaseConfigurationAccessor{
 	private final Function<GuildConfiguration, Map<K, V>> getter;
 	private final TriConsumer<GuildConfiguration, K, V> setter;
+	
+	public MapConfigurationAccessor(@NotNull String name, Function<GuildConfiguration, Map<K, V>> getter, TriConsumer<GuildConfiguration, K, V> setter){
+		super(name);
+		this.getter = getter;
+		this.setter = setter;
+	}
 	
 	public MapConfigurationAccessor(@NotNull String name, @NotNull Function<GuildConfiguration, Map<K, V>> getter){
 		this(name, getter, (s, k, v) -> getter.apply(s).put(k, v));

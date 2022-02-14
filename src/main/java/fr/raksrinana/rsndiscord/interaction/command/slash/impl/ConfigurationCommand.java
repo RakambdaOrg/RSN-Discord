@@ -26,6 +26,8 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +38,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import static fr.raksrinana.rsndiscord.interaction.command.CommandResult.BAD_ARGUMENTS;
 import static fr.raksrinana.rsndiscord.interaction.command.CommandResult.HANDLED;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
@@ -141,7 +144,7 @@ public class ConfigurationCommand extends SimpleSlashCommand{
 						.addChoice("remove", REMOVE_OPERATION_TYPE)
 						.addChoice("show", SHOW_OPERATION_TYPE)
 						.setRequired(true),
-				new OptionData(STRING, NAME_OPTION_ID, "Name of the configuration to change").setRequired(true),
+				new OptionData(STRING, NAME_OPTION_ID, "Name of the configuration to change").setRequired(true).setAutoComplete(true),
 				new OptionData(STRING, VALUE_OPTION_ID, "Value to set").setRequired(false));
 	}
 	
@@ -244,5 +247,36 @@ public class ConfigurationCommand extends SimpleSlashCommand{
 	private CommandResult handleUnknownOperation(@NotNull SlashCommandInteraction event){
 		JDAWrappers.reply(event, "Unknown operation type").submit();
 		return HANDLED;
+	}
+	
+	@Override
+	public void autoCompleteGuild(@NotNull CommandAutoCompleteInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
+		if(Objects.equals(NAME_OPTION_ID, event.getFocusedOption().getName())){
+			autoCompleteName(event);
+		}
+	}
+	
+	private void autoCompleteName(@NotNull CommandAutoCompleteInteractionEvent event){
+		var value = event.getFocusedOption().getValue();
+		var nameChoices = value.isBlank() ? getTopLevelChoices() : getStartingWithChoices(value);
+		var choices = nameChoices.limit(OptionData.MAX_CHOICES)
+				.sorted()
+				.map(name -> new Command.Choice(name, name))
+				.toList();
+		JDAWrappers.reply(event, choices).submit();
+	}
+	
+	@NotNull
+	private Stream<String> getTopLevelChoices(){
+		return accessors.values().stream()
+				.map(IConfigurationAccessor::getTopLevel)
+				.distinct();
+	}
+	
+	@NotNull
+	private Stream<String> getStartingWithChoices(@NotNull String value){
+		return accessors.values().stream()
+				.map(IConfigurationAccessor::getName)
+				.filter(name -> name.startsWith(value));
 	}
 }

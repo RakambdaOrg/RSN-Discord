@@ -29,4 +29,7 @@ public interface IConfigurationAccessor{
 	
 	@NotNull
 	String getName();
+	
+	@NotNull
+	String getTopLevel();
 }

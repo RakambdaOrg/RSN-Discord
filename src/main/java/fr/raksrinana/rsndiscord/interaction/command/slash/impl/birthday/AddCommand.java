@@ -43,7 +43,7 @@ public class AddCommand extends SubSlashCommand{
 	protected Collection<? extends OptionData> getOptions(){
 		return List.of(
 				new OptionData(OptionType.USER, USER_OPTION_ID, "User").setRequired(true),
-				new OptionData(OptionType.STRING, DATE_OPTION_ID, "Birthday").setRequired(true));
+				new OptionData(OptionType.STRING, DATE_OPTION_ID, "Birthday (yyyy-MM-dd)").setRequired(true));
 	}
 	
 	@Override

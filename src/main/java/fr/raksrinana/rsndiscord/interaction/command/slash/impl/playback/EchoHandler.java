@@ -22,8 +22,9 @@ public class EchoHandler implements AudioSendHandler, AudioReceiveHandler{
 	
 	@Override
 	public void handleCombinedAudio(@NotNull CombinedAudio combinedAudio){
-		if (combinedAudio.getUsers().isEmpty())
+		if(combinedAudio.getUsers().isEmpty()){
 			return;
+		}
 		
 		byte[] data = combinedAudio.getAudioData(1.0f);
 		queue.add(data);

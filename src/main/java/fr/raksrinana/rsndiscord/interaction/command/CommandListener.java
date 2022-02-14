@@ -1,14 +1,13 @@
-package fr.raksrinana.rsndiscord.interaction.command.slash;
+package fr.raksrinana.rsndiscord.interaction.command;
 
 import fr.raksrinana.rsndiscord.event.EventListener;
-import fr.raksrinana.rsndiscord.interaction.command.CommandResult;
-import fr.raksrinana.rsndiscord.interaction.command.CommandService;
 import fr.raksrinana.rsndiscord.interaction.command.api.IExecutableCommand;
 import fr.raksrinana.rsndiscord.interaction.command.slash.base.ExecutableSlashCommand;
 import fr.raksrinana.rsndiscord.interaction.command.user.base.ExecutableUserCommand;
 import fr.raksrinana.rsndiscord.log.LogContext;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 
 @EventListener
 @Log4j2
-public class SlashCommandListener extends ListenerAdapter{
+public class CommandListener extends ListenerAdapter{
 	@Override
 	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event){
 		super.onSlashCommandInteraction(event);
@@ -45,6 +44,19 @@ public class SlashCommandListener extends ListenerAdapter{
 			CommandService.getExecutableCommand(event.getCommandPath(), ExecutableUserCommand.class).ifPresentOrElse(
 					command -> event.deferReply(command.replyEphemeral()).submit().thenAccept(empty -> performInteraction(event, command)),
 					() -> event.reply("Unknown command {%s".formatted(event.getCommandPath())).setEphemeral(true).submit());
+		}
+	}
+	
+	@Override
+	public void onCommandAutoCompleteInteraction(@NotNull CommandAutoCompleteInteractionEvent event){
+		super.onCommandAutoCompleteInteraction(event);
+		
+		try(var ignored = LogContext.with(event.getGuild()).with(event.getUser())){
+			log.info("Received auto-complete {} from {} with args {}", event.getCommandPath(), event.getUser(), event.getFocusedOption());
+			
+			CommandService.getExecutableCommand(event.getCommandPath(), ExecutableSlashCommand.class).ifPresentOrElse(
+					command -> performAutoComplete(event, command),
+					() -> log.warn("Unknown command {%s".formatted(event.getCommandPath())));
 		}
 	}
 	
@@ -80,6 +92,20 @@ public class SlashCommandListener extends ListenerAdapter{
 		catch(Exception e){
 			log.error("Failed to execute command {}", command, e);
 			JDAWrappers.edit(event, "Error executing command (%s)".formatted(e.getClass().getName())).submitAndDelete(5);
+		}
+	}
+	
+	private void performAutoComplete(@NotNull CommandAutoCompleteInteractionEvent event, @NotNull IExecutableCommand<?> command){
+		try{
+			if(event.isFromGuild()){
+				command.autoCompleteGuild(event, Objects.requireNonNull(event.getGuild()), Objects.requireNonNull(event.getMember()));
+			}
+			else{
+				command.autoCompleteUser(event);
+			}
+		}
+		catch(Exception e){
+			log.error("Failed to execute command {}", command, e);
 		}
 	}
 	
