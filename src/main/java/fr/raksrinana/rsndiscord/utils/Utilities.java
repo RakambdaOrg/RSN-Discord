@@ -177,6 +177,7 @@ public class Utilities{
 				.thenApply(threads -> threads.stream()
 						.filter(thread -> Objects.equals(thread.getName(), name))
 						.findFirst()
+						.or(() -> guild.getThreadChannelsByName(name, true).stream().findFirst())
 						.orElseThrow(() -> new RuntimeException("Thread with name " + name + " not found in " + guild)));
 	}
 }
