@@ -96,7 +96,8 @@ public class TwitterApi implements IAPIEventListener{
 	}
 	
 	public static String getUrl(Tweet tweet){
-		return "https://twitter.com/i/web/status/%s".formatted(tweet.getId());
+		return "%s/status/%s".formatted(tweet.getUser().getUrl(), tweet.getId());
+		// return "https://twitter.com/i/web/status/%s".formatted(tweet.getId());
 	}
 	
 	@Override
