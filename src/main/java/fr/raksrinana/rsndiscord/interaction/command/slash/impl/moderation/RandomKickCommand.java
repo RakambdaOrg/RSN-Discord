@@ -8,6 +8,7 @@ import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.IInviteContainer;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -126,7 +127,7 @@ public class RandomKickCommand extends SubSlashCommand{
 					JDAWrappers.message(privateChannel, kickMessage).submit();
 					
 					Optional.ofNullable(guild.getDefaultChannel())
-							.map(TextChannel::createInvite)
+							.map(IInviteContainer::createInvite)
 							.map(invite -> invite.setMaxAge(24L, TimeUnit.HOURS)
 									.setMaxUses(1))
 							.map(RestAction::submit)
