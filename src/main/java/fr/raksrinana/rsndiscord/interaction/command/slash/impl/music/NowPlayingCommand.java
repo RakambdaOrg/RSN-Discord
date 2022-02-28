@@ -55,7 +55,8 @@ public class NowPlayingCommand extends SubSlashCommand{
 					.setDescription(track.getInfo().title)
 					.addField(translate(guild, "music.requester"), requester, true)
 					.addField(translate(guild, "music.repeating"), repeating, true)
-					.addField(translate(guild, "music.position"), progressBar, true);
+					.addField(translate(guild, "music.position"), progressBar, true)
+					.setThumbnail(track.getInfo().artworkUrl);
 		}, () -> {
 			builder.setColor(RED);
 			builder.setDescription(translate(guild, "music.nothing-playing"));

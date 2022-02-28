@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import static fr.raksrinana.rsndiscord.interaction.command.slash.impl.music.NowPlayingCommand.getDuration;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.awt.Color.GREEN;
@@ -66,7 +67,8 @@ public class AddMusicTrackConsumer implements TrackConsumer{
 				.addField(translate(guild, "music.requester"), author.getAsMention(), true)
 				.addField(translate(guild, "music.track.duration"), getDuration(track.getDuration()), true)
 				.addField(translate(guild, "music.track.eta"), getDuration(delay), true)
-				.addField(translate(guild, "music.repeating"), String.valueOf(repeat), true);
+				.addField(translate(guild, "music.repeating"), String.valueOf(repeat), true)
+				.setThumbnail(track.getInfo().artworkUrl);
 		if(!isCurrentTrack){
 			builder.addField(translate(guild, "music.queue.position"), String.valueOf(1 + before.size()), true);
 		}

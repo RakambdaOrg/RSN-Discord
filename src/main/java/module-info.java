@@ -2,7 +2,6 @@ open module fr.raksrinana.rsndiscord {
 	requires java.desktop;
 	requires java.sql;
 	requires org.apache.commons.lang3;
-	requires org.apache.commons.io;
 	requires unirest.java.core;
 	requires unirest.objectmapper.jackson;
 	requires org.reflections;
@@ -16,7 +15,8 @@ open module fr.raksrinana.rsndiscord {
 	requires org.apache.logging.log4j.slf4j;
 	requires java.scripting;
 	requires net.dv8tion.jda;
-	requires lavaplayer;
+	// requires lavaplayer;
+	requires lavaplayer.custom.SNAPSHOT;
 	requires okhttp3;
 	requires jump3r;
 	requires twittered;
