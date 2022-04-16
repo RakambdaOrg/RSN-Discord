@@ -114,7 +114,7 @@ java {
 
 jib {
     from {
-        image = "eclipse-temurin:17-jdk"
+        image = "eclipse-temurin:18-jdk"
         platforms {
             platform {
                 os = "linux"
