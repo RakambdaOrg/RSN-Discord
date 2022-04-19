@@ -14,6 +14,7 @@ import fr.raksrinana.rsndiscord.utils.json.converter.ZonedDateTimeSerializer;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
@@ -41,7 +42,7 @@ public class UnbanMemberScheduleHandler extends SimpleScheduleHandler{
 			return completedFuture(DELAYED);
 		}
 		
-		return JDAWrappers.unban(guild, Long.toUnsignedString(userId)).submit()
+		return JDAWrappers.unban(guild, UserSnowflake.fromId(userId)).submit()
 				.thenApply(e -> COMPLETED)
 				.exceptionally(e -> {
 					if(e instanceof ErrorResponseException re && re.getErrorResponse() == UNKNOWN_USER){
