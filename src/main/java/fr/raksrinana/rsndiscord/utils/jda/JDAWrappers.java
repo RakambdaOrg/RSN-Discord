@@ -40,6 +40,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.ThreadChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
@@ -255,7 +256,7 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static UnbanWrapper unban(@NotNull Guild guild, @NotNull String userId){
+	public static UnbanWrapper unban(@NotNull Guild guild, @NotNull UserSnowflake userId){
 		return new UnbanWrapper(guild, userId);
 	}
 	
