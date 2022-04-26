@@ -21,6 +21,7 @@ import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.DeleteMessageWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.EditMessageWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.InteractionEditMessageWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.InteractionNewMessageWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.InteractionReplyModalWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.MessageWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.RemoveAllReactionWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.RemoveReactionWrapper;
@@ -43,10 +44,12 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
+import net.dv8tion.jda.api.interactions.callbacks.IModalCallback;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.interactions.components.LayoutComponent;
+import net.dv8tion.jda.api.interactions.components.Modal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.awt.Color;
@@ -188,6 +191,11 @@ public class JDAWrappers{
 	@NotNull
 	public static InteractionNewMessageWrapper reply(@NotNull IReplyCallback event, @NotNull MessageEmbed embed){
 		return new InteractionNewMessageWrapper(event.getGuild(), event.getHook(), embed);
+	}
+	
+	@NotNull
+	public static InteractionReplyModalWrapper reply(@NotNull IModalCallback event, @NotNull Modal modal){
+		return new InteractionReplyModalWrapper(event.getGuild(), event, modal);
 	}
 	
 	@NotNull

@@ -16,7 +16,6 @@ open module fr.raksrinana.rsndiscord {
 	requires java.scripting;
 	requires net.dv8tion.jda;
 	// requires lavaplayer;
-	requires lavaplayer.custom.SNAPSHOT;
 	requires okhttp3;
 	requires jump3r;
 	requires twittered;
