@@ -61,7 +61,7 @@ public class AnilistTokenModal extends SimpleModalHandler{
 	@NotNull
 	public Modal asComponent(){
 		var code = TextInput.create(CODE_VALUE_ID, "Auth code", TextInputStyle.SHORT)
-				.setPlaceholder("Get your code at : " + AniListApi.getCODE_LINK())
+				.setValue("Get your code at : " + AniListApi.getCODE_LINK())
 				.setRequired(true)
 				.build();
 		
