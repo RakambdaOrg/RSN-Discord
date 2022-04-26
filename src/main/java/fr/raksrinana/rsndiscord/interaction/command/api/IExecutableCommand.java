@@ -14,6 +14,10 @@ public interface IExecutableCommand<T extends CommandInteraction> extends IComma
 		return true;
 	}
 	
+	default boolean deferReply(){
+		return true;
+	}
+	
 	@NotNull
 	default CommandResult executeGuild(@NotNull T event, @NotNull Guild guild, @NotNull Member member){
 		return CommandResult.NOT_IMPLEMENTED;

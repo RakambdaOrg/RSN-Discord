@@ -31,4 +31,9 @@ public class RegisterCommand extends SubSlashCommand{
 		JDAWrappers.reply(event, new AnilistTokenModal().asComponent()).submit();
 		return HANDLED;
 	}
+	
+	@Override
+	public boolean deferReply(){
+		return false;
+	}
 }

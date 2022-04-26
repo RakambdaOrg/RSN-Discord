@@ -11,11 +11,13 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @EventListener
@@ -29,7 +31,7 @@ public class CommandListener extends ListenerAdapter{
 			log.info("Received slash-command {} from {} with args {}", event.getCommandPath(), event.getUser(), getArgsForLogs(event.getOptions()));
 			
 			CommandService.getExecutableCommand(event.getCommandPath(), ExecutableSlashCommand.class).ifPresentOrElse(
-					command -> event.deferReply(command.replyEphemeral()).submit().thenAccept(empty -> performInteraction(event, command)),
+					command -> performInteractionDeferred(event, command),
 					() -> event.reply("Unknown command {%s".formatted(event.getCommandPath())).setEphemeral(true).submit());
 		}
 	}
@@ -42,8 +44,8 @@ public class CommandListener extends ListenerAdapter{
 			log.info("Received user-context {} from {}", event.getCommandPath(), event.getUser());
 			
 			CommandService.getExecutableCommand(event.getCommandPath(), ExecutableUserCommand.class).ifPresentOrElse(
-					command -> event.deferReply(command.replyEphemeral()).submit().thenAccept(empty -> performInteraction(event, command)),
-					() -> event.reply("Unknown command {%s".formatted(event.getCommandPath())).setEphemeral(true).submit());
+					command -> performInteractionDeferred(event, command),
+					() -> event.reply("Unknown context interaction {%s".formatted(event.getCommandPath())).setEphemeral(true).submit());
 		}
 	}
 	
@@ -65,6 +67,14 @@ public class CommandListener extends ListenerAdapter{
 		return options.stream()
 				.map(option -> "%s(%s)[%s]".formatted(option.getName(), option.getType(), option.getAsString()))
 				.collect(Collectors.joining(", "));
+	}
+	
+	private <T extends CommandInteraction> void performInteractionDeferred(@NotNull T event, @NotNull IExecutableCommand<T> command){
+		CompletableFuture<InteractionHook> defer = CompletableFuture.completedFuture(null);
+		if(command.deferReply()){
+			defer = event.deferReply(command.replyEphemeral()).submit();
+		}
+		defer.thenAccept(empty -> performInteraction(event, command));
 	}
 	
 	private <T extends CommandInteraction> void performInteraction(@NotNull T event, @NotNull IExecutableCommand<T> command){

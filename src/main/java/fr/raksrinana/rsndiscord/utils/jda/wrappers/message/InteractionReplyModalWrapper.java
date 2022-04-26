@@ -25,6 +25,10 @@ public class InteractionReplyModalWrapper{
 				.thenApply(empty -> {
 					log.info("Replied with new modal to slash command in {}", target);
 					return empty;
+				})
+				.exceptionally(t -> {
+					log.error("Failed to reply modal", t);
+					return null;
 				});
 	}
 }
