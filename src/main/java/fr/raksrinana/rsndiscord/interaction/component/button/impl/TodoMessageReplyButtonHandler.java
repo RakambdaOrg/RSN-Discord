@@ -42,7 +42,7 @@ public class TodoMessageReplyButtonHandler extends SimpleButtonHandler{
 	@NotNull
 	private CompletableFuture<Void> addMembersToThread(@NotNull ButtonInteractionEvent event, @NotNull ThreadChannel thread){
 		var authorFuture = Stream.of(JDAWrappers.addThreadMember(thread, event.getUser()).submit());
-		var mentionedFutures = event.getMessage().getMentionedMembers().stream()
+		var mentionedFutures = event.getMessage().getMentions().getMembers().stream()
 				.map(u -> JDAWrappers.addThreadMember(thread, u).submit());
 		
 		var futures = Stream.concat(authorFuture, mentionedFutures).toArray(CompletableFuture[]::new);

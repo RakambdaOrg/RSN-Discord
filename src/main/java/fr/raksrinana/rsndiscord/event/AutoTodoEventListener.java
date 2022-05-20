@@ -80,7 +80,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 		if(!message.getAttachments().isEmpty()){
 			return false;
 		}
-		return message.getEmotes().stream()
+		return message.getMentions().getEmotes().stream()
 				.map(emote -> jda.getEmoteById(emote.getId()))
 				.allMatch(emote -> emote != null
 				                   && emote.getGuild() != null

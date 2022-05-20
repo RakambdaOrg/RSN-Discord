@@ -170,14 +170,4 @@ public class Utilities{
 	public static boolean containsChannel(@NotNull Collection<ChannelConfiguration> channels, @NotNull MessageChannel channel){
 		return channels.stream().anyMatch(c -> Objects.equals(c.getChannelId(), channel.getIdLong()));
 	}
-	
-	@NotNull
-	public static CompletableFuture<ThreadChannel> getThreadByName(@NotNull Guild guild, @NotNull String name){
-		return guild.retrieveActiveThreads().submit()
-				.thenApply(threads -> threads.stream()
-						.filter(thread -> Objects.equals(thread.getName(), name))
-						.findFirst()
-						.or(() -> guild.getThreadChannelsByName(name, true).stream().findFirst())
-						.orElseThrow(() -> new RuntimeException("Thread with name " + name + " not found in " + guild)));
-	}
 }

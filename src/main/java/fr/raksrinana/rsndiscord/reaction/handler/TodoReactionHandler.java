@@ -86,13 +86,17 @@ public class TodoReactionHandler implements IReactionHandler{
 		var threadName = "reply-" + message.getIdLong();
 		
 		try{
-			return Utilities.getThreadByName(event.getGuild(), threadName)
-					.thenCompose(thread -> JDAWrappers.delete(thread).submit())
-					.exceptionally(throwable -> {
-						log.error("Failed to deleted thread {}", threadName, throwable);
-						return null;
-					})
-					.thenCompose(empty -> JDAWrappers.delete(message).submit())
+			var startedThread = message.getStartedThread();
+			
+			CompletableFuture<?> future = CompletableFuture.completedFuture(null);
+			if(Objects.nonNull(startedThread)){
+				future = JDAWrappers.delete(startedThread).submit()
+						.exceptionally(throwable -> {
+							log.error("Failed to deleted thread {}", threadName, throwable);
+							return null;
+						});
+			}
+			return future.thenCompose(empty -> JDAWrappers.delete(message).submit())
 					.thenApply(empty -> PROCESSED_DELETE)
 					.get(30, SECONDS);
 		}
@@ -118,7 +122,7 @@ public class TodoReactionHandler implements IReactionHandler{
 			return JDAWrappers.createThread(message, replyName).submit()
 					.thenCompose(thread -> {
 						var authorFuture = Stream.of(JDAWrappers.addThreadMember(thread, user).submit());
-						var mentionedFutures = message.getMentionedMembers().stream()
+						var mentionedFutures = message.getMentions().getMembers().stream()
 								.map(u -> JDAWrappers.addThreadMember(thread, u).submit());
 						
 						var futures = Stream.concat(authorFuture, mentionedFutures).toArray(CompletableFuture[]::new);
