@@ -30,6 +30,7 @@ import fr.raksrinana.rsndiscord.utils.jda.wrappers.role.SetColorWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.thread.AddThreadMemberWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.thread.CreateThreadWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.thread.DeleteThreadWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.thread.EditThreadWrapper;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -151,6 +152,11 @@ public class JDAWrappers{
 	@NotNull
 	public static CreateThreadWrapper createThread(@NotNull Message message, @NotNull String name){
 		return new CreateThreadWrapper(message, name);
+	}
+	
+	@NotNull
+	public static EditThreadWrapper editThread(@NotNull ThreadChannel threadChannel){
+		return new EditThreadWrapper(threadChannel);
 	}
 	
 	@NotNull

@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
+import static net.dv8tion.jda.api.entities.ThreadChannel.AutoArchiveDuration.TIME_1_WEEK;
 
 @Log4j2
 @ButtonHandler
@@ -31,6 +32,9 @@ public class TodoMessageReplyButtonHandler extends SimpleButtonHandler{
 		var replyName = "reply-" + event.getMessageIdLong();
 		
 		return JDAWrappers.createThread(message, replyName).submit()
+				.thenCompose(thread -> JDAWrappers.editThread(thread)
+						.setAutoArchiveDuration(TIME_1_WEEK)
+						.submit())
 				.thenCompose(thread -> CompletableFuture.allOf(
 						addMembersToThread(event, thread),
 						JDAWrappers.message(thread, translate(guild, "reaction.react-archive", user.getAsMention())).submit(),

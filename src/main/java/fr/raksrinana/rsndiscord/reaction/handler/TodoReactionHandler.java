@@ -22,6 +22,7 @@ import static fr.raksrinana.rsndiscord.utils.BasicEmotes.*;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static net.dv8tion.jda.api.entities.ThreadChannel.AutoArchiveDuration.TIME_1_WEEK;
 
 @ReactionHandler
 @Log4j2
@@ -120,6 +121,9 @@ public class TodoReactionHandler implements IReactionHandler{
 		
 		try{
 			return JDAWrappers.createThread(message, replyName).submit()
+					.thenCompose(thread -> JDAWrappers.editThread(thread)
+							.setAutoArchiveDuration(TIME_1_WEEK)
+							.submit())
 					.thenCompose(thread -> {
 						var authorFuture = Stream.of(JDAWrappers.addThreadMember(thread, user).submit());
 						var mentionedFutures = message.getMentions().getMembers().stream()
