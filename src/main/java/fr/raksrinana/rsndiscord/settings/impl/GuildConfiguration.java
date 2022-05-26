@@ -14,7 +14,6 @@ import fr.raksrinana.rsndiscord.settings.impl.guild.JoinLeaveConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.NicknameConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.RandomKickConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.TraktConfiguration;
-import fr.raksrinana.rsndiscord.settings.impl.guild.TwitchConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.TwitterConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.anilist.AniListConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.autoroles.LeavingRolesConfiguration;
@@ -62,9 +61,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@JsonProperty("nickname")
 	@Getter
 	private final NicknameConfiguration nicknameConfiguration = new NicknameConfiguration();
-	@JsonProperty("twitchConfiguration")
-	@Getter
-	private final TwitchConfiguration twitchConfiguration = new TwitchConfiguration();
 	@JsonProperty("hermitcraft")
 	@Getter
 	private final HermitcraftConfiguration hermitcraftConfiguration = new HermitcraftConfiguration();

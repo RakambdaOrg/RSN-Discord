@@ -9,7 +9,6 @@ import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.set
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.set.RoleSetConfigurationAccessor;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.set.StringSetConfigurationAccessor;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.set.URLSetConfigurationAccessor;
-import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.BooleanConfigurationAccessor;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.CategoryConfigurationAccessor;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.ChannelConfigurationAccessor;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.DoubleConfigurationAccessor;
@@ -17,7 +16,6 @@ import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.val
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.LocaleConfigurationAccessor;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.LongConfigurationAccessor;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.RoleConfigurationAccessor;
-import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.StringConfigurationAccessor;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.UserConfigurationAccessor;
 import fr.raksrinana.rsndiscord.settings.ConfigurationOperation;
 import fr.raksrinana.rsndiscord.settings.Settings;
@@ -98,11 +96,6 @@ public class ConfigurationCommand extends SimpleSlashCommand{
 		accessors.add(new ChannelConfigurationAccessor("trakt.mediaChangeChannel", s -> s.getTraktConfiguration().getMediaChangeChannel(), (s, v) -> s.getTraktConfiguration().setMediaChangeChannel(v)));
 		accessors.add(new ChannelConfigurationAccessor("trakt.thaChannel", s -> s.getTraktConfiguration().getThaChannel(), (s, v) -> s.getTraktConfiguration().setThaChannel(v)));
 		accessors.add(new UserConfigurationAccessor("trakt.thaUser", s -> s.getTraktConfiguration().getThaUser(), (s, v) -> s.getTraktConfiguration().setThaUser(v)));
-		
-		accessors.add(new StringSetConfigurationAccessor("twitch.autoReconnect", s -> s.getTwitchConfiguration().getTwitchAutoConnectUsers()));
-		accessors.add(new BooleanConfigurationAccessor("twitch.forward", s -> s.getTwitchConfiguration().getIrcForward(), (s, v) -> s.getTwitchConfiguration().setIrcForward(v)));
-		accessors.add(new StringConfigurationAccessor("twitch.randomKickRewardId", s -> s.getTwitchConfiguration().getRandomKickRewardId(), (s, v) -> s.getTwitchConfiguration().setRandomKickRewardId(v)));
-		accessors.add(new ChannelConfigurationAccessor("twitch.channel", s -> s.getTwitchConfiguration().getTwitchChannel(), (s, v) -> s.getTwitchConfiguration().setTwitchChannel(v)));
 		
 		accessors.add(new ChannelConfigurationAccessor("twitter.searchChannel", s -> s.getTwitterConfiguration().getSearchChannel(), (s, v) -> s.getTwitterConfiguration().setSearchChannel(v)));
 		accessors.add(new StringSetConfigurationAccessor("twitter.searches", s -> s.getTwitterConfiguration().getSearches()));

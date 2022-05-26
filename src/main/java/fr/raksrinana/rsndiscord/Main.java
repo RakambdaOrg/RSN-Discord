@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord;
 
-import fr.raksrinana.rsndiscord.api.twitch.TwitchUtils;
 import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
 import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.interaction.command.CommandService;
@@ -37,7 +36,6 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.OnlineStatus.ONLINE;
 
@@ -100,8 +98,6 @@ public class Main{
 			
 			log.info("Started");
 			announceStart();
-			
-			executorService.schedule((Runnable) TwitchUtils::connect, 15, TimeUnit.SECONDS);
 		}
 		catch(LoginException | InterruptedException e){
 			log.error("Couldn't start bot", e);
@@ -175,7 +171,6 @@ public class Main{
 		TwitterApi.removeStreamFilters();
 		UserReplyEventListener.stopAll();
 		RSNAudioManager.stopAll();
-		TwitchUtils.close();
 		executorService.shutdownNow();
 		Settings.close();
 		Main.getJda().shutdown();
