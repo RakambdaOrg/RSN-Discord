@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.schedule.api.IScheduleHandler;
 import fr.raksrinana.rsndiscord.settings.api.ICompositeConfiguration;
-import fr.raksrinana.rsndiscord.settings.impl.guild.EventConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.HermitcraftConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.JoinLeaveConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.NicknameConfiguration;
@@ -117,10 +116,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@Getter
 	@Setter
 	private PermissionsConfiguration permissionsConfiguration = new PermissionsConfiguration();
-	@JsonProperty("event")
-	@Setter
-	@Getter
-	private EventConfiguration eventConfiguration = new EventConfiguration();
 	@JsonProperty("leaveServerBanDuration")
 	@Setter
 	@JsonDeserialize(using = DurationDeserializer.class)

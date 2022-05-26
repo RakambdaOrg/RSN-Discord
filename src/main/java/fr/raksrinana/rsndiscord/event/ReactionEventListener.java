@@ -12,6 +12,7 @@ import static fr.raksrinana.rsndiscord.reaction.handler.ReactionHandlerResult.PR
 
 @EventListener
 @Log4j2
+@Deprecated
 public class ReactionEventListener extends ListenerAdapter{
 	@Override
 	public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event){

@@ -2,10 +2,8 @@ package fr.raksrinana.rsndiscord.utils.jda;
 
 import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.EditPresenceWrapper;
-import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.CreateTextChannelWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.DeleteChannelWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.EditChannelWrapper;
-import fr.raksrinana.rsndiscord.utils.jda.wrappers.guild.LeaveGuildWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.interaction.AutoCompleteWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.AddRoleWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.BanWrapper;
@@ -24,7 +22,6 @@ import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.InteractionNewMessage
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.InteractionReplyModalWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.MessageWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.RemoveAllReactionWrapper;
-import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.RemoveReactionWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.UnpinMessageWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.role.SetColorWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.thread.AddThreadMemberWrapper;
@@ -112,11 +109,6 @@ public class JDAWrappers{
 	@NotNull
 	public static AddReactionWrapper addReaction(@NotNull Message message, @NotNull BasicEmotes emote){
 		return addReaction(message, emote.getValue());
-	}
-	
-	@NotNull
-	public static RemoveReactionWrapper removeReaction(MessageReaction messageReaction){
-		return new RemoveReactionWrapper(messageReaction);
 	}
 	
 	@NotNull
@@ -265,18 +257,8 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static CreateTextChannelWrapper createTextChannel(@NotNull Guild guild, @NotNull String name){
-		return new CreateTextChannelWrapper(guild, name);
-	}
-	
-	@NotNull
 	public static UnbanWrapper unban(@NotNull Guild guild, @NotNull UserSnowflake userId){
 		return new UnbanWrapper(guild, userId);
-	}
-	
-	@NotNull
-	public static LeaveGuildWrapper leave(@NotNull Guild guild){
-		return new LeaveGuildWrapper(guild);
 	}
 	
 	@NotNull

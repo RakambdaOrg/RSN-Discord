@@ -20,8 +20,8 @@ import static java.time.ZonedDateTime.now;
 
 @Log4j2
 @ButtonHandler
-public class ArchiveMediaReactionButtonHandler extends SimpleButtonHandler{
-	public ArchiveMediaReactionButtonHandler(){
+public class TimeReactionDeleteButtonHandler extends SimpleButtonHandler{
+	public TimeReactionDeleteButtonHandler(){
 		super("archive-media-reaction");
 	}
 	

@@ -1,6 +1,6 @@
 package fr.raksrinana.rsndiscord.interaction.command.slash.impl;
 
-import fr.raksrinana.rsndiscord.interaction.component.button.impl.ArchiveMediaReactionButtonHandler;
+import fr.raksrinana.rsndiscord.interaction.component.button.impl.TimeReactionDeleteButtonHandler;
 import fr.raksrinana.rsndiscord.interaction.command.CommandResult;
 import fr.raksrinana.rsndiscord.interaction.command.slash.api.BotSlashCommand;
 import fr.raksrinana.rsndiscord.interaction.command.slash.base.SimpleSlashCommand;
@@ -101,7 +101,7 @@ public class TimeReactionCommand extends SimpleSlashCommand{
 			var messageAction = JDAWrappers.edit(event, messageContent.toString());
 			
 			if(archive){
-				var buttonHandler = new ArchiveMediaReactionButtonHandler();
+				var buttonHandler = new TimeReactionDeleteButtonHandler();
 				messageAction = messageAction.addActionRow(buttonHandler.asComponent());
 			}
 			
