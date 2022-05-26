@@ -14,6 +14,10 @@ public interface IComponentHandler<T extends Component, E extends ComponentInter
 	@NotNull
 	T asComponent();
 	
+	default boolean deferReply(){
+		return true;
+	}
+	
 	@NotNull
 	default CompletableFuture<ComponentResult> handleGuild(@NotNull E event, @NotNull Guild guild, @NotNull Member member){
 		return CompletableFuture.completedFuture(ComponentResult.NOT_IMPLEMENTED);

@@ -2,6 +2,7 @@ package fr.raksrinana.rsndiscord.interaction.modal.impl;
 
 import fr.raksrinana.rsndiscord.api.anilist.AniListApi;
 import fr.raksrinana.rsndiscord.interaction.modal.ModalResult;
+import fr.raksrinana.rsndiscord.interaction.modal.api.ModalHandler;
 import fr.raksrinana.rsndiscord.interaction.modal.base.SimpleModalHandler;
 import fr.raksrinana.rsndiscord.utils.InvalidResponseException;
 import fr.raksrinana.rsndiscord.utils.Utilities;
@@ -21,6 +22,7 @@ import static fr.raksrinana.rsndiscord.interaction.modal.ModalResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 
 @Log4j2
+@ModalHandler
 public class AnilistTokenModal extends SimpleModalHandler{
 	private static final String CODE_VALUE_ID = "code";
 	

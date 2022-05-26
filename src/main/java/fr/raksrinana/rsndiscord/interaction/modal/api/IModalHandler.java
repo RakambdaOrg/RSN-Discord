@@ -24,4 +24,8 @@ public interface IModalHandler{
 	default CompletableFuture<ModalResult> handleUser(@NotNull ModalInteractionEvent event){
 		return CompletableFuture.completedFuture(ModalResult.NOT_IMPLEMENTED);
 	}
+	
+	default boolean deferReply(){
+		return true;
+	}
 }

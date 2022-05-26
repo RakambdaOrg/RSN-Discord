@@ -36,7 +36,14 @@ public class InteractionListener extends ListenerAdapter{
 			log.info("Received interaction {} from {}", componentId, event.getUser());
 			
 			handlerSupplier.apply(componentId).ifPresentOrElse(
-					handler -> event.deferEdit().submit().thenAccept(empty -> handleInteraction(event, handler)),
+					handler -> {
+						if(handler.deferReply()){
+							event.deferEdit().submit().thenAccept(empty -> handleInteraction(event, handler));
+						}
+						else{
+							handleInteraction(event, handler);
+						}
+					},
 					() -> JDAWrappers.reply(event, "Didn't find the interaction id " + componentId));
 		}
 	}

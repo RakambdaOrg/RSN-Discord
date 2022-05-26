@@ -26,7 +26,7 @@ public class ModalListener extends ListenerAdapter{
 			
 			ModalService.getModalHandler(event.getModalId()).ifPresentOrElse(
 					modal -> performInteraction(event, modal),
-					() -> event.reply("Unknown modal {%s".formatted(event.getModalId())).setEphemeral(true).submit());
+					() -> JDAWrappers.reply(event, "Unknown modal {%s".formatted(event.getModalId())).ephemeral(true).submit());
 		}
 	}
 	
@@ -39,6 +39,10 @@ public class ModalListener extends ListenerAdapter{
 	
 	private void performInteraction(@NotNull ModalInteractionEvent event, @NotNull IModalHandler modal){
 		try{
+			if(modal.deferReply()){
+				event.deferReply().submit();
+			}
+			
 			CompletableFuture<ModalResult> result;
 			if(event.isFromGuild()){
 				result = modal.handleGuild(event, Objects.requireNonNull(event.getGuild()), Objects.requireNonNull(event.getMember()));

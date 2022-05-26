@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import static fr.raksrinana.rsndiscord.schedule.ScheduleService.deleteMessageMins;
 
@@ -35,6 +36,12 @@ public class InteractionNewMessageWrapper{
 	
 	@NotNull
 	public InteractionNewMessageWrapper addActionRow(@NotNull ItemComponent... components){
+		action = action.addActionRow(components);
+		return this;
+	}
+	
+	@NotNull
+	public InteractionNewMessageWrapper addActionRow(@NotNull Collection<? extends ItemComponent> components){
 		action = action.addActionRow(components);
 		return this;
 	}

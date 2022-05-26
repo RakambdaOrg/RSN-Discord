@@ -18,6 +18,7 @@ import static net.dv8tion.jda.api.entities.MessageType.INLINE_REPLY;
 @EventListener
 @Getter
 @Log4j2
+@Deprecated
 public class TimeReactionsReplyEventListener extends ListenerAdapter{
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event){
@@ -44,6 +45,7 @@ public class TimeReactionsReplyEventListener extends ListenerAdapter{
 			if(Settings.get(guild).getMediaReactionMessages().contains(new MessageConfiguration(messageReference.getChannelIdLong(), messageReference.getMessageIdLong()))){
 				messageReference.resolve().submit().thenAccept(reference -> {
 					var original = Arrays.stream(reference.getContentRaw().split("\n"))
+							.filter(line -> !line.isBlank())
 							.filter(line -> Character.isDigit(line.charAt(0)) || line.startsWith("N/A"))
 							.map(line -> line.split(" ", 2)[0])
 							.toList();
