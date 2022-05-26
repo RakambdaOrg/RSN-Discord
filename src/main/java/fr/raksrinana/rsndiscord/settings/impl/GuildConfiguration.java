@@ -6,10 +6,18 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import fr.raksrinana.rsndiscord.reaction.ReactionTag;
 import fr.raksrinana.rsndiscord.schedule.api.IScheduleHandler;
 import fr.raksrinana.rsndiscord.settings.api.ICompositeConfiguration;
-import fr.raksrinana.rsndiscord.settings.impl.guild.*;
+import fr.raksrinana.rsndiscord.settings.impl.guild.EventConfiguration;
+import fr.raksrinana.rsndiscord.settings.impl.guild.ExternalTodosConfiguration;
+import fr.raksrinana.rsndiscord.settings.impl.guild.HermitcraftConfiguration;
+import fr.raksrinana.rsndiscord.settings.impl.guild.JoinLeaveConfiguration;
+import fr.raksrinana.rsndiscord.settings.impl.guild.NicknameConfiguration;
+import fr.raksrinana.rsndiscord.settings.impl.guild.RainbowSixConfiguration;
+import fr.raksrinana.rsndiscord.settings.impl.guild.RandomKickConfiguration;
+import fr.raksrinana.rsndiscord.settings.impl.guild.TraktConfiguration;
+import fr.raksrinana.rsndiscord.settings.impl.guild.TwitchConfiguration;
+import fr.raksrinana.rsndiscord.settings.impl.guild.TwitterConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.anilist.AniListConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.autoroles.LeavingRolesConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.birthday.BirthdaysConfiguration;
@@ -28,11 +36,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toSet;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -119,9 +133,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@Setter
 	@Getter
 	private EventConfiguration eventConfiguration = new EventConfiguration();
-	@JsonProperty("discordIncidentsChannel")
-	@Setter
-	private ChannelConfiguration discordIncidentsChannel;
 	@JsonProperty("leaveServerBanDuration")
 	@Setter
 	@JsonDeserialize(using = DurationDeserializer.class)
@@ -152,20 +163,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 		this.guildId = guildId;
 	}
 	
-	public void addMessagesAwaitingReaction(@NotNull WaitingReactionMessageConfiguration reaction){
-		messagesAwaitingReaction.add(reaction);
-	}
-	
-	public void removeMessagesAwaitingReaction(@NotNull WaitingReactionMessageConfiguration reaction){
-		messagesAwaitingReaction.remove(reaction);
-	}
-	
-	public Collection<WaitingReactionMessageConfiguration> getMessagesAwaitingReaction(@NotNull ReactionTag tag){
-		return new HashSet<>(messagesAwaitingReaction).stream()
-				.filter(reaction -> Objects.equals(reaction.getTag(), tag))
-				.collect(toSet());
-	}
-	
 	public void add(@NotNull IScheduleHandler scheduleHandler){
 		scheduleHandlers.put(scheduleHandler.getSchedulerId(), scheduleHandler);
 	}
@@ -182,11 +179,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@NotNull
 	public Optional<CategoryConfiguration> getArchiveCategory(){
 		return ofNullable(archiveCategory);
-	}
-	
-	@NotNull
-	public Optional<ChannelConfiguration> getDiscordIncidentsChannel(){
-		return ofNullable(discordIncidentsChannel);
 	}
 	
 	@NotNull

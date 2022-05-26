@@ -64,7 +64,6 @@ public class ConfigurationCommand extends SimpleSlashCommand{
 		accessors.add(new CategoryConfigurationAccessor("archiveCategory", GuildConfiguration::getArchiveCategory, GuildConfiguration::setArchiveCategory));
 		accessors.add(new RoleSetConfigurationAccessor("autoRoles", GuildConfiguration::getAutoRoles));
 		accessors.add(new ChannelSetConfigurationAccessor("autoThumbsChannels", GuildConfiguration::getAutoThumbsChannels));
-		accessors.add(new ChannelConfigurationAccessor("discordIncidentsChannel", GuildConfiguration::getDiscordIncidentsChannel, GuildConfiguration::setDiscordIncidentsChannel));
 		accessors.add(new RoleConfigurationAccessor("eventWinnerRole", s -> s.getEventConfiguration().getWinnerRole(), (s, v) -> s.getEventConfiguration().setWinnerRole(v)));
 		accessors.add(new ChannelConfigurationAccessor("generalChannel", GuildConfiguration::getGeneralChannel, GuildConfiguration::setGeneralChannel));
 		accessors.add(new DurationConfigurationAccessor("leaveServerBanDuration", GuildConfiguration::getLeaveServerBanDuration, GuildConfiguration::setLeaveServerBanDuration));
