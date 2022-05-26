@@ -37,7 +37,7 @@ public class TodoMessageKeepButtonHandler extends SimpleButtonHandler{
 							return b.asDisabled();
 						}
 						if(Objects.equals(b.getId(), getId())){
-							return b.withLabel("Message archived").asDisabled();
+							return b.withLabel("Thread kept").asDisabled();
 						}
 					}
 					return c;
@@ -50,6 +50,6 @@ public class TodoMessageKeepButtonHandler extends SimpleButtonHandler{
 	@Override
 	@NotNull
 	public Button asComponent(){
-		return Button.success(getComponentId(), "Archive").withEmoji(Emoji.fromUnicode("U+1F4E6"));
+		return Button.success(getComponentId(), "Keep").withEmoji(Emoji.fromUnicode("U+1F4E6"));
 	}
 }

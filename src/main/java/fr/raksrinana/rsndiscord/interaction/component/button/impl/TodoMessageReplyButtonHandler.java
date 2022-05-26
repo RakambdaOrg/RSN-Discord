@@ -19,6 +19,7 @@ import static net.dv8tion.jda.api.entities.ThreadChannel.AutoArchiveDuration.TIM
 
 @Log4j2
 @ButtonHandler
+@Deprecated
 public class TodoMessageReplyButtonHandler extends SimpleButtonHandler{
 	public TodoMessageReplyButtonHandler(){
 		super("todo-message-reply");
