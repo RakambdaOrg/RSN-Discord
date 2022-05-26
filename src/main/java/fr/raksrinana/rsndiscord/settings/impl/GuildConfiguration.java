@@ -12,7 +12,6 @@ import fr.raksrinana.rsndiscord.settings.impl.guild.EventConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.HermitcraftConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.JoinLeaveConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.NicknameConfiguration;
-import fr.raksrinana.rsndiscord.settings.impl.guild.RainbowSixConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.RandomKickConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.TraktConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.TwitchConfiguration;
@@ -69,9 +68,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@JsonProperty("hermitcraft")
 	@Getter
 	private final HermitcraftConfiguration hermitcraftConfiguration = new HermitcraftConfiguration();
-	@JsonProperty("rainbowSix")
-	@Getter
-	private final RainbowSixConfiguration rainbowSixConfiguration = new RainbowSixConfiguration();
 	@JsonProperty("autoRoles")
 	@Getter
 	@Setter

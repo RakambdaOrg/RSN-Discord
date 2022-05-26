@@ -87,8 +87,6 @@ public class ConfigurationCommand extends SimpleSlashCommand{
 		
 		accessors.add(new LongConfigurationAccessor("nickname.changeDelay", s -> s.getNicknameConfiguration().getChangeDelay(), (s, v) -> s.getNicknameConfiguration().setChangeDelay(v)));
 		
-		accessors.add(new ChannelConfigurationAccessor("rainbow6.matchChannel", s -> s.getRainbowSixConfiguration().getMatchNotificationChannel(), (s, v) -> s.getRainbowSixConfiguration().setMatchNotificationChannel(v)));
-		
 		accessors.add(new RoleSetConfigurationAccessor("randomkick.kickableRoles", s -> s.getRandomKick().getKickableRoles()));
 		accessors.add(new RoleConfigurationAccessor("randomkick.kickedRole", s -> s.getRandomKick().getKickedRole(), (s, v) -> s.getRandomKick().setKickedRole(v)));
 		accessors.add(new DoubleConfigurationAccessor("randomkick.kickRoleProbability", s -> s.getRandomKick().getKickRoleProbability(), (s, v) -> s.getRandomKick().setKickRoleProbability(v)));
