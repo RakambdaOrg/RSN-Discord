@@ -78,10 +78,6 @@ public class ConfigurationCommand extends SimpleSlashCommand{
 		
 		accessors.add(new ChannelConfigurationAccessor("birthday.notificationChannel", s -> s.getBirthdays().getNotificationChannel(), (s, v) -> s.getBirthdays().setNotificationChannel(v)));
 		
-		accessors.add(new StringConfigurationAccessor("externalTodos.endpoint", s -> s.getExternalTodos().getEndpoint(), (s, v) -> s.getExternalTodos().setEndpoint(v)));
-		accessors.add(new ChannelConfigurationAccessor("externalTodos.notificationChannel", s -> s.getExternalTodos().getNotificationChannel(), (s, v) -> s.getExternalTodos().setNotificationChannel(v)));
-		accessors.add(new StringConfigurationAccessor("externalTodos.token", s -> s.getExternalTodos().getToken(), (s, v) -> s.getExternalTodos().setToken(v)));
-		
 		accessors.add(new ChannelConfigurationAccessor("hermitcraft.streamChannel", s -> s.getHermitcraftConfiguration().getStreamingNotificationChannel(), (s, v) -> s.getHermitcraftConfiguration().setStreamingNotificationChannel(v)));
 		accessors.add(new ChannelConfigurationAccessor("hermitcraft.videoChannel", s -> s.getHermitcraftConfiguration().getVideoNotificationChannel(), (s, v) -> s.getHermitcraftConfiguration().setVideoNotificationChannel(v)));
 		

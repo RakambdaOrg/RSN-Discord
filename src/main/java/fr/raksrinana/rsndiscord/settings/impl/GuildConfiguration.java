@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.schedule.api.IScheduleHandler;
 import fr.raksrinana.rsndiscord.settings.api.ICompositeConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.EventConfiguration;
-import fr.raksrinana.rsndiscord.settings.impl.guild.ExternalTodosConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.HermitcraftConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.JoinLeaveConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.NicknameConfiguration;
@@ -106,9 +105,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@Getter
 	@Setter
 	private ReactionsConfiguration reactionsConfiguration = new ReactionsConfiguration();
-	@JsonProperty("externalTodos")
-	@Getter
-	private final ExternalTodosConfiguration externalTodos = new ExternalTodosConfiguration();
 	@JsonProperty("leavingRoles")
 	@Getter
 	private final LeavingRolesConfiguration leavingRolesConfiguration = new LeavingRolesConfiguration();
