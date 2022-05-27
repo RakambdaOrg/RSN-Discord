@@ -44,6 +44,7 @@ public class TodoMessageKeepButtonHandler extends SimpleButtonHandler{
 				})
 				.toList();
 		return JDAWrappers.editComponents(message, buttons).submit()
+				.thenCompose(empty -> JDAWrappers.message(message.getChannel(), "%s kept the thread".formatted(member.getAsMention())).submit())
 				.thenApply(empty -> ComponentResult.HANDLED);
 	}
 	
