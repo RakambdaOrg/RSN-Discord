@@ -13,7 +13,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import org.jetbrains.annotations.NotNull;
-import java.util.Objects;
 import static fr.raksrinana.rsndiscord.utils.Utilities.containsChannel;
 
 @EventListener
@@ -49,11 +48,6 @@ public class AutoTodoEventListener extends ListenerAdapter{
 	}
 	
 	private void handleTodo(@NotNull MessageReceivedEvent event){
-		if(Objects.equals(event.getAuthor(), event.getJDA().getSelfUser())){
-			JDAWrappers.editComponents(event.getMessage(), buttons).submit();
-			return;
-		}
-		
 		JDAWrappers.createThread(event.getMessage(), "reply-" + event.getMessageId()).submit()
 				.thenCompose(thread -> JDAWrappers.editThread(thread)
 						.setAutoArchiveDuration(ThreadChannel.AutoArchiveDuration.TIME_1_WEEK)
