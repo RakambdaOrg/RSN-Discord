@@ -14,7 +14,9 @@ import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import static fr.raksrinana.rsndiscord.interaction.modal.ModalResult.HANDLED;
 
 @Log4j2
@@ -30,7 +32,12 @@ public class TimeReactionReplyModal extends SimpleModalHandler{
 	
 	public TimeReactionReplyModal(@Nullable String body){
 		super("time-reaction-reply");
-		this.body = body;
+		this.body = Objects.isNull(body)
+				? null
+				: body.lines()
+				.filter(line -> !line.isBlank())
+				.filter(line -> !line.startsWith("§"))
+				.collect(Collectors.joining("\n"));
 	}
 	
 	@Override

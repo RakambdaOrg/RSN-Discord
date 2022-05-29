@@ -54,12 +54,12 @@ public class TimeReactionCreateModal extends SimpleModalHandler{
 			Optional.ofNullable(event.getValue(EPISODE_ID))
 					.map(ModalMapping::getAsString)
 					.filter(s -> !s.isBlank())
-					.ifPresent(episode -> messageContent.append("__**EP ").append(episode).append("**__\n"));
+					.ifPresent(episode -> messageContent.append("§__**EP ").append(episode).append("**__\n"));
 			
 			Optional.ofNullable(event.getValue(LINK_ID))
 					.map(ModalMapping::getAsString)
 					.filter(s -> !s.isBlank())
-					.ifPresent(link -> messageContent.append(link).append("\n"));
+					.ifPresent(link -> messageContent.append("§ ").append(link).append("\n"));
 			
 			reactions.stream()
 					.filter(reaction -> !reaction.isBlank())
