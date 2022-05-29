@@ -37,6 +37,7 @@ public class TimeReactionReplyModal extends SimpleModalHandler{
 				: body.lines()
 				.filter(line -> !line.isBlank())
 				.filter(line -> !line.startsWith("§"))
+				.map(line -> line.replace("||", ""))
 				.collect(Collectors.joining("\n"));
 	}
 	
