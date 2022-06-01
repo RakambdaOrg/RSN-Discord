@@ -3,6 +3,7 @@ package fr.raksrinana.rsndiscord.interaction.command.slash.impl.moderation;
 import fr.raksrinana.rsndiscord.interaction.command.CommandResult;
 import fr.raksrinana.rsndiscord.interaction.command.slash.base.group.SubSlashCommand;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.DeleteMessageWrapper;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -47,18 +48,16 @@ public class ClearCommand extends SubSlashCommand{
 				.map(MessageChannel.class::cast)
 				.orElse(channel);
 		
-		var message = translate(event.getGuild(), "clear.removing", messageCount, targetChannel.getId());
-		JDAWrappers.edit(event, message).submitAndDelete(5);
-		
-		targetChannel.getIterableHistory()
-				.takeAsync(messageCount)
-				.thenCompose(messages -> deleteAll(event, messages))
-				.thenCompose(empty -> JDAWrappers.edit(event, "Clear messages done").submit());
+		JDAWrappers.edit(event, translate(event.getGuild(), "clear.removing", messageCount, targetChannel.getId())).submitAndDelete(5)
+				.thenCompose(msg -> targetChannel.getIterableHistory()
+						.takeAsync(messageCount)
+						.thenCompose(messages -> deleteAll(event, messages))
+						.thenCompose(empty -> JDAWrappers.edit(event, "Clear messages done").submit()));
 		return HANDLED;
 	}
 	
 	@NotNull
-	private CompletableFuture<Message> deleteAll(@NotNull SlashCommandInteraction event, @NotNull Collection<Message> messages){
+	private CompletableFuture<Void> deleteAll(@NotNull SlashCommandInteraction event, @NotNull Collection<Message> messages){
 		var size = messages.size();
 		var counter = new AtomicInteger(0);
 		
@@ -70,12 +69,11 @@ public class ClearCommand extends SubSlashCommand{
 			return CompletableFuture.completedFuture(null);
 		};
 		
-		var future = CompletableFuture.<Message> completedFuture(null);
-		for(var message : messages){
-			future = future.thenCompose(empty -> JDAWrappers.delete(message).submit().thenCompose(notifier));
-		}
-		
-		return future;
+		return CompletableFuture.allOf(messages.stream()
+				.map(JDAWrappers::delete)
+				.map(DeleteMessageWrapper::submit)
+				.map(f -> f.thenCompose(notifier))
+				.toArray(CompletableFuture[]::new));
 	}
 	
 	@Override
