@@ -48,7 +48,8 @@ public class ClearCommand extends SubSlashCommand{
 		
 		targetChannel.getIterableHistory()
 				.takeAsync(messageCount)
-				.thenAccept(messages -> messages.forEach(m -> JDAWrappers.delete(m).submit()));
+				.thenAccept(messages -> messages.forEach(m -> JDAWrappers.delete(m).submit()))
+				.thenCompose(empty -> JDAWrappers.edit(event, "Clear messages done").submit());
 		return HANDLED;
 	}
 	
