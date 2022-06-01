@@ -4,6 +4,7 @@ import fr.raksrinana.rsndiscord.interaction.command.CommandResult;
 import fr.raksrinana.rsndiscord.interaction.command.slash.base.group.SubSlashCommand;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.message.DeleteMessageWrapper;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -18,12 +19,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
+import java.util.function.Consumer;
 import static fr.raksrinana.rsndiscord.interaction.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.CHANNEL;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
 
+@Log4j2
 public class ClearCommand extends SubSlashCommand{
 	public static final String CHANNEL_OPTION_ID = "channel";
 	public static final String MESSAGE_COUNT_OPTION_ID = "count";
@@ -61,18 +63,17 @@ public class ClearCommand extends SubSlashCommand{
 		var size = messages.size();
 		var counter = new AtomicInteger(0);
 		
-		Function<Void, CompletableFuture<Message>> notifier = empty -> {
+		Consumer<Void> notifier = empty -> {
 			var value = counter.incrementAndGet();
 			if(value % 20 == 0){
-				return JDAWrappers.edit(event, "Processed %d/%d".formatted(value, size)).submit();
+				log.info("Processed {}/{}", value, size);
 			}
-			return CompletableFuture.completedFuture(null);
 		};
 		
 		return CompletableFuture.allOf(messages.stream()
 				.map(JDAWrappers::delete)
 				.map(DeleteMessageWrapper::submit)
-				.map(f -> f.thenCompose(notifier))
+				.map(f -> f.thenAccept(notifier))
 				.toArray(CompletableFuture[]::new));
 	}
 	

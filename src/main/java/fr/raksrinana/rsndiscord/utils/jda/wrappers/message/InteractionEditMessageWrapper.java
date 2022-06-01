@@ -5,7 +5,6 @@ import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.InteractionHook;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageUpdateAction;
 import org.jetbrains.annotations.NotNull;
@@ -37,12 +36,6 @@ public class InteractionEditMessageWrapper{
 	@NotNull
 	public InteractionEditMessageWrapper clearActionRows(){
 		action = action.setActionRows(List.of());
-		return this;
-	}
-	
-	@NotNull
-	public InteractionEditMessageWrapper addActionRow(ItemComponent... components){
-		action = action.setActionRow(components);
 		return this;
 	}
 	
