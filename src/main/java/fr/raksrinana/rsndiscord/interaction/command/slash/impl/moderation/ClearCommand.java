@@ -65,8 +65,8 @@ public class ClearCommand extends SubSlashCommand{
 		
 		Consumer<Void> notifier = empty -> {
 			var value = counter.incrementAndGet();
-			if(value % 20 == 0){
-				log.info("Processed {}/{}", value, size);
+			if(value % 5 == 0 || value == size){
+				log.info("Deleting messages in {} processed {}/{}", event.getChannel(), value, size);
 			}
 		};
 		
