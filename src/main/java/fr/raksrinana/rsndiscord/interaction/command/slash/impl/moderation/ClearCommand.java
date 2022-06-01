@@ -6,6 +6,7 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
@@ -14,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import static fr.raksrinana.rsndiscord.interaction.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.CHANNEL;
@@ -48,9 +51,30 @@ public class ClearCommand extends SubSlashCommand{
 		
 		targetChannel.getIterableHistory()
 				.takeAsync(messageCount)
-				.thenAccept(messages -> messages.forEach(m -> JDAWrappers.delete(m).submit()))
+				.thenCompose(messages -> deleteAll(event, messages))
 				.thenCompose(empty -> JDAWrappers.edit(event, "Clear messages done").submit());
 		return HANDLED;
+	}
+	
+	@NotNull
+	private CompletableFuture<Message> deleteAll(@NotNull SlashCommandInteraction event, @NotNull Collection<Message> messages){
+		var size = messages.size();
+		var counter = new AtomicInteger(0);
+		
+		var future = CompletableFuture.<Message>completedFuture(null);
+		for(var message : messages){
+			var messageFuture = JDAWrappers.delete(message).submit()
+					.thenCompose(empty -> {
+						var value = counter.incrementAndGet();
+						if(value % 50 == 0){
+							return JDAWrappers.edit(event, "Processed %d/%d".formatted(value, size)).submit();
+						}
+						return CompletableFuture.completedFuture(null);
+					});
+			future = future.thenCompose(empty -> messageFuture);
+		}
+		
+		return future;
 	}
 	
 	@Override
