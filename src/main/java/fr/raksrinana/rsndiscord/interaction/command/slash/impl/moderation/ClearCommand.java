@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import static fr.raksrinana.rsndiscord.interaction.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.CHANNEL;
@@ -61,17 +62,17 @@ public class ClearCommand extends SubSlashCommand{
 		var size = messages.size();
 		var counter = new AtomicInteger(0);
 		
-		var future = CompletableFuture.<Message>completedFuture(null);
+		Function<Void, CompletableFuture<Message>> notifier = empty -> {
+			var value = counter.incrementAndGet();
+			if(value % 50 == 0){
+				return JDAWrappers.edit(event, "Processed %d/%d".formatted(value, size)).submit();
+			}
+			return CompletableFuture.completedFuture(null);
+		};
+		
+		var future = CompletableFuture.<Message> completedFuture(null);
 		for(var message : messages){
-			var messageFuture = JDAWrappers.delete(message).submit()
-					.thenCompose(empty -> {
-						var value = counter.incrementAndGet();
-						if(value % 50 == 0){
-							return JDAWrappers.edit(event, "Processed %d/%d".formatted(value, size)).submit();
-						}
-						return CompletableFuture.completedFuture(null);
-					});
-			future = future.thenCompose(empty -> messageFuture);
+			future = future.thenCompose(empty -> JDAWrappers.delete(message).submit().thenCompose(notifier));
 		}
 		
 		return future;
