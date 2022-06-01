@@ -64,7 +64,7 @@ public class ClearCommand extends SubSlashCommand{
 		
 		Function<Void, CompletableFuture<Message>> notifier = empty -> {
 			var value = counter.incrementAndGet();
-			if(value % 50 == 0){
+			if(value % 20 == 0){
 				return JDAWrappers.edit(event, "Processed %d/%d".formatted(value, size)).submit();
 			}
 			return CompletableFuture.completedFuture(null);
