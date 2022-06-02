@@ -4,13 +4,10 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import fr.raksrinana.rsndiscord.schedule.api.IScheduleHandler;
 import fr.raksrinana.rsndiscord.settings.api.ICompositeConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.HermitcraftConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.JoinLeaveConfiguration;
-import fr.raksrinana.rsndiscord.settings.impl.guild.NicknameConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.RandomKickConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.TraktConfiguration;
 import fr.raksrinana.rsndiscord.settings.impl.guild.TwitterConfiguration;
@@ -25,13 +22,10 @@ import fr.raksrinana.rsndiscord.settings.types.CategoryConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.MessageConfiguration;
 import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
-import fr.raksrinana.rsndiscord.utils.json.converter.DurationDeserializer;
-import fr.raksrinana.rsndiscord.utils.json.converter.DurationSerializer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
-import java.time.Duration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -57,16 +51,9 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@JsonProperty("trakt")
 	@Getter
 	private final TraktConfiguration traktConfiguration = new TraktConfiguration();
-	@JsonProperty("nickname")
-	@Getter
-	private final NicknameConfiguration nicknameConfiguration = new NicknameConfiguration();
 	@JsonProperty("hermitcraft")
 	@Getter
 	private final HermitcraftConfiguration hermitcraftConfiguration = new HermitcraftConfiguration();
-	@JsonProperty("autoRoles")
-	@Getter
-	@Setter
-	private Set<RoleConfiguration> autoRoles = new HashSet<>();
 	@JsonProperty("moderatorRoles")
 	@Getter
 	@Setter
@@ -99,12 +86,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@JsonProperty("leavingRoles")
 	@Getter
 	private final LeavingRolesConfiguration leavingRolesConfiguration = new LeavingRolesConfiguration();
-	@JsonProperty("generalChannel")
-	@Setter
-	private ChannelConfiguration generalChannel;
-	@JsonProperty("logChannel")
-	@Setter
-	private ChannelConfiguration logChannel;
 	@JsonProperty("randomKick")
 	@Getter
 	private final RandomKickConfiguration randomKick = new RandomKickConfiguration();
@@ -116,11 +97,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@Getter
 	@Setter
 	private PermissionsConfiguration permissionsConfiguration = new PermissionsConfiguration();
-	@JsonProperty("leaveServerBanDuration")
-	@Setter
-	@JsonDeserialize(using = DurationDeserializer.class)
-	@JsonSerialize(using = DurationSerializer.class)
-	private Duration leaveServerBanDuration;
 	@JsonProperty("twitter")
 	@Getter
 	@Setter
@@ -165,23 +141,8 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	}
 	
 	@NotNull
-	public Optional<ChannelConfiguration> getGeneralChannel(){
-		return Optional.of(generalChannel);
-	}
-	
-	@NotNull
-	public Optional<Duration> getLeaveServerBanDuration(){
-		return ofNullable(leaveServerBanDuration);
-	}
-	
-	@NotNull
 	public Optional<Locale> getLocale(){
 		return ofNullable(locale);
-	}
-	
-	@NotNull
-	public Optional<ChannelConfiguration> getLogChannel(){
-		return ofNullable(logChannel);
 	}
 	
 	@NotNull
