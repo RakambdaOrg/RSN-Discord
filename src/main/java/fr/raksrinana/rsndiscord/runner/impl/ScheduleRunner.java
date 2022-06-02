@@ -23,10 +23,12 @@ public class ScheduleRunner implements IScheduledRunner{
 		log.debug("Processing guild {}", guild);
 		
 		var guildConfiguration = Settings.get(guild);
-		for(var schedule : guildConfiguration.getScheduleHandlers().values()){
+		var valuesIterator = guildConfiguration.getScheduleHandlers().values().iterator();
+		while(valuesIterator.hasNext()){
+			var schedule = valuesIterator.next();
 			schedule.process(guild).thenAccept(result -> {
 				if(result == COMPLETED){
-					guildConfiguration.removeScheduleHandler(schedule.getSchedulerId());
+					valuesIterator.remove();
 				}
 			});
 		}

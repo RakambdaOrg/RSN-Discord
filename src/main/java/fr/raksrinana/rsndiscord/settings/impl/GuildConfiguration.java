@@ -31,7 +31,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -112,7 +111,7 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	@JsonProperty("scheduleHandlers")
 	@JsonAlias("scheduleActionHandlers")
 	@Getter
-	private Map<String, IScheduleHandler> scheduleHandlers = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<String, IScheduleHandler> scheduleHandlers = new ConcurrentHashMap<>();
 	@JsonProperty("rss")
 	@Getter
 	@Setter
@@ -124,10 +123,6 @@ public class GuildConfiguration implements ICompositeConfiguration{
 	
 	public void add(@NotNull IScheduleHandler scheduleHandler){
 		scheduleHandlers.put(scheduleHandler.getSchedulerId(), scheduleHandler);
-	}
-	
-	public void removeScheduleHandler(@NotNull String id){
-		scheduleHandlers.remove(id);
 	}
 	
 	@NotNull
