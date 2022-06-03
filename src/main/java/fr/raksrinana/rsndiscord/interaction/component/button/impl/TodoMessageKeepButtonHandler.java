@@ -5,7 +5,6 @@ import fr.raksrinana.rsndiscord.interaction.component.button.api.ButtonHandler;
 import fr.raksrinana.rsndiscord.interaction.component.button.base.SimpleButtonHandler;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -14,7 +13,6 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
 
 @Log4j2
 @ButtonHandler
@@ -29,9 +27,8 @@ public class TodoMessageKeepButtonHandler extends SimpleButtonHandler{
 	@Override
 	public CompletableFuture<ComponentResult> handleGuild(@NotNull ButtonInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
 		var message = event.getMessage();
-		var isThread = event.getChannel().getType() == ChannelType.GUILD_PUBLIC_THREAD;
 		
-		var oldButtons = message.getActionRows().stream()
+		var buttons = message.getActionRows().stream()
 				.findFirst().stream()
 				.flatMap(a -> a.getComponents().stream())
 				.map(c -> {
@@ -44,15 +41,9 @@ public class TodoMessageKeepButtonHandler extends SimpleButtonHandler{
 						}
 					}
 					return c;
-				});
-		
-		var newButtons = Stream.concat(
-						oldButtons,
-						isThread ? Stream.of(new TodoMessageRenameButtonHandler().asComponent()) : Stream.empty()
-				)
+				})
 				.toList();
-		
-		return JDAWrappers.editComponents(message, newButtons).submit()
+		return JDAWrappers.editComponents(message, buttons).submit()
 				.thenCompose(empty -> JDAWrappers.message(message.getChannel(), "%s kept the thread".formatted(member.getAsMention())).submit())
 				.thenApply(empty -> ComponentResult.HANDLED);
 	}

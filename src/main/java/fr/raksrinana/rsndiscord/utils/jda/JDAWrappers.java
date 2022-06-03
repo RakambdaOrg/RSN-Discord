@@ -4,7 +4,6 @@ import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.EditPresenceWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.DeleteChannelWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.EditChannelWrapper;
-import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.EditTextChannelWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.interaction.AutoCompleteWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.AddRoleWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.BanWrapper;
@@ -31,7 +30,6 @@ import fr.raksrinana.rsndiscord.utils.jda.wrappers.thread.DeleteThreadWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.thread.EditThreadWrapper;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -204,12 +202,7 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static EditTextChannelWrapper edit(@NotNull TextChannel channel){
-		return new EditTextChannelWrapper(channel);
-	}
-	
-	@NotNull
-	public static EditChannelWrapper edit(@NotNull GuildMessageChannel channel){
+	public static EditChannelWrapper edit(@NotNull TextChannel channel){
 		return new EditChannelWrapper(channel);
 	}
 	
