@@ -155,8 +155,8 @@ public class TimeReactionCreateModal extends SimpleModalHandler{
 		return Modal.create(getComponentId(), "Time reaction create")
 				.addActionRows(
 						ActionRow.of(episode),
-						ActionRow.of(archive),
 						ActionRow.of(link),
+						ActionRow.of(archive),
 						ActionRow.of(body)
 				)
 				.build();
