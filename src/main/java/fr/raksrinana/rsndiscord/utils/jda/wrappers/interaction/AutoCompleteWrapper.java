@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.utils.jda.wrappers.interaction;
 
+import fr.raksrinana.rsndiscord.utils.jda.ActionWrapper;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -7,26 +8,23 @@ import net.dv8tion.jda.api.requests.restaction.interactions.AutoCompleteCallback
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.CompletableFuture;
 
 @Log4j2
-public class AutoCompleteWrapper{
+public class AutoCompleteWrapper extends ActionWrapper<Void, AutoCompleteCallbackAction>{
 	private final ArrayList<Command.Choice> choices;
-	private AutoCompleteCallbackAction action;
 	
 	public AutoCompleteWrapper(@NotNull CommandAutoCompleteInteractionEvent event, @NotNull Collection<Command.Choice> choices){
+		super(event.replyChoices(choices));
 		this.choices = new ArrayList<>(choices);
-		action = event.replyChoices(choices);
 	}
 	
 	public void addChoice(@NotNull Command.Choice choice){
-		action = action.addChoices(choice);
 		choices.add(choice);
+		getAction().addChoices(choice);
 	}
 	
-	@NotNull
-	public CompletableFuture<Void> submit(){
-		return action.submit()
-				.thenAccept(empty -> log.info("Added choices {}", choices));
+	@Override
+	protected void logSuccess(Void value){
+		log.info("Added choices {}", choices);
 	}
 }

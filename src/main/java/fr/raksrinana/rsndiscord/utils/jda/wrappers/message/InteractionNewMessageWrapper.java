@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.utils.jda.wrappers.message;
 
+import fr.raksrinana.rsndiscord.utils.jda.ActionWrapper;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.Message;
@@ -14,45 +15,40 @@ import java.util.concurrent.CompletableFuture;
 import static fr.raksrinana.rsndiscord.schedule.ScheduleService.deleteMessageMins;
 
 @Log4j2
-public class InteractionNewMessageWrapper{
+public class InteractionNewMessageWrapper extends ActionWrapper<Message, WebhookMessageAction<Message>>{
 	private final ISnowflake target;
-	private WebhookMessageAction<Message> action;
 	
 	public InteractionNewMessageWrapper(@Nullable ISnowflake target, @NotNull InteractionHook hook, @NotNull MessageEmbed embed){
+		super(hook.sendMessageEmbeds(embed));
 		this.target = target;
-		action = hook.sendMessageEmbeds(embed);
 	}
 	
 	public InteractionNewMessageWrapper(@Nullable ISnowflake target, @NotNull InteractionHook hook, @NotNull String message){
+		super(hook.sendMessage(message));
 		this.target = target;
-		action = hook.sendMessage(message);
 	}
 	
 	@NotNull
 	public InteractionNewMessageWrapper ephemeral(boolean state){
-		action = action.setEphemeral(state);
+		getAction().setEphemeral(state);
 		return this;
 	}
 	
 	@NotNull
 	public InteractionNewMessageWrapper addActionRow(@NotNull ItemComponent... components){
-		action = action.addActionRow(components);
+		getAction().addActionRow(components);
 		return this;
 	}
 	
 	@NotNull
 	public InteractionNewMessageWrapper addActionRow(@NotNull Collection<? extends ItemComponent> components){
-		action = action.addActionRow(components);
+		getAction().addActionRow(components);
 		return this;
 	}
 	
-	@NotNull
-	public CompletableFuture<Message> submit(){
-		return action.submit()
-				.thenApply(message -> {
-					log.info("Replied with new message to slash command in {} : {}", target, message.getContentRaw());
-					return message;
-				});
+	@Override
+	protected void logSuccess(Message value){
+		log.info("Replied with new message to slash command in {} : {}", target, value.getContentRaw());
 	}
 	
 	@NotNull

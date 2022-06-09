@@ -35,7 +35,7 @@ public class TodoMessageReplyButtonHandler extends SimpleButtonHandler{
 		return JDAWrappers.createThread(message, replyName).submit()
 				.thenCompose(thread -> JDAWrappers.editThread(thread)
 						.setAutoArchiveDuration(TIME_1_WEEK)
-						.submit())
+						.submitAndGet())
 				.thenCompose(thread -> CompletableFuture.allOf(
 						addMembersToThread(event, thread),
 						JDAWrappers.message(thread, translate(guild, "reaction.react-archive", user.getAsMention())).submit(),

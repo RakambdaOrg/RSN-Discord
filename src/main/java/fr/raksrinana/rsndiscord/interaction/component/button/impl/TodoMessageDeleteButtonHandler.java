@@ -57,7 +57,7 @@ public class TodoMessageDeleteButtonHandler extends SimpleButtonHandler{
 		
 		var startedThread = message.getStartedThread();
 		if(Objects.nonNull(startedThread)){
-			future = future.thenCompose(empty -> JDAWrappers.delete(startedThread).submit())
+			future = future.thenCompose(empty -> JDAWrappers.delete(startedThread).delay(30))
 					.exceptionally(throwable -> {
 						log.error("Failed to delete thread {}", startedThread, throwable);
 						return null;

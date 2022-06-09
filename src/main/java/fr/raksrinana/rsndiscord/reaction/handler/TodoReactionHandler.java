@@ -123,7 +123,7 @@ public class TodoReactionHandler implements IReactionHandler{
 			return JDAWrappers.createThread(message, replyName).submit()
 					.thenCompose(thread -> JDAWrappers.editThread(thread)
 							.setAutoArchiveDuration(TIME_1_WEEK)
-							.submit())
+							.submitAndGet())
 					.thenCompose(thread -> {
 						var authorFuture = Stream.of(JDAWrappers.addThreadMember(thread, user).submit());
 						var mentionedFutures = message.getMentions().getMembers().stream()

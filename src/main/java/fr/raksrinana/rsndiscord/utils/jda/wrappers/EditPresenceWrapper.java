@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.managers.Presence;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 @Log4j2
 public class EditPresenceWrapper{
 	private final Presence action;
