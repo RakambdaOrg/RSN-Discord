@@ -22,8 +22,8 @@ jobs:
         run: chmod +x gradlew
       - name: Check project
         run: ./gradlew check
-      - name: Push branch on Docker Hub
-        run: ./gradlew jib -PdockerUsername=${{ secrets.DOCKER_USERNAME }} -PdockerPassword=${{ secrets.DOCKER_TOKEN }} -Djib.to.image=mrcraftcod/rsn-discord:${GITHUB_REF##*/}
+#      - name: Push branch on Docker Hub
+#        run: ./gradlew jib -PdockerUsername=${{ secrets.DOCKER_USERNAME }} -PdockerPassword=${{ secrets.DOCKER_TOKEN }} -Djib.to.image="${{ secrets.DOCKER_IMAGE_REPO }}/mrcraftcod/rsn-discord:${GITHUB_REF##*/}" -Djib.console=plain
       - name: Push latest on Docker Hub
         if: success() && github.ref == 'refs/heads/main'
-        run: ./gradlew jib -PdockerUsername=${{ secrets.DOCKER_USERNAME }} -PdockerPassword=${{ secrets.DOCKER_TOKEN }}
+        run: ./gradlew jib -PdockerUsername=${{ secrets.DOCKER_USERNAME }} -PdockerPassword=${{ secrets.DOCKER_TOKEN }} -Djib.to.image="${{ secrets.DOCKER_IMAGE_REPO }}/mrcraftcod/rsn-discord:latest" -Djib.console=plain

@@ -127,7 +127,6 @@ jib {
         }
     }
     to {
-        image = "mrcraftcod/rsn-discord"
         auth {
             username = project.findProperty("dockerUsername").toString()
             password = project.findProperty("dockerPassword").toString()
