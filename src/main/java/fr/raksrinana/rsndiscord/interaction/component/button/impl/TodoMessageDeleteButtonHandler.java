@@ -41,7 +41,7 @@ public class TodoMessageDeleteButtonHandler extends SimpleButtonHandler{
 		return threadChannel.retrieveParentMessage().submit()
 				.thenCompose(message -> JDAWrappers.delete(message).submit())
 				.exceptionally(throwable -> {
-					log.error("Failed to delete thread parrent message", throwable);
+					log.error("Failed to delete thread parent message", throwable);
 					return null;
 				})
 				.thenCompose(empty -> JDAWrappers.delete(threadChannel).submit())
@@ -54,7 +54,7 @@ public class TodoMessageDeleteButtonHandler extends SimpleButtonHandler{
 				.map(reference -> reference.resolve().submit().thenCompose(m -> JDAWrappers.delete(m).submit()))
 				.orElseGet(() -> CompletableFuture.completedFuture(null));
 		
-		var deleteMessage = JDAWrappers.delete(message).delay(30);
+		var deleteMessage = JDAWrappers.delete(message).submit();
 		
 		var deleteThread = Optional.ofNullable(message.getStartedThread())
 				.map(thread -> JDAWrappers.delete(thread).submit()
