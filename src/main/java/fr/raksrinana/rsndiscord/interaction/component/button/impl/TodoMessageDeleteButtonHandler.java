@@ -13,7 +13,6 @@ import net.dv8tion.jda.api.entities.ThreadChannel;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -51,20 +50,23 @@ public class TodoMessageDeleteButtonHandler extends SimpleButtonHandler{
 	
 	@NotNull
 	private CompletableFuture<ComponentResult> handleDefault(@NotNull Message message){
-		CompletableFuture<?> future = Optional.ofNullable(message.getMessageReference())
-				.map(reference -> reference.resolve().submit().thenApply(m -> JDAWrappers.delete(m).submit()))
+		var deleteReference = Optional.ofNullable(message.getMessageReference())
+				.map(reference -> reference.resolve().submit().thenCompose(m -> JDAWrappers.delete(m).submit()))
 				.orElseGet(() -> CompletableFuture.completedFuture(null));
 		
-		var startedThread = message.getStartedThread();
-		if(Objects.nonNull(startedThread)){
-			future = future.thenCompose(empty -> JDAWrappers.delete(startedThread).delay(30))
-					.exceptionally(throwable -> {
-						log.error("Failed to delete thread {}", startedThread, throwable);
-						return null;
-					});
-		}
+		var deleteMessage = JDAWrappers.delete(message).delay(30);
 		
-		return future.thenCompose(empty -> JDAWrappers.delete(message).submit())
+		var deleteThread = Optional.ofNullable(message.getStartedThread())
+				.map(thread -> JDAWrappers.delete(thread).submit()
+						.exceptionally(throwable -> {
+							log.error("Failed to delete thread {}", thread, throwable);
+							return null;
+						}))
+				.orElse(CompletableFuture.completedFuture(null));
+		
+		return deleteReference
+				.thenCompose(empty -> deleteMessage)
+				.thenCompose(empty -> deleteThread)
 				.thenApply(empty -> ComponentResult.HANDLED);
 	}
 	
