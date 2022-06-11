@@ -56,6 +56,7 @@ public class ClearCommand extends SubSlashCommand{
 		
 		JDAWrappers.edit(event, translate(event.getGuild(), "clear.removing", messageCount, targetChannel.getId())).submitAndDelete(5)
 				.thenCompose(msg -> targetChannel.getIterableHistory()
+						.reverse()
 						.takeAsync(messageCount)
 						.thenCompose(messages -> deleteAll(event, messages))
 						.thenCompose(empty -> JDAWrappers.edit(event, "Clear messages done").submit()));
@@ -88,7 +89,7 @@ public class ClearCommand extends SubSlashCommand{
 			deleteThread = JDAWrappers.message(thread, "Deleting this thread soon")
 					.addActionRow(new ClearDeleteThreadCancelButtonHandler().asComponent())
 					.submit()
-					.thenAccept(m -> Settings.get(message.getGuild()).add(new DeleteThreadScheduleHandler(thread.getIdLong(), now().plusDays(1))));
+					.thenAccept(m -> Settings.get(message.getGuild()).add(new DeleteThreadScheduleHandler(thread.getIdLong(), now().plusHours(3))));
 		}
 		
 		return deleteThread.thenCompose(empty -> JDAWrappers.delete(message).submit());
