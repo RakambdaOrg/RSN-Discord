@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.requests.restaction.pagination.PaginationAction;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Objects;
@@ -26,6 +27,7 @@ import java.util.function.Consumer;
 import static fr.raksrinana.rsndiscord.interaction.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.time.ZonedDateTime.now;
+import static net.dv8tion.jda.api.interactions.commands.OptionType.BOOLEAN;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.CHANNEL;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
 
@@ -33,6 +35,7 @@ import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
 public class ClearCommand extends SubSlashCommand{
 	public static final String CHANNEL_OPTION_ID = "channel";
 	public static final String MESSAGE_COUNT_OPTION_ID = "count";
+	public static final String ORDER_OPTION_ID = "order";
 	
 	@Override
 	@NotNull
@@ -40,7 +43,9 @@ public class ClearCommand extends SubSlashCommand{
 		return Set.of(
 				new OptionData(CHANNEL, CHANNEL_OPTION_ID, "Channel to delete the message in (default: current channel)")
 						.setChannelTypes(ChannelType.TEXT),
-				new OptionData(INTEGER, MESSAGE_COUNT_OPTION_ID, "Number of messages to delete"));
+				new OptionData(INTEGER, MESSAGE_COUNT_OPTION_ID, "Number of messages to delete"),
+				new OptionData(BOOLEAN, ORDER_OPTION_ID, "Clear from bottom (most recent, default: false)")
+		);
 	}
 	
 	@Override
@@ -53,10 +58,13 @@ public class ClearCommand extends SubSlashCommand{
 				.map(OptionMapping::getAsMessageChannel)
 				.map(MessageChannel.class::cast)
 				.orElse(channel);
+		var order = Optional.ofNullable(event.getOption(ORDER_OPTION_ID))
+				.map(OptionMapping::getAsBoolean)
+				.orElse(false) ? PaginationAction.PaginationOrder.BACKWARD : PaginationAction.PaginationOrder.FORWARD;
 		
 		JDAWrappers.edit(event, translate(event.getGuild(), "clear.removing", messageCount, targetChannel.getId())).submitAndDelete(5)
 				.thenCompose(msg -> targetChannel.getIterableHistory()
-						.reverse()
+						.order(order)
 						.takeAsync(messageCount)
 						.thenCompose(messages -> deleteAll(event, messages))
 						.thenCompose(empty -> JDAWrappers.edit(event, "Clear messages done").submit()));
