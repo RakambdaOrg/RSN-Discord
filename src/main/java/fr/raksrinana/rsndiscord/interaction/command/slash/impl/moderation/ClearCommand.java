@@ -27,15 +27,18 @@ import java.util.function.Consumer;
 import static fr.raksrinana.rsndiscord.interaction.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.time.ZonedDateTime.now;
-import static net.dv8tion.jda.api.interactions.commands.OptionType.BOOLEAN;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.CHANNEL;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
+import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
 @Log4j2
 public class ClearCommand extends SubSlashCommand{
-	public static final String CHANNEL_OPTION_ID = "channel";
-	public static final String MESSAGE_COUNT_OPTION_ID = "count";
-	public static final String ORDER_OPTION_ID = "order";
+	private static final String CHANNEL_OPTION_ID = "channel";
+	private static final String MESSAGE_COUNT_OPTION_ID = "count";
+	private static final String ORDER_OPTION_ID = "order";
+	private static final String OLD_ORDER = "old";
+	private static final String NEW_ORDER = "new";
+	private static final int DEFAULT_COUNT = 100;
 	
 	@Override
 	@NotNull
@@ -43,8 +46,10 @@ public class ClearCommand extends SubSlashCommand{
 		return Set.of(
 				new OptionData(CHANNEL, CHANNEL_OPTION_ID, "Channel to delete the message in (default: current channel)")
 						.setChannelTypes(ChannelType.TEXT),
-				new OptionData(INTEGER, MESSAGE_COUNT_OPTION_ID, "Number of messages to delete"),
-				new OptionData(BOOLEAN, ORDER_OPTION_ID, "Clear from bottom (most recent, default: false)")
+				new OptionData(INTEGER, MESSAGE_COUNT_OPTION_ID, "Number of messages to delete (default " + DEFAULT_COUNT + ")"),
+				new OptionData(STRING, ORDER_OPTION_ID, "Clear order (default: new)")
+						.addChoice("Newest first", NEW_ORDER)
+						.addChoice("Oldest first", OLD_ORDER)
 		);
 	}
 	
@@ -53,14 +58,15 @@ public class ClearCommand extends SubSlashCommand{
 	public CommandResult executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
 		var channel = event.getChannel();
 		
-		var messageCount = getOptionAsInt(event.getOption(MESSAGE_COUNT_OPTION_ID)).orElse(100);
+		var messageCount = getOptionAsInt(event.getOption(MESSAGE_COUNT_OPTION_ID)).orElse(DEFAULT_COUNT);
 		var targetChannel = Optional.ofNullable(event.getOption(CHANNEL_OPTION_ID))
 				.map(OptionMapping::getAsMessageChannel)
 				.map(MessageChannel.class::cast)
 				.orElse(channel);
 		var order = Optional.ofNullable(event.getOption(ORDER_OPTION_ID))
-				.map(OptionMapping::getAsBoolean)
-				.orElse(false) ? PaginationAction.PaginationOrder.BACKWARD : PaginationAction.PaginationOrder.FORWARD;
+				.map(OptionMapping::getAsString)
+				.map(OLD_ORDER::equals)
+				.orElse(false) ? PaginationAction.PaginationOrder.FORWARD : PaginationAction.PaginationOrder.BACKWARD;
 		
 		JDAWrappers.edit(event, translate(event.getGuild(), "clear.removing", messageCount, targetChannel.getId())).submitAndDelete(5)
 				.thenCompose(msg -> targetChannel.getIterableHistory()
