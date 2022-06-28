@@ -35,19 +35,17 @@ public class TodoReactionHandler implements IReactionHandler{
 	@Override
 	@NotNull
 	public ReactionHandlerResult accept(@NotNull MessageReactionAddEvent event, @NotNull WaitingReactionMessageConfiguration reaction){
-		var reactionEmote = event.getReactionEmote();
+		var reactionEmote = event.getReaction().getEmoji();
 		
-		if(reactionEmote.isEmoji()){
-			var emote = BasicEmotes.getEmote(reactionEmote.getEmoji());
-			if(isValidEmote(emote)){
-				try{
-					return processTodoCompleted(event, emote, reaction);
-				}
-				catch(InterruptedException | ExecutionException | TimeoutException e){
-					Utilities.reportException("Failed to handle reaction", e);
-					log.error("Failed to handle reaction", e);
-					return FAIL;
-				}
+		var emote = BasicEmotes.getEmote(reactionEmote.getName());
+		if(isValidEmote(emote)){
+			try{
+				return processTodoCompleted(event, emote, reaction);
+			}
+			catch(InterruptedException | ExecutionException | TimeoutException e){
+				Utilities.reportException("Failed to handle reaction", e);
+				log.error("Failed to handle reaction", e);
+				return FAIL;
 			}
 		}
 		return PROCESSED;
@@ -109,8 +107,8 @@ public class TodoReactionHandler implements IReactionHandler{
 	
 	@NotNull
 	private ReactionHandlerResult handleArchive(@NotNull MessageReactionAddEvent event, @NotNull User user, @NotNull Message message){
-		JDAWrappers.removeAllReactions(message, CHECK_OK.getValue()).submit();
-		JDAWrappers.removeAllReactions(message, PAPERCLIP.getValue()).submit();
+		JDAWrappers.removeAllReactions(message, CHECK_OK.asEmoji()).submit();
+		JDAWrappers.removeAllReactions(message, PAPERCLIP.asEmoji()).submit();
 		return PROCESSED;
 	}
 	

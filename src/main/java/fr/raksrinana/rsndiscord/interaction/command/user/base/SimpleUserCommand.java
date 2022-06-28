@@ -11,6 +11,7 @@ public abstract class SimpleUserCommand extends ExecutableSlashCommand implement
 	@NotNull
 	public CommandData getDefinition(){
 		return Commands.user(getId())
-				.setDefaultEnabled(getDefaultPermission());
+				.setGuildOnly(isGuildOnly())
+				.setDefaultPermissions(getDefaultPermission());
 	}
 }

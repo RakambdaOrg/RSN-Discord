@@ -6,9 +6,9 @@ import fr.raksrinana.rsndiscord.interaction.component.button.base.SimpleButtonHa
 import fr.raksrinana.rsndiscord.interaction.modal.impl.TimeReactionReplyModal;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
-import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;

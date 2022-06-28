@@ -38,7 +38,7 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 		}
 		
 		var guild = event.getGuild();
-		var replyEmote = BasicEmotes.getEmote(event.getReactionEmote().getName());
+		var replyEmote = BasicEmotes.getEmote(event.getReaction().getEmoji().getAsReactionCode());
 		
 		if(replyEmote != CHECK_OK){
 			return false;
@@ -68,7 +68,7 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 	private boolean count(@NotNull MessageReactionAddEvent event) throws InterruptedException, ExecutionException, TimeoutException{
 		var count = event.retrieveMessage().submit()
 				.thenApply(message -> message.getReactions().stream()
-						.filter(r -> BasicEmotes.getEmote(r.getReactionEmote().getName()) == CHECK_OK)
+						.filter(r -> BasicEmotes.getEmote(r.getEmoji().getName()) == CHECK_OK)
 						.mapToInt(MessageReaction::getCount)
 						.sum())
 				.get(30, SECONDS);

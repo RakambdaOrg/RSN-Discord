@@ -74,7 +74,7 @@ public class Main{
 			var jdaBuilder = JDABuilder.createDefault(System.getProperty("RSN_TOKEN"))
 					.enableIntents(GatewayIntent.GUILD_MEMBERS)
 					.setMemberCachePolicy(MemberCachePolicy.ALL)
-					.enableCache(CacheFlag.EMOTE)
+					.enableCache(CacheFlag.EMOJI)
 					.setAutoReconnect(true);
 			
 			registerAllEventListeners(jdaBuilder);

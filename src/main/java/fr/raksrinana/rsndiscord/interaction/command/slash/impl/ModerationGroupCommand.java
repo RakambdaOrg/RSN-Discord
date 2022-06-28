@@ -4,6 +4,8 @@ import fr.raksrinana.rsndiscord.interaction.command.slash.api.BotSlashCommand;
 import fr.raksrinana.rsndiscord.interaction.command.slash.base.group.SubCommandsGroupSlashCommand;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.moderation.*;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.moderation.NicknameCommand;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import org.jetbrains.annotations.NotNull;
 
 @BotSlashCommand
@@ -29,7 +31,7 @@ public class ModerationGroupCommand extends SubCommandsGroupSlashCommand{
 	}
 	
 	@Override
-	public boolean getDefaultPermission(){
-		return false;
+	public DefaultMemberPermissions getDefaultPermission(){
+		return DefaultMemberPermissions.enabledFor(Permission.BAN_MEMBERS, Permission.KICK_MEMBERS);
 	}
 }

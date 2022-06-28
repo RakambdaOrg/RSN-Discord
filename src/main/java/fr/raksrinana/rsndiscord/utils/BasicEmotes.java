@@ -1,5 +1,6 @@
 package fr.raksrinana.rsndiscord.utils;
 
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.jetbrains.annotations.NotNull;
 
 public enum BasicEmotes implements Comparable<BasicEmotes>{
@@ -82,6 +83,11 @@ public enum BasicEmotes implements Comparable<BasicEmotes>{
 			}
 		}
 		return ERROR;
+	}
+	
+	@NotNull
+	public Emoji asEmoji(){
+		return Emoji.fromUnicode(getValue());
 	}
 	
 	/**

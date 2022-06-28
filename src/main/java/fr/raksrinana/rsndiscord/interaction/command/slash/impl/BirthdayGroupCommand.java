@@ -6,6 +6,8 @@ import fr.raksrinana.rsndiscord.interaction.command.slash.impl.birthday.AddComma
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.birthday.GetCommand;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.birthday.ListCommand;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.birthday.RemoveCommand;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import org.jetbrains.annotations.NotNull;
 
 @BotSlashCommand
@@ -30,7 +32,7 @@ public class BirthdayGroupCommand extends SubCommandsGroupSlashCommand{
 	}
 	
 	@Override
-	public boolean getDefaultPermission(){
-		return false;
+	public DefaultMemberPermissions getDefaultPermission(){
+		return DefaultMemberPermissions.enabledFor(Permission.KICK_MEMBERS);
 	}
 }

@@ -25,7 +25,8 @@ public abstract class SubCommandsGroupGroupSlashCommand extends GroupSlashComman
 	@NotNull
 	public CommandData getDefinition(){
 		var command = Commands.slash(getId(), getShortDescription())
-				.setDefaultEnabled(getDefaultPermission());
+				.setGuildOnly(isGuildOnly())
+				.setDefaultPermissions(getDefaultPermission());
 		
 		command.addSubcommandGroups(subcommandGroups.values().stream()
 				.map(ISubGroupSlashCommand::getSlashCommand)

@@ -18,10 +18,12 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.impl.GuildConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
@@ -123,8 +125,8 @@ public class ConfigurationCommand extends SimpleSlashCommand{
 	}
 	
 	@Override
-	public boolean getDefaultPermission(){
-		return false;
+	public DefaultMemberPermissions getDefaultPermission(){
+		return DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR);
 	}
 	
 	@Override

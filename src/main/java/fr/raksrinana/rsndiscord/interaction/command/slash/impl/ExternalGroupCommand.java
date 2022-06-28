@@ -5,6 +5,8 @@ import fr.raksrinana.rsndiscord.interaction.command.slash.base.group.SubCommands
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.external.AnilistSubCommandGroupCommand;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.external.TraktSubCommandGroupCommand;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.external.TwitterSubCommandGroupCommand;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import org.jetbrains.annotations.NotNull;
 
 @BotSlashCommand
@@ -28,7 +30,7 @@ public class ExternalGroupCommand extends SubCommandsGroupGroupSlashCommand{
 	}
 	
 	@Override
-	public boolean getDefaultPermission(){
-		return false;
+	public DefaultMemberPermissions getDefaultPermission(){
+		return DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR);
 	}
 }

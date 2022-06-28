@@ -10,7 +10,8 @@ public abstract class SimpleSlashCommand extends ExecutableSlashCommand implemen
 	@NotNull
 	public CommandData getDefinition(){
 		return Commands.slash(getId(), getShortDescription())
-				.setDefaultEnabled(getDefaultPermission())
+				.setGuildOnly(isGuildOnly())
+				.setDefaultPermissions(getDefaultPermission())
 				.addOptions(getOptions());
 	}
 }

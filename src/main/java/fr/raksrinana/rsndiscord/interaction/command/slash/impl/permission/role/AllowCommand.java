@@ -1,9 +1,8 @@
 package fr.raksrinana.rsndiscord.interaction.command.slash.impl.permission.role;
 
 import fr.raksrinana.rsndiscord.interaction.command.CommandResult;
-import fr.raksrinana.rsndiscord.interaction.command.CommandService;
-import fr.raksrinana.rsndiscord.interaction.command.slash.base.group.SubSlashCommand;
 import fr.raksrinana.rsndiscord.interaction.command.permission.IPermission;
+import fr.raksrinana.rsndiscord.interaction.command.slash.base.group.SubSlashCommand;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
@@ -11,7 +10,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Set;
@@ -62,22 +60,9 @@ public class AllowCommand extends SubSlashCommand{
 		var role = event.getOption(ROLE_OPTION_ID).getAsRole();
 		var name = event.getOption(NAME_OPTION_ID).getAsString();
 		
-		if(name.startsWith("$")){
-			Settings.get(guild).getPermissionsConfiguration()
-					.grant(role, name.substring(1));
-			JDAWrappers.edit(event, "Custom permission allowed").submit();
-		}
-		else{
-			var privilege = CommandPrivilege.enable(role);
-			
-			CommandService.getRegistrableCommand(name).ifPresentOrElse(
-					command -> command.updateCommandPrivileges(guild, privileges -> {
-						privileges.remove(privilege);
-						privileges.add(privilege);
-						return privileges;
-					}).thenAccept(empty -> JDAWrappers.edit(event, "Command permission allowed").submit()),
-					() -> JDAWrappers.edit(event, "Command not found").submit());
-		}
+		Settings.get(guild).getPermissionsConfiguration()
+				.grant(role, name.substring(1));
+		JDAWrappers.edit(event, "Custom permission allowed").submit();
 		
 		return HANDLED;
 	}

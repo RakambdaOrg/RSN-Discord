@@ -40,6 +40,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.ThreadChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.interactions.callbacks.IModalCallback;
@@ -102,13 +103,13 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static AddReactionWrapper addReaction(@NotNull Message message, @NotNull String emote){
+	public static AddReactionWrapper addReaction(@NotNull Message message, @NotNull Emoji emote){
 		return new AddReactionWrapper(message, emote);
 	}
 	
 	@NotNull
 	public static AddReactionWrapper addReaction(@NotNull Message message, @NotNull BasicEmotes emote){
-		return addReaction(message, emote.getValue());
+		return addReaction(message, emote.asEmoji());
 	}
 	
 	@NotNull
@@ -117,8 +118,8 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static RemoveAllReactionWrapper removeAllReactions(@NotNull Message message, @NotNull String emote){
-		return new RemoveAllReactionWrapper(message, emote);
+	public static RemoveAllReactionWrapper removeAllReactions(@NotNull Message message, @NotNull Emoji emoji){
+		return new RemoveAllReactionWrapper(message, emoji);
 	}
 	
 	@NotNull
