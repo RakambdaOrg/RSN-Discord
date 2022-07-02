@@ -38,7 +38,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 			if(containsChannel(guildConfiguration.getReactionsConfiguration().getAutoTodoChannels(), event.getChannel())){
 				switch(message.getType()){
 					case CHANNEL_PINNED_ADD, THREAD_CREATED -> JDAWrappers.delete(message).submit();
-					case DEFAULT -> handleTodo(event);
+					case DEFAULT, INLINE_REPLY, SLASH_COMMAND, CONTEXT_COMMAND -> handleTodo(event);
 				}
 			}
 		}
