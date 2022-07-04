@@ -22,7 +22,7 @@ public class ScheduleService{
 	}
 	
 	@NotNull
-	public static Function<Message, Message> deleteMessageMins(int minutes){
+	public static Function<Message, Message> deleteMessageMins(long minutes){
 		return deleteMessage(date -> date.plusMinutes(minutes));
 	}
 }

@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -129,7 +130,12 @@ public class MessageWrapper extends ActionWrapper<Message, MessageAction>{
 	}
 	
 	@NotNull
-	public CompletableFuture<Message> submitAndDelete(int minutes){
+	public CompletableFuture<Message> submitAndDelete(@NotNull Duration duration){
+		return submitAndDelete(duration.toMinutes());
+	}
+	
+	@NotNull
+	public CompletableFuture<Message> submitAndDelete(long minutes){
 		return submit().thenApply(deleteMessageMins(minutes));
 	}
 }

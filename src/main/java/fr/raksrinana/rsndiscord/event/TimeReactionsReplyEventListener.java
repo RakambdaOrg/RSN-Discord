@@ -9,6 +9,7 @@ import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -61,7 +62,7 @@ public class TimeReactionsReplyEventListener extends ListenerAdapter{
 								.thenAccept(sent -> JDAWrappers.delete(message).submit());
 					}
 					else{
-						JDAWrappers.message(event.getChannel(), String.format("Expected %d lines, got %d", original.size(), received.size())).submitAndDelete(2);
+						JDAWrappers.message(event.getChannel(), String.format("Expected %d lines, got %d", original.size(), received.size())).submitAndDelete(Duration.ofDays(1));
 					}
 				});
 			}
