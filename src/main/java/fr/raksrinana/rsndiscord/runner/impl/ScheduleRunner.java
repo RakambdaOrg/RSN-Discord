@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.TimeUnit;
 import static fr.raksrinana.rsndiscord.schedule.ScheduleResult.COMPLETED;
+import static fr.raksrinana.rsndiscord.schedule.ScheduleResult.WARN;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 @ScheduledRunner
@@ -27,7 +28,12 @@ public class ScheduleRunner implements IScheduledRunner{
 		while(valuesIterator.hasNext()){
 			var schedule = valuesIterator.next();
 			schedule.process(guild).thenAccept(result -> {
-				if(result == COMPLETED){
+				if(result == WARN){
+					if(schedule.increaseAttempt()){
+						valuesIterator.remove();
+					}
+				}
+				else if(result == COMPLETED){
 					valuesIterator.remove();
 				}
 			});

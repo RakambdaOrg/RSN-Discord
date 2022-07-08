@@ -13,13 +13,17 @@ import fr.raksrinana.rsndiscord.utils.json.converter.ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.converter.ZonedDateTimeSerializer;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.concurrent.CompletableFuture;
-import static fr.raksrinana.rsndiscord.schedule.ScheduleResult.*;
+import java.util.concurrent.CompletionException;
+import static fr.raksrinana.rsndiscord.schedule.ScheduleResult.COMPLETED;
+import static fr.raksrinana.rsndiscord.schedule.ScheduleResult.DELAYED;
+import static fr.raksrinana.rsndiscord.schedule.ScheduleResult.FAILED;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_USER;
 
@@ -28,6 +32,7 @@ import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_USER;
 @JsonTypeName("UnbanMember")
 @AllArgsConstructor
 @NoArgsConstructor
+@Log4j2
 public class UnbanMemberScheduleHandler extends SimpleScheduleHandler{
 	@JsonProperty("userId")
 	private long userId;
@@ -44,11 +49,22 @@ public class UnbanMemberScheduleHandler extends SimpleScheduleHandler{
 		
 		return JDAWrappers.unban(guild, UserSnowflake.fromId(userId)).submit()
 				.thenApply(e -> COMPLETED)
-				.exceptionally(e -> {
-					if(e instanceof ErrorResponseException re && re.getErrorResponse() == UNKNOWN_USER){
-						return COMPLETED;
-					}
-					return FAILED;
-				});
+				.exceptionally(this::handleException);
+	}
+	
+	@NotNull
+	private ScheduleResult handleException(@NotNull Throwable e){
+		if(e instanceof CompletionException completionException){
+			return handleException(completionException.getCause());
+		}
+		
+		if(e instanceof ErrorResponseException re){
+			if(re.getErrorResponse() == UNKNOWN_USER){
+				return COMPLETED;
+			}
+		}
+		
+		log.error("Got unexpected exception", e);
+		return FAILED;
 	}
 }

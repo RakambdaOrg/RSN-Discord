@@ -23,6 +23,8 @@ import java.util.concurrent.CompletableFuture;
 		@JsonSubTypes.Type(value = UnbanMemberScheduleHandler.class, name = "UnbanMember"),
 })
 public interface IScheduleHandler{
+	boolean increaseAttempt();
+	
 	String getSchedulerId();
 	
 	CompletableFuture<ScheduleResult> process(@NotNull Guild guild);

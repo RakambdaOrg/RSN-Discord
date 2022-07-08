@@ -10,15 +10,16 @@ import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
-import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 import static java.util.Optional.ofNullable;
+import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -70,8 +71,7 @@ public class MessageConfiguration implements IAtomicConfiguration{
 		return getChannel().shouldBeRemoved() || getChannel().getChannel()
 				.map(channel -> channel.retrieveMessageById(getMessageId()).submit()
 						.thenApply(m -> false)
-						.exceptionally(throwable -> throwable instanceof ErrorResponseException
-								&& ((ErrorResponseException) throwable).getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE))
+						.exceptionally(this::handleException))
 				.map(future -> {
 					try{
 						return future.get();
@@ -81,6 +81,21 @@ public class MessageConfiguration implements IAtomicConfiguration{
 					}
 					return null;
 				}).orElse(false);
+	}
+	
+	private boolean handleException(@NotNull Throwable e){
+		if(e instanceof CompletionException completionException){
+			return handleException(completionException.getCause());
+		}
+		
+		if(e instanceof ErrorResponseException re){
+			if(re.getErrorResponse() == UNKNOWN_MESSAGE){
+				return true;
+			}
+		}
+		
+		log.error("Got unexpected exception", e);
+		return false;
 	}
 	
 	@NotNull

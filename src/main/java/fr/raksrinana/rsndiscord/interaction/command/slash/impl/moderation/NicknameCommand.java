@@ -17,9 +17,12 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletionException;
 import static fr.raksrinana.rsndiscord.interaction.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
-import static java.awt.Color.*;
+import static java.awt.Color.GREEN;
+import static java.awt.Color.ORANGE;
+import static java.awt.Color.RED;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
 
@@ -90,8 +93,8 @@ public class NicknameCommand extends SubSlashCommand{
 						
 						JDAWrappers.edit(event, builder.build()).submit();
 					})
-					.exceptionally(error -> {
-						var errorMessage = error instanceof ErrorResponseException ? ((ErrorResponseException) error).getMeaning() : error.getMessage();
+					.exceptionally(e -> {
+						var errorMessage = handleException(e);
 						builder.setColor(RED)
 								.setTitle(translate(guild, "nickname.invalid"))
 								.addField(translate(guild, "nickname.reason"), errorMessage, false);
@@ -105,5 +108,14 @@ public class NicknameCommand extends SubSlashCommand{
 			JDAWrappers.edit(event, builder.build()).submitAndDelete(10);
 		}
 		return HANDLED;
+	}
+	
+	@NotNull
+	private String handleException(@NotNull Throwable e){
+		if(e instanceof CompletionException completionException){
+			return handleException(completionException.getCause());
+		}
+		
+		return e instanceof ErrorResponseException ? ((ErrorResponseException) e).getMeaning() : e.getMessage();
 	}
 }

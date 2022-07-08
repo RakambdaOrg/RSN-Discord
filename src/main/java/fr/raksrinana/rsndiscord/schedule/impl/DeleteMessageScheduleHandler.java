@@ -13,20 +13,28 @@ import fr.raksrinana.rsndiscord.utils.json.converter.ZonedDateTimeDeserializer;
 import fr.raksrinana.rsndiscord.utils.json.converter.ZonedDateTimeSerializer;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.jetbrains.annotations.NotNull;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import static fr.raksrinana.rsndiscord.schedule.ScheduleResult.*;
+import java.util.concurrent.CompletionException;
+import static fr.raksrinana.rsndiscord.schedule.ScheduleResult.COMPLETED;
+import static fr.raksrinana.rsndiscord.schedule.ScheduleResult.DELAYED;
+import static fr.raksrinana.rsndiscord.schedule.ScheduleResult.FAILED;
+import static fr.raksrinana.rsndiscord.schedule.ScheduleResult.WARN;
 import static java.util.concurrent.CompletableFuture.completedFuture;
+import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_CHANNEL;
+import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonTypeName("DeleteMessage")
 @AllArgsConstructor
 @NoArgsConstructor
+@Log4j2
 public class DeleteMessageScheduleHandler extends SimpleScheduleHandler{
 	@JsonProperty("channelId")
 	private long channelId;
@@ -47,15 +55,26 @@ public class DeleteMessageScheduleHandler extends SimpleScheduleHandler{
 				.map(channel -> channel.retrieveMessageById(messageId).submit()
 						.thenCompose(message -> JDAWrappers.delete(message).submit())
 						.thenApply(empty -> COMPLETED)
-						.exceptionally(e -> {
-							if(e instanceof ErrorResponseException responseException){
-								return switch(responseException.getErrorResponse()){
-									case UNKNOWN_MESSAGE, UNKNOWN_CHANNEL -> COMPLETED;
-									default -> FAILED;
-								};
-							}
-							return FAILED;
-						})
-				).orElse(completedFuture(COMPLETED));
+						.exceptionally(this::handleException)
+				).orElseGet(() -> {
+					log.warn("Channel with ID {} couldn't be found", channelId);
+					return completedFuture(WARN);
+				});
+	}
+	
+	@NotNull
+	private ScheduleResult handleException(@NotNull Throwable e){
+		if(e instanceof CompletionException completionException){
+			return handleException(completionException.getCause());
+		}
+		if(e instanceof ErrorResponseException re){
+			var error = re.getErrorResponse();
+			if(error == UNKNOWN_MESSAGE || error == UNKNOWN_CHANNEL){
+				return COMPLETED;
+			}
+		}
+		
+		log.error("Got unexpected exception", e);
+		return FAILED;
 	}
 }
