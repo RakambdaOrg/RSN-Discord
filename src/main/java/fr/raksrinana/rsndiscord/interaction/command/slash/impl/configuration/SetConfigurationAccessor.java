@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration;
 
 import fr.raksrinana.rsndiscord.settings.impl.GuildConfiguration;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-@Slf4j
+@Log4j2
 public abstract class SetConfigurationAccessor<T> extends BaseConfigurationAccessor implements IConfigurationAccessor{
 	private final Function<GuildConfiguration, Set<T>> getter;
 	private final BiConsumer<GuildConfiguration, T> setter;

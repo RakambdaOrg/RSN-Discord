@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration;
 
 import fr.raksrinana.rsndiscord.settings.impl.GuildConfiguration;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-@Slf4j
+@Log4j2
 public abstract class MapConfigurationAccessor<K, V> extends BaseConfigurationAccessor{
 	private final Function<GuildConfiguration, Map<K, V>> getter;
 	private final TriConsumer<GuildConfiguration, K, V> setter;

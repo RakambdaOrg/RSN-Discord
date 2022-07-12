@@ -1,14 +1,19 @@
 package fr.raksrinana.rsndiscord.utils;
 
 import fr.raksrinana.rsndiscord.settings.Settings;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
-@Slf4j
+@Log4j2
 public class LangUtils{
 	private static final Map<Locale, ResourceBundle> bundles = new HashMap<>();
 	private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;

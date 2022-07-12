@@ -3,7 +3,7 @@ package fr.raksrinana.rsndiscord.interaction.command.slash.impl.moderation;
 import fr.raksrinana.rsndiscord.interaction.command.CommandResult;
 import fr.raksrinana.rsndiscord.interaction.command.slash.base.group.SubSlashCommand;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
@@ -18,7 +18,7 @@ import static fr.raksrinana.rsndiscord.interaction.command.CommandResult.HANDLED
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
 
-@Slf4j
+@Log4j2
 public class ListJoinsCommand extends SubSlashCommand{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ISO_ZONED_DATE_TIME;
 	private static final String USER_COUNT_OPTION_ID = "count";
