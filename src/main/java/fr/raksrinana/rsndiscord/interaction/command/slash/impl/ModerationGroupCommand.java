@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class ModerationGroupCommand extends SubCommandsGroupSlashCommand{
 	public ModerationGroupCommand(){
 		addSubcommand(new ClearCommand());
+		addSubcommand(new ClearThreadCommand());
 		addSubcommand(new ColorCommand());
 		addSubcommand(new ListJoinsCommand());
 		addSubcommand(new NicknameCommand());
