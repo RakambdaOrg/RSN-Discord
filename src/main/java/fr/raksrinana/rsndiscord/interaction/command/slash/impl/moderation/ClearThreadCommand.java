@@ -60,7 +60,7 @@ public class ClearThreadCommand extends SubSlashCommand{
 	@Override
 	@NotNull
 	public String getId(){
-		return "clearThread";
+		return "clearthread";
 	}
 	
 	@Override
