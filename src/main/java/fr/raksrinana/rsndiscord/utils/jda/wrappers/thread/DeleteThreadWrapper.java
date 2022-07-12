@@ -19,4 +19,9 @@ public class DeleteThreadWrapper extends ActionWrapper<Void, AuditableRestAction
 	protected void logSuccess(Void value){
 		log.info("Deleted thread {}", thread);
 	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to delete thread {}", thread, throwable);
+	}
 }

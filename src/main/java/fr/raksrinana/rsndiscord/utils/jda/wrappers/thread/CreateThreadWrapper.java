@@ -20,4 +20,9 @@ public class CreateThreadWrapper extends ActionWrapper<ThreadChannel, RestAction
 	protected void logSuccess(ThreadChannel value){
 		log.info("Created thread {} from {}", value, message);
 	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to create thread from {}", message, throwable);
+	}
 }

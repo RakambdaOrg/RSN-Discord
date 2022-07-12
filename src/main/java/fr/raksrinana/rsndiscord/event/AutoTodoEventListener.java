@@ -54,10 +54,6 @@ public class AutoTodoEventListener extends ListenerAdapter{
 						.submitAndGet())
 				.thenCompose(thread -> JDAWrappers.message(thread, "Interact with this messages with the buttons below")
 						.setActionRows(ActionRow.of(buttons))
-						.submit())
-				.exceptionally(e -> {
-					log.error("Failed to handle todo for event {}", event, e);
-					return null;
-				});
+						.submit());
 	}
 }
