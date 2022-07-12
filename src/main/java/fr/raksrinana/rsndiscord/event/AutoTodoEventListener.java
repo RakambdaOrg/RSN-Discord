@@ -27,7 +27,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event){
 		super.onMessageReceived(event);
-		if(!event.isFromGuild()){
+ 		if(!event.isFromGuild()){
 			return;
 		}
 		
@@ -54,6 +54,10 @@ public class AutoTodoEventListener extends ListenerAdapter{
 						.submitAndGet())
 				.thenCompose(thread -> JDAWrappers.message(thread, "Interact with this messages with the buttons below")
 						.setActionRows(ActionRow.of(buttons))
-						.submit());
+						.submit())
+				.exceptionally(e -> {
+					log.error("Failed to handle todo for event {}", event, e);
+					return null;
+				});
 	}
 }
