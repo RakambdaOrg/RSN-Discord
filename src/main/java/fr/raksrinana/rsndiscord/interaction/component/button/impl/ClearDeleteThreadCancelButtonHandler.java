@@ -18,6 +18,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 @ButtonHandler
+@Deprecated
 public class ClearDeleteThreadCancelButtonHandler extends SimpleButtonHandler{
 	public ClearDeleteThreadCancelButtonHandler(){
 		super("clear-delete-thread-cancel");

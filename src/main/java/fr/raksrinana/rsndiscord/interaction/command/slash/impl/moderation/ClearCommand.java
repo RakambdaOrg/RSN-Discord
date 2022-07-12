@@ -2,9 +2,6 @@ package fr.raksrinana.rsndiscord.interaction.command.slash.impl.moderation;
 
 import fr.raksrinana.rsndiscord.interaction.command.CommandResult;
 import fr.raksrinana.rsndiscord.interaction.command.slash.base.group.SubSlashCommand;
-import fr.raksrinana.rsndiscord.interaction.component.button.impl.ClearDeleteThreadCancelButtonHandler;
-import fr.raksrinana.rsndiscord.schedule.impl.DeleteThreadScheduleHandler;
-import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -12,11 +9,13 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.ThreadChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.requests.restaction.pagination.PaginationAction;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,7 +25,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import static fr.raksrinana.rsndiscord.interaction.command.CommandResult.HANDLED;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
-import static java.time.ZonedDateTime.now;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.CHANNEL;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
@@ -97,16 +95,15 @@ public class ClearCommand extends SubSlashCommand{
 	
 	@NotNull
 	private CompletableFuture<Void> processMessage(@NotNull Message message){
-		CompletableFuture<Void> deleteThread = CompletableFuture.completedFuture(null);
-		var thread = message.getStartedThread();
-		if(Objects.nonNull(thread)){
-			deleteThread = JDAWrappers.message(thread, "Deleting this thread soon")
-					.addActionRow(new ClearDeleteThreadCancelButtonHandler().asComponent())
-					.submit()
-					.thenAccept(m -> Settings.get(message.getGuild()).add(new DeleteThreadScheduleHandler(thread.getIdLong(), now().plusHours(3))));
+		return deleteThread(message.getStartedThread()).thenCompose(empty -> JDAWrappers.delete(message).submit());
+	}
+	
+	@NotNull
+	private CompletableFuture<Void> deleteThread(@Nullable ThreadChannel thread){
+		if(Objects.isNull(thread)){
+			return CompletableFuture.completedFuture(null);
 		}
-		
-		return deleteThread.thenCompose(empty -> JDAWrappers.delete(message).submit());
+		return JDAWrappers.delete(thread).submit();
 	}
 	
 	@Override

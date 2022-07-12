@@ -35,6 +35,7 @@ import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_CHANNEL;
 @AllArgsConstructor
 @NoArgsConstructor
 @Log4j2
+@Deprecated
 public class DeleteThreadScheduleHandler extends SimpleScheduleHandler{
 	@JsonProperty("threadId")
 	@Getter
