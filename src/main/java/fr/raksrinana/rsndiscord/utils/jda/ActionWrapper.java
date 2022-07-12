@@ -16,19 +16,8 @@ public abstract class ActionWrapper<R, T extends RestAction<R>>{
 	@Setter(AccessLevel.PROTECTED)
 	private T action;
 	
-	@NotNull
-	public CompletableFuture<R> submit(){
-		return getAction().submit();
-	}
-	
-	@NotNull
-	public CompletableFuture<R> delay(int seconds){
-		return delay(Duration.ofSeconds(seconds));
-	}
-	
-	@NotNull
-	public CompletableFuture<R> delay(@NotNull Duration duration){
-		return getAction().delay(duration).submit()
+	private CompletableFuture<R> logAction(CompletableFuture<R> future){
+		return future
 				.thenApply(value -> {
 					logSuccess(value);
 					return value;
@@ -40,6 +29,21 @@ public abstract class ActionWrapper<R, T extends RestAction<R>>{
 					}
 					throw new CompletionException(throwable);
 				});
+	}
+	
+	@NotNull
+	public CompletableFuture<R> submit(){
+		return logAction(getAction().submit());
+	}
+	
+	@NotNull
+	public CompletableFuture<R> delay(@NotNull Duration duration){
+		return logAction(getAction().delay(duration).submit());
+	}
+	
+	@NotNull
+	public CompletableFuture<R> delay(int seconds){
+		return delay(Duration.ofSeconds(seconds));
 	}
 	
 	protected void logSuccess(R value){}
