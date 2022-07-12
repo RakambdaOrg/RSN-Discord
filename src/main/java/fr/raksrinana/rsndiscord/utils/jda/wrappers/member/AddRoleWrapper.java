@@ -23,4 +23,9 @@ public class AddRoleWrapper extends ActionWrapper<Void, RestAction<Void>>{
 	protected void logSuccess(Void value){
 		log.info("Added role {} to {}", role, member);
 	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to add role {}", role, throwable);
+	}
 }

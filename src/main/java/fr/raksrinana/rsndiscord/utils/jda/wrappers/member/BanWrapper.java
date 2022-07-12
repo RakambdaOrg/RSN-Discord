@@ -25,4 +25,9 @@ public class BanWrapper extends ActionWrapper<Void, RestAction<Void>>{
 	protected void logSuccess(Void value){
 		log.info("Banned {} deleting his messages for the last {} days with the reason: {}", member, deletionDays, reason);
 	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to ban user {}", member, throwable);
+	}
 }

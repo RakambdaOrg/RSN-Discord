@@ -10,17 +10,22 @@ import org.jetbrains.annotations.Nullable;
 
 @Log4j2
 public class ModifyNicknameWrapper extends ActionWrapper<Void, RestAction<Void>>{
-	private final Member target;
+	private final Member member;
 	private final String nickname;
 	
-	public ModifyNicknameWrapper(@NotNull Guild guild, @NotNull Member target, @Nullable String nickname){
-		super(guild.modifyNickname(target, nickname));
-		this.target = target;
+	public ModifyNicknameWrapper(@NotNull Guild guild, @NotNull Member member, @Nullable String nickname){
+		super(guild.modifyNickname(member, nickname));
+		this.member = member;
 		this.nickname = nickname;
 	}
 	
 	@Override
 	protected void logSuccess(Void value){
-		log.info("Set nickname of {} to {}", target, nickname);
+		log.info("Set nickname of {} to {}", member, nickname);
+	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to modify nickname for user {}", member, throwable);
 	}
 }

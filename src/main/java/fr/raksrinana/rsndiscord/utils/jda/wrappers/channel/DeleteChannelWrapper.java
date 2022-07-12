@@ -19,4 +19,9 @@ public class DeleteChannelWrapper extends ActionWrapper<Void, AuditableRestActio
 	protected void logSuccess(Void value){
 		log.info("Deleted channel {}", channel);
 	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to delete channel {}", channel, throwable);
+	}
 }

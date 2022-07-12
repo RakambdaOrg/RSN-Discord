@@ -19,4 +19,9 @@ public class UnpinMessageWrapper extends ActionWrapper<Void, RestAction<Void>>{
 	protected void logSuccess(Void value){
 		log.info("Unpinned message {}", message);
 	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to unpin message {}", message, throwable);
+	}
 }

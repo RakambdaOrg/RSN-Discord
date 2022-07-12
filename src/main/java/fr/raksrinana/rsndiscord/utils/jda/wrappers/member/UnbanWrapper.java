@@ -9,15 +9,20 @@ import org.jetbrains.annotations.NotNull;
 
 @Log4j2
 public class UnbanWrapper extends ActionWrapper<Void, RestAction<Void>>{
-	private final UserSnowflake userSnowflake;
+	private final UserSnowflake user;
 	
-	public UnbanWrapper(@NotNull Guild guild, @NotNull UserSnowflake userSnowflake){
-		super(guild.unban(userSnowflake));
-		this.userSnowflake = userSnowflake;
+	public UnbanWrapper(@NotNull Guild guild, @NotNull UserSnowflake user){
+		super(guild.unban(user));
+		this.user = user;
 	}
 	
 	@Override
 	protected void logSuccess(Void value){
-		log.info("Unbanned member {}", userSnowflake);
+		log.info("Unbanned member {}", user);
+	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to unban user {}", user, throwable);
 	}
 }

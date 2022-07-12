@@ -25,6 +25,6 @@ public class InteractionReplyModalWrapper extends ActionWrapper<Void, ModalCallb
 	
 	@Override
 	protected void logException(Throwable throwable){
-		log.error("Failed to reply modal", throwable);
+		log.error("Failed to reply modal in {}", target, throwable);
 	}
 }

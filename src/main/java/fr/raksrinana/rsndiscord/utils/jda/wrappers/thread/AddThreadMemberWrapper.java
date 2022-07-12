@@ -29,4 +29,9 @@ public class AddThreadMemberWrapper extends ActionWrapper<Void, RestAction<Void>
 	protected void logSuccess(Void value){
 		log.info("Added {} to thread {}", target, thread);
 	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to add user {} to thread {}", target, thread, throwable);
+	}
 }

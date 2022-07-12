@@ -51,6 +51,11 @@ public class InteractionNewMessageWrapper extends ActionWrapper<Message, Webhook
 		log.info("Replied with new message to slash command in {} : {}", target, value.getContentRaw());
 	}
 	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to reply new message to slash command {}", target, throwable);
+	}
+	
 	@NotNull
 	public CompletableFuture<Message> submitAndDelete(int minutes){
 		return submit().thenApply(deleteMessageMins(minutes));

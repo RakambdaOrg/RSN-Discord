@@ -22,4 +22,9 @@ public class AddReactionWrapper extends ActionWrapper<Void, RestAction<Void>>{
 	protected void logSuccess(Void value){
 		log.info("Added reaction {} to message {}", reaction, message);
 	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to add reaction {} to message {}", reaction, message, throwable);
+	}
 }

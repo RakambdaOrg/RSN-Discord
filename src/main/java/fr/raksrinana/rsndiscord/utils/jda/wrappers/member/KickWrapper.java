@@ -23,4 +23,9 @@ public class KickWrapper extends ActionWrapper<Void, RestAction<Void>>{
 	protected void logSuccess(Void value){
 		log.info("Kicked {} with reason: {}", member, reason);
 	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to kick user {}", member, throwable);
+	}
 }

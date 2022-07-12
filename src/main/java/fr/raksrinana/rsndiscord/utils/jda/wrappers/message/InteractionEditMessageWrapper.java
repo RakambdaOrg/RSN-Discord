@@ -44,6 +44,11 @@ public class InteractionEditMessageWrapper extends ActionWrapper<Message, Webhoo
 		log.info("Replied with edited message to slash command in {} : {}", target, value.getContentRaw());
 	}
 	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to edit slash command message {}", target, throwable);
+	}
+	
 	@NotNull
 	public CompletableFuture<Message> submitAndDelete(int minutes){
 		return submit().thenApply(deleteMessageMins(minutes));

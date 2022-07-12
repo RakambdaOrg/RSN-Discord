@@ -19,4 +19,9 @@ public class ClearReactionsWrapper extends ActionWrapper<Void, RestAction<Void>>
 	protected void logSuccess(Void value){
 		log.info("Cleared reactions from message {}", message);
 	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to clear all reactions from message {}", message, throwable);
+	}
 }

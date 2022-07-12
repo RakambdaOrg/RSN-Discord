@@ -29,4 +29,10 @@ public class RemoveAllReactionWrapper extends ActionWrapper<Void, RestAction<Voi
 	protected void logSuccess(Void value){
 		log.info("Removed all reactions {} from message {}", reaction, message);
 	}
+	
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to remove all reactions {} from message {}", reaction, message, throwable);
+	}
 }

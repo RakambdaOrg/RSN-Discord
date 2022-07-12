@@ -28,4 +28,10 @@ public class DeleteMessageWrapper extends ActionWrapper<Void, RestAction<Void>>{
 	protected void logSuccess(Void value){
 		log.info("Deleted message {} in {}", message, channel);
 	}
+	
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to delete message {} in {}", message, channel, throwable);
+	}
 }

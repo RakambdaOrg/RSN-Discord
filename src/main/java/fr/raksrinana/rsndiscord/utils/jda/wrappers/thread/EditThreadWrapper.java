@@ -9,11 +9,11 @@ import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 public class EditThreadWrapper extends ActionWrapper<Void, ThreadChannelManager>{
-	private final ThreadChannel threadChannel;
+	private final ThreadChannel thread;
 	
-	public EditThreadWrapper(@NotNull ThreadChannel threadChannel){
-		super(threadChannel.getManager());
-		this.threadChannel = threadChannel;
+	public EditThreadWrapper(@NotNull ThreadChannel thread){
+		super(thread.getManager());
+		this.thread = thread;
 	}
 	
 	public EditThreadWrapper setAutoArchiveDuration(@NotNull ThreadChannel.AutoArchiveDuration duration){
@@ -23,11 +23,16 @@ public class EditThreadWrapper extends ActionWrapper<Void, ThreadChannelManager>
 	
 	@Override
 	protected void logSuccess(Void value){
-		log.info("Edited thread {}", threadChannel);
+		log.info("Edited thread {}", thread);
+	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to edit thread {}", thread, throwable);
 	}
 	
 	@NotNull
 	public CompletableFuture<ThreadChannel> submitAndGet(){
-		return submit().thenApply(empty -> threadChannel);
+		return submit().thenApply(empty -> thread);
 	}
 }

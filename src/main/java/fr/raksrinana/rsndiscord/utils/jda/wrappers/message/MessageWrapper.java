@@ -129,6 +129,11 @@ public class MessageWrapper extends ActionWrapper<Message, MessageAction>{
 		log.info("Sent message to {} : {}", channel, value.getContentRaw());
 	}
 	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to send message to channel {}", channel, throwable);
+	}
+	
 	@NotNull
 	public CompletableFuture<Message> submitAndDelete(@NotNull Duration duration){
 		return submitAndDelete(duration.toMinutes());

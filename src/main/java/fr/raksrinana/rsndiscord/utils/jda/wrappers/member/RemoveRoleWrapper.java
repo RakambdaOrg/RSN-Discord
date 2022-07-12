@@ -23,4 +23,9 @@ public class RemoveRoleWrapper extends ActionWrapper<Void, RestAction<Void>>{
 	protected void logSuccess(Void value){
 		log.info("Removed role {} from {}", role, member);
 	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to remove role {} from user {}", role, member, throwable);
+	}
 }

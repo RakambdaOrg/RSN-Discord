@@ -22,4 +22,9 @@ public class MuteWrapper extends ActionWrapper<Void, RestAction<Void>>{
 	protected void logSuccess(Void value){
 		log.info("Setting mute state of {} to {}", member, state);
 	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to mute user {}", member, throwable);
+	}
 }

@@ -22,4 +22,9 @@ public class DeafenWrapper extends ActionWrapper<Void, RestAction<Void>>{
 	protected void logSuccess(Void value){
 		log.info("Setting deaf state of {} to {}", member, state);
 	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to deafen user {}", member, throwable);
+	}
 }

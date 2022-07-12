@@ -27,4 +27,9 @@ public class AutoCompleteWrapper extends ActionWrapper<Void, AutoCompleteCallbac
 	protected void logSuccess(Void value){
 		log.info("Added choices {}", choices);
 	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to add choices {}", choices, throwable);
+	}
 }

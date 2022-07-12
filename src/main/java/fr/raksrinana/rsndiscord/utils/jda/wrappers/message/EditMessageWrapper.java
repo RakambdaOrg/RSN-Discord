@@ -44,4 +44,9 @@ public class EditMessageWrapper extends ActionWrapper<Message, MessageAction>{
 	protected void logSuccess(Message value){
 		log.info("Edited message {} with content: {}", message, message.getContentRaw());
 	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to edit message {}", message, throwable);
+	}
 }

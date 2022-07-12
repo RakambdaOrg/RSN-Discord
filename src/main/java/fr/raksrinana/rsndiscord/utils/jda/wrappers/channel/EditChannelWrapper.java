@@ -35,4 +35,9 @@ public class EditChannelWrapper extends ActionWrapper<Void, TextChannelManager>{
 	protected void logSuccess(Void value){
 		log.info("Edited channel {}", channel);
 	}
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to edit channel {}", channel, throwable);
+	}
 }

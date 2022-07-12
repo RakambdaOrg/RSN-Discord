@@ -23,4 +23,10 @@ public class SetColorWrapper extends ActionWrapper<Void, RoleManager>{
 	protected void logSuccess(Void value){
 		log.info("Setting {} color to {}", role, color);
 	}
+	
+	
+	@Override
+	protected void logException(Throwable throwable){
+		log.error("Failed to set color {} to role {}", color, role, throwable);
+	}
 }
