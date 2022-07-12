@@ -35,8 +35,8 @@ public abstract class ActionWrapper<R, T extends RestAction<R>>{
 				})
 				.exceptionally(throwable -> {
 					logException(throwable);
-					if(throwable instanceof CompletionException ce){
-						throw ce;
+					if(throwable instanceof RuntimeException re){
+						throw re;
 					}
 					throw new CompletionException(throwable);
 				});
