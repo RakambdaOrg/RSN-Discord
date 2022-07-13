@@ -9,10 +9,17 @@ import fr.raksrinana.rsndiscord.interaction.command.user.api.BotUserCommand;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.jetbrains.annotations.NotNull;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import static fr.raksrinana.rsndiscord.utils.Utilities.getAllAnnotatedWith;
@@ -47,39 +54,70 @@ public class CommandService{
 		);
 	}
 	
-	public static void registerGlobalCommands(){
+	@NotNull
+	public static CompletableFuture<Void> registerGlobalCommands(){
 		log.info("Registering global slash commands");
-		var action = Main.getJda().updateCommands();
 		
 		var commands = registrableCommands.values().stream()
 				.filter(cmd -> !cmd.isGuildOnly())
 				.map(IRegistrableCommand::getDefinition)
 				.collect(Collectors.toSet());
 		
-		action.addCommands(commands).submit()
-				.thenAccept(slashCommands -> log.info("Global slash commands registered: {}", slashCommands.stream().map(Command::getName).collect(Collectors.joining(", "))))
+		return clearGlobalCommands().thenCompose(empty -> registerCommands(Main.getJda().updateCommands(), commands));
+	}
+	
+	@NotNull
+	public static CompletableFuture<Void> registerGuildCommands(@NotNull Guild guild){
+		log.info("Registering guild slash commands for {}", guild);
+		
+		var commands = registrableCommands.values().stream()
+				.filter(IRegistrableCommand::isGuildOnly)
+				.map(IRegistrableCommand::getDefinition)
+				.collect(Collectors.toSet());
+		
+		return clearGuildCommands(guild).thenCompose(empty -> registerCommands(guild.updateCommands(), commands));
+	}
+	
+	@NotNull
+	public static CompletableFuture<Void> registerCommands(@NotNull CommandListUpdateAction action, @NotNull Collection<CommandData> commands){
+		if(commands.isEmpty()){
+			log.info("No commands to register");
+			return CompletableFuture.completedFuture(null);
+		}
+		
+		log.info("Registering {} commands", commands.size());
+		return action.addCommands(commands).submit()
+				.thenAccept(slashCommands -> log.info("Slash commands registered: {}", slashCommands.stream()
+						.map(Command::getName)
+						.collect(Collectors.joining(", "))))
 				.exceptionally(e -> {
-					log.error("Failed to register global slash commands", e);
+					log.error("Failed to register slash commands", e);
 					return null;
 				});
 	}
 	
-	public static void registerGuildCommands(@NotNull Guild guild){
-		log.info("Registering guild slash commands for {}", guild);
-		var action = guild.updateCommands();
-		
-		var commands = registrableCommands.values().stream()
-				.map(IRegistrableCommand::getDefinition)
-				.collect(Collectors.toList());
-		
-		action.addCommands(commands).submit()
-				.thenAccept(slashCommands -> log.info("{} slash commands registered: {}", guild, slashCommands.stream()
-						.map(Command::getName)
-						.collect(Collectors.joining(", "))))
-				.exceptionally(e -> {
-					log.error("Failed to register global slash commands", e);
-					return null;
-				});
+	@NotNull
+	private static CompletableFuture<Void> clearGlobalCommands(){
+		log.info("Clearing global slash commands");
+		var jda = Main.getJda();
+		return clearCommands(jda.retrieveCommands(), jda::deleteCommandById);
+	}
+	
+	@NotNull
+	public static CompletableFuture<Void> clearGuildCommands(@NotNull Guild guild){
+		log.info("Clearing guild commands for guild {}", guild);
+		return clearCommands(guild.retrieveCommands(), guild::deleteCommandById);
+	}
+	
+	@NotNull
+	private static CompletableFuture<Void> clearCommands(@NotNull RestAction<List<Command>> retrieve, @NotNull Function<String, RestAction<Void>> deleteCommand){
+		return retrieve.submit().thenCompose(commands -> commands.stream()
+				.map(command -> {
+					log.info("Clearing command {}", command);
+					return deleteCommand.apply(command.getId()).submit();
+				})
+				.reduce((left, right) -> left.thenCombine(right, (v1, v2) -> null))
+				.orElseGet(() -> CompletableFuture.completedFuture(null)));
 	}
 	
 	@NotNull

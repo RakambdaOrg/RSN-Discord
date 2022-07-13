@@ -91,8 +91,11 @@ public class Main{
 					.setStatus(ONLINE)
 					.setActivity(Activity.of(Activity.ActivityType.PLAYING, "Bip bip"));
 			
-			CommandService.registerGlobalCommands();
-			CommandService.registerGuildCommands(jda.getGuildById(735921627631583394L));
+			CommandService.registerGlobalCommands().thenAccept(empty -> {
+				jda.getGuilds().forEach(CommandService::clearGuildCommands);
+				//CommandService.registerGuildCommands(jda.getGuildById(735921627631583394L));
+			});
+			
 			ReactionUtils.registerAllHandlers();
 			RunnerUtils.registerAllScheduledRunners();
 			
