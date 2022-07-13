@@ -2,6 +2,7 @@ package fr.raksrinana.rsndiscord.event;
 
 import fr.raksrinana.rsndiscord.interaction.component.button.impl.TodoMessageDeleteButtonHandler;
 import fr.raksrinana.rsndiscord.interaction.component.button.impl.TodoMessageKeepButtonHandler;
+import fr.raksrinana.rsndiscord.interaction.component.button.impl.TodoMessageKeepWithoutThreadButtonHandler;
 import fr.raksrinana.rsndiscord.log.LogContext;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
@@ -21,7 +22,8 @@ import static fr.raksrinana.rsndiscord.utils.Utilities.containsChannel;
 public class AutoTodoEventListener extends ListenerAdapter{
 	private static final ItemComponent[] buttons = {
 			new TodoMessageDeleteButtonHandler().asComponent(),
-			new TodoMessageKeepButtonHandler().asComponent()
+			new TodoMessageKeepButtonHandler().asComponent(),
+			new TodoMessageKeepWithoutThreadButtonHandler().asComponent()
 	};
 	
 	@Override
