@@ -34,6 +34,7 @@ import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
@@ -91,13 +92,21 @@ public class Main{
 					.setStatus(ONLINE)
 					.setActivity(Activity.of(Activity.ActivityType.PLAYING, "Bip bip"));
 			
-			CommandService.registerGlobalCommands().thenAccept(empty -> {
-				jda.getGuilds().forEach(CommandService::clearGuildCommands);
-				//CommandService.registerGuildCommands(jda.getGuildById(735921627631583394L));
-			});
-			
 			ReactionUtils.registerAllHandlers();
 			RunnerUtils.registerAllScheduledRunners();
+			
+			CommandService.registerGlobalCommands().thenCompose(empty -> {
+				if(DEVELOPMENT){
+					var guild = jda.getGuildById(735921627631583394L);
+					return CommandService.registerGuildCommands(guild);
+				}
+				
+				var future = CompletableFuture.<Void> completedFuture(null);
+				for(var guild : jda.getGuilds()){
+					future = future.thenCompose(empty2 -> CommandService.clearGuildCommands(guild));
+				}
+				return future;
+			});
 			
 			log.info("Started");
 			announceStart();
@@ -174,6 +183,7 @@ public class Main{
 		TwitterApi.removeStreamFilters();
 		UserReplyEventListener.stopAll();
 		RSNAudioManager.stopAll();
+		CommandService.resetAllIfDev();
 		executorService.shutdownNow();
 		Settings.close();
 		Main.getJda().shutdown();

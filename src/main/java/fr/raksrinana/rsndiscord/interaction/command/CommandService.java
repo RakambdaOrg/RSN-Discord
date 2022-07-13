@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -118,6 +119,26 @@ public class CommandService{
 				})
 				.reduce((left, right) -> left.thenCombine(right, (v1, v2) -> null))
 				.orElseGet(() -> CompletableFuture.completedFuture(null)));
+	}
+	
+	public static void resetAllIfDev(){
+		if(Main.DEVELOPMENT){
+			log.info("Development mode activated, removing commands");
+			try{
+				var jda = Main.getJda();
+				
+				clearGlobalCommands().thenCompose(empty -> {
+					var future = CompletableFuture.<Void> completedFuture(null);
+					for(var guild : jda.getGuilds()){
+						future = future.thenCompose(empty2 -> CommandService.clearGuildCommands(guild));
+					}
+					return future;
+				}).get(5, TimeUnit.MINUTES);
+			}
+			catch(Exception e){
+				log.error("Failed to reset commands", e);
+			}
+		}
 	}
 	
 	@NotNull
