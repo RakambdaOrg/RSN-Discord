@@ -87,11 +87,10 @@ public class ClearCommand extends SubSlashCommand{
 			}
 		};
 		
-		return messages.stream()
+		return CompletableFuture.allOf(messages.stream()
 				.map(this::processMessage)
 				.map(f -> f.thenAccept(notifier))
-				.reduce((left, right) -> left.thenCombine(right, (v1, v2) -> null))
-				.orElseGet(() -> CompletableFuture.completedFuture(null));
+				.toArray(CompletableFuture[]::new));
 	}
 	
 	@NotNull
