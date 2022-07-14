@@ -4,57 +4,55 @@ import fr.raksrinana.rsndiscord.interaction.command.CommandResult;
 import fr.raksrinana.rsndiscord.interaction.command.slash.base.group.SubSlashCommand;
 import fr.raksrinana.rsndiscord.utils.jda.ActionWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.ThreadChannel;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
+import java.util.concurrent.CompletableFuture;
 import static fr.raksrinana.rsndiscord.interaction.command.CommandResult.HANDLED;
-import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
-import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
 
 @Log4j2
 public class ClearThreadCommand extends SubSlashCommand{
-	private static final String USER_OPTION_ID = "user";
-	private static final String THREAD_COUNT_OPTION_ID = "count";
-	private static final int DEFAULT_COUNT = 100;
-	
-	@Override
-	@NotNull
-	protected Collection<? extends OptionData> getOptions(){
-		return Set.of(
-				new OptionData(USER, USER_OPTION_ID, "Channel to delete the message in (default: everyone)"),
-				new OptionData(INTEGER, THREAD_COUNT_OPTION_ID, "Number of threads to delete (default " + DEFAULT_COUNT + ")")
-		);
-	}
-	
 	@Override
 	@NotNull
 	public CommandResult executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
-		var channel = event.getTextChannel();
-		
-		var threadCount = getOptionAsInt(event.getOption(THREAD_COUNT_OPTION_ID)).orElse(DEFAULT_COUNT);
-		var predicate = Optional.ofNullable(event.getOption(USER_OPTION_ID))
-				.map(OptionMapping::getAsUser)
-				.map(user -> (Predicate<ThreadChannel>) tc -> Objects.equals(tc.getOwnerId(), user.getId()))
-				.orElse(tc -> true);
-		
-		channel.retrieveArchivedPublicThreadChannels().submit()
-				.thenAccept(threads -> threads.stream()
-						.filter(predicate)
-						.limit(threadCount)
-						.map(JDAWrappers::delete)
-						.forEach(ActionWrapper::submit));
+		guild.retrieveActiveThreads().submit()
+				.thenCompose(this::handleThreads)
+				.thenCompose(empty -> event.getTextChannel().retrieveArchivedPublicThreadChannels().submit())
+				.thenCompose(this::handleThreads);
 		
 		return HANDLED;
+	}
+	
+	@NotNull
+	private CompletableFuture<Void> handleThreads(@NotNull Collection<ThreadChannel> threads){
+		return threads.stream()
+				.filter(this::shouldDeleteThread)
+				.map(JDAWrappers::delete)
+				.map(ActionWrapper::submit)
+				.reduce((left, right) -> left.thenCombine(right, (v1, v2) -> null))
+				.orElseGet(() -> CompletableFuture.completedFuture(null));
+	}
+	
+	@SneakyThrows
+	private boolean shouldDeleteThread(@NotNull ThreadChannel threadChannel){
+		return JDAWrappers.history(threadChannel)
+				.takeAsync(1)
+				.thenApply(messages -> messages.stream().anyMatch(this::isCorrectMessage))
+				.get();
+	}
+	
+	private boolean isCorrectMessage(@NotNull Message message){
+		if(!Objects.equals(message.getAuthor().getId(), message.getJDA().getSelfUser().getId())){
+			return false;
+		}
+		return Objects.equals(message.getContentRaw(), "Deleting this thread soon");
 	}
 	
 	@Override
@@ -66,6 +64,6 @@ public class ClearThreadCommand extends SubSlashCommand{
 	@Override
 	@NotNull
 	public String getShortDescription(){
-		return "Clear archived threads from a channel";
+		return "Clear threads that should have been deleted";
 	}
 }

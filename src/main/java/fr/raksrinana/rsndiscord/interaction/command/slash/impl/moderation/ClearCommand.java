@@ -67,7 +67,7 @@ public class ClearCommand extends SubSlashCommand{
 				.orElse(false) ? PaginationAction.PaginationOrder.FORWARD : PaginationAction.PaginationOrder.BACKWARD;
 		
 		JDAWrappers.edit(event, translate(event.getGuild(), "clear.removing", messageCount, targetChannel.getId())).submitAndDelete(5)
-				.thenCompose(msg -> targetChannel.getIterableHistory()
+				.thenCompose(msg -> JDAWrappers.history(targetChannel)
 						.order(order)
 						.takeAsync(messageCount)
 						.thenCompose(messages -> deleteAll(event, messages))
@@ -87,10 +87,11 @@ public class ClearCommand extends SubSlashCommand{
 			}
 		};
 		
-		return CompletableFuture.allOf(messages.stream()
+		return messages.stream()
 				.map(this::processMessage)
 				.map(f -> f.thenAccept(notifier))
-				.toArray(CompletableFuture[]::new));
+				.reduce((left, right) -> left.thenCombine(right, (v1, v2) -> null))
+				.orElseGet(() -> CompletableFuture.completedFuture(null));
 	}
 	
 	@NotNull

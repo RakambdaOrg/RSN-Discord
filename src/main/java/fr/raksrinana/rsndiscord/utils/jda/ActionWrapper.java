@@ -16,7 +16,8 @@ public abstract class ActionWrapper<R, T extends RestAction<R>>{
 	@Setter(AccessLevel.PROTECTED)
 	private T action;
 	
-	private CompletableFuture<R> logAction(CompletableFuture<R> future){
+	@NotNull
+	protected CompletableFuture<R> logAction(@NotNull CompletableFuture<R> future){
 		return future
 				.thenApply(value -> {
 					logSuccess(value);

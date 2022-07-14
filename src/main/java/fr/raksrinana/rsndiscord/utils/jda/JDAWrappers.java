@@ -4,6 +4,7 @@ import fr.raksrinana.rsndiscord.utils.BasicEmotes;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.EditPresenceWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.DeleteChannelWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.EditChannelWrapper;
+import fr.raksrinana.rsndiscord.utils.jda.wrappers.channel.HistoryChannelWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.interaction.AutoCompleteWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.AddRoleWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.wrappers.member.BanWrapper;
@@ -270,5 +271,10 @@ public class JDAWrappers{
 	@NotNull
 	public static AutoCompleteWrapper reply(@NotNull CommandAutoCompleteInteractionEvent event, @NotNull Collection<Command.Choice> choices){
 		return new AutoCompleteWrapper(event, choices);
+	}
+	
+	@NotNull
+	public static HistoryChannelWrapper history(@NotNull MessageChannel channel){
+		return new HistoryChannelWrapper(channel);
 	}
 }
