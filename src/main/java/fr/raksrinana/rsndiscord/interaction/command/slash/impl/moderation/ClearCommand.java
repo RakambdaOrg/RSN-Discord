@@ -80,6 +80,8 @@ public class ClearCommand extends SubSlashCommand{
 		var size = messages.size();
 		var counter = new AtomicInteger(0);
 		
+		log.info("Found {} messages to delete", messages.size());
+		
 		Consumer<Void> notifier = empty -> {
 			var value = counter.incrementAndGet();
 			if(value % 5 == 0 || value == size){
@@ -87,10 +89,11 @@ public class ClearCommand extends SubSlashCommand{
 			}
 		};
 		
-		return CompletableFuture.allOf(messages.stream()
+		return messages.stream()
 				.map(this::processMessage)
 				.map(f -> f.thenAccept(notifier))
-				.toArray(CompletableFuture[]::new));
+				.reduce((left, right) -> left.thenCombine(right, (v1, v2) -> null))
+				.orElseGet(() -> CompletableFuture.completedFuture(null));
 	}
 	
 	@NotNull

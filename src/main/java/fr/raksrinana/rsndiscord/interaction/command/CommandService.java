@@ -127,13 +127,12 @@ public class CommandService{
 			try{
 				var jda = Main.getJda();
 				
-				clearGlobalCommands().thenCompose(empty -> {
-					var future = CompletableFuture.<Void> completedFuture(null);
-					for(var guild : jda.getGuilds()){
-						future = future.thenCompose(empty2 -> CommandService.clearGuildCommands(guild));
-					}
-					return future;
-				}).get(5, TimeUnit.MINUTES);
+				clearGlobalCommands()
+						.thenCompose(empty -> jda.getGuilds().stream()
+								.map(CommandService::clearGuildCommands)
+								.reduce((left, right) -> left.thenCombine(right, (v1, v2) -> null))
+								.orElseGet(() -> CompletableFuture.completedFuture(null)))
+						.get(5, TimeUnit.MINUTES);
 			}
 			catch(Exception e){
 				log.error("Failed to reset commands", e);

@@ -15,6 +15,7 @@ public abstract class PagedActionWrapper<R, T extends PaginationAction<R, T>> ex
 	
 	public PagedActionWrapper(T action){
 		super(action);
+		pagedAction = action;
 	}
 	
 	@NotNull
