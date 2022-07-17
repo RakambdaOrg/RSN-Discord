@@ -46,7 +46,7 @@ public class SayCommand extends SubSlashCommand{
 	@NotNull
 	public CommandResult executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
 		var message = event.getOption(MESSAGE_OPTION_ID).getAsString();
-		JDAWrappers.message(event.getTextChannel(), message).submit();
+		JDAWrappers.message(event.getChannel(), message).submit();
 		return HANDLED_NO_MESSAGE;
 	}
 }

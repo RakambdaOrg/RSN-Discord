@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.IInviteContainer;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.unions.GuildMessageChannelUnion;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -61,7 +61,7 @@ public class RandomKickCommand extends SubSlashCommand{
 		var targetRole = Optional.ofNullable(event.getOption(ROLE_OPTION_ID)).map(OptionMapping::getAsRole).or(() -> getRandomRole(guild));
 		
 		JDAWrappers.reply(event, "Random kick started").submit();
-		randomKick(event.getTextChannel(), targetRole.orElse(null), reason, true);
+		randomKick(event.getGuildChannel(), targetRole.orElse(null), reason, true);
 		
 		return HANDLED;
 	}
@@ -80,7 +80,7 @@ public class RandomKickCommand extends SubSlashCommand{
 		return Optional.empty();
 	}
 	
-	public static void randomKick(@NotNull TextChannel channel, @Nullable Role targetRole, @NotNull String reason, boolean allowReKick){
+	public static void randomKick(@NotNull GuildMessageChannelUnion channel, @Nullable Role targetRole, @NotNull String reason, boolean allowReKick){
 		var guild = channel.getGuild();
 		var botMember = guild.getSelfMember();
 		
@@ -100,7 +100,7 @@ public class RandomKickCommand extends SubSlashCommand{
 				});
 	}
 	
-	private static void performKick(@NotNull Guild guild, @NotNull TextChannel channel, @NotNull List<Member> members, @NotNull String reason, boolean allowReKick){
+	private static void performKick(@NotNull Guild guild, @NotNull GuildMessageChannelUnion channel, @NotNull List<Member> members, @NotNull String reason, boolean allowReKick){
 		var kickRole = Settings.get(guild).getRandomKick()
 				.getKickedRole()
 				.flatMap(RoleConfiguration::getRole);

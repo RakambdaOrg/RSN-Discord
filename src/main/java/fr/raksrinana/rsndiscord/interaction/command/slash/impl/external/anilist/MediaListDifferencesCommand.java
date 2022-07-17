@@ -56,7 +56,7 @@ public class MediaListDifferencesCommand extends SubSlashCommand{
 		
 		var type = MediaType.valueOf(typeStr);
 		
-		new MediaListDifferencesRunner(event.getJDA(), type, event.getTextChannel(), member1, member2).runQueryOnDefaultUsersChannels(event.getJDA());
+		new MediaListDifferencesRunner(event.getJDA(), type, event.getChannel().asTextChannel(), member1, member2).runQueryOnDefaultUsersChannels(event.getJDA());
 		return HANDLED_NO_MESSAGE;
 	}
 }

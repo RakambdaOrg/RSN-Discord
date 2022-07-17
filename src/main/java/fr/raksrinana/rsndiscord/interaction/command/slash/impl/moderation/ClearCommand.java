@@ -8,8 +8,8 @@ import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.ThreadChannel;
+import net.dv8tion.jda.api.entities.channel.unions.GuildChannelUnion;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -54,12 +54,12 @@ public class ClearCommand extends SubSlashCommand{
 	@Override
 	@NotNull
 	public CommandResult executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
-		var channel = event.getChannel();
+		var channel = event.getGuildChannel();
 		
 		var messageCount = getOptionAsInt(event.getOption(MESSAGE_COUNT_OPTION_ID)).orElse(DEFAULT_COUNT);
 		var targetChannel = Optional.ofNullable(event.getOption(CHANNEL_OPTION_ID))
-				.map(OptionMapping::getAsMessageChannel)
-				.map(MessageChannel.class::cast)
+				.map(OptionMapping::getAsChannel)
+				.map(GuildChannelUnion::asGuildMessageChannel)
 				.orElse(channel);
 		var order = Optional.ofNullable(event.getOption(ORDER_OPTION_ID))
 				.map(OptionMapping::getAsString)

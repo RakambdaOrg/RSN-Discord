@@ -3,12 +3,16 @@ package fr.raksrinana.rsndiscord.reply;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.unions.GuildMessageChannelUnion;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import org.jetbrains.annotations.NotNull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -19,14 +23,14 @@ public abstract class BasicWaitingUserReply implements IWaitingUserReply{
 	@Getter
 	private final List<Message> infoMessages;
 	@Getter
-	private final TextChannel waitChannel;
+	private final GuildMessageChannelUnion waitChannel;
 	@Getter
 	private final User waitUser;
 	private final Object lock;
 	@Getter
 	private boolean handled;
 	
-	protected BasicWaitingUserReply(@NotNull User author, @NotNull TextChannel waitChannel, int delay, @NotNull TimeUnit unit, @NotNull Message... infoMessages){
+	protected BasicWaitingUserReply(@NotNull User author, @NotNull GuildMessageChannelUnion waitChannel, int delay, @NotNull TimeUnit unit, @NotNull Message... infoMessages){
 		lock = new Object();
 		this.waitChannel = waitChannel;
 		waitUser = author;

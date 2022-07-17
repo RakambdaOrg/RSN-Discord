@@ -23,7 +23,7 @@ public class LangUtils{
 		if(Objects.isNull(guild)){
 			return translate(DEFAULT_LOCALE, key, args);
 		}
-		return translate(Settings.get(guild).getLocale().orElseGet(guild::getLocale), key, args);
+		return translate(Settings.get(guild).getLocale().orElseGet(() ->  Locale.forLanguageTag(guild.getLocale().getLocale())), key, args);
 	}
 	
 	@NotNull
