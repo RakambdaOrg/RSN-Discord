@@ -28,7 +28,7 @@ public class TimeReactionDeleteButtonHandler extends SimpleButtonHandler{
 	@NotNull
 	@Override
 	public CompletableFuture<ComponentResult> handleGuild(@NotNull ButtonInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
-		var channel = event.getTextChannel();
+		var channel = event.getChannel();
 		var user = event.getUser();
 		
 		var config = Settings.get(guild);
@@ -37,7 +37,7 @@ public class TimeReactionDeleteButtonHandler extends SimpleButtonHandler{
 		
 		return config.getArchiveCategory()
 				.flatMap(CategoryConfiguration::getCategory)
-				.map(archiveCategory -> JDAWrappers.edit(channel)
+				.map(archiveCategory -> JDAWrappers.edit(channel.asTextChannel())
 						.setParent(archiveCategory)
 						.sync(archiveCategory)
 						.submit()

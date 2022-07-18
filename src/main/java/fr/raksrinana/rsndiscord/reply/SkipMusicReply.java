@@ -26,7 +26,7 @@ public class SkipMusicReply extends BasicWaitingUserReply{
 	private final AudioTrack audioTrack;
 	
 	public SkipMusicReply(SlashCommandInteraction event, Message message, int votesRequired, AudioTrack audioTrack){
-		super(event.getUser(), event.getTextChannel(), 20, SECONDS, message);
+		super(event.getUser(), event.getGuildChannel(), 20, SECONDS, message);
 		this.votesRequired = votesRequired;
 		this.audioTrack = audioTrack;
 	}

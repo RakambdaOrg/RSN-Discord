@@ -1,7 +1,7 @@
 package fr.raksrinana.rsndiscord.reply;
 
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.unions.GuildMessageChannelUnion;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ public interface IWaitingUserReply extends Closeable{
 	
 	@NotNull User getUser();
 	
-	@NotNull TextChannel getWaitChannel();
+	@NotNull GuildMessageChannelUnion getWaitChannel();
 	
 	boolean isHandled();
 }

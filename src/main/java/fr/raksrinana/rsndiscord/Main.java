@@ -73,7 +73,7 @@ public class Main{
 		try{
 			log.info("Building JDA");
 			var jdaBuilder = JDABuilder.createDefault(System.getProperty("RSN_TOKEN"))
-					.enableIntents(GatewayIntent.GUILD_MEMBERS)
+					.enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT)
 					.setMemberCachePolicy(MemberCachePolicy.ALL)
 					.enableCache(CacheFlag.EMOJI)
 					.setAutoReconnect(true);

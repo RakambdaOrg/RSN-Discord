@@ -24,7 +24,7 @@ public class ClearThreadCommand extends SubSlashCommand{
 	public CommandResult executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
 		guild.retrieveActiveThreads().submit()
 				.thenCompose(this::handleThreads)
-				.thenCompose(empty -> event.getTextChannel().retrieveArchivedPublicThreadChannels().submit())
+				.thenCompose(empty -> event.getGuildChannel().asThreadContainer().retrieveArchivedPublicThreadChannels().submit())
 				.thenCompose(this::handleThreads);
 		
 		return HANDLED;
