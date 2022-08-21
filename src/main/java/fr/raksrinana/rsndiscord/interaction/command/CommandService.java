@@ -57,7 +57,7 @@ public class CommandService{
 	
 	@NotNull
 	public static CompletableFuture<Void> registerGlobalCommands(){
-		var clearing = clearGlobalCommands();
+		var clearing = CompletableFuture.completedFuture(null); //clearGlobalCommands();
 		log.info("Registering global slash commands");
 		
 		var commands = registrableCommands.values().stream()
