@@ -57,6 +57,7 @@ public class CommandService{
 	
 	@NotNull
 	public static CompletableFuture<Void> registerGlobalCommands(){
+		var clearing = clearGlobalCommands();
 		log.info("Registering global slash commands");
 		
 		var commands = registrableCommands.values().stream()
@@ -64,11 +65,12 @@ public class CommandService{
 				.map(IRegistrableCommand::getDefinition)
 				.collect(Collectors.toSet());
 		
-		return clearGlobalCommands().thenCompose(empty -> registerCommands(Main.getJda().updateCommands(), commands));
+		return clearing.thenCompose(empty -> registerCommands(Main.getJda().updateCommands(), commands));
 	}
 	
 	@NotNull
 	public static CompletableFuture<Void> registerGuildCommands(@NotNull Guild guild){
+		var clearing = clearGuildCommands(guild);
 		log.info("Registering guild slash commands for {}", guild);
 		
 		var commands = registrableCommands.values().stream()
@@ -76,7 +78,7 @@ public class CommandService{
 				.map(IRegistrableCommand::getDefinition)
 				.collect(Collectors.toSet());
 		
-		return clearGuildCommands(guild).thenCompose(empty -> registerCommands(guild.updateCommands(), commands));
+		return clearing.thenCompose(empty -> registerCommands(guild.updateCommands(), commands));
 	}
 	
 	@NotNull

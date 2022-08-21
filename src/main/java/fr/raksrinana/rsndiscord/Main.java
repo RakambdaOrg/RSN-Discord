@@ -96,15 +96,16 @@ public class Main{
 			RunnerUtils.registerAllScheduledRunners();
 			
 			CommandService.registerGlobalCommands().thenCompose(empty -> {
-				if(DEVELOPMENT){
-					var guild = jda.getGuildById(735921627631583394L);
-					return CommandService.registerGuildCommands(guild);
-				}
-				
 				var future = CompletableFuture.<Void> completedFuture(null);
 				for(var guild : jda.getGuilds()){
 					future = future.thenCompose(empty2 -> CommandService.clearGuildCommands(guild));
 				}
+				
+				if(DEVELOPMENT){
+					var guild = jda.getGuildById(735921627631583394L);
+					future = future.thenCompose(empty2 -> CommandService.registerGuildCommands(guild));
+				}
+				
 				return future;
 			});
 			
