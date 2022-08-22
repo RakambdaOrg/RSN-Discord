@@ -9,7 +9,9 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageReference;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
-import net.dv8tion.jda.api.requests.restaction.MessageAction;
+import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
+import net.dv8tion.jda.api.utils.FileUpload;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.io.InputStream;
@@ -22,7 +24,7 @@ import java.util.concurrent.CompletableFuture;
 import static fr.raksrinana.rsndiscord.schedule.ScheduleService.deleteMessageMins;
 
 @Log4j2
-public class MessageWrapper extends ActionWrapper<Message, MessageAction>{
+public class MessageWrapper extends ActionWrapper<Message, MessageCreateAction>{
 	private final MessageChannel channel;
 	
 	public MessageWrapper(@NotNull MessageChannel channel, @NotNull String message){
@@ -36,13 +38,13 @@ public class MessageWrapper extends ActionWrapper<Message, MessageAction>{
 	}
 	
 	public MessageWrapper(@NotNull MessageChannel channel, @NotNull Message message){
-		super(channel.sendMessage(message));
+		super(channel.sendMessage(MessageCreateBuilder.fromMessage(message).build()));
 		this.channel = channel;
 	}
 	
 	@NotNull
 	public MessageWrapper allowedMentions(@Nullable Collection<Message.MentionType> mentionTypes){
-		getAction().allowedMentions(mentionTypes);
+		getAction().setAllowedMentions(mentionTypes);
 		return this;
 	}
 	
@@ -60,31 +62,31 @@ public class MessageWrapper extends ActionWrapper<Message, MessageAction>{
 	
 	@NotNull
 	public MessageWrapper tts(boolean state){
-		getAction().tts(state);
+		getAction().setTTS(state);
 		return this;
 	}
 	
 	@NotNull
 	public MessageWrapper replyTo(@NotNull Message message){
-		getAction().reference(message);
+		getAction().setMessageReference(message);
 		return this;
 	}
 	
 	@NotNull
 	public MessageWrapper replyTo(@NotNull MessageReference messageReference){
-		getAction().referenceById(messageReference.getMessageIdLong());
+		getAction().setMessageReference(messageReference.getMessageIdLong());
 		return this;
 	}
 	
 	@NotNull
 	public MessageWrapper addFile(@NotNull Path path){
-		getAction().addFile(path.toFile());
+		getAction().addFiles(FileUpload.fromData(path));
 		return this;
 	}
 	
 	@NotNull
 	public MessageWrapper addFile(@NotNull InputStream inputStream, @NotNull String fileName){
-		getAction().addFile(inputStream, fileName);
+		getAction().addFiles(FileUpload.fromData(inputStream, fileName));
 		return this;
 	}
 	
@@ -108,19 +110,19 @@ public class MessageWrapper extends ActionWrapper<Message, MessageAction>{
 	
 	@NotNull
 	public MessageWrapper clearActionRows(){
-		getAction().setActionRows(List.of());
+		getAction().setComponents(List.of());
 		return this;
 	}
 	
 	@NotNull
 	public MessageWrapper content(String content){
-		getAction().content(content);
+		getAction().setContent(content);
 		return this;
 	}
 	
 	@NotNull
 	public MessageWrapper setActionRows(@NotNull ActionRow... actionRows){
-		getAction().setActionRows(actionRows);
+		getAction().setComponents(actionRows);
 		return this;
 	}
 	

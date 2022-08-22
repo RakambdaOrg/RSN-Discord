@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.LayoutComponent;
-import net.dv8tion.jda.api.requests.restaction.WebhookMessageUpdateAction;
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import static fr.raksrinana.rsndiscord.schedule.ScheduleService.deleteMessageMins;
 
 @Log4j2
-public class InteractionEditMessageWrapper extends ActionWrapper<Message, WebhookMessageUpdateAction<Message>>{
+public class InteractionEditMessageWrapper extends ActionWrapper<Message, WebhookMessageEditAction<Message>>{
 	private final ISnowflake target;
 	
 	public InteractionEditMessageWrapper(@Nullable ISnowflake target, @NotNull InteractionHook hook, @NotNull MessageEmbed embed){
@@ -35,7 +35,7 @@ public class InteractionEditMessageWrapper extends ActionWrapper<Message, Webhoo
 	
 	@NotNull
 	public InteractionEditMessageWrapper clearActionRows(){
-		getAction().setActionRows(List.of());
+		getAction().setComponents(List.of());
 		return this;
 	}
 	
