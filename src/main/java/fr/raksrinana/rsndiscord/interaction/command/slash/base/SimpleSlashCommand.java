@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord.interaction.command.slash.base;
 
-import fr.raksrinana.rsndiscord.interaction.InteractionService;
 import fr.raksrinana.rsndiscord.interaction.command.slash.api.ISimpleSlashCommand;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -11,7 +10,7 @@ public abstract class SimpleSlashCommand extends ExecutableSlashCommand implemen
 	@NotNull
 	public CommandData getDefinition(){
 		return Commands.slash(getId(), getShortDescription())
-				.setLocalizationFunction(InteractionService.getLocalizationFunction())
+				//.setLocalizationFunction(InteractionService.getLocalizationFunction())
 				.setGuildOnly(isGuildOnly())
 				.setDefaultPermissions(getDefaultPermission())
 				.addOptions(getOptions());

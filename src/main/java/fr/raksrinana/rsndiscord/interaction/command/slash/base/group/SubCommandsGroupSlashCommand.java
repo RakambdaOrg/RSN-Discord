@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord.interaction.command.slash.base.group;
 
-import fr.raksrinana.rsndiscord.interaction.InteractionService;
 import fr.raksrinana.rsndiscord.interaction.command.api.ICommand;
 import fr.raksrinana.rsndiscord.interaction.command.slash.api.IGroupSlashCommand;
 import fr.raksrinana.rsndiscord.interaction.command.slash.api.ISubSlashCommand;
@@ -25,7 +24,7 @@ public abstract class SubCommandsGroupSlashCommand extends GroupSlashCommand imp
 	@Override
 	public @NotNull CommandData getDefinition(){
 		var command = Commands.slash(getId(), getShortDescription())
-				.setLocalizationFunction(InteractionService.getLocalizationFunction())
+				//.setLocalizationFunction(InteractionService.getLocalizationFunction())
 				.setGuildOnly(isGuildOnly())
 				.setDefaultPermissions(getDefaultPermission());
 		
