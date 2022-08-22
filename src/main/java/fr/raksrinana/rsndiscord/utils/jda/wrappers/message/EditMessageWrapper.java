@@ -5,12 +5,13 @@ import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
-import net.dv8tion.jda.api.requests.restaction.MessageAction;
+import net.dv8tion.jda.api.requests.restaction.MessageEditAction;
+import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 @Log4j2
-public class EditMessageWrapper extends ActionWrapper<Message, MessageAction>{
+public class EditMessageWrapper extends ActionWrapper<Message, MessageEditAction>{
 	private final Message message;
 	
 	public EditMessageWrapper(@NotNull Message message, @NotNull String content){
@@ -24,7 +25,7 @@ public class EditMessageWrapper extends ActionWrapper<Message, MessageAction>{
 	}
 	
 	public EditMessageWrapper(@NotNull Message message){
-		super(message.editMessage(message));
+		super(message.editMessage(MessageEditBuilder.fromMessage(message).build()));
 		this.message = message;
 	}
 	
