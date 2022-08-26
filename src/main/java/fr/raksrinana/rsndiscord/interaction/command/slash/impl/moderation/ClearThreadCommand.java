@@ -10,12 +10,18 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.ThreadChannel;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import static fr.raksrinana.rsndiscord.interaction.command.CommandResult.HANDLED;
+import static net.dv8tion.jda.api.requests.ErrorResponse.UNKNOWN_MESSAGE;
 
 @Log4j2
 public class ClearThreadCommand extends SubSlashCommand{
@@ -44,15 +50,51 @@ public class ClearThreadCommand extends SubSlashCommand{
 	private boolean shouldDeleteThread(@NotNull ThreadChannel threadChannel){
 		return JDAWrappers.history(threadChannel)
 				.takeAsync(1)
-				.thenApply(messages -> messages.stream().anyMatch(this::isCorrectMessage))
+				.thenApply(messages -> messages.stream().anyMatch(this::isDeletionMessage)
+				                       || (!hasParentMessage(threadChannel) && messages.stream().anyMatch(this::isCreationMessage)))
 				.get();
 	}
 	
-	private boolean isCorrectMessage(@NotNull Message message){
+	private boolean hasParentMessage(@NotNull ThreadChannel threadChannel){
+		try{
+			return threadChannel.retrieveParentMessage().submit()
+					.thenApply(m -> true)
+					.exceptionally(this::handleException)
+					.get(10, TimeUnit.MINUTES);
+		}
+		catch(InterruptedException | ExecutionException | TimeoutException e){
+			log.error("Failed to get parent message", e);
+			return false;
+		}
+	}
+	
+	private boolean isDeletionMessage(@NotNull Message message){
 		if(!Objects.equals(message.getAuthor().getId(), message.getJDA().getSelfUser().getId())){
 			return false;
 		}
 		return Objects.equals(message.getContentRaw(), "Deleting this thread soon");
+	}
+	
+	private boolean isCreationMessage(@NotNull Message message){
+		if(!Objects.equals(message.getAuthor().getId(), message.getJDA().getSelfUser().getId())){
+			return false;
+		}
+		return Objects.equals(message.getContentRaw(), "Interact with this messages with the buttons below");
+	}
+	
+	private boolean handleException(@NotNull Throwable e){
+		if(e instanceof CompletionException completionException){
+			return handleException(completionException.getCause());
+		}
+		if(e instanceof ErrorResponseException re){
+			var error = re.getErrorResponse();
+			if(error == UNKNOWN_MESSAGE){
+				return false;
+			}
+		}
+		
+		log.error("Got unexpected exception", e);
+		return true;
 	}
 	
 	@Override
