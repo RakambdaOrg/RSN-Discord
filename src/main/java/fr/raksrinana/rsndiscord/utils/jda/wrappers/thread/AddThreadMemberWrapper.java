@@ -3,8 +3,8 @@ package fr.raksrinana.rsndiscord.utils.jda.wrappers.thread;
 import fr.raksrinana.rsndiscord.utils.jda.ActionWrapper;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.ThreadChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 

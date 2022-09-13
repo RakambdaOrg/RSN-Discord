@@ -22,7 +22,7 @@ import static fr.raksrinana.rsndiscord.utils.BasicEmotes.*;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static net.dv8tion.jda.api.entities.ThreadChannel.AutoArchiveDuration.TIME_1_WEEK;
+import static net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel.AutoArchiveDuration.TIME_1_WEEK;
 
 @ReactionHandler
 @Log4j2

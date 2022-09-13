@@ -8,9 +8,9 @@ import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.IInviteContainer;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.attribute.IInviteContainer;
 import net.dv8tion.jda.api.entities.channel.unions.GuildMessageChannelUnion;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
@@ -137,7 +137,9 @@ public class RandomKickCommand extends SubSlashCommand{
 		JDAWrappers.message(channel, translate(guild, "random-kick.kicking", member.getAsMention()))
 				.tts(true).submit()
 				.thenAccept(kickStartMessage -> Main.getExecutorService().schedule(() -> {
-					JDAWrappers.kick(member, reason).submit()
+					JDAWrappers.kick(member)
+							.reason(reason)
+							.submit()
 							.thenAccept(empty2 -> JDAWrappers.reply(kickStartMessage, kickMessage).mention(member).submit())
 							.exceptionally(exception -> {
 								JDAWrappers.message(channel, translate(guild, "random-kick.error", exception.getMessage())).submit();

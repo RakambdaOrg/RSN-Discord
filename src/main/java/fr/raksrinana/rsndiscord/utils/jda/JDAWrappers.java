@@ -33,14 +33,14 @@ import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.ThreadChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
@@ -214,13 +214,13 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static KickWrapper kick(@NotNull Member member, @Nullable String reason){
-		return new KickWrapper(member.getGuild(), member, reason);
+	public static KickWrapper kick(@NotNull Member member){
+		return new KickWrapper(member.getGuild(), member);
 	}
 	
 	@NotNull
-	public static BanWrapper ban(@NotNull Member target, int deletionDays, @Nullable String reason){
-		return new BanWrapper(target.getGuild(), target, deletionDays, reason);
+	public static BanWrapper ban(@NotNull Member target, int deletionDays){
+		return new BanWrapper(target.getGuild(), target, deletionDays);
 	}
 	
 	@NotNull

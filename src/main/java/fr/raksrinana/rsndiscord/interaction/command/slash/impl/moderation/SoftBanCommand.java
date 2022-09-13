@@ -55,7 +55,9 @@ public class SoftBanCommand extends SubSlashCommand{
 		var message = translate(guild, "softban.banned", target.getAsMention(), durationToString(duration), reason);
 		var unbanSchedule = new UnbanMemberScheduleHandler(target.getIdLong(), ZonedDateTime.now().plus(duration));
 		
-		JDAWrappers.ban(target, 0, reason).submit()
+		JDAWrappers.ban(target, 0)
+				.reason(reason)
+				.submit()
 				.thenAccept(empty -> {
 					Settings.get(guild).add(unbanSchedule);
 					JDAWrappers.edit(event, message).submit();
