@@ -20,13 +20,13 @@ import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
-import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -112,7 +112,7 @@ public class Main{
 			log.info("Started");
 			announceStart();
 		}
-		catch(LoginException | InterruptedException e){
+		catch(InvalidTokenException | InterruptedException e){
 			log.error("Couldn't start bot", e);
 			new ForceShutdownThread().start();
 			close();

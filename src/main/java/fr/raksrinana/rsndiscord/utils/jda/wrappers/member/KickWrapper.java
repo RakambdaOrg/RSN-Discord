@@ -4,19 +4,25 @@ import fr.raksrinana.rsndiscord.utils.jda.ActionWrapper;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Log4j2
-public class KickWrapper extends ActionWrapper<Void, RestAction<Void>>{
+public class KickWrapper extends ActionWrapper<Void, AuditableRestAction<Void>>{
 	private final Member member;
-	private final String reason;
+	private String reason;
 	
-	public KickWrapper(@NotNull Guild guild, @NotNull Member member, @Nullable String reason){
-		super(guild.kick(member, reason));
+	public KickWrapper(@NotNull Guild guild, @NotNull Member member){
+		super(guild.kick(member));
 		this.member = member;
+	}
+	
+	@NotNull
+	public KickWrapper reason(@Nullable String reason){
+		getAction().reason(reason);
 		this.reason = reason;
+		return this;
 	}
 	
 	@Override
