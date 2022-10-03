@@ -1,7 +1,7 @@
 [versions]
 jda-version = "5.0.0-alpha.20"
 lavaplayer-version = "1.3.78"
-lavaplayer-fork-version = "45279270c2"
+lavaplayer-fork-version = "e84b9b4f79"
 lp_cross-version = "0.1.1"
 slf4j-version = "2.0.3"
 log4j2-version = "2.19.0"
