@@ -92,15 +92,15 @@ application {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_18
-    targetCompatibility = JavaVersion.VERSION_18
+    sourceCompatibility = JavaVersion.VERSION_19
+    targetCompatibility = JavaVersion.VERSION_19
 
     modularity.inferModulePath.set(false)
 }
 
 jib {
     from {
-        image = "eclipse-temurin:18-jdk"
+        image = "eclipse-temurin:19-jdk"
         platforms {
             platform {
                 os = "linux"
