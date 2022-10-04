@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.MessageReference;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
+import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -39,6 +40,11 @@ public class MessageWrapper extends ActionWrapper<Message, MessageCreateAction>{
 	
 	public MessageWrapper(@NotNull MessageChannel channel, @NotNull Message message){
 		super(channel.sendMessage(MessageCreateBuilder.fromMessage(message).build()));
+		this.channel = channel;
+	}
+	
+	public MessageWrapper(@NotNull MessageChannel channel, @NotNull LayoutComponent component, @NotNull LayoutComponent... components){
+		super(channel.sendMessageComponents(component, components));
 		this.channel = channel;
 	}
 	

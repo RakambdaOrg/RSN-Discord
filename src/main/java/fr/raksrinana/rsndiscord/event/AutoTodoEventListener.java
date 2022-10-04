@@ -54,8 +54,6 @@ public class AutoTodoEventListener extends ListenerAdapter{
 				.thenCompose(thread -> JDAWrappers.editThread(thread)
 						.setAutoArchiveDuration(ThreadChannel.AutoArchiveDuration.TIME_1_WEEK)
 						.submitAndGet())
-				.thenCompose(thread -> JDAWrappers.message(thread, "Interact with this messages with the buttons below")
-						.setActionRows(ActionRow.of(buttons))
-						.submit());
+				.thenCompose(thread -> JDAWrappers.message(thread, ActionRow.of(buttons)).submit());
 	}
 }

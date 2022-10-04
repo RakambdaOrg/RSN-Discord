@@ -2,9 +2,9 @@ package fr.raksrinana.rsndiscord.interaction.command.slash.impl.moderation;
 
 import fr.raksrinana.rsndiscord.interaction.command.CommandResult;
 import fr.raksrinana.rsndiscord.interaction.command.slash.base.group.SubSlashCommand;
+import fr.raksrinana.rsndiscord.interaction.component.button.impl.TodoMessageDeleteButtonHandler;
 import fr.raksrinana.rsndiscord.utils.jda.ActionWrapper;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
-import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -12,6 +12,8 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
+import net.dv8tion.jda.api.interactions.components.ActionComponent;
+import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Objects;
@@ -46,13 +48,18 @@ public class ClearThreadCommand extends SubSlashCommand{
 				.orElseGet(() -> CompletableFuture.completedFuture(null));
 	}
 	
-	@SneakyThrows
+	// @SneakyThrows //TODO Lombok 19
 	private boolean shouldDeleteThread(@NotNull ThreadChannel threadChannel){
-		return JDAWrappers.history(threadChannel)
-				.takeAsync(1)
-				.thenApply(messages -> messages.stream().anyMatch(this::isDeletionMessage)
-				                       || (!hasParentMessage(threadChannel) && messages.stream().anyMatch(this::isCreationMessage)))
-				.get();
+		try{
+			return JDAWrappers.history(threadChannel)
+					.takeAsync(1)
+					.thenApply(messages -> messages.stream().anyMatch(this::isDeletionMessage)
+					                       || (!hasParentMessage(threadChannel) && messages.stream().anyMatch(this::isCreationMessage)))
+					.get();
+		}
+		catch(InterruptedException | ExecutionException e){
+			throw new RuntimeException(e);
+		}
 	}
 	
 	private boolean hasParentMessage(@NotNull ThreadChannel threadChannel){
@@ -79,7 +86,12 @@ public class ClearThreadCommand extends SubSlashCommand{
 		if(!Objects.equals(message.getAuthor().getId(), message.getJDA().getSelfUser().getId())){
 			return false;
 		}
-		return Objects.equals(message.getContentRaw(), "Interact with this messages with the buttons below");
+		return message.getComponents().stream()
+				.map(LayoutComponent::getComponents)
+				.flatMap(Collection::stream)
+				.filter(ActionComponent.class::isInstance)
+				.map(ActionComponent.class::cast)
+				.anyMatch(ac -> Objects.equals(ac.getId(), new TodoMessageDeleteButtonHandler().getId()));
 	}
 	
 	private boolean handleException(@NotNull Throwable e){

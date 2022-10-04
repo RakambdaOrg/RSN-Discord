@@ -15,6 +15,6 @@ public class LocaleConfigurationAccessor extends ValueConfigurationAccessor<Loca
 	
 	@Override
 	protected Locale fromString(@NotNull String value){
-		return new Locale(value);
+		return new Locale.Builder().setLanguage(value).build();
 	}
 }

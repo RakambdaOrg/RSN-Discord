@@ -64,6 +64,11 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
+	public static MessageWrapper message(@NotNull MessageChannel channel, @NotNull LayoutComponent component, @NotNull LayoutComponent... components){
+		return new MessageWrapper(channel, component, components);
+	}
+	
+	@NotNull
 	public static MessageWrapper message(@NotNull MessageChannel channel, @NotNull MessageEmbed embed){
 		return new MessageWrapper(channel, embed);
 	}
