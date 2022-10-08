@@ -2,7 +2,7 @@ package fr.raksrinana.rsndiscord.event;
 
 import fr.raksrinana.rsndiscord.ForceShutdownThread;
 import lombok.extern.log4j.Log4j2;
-import net.dv8tion.jda.api.events.ShutdownEvent;
+import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
