@@ -8,12 +8,16 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
+import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import org.jetbrains.annotations.NotNull;
+import java.util.concurrent.CompletableFuture;
 import static fr.raksrinana.rsndiscord.utils.Utilities.containsChannel;
 
 @EventListener
@@ -29,7 +33,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event){
 		super.onMessageReceived(event);
- 		if(!event.isFromGuild()){
+		if(!event.isFromGuild()){
 			return;
 		}
 		
@@ -49,11 +53,26 @@ public class AutoTodoEventListener extends ListenerAdapter{
 		}
 	}
 	
+	@Override
+	public void onChannelCreate(@NotNull ChannelCreateEvent event){
+		if(event.getChannelType() == ChannelType.GUILD_PUBLIC_THREAD){
+			var threadChannel = event.getChannel().asThreadChannel();
+			if(threadChannel.getParentChannel().getType() == ChannelType.FORUM){
+				sendButtons(threadChannel);
+			}
+		}
+		super.onChannelCreate(event);
+	}
+	
 	private void handleTodo(@NotNull MessageReceivedEvent event){
 		JDAWrappers.createThread(event.getMessage(), "reply-" + event.getMessageId()).submit()
 				.thenCompose(thread -> JDAWrappers.editThread(thread)
 						.setAutoArchiveDuration(ThreadChannel.AutoArchiveDuration.TIME_1_WEEK)
 						.submitAndGet())
-				.thenCompose(thread -> JDAWrappers.message(thread, ActionRow.of(buttons)).submit());
+				.thenCompose(this::sendButtons);
+	}
+	
+	private CompletableFuture<Message> sendButtons(ThreadChannel thread){
+		return JDAWrappers.message(thread, ActionRow.of(buttons)).submit();
 	}
 }
