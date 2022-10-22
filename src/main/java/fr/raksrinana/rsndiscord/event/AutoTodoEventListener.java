@@ -8,7 +8,6 @@ import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
@@ -17,17 +16,20 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import org.jetbrains.annotations.NotNull;
-import java.util.concurrent.CompletableFuture;
 import static fr.raksrinana.rsndiscord.utils.Utilities.containsChannel;
 
 @EventListener
 @Getter
 @Log4j2
 public class AutoTodoEventListener extends ListenerAdapter{
-	private static final ItemComponent[] buttons = {
+	private static final ItemComponent[] BUTTONS_NORMAL = {
 			new TodoMessageDeleteButtonHandler().asComponent(),
 			new TodoMessageKeepButtonHandler().asComponent(),
 			new TodoMessageKeepWithoutThreadButtonHandler().asComponent()
+	};
+	private static final ItemComponent[] BUTTONS_FORUM = {
+			new TodoMessageDeleteButtonHandler().asComponent(),
+			new TodoMessageKeepButtonHandler().asComponent()
 	};
 	
 	@Override
@@ -58,10 +60,9 @@ public class AutoTodoEventListener extends ListenerAdapter{
 		if(event.getChannelType() == ChannelType.GUILD_PUBLIC_THREAD){
 			var threadChannel = event.getChannel().asThreadChannel();
 			if(threadChannel.getParentChannel().getType() == ChannelType.FORUM){
-				sendButtons(threadChannel);
+				JDAWrappers.message(threadChannel, ActionRow.of(BUTTONS_FORUM)).submit();
 			}
 		}
-		super.onChannelCreate(event);
 	}
 	
 	private void handleTodo(@NotNull MessageReceivedEvent event){
@@ -69,10 +70,6 @@ public class AutoTodoEventListener extends ListenerAdapter{
 				.thenCompose(thread -> JDAWrappers.editThread(thread)
 						.setAutoArchiveDuration(ThreadChannel.AutoArchiveDuration.TIME_1_WEEK)
 						.submitAndGet())
-				.thenCompose(this::sendButtons);
-	}
-	
-	private CompletableFuture<Message> sendButtons(ThreadChannel thread){
-		return JDAWrappers.message(thread, ActionRow.of(buttons)).submit();
+				.thenCompose(thread -> JDAWrappers.message(thread, ActionRow.of(BUTTONS_NORMAL)).submit());
 	}
 }

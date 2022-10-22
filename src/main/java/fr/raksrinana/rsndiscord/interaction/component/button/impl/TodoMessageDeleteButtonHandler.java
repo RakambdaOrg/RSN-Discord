@@ -8,6 +8,7 @@ import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -28,8 +29,14 @@ public class TodoMessageDeleteButtonHandler extends SimpleButtonHandler{
 	public CompletableFuture<ComponentResult> handleGuild(@NotNull ButtonInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
 		var channel = event.getChannel();
 		
-		if(channel instanceof ThreadChannel threadChannel){
-			return handleThreadChannel(threadChannel);
+		if(channel.getType() == ChannelType.GUILD_PUBLIC_THREAD){
+			var threadChannel = channel.asThreadChannel();
+			if(threadChannel.getParentChannel().getType() == ChannelType.FORUM){
+				return handleForumPost(threadChannel);
+			}
+			else{
+				return handleThreadChannel(threadChannel);
+			}
 		}
 		else{
 			return handleDefault(event.getMessage());
@@ -46,6 +53,11 @@ public class TodoMessageDeleteButtonHandler extends SimpleButtonHandler{
 				})
 				.thenCompose(empty -> JDAWrappers.delete(threadChannel).submit())
 				.thenApply(empty -> ComponentResult.HANDLED);
+	}
+	
+	@NotNull
+	private CompletableFuture<ComponentResult> handleForumPost(@NotNull ThreadChannel threadChannel){
+		return JDAWrappers.delete(threadChannel).submit().thenApply(empty -> ComponentResult.HANDLED);
 	}
 	
 	@NotNull
