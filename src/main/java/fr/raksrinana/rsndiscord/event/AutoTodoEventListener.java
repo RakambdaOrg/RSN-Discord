@@ -11,6 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.thread.ThreadHiddenEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
@@ -33,7 +34,6 @@ public class AutoTodoEventListener extends ListenerAdapter{
 	
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event){
-		super.onMessageReceived(event);
 		if(!event.isFromGuild() || event.getChannelType() != ChannelType.TEXT){
 			return;
 		}
@@ -42,7 +42,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 			var guildConfiguration = Settings.get(event.getGuild());
 			var message = event.getMessage();
 			
-			if(containsChannel(guildConfiguration.getReactionsConfiguration().getAutoTodoChannels(), event.getChannel())){
+			if(containsChannel(guildConfiguration.getReactionsConfiguration().getAutoTodoChannels(), event.getChannel().asGuildMessageChannel())){
 				switch(message.getType()){
 					case CHANNEL_PINNED_ADD, THREAD_CREATED -> JDAWrappers.delete(message).submit();
 					case DEFAULT, INLINE_REPLY, SLASH_COMMAND, CONTEXT_COMMAND -> JDAWrappers
@@ -69,6 +69,26 @@ public class AutoTodoEventListener extends ListenerAdapter{
 			}
 			
 			JDAWrappers.message(threadChannel, ActionRow.of(BUTTONS_FORUM)).submit();
+		}
+	}
+	
+	@Override
+	public void onThreadHidden(@NotNull ThreadHiddenEvent event){
+		try(var ignored = LogContext.with(event.getGuild())){
+			var threadChannel = event.getThread();
+			var parentChannel = threadChannel.getParentChannel();
+			if(threadChannel.isLocked()){
+				return;
+			}
+			
+			var guildConfiguration = Settings.get(event.getGuild());
+			
+			if(containsChannel(guildConfiguration.getReactionsConfiguration().getAutoTodoChannels(), parentChannel)){
+				JDAWrappers.message(threadChannel, "Bump").submit();
+			}
+		}
+		catch(Exception e){
+			log.error("Error handling message", e);
 		}
 	}
 }
