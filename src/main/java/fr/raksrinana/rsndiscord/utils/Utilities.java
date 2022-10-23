@@ -1,13 +1,10 @@
 package fr.raksrinana.rsndiscord.utils;
 
 import fr.raksrinana.rsndiscord.Main;
-import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
-import fr.raksrinana.rsndiscord.settings.types.RoleConfiguration;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -48,32 +45,6 @@ public class Utilities{
 				NoSuchMethodException,
 				InvocationTargetException,
 				IllegalAccessException;
-	}
-	
-	/**
-	 * Tell if the member is a moderator.
-	 *
-	 * @param member The member to test.
-	 *
-	 * @return True if moderator, false otherwise.
-	 */
-	public static boolean isModerator(@NotNull Member member){
-		return isAdmin(member) || Settings.get(member.getGuild()).getModeratorRoles().stream()
-				.map(RoleConfiguration::getRole)
-				.flatMap(Optional::stream)
-				.anyMatch(role -> member.getRoles().contains(role));
-	}
-	
-	/**
-	 * Tell if the member is an admin.
-	 *
-	 * @param member The member to test.
-	 *
-	 * @return True if admin, false otherwise.
-	 */
-	public static boolean isAdmin(@NotNull Member member){
-		return isCreator(member) || member.getRoles().stream()
-				.anyMatch(role -> role.hasPermission(Permission.ADMINISTRATOR));
 	}
 	
 	/**

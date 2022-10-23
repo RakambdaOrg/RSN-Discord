@@ -15,12 +15,6 @@ import static fr.raksrinana.rsndiscord.interaction.command.CommandResult.HANDLED
 @BotSlashCommand
 @Log4j2
 public class TimeReactionCommand extends SimpleSlashCommand{
-	private static final String COMMENT_STR = "--";
-	private static final String CONTENT_OPTION_ID = "content";
-	private static final String EPISODE_OPTION_ID = "episode";
-	private static final String LINK_OPTION_ID = "link";
-	private static final String ARCHIVE_OPTION_ID = "archive";
-	
 	@Override
 	@NotNull
 	public String getId(){

@@ -5,14 +5,10 @@ import fr.raksrinana.rsndiscord.interaction.command.slash.api.BotSlashCommand;
 import fr.raksrinana.rsndiscord.interaction.command.slash.base.SimpleSlashCommand;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.IConfigurationAccessor;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.set.ChannelSetConfigurationAccessor;
-import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.set.RoleSetConfigurationAccessor;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.set.StringSetConfigurationAccessor;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.set.URLSetConfigurationAccessor;
-import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.CategoryConfigurationAccessor;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.ChannelConfigurationAccessor;
-import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.DoubleConfigurationAccessor;
 import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.LocaleConfigurationAccessor;
-import fr.raksrinana.rsndiscord.interaction.command.slash.impl.configuration.value.RoleConfigurationAccessor;
 import fr.raksrinana.rsndiscord.settings.ConfigurationOperation;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.settings.impl.GuildConfiguration;
@@ -56,27 +52,13 @@ public class ConfigurationCommand extends SimpleSlashCommand{
 	
 	public ConfigurationCommand(){
 		var accessors = new LinkedList<IConfigurationAccessor>();
-		accessors.add(new ChannelConfigurationAccessor("announceStartChannel", GuildConfiguration::getAnnounceStartChannel, GuildConfiguration::setAnnounceStartChannel));
-		accessors.add(new CategoryConfigurationAccessor("archiveCategory", GuildConfiguration::getArchiveCategory, GuildConfiguration::setArchiveCategory));
-		accessors.add(new ChannelSetConfigurationAccessor("autoThumbsChannels", GuildConfiguration::getAutoThumbsChannels));
 		accessors.add(new LocaleConfigurationAccessor("locale", GuildConfiguration::getLocale, GuildConfiguration::setLocale));
-		accessors.add(new RoleSetConfigurationAccessor("moderatorRoles", GuildConfiguration::getModeratorRoles));
 		
 		accessors.add(new ChannelConfigurationAccessor("anilist.mediaChangeChannel", s -> s.getAniListConfiguration().getMediaChangeChannel(), (s, v) -> s.getAniListConfiguration().setMediaChangeChannel(v)));
 		accessors.add(new ChannelConfigurationAccessor("anilist.notificationChannel", s -> s.getAniListConfiguration().getNotificationsChannel(), (s, v) -> s.getAniListConfiguration().setNotificationsChannel(v)));
-		accessors.add(new ChannelConfigurationAccessor("birthday.notificationChannel", s -> s.getBirthdays().getNotificationChannel(), (s, v) -> s.getBirthdays().setNotificationChannel(v)));
 		
 		accessors.add(new ChannelConfigurationAccessor("hermitcraft.streamChannel", s -> s.getHermitcraftConfiguration().getStreamingNotificationChannel(), (s, v) -> s.getHermitcraftConfiguration().setStreamingNotificationChannel(v)));
 		accessors.add(new ChannelConfigurationAccessor("hermitcraft.videoChannel", s -> s.getHermitcraftConfiguration().getVideoNotificationChannel(), (s, v) -> s.getHermitcraftConfiguration().setVideoNotificationChannel(v)));
-		
-		accessors.add(new ChannelConfigurationAccessor("joinleave.channel", s -> s.getJoinLeaveConfiguration().getChannel(), (s, v) -> s.getJoinLeaveConfiguration().setChannel(v)));
-		accessors.add(new StringSetConfigurationAccessor("joinleave.joinImages", s -> s.getJoinLeaveConfiguration().getJoinImages()));
-		accessors.add(new StringSetConfigurationAccessor("joinleave.leaveImages", s -> s.getJoinLeaveConfiguration().getLeaveImages()));
-		
-		accessors.add(new RoleSetConfigurationAccessor("randomkick.kickableRoles", s -> s.getRandomKick().getKickableRoles()));
-		accessors.add(new RoleConfigurationAccessor("randomkick.kickedRole", s -> s.getRandomKick().getKickedRole(), (s, v) -> s.getRandomKick().setKickedRole(v)));
-		accessors.add(new DoubleConfigurationAccessor("randomkick.kickRoleProbability", s -> s.getRandomKick().getKickRoleProbability(), (s, v) -> s.getRandomKick().setKickRoleProbability(v)));
-		accessors.add(new RoleSetConfigurationAccessor("randomkick.randomKickRolesPing", s -> s.getRandomKick().getRandomKickRolesPing()));
 		
 		accessors.add(new ChannelSetConfigurationAccessor("reactions.autoTodoChannels", s -> s.getReactionsConfiguration().getAutoTodoChannels()));
 		

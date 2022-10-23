@@ -7,14 +7,12 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Log4j2
@@ -32,15 +30,14 @@ public class TodoMessageDeleteButtonHandler extends SimpleButtonHandler{
 		if(channel.getType() == ChannelType.GUILD_PUBLIC_THREAD){
 			var threadChannel = channel.asThreadChannel();
 			if(threadChannel.getParentChannel().getType() == ChannelType.FORUM){
-				return handleForumPost(threadChannel);
+				return JDAWrappers.delete(threadChannel).submit()
+						.thenApply(empty -> ComponentResult.HANDLED);
 			}
-			else{
-				return handleThreadChannel(threadChannel);
-			}
+			
+			return handleThreadChannel(threadChannel);
 		}
-		else{
-			return handleDefault(event.getMessage());
-		}
+		
+		return CompletableFuture.completedFuture(ComponentResult.NOT_IMPLEMENTED);
 	}
 	
 	@NotNull
@@ -55,36 +52,9 @@ public class TodoMessageDeleteButtonHandler extends SimpleButtonHandler{
 				.thenApply(empty -> ComponentResult.HANDLED);
 	}
 	
-	@NotNull
-	private CompletableFuture<ComponentResult> handleForumPost(@NotNull ThreadChannel threadChannel){
-		return JDAWrappers.delete(threadChannel).submit().thenApply(empty -> ComponentResult.HANDLED);
-	}
-	
-	@NotNull
-	private CompletableFuture<ComponentResult> handleDefault(@NotNull Message message){
-		var deleteReference = Optional.ofNullable(message.getMessageReference())
-				.map(reference -> reference.resolve().submit().thenCompose(m -> JDAWrappers.delete(m).submit()))
-				.orElseGet(() -> CompletableFuture.completedFuture(null));
-		
-		var deleteMessage = JDAWrappers.delete(message).submit();
-		
-		var deleteThread = Optional.ofNullable(message.getStartedThread())
-				.map(thread -> JDAWrappers.delete(thread).submit()
-						.exceptionally(throwable -> {
-							log.error("Failed to delete thread {}", thread, throwable);
-							return null;
-						}))
-				.orElse(CompletableFuture.completedFuture(null));
-		
-		return deleteReference
-				.thenCompose(empty -> deleteMessage)
-				.thenCompose(empty -> deleteThread)
-				.thenApply(empty -> ComponentResult.HANDLED);
-	}
-	
 	@Override
 	@NotNull
 	public Button asComponent(){
-		return Button.success(getComponentId(), "Delete").withEmoji(Emoji.fromUnicode("U+1F5D1"));
+		return Button.success(getComponentId(), "Archive").withEmoji(Emoji.fromUnicode("U+1F5D1"));
 	}
 }

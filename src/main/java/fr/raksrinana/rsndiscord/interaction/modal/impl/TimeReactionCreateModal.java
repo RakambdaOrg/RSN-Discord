@@ -1,6 +1,5 @@
 package fr.raksrinana.rsndiscord.interaction.modal.impl;
 
-import fr.raksrinana.rsndiscord.interaction.component.button.impl.TimeReactionDeleteButtonHandler;
 import fr.raksrinana.rsndiscord.interaction.component.button.impl.TimeReactionReplyButtonHandler;
 import fr.raksrinana.rsndiscord.interaction.modal.ModalResult;
 import fr.raksrinana.rsndiscord.interaction.modal.api.ModalHandler;
@@ -13,15 +12,14 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import org.jetbrains.annotations.NotNull;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -34,7 +32,6 @@ public class TimeReactionCreateModal extends SimpleModalHandler{
 	private static final String BODY_ID = "body";
 	private static final String EPISODE_ID = "episode";
 	private static final String LINK_ID = "link";
-	private static final String ARCHIVE_ID = "archive";
 	
 	private static final String NO_SPOILER_STR = "--";
 	
@@ -83,15 +80,8 @@ public class TimeReactionCreateModal extends SimpleModalHandler{
 						}
 					});
 			
-			var buttons = new ArrayList<ItemComponent>();
-			buttons.add(new TimeReactionReplyButtonHandler().asComponent());
-			Optional.ofNullable(event.getValue(ARCHIVE_ID))
-					.map(ModalMapping::getAsString)
-					.filter(s -> !s.isBlank())
-					.ifPresent(archive -> buttons.add(new TimeReactionDeleteButtonHandler().asComponent()));
-			
 			return JDAWrappers.reply(event, messageContent.toString())
-					.addActionRow(buttons)
+					.addActionRow(List.of(new TimeReactionReplyButtonHandler().asComponent()))
 					.submit()
 					.thenAccept(message -> Settings.get(guild).getMediaReactionMessages().add(new MessageConfiguration(message)))
 					.thenApply(empty -> ModalResult.HANDLED)
@@ -138,11 +128,6 @@ public class TimeReactionCreateModal extends SimpleModalHandler{
 				.setRequired(false)
 				.build();
 		
-		var archive = TextInput.create(ARCHIVE_ID, "Archive", TextInputStyle.SHORT)
-				.setPlaceholder("Fill in anything to archive")
-				.setRequired(false)
-				.build();
-		
 		var link = TextInput.create(LINK_ID, "Link", TextInputStyle.SHORT)
 				.setRequired(false)
 				.build();
@@ -156,7 +141,6 @@ public class TimeReactionCreateModal extends SimpleModalHandler{
 				.addActionRows(
 						ActionRow.of(episode),
 						ActionRow.of(link),
-						ActionRow.of(archive),
 						ActionRow.of(body)
 				)
 				.build();

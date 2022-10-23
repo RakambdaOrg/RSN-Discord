@@ -2,7 +2,6 @@ package fr.raksrinana.rsndiscord.interaction.command.slash.impl.music;
 
 import fr.raksrinana.rsndiscord.interaction.command.CommandResult;
 import fr.raksrinana.rsndiscord.interaction.command.slash.base.group.SubSlashCommand;
-import fr.raksrinana.rsndiscord.interaction.command.permission.IPermission;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
@@ -16,7 +15,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 import static fr.raksrinana.rsndiscord.interaction.command.CommandResult.HANDLED;
-import static fr.raksrinana.rsndiscord.interaction.command.permission.SimplePermission.FALSE_BY_DEFAULT;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static java.util.Objects.isNull;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
@@ -49,12 +47,6 @@ public class SeekCommand extends SubSlashCommand{
 	@NotNull
 	protected Collection<? extends OptionData> getOptions(){
 		return List.of(new OptionData(STRING, TIME_OPTION_ID, "Time to seek").setRequired(true));
-	}
-	
-	@Override
-	@NotNull
-	public IPermission getPermission(){
-		return FALSE_BY_DEFAULT;
 	}
 	
 	@Override

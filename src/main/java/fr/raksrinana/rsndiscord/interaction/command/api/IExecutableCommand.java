@@ -2,12 +2,12 @@ package fr.raksrinana.rsndiscord.interaction.command.api;
 
 import fr.raksrinana.rsndiscord.interaction.command.CommandResult;
 import fr.raksrinana.rsndiscord.interaction.command.permission.IPermission;
+import fr.raksrinana.rsndiscord.interaction.command.permission.NoPermission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
 import org.jetbrains.annotations.NotNull;
-import static fr.raksrinana.rsndiscord.interaction.command.permission.SimplePermission.TRUE_BY_DEFAULT;
 
 public interface IExecutableCommand<T extends CommandInteraction> extends ICommand{
 	default boolean replyEphemeral(){
@@ -30,7 +30,7 @@ public interface IExecutableCommand<T extends CommandInteraction> extends IComma
 	
 	@NotNull
 	default IPermission getPermission(){
-		return TRUE_BY_DEFAULT;
+		return NoPermission.INSTANCE;
 	}
 	
 	default boolean isSpecificAllowed(@NotNull Member member){

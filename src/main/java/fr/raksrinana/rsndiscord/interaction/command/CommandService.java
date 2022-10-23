@@ -5,7 +5,6 @@ import fr.raksrinana.rsndiscord.interaction.command.api.ICommand;
 import fr.raksrinana.rsndiscord.interaction.command.api.IExecutableCommand;
 import fr.raksrinana.rsndiscord.interaction.command.api.IRegistrableCommand;
 import fr.raksrinana.rsndiscord.interaction.command.slash.api.BotSlashCommand;
-import fr.raksrinana.rsndiscord.interaction.command.user.api.BotUserCommand;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -30,6 +29,7 @@ public class CommandService{
 	private static final Map<String, ICommand> commands;
 	private static final Map<String, IExecutableCommand<?>> executableCommands;
 	private static final Map<String, IRegistrableCommand> registrableCommands;
+	
 	static{
 		commands = getAllCommands()
 				.map(ICommand::getCommandMap)
@@ -47,12 +47,10 @@ public class CommandService{
 				.map(entry -> Map.entry(entry.getKey(), (IRegistrableCommand) entry.getValue()))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
+	
 	@NotNull
 	private static Stream<ICommand> getAllCommands(){
-		return Stream.concat(
-				getAllAnnotatedWith(BotSlashCommand.class, clazz -> (ICommand) clazz.getConstructor().newInstance()),
-				getAllAnnotatedWith(BotUserCommand.class, clazz -> (ICommand) clazz.getConstructor().newInstance())
-		);
+		return getAllAnnotatedWith(BotSlashCommand.class, clazz -> (ICommand) clazz.getConstructor().newInstance());
 	}
 	
 	@NotNull

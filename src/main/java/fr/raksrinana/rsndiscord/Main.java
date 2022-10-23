@@ -4,12 +4,8 @@ import fr.raksrinana.rsndiscord.api.twitter.TwitterApi;
 import fr.raksrinana.rsndiscord.event.EventListener;
 import fr.raksrinana.rsndiscord.interaction.command.CommandService;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
-import fr.raksrinana.rsndiscord.reaction.ReactionUtils;
-import fr.raksrinana.rsndiscord.reply.UserReplyEventListener;
 import fr.raksrinana.rsndiscord.runner.RunnerUtils;
 import fr.raksrinana.rsndiscord.settings.Settings;
-import fr.raksrinana.rsndiscord.settings.impl.GuildConfiguration;
-import fr.raksrinana.rsndiscord.settings.types.ChannelConfiguration;
 import fr.raksrinana.rsndiscord.utils.Utilities;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import fr.raksrinana.rsndiscord.utils.json.JacksonUtils;
@@ -32,12 +28,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.OnlineStatus.ONLINE;
 
 @Log4j2
@@ -92,7 +86,6 @@ public class Main{
 					.setStatus(ONLINE)
 					.setActivity(Activity.of(Activity.ActivityType.PLAYING, "Bip bip"));
 			
-			ReactionUtils.registerAllHandlers();
 			RunnerUtils.registerAllScheduledRunners();
 			
 			CommandService.registerGlobalCommands().thenCompose(empty -> {
@@ -110,7 +103,6 @@ public class Main{
 			});
 			
 			log.info("Started");
-			announceStart();
 		}
 		catch(InvalidTokenException | InterruptedException e){
 			log.error("Couldn't start bot", e);
@@ -163,26 +155,10 @@ public class Main{
 	}
 	
 	/**
-	 * Announce the bot started in channels defined in the configuration.
-	 *
-	 * @see GuildConfiguration#getAnnounceStartChannel()
-	 */
-	private static void announceStart(){
-		Main.jda.getGuilds().stream()
-				.map(Settings::get)
-				.map(GuildConfiguration::getAnnounceStartChannel)
-				.flatMap(Optional::stream)
-				.map(ChannelConfiguration::getChannel)
-				.flatMap(Optional::stream)
-				.forEach(channel -> JDAWrappers.message(channel, translate(channel.getGuild(), "started")).submit());
-	}
-	
-	/**
 	 * Close the bot.
 	 */
 	public static void close(){
 		TwitterApi.removeStreamFilters();
-		UserReplyEventListener.stopAll();
 		RSNAudioManager.stopAll();
 		CommandService.resetAllIfDev();
 		executorService.shutdownNow();

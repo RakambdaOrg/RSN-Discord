@@ -21,6 +21,16 @@ public class EditThreadWrapper extends ActionWrapper<Void, ThreadChannelManager>
 		return this;
 	}
 	
+	public EditThreadWrapper setArchived(boolean archived){
+		getAction().setArchived(archived);
+		return this;
+	}
+	
+	public EditThreadWrapper setLocked(boolean locked){
+		getAction().setLocked(locked);
+		return this;
+	}
+	
 	@Override
 	protected void logSuccess(Void value){
 		log.info("Edited thread {}", thread);

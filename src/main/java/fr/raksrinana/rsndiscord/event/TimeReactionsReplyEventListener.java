@@ -20,6 +20,9 @@ import static net.dv8tion.jda.api.entities.MessageType.INLINE_REPLY;
 @Getter
 @Log4j2
 @Deprecated
+/**
+ * @deprecated Should use commands instead of scanning messages
+ */
 public class TimeReactionsReplyEventListener extends ListenerAdapter{
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event){
@@ -30,20 +33,21 @@ public class TimeReactionsReplyEventListener extends ListenerAdapter{
 		
 		var guild = event.getGuild();
 		var author = event.getAuthor();
+		var message = event.getMessage();
+		
+		if(message.getType() != INLINE_REPLY || author.isBot()){
+			return;
+		}
 		
 		try(var ignored = LogContext.with(guild).with(author)){
-			var message = event.getMessage();
-			
-			if(message.getType() != INLINE_REPLY || author.isBot()){
-				return;
-			}
 			
 			var messageReference = message.getMessageReference();
 			if(isNull(messageReference)){
 				return;
 			}
 			
-			if(Settings.get(guild).getMediaReactionMessages().contains(new MessageConfiguration(messageReference.getChannelIdLong(), messageReference.getMessageIdLong()))){
+			var messageConfiguration = new MessageConfiguration(messageReference.getChannelIdLong(), messageReference.getMessageIdLong());
+			if(Settings.get(guild).getMediaReactionMessages().contains(messageConfiguration)){
 				messageReference.resolve().submit().thenAccept(reference -> {
 					var original = Arrays.stream(reference.getContentRaw().split("\n"))
 							.filter(line -> !line.isBlank())

@@ -9,7 +9,6 @@ import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -35,7 +34,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event){
 		super.onMessageReceived(event);
-		if(!event.isFromGuild()){
+		if(!event.isFromGuild() || event.getChannelType() != ChannelType.TEXT){
 			return;
 		}
 		
@@ -46,7 +45,9 @@ public class AutoTodoEventListener extends ListenerAdapter{
 			if(containsChannel(guildConfiguration.getReactionsConfiguration().getAutoTodoChannels(), event.getChannel())){
 				switch(message.getType()){
 					case CHANNEL_PINNED_ADD, THREAD_CREATED -> JDAWrappers.delete(message).submit();
-					case DEFAULT, INLINE_REPLY, SLASH_COMMAND, CONTEXT_COMMAND -> handleTodo(event);
+					case DEFAULT, INLINE_REPLY, SLASH_COMMAND, CONTEXT_COMMAND -> JDAWrappers
+							.createThread(event.getMessage(), "reply-" + event.getMessageId()).submit()
+							.thenCompose(thread -> JDAWrappers.message(thread, ActionRow.of(BUTTONS_NORMAL)).submit());
 				}
 			}
 		}
@@ -57,19 +58,17 @@ public class AutoTodoEventListener extends ListenerAdapter{
 	
 	@Override
 	public void onChannelCreate(@NotNull ChannelCreateEvent event){
-		if(event.getChannelType() == ChannelType.GUILD_PUBLIC_THREAD){
-			var threadChannel = event.getChannel().asThreadChannel();
-			if(threadChannel.getParentChannel().getType() == ChannelType.FORUM){
-				JDAWrappers.message(threadChannel, ActionRow.of(BUTTONS_FORUM)).submit();
-			}
+		if(!event.isFromGuild() || event.getChannelType() != ChannelType.GUILD_PUBLIC_THREAD){
+			return;
 		}
-	}
-	
-	private void handleTodo(@NotNull MessageReceivedEvent event){
-		JDAWrappers.createThread(event.getMessage(), "reply-" + event.getMessageId()).submit()
-				.thenCompose(thread -> JDAWrappers.editThread(thread)
-						.setAutoArchiveDuration(ThreadChannel.AutoArchiveDuration.TIME_1_WEEK)
-						.submitAndGet())
-				.thenCompose(thread -> JDAWrappers.message(thread, ActionRow.of(BUTTONS_NORMAL)).submit());
+		
+		try(var ignored = LogContext.with(event.getGuild())){
+			var threadChannel = event.getChannel().asThreadChannel();
+			if(threadChannel.getParentChannel().getType() != ChannelType.FORUM){
+				return;
+			}
+			
+			JDAWrappers.message(threadChannel, ActionRow.of(BUTTONS_FORUM)).submit();
+		}
 	}
 }

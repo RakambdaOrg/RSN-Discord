@@ -2,8 +2,8 @@ package fr.raksrinana.rsndiscord.interaction.command.slash.impl;
 
 import fr.raksrinana.rsndiscord.interaction.command.slash.api.BotSlashCommand;
 import fr.raksrinana.rsndiscord.interaction.command.slash.base.group.SubCommandsGroupSlashCommand;
-import fr.raksrinana.rsndiscord.interaction.command.slash.impl.moderation.*;
-import fr.raksrinana.rsndiscord.interaction.command.slash.impl.moderation.NicknameCommand;
+import fr.raksrinana.rsndiscord.interaction.command.slash.impl.moderation.ClearCommand;
+import fr.raksrinana.rsndiscord.interaction.command.slash.impl.moderation.ClearThreadCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import org.jetbrains.annotations.NotNull;
@@ -13,12 +13,6 @@ public class ModerationGroupCommand extends SubCommandsGroupSlashCommand{
 	public ModerationGroupCommand(){
 		addSubcommand(new ClearCommand());
 		addSubcommand(new ClearThreadCommand());
-		addSubcommand(new ColorCommand());
-		addSubcommand(new ListJoinsCommand());
-		addSubcommand(new NicknameCommand());
-		addSubcommand(new RandomKickCommand());
-		addSubcommand(new RemoveAllRoleCommand());
-		addSubcommand(new SoftBanCommand());
 	}
 	
 	@Override
@@ -33,6 +27,6 @@ public class ModerationGroupCommand extends SubCommandsGroupSlashCommand{
 	
 	@Override
 	public DefaultMemberPermissions getDefaultPermission(){
-		return DefaultMemberPermissions.enabledFor(Permission.BAN_MEMBERS, Permission.KICK_MEMBERS);
+		return DefaultMemberPermissions.enabledFor(Permission.MANAGE_CHANNEL);
 	}
 }

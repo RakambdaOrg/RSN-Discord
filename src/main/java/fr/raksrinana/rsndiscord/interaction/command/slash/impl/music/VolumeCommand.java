@@ -2,7 +2,6 @@ package fr.raksrinana.rsndiscord.interaction.command.slash.impl.music;
 
 import fr.raksrinana.rsndiscord.interaction.command.CommandResult;
 import fr.raksrinana.rsndiscord.interaction.command.slash.base.group.SubSlashCommand;
-import fr.raksrinana.rsndiscord.interaction.command.permission.IPermission;
 import fr.raksrinana.rsndiscord.music.RSNAudioManager;
 import fr.raksrinana.rsndiscord.settings.Settings;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
@@ -14,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 import static fr.raksrinana.rsndiscord.interaction.command.CommandResult.HANDLED;
-import static fr.raksrinana.rsndiscord.interaction.command.permission.SimplePermission.FALSE_BY_DEFAULT;
 import static fr.raksrinana.rsndiscord.utils.LangUtils.translate;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
 
@@ -36,12 +34,6 @@ public class VolumeCommand extends SubSlashCommand{
 	@Override
 	public boolean replyEphemeral(){
 		return false;
-	}
-	
-	@Override
-	@NotNull
-	public IPermission getPermission(){
-		return FALSE_BY_DEFAULT;
 	}
 	
 	@Override

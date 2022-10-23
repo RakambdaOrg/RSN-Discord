@@ -5,7 +5,6 @@ import fr.raksrinana.rsndiscord.log.LogContext;
 import fr.raksrinana.rsndiscord.utils.jda.JDAWrappers;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.Component;
 import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
@@ -22,12 +21,6 @@ public class InteractionListener extends ListenerAdapter{
 	public void onButtonInteraction(@NotNull ButtonInteractionEvent event){
 		super.onButtonInteraction(event);
 		onInteraction(event, ComponentService::getButtonHandler);
-	}
-	
-	@Override
-	public void onSelectMenuInteraction(@NotNull SelectMenuInteractionEvent event){
-		super.onSelectMenuInteraction(event);
-		onInteraction(event, ComponentService::getSelectionMenuHandler);
 	}
 	
 	private <T extends Component, E extends ComponentInteraction> void onInteraction(@NotNull E event, @NotNull Function<String, Optional<? extends IComponentHandler<T, E>>> handlerSupplier){
