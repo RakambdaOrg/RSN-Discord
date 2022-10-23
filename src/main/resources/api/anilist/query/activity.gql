@@ -1,0 +1,24 @@
+#include "./fragment/fuzzyDate.gql"
+#include "./fragment/media.gql"
+#include "./fragment/pageInfo.gql"
+
+query($page: Int, $perPage: Int, $userId: Int, $date: Int){
+    Page (page: $page, perPage: $perPage) {
+        pageInfo {
+            ...PageInfoParts
+        }
+        activities(userId: $userId, createdAt_greater: $date){
+            ... on ListActivity {
+                id
+                userId
+                type
+                createdAt
+                progress
+                siteUrl
+                media {
+                    ... MediaParts
+                }
+            }
+        }
+    }
+}

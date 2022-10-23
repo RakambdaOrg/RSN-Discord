@@ -1,0 +1,6 @@
+# @name Get all tasks
+GET {{endpoint}}/task/
+
+###
+# @name Trigger task
+POST {{endpoint}}/task/anilist.activity/trigger

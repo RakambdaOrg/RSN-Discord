@@ -1,0 +1,18 @@
+logging:
+  level:
+    root: INFO
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    generate-ddl: false
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  jackson:
+    visibility:
+      field: any
+      getter: none
+      setter: none
+      creator: none
+      is-getter: none
+    deserialization:
+      fail-on-unknown-properties: true

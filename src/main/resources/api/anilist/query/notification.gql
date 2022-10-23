@@ -1,0 +1,59 @@
+#include "./fragment/fuzzyDate.gql"
+#include "./fragment/media.gql"
+#include "./fragment/pageInfo.gql"
+
+query($page: Int, $perPage: Int, $typeIn: [NotificationType]){
+    Page (page: $page, perPage: $perPage) {
+        pageInfo {
+            ...PageInfoParts
+        }
+        notifications(type_in: $typeIn){
+            ... on AiringNotification {
+                id
+                type
+                episode
+                createdAt
+                media{
+                    ...MediaParts
+                }
+            }
+            ... on RelatedMediaAdditionNotification {
+                id
+                type
+                createdAt
+                media{
+                    ...MediaParts
+                }
+            }
+            ... on MediaDataChangeNotification {
+                id
+                type
+                context
+                reason
+                createdAt
+                media{
+                    ...MediaParts
+                }
+            }
+            ... on MediaMergeNotification {
+                id
+                type
+                deletedMediaTitles
+                context
+                reason
+                createdAt
+                media{
+                    ...MediaParts
+                }
+            }
+            ... on MediaDeletionNotification {
+                id
+                type
+                deletedMediaTitle
+                context
+                reason
+                createdAt
+            }
+        }
+    }
+}

@@ -1,0 +1,40 @@
+fragment MediaParts on Media {
+    id
+    season
+    type
+    format
+    status
+    episodes
+    chapters
+    volumes
+    genres
+    synonyms
+    isAdult
+    siteUrl
+    source(version: 3)
+    title {
+        userPreferred
+        romaji
+        english
+        native
+    }
+    startDate {
+        ... FuzzyDateParts
+    }
+    endDate {
+        ... FuzzyDateParts
+    }
+    coverImage {
+        large
+    }
+    rankings {
+        id
+        rank
+        type
+        format
+        year
+        season
+        allTime
+        context
+    }
+}

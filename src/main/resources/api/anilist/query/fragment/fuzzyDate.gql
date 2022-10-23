@@ -1,0 +1,5 @@
+fragment FuzzyDateParts on FuzzyDate {
+    year
+    month
+    day
+}

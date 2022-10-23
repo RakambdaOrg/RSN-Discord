@@ -1,0 +1,34 @@
+#include "./fragment/fuzzyDate.gql"
+#include "./fragment/media.gql"
+#include "./fragment/pageInfo.gql"
+
+query($page: Int, $perPage: Int, $userId: Int){
+    Page (page: $page, perPage: $perPage) {
+        pageInfo {
+            ...PageInfoParts
+        }
+        mediaList(userId: $userId) {
+            id
+            private
+            progress
+            progressVolumes
+            priority
+            customLists
+            score(format: POINT_100)
+            status
+            updatedAt
+            createdAt
+            repeat
+            notes
+            startedAt {
+                ...FuzzyDateParts
+            }
+            completedAt {
+                ...FuzzyDateParts
+            }
+            media {
+                ...MediaParts
+            }
+        }
+    }
+}
