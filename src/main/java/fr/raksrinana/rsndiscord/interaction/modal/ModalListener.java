@@ -40,7 +40,7 @@ public class ModalListener extends ListenerAdapter{
 	private void performInteraction(@NotNull ModalInteractionEvent event, @NotNull IModalHandler modal){
 		try{
 			if(modal.deferReply()){
-				event.deferReply().submit();
+				event.deferReply().complete();
 			}
 			
 			CompletableFuture<ModalResult> result;
