@@ -55,6 +55,6 @@ public class TodoMessageDeleteButtonHandler extends SimpleButtonHandler{
 	@Override
 	@NotNull
 	public Button asComponent(){
-		return Button.success(getComponentId(), "Delete").withEmoji(Emoji.fromUnicode("U+1F5D1"));
+		return Button.danger(getComponentId(), "Delete").withEmoji(Emoji.fromUnicode("U+1F5D1"));
 	}
 }

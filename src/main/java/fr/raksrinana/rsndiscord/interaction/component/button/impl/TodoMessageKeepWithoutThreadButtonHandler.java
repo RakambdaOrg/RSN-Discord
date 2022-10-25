@@ -43,6 +43,6 @@ public class TodoMessageKeepWithoutThreadButtonHandler extends SimpleButtonHandl
 	@Override
 	@NotNull
 	public Button asComponent(){
-		return Button.success(getComponentId(), "Archive (only message)").withEmoji(Emoji.fromUnicode("U+1F4E8"));
+		return Button.primary(getComponentId(), "Archive (only message)").withEmoji(Emoji.fromUnicode("U+1F4E8"));
 	}
 }

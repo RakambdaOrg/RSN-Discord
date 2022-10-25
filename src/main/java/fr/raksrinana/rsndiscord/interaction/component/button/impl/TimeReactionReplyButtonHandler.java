@@ -36,6 +36,6 @@ public class TimeReactionReplyButtonHandler extends SimpleButtonHandler{
 	@Override
 	@NotNull
 	public Button asComponent(){
-		return Button.success(getComponentId(), "Reply").withEmoji(Emoji.fromUnicode("U+21A9"));
+		return Button.primary(getComponentId(), "Reply").withEmoji(Emoji.fromUnicode("U+21A9"));
 	}
 }
