@@ -55,6 +55,8 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.Color;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Log4j2
 public class JDAWrappers{
@@ -281,5 +283,11 @@ public class JDAWrappers{
 	@NotNull
 	public static HistoryChannelWrapper history(@NotNull MessageChannel channel){
 		return new HistoryChannelWrapper(channel);
+	}
+	
+	@NotNull
+	public static CompletableFuture<Void> delay(int seconds){
+		var delay = CompletableFuture.delayedExecutor(seconds, TimeUnit.SECONDS);
+		return CompletableFuture.supplyAsync(() -> null, delay);
 	}
 }
