@@ -97,6 +97,11 @@ public class TimeReactionCreateModal extends SimpleModalHandler{
 		}
 	}
 	
+	@Override
+	public boolean deferReply(){
+		return false;
+	}
+	
 	@NotNull
 	private static String convertTime(@NotNull String string) throws IllegalArgumentException{
 		if(string.isBlank() || string.chars().anyMatch(c -> !isDigit(c))){
