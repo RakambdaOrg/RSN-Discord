@@ -32,7 +32,7 @@ public class TodoMessageKeepButtonHandler extends SimpleButtonHandler{
 		var threadChannel = event.getChannel().asThreadChannel();
 		
 		return JDAWrappers.delete(message).submit()
-				.thenCompose(v -> JDAWrappers.editThread(threadChannel).setLocked(true).submit())
+				.thenCompose(v -> JDAWrappers.editThread(threadChannel).setArchived(true).submit())
 				.thenApply(empty -> ComponentResult.HANDLED);
 	}
 	
