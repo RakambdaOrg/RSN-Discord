@@ -40,6 +40,7 @@ dependencies {
 }
 
 repositories {
+    mavenCentral()
     maven {
         name = "m2-dv8tion"
         url = uri("https://m2.dv8tion.net/releases")
@@ -48,7 +49,6 @@ repositories {
         name = "jitpack"
         url = uri("https://jitpack.io")
     }
-    mavenCentral()
 }
 
 tasks {
