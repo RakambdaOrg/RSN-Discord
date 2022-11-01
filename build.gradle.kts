@@ -99,7 +99,7 @@ jib {
     container {
         val className: String by project
 
-        creationTime = "USE_CURRENT_TIMESTAMP"
+        creationTime.set("USE_CURRENT_TIMESTAMP")
         mainClass = className
 
         ports = listOf("8080")
