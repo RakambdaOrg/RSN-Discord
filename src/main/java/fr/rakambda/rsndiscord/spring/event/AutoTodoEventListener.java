@@ -84,7 +84,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 			
 			log.info("Handling auto-todo in {}", event.getChannel());
 			
-			JDAWrappers.delay(5)
+			JDAWrappers.delay(2)
 					.thenCompose(empty -> JDAWrappers.message(threadChannel, ActionRow.of(BUTTONS_FORUM)).submit());
 		}
 	}
