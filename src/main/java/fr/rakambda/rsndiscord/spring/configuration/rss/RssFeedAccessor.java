@@ -39,12 +39,13 @@ public class RssFeedAccessor implements IConfigurationAccessor{
 	
 	@Override
 	public boolean remove(long guildId, @NotNull String value){
-		return rssRepository.deleteAllByGuild_IdAndUrl(guildId, value.trim());
+		return rssRepository.deleteAllByGuild_IdAndUrl(guildId, value.trim()) > 0;
 	}
 	
 	@Override
 	public boolean reset(long guildId){
-		return rssRepository.deleteAllByGuild_Id(guildId);
+		rssRepository.deleteAllByGuild_Id(guildId);
+		return true;
 	}
 	
 	@Override

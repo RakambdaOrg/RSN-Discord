@@ -43,12 +43,13 @@ public class TwitterUserAccessor implements IConfigurationAccessor{
 	
 	@Override
 	public boolean remove(long guildId, @NotNull String value){
-		return twitterRepository.deleteAllByGuild_IdAndTypeAndSearch(guildId, TWITTER_TYPE, value.trim());
+		return twitterRepository.deleteAllByGuild_IdAndTypeAndSearch(guildId, TWITTER_TYPE, value.trim()) > 0;
 	}
 	
 	@Override
 	public boolean reset(long guildId){
-		return twitterRepository.deleteAllByGuild_IdAndType(guildId, TWITTER_TYPE);
+		twitterRepository.deleteAllByGuild_IdAndType(guildId, TWITTER_TYPE);
+		return true;
 	}
 	
 	@Override

@@ -24,10 +24,10 @@ public interface ChannelRepository extends JpaRepository<ChannelEntity, Integer>
 	List<ChannelEntity> findAllByGuild_IdAndType(long guildId, @NotNull ChannelType type);
 	
 	@CacheEvict
-	boolean deleteAllByGuild_IdAndTypeAndChannelId(long guildId, @NotNull ChannelType type, long channelId);
+	int deleteAllByGuild_IdAndTypeAndChannelId(long guildId, @NotNull ChannelType type, long channelId);
 	
 	@CacheEvict
-	boolean deleteAllByGuild_IdAndType(long guildId, @NotNull ChannelType type);
+	int deleteAllByGuild_IdAndType(long guildId, @NotNull ChannelType type);
 	
 	@Override
 	@CachePut

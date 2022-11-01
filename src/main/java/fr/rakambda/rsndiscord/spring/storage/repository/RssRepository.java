@@ -11,7 +11,7 @@ public interface RssRepository extends JpaRepository<RssEntity, Integer>{
 	@NotNull
 	List<RssEntity> findAllByGuild_Id(long guildId);
 	
-	boolean deleteAllByGuild_IdAndUrl(long guildId, String url);
+	int deleteAllByGuild_IdAndUrl(long guildId, String url);
 	
-	boolean deleteAllByGuild_Id(long guildId);
+	int deleteAllByGuild_Id(long guildId);
 }

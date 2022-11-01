@@ -34,12 +34,13 @@ public abstract class ChannelAccessor implements IConfigurationAccessor{
 	
 	@Override
 	public boolean remove(long guildId, @NotNull String value){
-		return channelRepository.deleteAllByGuild_IdAndTypeAndChannelId(guildId, channelType, Long.parseLong(value));
+		return channelRepository.deleteAllByGuild_IdAndTypeAndChannelId(guildId, channelType, Long.parseLong(value)) > 0;
 	}
 	
 	@Override
 	public boolean reset(long guildId){
-		return channelRepository.deleteAllByGuild_IdAndType(guildId, channelType);
+		channelRepository.deleteAllByGuild_IdAndType(guildId, channelType);
+		return true;
 	}
 	
 	@Override
