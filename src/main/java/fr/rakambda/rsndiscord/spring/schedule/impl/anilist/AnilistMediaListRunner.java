@@ -174,7 +174,7 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 				.setAuthor(user.getName(), null, user.getAvatarUrl())
 				.setTitle(localizationService.translate(locale, "anilist.list-info"), media.getUrl())
 				.setColor(mediaList.getStatus().getColor())
-				.addField(localizationService.translate(locale, "anilist.list-status"), mediaList.getStatus().toString(), true)
+				.addField(localizationService.translate(locale, "anilist.list-status"), mediaList.getStatus().getValue(), true)
 				.setTimestamp(mediaList.getUpdatedAt());
 		
 		Optional.ofNullable(mediaList.getScore())
