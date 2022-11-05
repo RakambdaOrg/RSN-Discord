@@ -158,38 +158,39 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 	private void sendUserElements(@NotNull User user, @NotNull Collection<Notification> notifications, @NotNull Collection<GuildMessageChannel> channels){
 		channels.stream()
 				.filter(c -> c.getGuild().isMember(user))
-				.forEach(c -> sendUserElements(c, notifications));
+				.forEach(c -> sendUserElements(c, user, notifications));
 	}
 	
-	private void sendUserElements(@NotNull GuildMessageChannel channel, @NotNull Collection<Notification> notifications){
+	private void sendUserElements(@NotNull GuildMessageChannel channel, @NotNull User user, @NotNull Collection<Notification> notifications){
 		notifications.stream()
-				.map(n -> buildEmbed(n, channel.getGuild().getLocale()))
+				.map(n -> buildEmbed(n, user, channel.getGuild().getLocale()))
 				.forEach(e -> JDAWrappers.message(channel, e).submit());
 	}
 	
 	@NotNull
-	private MessageEmbed buildEmbed(@NotNull Notification notification, @NotNull DiscordLocale locale){
+	private MessageEmbed buildEmbed(@NotNull Notification notification, @NotNull User user, @NotNull DiscordLocale locale){
 		if(notification instanceof AiringNotification airingNotification){
-			return buildTypeEmbed(airingNotification, locale);
+			return buildTypeEmbed(airingNotification, user, locale);
 		}
 		if(notification instanceof RelatedMediaAdditionNotification relatedMediaAdditionNotification){
-			return buildTypeEmbed(relatedMediaAdditionNotification, locale);
+			return buildTypeEmbed(relatedMediaAdditionNotification, user, locale);
 		}
 		if(notification instanceof MediaDataChangeNotification mediaDataChangeNotification){
-			return buildTypeEmbed(mediaDataChangeNotification, locale);
+			return buildTypeEmbed(mediaDataChangeNotification, user, locale);
 		}
 		if(notification instanceof MediaMergeNotification mediaMergeNotification){
-			return buildTypeEmbed(mediaMergeNotification, locale);
+			return buildTypeEmbed(mediaMergeNotification, user, locale);
 		}
 		if(notification instanceof MediaDeletionNotification mediaDeletionNotification){
-			return buildTypeEmbed(mediaDeletionNotification);
+			return buildTypeEmbed(mediaDeletionNotification, user);
 		}
 		throw new IllegalStateException("Unknown type " + notification.getClass().getSimpleName());
 	}
 	
 	@NotNull
-	private MessageEmbed buildTypeEmbed(@NotNull MediaDeletionNotification notification){
+	private MessageEmbed buildTypeEmbed(@NotNull MediaDeletionNotification notification, @NotNull User user){
 		return new EmbedBuilder()
+				.setAuthor(user.getName(), null, user.getAvatarUrl())
 				.setTitle("Media entry deleted")
 				.setColor(Color.RED)
 				.addField("Deleted titles", notification.getDeletedMediaTitle(), true)
@@ -200,12 +201,13 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 	}
 	
 	@NotNull
-	private MessageEmbed buildTypeEmbed(@NotNull MediaMergeNotification notification, @NotNull DiscordLocale locale){
+	private MessageEmbed buildTypeEmbed(@NotNull MediaMergeNotification notification, @NotNull User user, @NotNull DiscordLocale locale){
 		var deletedTitles = notification.getDeletedMediaTitles().stream()
 				.map("`%s`"::formatted)
 				.collect(Collectors.joining(", "));
 		
 		var builder = new EmbedBuilder()
+				.setAuthor(user.getName(), null, user.getAvatarUrl())
 				.setTitle("Media entries merged", notification.getMedia().getUrl())
 				.setColor(Color.ORANGE)
 				.addField("Deleted titles", deletedTitles, true)
@@ -221,8 +223,9 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 	}
 	
 	@NotNull
-	private MessageEmbed buildTypeEmbed(@NotNull MediaDataChangeNotification notification, @NotNull DiscordLocale locale){
+	private MessageEmbed buildTypeEmbed(@NotNull MediaDataChangeNotification notification, @NotNull User user, @NotNull DiscordLocale locale){
 		var builder = new EmbedBuilder()
+				.setAuthor(user.getName(), null, user.getAvatarUrl())
 				.setTitle("Media data changed", notification.getMedia().getUrl())
 				.setColor(Color.ORANGE)
 				.addField("Context", notification.getContext(), true)
@@ -237,8 +240,9 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 	}
 	
 	@NotNull
-	private MessageEmbed buildTypeEmbed(@NotNull RelatedMediaAdditionNotification notification, @NotNull DiscordLocale locale){
+	private MessageEmbed buildTypeEmbed(@NotNull RelatedMediaAdditionNotification notification, @NotNull User user, @NotNull DiscordLocale locale){
 		var builder = new EmbedBuilder()
+				.setAuthor(user.getName(), null, user.getAvatarUrl())
 				.setTitle(localizationService.translate(locale, "anilist.related"), notification.getMedia().getUrl())
 				.setColor(Color.PINK)
 				.addField(localizationService.translate(locale, "anilist.media"), "", false)
@@ -250,8 +254,9 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 	}
 	
 	@NotNull
-	private MessageEmbed buildTypeEmbed(@NotNull AiringNotification notification, @NotNull DiscordLocale locale){
+	private MessageEmbed buildTypeEmbed(@NotNull AiringNotification notification, @NotNull User user, @NotNull DiscordLocale locale){
 		var builder = new EmbedBuilder()
+				.setAuthor(user.getName(), null, user.getAvatarUrl())
 				.setTitle(localizationService.translate(locale, "anilist.release"), notification.getMedia().getUrl())
 				.setColor(Color.GREEN)
 				.addField(localizationService.translate(locale, "anilist.episode"), String.valueOf(notification.getEpisode()), true)

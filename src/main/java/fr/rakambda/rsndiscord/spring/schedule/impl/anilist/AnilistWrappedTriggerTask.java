@@ -5,6 +5,7 @@ import fr.rakambda.rsndiscord.spring.api.anilist.response.gql.media.AnimeMedia;
 import fr.rakambda.rsndiscord.spring.api.anilist.response.gql.media.MangaMedia;
 import fr.rakambda.rsndiscord.spring.api.anilist.response.gql.media.Media;
 import fr.rakambda.rsndiscord.spring.api.anilist.response.gql.media.MediaFormat;
+import fr.rakambda.rsndiscord.spring.api.anilist.response.gql.media.MediaRank;
 import fr.rakambda.rsndiscord.spring.api.anilist.response.gql.media.MediaStatus;
 import fr.rakambda.rsndiscord.spring.api.anilist.response.gql.media.MediaType;
 import fr.rakambda.rsndiscord.spring.schedule.WrappedTriggerTask;
@@ -15,7 +16,9 @@ import net.dv8tion.jda.api.interactions.DiscordLocale;
 import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 public abstract class AnilistWrappedTriggerTask extends WrappedTriggerTask{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -61,8 +64,9 @@ public abstract class AnilistWrappedTriggerTask extends WrappedTriggerTask{
 				.map(DF::format)
 				.ifPresent(d -> builder.addField(localizationService.translate(locale, "anilist.ended"), d, true));
 		
-		media.getRankings()
-				.forEach(ranking -> builder.addField("Ranking", ranking.getContext(), true));
+		Optional.ofNullable(media.getRankings()).orElse(Set.of()).stream()
+				.map(this::mapRanking)
+				.forEach(ranking -> builder.addField("anilist.ranking", ranking, true));
 		
 		Optional.ofNullable(media.getGenres())
 				.filter(g -> !g.isEmpty())
@@ -79,6 +83,26 @@ public abstract class AnilistWrappedTriggerTask extends WrappedTriggerTask{
 		
 		builder.setThumbnail(media.getCoverImage().getLarge().toString())
 				.setFooter("ID: " + getId());
+	}
+	
+	@NotNull
+	private String mapRanking(@NotNull MediaRank ranking){
+		var sb = new StringBuilder(ranking.getType().getIcon())
+				.append(" ")
+				.append("#")
+				.append(ranking.getRank())
+				.append(" ")
+				.append(ranking.getContext());
+		
+		if(Objects.nonNull(ranking.getSeason())){
+			sb.append(" ").append(ranking.getSeason());
+		}
+		
+		if(Objects.nonNull(ranking.getYear())){
+			sb.append(" ").append(ranking.getYear());
+		}
+		
+		return sb.toString();
 	}
 	
 	private void fillTypeEmbed(@NotNull EmbedBuilder builder, @NotNull AnimeMedia media, @NotNull DiscordLocale locale){

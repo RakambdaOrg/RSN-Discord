@@ -156,21 +156,22 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 	private void sendUserElements(@NotNull User user, @NotNull Collection<MediaList> mediaLists, @NotNull Collection<GuildMessageChannel> channels){
 		channels.stream()
 				.filter(c -> c.getGuild().isMember(user))
-				.forEach(c -> sendUserElements(c, mediaLists));
+				.forEach(c -> sendUserElements(c, user, mediaLists));
 	}
 	
-	private void sendUserElements(@NotNull GuildMessageChannel channel, @NotNull Collection<MediaList> mediaLists){
+	private void sendUserElements(@NotNull GuildMessageChannel channel, @NotNull User user, @NotNull Collection<MediaList> mediaLists){
 		mediaLists.stream()
-				.map(ml -> buildEmbed(ml, channel.getGuild().getLocale()))
+				.map(ml -> buildEmbed(ml, user, channel.getGuild().getLocale()))
 				.forEach(e -> JDAWrappers.message(channel, e).submit());
 	}
 	
 	@NotNull
-	private MessageEmbed buildEmbed(@NotNull MediaList mediaList, @NotNull DiscordLocale locale){
+	private MessageEmbed buildEmbed(@NotNull MediaList mediaList, @NotNull User user, @NotNull DiscordLocale locale){
 		var media = mediaList.getMedia();
 		var totalElements = getTotalElements(media).map(Objects::toString).orElse("?");
 		
 		var builder = new EmbedBuilder()
+				.setAuthor(user.getName(), null, user.getAvatarUrl())
 				.setTitle(localizationService.translate(locale, "anilist.list-info"), media.getUrl())
 				.setColor(mediaList.getStatus().getColor())
 				.addField(localizationService.translate(locale, "anilist.list-status"), mediaList.getStatus().toString(), true)

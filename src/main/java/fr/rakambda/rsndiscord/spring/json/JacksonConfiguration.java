@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import java.util.List;
+import java.util.Set;
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
@@ -33,6 +34,7 @@ public class JacksonConfiguration{
 				.visibility(CREATOR, NONE)
 				.serializationInclusion(NON_NULL)
 				.withConfigOverride(List.class, o -> o.setSetterInfo(JsonSetter.Value.forValueNulls(AS_EMPTY)))
+				.withConfigOverride(Set.class, o -> o.setSetterInfo(JsonSetter.Value.forValueNulls(AS_EMPTY)))
 				.build();
 	}
 }
