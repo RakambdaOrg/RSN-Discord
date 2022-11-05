@@ -73,6 +73,9 @@ public abstract class AnilistWrappedTriggerTask extends WrappedTriggerTask{
 				.map(g -> String.join(", ", g))
 				.ifPresent(g -> builder.addField(localizationService.translate(locale, "anilist.genres"), g, true));
 		
+		Optional.ofNullable(media.getTitle().getEnglish())
+				.ifPresent(s -> builder.addField("English title", s, true));
+		
 		Optional.ofNullable(media.getSynonyms())
 				.filter(s -> !s.isEmpty())
 				.map(s -> String.join(", ", s))
