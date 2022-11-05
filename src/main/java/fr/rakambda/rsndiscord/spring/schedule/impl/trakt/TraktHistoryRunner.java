@@ -147,12 +147,12 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 	private void sendUserElements(@NotNull User user, @NotNull Collection<UserHistory> histories, @NotNull Collection<GuildMessageChannel> channels){
 		channels.stream()
 				.filter(c -> JDAWrappers.findMember(c.getGuild(), user.getIdLong()).isPresent())
-				.forEach(c -> sendUserElements(c, histories));
+				.forEach(c -> sendUserElements(c, user, histories));
 	}
 	
-	private void sendUserElements(@NotNull GuildMessageChannel channel, @NotNull Collection<UserHistory> histories){
+	private void sendUserElements(@NotNull GuildMessageChannel channel, @NotNull User user, @NotNull Collection<UserHistory> histories){
 		histories.stream()
-				.map(h -> buildEmbed(h, channel.getGuild().getLocale()))
+				.map(h -> buildEmbed(h, user, channel.getGuild().getLocale()))
 				.forEach(e -> JDAWrappers.message(channel, e).submit());
 	}
 	
@@ -179,18 +179,18 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 	}
 	
 	@NotNull
-	private MessageEmbed buildEmbed(@NotNull UserHistory history, @NotNull DiscordLocale locale){
+	private MessageEmbed buildEmbed(@NotNull UserHistory history, @NotNull User user, @NotNull DiscordLocale locale){
 		if(history instanceof UserMovieHistory userMovieHistory){
-			return buildTypeEmbed(userMovieHistory, locale);
+			return buildTypeEmbed(userMovieHistory, user, locale);
 		}
 		if(history instanceof UserSerieHistory userSerieHistory){
-			return buildTypeEmbed(userSerieHistory, locale);
+			return buildTypeEmbed(userSerieHistory, user, locale);
 		}
 		throw new IllegalStateException("Unknown type " + history.getClass().getSimpleName());
 	}
 	
 	@NotNull
-	private MessageEmbed buildTypeEmbed(@NotNull UserMovieHistory history, @NotNull DiscordLocale locale){
+	private MessageEmbed buildTypeEmbed(@NotNull UserMovieHistory history, @NotNull User user, @NotNull DiscordLocale locale){
 		var movie = history.getMovie();
 		
 		var movieDetails = Optional.ofNullable(history.getMovie().getIds())
@@ -198,6 +198,7 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 				.flatMap(this::getMovieDetails);
 		
 		var builder = new EmbedBuilder()
+				.setAuthor(user.getName(), null, user.getAvatarUrl())
 				.setTitle(localizationService.translate(locale, "trakt.watched.movie"), movie.getTrailer())
 				.setColor(Color.GREEN)
 				.addField(localizationService.translate(locale, "trakt.title"), movie.getTitle(), true)
@@ -219,7 +220,7 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 	}
 	
 	@NotNull
-	private MessageEmbed buildTypeEmbed(@NotNull UserSerieHistory history, @NotNull DiscordLocale locale){
+	private MessageEmbed buildTypeEmbed(@NotNull UserSerieHistory history, @NotNull User user, @NotNull DiscordLocale locale){
 		var show = history.getShow();
 		var episode = history.getEpisode();
 		
@@ -238,6 +239,7 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 		var episodeProgress = totalEpisodes.map(t -> "%d/%d".formatted(episode.getNumber(), t)).orElseGet(() -> Integer.toString(episode.getNumber()));
 		
 		var builder = new EmbedBuilder()
+				.setAuthor(user.getName(), null, user.getAvatarUrl())
 				.setTitle(localizationService.translate(locale, "trakt.watched.episode"), show.getTrailer())
 				.addField(localizationService.translate(locale, "trakt.season"), seasonProgress, true)
 				.addField(localizationService.translate(locale, "trakt.episode"), episodeProgress, true)
