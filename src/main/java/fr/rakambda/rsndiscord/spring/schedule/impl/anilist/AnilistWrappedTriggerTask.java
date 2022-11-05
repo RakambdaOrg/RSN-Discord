@@ -82,7 +82,7 @@ public abstract class AnilistWrappedTriggerTask extends WrappedTriggerTask{
 				.ifPresent(source -> builder.addField("Source", source.toString(), true));
 		
 		builder.setThumbnail(media.getCoverImage().getLarge().toString())
-				.setFooter("ID: " + getId());
+				.setFooter("ID: " + media.getId());
 	}
 	
 	@NotNull
