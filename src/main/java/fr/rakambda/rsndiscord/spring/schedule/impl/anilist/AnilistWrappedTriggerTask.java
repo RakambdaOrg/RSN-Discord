@@ -79,7 +79,7 @@ public abstract class AnilistWrappedTriggerTask extends WrappedTriggerTask{
 				.ifPresent(s -> builder.addField(localizationService.translate(locale, "anilist.synonyms"), s, true));
 		
 		Optional.ofNullable(media.getSource())
-				.ifPresent(source -> builder.addField("Source", source.toString(), true));
+				.ifPresent(source -> builder.addField("Source", source.getValue(), true));
 		
 		builder.setThumbnail(media.getCoverImage().getLarge().toString())
 				.setFooter("ID: " + media.getId());
