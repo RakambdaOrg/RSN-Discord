@@ -7,6 +7,9 @@ spring:
       ddl-auto: none
     generate-ddl: false
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  datasource:
+    hikari:
+      maximum-pool-size: 3
   jackson:
     visibility:
       field: any
