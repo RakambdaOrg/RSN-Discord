@@ -164,7 +164,7 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 	private void sendUserElements(@NotNull GuildMessageChannel channel, @NotNull User user, @NotNull Collection<Notification> notifications){
 		notifications.stream()
 				.map(n -> buildEmbed(n, user, channel.getGuild().getLocale()))
-				.forEach(e -> JDAWrappers.message(channel, e).submit());
+				.forEach(e -> JDAWrappers.message(channel, user.getAsMention()).embed(e).submit());
 	}
 	
 	@NotNull
