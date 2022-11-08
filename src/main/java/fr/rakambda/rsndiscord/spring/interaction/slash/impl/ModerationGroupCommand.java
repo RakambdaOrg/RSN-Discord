@@ -33,7 +33,12 @@ public class ModerationGroupCommand implements IRegistrableSlashCommand{
 										new OptionData(INTEGER, ClearCommand.MESSAGE_COUNT_OPTION_ID, "Number of messages to delete"),
 										new OptionData(STRING, ClearCommand.ORDER_OPTION_ID, "Clear order (default: new)")
 												.addChoice("Newest first", ClearCommand.ORDER_NEW_CHOICE)
-												.addChoice("Oldest first", ClearCommand.ORDER_OLD_CHOICE))
+												.addChoice("Oldest first", ClearCommand.ORDER_OLD_CHOICE)),
+						new SubcommandData("tags", "Obtain thread channel's tags")
+								.addOptions(
+										new OptionData(CHANNEL, ClearCommand.CHANNEL_OPTION_ID, "Thread to get the tags from")
+												.setChannelTypes(ChannelType.GUILD_PUBLIC_THREAD)
+												.setRequired(true))
 				);
 	}
 }

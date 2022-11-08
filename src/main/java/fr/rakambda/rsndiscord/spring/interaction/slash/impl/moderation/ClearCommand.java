@@ -1,6 +1,5 @@
 package fr.rakambda.rsndiscord.spring.interaction.slash.impl.moderation;
 
-import fr.rakambda.rsndiscord.spring.amqp.RabbitService;
 import fr.rakambda.rsndiscord.spring.interaction.slash.api.IExecutableSlashCommandGuild;
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.util.LocalizationService;
@@ -35,12 +34,10 @@ public class ClearCommand implements IExecutableSlashCommandGuild{
 	private static final int DEFAULT_COUNT = 100;
 	
 	private final LocalizationService localizationService;
-	private final RabbitService rabbitService;
 	
 	@Autowired
-	public ClearCommand(LocalizationService localizationService, RabbitService rabbitService){
+	public ClearCommand(LocalizationService localizationService){
 		this.localizationService = localizationService;
-		this.rabbitService = rabbitService;
 	}
 	
 	@Override
