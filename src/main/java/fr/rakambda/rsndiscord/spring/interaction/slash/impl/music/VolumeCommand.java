@@ -51,7 +51,7 @@ public class VolumeCommand implements IExecutableSlashCommandGuild{
 		
 		audioServiceFactory.get(guild).getTrackScheduler().setVolume(volume);
 		
-		var guildEntity = audioRepository.findByGuild_Id(guild.getIdLong()).orElseThrow(() -> new InvalidStateException("Failed to save settings for guild"));
+		var guildEntity = audioRepository.findByGuildId(guild.getIdLong()).orElseThrow(() -> new InvalidStateException("Failed to save settings for guild"));
 		guildEntity.setVolume(volume);
 		audioRepository.save(guildEntity);
 		

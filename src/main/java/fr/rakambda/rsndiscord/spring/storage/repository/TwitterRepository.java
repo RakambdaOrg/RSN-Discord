@@ -13,9 +13,9 @@ public interface TwitterRepository extends JpaRepository<TwitterEntity, Integer>
 	List<TwitterEntity> findAllByType(@NotNull TwitterType type);
 	
 	@NotNull
-	List<TwitterEntity> findAllByGuild_IdAndType(long guildId, @NotNull TwitterType type);
+	List<TwitterEntity> findAllByGuildIdAndType(long guildId, @NotNull TwitterType type);
 	
-	int deleteAllByGuild_IdAndTypeAndSearch(long guildId, @NotNull TwitterType type, String search);
+	int deleteAllByGuildIdAndTypeAndSearch(long guildId, @NotNull TwitterType type, String search);
 	
-	int deleteAllByGuild_IdAndType(long guildId, @NotNull TwitterType type);
+	int deleteAllByGuildIdAndType(long guildId, @NotNull TwitterType type);
 }

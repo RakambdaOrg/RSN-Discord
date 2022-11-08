@@ -28,7 +28,7 @@ public class AudioServiceFactory{
 	
 	@NotNull
 	private AudioService buildService(@NotNull Guild guild){
-		var guildEntity = audioRepository.findByGuild_Id(guild.getIdLong()).orElseThrow();
+		var guildEntity = audioRepository.findByGuildId(guild.getIdLong()).orElseThrow();
 		var volume = Math.min(100, Math.max(0, guildEntity.getVolume()));
 		
 		return new AudioService(guild, volume);

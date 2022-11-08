@@ -90,7 +90,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 	}
 	
 	private boolean isChannelNotRegistered(@NotNull GuildChannel channel){
-		return channelRepository.findAllByGuild_IdAndType(channel.getGuild().getIdLong(), fr.rakambda.rsndiscord.spring.storage.entity.ChannelType.AUTO_TODO).stream()
+		return channelRepository.findAllByGuildIdAndType(channel.getGuild().getIdLong(), fr.rakambda.rsndiscord.spring.storage.entity.ChannelType.AUTO_TODO).stream()
 				.noneMatch(channelEntity -> Objects.equals(channelEntity.getChannelId(), channel.getIdLong()));
 	}
 }

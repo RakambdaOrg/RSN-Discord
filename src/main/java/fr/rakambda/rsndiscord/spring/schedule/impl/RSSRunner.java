@@ -13,7 +13,6 @@ import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.schedule.WrappedTriggerTask;
 import fr.rakambda.rsndiscord.spring.storage.entity.ChannelEntity;
 import fr.rakambda.rsndiscord.spring.storage.entity.ChannelType;
-import fr.rakambda.rsndiscord.spring.storage.entity.GuildEntity;
 import fr.rakambda.rsndiscord.spring.storage.entity.RssEntity;
 import fr.rakambda.rsndiscord.spring.storage.repository.ChannelRepository;
 import fr.rakambda.rsndiscord.spring.storage.repository.RssRepository;
@@ -95,7 +94,7 @@ public class RSSRunner extends WrappedTriggerTask{
 	
 	@NotNull
 	private Collection<TextChannel> filterChannels(@NotNull List<TextChannel> channels, @NotNull List<RssEntity> entities){
-		var guildIds = entities.stream().map(RssEntity::getGuild).map(GuildEntity::getId).collect(Collectors.toSet());
+		var guildIds = entities.stream().map(RssEntity::getGuildId).collect(Collectors.toSet());
 		return channels.stream()
 				.filter(c -> guildIds.contains(c.getGuild().getIdLong()))
 				.toList();

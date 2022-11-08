@@ -81,7 +81,7 @@ public class ReadyEventListener extends ListenerAdapter{
 		
 		log.info("Adding {} to storage", event.getGuild());
 		var guildEntity = guildRepository.save(GuildEntity.builder().id(guildId).build());
-		audioRepository.save(AudioEntity.builder().volume(100).guild(guildEntity).build());
+		audioRepository.save(AudioEntity.builder().volume(100).guildId(guildId).build());
 	}
 	
 	@NotNull

@@ -9,12 +9,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Data
@@ -37,7 +34,7 @@ public class TwitterEntity{
 	@Basic
 	private String lastTweetId;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "GuildId", nullable = false)
-	private GuildEntity guild;
+	@Basic
+	@Column(nullable = false)
+	private Long guildId;
 }

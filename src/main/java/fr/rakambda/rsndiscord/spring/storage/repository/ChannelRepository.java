@@ -21,13 +21,13 @@ public interface ChannelRepository extends JpaRepository<ChannelEntity, Integer>
 	
 	@NotNull
 	@Cacheable
-	List<ChannelEntity> findAllByGuild_IdAndType(long guildId, @NotNull ChannelType type);
+	List<ChannelEntity> findAllByGuildIdAndType(long guildId, @NotNull ChannelType type);
 	
 	@CacheEvict
-	int deleteAllByGuild_IdAndTypeAndChannelId(long guildId, @NotNull ChannelType type, long channelId);
+	int deleteAllByGuildIdAndTypeAndChannelId(long guildId, @NotNull ChannelType type, long channelId);
 	
 	@CacheEvict
-	int deleteAllByGuild_IdAndType(long guildId, @NotNull ChannelType type);
+	int deleteAllByGuildIdAndType(long guildId, @NotNull ChannelType type);
 	
 	@Override
 	@CachePut

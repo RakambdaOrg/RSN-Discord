@@ -1,7 +1,6 @@
 package fr.rakambda.rsndiscord.spring.configuration.twitter;
 
 import fr.rakambda.rsndiscord.spring.configuration.IConfigurationAccessor;
-import fr.rakambda.rsndiscord.spring.storage.entity.GuildEntity;
 import fr.rakambda.rsndiscord.spring.storage.entity.TwitterEntity;
 import fr.rakambda.rsndiscord.spring.storage.entity.TwitterType;
 import fr.rakambda.rsndiscord.spring.storage.repository.TwitterRepository;
@@ -34,28 +33,26 @@ public class TwitterUserAccessor implements IConfigurationAccessor{
 		twitterRepository.save(TwitterEntity.builder()
 				.search(value.trim())
 				.type(TWITTER_TYPE)
-				.guild(GuildEntity.builder()
-						.id(guildId)
-						.build())
+				.guildId(guildId)
 				.build());
 		return true;
 	}
 	
 	@Override
 	public boolean remove(long guildId, @NotNull String value){
-		return twitterRepository.deleteAllByGuild_IdAndTypeAndSearch(guildId, TWITTER_TYPE, value.trim()) > 0;
+		return twitterRepository.deleteAllByGuildIdAndTypeAndSearch(guildId, TWITTER_TYPE, value.trim()) > 0;
 	}
 	
 	@Override
 	public boolean reset(long guildId){
-		twitterRepository.deleteAllByGuild_IdAndType(guildId, TWITTER_TYPE);
+		twitterRepository.deleteAllByGuildIdAndType(guildId, TWITTER_TYPE);
 		return true;
 	}
 	
 	@Override
 	@NotNull
 	public Optional<MessageEmbed> show(long guildId){
-		var value = twitterRepository.findAllByGuild_IdAndType(guildId, TWITTER_TYPE).stream()
+		var value = twitterRepository.findAllByGuildIdAndType(guildId, TWITTER_TYPE).stream()
 				.map(t -> "%s: %s".formatted(t.getType(), t.getSearch()))
 				.map(Objects::toString)
 				.collect(Collectors.joining(", "));

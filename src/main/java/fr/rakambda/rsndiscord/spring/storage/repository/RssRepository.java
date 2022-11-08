@@ -9,9 +9,9 @@ import java.util.List;
 @Repository
 public interface RssRepository extends JpaRepository<RssEntity, Integer>{
 	@NotNull
-	List<RssEntity> findAllByGuild_Id(long guildId);
+	List<RssEntity> findAllByGuildId(long guildId);
 	
-	int deleteAllByGuild_IdAndUrl(long guildId, String url);
+	int deleteAllByGuildIdAndUrl(long guildId, String url);
 	
-	int deleteAllByGuild_Id(long guildId);
+	int deleteAllByGuildId(long guildId);
 }

@@ -2,7 +2,6 @@ package fr.rakambda.rsndiscord.spring.configuration;
 
 import fr.rakambda.rsndiscord.spring.storage.entity.ChannelEntity;
 import fr.rakambda.rsndiscord.spring.storage.entity.ChannelType;
-import fr.rakambda.rsndiscord.spring.storage.entity.GuildEntity;
 import fr.rakambda.rsndiscord.spring.storage.repository.ChannelRepository;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -25,28 +24,26 @@ public abstract class ChannelAccessor implements IConfigurationAccessor{
 		channelRepository.save(ChannelEntity.builder()
 				.channelId(Long.parseLong(value))
 				.type(channelType)
-				.guild(GuildEntity.builder()
-						.id(guildId)
-						.build())
+				.guildId(guildId)
 				.build());
 		return true;
 	}
 	
 	@Override
 	public boolean remove(long guildId, @NotNull String value){
-		return channelRepository.deleteAllByGuild_IdAndTypeAndChannelId(guildId, channelType, Long.parseLong(value)) > 0;
+		return channelRepository.deleteAllByGuildIdAndTypeAndChannelId(guildId, channelType, Long.parseLong(value)) > 0;
 	}
 	
 	@Override
 	public boolean reset(long guildId){
-		channelRepository.deleteAllByGuild_IdAndType(guildId, channelType);
+		channelRepository.deleteAllByGuildIdAndType(guildId, channelType);
 		return true;
 	}
 	
 	@Override
 	@NotNull
 	public Optional<MessageEmbed> show(long guildId){
-		var value = channelRepository.findAllByGuild_IdAndType(guildId, channelType).stream()
+		var value = channelRepository.findAllByGuildIdAndType(guildId, channelType).stream()
 				.map(ChannelEntity::getChannelId)
 				.map(Objects::toString)
 				.collect(Collectors.joining(", "));

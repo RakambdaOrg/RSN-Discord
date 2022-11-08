@@ -1,12 +1,10 @@
 package fr.rakambda.rsndiscord.spring.schedule.impl;
 
-import fr.rakambda.rsndiscord.spring.api.exceptions.RequestFailedException;
 import fr.rakambda.rsndiscord.spring.api.twitter.TwitterService;
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.schedule.WrappedTriggerTask;
 import fr.rakambda.rsndiscord.spring.storage.entity.ChannelEntity;
 import fr.rakambda.rsndiscord.spring.storage.entity.ChannelType;
-import fr.rakambda.rsndiscord.spring.storage.entity.GuildEntity;
 import fr.rakambda.rsndiscord.spring.storage.entity.TwitterEntity;
 import fr.rakambda.rsndiscord.spring.storage.entity.TwitterType;
 import fr.rakambda.rsndiscord.spring.storage.repository.ChannelRepository;
@@ -76,7 +74,7 @@ public class UserTweetsRunner extends WrappedTriggerTask{
 	
 	@NotNull
 	private Collection<TextChannel> filterChannels(@NotNull List<TextChannel> channels, @NotNull List<TwitterEntity> entities){
-		var guildIds = entities.stream().map(TwitterEntity::getGuild).map(GuildEntity::getId).collect(Collectors.toSet());
+		var guildIds = entities.stream().map(TwitterEntity::getGuildId).collect(Collectors.toSet());
 		return channels.stream()
 				.filter(c -> guildIds.contains(c.getGuild().getIdLong()))
 				.toList();
