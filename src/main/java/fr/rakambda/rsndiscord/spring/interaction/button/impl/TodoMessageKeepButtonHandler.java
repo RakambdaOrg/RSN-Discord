@@ -63,7 +63,7 @@ public class TodoMessageKeepButtonHandler implements IExecutableButtonGuild{
 			archiveRepository.findById(parentChannel.getIdLong())
 					.map(ArchiveEntity::getTagId)
 					.map(ForumTagSnowflake::fromId)
-					.ifPresent(edit::setTags);
+					.ifPresent(edit::addTag);
 		}
 		
 		return edit.submit();
