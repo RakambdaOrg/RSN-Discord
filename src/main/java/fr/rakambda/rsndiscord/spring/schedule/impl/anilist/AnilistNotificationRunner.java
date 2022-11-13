@@ -1,6 +1,5 @@
 package fr.rakambda.rsndiscord.spring.schedule.impl.anilist;
 
-import fr.rakambda.rsndiscord.spring.BotException;
 import fr.rakambda.rsndiscord.spring.api.anilist.AnilistService;
 import fr.rakambda.rsndiscord.spring.api.anilist.response.gql.notification.AiringNotification;
 import fr.rakambda.rsndiscord.spring.api.anilist.response.gql.notification.MediaDataChangeNotification;
@@ -135,7 +134,7 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 			
 			return Stream.of(entity);
 		}
-		catch(BotException e){
+		catch(Throwable e){
 			log.error("Failed to process user {}", entity, e);
 			return Stream.empty();
 		}

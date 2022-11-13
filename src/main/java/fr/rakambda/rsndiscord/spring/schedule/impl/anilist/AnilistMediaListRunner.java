@@ -1,6 +1,5 @@
 package fr.rakambda.rsndiscord.spring.schedule.impl.anilist;
 
-import fr.rakambda.rsndiscord.spring.BotException;
 import fr.rakambda.rsndiscord.spring.api.anilist.AnilistService;
 import fr.rakambda.rsndiscord.spring.api.anilist.response.gql.MediaList;
 import fr.rakambda.rsndiscord.spring.api.anilist.response.gql.media.AnimeMedia;
@@ -133,7 +132,7 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 			
 			return Stream.of(entity);
 		}
-		catch(BotException e){
+		catch(Throwable e){
 			log.error("Failed to process user {}", entity, e);
 			return Stream.empty();
 		}
