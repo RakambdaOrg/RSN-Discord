@@ -46,4 +46,4 @@ jobs:
       - name: Set gradle permissions
         run: chmod +x gradlew
       - name: Push latest on Docker Hub
-        run: ./gradlew jib -PdockerUsername=${{ secrets.DOCKER_USERNAME }} -PdockerPassword=${{ secrets.DOCKER_TOKEN }} -Djib.to.image="${{ secrets.DOCKER_IMAGE_REPO }}/mrcraftcod/rsn-discord:latest" -Djib.console=plain
+        run: ./gradlew jib -PdockerUsername=${{ secrets.DOCKER_USERNAME }} -PdockerPassword=${{ secrets.DOCKER_TOKEN }} -Djib.to.image="${{ secrets.DOCKER_IMAGE_REPO }}/rakambda/rsn-discord:latest" -Djib.console=plain
