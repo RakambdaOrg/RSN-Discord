@@ -78,7 +78,7 @@ springBoot {
 
 jib {
     from {
-        image = "eclipse-temurin:19-jre"
+        image = "eclipse-temurin:19-jdk"
         platforms {
             platform {
                 os = "linux"
