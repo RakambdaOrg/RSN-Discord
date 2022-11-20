@@ -2,8 +2,8 @@ package fr.rakambda.rsndiscord.spring.interaction.slash.impl;
 
 import fr.rakambda.rsndiscord.spring.interaction.modal.impl.TimeReactionCreateModal;
 import fr.rakambda.rsndiscord.spring.interaction.slash.api.IExecutableSlashCommandGuild;
-import fr.rakambda.rsndiscord.spring.interaction.slash.api.IRegistrableSlashCommand;
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
+import fr.rakambda.rsndiscord.spring.interaction.slash.api.IRegistrableSlashCommand;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -41,7 +41,6 @@ public class TimeReactionCommand implements IRegistrableSlashCommand, IExecutabl
 	@Override
 	@NotNull
 	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
-		return JDAWrappers.edit(event, "Modal opened").submit()
-				.thenCompose(message -> JDAWrappers.reply(event, TimeReactionCreateModal.builder().get()).submit());
+		return JDAWrappers.reply(event, TimeReactionCreateModal.builder().get()).submit();
 	}
 }
