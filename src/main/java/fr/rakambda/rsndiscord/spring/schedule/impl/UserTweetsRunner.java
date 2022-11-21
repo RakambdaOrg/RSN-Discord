@@ -116,7 +116,8 @@ public class UserTweetsRunner extends WrappedTriggerTask{
 	}
 	
 	private void sendTweet(@NotNull Tweet tweet, @NotNull Collection<TextChannel> channels){
-		channels.forEach(c -> JDAWrappers.message(c, twitterService.getUrl(tweet)).submit());
+		var message = twitterService.getUrl(tweet).replace("https://twitter.com/", "https://fxtwitter.com/");
+		channels.forEach(c -> JDAWrappers.message(c, message).submit());
 	}
 	
 	@Override
