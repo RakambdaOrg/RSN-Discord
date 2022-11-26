@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.TriggerContext;
 import java.time.Instant;
 import java.time.temporal.TemporalUnit;
-import java.util.Date;
 import static net.dv8tion.jda.api.JDA.Status.CONNECTED;
 
 @Slf4j
@@ -60,7 +59,7 @@ public abstract class WrappedTriggerTask implements TriggerTaskProvider{
 	}
 	
 	@Override
-	public Date nextExecutionTime(@NotNull TriggerContext triggerContext){
-		return Date.from(nextRun);
+	public Instant nextExecution(@NotNull TriggerContext triggerContext){
+		return nextRun;
 	}
 }
