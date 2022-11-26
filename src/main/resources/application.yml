@@ -3,10 +3,10 @@ logging:
     root: INFO
 spring:
   jpa:
+    generate-ddl: false
+    database-platform: org.hibernate.dialect.MariaDBDialect
     hibernate:
       ddl-auto: none
-    generate-ddl: false
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
   datasource:
     hikari:
       maximum-pool-size: 3
