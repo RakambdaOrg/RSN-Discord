@@ -35,9 +35,9 @@ public class SlashCommandRunner{
 	}
 	
 	public void execute(@NotNull SlashCommandInteractionEvent event){
-		CompletableFuture.completedFuture(event.getCommandPath())
-				.thenApply(path -> slashCommandService.getExecutableCommand(path)
-						.orElseThrow(() -> new IllegalStateException("Unknown command %s".formatted(path))))
+		CompletableFuture.completedFuture(event.getFullCommandName())
+				.thenApply(fullCommandName -> slashCommandService.getExecutableCommand(fullCommandName)
+						.orElseThrow(() -> new IllegalStateException("Unknown command %s".formatted(fullCommandName))))
 				.thenCompose(cmd -> verifyAllowed(event, cmd))
 				.thenCompose(cmd -> runCommand(event, cmd))
 				.exceptionally(ex -> handleExecutionError(event, ex));
@@ -67,7 +67,7 @@ public class SlashCommandRunner{
 	
 	@NotNull
 	private CompletableFuture<IExecutableSlashCommand> verifyAllowed(@NotNull SlashCommandInteraction event, @NotNull IExecutableSlashCommand command){
-		if(!command.getPermission().isAllowed(event.getCommandPath(), event.getUser())){
+		if(!command.getPermission().isAllowed(event.getUser())){
 			return CompletableFuture.failedFuture(new NotAllowedException());
 		}
 		return CompletableFuture.completedFuture(command);
@@ -75,12 +75,12 @@ public class SlashCommandRunner{
 	
 	@Nullable
 	private <T> T handleExecutionError(@NotNull SlashCommandInteractionEvent event, @NotNull Throwable ex){
-		log.error("Failed to execute command {}", event.getCommandPath(), ex);
+		log.error("Failed to execute command {}", event.getFullCommandName(), ex);
 		
 		var exceptionMessage = ex instanceof BotException bex
 				? localizationService.translate(event.getUserLocale(), bex.getFriendlyMessageKey(), bex.getFriendlyMessageArgs())
 				: ex.getMessage();
-		var message = "Failed to execute command %s: %s".formatted(event.getCommandPath(), exceptionMessage);
+		var message = "Failed to execute command %s: %s".formatted(event.getFullCommandName(), exceptionMessage);
 		
 		if(event.isAcknowledged()){
 			JDAWrappers.edit(event, message).submitAndDelete(5, rabbitService);

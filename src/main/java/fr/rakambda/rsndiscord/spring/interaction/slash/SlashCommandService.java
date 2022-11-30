@@ -121,7 +121,7 @@ public class SlashCommandService{
 	}
 	
 	@NotNull
-	public Optional<IExecutableSlashCommand> getExecutableCommand(@NotNull String path){
-		return Optional.ofNullable(executableSlashCommands.get(path));
+	public Optional<IExecutableSlashCommand> getExecutableCommand(@NotNull String fullCommandName){
+		return Optional.ofNullable(executableSlashCommands.get(fullCommandName.replace(" ", "/")));
 	}
 }

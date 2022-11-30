@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 public record NoPermission() implements IPermission{
 	@Override
-	public boolean isAllowed(@NotNull String id, @NotNull User user){
+	public boolean isAllowed(@NotNull User user){
 		return true;
 	}
 }
