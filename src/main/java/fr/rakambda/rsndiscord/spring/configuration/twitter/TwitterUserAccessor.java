@@ -4,6 +4,7 @@ import fr.rakambda.rsndiscord.spring.configuration.IConfigurationAccessor;
 import fr.rakambda.rsndiscord.spring.storage.entity.TwitterEntity;
 import fr.rakambda.rsndiscord.spring.storage.entity.TwitterType;
 import fr.rakambda.rsndiscord.spring.storage.repository.TwitterRepository;
+import jakarta.transaction.Transactional;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +30,7 @@ public class TwitterUserAccessor implements IConfigurationAccessor{
 	}
 	
 	@Override
+	@Transactional
 	public boolean add(long guildId, @NotNull String value){
 		twitterRepository.save(TwitterEntity.builder()
 				.search(value.trim())
@@ -39,11 +41,13 @@ public class TwitterUserAccessor implements IConfigurationAccessor{
 	}
 	
 	@Override
+	@Transactional
 	public boolean remove(long guildId, @NotNull String value){
 		return twitterRepository.deleteAllByGuildIdAndTypeAndSearch(guildId, TWITTER_TYPE, value.trim()) > 0;
 	}
 	
 	@Override
+	@Transactional
 	public boolean reset(long guildId){
 		twitterRepository.deleteAllByGuildIdAndType(guildId, TWITTER_TYPE);
 		return true;

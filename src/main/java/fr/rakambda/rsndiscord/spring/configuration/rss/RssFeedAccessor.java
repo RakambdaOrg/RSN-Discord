@@ -3,6 +3,7 @@ package fr.rakambda.rsndiscord.spring.configuration.rss;
 import fr.rakambda.rsndiscord.spring.configuration.IConfigurationAccessor;
 import fr.rakambda.rsndiscord.spring.storage.entity.RssEntity;
 import fr.rakambda.rsndiscord.spring.storage.repository.RssRepository;
+import jakarta.transaction.Transactional;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,7 @@ public class RssFeedAccessor implements IConfigurationAccessor{
 	}
 	
 	@Override
+	@Transactional
 	public boolean add(long guildId, @NotNull String value){
 		rssRepository.save(RssEntity.builder()
 				.url(value.trim())
@@ -35,11 +37,13 @@ public class RssFeedAccessor implements IConfigurationAccessor{
 	}
 	
 	@Override
+	@Transactional
 	public boolean remove(long guildId, @NotNull String value){
 		return rssRepository.deleteAllByGuildIdAndUrl(guildId, value.trim()) > 0;
 	}
 	
 	@Override
+	@Transactional
 	public boolean reset(long guildId){
 		rssRepository.deleteAllByGuildId(guildId);
 		return true;
