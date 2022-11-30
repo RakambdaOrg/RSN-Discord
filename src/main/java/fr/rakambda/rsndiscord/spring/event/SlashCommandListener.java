@@ -29,7 +29,7 @@ public class SlashCommandListener extends ListenerAdapter{
 	@Override
 	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event){
 		try(var ignored = LogContext.with(event.getGuild()).with(event.getUser())){
-			log.info("Received slash-command {} from {} with args {}", event.getCommandPath(), event.getUser(), getArgsForLogs(event.getOptions()));
+			log.info("Received slash-command {} from {} with args {}", event.getFullCommandName(), event.getUser(), getArgsForLogs(event.getOptions()));
 			slashCommandRunner.execute(event);
 		}
 	}
@@ -37,7 +37,7 @@ public class SlashCommandListener extends ListenerAdapter{
 	@Override
 	public void onCommandAutoCompleteInteraction(@NotNull CommandAutoCompleteInteractionEvent event){
 		try(var ignored = LogContext.with(event.getGuild()).with(event.getUser())){
-			log.info("Received auto-complete {} from {} with args {}", event.getCommandPath(), event.getUser(), event.getFocusedOption());
+			log.info("Received auto-complete {} from {} with args {}", event.getFullCommandName(), event.getUser(), event.getFocusedOption());
 			slashCommandCompletionRunner.complete(event);
 		}
 	}

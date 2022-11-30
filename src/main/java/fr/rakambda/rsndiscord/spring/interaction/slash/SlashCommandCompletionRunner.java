@@ -25,8 +25,8 @@ public class SlashCommandCompletionRunner{
 	}
 	
 	public void complete(@NotNull CommandAutoCompleteInteractionEvent event){
-		CompletableFuture.completedFuture(event.getCommandPath())
-				.thenApply(path -> slashCommandService.getExecutableCommand(event.getCommandPath())
+		CompletableFuture.completedFuture(event.getFullCommandName())
+				.thenApply(path -> slashCommandService.getExecutableCommand(event.getFullCommandName())
 						.orElseThrow(() -> new IllegalStateException("Unknown command %s".formatted(path))))
 				.thenCompose(cmd -> runCompletion(event, cmd))
 				.exceptionally(ex -> handleExecutionError(event, ex));
@@ -55,7 +55,7 @@ public class SlashCommandCompletionRunner{
 	
 	@Nullable
 	private <T> T handleExecutionError(@NotNull CommandAutoCompleteInteractionEvent event, @NotNull Throwable ex){
-		log.error("Failed to auto complete command {}", event.getCommandPath(), ex);
+		log.error("Failed to auto complete command {}", event.getFullCommandName(), ex);
 		return null;
 	}
 }

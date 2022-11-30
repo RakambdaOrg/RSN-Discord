@@ -12,7 +12,7 @@ public class CreatorPermission implements IPermission{
 	private static final Set<Long> ACCOUNTS = Set.of(MAIN_ACCOUNT, SECONDARY_ACCOUNT);
 	
 	@Override
-	public boolean isAllowed(@NotNull String id, @NotNull User user){
+	public boolean isAllowed(@NotNull User user){
 		return ACCOUNTS.contains(user.getIdLong());
 	}
 }
