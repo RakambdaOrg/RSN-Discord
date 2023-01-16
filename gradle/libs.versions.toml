@@ -1,7 +1,7 @@
 [versions]
 jda-version = "5.0.0-beta.2"
 lavaplayer-version = "1.3.78"
-lavaplayer-fork-version = "custom-SNAPSHOT"
+lavaplayer-fork-version = "f13ac87"
 lp_cross-version = "0.1.1"
 twittered-version = "2.21"
 jetbrains-annotations-version = "23.1.0"
