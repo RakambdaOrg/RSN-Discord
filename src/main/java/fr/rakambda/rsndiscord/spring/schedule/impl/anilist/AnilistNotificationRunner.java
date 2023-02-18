@@ -72,13 +72,13 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 	
 	@Override
 	protected long getPeriod(){
-		return 30;
+		return 4;
 	}
 	
 	@Override
 	@NotNull
 	protected TemporalUnit getPeriodUnit(){
-		return ChronoUnit.MINUTES;
+		return ChronoUnit.HOURS;
 	}
 	
 	@Override

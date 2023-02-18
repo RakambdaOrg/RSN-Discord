@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import java.awt.Color;
 import java.time.Duration;
@@ -27,6 +28,7 @@ import java.util.Optional;
 import java.util.Set;
 import static java.util.Optional.empty;
 
+@Profile("hermitcraft-stream")
 @Component
 @Slf4j
 public class StreamRunner extends WrappedTriggerTask{

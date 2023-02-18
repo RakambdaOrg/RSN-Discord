@@ -11,6 +11,7 @@ public enum ChannelType{
 	AUTO_TODO,
 	HERMITCRAFT_LIVE,
 	HERMITCRAFT_VIDEO,
+	@Deprecated
 	RSS,
 	TRAKT_MEDIA_CHANGE,
 	TWITTER,

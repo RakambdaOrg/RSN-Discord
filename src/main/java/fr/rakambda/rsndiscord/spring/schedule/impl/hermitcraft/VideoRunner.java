@@ -57,13 +57,13 @@ public class VideoRunner extends WrappedTriggerTask{
 	
 	@Override
 	protected long getPeriod(){
-		return 20;
+		return 1;
 	}
 	
 	@NotNull
 	@Override
 	public TemporalUnit getPeriodUnit(){
-		return ChronoUnit.MINUTES;
+		return ChronoUnit.HOURS;
 	}
 	
 	@Override

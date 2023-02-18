@@ -76,7 +76,7 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 	
 	@Override
 	protected long getPeriod(){
-		return 1;
+		return 12;
 	}
 	
 	@Override

@@ -70,7 +70,7 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 	
 	@Override
 	protected long getPeriod(){
-		return 4;
+		return 12;
 	}
 	
 	@Override

@@ -6,8 +6,6 @@ lp_cross-version = "0.1.1"
 twittered-version = "2.21"
 jetbrains-annotations-version = "24.0.0"
 opus-version = "1.1.1"
-rome-version = "1.18.0"
-jsoup-version = "1.15.3"
 
 names-version = "0.45.0"
 jib-version = "3.3.1"
@@ -17,16 +15,12 @@ sptringboot-dm-version = "1.1.0"
 
 [libraries]
 jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda-version" }
-#jda = { group = "com.github.DV8FromTheWorld", name = "JDA", version.ref = "jda-version" }
-#lavaplayer = { group = "com.sedmelluq", name = "lavaplayer", version.ref = "lavaplayer-version" }
 lavaplayer = { group = "com.github.walkyst", name = "lavaplayer-fork", version.ref = "lavaplayer-fork-version" }
 lpCross = { group = "com.github.natanbc", name = "lp-cross", version.ref = "lp_cross-version" }
 twittered = { group = "io.github.redouane59.twitter", name = "twittered", version.ref = "twittered-version" }
 jetbrainsAnnotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations-version" }
 opus-api = { group = "club.minnced", name = "opus-java-api", version.ref = "opus-version" }
 opus-natives = { group = "club.minnced", name = "opus-java-natives", version.ref = "opus-version" }
-rome = { group ="com.rometools", name = "rome", version.ref = "rome-version" }
-jsoup = { group ="org.jsoup", name = "jsoup", version.ref = "jsoup-version" }
 
 [bundles]
 opus = ["opus-api", "opus-natives"]
