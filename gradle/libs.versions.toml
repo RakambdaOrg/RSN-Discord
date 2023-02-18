@@ -7,7 +7,7 @@ twittered-version = "2.21"
 jetbrains-annotations-version = "24.0.0"
 opus-version = "1.1.1"
 rome-version = "1.18.0"
-jsoup-version = "1.15.3"
+jsoup-version = "1.15.4"
 
 names-version = "0.45.0"
 jib-version = "3.3.1"
