@@ -12,6 +12,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -30,10 +32,16 @@ public class StopService{
 		this.applicationContext = applicationContext;
 	}
 	
-	public void shutdown(@NotNull JDA jda){
+	public void shutdown(@NotNull JDA jda) throws InterruptedException {
 		log.info("Stopping bot");
 		audioServiceFactory.getAll().forEach(AudioService::leave);
-		resetCommands(jda).thenAccept(empty -> jda.shutdown());
+		resetCommands(jda);
+
+		jda.shutdown();
+		if (!jda.awaitShutdown(Duration.ofMinutes(5))) {
+			jda.shutdownNow();
+			jda.awaitShutdown();
+		}
 		
 		var client = jda.getHttpClient();
 		client.connectionPool().evictAll();
