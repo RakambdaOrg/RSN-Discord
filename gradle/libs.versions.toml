@@ -7,7 +7,7 @@ twittered-version = "2.21"
 jetbrains-annotations-version = "24.0.0"
 opus-version = "1.1.1"
 
-names-version = "0.45.0"
+names-version = "0.46.0"
 jib-version = "3.3.1"
 git-properties-version = "2.4.1"
 sptringboot-version = "3.0.2"
