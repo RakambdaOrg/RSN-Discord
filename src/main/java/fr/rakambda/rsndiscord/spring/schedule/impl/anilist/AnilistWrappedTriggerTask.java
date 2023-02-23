@@ -66,7 +66,7 @@ public abstract class AnilistWrappedTriggerTask extends WrappedTriggerTask{
 		
 		Optional.ofNullable(media.getRankings()).orElse(Set.of()).stream()
 				.map(this::mapRanking)
-				.forEach(ranking -> builder.addField("anilist.ranking", ranking, true));
+				.forEach(ranking -> builder.addField(localizationService.translate(locale, "anilist.ranking"), ranking, true));
 		
 		Optional.ofNullable(media.getGenres())
 				.filter(g -> !g.isEmpty())
