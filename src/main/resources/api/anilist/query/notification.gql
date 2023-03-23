@@ -2,12 +2,12 @@
 #include "./fragment/media.gql"
 #include "./fragment/pageInfo.gql"
 
-query($page: Int, $perPage: Int, $typeIn: [NotificationType]){
+query($page: Int, $perPage: Int, $typeIn: [NotificationType], $resetNotificationCount: Boolean){
     Page (page: $page, perPage: $perPage) {
         pageInfo {
             ...PageInfoParts
         }
-        notifications(type_in: $typeIn){
+        notifications(type_in: $typeIn, resetNotificationCount: $resetNotificationCount){
             ... on AiringNotification {
                 id
                 type

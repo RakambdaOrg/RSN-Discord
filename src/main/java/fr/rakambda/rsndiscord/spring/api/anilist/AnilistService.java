@@ -131,7 +131,7 @@ public class AnilistService{
 	}
 	
 	@NotNull
-	public Collection<Notification> getAllNotifications(long userId, @NotNull Collection<NotificationType> types) throws RequestFailedException, NotLoggedInException{
+	public Collection<Notification> getAllNotifications(long userId, @NotNull Collection<NotificationType> types, boolean resetNotificationCount) throws RequestFailedException, NotLoggedInException{
 		log.info("Getting notifications for {}", userId);
 		
 		Collection<Notification> elements = new LinkedList<>();
@@ -141,7 +141,7 @@ public class AnilistService{
 		var token = getUserToken(userId);
 		
 		do{
-			response = getNotifications(token, types, currentPage).getPage();
+			response = getNotifications(token, types, resetNotificationCount, currentPage).getPage();
 			elements.addAll(response.getNotifications());
 			currentPage++;
 		}
@@ -151,11 +151,12 @@ public class AnilistService{
 	}
 	
 	@NotNull
-	private PageResponse<NotificationPagedResponse> getNotifications(@NotNull String token, @NotNull Collection<NotificationType> types, int page) throws RequestFailedException{
+	private PageResponse<NotificationPagedResponse> getNotifications(@NotNull String token, @NotNull Collection<NotificationType> types, boolean resetNotificationCount, int page) throws RequestFailedException{
 		var params = Map.of(
 				"page", page,
 				"perPage", 150,
-				"typeIn", types
+				"typeIn", types,
+				"resetNotificationCount", resetNotificationCount
 		);
 		return gqlQuery(token, "api/anilist/query/notification.gql", params, new ParameterizedTypeReference<>(){});
 	}
