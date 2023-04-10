@@ -1,7 +1,7 @@
 [versions]
 jda-version = "5.0.0-beta.6"
 lavaplayer-version = "1.3.78"
-lavaplayer-fork-version = "ef07585"
+lavaplayer-fork-version = "custom-SNAPSHOT"
 lp_cross-version = "0.1.1"
 twittered-version = "2.21"
 jetbrains-annotations-version = "24.0.1"
@@ -15,7 +15,7 @@ sptringboot-dm-version = "1.1.0"
 
 [libraries]
 jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda-version" }
-lavaplayer = { group = "com.github.walkyst", name = "lavaplayer-fork", version.ref = "lavaplayer-fork-version" }
+lavaplayer = { group = "com.github.Walkyst.lavaplayer-fork", name = "lavaplayer", version.ref = "lavaplayer-fork-version" }
 lpCross = { group = "com.github.natanbc", name = "lp-cross", version.ref = "lp_cross-version" }
 twittered = { group = "io.github.redouane59.twitter", name = "twittered", version.ref = "twittered-version" }
 jetbrainsAnnotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations-version" }
