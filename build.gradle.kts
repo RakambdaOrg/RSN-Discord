@@ -25,7 +25,6 @@ dependencies {
     implementation(libs.bundles.opus)
     implementation(libs.lavaplayer)
     implementation(libs.lpCross)
-    implementation(libs.twittered)
 
     implementation("org.springframework.boot:spring-boot-starter-amqp")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")

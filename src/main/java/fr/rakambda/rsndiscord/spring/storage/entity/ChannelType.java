@@ -14,5 +14,4 @@ public enum ChannelType{
 	@Deprecated
 	RSS,
 	TRAKT_MEDIA_CHANGE,
-	TWITTER,
 }
