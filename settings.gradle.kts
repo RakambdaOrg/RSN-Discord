@@ -1,1 +1,1 @@
-rootProject.name = "rsn-discord"
+rootProject.name = "RSNDiscord"

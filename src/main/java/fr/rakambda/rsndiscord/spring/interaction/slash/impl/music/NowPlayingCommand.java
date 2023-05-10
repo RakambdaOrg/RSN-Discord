@@ -83,7 +83,6 @@ public class NowPlayingCommand implements IExecutableSlashCommandGuild{
 				.addField(localizationService.translate(locale, "music.requester"), requester, true)
 				.addField(localizationService.translate(locale, "music.repeating"), repeating, true)
 				.addField(localizationService.translate(locale, "music.position"), progressBar, true)
-				.setImage(currentTrack.getInfo().artworkUrl)
 				.build();
 		
 		return deferred.thenCompose(empty -> JDAWrappers.edit(event, embed).submit());

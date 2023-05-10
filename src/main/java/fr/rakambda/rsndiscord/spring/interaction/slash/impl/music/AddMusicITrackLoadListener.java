@@ -57,8 +57,7 @@ public class AddMusicITrackLoadListener implements ITrackLoadListener{
 				.addField(localizationService.translate(locale, "music.requester"), author.getAsMention(), true)
 				.addField(localizationService.translate(locale, "music.track.duration"), getDuration(track.getDuration()), true)
 				.addField(localizationService.translate(locale, "music.track.eta"), getDuration(delay), true)
-				.addField(localizationService.translate(locale, "music.repeating"), Boolean.toString(repeat), true)
-				.setImage(track.getInfo().artworkUrl);
+				.addField(localizationService.translate(locale, "music.repeating"), Boolean.toString(repeat), true);
 		if(!isCurrentTrack){
 			builder.addField(localizationService.translate(locale, "music.queue.position"), String.valueOf(1 + before.size()), true);
 		}
