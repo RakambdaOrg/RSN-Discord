@@ -2,9 +2,11 @@ package fr.rakambda.rsndiscord.spring.interaction.slash.impl;
 
 import fr.rakambda.rsndiscord.spring.interaction.slash.api.IRegistrableSlashCommand;
 import fr.rakambda.rsndiscord.spring.interaction.slash.impl.moderation.ClearCommand;
+import fr.rakambda.rsndiscord.spring.interaction.slash.impl.moderation.ClearRangeCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -34,6 +36,12 @@ public class ModerationGroupCommand implements IRegistrableSlashCommand{
 										new OptionData(STRING, ClearCommand.ORDER_OPTION_ID, "Clear order (default: new)")
 												.addChoice("Newest first", ClearCommand.ORDER_NEW_CHOICE)
 												.addChoice("Oldest first", ClearCommand.ORDER_OLD_CHOICE)),
+						new SubcommandData("clear-range", "Clear messages within a range from a channel")
+								.addOptions(
+										new OptionData(CHANNEL, ClearRangeCommand.CHANNEL_OPTION_ID, "Channel to delete the message in (default: current channel)")
+												.setChannelTypes(ChannelType.TEXT),
+										new OptionData(OptionType.NUMBER, ClearRangeCommand.FROM_OPTION_ID, "Newest message (excluded)"),
+										new OptionData(OptionType.NUMBER, ClearRangeCommand.TO_OPTION_ID, "Older message (included)")),
 						new SubcommandData("tags", "Obtain thread channel's tags")
 								.addOptions(
 										new OptionData(CHANNEL, ClearCommand.CHANNEL_OPTION_ID, "Thread to get the tags from")
