@@ -40,8 +40,8 @@ public class ModerationGroupCommand implements IRegistrableSlashCommand{
 								.addOptions(
 										new OptionData(CHANNEL, ClearRangeCommand.CHANNEL_OPTION_ID, "Channel to delete the message in (default: current channel)")
 												.setChannelTypes(ChannelType.TEXT),
-										new OptionData(OptionType.NUMBER, ClearRangeCommand.FROM_OPTION_ID, "Newest message (excluded)"),
-										new OptionData(OptionType.NUMBER, ClearRangeCommand.TO_OPTION_ID, "Older message (included)")),
+										new OptionData(OptionType.STRING, ClearRangeCommand.FROM_OPTION_ID, "Start message)"),
+										new OptionData(OptionType.STRING, ClearRangeCommand.TO_OPTION_ID, "End message)")),
 						new SubcommandData("tags", "Obtain thread channel's tags")
 								.addOptions(
 										new OptionData(CHANNEL, ClearCommand.CHANNEL_OPTION_ID, "Thread to get the tags from")

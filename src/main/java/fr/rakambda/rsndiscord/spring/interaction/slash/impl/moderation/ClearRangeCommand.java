@@ -54,8 +54,8 @@ public class ClearRangeCommand implements IExecutableSlashCommandGuild{
 				.map(OptionMapping::getAsChannel)
 				.map(GuildChannelUnion::asGuildMessageChannel)
 				.orElse(channel);
-		var optionFromId = event.getOption(FROM_OPTION_ID).getAsLong();
-		var optionToId = event.getOption(TO_OPTION_ID).getAsLong();
+		var optionFromId = event.getOption(FROM_OPTION_ID).getAsString();
+		var optionToId = event.getOption(TO_OPTION_ID).getAsString();
 		
 		var fromMessage = targetChannel.retrieveMessageById(optionFromId).complete();
 		var toMessage = targetChannel.retrieveMessageById(optionToId).complete();
