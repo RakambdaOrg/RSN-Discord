@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.unions.GuildChannelUnion;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
+import net.dv8tion.jda.api.requests.restaction.pagination.PaginationAction;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -74,11 +75,13 @@ public class ClearRangeCommand implements IExecutableSlashCommandGuild{
 		return deferred
 				.thenCompose(empty -> JDAWrappers.edit(event, "Doing stuff").submit())
 				.thenAccept(msg -> JDAWrappers.history(targetChannel)
+						.order(PaginationAction.PaginationOrder.BACKWARD)
 						.skipTo(fromId)
 						.foreachAsync(m -> {
 							processMessage(m);
 							return m.getIdLong() != toId;
-						}));
+						}))
+				.thenCompose(empty -> JDAWrappers.delete(toMessage).submit());
 	}
 	
 	@NotNull
