@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Component
@@ -72,16 +73,23 @@ public class ClearRangeCommand implements IExecutableSlashCommandGuild{
 			toId = toMessage.getIdLong();
 		}
 		
+		var content = localizationService.translate(event.getUserLocale(), "clear-range.removing", fromMessage.getId(), toMessage.getId(), targetChannel.getId());
 		return deferred
-				.thenCompose(empty -> JDAWrappers.edit(event, "Doing stuff").submit())
-				.thenAccept(msg -> JDAWrappers.history(targetChannel)
+				.thenCompose(empty -> JDAWrappers.edit(event, content).submit())
+				.thenCompose(msg -> JDAWrappers.history(targetChannel)
 						.order(PaginationAction.PaginationOrder.BACKWARD)
 						.skipTo(fromId)
 						.foreachAsync(m -> {
-							processMessage(m);
-							return m.getIdLong() != toId;
-						}))
-				.thenCompose(empty -> JDAWrappers.delete(toMessage).submit());
+							try{
+								processMessage(m).get();
+								return m.getIdLong() != toId;
+							}
+							catch(InterruptedException | ExecutionException e){
+								throw new RuntimeException("Failed to wait for message deletion", e);
+							}
+						})
+						.thenCompose(empty -> JDAWrappers.delete(toMessage).submit())
+						.thenCompose(empty -> JDAWrappers.edit(event, "Clear messages done").submit()));
 	}
 	
 	@NotNull

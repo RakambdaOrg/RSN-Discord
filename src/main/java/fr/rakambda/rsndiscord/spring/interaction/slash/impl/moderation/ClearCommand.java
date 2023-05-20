@@ -74,9 +74,9 @@ public class ClearCommand implements IExecutableSlashCommandGuild{
 				.thenCompose(empty -> JDAWrappers.edit(event, content).submit())
 				.thenCompose(msg -> JDAWrappers.history(targetChannel)
 						.order(order)
-						.takeAsync(messageCount)
-						.thenCompose(messages -> deleteAll(event, messages))
-						.thenCompose(empty -> JDAWrappers.edit(event, "Clear messages done").submit()));
+						.takeAsync(messageCount))
+				.thenCompose(messages -> deleteAll(event, messages))
+				.thenCompose(empty -> JDAWrappers.edit(event, "Clear messages done").submit());
 	}
 	
 	@NotNull
