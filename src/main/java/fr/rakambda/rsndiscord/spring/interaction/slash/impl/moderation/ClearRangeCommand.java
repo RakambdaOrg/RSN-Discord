@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Component
@@ -82,11 +81,11 @@ public class ClearRangeCommand implements IExecutableSlashCommandGuild{
 						.foreachAsync(m -> {
 							try{
 								processMessage(m).get();
-								return m.getIdLong() != toId;
 							}
-							catch(InterruptedException | ExecutionException e){
-								throw new RuntimeException("Failed to wait for message deletion", e);
+							catch(Exception e){
+								log.error("Failed to wait for message deletion", e);
 							}
+							return m.getIdLong() != toId;
 						})
 						.thenCompose(empty -> JDAWrappers.delete(toMessage).submit())
 						.thenCompose(empty -> JDAWrappers.edit(event, "Clear messages done").submit()));
