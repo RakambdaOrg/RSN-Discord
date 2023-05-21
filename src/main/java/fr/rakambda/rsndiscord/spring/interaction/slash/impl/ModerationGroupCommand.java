@@ -39,12 +39,12 @@ public class ModerationGroupCommand implements IRegistrableSlashCommand{
 												.addChoice("Oldest first", ClearCommand.ORDER_OLD_CHOICE)),
 						new SubcommandData("clear-range", "Clear messages within a range from a channel")
 								.addOptions(
-										new OptionData(CHANNEL, ClearRangeCommand.CHANNEL_OPTION_ID, "Channel to delete the message in (default: current channel)")
-												.setChannelTypes(ChannelType.TEXT),
 										new OptionData(OptionType.STRING, ClearRangeCommand.FROM_OPTION_ID, "Start message")
 												.setRequired(true),
 										new OptionData(OptionType.STRING, ClearRangeCommand.TO_OPTION_ID, "End message")
-												.setRequired(true)),
+												.setRequired(true),
+										new OptionData(CHANNEL, ClearRangeCommand.CHANNEL_OPTION_ID, "Channel to delete the message in (default: current channel)")
+												.setChannelTypes(ChannelType.TEXT)),
 						new SubcommandData("clear-threads", "Clear threads in a forum")
 								.addOptions(
 										new OptionData(CHANNEL, ClearThreadsCommand.CHANNEL_OPTION_ID, "Channel to delete the threads in")
