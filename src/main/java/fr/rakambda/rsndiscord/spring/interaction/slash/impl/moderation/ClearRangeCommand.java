@@ -87,7 +87,7 @@ public class ClearRangeCommand implements IExecutableSlashCommandGuild{
 							}
 							return m.getIdLong() != toId;
 						})
-						.thenCompose(empty -> JDAWrappers.delete(toMessage).submit())
+						.thenCompose(empty -> JDAWrappers.delete(fromMessage).submit())
 						.thenCompose(empty -> JDAWrappers.edit(event, "Clear messages done").submit()));
 	}
 	
