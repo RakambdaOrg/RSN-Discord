@@ -67,6 +67,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_20
 }
 
+tasks.withType<JavaCompile>(){
+    options.compilerArgs.addAll(listOf("-Xlint:deprecation"))
+}
+
 springBoot {
     val className: String by project
 

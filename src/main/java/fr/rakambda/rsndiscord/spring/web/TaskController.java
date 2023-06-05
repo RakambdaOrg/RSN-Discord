@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.time.Instant;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,6 +36,6 @@ public class TaskController{
 				.filter(t -> Objects.equals(t.getId(), taskId))
 				.findFirst()
 				.orElseThrow(() -> new IllegalArgumentException("Invalid task id"));
-		taskScheduler.schedule(task, new Date());
+		taskScheduler.schedule(task, Instant.now());
 	}
 }
