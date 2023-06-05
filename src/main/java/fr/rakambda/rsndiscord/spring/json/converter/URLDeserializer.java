@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import static java.util.Objects.nonNull;
 
@@ -19,7 +20,7 @@ public class URLDeserializer extends JsonDeserializer<URL>{
 		try{
 			var value = jsonParser.getValueAsString();
 			if(nonNull(value) && !value.isBlank() && !value.equals(".")){
-				return new URL(value);
+				return URI.create(value).toURL();
 			}
 		}
 		catch(MalformedURLException e){

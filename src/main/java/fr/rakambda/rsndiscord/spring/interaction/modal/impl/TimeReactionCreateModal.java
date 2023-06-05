@@ -128,7 +128,7 @@ public class TimeReactionCreateModal implements IExecutableModalGuild{
 					.build();
 			
 			return Modal.create(COMPONENT_ID, "Time reaction create")
-					.addActionRows(
+					.addComponents(
 							ActionRow.of(episode),
 							ActionRow.of(link),
 							ActionRow.of(body)

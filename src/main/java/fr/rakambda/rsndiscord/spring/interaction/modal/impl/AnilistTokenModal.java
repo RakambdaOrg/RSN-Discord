@@ -65,7 +65,7 @@ public class AnilistTokenModal implements IExecutableModalGuild{
 					.build();
 			
 			return Modal.create(COMPONENT_ID, "Anilist register")
-					.addActionRows(ActionRow.of(code))
+					.addComponents(ActionRow.of(code))
 					.build();
 		};
 	}
