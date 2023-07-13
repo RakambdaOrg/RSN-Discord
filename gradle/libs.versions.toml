@@ -10,7 +10,7 @@ names-version = "0.47.0"
 jib-version = "3.3.2"
 git-properties-version = "2.4.1"
 sptringboot-version = "3.1.1"
-sptringboot-dm-version = "1.1.0"
+sptringboot-dm-version = "1.1.1"
 
 [libraries]
 jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda-version" }
