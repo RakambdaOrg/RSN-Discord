@@ -17,17 +17,13 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: ${{ env.APP_JAVA_VERSION }}
-          cache: 'gradle'
-      - name: Set gradle permissions
-        run: chmod +x gradlew
-      - name: Build project
+
+      - name: Build
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: assemble
-      - name: Check project
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: check
+          arguments: | 
+            assemble
+            check
 
   publish:
     name: Publish
@@ -43,8 +39,13 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: ${{ env.APP_JAVA_VERSION }}
-          cache: 'gradle'
-      - name: Set gradle permissions
-        run: chmod +x gradlew
-      - name: Push latest on Docker Hub
-        run: ./gradlew jib -PdockerUsername=${{ secrets.DOCKER_USERNAME }} -PdockerPassword=${{ secrets.DOCKER_TOKEN }} -Djib.to.image="${{ secrets.DOCKER_IMAGE_REPO }}/rakambda/rsn-discord:latest" -Djib.console=plain
+
+      - name: Build
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: |
+            jib
+            -Dorg.gradle.project.dockerUsername=${{ secrets.DOCKER_USERNAME }}
+            -Dorg.gradle.project.dockerPassword=${{ secrets.DOCKER_TOKEN }}
+            -Djib.to.image="${{ secrets.DOCKER_IMAGE_REPO }}/rakambda/rsn-discord:latest"
+            -Djib.console=plain
