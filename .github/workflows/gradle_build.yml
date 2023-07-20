@@ -45,7 +45,7 @@ jobs:
         with:
           arguments: |
             jib
-            -Dorg.gradle.project.dockerUsername=${{ secrets.DOCKER_USERNAME }}
-            -Dorg.gradle.project.dockerPassword=${{ secrets.DOCKER_TOKEN }}
-            -Djib.to.image="${{ secrets.DOCKER_IMAGE_REPO }}/rakambda/rsn-discord:latest"
+            -DdockerUsername=${{ secrets.DOCKER_USERNAME }}
+            -DdockerPassword=${{ secrets.DOCKER_TOKEN }}
+            -Djib.to.image=${{ secrets.DOCKER_IMAGE_REPO }}/rakambda/rsn-discord:latest
             -Djib.console=plain
