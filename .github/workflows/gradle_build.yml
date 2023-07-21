@@ -47,5 +47,5 @@ jobs:
             jib
             -PdockerUsername=${{ secrets.DOCKER_USERNAME }}
             -PdockerPassword=${{ secrets.DOCKER_TOKEN }}
-            -Pjib.to.image=${{ secrets.DOCKER_IMAGE_REPO }}/rakambda/rsn-discord:latest
-            -Pjib.console=plain
+            -Djib.to.image=${{ secrets.DOCKER_IMAGE_REPO }}/rakambda/rsn-discord:latest
+            -Djib.console=plain
