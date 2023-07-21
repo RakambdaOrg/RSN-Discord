@@ -45,7 +45,7 @@ jobs:
         with:
           arguments: |
             jib
-            -DdockerUsername=${{ secrets.DOCKER_USERNAME }}
-            -DdockerPassword=${{ secrets.DOCKER_TOKEN }}
-            -Djib.to.image=${{ secrets.DOCKER_IMAGE_REPO }}/rakambda/rsn-discord:latest
-            -Djib.console=plain
+            -PdockerUsername=${{ secrets.DOCKER_USERNAME }}
+            -PdockerPassword=${{ secrets.DOCKER_TOKEN }}
+            -Pjib.to.image=${{ secrets.DOCKER_IMAGE_REPO }}/rakambda/rsn-discord:latest
+            -Pjib.console=plain
