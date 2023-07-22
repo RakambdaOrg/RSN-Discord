@@ -44,6 +44,10 @@ import java.util.stream.Stream;
 @Component
 @Slf4j
 public class TraktHistoryRunner extends WrappedTriggerTask{
+	private static final Comparator<UserHistory> USER_HISTORY_COMPARATOR = Comparator
+			.<UserHistory, Instant>comparing(h -> extractDate(h).orElse(Instant.EPOCH))
+			.thenComparing(h -> extractSeason(h).orElse(0))
+			.thenComparing(h -> extractEpisode(h).orElse(0));
 	private static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
 	private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	
@@ -125,13 +129,13 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 			var lastActivityDate = entity.getLastActivityDate();
 			var histories = traktService.getAllUserHistory(user.getIdLong(), lastActivityDate, null).stream()
 					.filter(h -> isNewer(h, lastActivityDate))
-					.sorted(Comparator.comparing(h -> extractDate(h).orElse(Instant.EPOCH)))
+					.sorted(USER_HISTORY_COMPARATOR)
 					.toList();
 			
 			sendUserElements(user, histories, channels);
 			
 			histories.stream()
-					.map(this::extractDate)
+					.map(TraktHistoryRunner::extractDate)
 					.flatMap(Optional::stream)
 					.max(Comparator.naturalOrder())
 					.ifPresent(entity::setLastActivityDate);
@@ -281,8 +285,24 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 	}
 	
 	@NotNull
-	private Optional<Instant> extractDate(@NotNull UserHistory history){
+	private static Optional<Instant> extractDate(@NotNull UserHistory history){
 		return Optional.ofNullable(history.getWatchedAt()).map(ChronoZonedDateTime::toInstant);
+	}
+	
+	@NotNull
+	private static Optional<Integer> extractSeason(@NotNull UserHistory history){
+		if(history instanceof UserSerieHistory serieHistory){
+			return Optional.of(serieHistory.getEpisode().getSeason());
+		}
+		return Optional.empty();
+	}
+	
+	@NotNull
+	private static Optional<Integer> extractEpisode(@NotNull UserHistory history){
+		if(history instanceof UserSerieHistory serieHistory){
+			return Optional.of(serieHistory.getEpisode().getNumber());
+		}
+		return Optional.empty();
 	}
 	
 	@NotNull
