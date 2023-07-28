@@ -14,4 +14,5 @@ public enum ChannelType{
 	@Deprecated
 	RSS,
 	TRAKT_MEDIA_CHANGE,
+	SCAN_LINK_REPLACEMENT,
 }
