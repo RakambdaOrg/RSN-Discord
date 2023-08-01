@@ -7,7 +7,9 @@ import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.log.LogContext;
 import fr.rakambda.rsndiscord.spring.storage.repository.ChannelRepository;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -18,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 @Slf4j
@@ -33,10 +36,12 @@ public class AutoTodoEventListener extends ListenerAdapter{
 	};
 	
 	private final ChannelRepository channelRepository;
+	private final FixLinksEventListener fixLinksEventListener;
 	
 	@Autowired
-	public AutoTodoEventListener(ChannelRepository channelRepository){
+	public AutoTodoEventListener(ChannelRepository channelRepository, FixLinksEventListener fixLinksEventListener){
 		this.channelRepository = channelRepository;
+		this.fixLinksEventListener = fixLinksEventListener;
 	}
 	
 	@Override
@@ -59,9 +64,19 @@ public class AutoTodoEventListener extends ListenerAdapter{
 				case CHANNEL_PINNED_ADD, THREAD_CREATED -> JDAWrappers.delete(message).submit();
 				case DEFAULT, INLINE_REPLY, SLASH_COMMAND, CONTEXT_COMMAND -> JDAWrappers
 						.createThread(message, "reply-" + event.getMessageId()).submit()
-						.thenCompose(thread -> JDAWrappers.message(thread, ActionRow.of(BUTTONS_NORMAL)).submit());
+						.thenCompose(thread -> JDAWrappers.message(thread, ActionRow.of(BUTTONS_NORMAL)).submit()
+								.thenCompose(m -> fixLinks(thread)));
 			}
 		}
+	}
+	
+	@NotNull
+	private CompletableFuture<Message> fixLinks(@NotNull ThreadChannel thread){
+		return thread.retrieveParentMessage().submit()
+				.thenApply(message -> fixLinksEventListener.extractFixedLinks(message.getContentRaw()))
+				.thenCompose(links -> links.isEmpty()
+						? CompletableFuture.completedFuture(null)
+						: JDAWrappers.message(thread, String.join("\n", links)).submit());
 	}
 	
 	@Override
@@ -89,7 +104,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 		}
 	}
 	
-	private boolean isChannelNotRegistered(@NotNull GuildChannel channel){
+	public boolean isChannelNotRegistered(@NotNull GuildChannel channel){
 		return channelRepository.findAllByGuildIdAndType(channel.getGuild().getIdLong(), fr.rakambda.rsndiscord.spring.storage.entity.ChannelType.AUTO_TODO).stream()
 				.noneMatch(channelEntity -> Objects.equals(channelEntity.getChannelId(), channel.getIdLong()));
 	}
