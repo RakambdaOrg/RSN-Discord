@@ -91,12 +91,6 @@ jib {
             }
         }
     }
-    to {
-        auth {
-            username = project.findProperty("dockerUsername").toString()
-            password = project.findProperty("dockerPassword").toString()
-        }
-    }
     container {
         val className: String by project
 
