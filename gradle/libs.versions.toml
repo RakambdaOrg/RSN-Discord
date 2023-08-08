@@ -1,7 +1,6 @@
 [versions]
 jda-version = "5.0.0-beta.13"
-lavaplayer-version = "1.3.78"
-lavaplayer-fork-version = "1.4.2"
+lavaplayer-version = "2.0.0"
 lp_cross-version = "0.1.1"
 jetbrains-annotations-version = "24.0.1"
 opus-version = "1.1.1"
@@ -14,7 +13,7 @@ sptringboot-dm-version = "1.1.2"
 
 [libraries]
 jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda-version" }
-lavaplayer = { group = "com.github.Walkyst.lavaplayer-fork", name = "lavaplayer", version.ref = "lavaplayer-fork-version" }
+lavaplayer = { group = "dev.arbjerg", name = "lavaplayer", version.ref = "lavaplayer-version" }
 lpCross = { group = "com.github.natanbc", name = "lp-cross", version.ref = "lp_cross-version" }
 jetbrainsAnnotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations-version" }
 opus-api = { group = "club.minnced", name = "opus-java-api", version.ref = "opus-version" }
