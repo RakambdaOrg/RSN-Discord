@@ -56,6 +56,10 @@ repositories {
         name = "m2-dv8tion"
         url = uri("https://m2.dv8tion.net/releases")
     }
+    maven {
+        name = "jitpack"
+        url = uri("https://jitpack.io")
+    }
 }
 
 java {
