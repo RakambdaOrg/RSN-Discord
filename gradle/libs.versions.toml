@@ -1,6 +1,6 @@
 [versions]
 jda-version = "5.0.0-beta.13"
-lavaplayer-version = "2.0.1"
+lavaplayer-version = "2.0.2"
 lp_cross-version = "0.1.1"
 jetbrains-annotations-version = "24.0.1"
 opus-version = "1.1.1"
