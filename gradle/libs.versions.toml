@@ -5,7 +5,7 @@ lp_cross-version = "0.1.1"
 jetbrains-annotations-version = "24.0.1"
 opus-version = "1.1.1"
 
-names-version = "0.48.0"
+names-version = "0.49.0"
 jib-version = "3.4.0"
 git-properties-version = "2.4.1"
 sptringboot-version = "3.1.4"
