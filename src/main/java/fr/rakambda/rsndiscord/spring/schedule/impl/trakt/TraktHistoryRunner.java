@@ -218,7 +218,7 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 		
 		movieDetails.map(MovieDetails::getPosterPath)
 				.map(p -> theMovieDbService.getImageURL(p, TmdbImageSize.ORIGINAL))
-				.ifPresent(builder::setThumbnail);
+				.ifPresent(builder::setImage);
 		
 		return builder.build();
 	}
@@ -270,7 +270,7 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 		seasonDetails.map(Season::getPosterPath)
 				.or(() -> tvDetails.map(TvDetails::getPosterPath))
 				.map(p -> theMovieDbService.getImageURL(p, TmdbImageSize.ORIGINAL))
-				.ifPresent(builder::setThumbnail);
+				.ifPresent(builder::setImage);
 		
 		return builder.build();
 	}
