@@ -32,7 +32,8 @@ public sealed abstract class Media permits AnimeMedia, MangaMedia{
 	private MediaCoverImage coverImage;
 	private MediaSource source;
 	private Set<MediaRank> rankings = new HashSet<>();
-	private boolean isAdult;
+	@JsonProperty("isAdult")
+	private boolean adult;
 	private int id;
 	
 	public abstract MediaType getType();

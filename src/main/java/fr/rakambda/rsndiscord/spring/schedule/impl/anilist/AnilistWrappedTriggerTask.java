@@ -47,7 +47,7 @@ public abstract class AnilistWrappedTriggerTask extends WrappedTriggerTask{
 		
 		Optional.of(media.isAdult())
 				.filter(a -> a)
-				.ifPresent(a -> builder.addField(localizationService.translate(locale, "anilist.adult"), "", true));
+				.ifPresent(a -> builder.addField(localizationService.translate(locale, "anilist.adult"), "\uD83D\uDD1E Yes", true));
 		
 		if(media instanceof AnimeMedia animeMedia){
 			fillTypeEmbed(builder, animeMedia, locale);

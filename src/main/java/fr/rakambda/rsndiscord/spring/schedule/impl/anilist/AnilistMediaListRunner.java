@@ -184,7 +184,7 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 		
 		Optional.of(mediaList.isPrivateItem())
 				.filter(p -> p)
-				.ifPresent(p -> builder.addField(localizationService.translate(locale, "anilist.list-private"), "Yes", true));
+				.ifPresent(p -> builder.addField(localizationService.translate(locale, "anilist.list-private"), "\uD83D\uDD12 Yes", true));
 		
 		mediaList.getStartedAt().asDate()
 				.map(DF::format)
