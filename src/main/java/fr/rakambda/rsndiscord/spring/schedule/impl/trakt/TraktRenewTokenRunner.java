@@ -67,7 +67,7 @@ public class TraktRenewTokenRunner extends WrappedTriggerTask{
 			return;
 		}
 		
-		if(entity.getRefreshTokenExpire().plus(getPeriod() * 4, getPeriodUnit()).isBefore(Instant.now())){
+		if(Instant.now().isBefore(entity.getRefreshTokenExpire().minus(getPeriod() * 4, getPeriodUnit()))){
 			return;
 		}
 		

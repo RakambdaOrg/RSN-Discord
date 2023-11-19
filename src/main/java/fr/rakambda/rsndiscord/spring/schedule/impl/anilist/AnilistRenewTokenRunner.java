@@ -62,12 +62,11 @@ public class AnilistRenewTokenRunner extends WrappedTriggerTask{
 	}
 	
 	private void processEntity(@NotNull AnilistEntity entity){
-		if(Objects.nonNull(entity.getRefreshTokenExpire()) && entity.getRefreshTokenExpire().plus(getPeriod() + 1, getPeriodUnit()).isBefore(Instant.now())){
+		if(Objects.nonNull(entity.getRefreshTokenExpire()) && Instant.now().isBefore(entity.getRefreshTokenExpire().minus(getPeriod() * 4, getPeriodUnit()))){
 			return;
 		}
 		
 		try{
-			log.info("Renewing token for {}", entity.getId());
 			renewToken(entity);
 		}
 		catch(Exception e){
