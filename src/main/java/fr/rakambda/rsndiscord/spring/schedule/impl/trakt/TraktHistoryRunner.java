@@ -315,7 +315,7 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 	
 	@NotNull
 	private Collection<TraktEntity> getUsers(){
-		return traktRepository.findAll();
+		return traktRepository.findAllByEnabledIsTrue();
 	}
 	
 	@Override

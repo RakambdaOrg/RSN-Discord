@@ -200,6 +200,7 @@ public class TraktService{
 					entity.setAccessToken(r.getAccessToken());
 					entity.setRefreshToken(r.getRefreshToken());
 					entity.setRefreshTokenExpire(Instant.now().plusSeconds(r.getExpiresIn()));
+					entity.setEnabled(true);
 				})
 				.flatMap(r -> getUserSettings(r.getAccessToken()))
 				.doOnNext(u -> entity.setUsername(u.getUser().getUsername()))

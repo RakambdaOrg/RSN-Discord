@@ -59,7 +59,7 @@ public class TraktRenewTokenRunner extends WrappedTriggerTask{
 	
 	@Override
 	protected void executeGlobal(@NotNull JDA jda){
-		traktRepository.findAll().forEach(this::processEntity);
+		traktRepository.findAllByEnabledIsTrue().forEach(this::processEntity);
 	}
 	
 	private void processEntity(@NotNull TraktEntity entity){
