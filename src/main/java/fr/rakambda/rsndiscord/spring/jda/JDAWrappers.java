@@ -307,6 +307,16 @@ public class JDAWrappers{
 		}
 	}
 	
+	public static boolean isMember(@NotNull Guild guild, long userId){
+		if(guild.isLoaded()){
+			if(guild.isMember(UserSnowflake.fromId(userId))){
+				return true;
+			}
+		}
+		
+		return findMember(guild, userId).isPresent();
+	}
+	
 	@NotNull
 	public static CompletableFuture<Void> delay(int seconds){
 		var delay = CompletableFuture.delayedExecutor(seconds, TimeUnit.SECONDS);

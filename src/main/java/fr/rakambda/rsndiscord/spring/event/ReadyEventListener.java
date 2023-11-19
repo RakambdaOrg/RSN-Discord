@@ -50,6 +50,8 @@ public class ReadyEventListener extends ListenerAdapter{
 				.setStatus(ONLINE)
 				.setActivity(Activity.of(Activity.ActivityType.PLAYING, "Bip bip"));
 		
+		jda.getGuilds().forEach(Guild::loadMembers);
+		
 		clearGuildCommands(jda.getGuilds())
 				.thenCompose(empty -> registerCommands(jda))
 				.exceptionally(this::handleException);

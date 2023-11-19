@@ -150,7 +150,7 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 	
 	private void sendUserElements(@NotNull User user, @NotNull Collection<UserHistory> histories, @NotNull Collection<GuildMessageChannel> channels){
 		channels.stream()
-				.filter(c -> JDAWrappers.findMember(c.getGuild(), user.getIdLong()).isPresent())
+				.filter(c -> JDAWrappers.isMember(c.getGuild(), user.getIdLong()))
 				.forEach(c -> sendUserElements(c, user, histories));
 	}
 	

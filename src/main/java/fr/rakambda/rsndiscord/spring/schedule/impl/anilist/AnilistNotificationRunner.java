@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import java.awt.Color;
+import java.awt.*;
 import java.time.Instant;
 import java.time.chrono.ChronoZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -156,7 +156,7 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 	
 	private void sendUserElements(@NotNull User user, @NotNull Collection<Notification> notifications, @NotNull Collection<GuildMessageChannel> channels){
 		channels.stream()
-				.filter(c -> c.getGuild().isMember(user))
+				.filter(c -> JDAWrappers.isMember(c.getGuild(), user.getIdLong()))
 				.forEach(c -> sendUserElements(c, user, notifications));
 	}
 	

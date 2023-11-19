@@ -154,7 +154,7 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 	
 	private void sendUserElements(@NotNull User user, @NotNull Collection<MediaList> mediaLists, @NotNull Collection<GuildMessageChannel> channels){
 		channels.stream()
-				.filter(c -> c.getGuild().isMember(user))
+				.filter(c -> JDAWrappers.isMember(c.getGuild(), user.getIdLong()))
 				.forEach(c -> sendUserElements(c, user, mediaLists));
 	}
 	
