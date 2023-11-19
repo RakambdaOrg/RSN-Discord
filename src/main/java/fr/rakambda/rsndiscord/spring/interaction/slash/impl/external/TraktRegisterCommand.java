@@ -31,13 +31,13 @@ public class TraktRegisterCommand implements IExecutableSlashCommandGuild{
 	@Override
 	@NotNull
 	public String getId(){
-		return "trakt";
+		return "register";
 	}
 	
 	@Override
 	@NotNull
 	public String getPath(){
-		return "external/trakt";
+		return "trakt/register";
 	}
 	
 	@Override

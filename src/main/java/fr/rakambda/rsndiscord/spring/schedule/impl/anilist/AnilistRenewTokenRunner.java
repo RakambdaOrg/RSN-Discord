@@ -1,8 +1,8 @@
 package fr.rakambda.rsndiscord.spring.schedule.impl.anilist;
 
 import fr.rakambda.rsndiscord.spring.api.anilist.AnilistService;
-import fr.rakambda.rsndiscord.spring.interaction.slash.impl.external.AnilistRegisterCommand;
-import fr.rakambda.rsndiscord.spring.interaction.slash.impl.external.AnilistUnregisterCommand;
+import fr.rakambda.rsndiscord.spring.interaction.slash.impl.anilist.AnilistRegisterCommand;
+import fr.rakambda.rsndiscord.spring.interaction.slash.impl.anilist.AnilistUnregisterCommand;
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.schedule.WrappedTriggerTask;
 import fr.rakambda.rsndiscord.spring.storage.entity.AnilistEntity;

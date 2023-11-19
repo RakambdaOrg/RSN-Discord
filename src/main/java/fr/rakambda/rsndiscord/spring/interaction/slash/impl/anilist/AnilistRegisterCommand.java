@@ -1,8 +1,9 @@
-package fr.rakambda.rsndiscord.spring.interaction.slash.impl.external;
+package fr.rakambda.rsndiscord.spring.interaction.slash.impl.anilist;
 
+import fr.rakambda.rsndiscord.spring.api.anilist.AnilistService;
+import fr.rakambda.rsndiscord.spring.interaction.modal.impl.AnilistTokenModal;
 import fr.rakambda.rsndiscord.spring.interaction.slash.api.IExecutableSlashCommandGuild;
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
-import fr.rakambda.rsndiscord.spring.storage.repository.AnilistRepository;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -14,36 +15,29 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Component
-public class AnilistUnregisterCommand implements IExecutableSlashCommandGuild{
-	private final AnilistRepository anilistRepository;
+public class AnilistRegisterCommand implements IExecutableSlashCommandGuild{
+	private final AnilistService aniListService;
 	
 	@Autowired
-	public AnilistUnregisterCommand(AnilistRepository anilistRepository){
-		this.anilistRepository = anilistRepository;
+	public AnilistRegisterCommand(AnilistService aniListService){
+		this.aniListService = aniListService;
 	}
 	
 	@Override
 	@NotNull
 	public String getId(){
-		return "anilist";
+		return "register";
 	}
 	
 	@Override
 	@NotNull
 	public String getPath(){
-		return "external/anilist";
+		return "anilist/register";
 	}
 	
 	@Override
 	@NotNull
 	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
-		anilistRepository.findById(member.getIdLong())
-				.ifPresent(entity -> {
-					entity.setEnabled(false);
-					anilistRepository.save(entity);
-				});
-		return JDAWrappers.reply(event, "Done")
-				.ephemeral(true)
-				.submit();
+		return JDAWrappers.reply(event, AnilistTokenModal.builder(aniListService.getCodeLink()).get()).submit();
 	}
 }

@@ -31,4 +31,6 @@ public class TraktEntity{
 	private Instant refreshTokenExpire;
 	@Basic
 	private Instant lastActivityDate;
+	@Basic
+	private boolean enabled;
 }
