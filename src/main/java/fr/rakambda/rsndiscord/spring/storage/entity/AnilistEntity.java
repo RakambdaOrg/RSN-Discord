@@ -33,4 +33,6 @@ public class AnilistEntity{
 	private Instant lastMediaListDate;
 	@Basic
 	private Instant lastNotificationDate;
+	@Basic
+	private boolean enabled;
 }

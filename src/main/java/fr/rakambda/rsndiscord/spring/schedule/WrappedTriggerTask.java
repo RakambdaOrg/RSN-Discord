@@ -12,7 +12,7 @@ import static net.dv8tion.jda.api.JDA.Status.CONNECTED;
 
 @Slf4j
 public abstract class WrappedTriggerTask implements TriggerTaskProvider{
-	private final JDA jda;
+	protected final JDA jda;
 	
 	private Instant nextRun = Instant.EPOCH;
 	

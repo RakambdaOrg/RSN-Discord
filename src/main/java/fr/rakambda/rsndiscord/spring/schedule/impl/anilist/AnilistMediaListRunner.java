@@ -254,7 +254,7 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 	
 	@NotNull
 	private Collection<AnilistEntity> getUsers(){
-		return anilistRepository.findAll();
+		return anilistRepository.findAllByEnabledIsTrue();
 	}
 	
 	@Override

@@ -48,7 +48,7 @@ public class TraktRegisterCommand implements IExecutableSlashCommandGuild{
 		
 		if(traktService.isUserRegistered(member.getIdLong())){
 			var content = localizationService.translate(locale, "trakt.already-registered");
-			deferred.thenCompose(empty -> JDAWrappers.edit(event, content).submit());
+			return deferred.thenCompose(empty -> JDAWrappers.edit(event, content).submit());
 		}
 		
 		var deviceCode = traktService.getDeviceCode();

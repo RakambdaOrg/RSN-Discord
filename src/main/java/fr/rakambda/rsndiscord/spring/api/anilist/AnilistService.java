@@ -98,6 +98,7 @@ public class AnilistService{
 		entity.setRefreshToken(response.getRefreshToken());
 		entity.setRefreshTokenExpire(Instant.now().plusSeconds(response.getExpiresIn()));
 		entity.setUserId(getViewerId(response.getAccessToken()).getViewer().getId());
+		entity.setEnabled(true);
 		
 		anilistRepository.save(entity);
 	}
