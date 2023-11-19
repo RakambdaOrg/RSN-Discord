@@ -75,7 +75,7 @@ public class TraktRenewTokenRunner extends WrappedTriggerTask{
 			traktService.renewToken(entity.getId());
 		}
 		catch(WebClientResponseException.BadRequest e){
-			var message = "Your Anilist connection is over, you need to renew it with `%s` in one of the servers I'm in.\nIf you want to stop sync, please use `%s`."
+			var message = "Your Trakt connection is over, you need to renew it with `%s` in one of the servers I'm in.\nIf you want to stop sync, please use `%s`."
 					.formatted(
 							new TraktRegisterCommand(traktService, null).getPath(),
 							new TraktUnregisterCommand(traktRepository).getPath()
