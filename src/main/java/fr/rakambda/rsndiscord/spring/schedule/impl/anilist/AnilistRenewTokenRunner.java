@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
+import java.util.Objects;
 
 @Component
 @Slf4j
@@ -61,7 +62,7 @@ public class AnilistRenewTokenRunner extends WrappedTriggerTask{
 	}
 	
 	private void processEntity(@NotNull AnilistEntity entity){
-		if(entity.getRefreshTokenExpire().plus(getPeriod() + 1, getPeriodUnit()).isBefore(Instant.now())){
+		if(Objects.nonNull(entity.getRefreshTokenExpire()) && entity.getRefreshTokenExpire().plus(getPeriod() + 1, getPeriodUnit()).isBefore(Instant.now())){
 			return;
 		}
 		
