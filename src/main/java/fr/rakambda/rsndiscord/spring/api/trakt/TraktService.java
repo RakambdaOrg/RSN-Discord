@@ -233,6 +233,7 @@ public class TraktService{
 		entity.setAccessToken(accessToken.getAccessToken());
 		entity.setRefreshToken(accessToken.getRefreshToken());
 		entity.setRefreshTokenExpire(Instant.now().plusSeconds(accessToken.getExpiresIn()));
+		entity.setEnabled(true);
 		
 		traktRepository.save(entity);
 	}
