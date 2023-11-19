@@ -124,7 +124,9 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 					.sorted(Comparator.comparing(e -> extractDate(e).orElse(Instant.EPOCH)))
 					.toList();
 			
-			sendUserElements(user, notifications, channels);
+			if(!notifications.isEmpty()){
+				sendUserElements(user, notifications, channels);
+			}
 			
 			notifications.stream()
 					.map(this::extractDate)

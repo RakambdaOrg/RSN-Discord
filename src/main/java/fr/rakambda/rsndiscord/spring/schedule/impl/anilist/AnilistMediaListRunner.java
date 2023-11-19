@@ -122,7 +122,9 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 					.sorted(Comparator.comparing(e -> extractDate(e).orElse(Instant.EPOCH)))
 					.toList();
 			
-			sendUserElements(user, mediaLists, channels);
+			if(!mediaLists.isEmpty()){
+				sendUserElements(user, mediaLists, channels);
+			}
 			
 			mediaLists.stream()
 					.map(this::extractDate)
