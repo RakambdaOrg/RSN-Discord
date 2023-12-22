@@ -38,11 +38,11 @@ public class InteractionEditMessageWrapper extends MessageWrapper<WebhookMessage
 	
 	@Override
 	protected void logSuccess(Message value){
-		log.info("Replied with edited message to slash command in {} : {}", target, value.getContentRaw());
+		log.info("Replied with edited message to interaction in {} : {}", target, value.getContentRaw());
 	}
 	
 	@Override
 	protected void logException(Throwable throwable){
-		log.error("Failed to edit slash command message {}", target, throwable);
+		log.error("Failed to edit interaction message {}", target, throwable);
 	}
 }

@@ -2,7 +2,7 @@ package fr.rakambda.rsndiscord.spring;
 
 import fr.rakambda.rsndiscord.spring.audio.AudioService;
 import fr.rakambda.rsndiscord.spring.audio.AudioServiceFactory;
-import fr.rakambda.rsndiscord.spring.interaction.slash.SlashCommandService;
+import fr.rakambda.rsndiscord.spring.interaction.InteractionsService;
 import fr.rakambda.rsndiscord.spring.settings.ApplicationSettings;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
@@ -10,9 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
@@ -20,15 +18,15 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class StopService{
 	private final ApplicationSettings applicationSettings;
-	private final SlashCommandService slashCommandService;
-	private final AudioServiceFactory audioServiceFactory;
+	private final InteractionsService interactionsService;
+    private final AudioServiceFactory audioServiceFactory;
 	private final ApplicationContext applicationContext;
 	
 	@Autowired
-	public StopService(ApplicationSettings applicationSettings, @Lazy SlashCommandService slashCommandService, AudioServiceFactory audioServiceFactory, ApplicationContext applicationContext){
+	public StopService(ApplicationSettings applicationSettings, InteractionsService interactionsService, AudioServiceFactory audioServiceFactory, ApplicationContext applicationContext){
 		this.applicationSettings = applicationSettings;
-		this.slashCommandService = slashCommandService;
-		this.audioServiceFactory = audioServiceFactory;
+        this.interactionsService = interactionsService;
+        this.audioServiceFactory = audioServiceFactory;
 		this.applicationContext = applicationContext;
 	}
 	
@@ -60,7 +58,7 @@ public class StopService{
 			return CompletableFuture.completedFuture(null);
 		}
 		
-		return slashCommandService.removeAllCommands(jda);
+		return interactionsService.removeAllCommands(jda);
 	}
 	
 	@Slf4j

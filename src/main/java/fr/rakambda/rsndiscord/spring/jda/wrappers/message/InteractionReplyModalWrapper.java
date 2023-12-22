@@ -20,7 +20,7 @@ public class InteractionReplyModalWrapper extends ActionWrapper<Void, ModalCallb
 	
 	@Override
 	protected void logSuccess(Void value){
-		log.info("Replied with new modal to slash command in {}", target);
+		log.info("Replied with new modal to interaction in {}", target);
 	}
 	
 	@Override

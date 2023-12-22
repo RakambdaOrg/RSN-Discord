@@ -1,5 +1,7 @@
 package fr.rakambda.rsndiscord.spring.event;
 
+import fr.rakambda.rsndiscord.spring.interaction.InteractionsService;
+import fr.rakambda.rsndiscord.spring.interaction.context.message.MessageContextMenuService;
 import fr.rakambda.rsndiscord.spring.interaction.slash.SlashCommandService;
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.settings.ApplicationSettings;
@@ -29,15 +31,19 @@ import static net.dv8tion.jda.api.OnlineStatus.ONLINE;
 @Component
 public class ReadyEventListener extends ListenerAdapter{
 	private final ApplicationSettings applicationSettings;
+	private final InteractionsService interactionsService;
 	private final SlashCommandService slashCommandService;
+	private final MessageContextMenuService messageContextMenuService;
 	private final GuildRepository guildRepository;
 	private final AudioRepository audioRepository;
 	
 	@Autowired
-	public ReadyEventListener(ApplicationSettings applicationSettings, SlashCommandService slashCommandService, GuildRepository guildRepository, AudioRepository audioRepository){
+	public ReadyEventListener(ApplicationSettings applicationSettings, InteractionsService interactionsService, SlashCommandService slashCommandService, MessageContextMenuService messageContextMenuService, GuildRepository guildRepository, AudioRepository audioRepository){
 		this.applicationSettings = applicationSettings;
-		this.slashCommandService = slashCommandService;
-		this.guildRepository = guildRepository;
+        this.interactionsService = interactionsService;
+        this.slashCommandService = slashCommandService;
+        this.messageContextMenuService = messageContextMenuService;
+        this.guildRepository = guildRepository;
 		this.audioRepository = audioRepository;
 	}
 	
@@ -82,7 +88,7 @@ public class ReadyEventListener extends ListenerAdapter{
 		}
 		
 		log.info("Adding {} to storage", event.getGuild());
-		var guildEntity = guildRepository.save(GuildEntity.builder().id(guildId).build());
+		guildRepository.save(GuildEntity.builder().id(guildId).build());
 		audioRepository.save(AudioEntity.builder().volume(100).guildId(guildId).build());
 	}
 	
@@ -90,7 +96,7 @@ public class ReadyEventListener extends ListenerAdapter{
 	private CompletableFuture<Void> clearGuildCommands(@NotNull Collection<Guild> guilds){
 		var future = CompletableFuture.<Void> completedFuture(null);
 		for(var guild : guilds){
-			future = future.thenCompose(empty2 -> slashCommandService.clearGuildCommands(guild));
+			future = future.thenCompose(empty2 -> interactionsService.clearGuildCommands(guild));
 		}
 		return future;
 	}
@@ -101,11 +107,14 @@ public class ReadyEventListener extends ListenerAdapter{
 			return applicationSettings.getDevelopmentGuilds().stream()
 					.map(jda::getGuildById)
 					.filter(Objects::nonNull)
-					.map(slashCommandService::registerGuildCommands)
+					.map(guild -> interactionsService.clearGuildCommands(guild)
+							.thenCompose(empty -> slashCommandService.registerGuildCommands(guild))
+							.thenCompose(empty -> messageContextMenuService.registerGuildMenus(guild)))
 					.reduce((left, right) -> left.thenCombine(right, (v1, v2) -> null))
 					.orElseGet(() -> CompletableFuture.completedFuture(null));
 		}
 		
-		return slashCommandService.registerGlobalCommands(jda);
+		return slashCommandService.registerGlobalCommands(jda)
+				.thenCompose(empty -> messageContextMenuService.registerGlobalMenus(jda));
 	}
 }

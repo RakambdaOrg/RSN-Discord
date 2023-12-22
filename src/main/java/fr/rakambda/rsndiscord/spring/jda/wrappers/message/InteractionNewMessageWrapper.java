@@ -45,11 +45,11 @@ public class InteractionNewMessageWrapper extends MessageWrapper<WebhookMessageC
 	
 	@Override
 	protected void logSuccess(Message value){
-		log.info("Replied with new message to slash command in {} : {}", target, value.getContentRaw());
+		log.info("Replied with new message to interaction in {} : {}", target, value.getContentRaw());
 	}
 	
 	@Override
 	protected void logException(Throwable throwable){
-		log.error("Failed to reply new message to slash command {}", target, throwable);
+		log.error("Failed to reply new message to interaction {}", target, throwable);
 	}
 }
