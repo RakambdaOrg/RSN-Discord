@@ -13,6 +13,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @Service
@@ -30,10 +33,10 @@ public class StopService{
 		this.applicationContext = applicationContext;
 	}
 	
-	public void shutdown(@NotNull JDA jda) throws InterruptedException {
+	public void shutdown(@NotNull JDA jda) throws InterruptedException, ExecutionException, TimeoutException{
 		log.info("Stopping bot");
 		audioServiceFactory.getAll().forEach(AudioService::leave);
-		resetCommands(jda);
+		resetCommands(jda).get(10, TimeUnit.MINUTES);
 
 		jda.shutdown();
 		if (!jda.awaitShutdown(Duration.ofMinutes(5))) {

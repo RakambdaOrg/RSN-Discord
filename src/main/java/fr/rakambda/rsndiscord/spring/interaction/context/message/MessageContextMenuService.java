@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.localization.LocalizationFunction;
 import net.dv8tion.jda.api.interactions.commands.localization.ResourceBundleLocalizationFunction;
-import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
+import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,7 +50,7 @@ public class MessageContextMenuService {
 				.map(cmd -> cmd.getDefinition(localizationFunction))
 				.collect(Collectors.toSet());
 		
-		return registerMenus(jda.updateCommands(), commands);
+		return registerMenus(jda::upsertCommand, commands);
 	}
 	
 	@NotNull
@@ -61,21 +62,23 @@ public class MessageContextMenuService {
 				.map(cmd -> cmd.getDefinition(localizationFunction))
 				.collect(Collectors.toSet());
 		
-		return registerMenus(guild.updateCommands(), commands);
+		return registerMenus(guild::upsertCommand, commands);
 	}
 	
 	@NotNull
-	private CompletableFuture<Void> registerMenus(@NotNull CommandListUpdateAction action, @NotNull Collection<CommandData> commands){
+	private CompletableFuture<Void> registerMenus(@NotNull Function<CommandData, RestAction<Command>> action, @NotNull Collection<CommandData> commands){
 		if(commands.isEmpty()){
-			log.info("No commands to register");
+			log.info("No message context menus to register");
 			return CompletableFuture.completedFuture(null);
 		}
 		
-		log.info("Registering {} commands", commands.size());
-		return action.addCommands(commands).submit()
-				.thenAccept(registered -> log.info("Message context menus registered: {}", registered.stream()
-						.map(Command::getName)
-						.collect(Collectors.joining(", "))))
+		log.info("Registering {} message context menus", commands.size());
+		return commands.stream()
+				.map(command -> action.apply(command).submit()
+						.thenAccept(registered -> log.info("Message context menus registered: {}", registered.getName())))
+				.reduce((a, b) -> a.thenCombine(b, (v1, v2) -> null))
+				.orElseGet(() -> CompletableFuture.completedFuture(null))
+				.thenAccept(empty -> {})
 				.exceptionally(e -> {
 					log.error("Failed to register message context menus", e);
 					return null;

@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.localization.LocalizationFunction;
 import net.dv8tion.jda.api.interactions.commands.localization.ResourceBundleLocalizationFunction;
-import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
+import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,7 +50,7 @@ public class SlashCommandService{
 				.map(cmd -> cmd.getDefinition(localizationFunction))
 				.collect(Collectors.toSet());
 		
-		return registerCommands(jda.updateCommands(), commands);
+		return registerCommands(jda::upsertCommand, commands);
 	}
 	
 	@NotNull
@@ -61,21 +62,23 @@ public class SlashCommandService{
 				.map(cmd -> cmd.getDefinition(localizationFunction))
 				.collect(Collectors.toSet());
 		
-		return registerCommands(guild.updateCommands(), commands);
+		return registerCommands(guild::upsertCommand, commands);
 	}
 	
 	@NotNull
-	private CompletableFuture<Void> registerCommands(@NotNull CommandListUpdateAction action, @NotNull Collection<CommandData> commands){
+	private CompletableFuture<Void> registerCommands(@NotNull Function<CommandData, RestAction<Command>> action, @NotNull Collection<CommandData> commands){
 		if(commands.isEmpty()){
 			log.info("No commands to register");
 			return CompletableFuture.completedFuture(null);
 		}
 		
 		log.info("Registering {} commands", commands.size());
-		return action.addCommands(commands).submit()
-				.thenAccept(registered -> log.info("Slash commands registered: {}", registered.stream()
-						.map(Command::getName)
-						.collect(Collectors.joining(", "))))
+		return commands.stream()
+				.map(command -> action.apply(command).submit()
+						.thenAccept(registered -> log.info("Slash command registered: {}", registered.getName())))
+				.reduce((a, b) -> a.thenCombine(b, (v1, v2) -> null))
+				.orElseGet(() -> CompletableFuture.completedFuture(null))
+				.thenAccept(empty -> {})
 				.exceptionally(e -> {
 					log.error("Failed to register slash commands", e);
 					return null;

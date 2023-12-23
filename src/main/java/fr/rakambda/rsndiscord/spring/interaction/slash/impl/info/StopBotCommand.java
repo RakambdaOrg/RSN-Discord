@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @Component
@@ -63,7 +65,7 @@ public class StopBotCommand implements IExecutableSlashCommandGuild, IExecutable
 			var reply = JDAWrappers.reply(event, "Stopping").ephemeral(true).submit();
 			stopService.shutdown(event.getJDA());
 			return reply;
-		} catch (InterruptedException e) {
+		} catch (InterruptedException | ExecutionException | TimeoutException e) {
 			throw new RuntimeException("Failed to stop bot", e);
 		}
 	}
