@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
+
 plugins {
     idea
     java
@@ -72,16 +74,16 @@ tasks.withType<JavaCompile>() {
     options.compilerArgs.addAll(listOf("-Xlint:deprecation"))
 }
 
-tasks {
-    bootBuildImage {
-        imageName.set(project.findProperty("dockerImage") as String?)
+tasks.withType<BootBuildImage> {
+    builder = "paketobuildpacks/builder:tiny"
 
-        docker {
-            publishRegistry {
-                username.set(project.findProperty("dockerUser") as String?)
-                password.set(project.findProperty("dockerToken") as String?)
-                url.set(project.findProperty("dockerRepository") as String?)
-            }
+    imageName.set(project.findProperty("dockerImage") as String?)
+
+    docker {
+        publishRegistry {
+            username.set(project.findProperty("dockerUser") as String?)
+            password.set(project.findProperty("dockerToken") as String?)
+            url.set(project.findProperty("dockerRepository") as String?)
         }
     }
 }
