@@ -143,7 +143,7 @@ public class SimklService{
 		return client.get()
 				.uri(b -> b.pathSegment("oauth", "pin", "{deviceCode}")
 						.queryParam("client_id", applicationSettings.getSimkl().getClientId())
-						.build(deviceCode.getDeviceCode()))
+						.build(deviceCode.getUserCode()))
 				.retrieve()
 				.bodyToMono(AccessTokenResponse.class)
 				.flatMap(body -> {
