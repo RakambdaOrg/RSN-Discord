@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @Slf4j
 @Service
@@ -33,24 +34,36 @@ public class TheMovieDbService{
 	public MovieDetails getMovieDetails(long movieId) throws RequestFailedException{
 		log.info("Getting movie details for {}", movieId);
 		
-		return HttpUtils.withStatusOkAndBody(client.get()
-				.uri(b -> b.pathSegment("movie", "{id}").build(movieId))
-				.retrieve()
-				.toEntity(MovieDetails.class)
-				.blockOptional()
-				.orElseThrow(() -> new RequestFailedException("Failed to get movie details")));
+		try{
+			return HttpUtils.withStatusOkAndBody(client.get()
+					.uri(b -> b.pathSegment("movie", "{id}").build(movieId))
+					.retrieve()
+					.toEntity(MovieDetails.class)
+					.blockOptional()
+					.orElseThrow(() -> new RequestFailedException("Failed to get movie details")));
+		}
+		catch(WebClientResponseException e){
+			log.error("Failed to get movie details", e);
+			throw new RequestFailedException("Failed to get movie details");
+		}
 	}
 	
 	@NotNull
 	public TvDetails getTvDetails(long tvId) throws RequestFailedException{
-		log.info("Getting tv details for {}", tvId);
 		
-		return HttpUtils.withStatusOkAndBody(client.get()
-				.uri(b -> b.pathSegment("tv", "{id}").build(tvId))
-				.retrieve()
-				.toEntity(TvDetails.class)
-				.blockOptional()
-				.orElseThrow(() -> new RequestFailedException("Failed to get tv details")));
+		log.info("Getting tv details for {}", tvId);
+		try{
+			return HttpUtils.withStatusOkAndBody(client.get()
+					.uri(b -> b.pathSegment("tv", "{id}").build(tvId))
+					.retrieve()
+					.toEntity(TvDetails.class)
+					.blockOptional()
+					.orElseThrow(() -> new RequestFailedException("Failed to get tv details")));
+		}
+		catch(WebClientResponseException e){
+			log.error("Failed to get tv details", e);
+			throw new RequestFailedException("Failed to get tv details");
+		}
 	}
 	
 	@NotNull
