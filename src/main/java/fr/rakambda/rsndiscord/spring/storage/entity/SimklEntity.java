@@ -22,8 +22,6 @@ public class SimklEntity {
 	@Column(nullable = false)
 	private Long id;
 	@Basic
-	private String username;
-	@Basic
 	private String accessToken;
 	@Basic
 	private Instant lastActivityDate;
