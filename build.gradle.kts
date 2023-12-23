@@ -31,15 +31,9 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-amqp")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-log4j2")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
-    modules {
-        module("org.springframework.boot:spring-boot-starter-logging") {
-            replacedBy("org.springframework.boot:spring-boot-starter-log4j2", "Use Log4j2 instead of Logback")
-        }
-    }
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-mysql")
 
@@ -70,7 +64,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
-tasks.withType<JavaCompile>() {
+tasks.withType<JavaCompile> {
     options.compilerArgs.addAll(listOf("-Xlint:deprecation"))
 }
 

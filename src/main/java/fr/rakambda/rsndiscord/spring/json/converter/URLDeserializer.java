@@ -3,7 +3,7 @@ package fr.rakambda.rsndiscord.spring.json.converter;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.net.URI;
 import java.net.URL;
 import static java.util.Objects.nonNull;
 
-@Log4j2
+@Slf4j
 public class URLDeserializer extends JsonDeserializer<URL>{
 	@Override
 	@Nullable
