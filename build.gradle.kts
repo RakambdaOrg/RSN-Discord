@@ -71,9 +71,7 @@ tasks.withType<JavaCompile> {
 tasks.withType<BootBuildImage> {
     builder = "paketobuildpacks/builder-jammy-tiny"
 
-    environment = mapOf(
-            "BP_NATIVE_IMAGE_BUILD_ARGUMENTS" to "-march=compatibility"
-    )
+    environment = mapOf("BP_NATIVE_IMAGE_BUILD_ARGUMENTS" to "-march=compatibility")
 }
 
 tasks.withType<org.springframework.boot.gradle.tasks.aot.ProcessAot> {

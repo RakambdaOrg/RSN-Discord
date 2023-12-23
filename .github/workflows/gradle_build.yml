@@ -14,44 +14,15 @@ jobs:
       java-version: ${{ vars.JAVA_VERSION }}
 
   docker:
+    uses: Rakambda/rakambda-github-workflows/.github/workflows/springboot-native-docker-publish.yml@main
+#    if: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
     needs:
       - build
-    name: Gradle - Publish Docker Native
-    runs-on: [ "ubuntu-latest"]
-    concurrency: docker-${{ inputs.docker-tag }}
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
-      - name: Login on registry
-        uses: docker/login-action@v3.0.0
-        with:
-          registry: ${{ secrets.DOCKER_REPO }}
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_TOKEN }}
-      - name: Set up JDK
-        uses: graalvm/setup-graalvm@v1
-        with:
-          version: 'latest'
-          java-version: ${{ vars.JAVA_VERSION }}
-          components: 'native-image'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          native-image-job-reports: "true"
-      - name: Calculate image tag
-        id: image-tag
-        run: |
-          if [ -z "${{ inputs.docker-tag }}" ]; then
-            echo "tag=${GITHUB_REF##*/}" >> "$GITHUB_OUTPUT"
-          else
-            echo "tag=${{ inputs.docker-tag }}" >> "$GITHUB_OUTPUT"
-          fi
-      - name: Jib
-        uses: gradle/gradle-build-action@v2.8.0
-        with:
-          cache-disabled: true
-          arguments: |
-            bootBuildImage
-            --imageName=${{ secrets.DOCKER_REPO }}/${{ vars.DOCKER_IMAGE }}:${{ steps.image-tag.outputs.tag }}
-
-      - name: Push on Docker
-        run: |
-          docker push ${{ secrets.DOCKER_REPO }}/${{ vars.DOCKER_IMAGE }}:${{ steps.image-tag.outputs.tag }}
+    with:
+      java-version: ${{ vars.JAVA_VERSION }}
+      docker-image: ${{ vars.DOCKER_IMAGE }}
+      docker-tag: native
+    secrets:
+      docker-repo: ${{ secrets.DOCKER_REPO }}
+      docker-username: ${{ secrets.DOCKER_USERNAME }}
+      docker-token: ${{ secrets.DOCKER_TOKEN }}
