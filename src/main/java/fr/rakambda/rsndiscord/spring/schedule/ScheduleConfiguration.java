@@ -3,7 +3,7 @@ package fr.rakambda.rsndiscord.spring.schedule;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.task.TaskSchedulerBuilder;
+import org.springframework.boot.task.ThreadPoolTaskSchedulerBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -39,7 +39,7 @@ public class ScheduleConfiguration implements SchedulingConfigurer{
 	}
 	
 	@Bean
-	public ThreadPoolTaskScheduler taskScheduler(TaskSchedulerBuilder builder) {
+	public ThreadPoolTaskScheduler taskScheduler(ThreadPoolTaskSchedulerBuilder builder) {
 		return builder.build();
 	}
 	
