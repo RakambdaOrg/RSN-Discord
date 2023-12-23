@@ -50,7 +50,6 @@ jobs:
           cache-disabled: true
           arguments: |
             bootBuildImage
-            --publishImage=false
             --imageName=${{ secrets.DOCKER_REPO }}/${{ vars.DOCKER_IMAGE }}:${{ steps.image-tag.outputs.tag }}
 
       - name: Push on Docker
