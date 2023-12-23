@@ -19,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 import java.time.Duration;
 import java.time.Instant;
@@ -145,7 +146,14 @@ public class SimklService{
 						.build(deviceCode.getDeviceCode()))
 				.retrieve()
 				.bodyToMono(AccessTokenResponse.class)
-				.retryWhen(Retry.fixedDelay(retryCount, Duration.ofSeconds(deviceCode.getInterval()))) //TODO
+				.flatMap(body -> {
+					if(!Objects.equals("OK", body.getResult())){
+						return Mono.error(new IllegalStateException("Response is not ok"));
+					}
+					
+					return Mono.just(body);
+				})
+				.retryWhen(Retry.fixedDelay(retryCount, Duration.ofSeconds(deviceCode.getInterval())))
 				.doOnNext(r -> {
 					entity.setAccessToken(r.getAccessToken());
 					entity.setEnabled(true);
