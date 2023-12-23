@@ -3,4 +3,4 @@ GET {{endpoint}}/task/
 
 ###
 # @name Trigger task
-POST {{endpoint}}/task/anilist.activity/trigger
+POST {{endpoint}}/task/simkl.history/trigger

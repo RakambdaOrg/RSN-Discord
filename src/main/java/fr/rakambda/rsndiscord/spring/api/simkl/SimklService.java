@@ -91,7 +91,7 @@ public class SimklService{
 				.map(d -> ZonedDateTime.ofInstant(d, UTC))
 				.map(d -> d.format(ISO_DATE_TIME));
 		
-		return HttpUtils.withStatusOkAndBody(
+		var response = HttpUtils.verifyStatus(
 				client.get()
 						.uri(b -> {
 							b = b.pathSegment("sync", "all-items")
@@ -109,6 +109,9 @@ public class SimklService{
 						.toEntity(new ParameterizedTypeReference<UserHistoryResponse>(){})
 						.blockOptional()
 						.orElseThrow(() -> new RequestFailedException("Failed to get user history")));
+		
+		return Optional.ofNullable(response.getBody())
+				.orElseGet(UserHistoryResponse::new);
 	}
 	
 	public boolean isUserRegistered(long userId){
