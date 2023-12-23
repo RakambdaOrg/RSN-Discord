@@ -22,6 +22,12 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+      - name: Login on registry
+        uses: docker/login-action@v3.0.0
+        with:
+          registry: ${{ secrets.DOCKER_REPO }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
       - name: Set up JDK
         uses: graalvm/setup-graalvm@v1
         with:
@@ -40,13 +46,13 @@ jobs:
           fi
       - name: Jib
         uses: gradle/gradle-build-action@v2.8.0
-        env:
-          ORG_GRADLE_PROJECT_dockerRepository: ${{ secrets.DOCKER_REPO }}
-          ORG_GRADLE_PROJECT_dockerUser: ${{ secrets.DOCKER_USERNAME }}
-          ORG_GRADLE_PROJECT_dockerToken: ${{ secrets.DOCKER_TOKEN }}
         with:
           cache-disabled: true
           arguments: |
             bootBuildImage
-            --publishImage
+            --publishImage=false
             --imageName=${{ secrets.DOCKER_REPO }}/${{ vars.DOCKER_IMAGE }}:${{ steps.image-tag.outputs.tag }}
+
+      - name: Push on Docker
+        run: |
+          docker push ${{ secrets.DOCKER_REPO }}/${{ vars.DOCKER_IMAGE }}:${{ steps.image-tag.outputs.tag }}

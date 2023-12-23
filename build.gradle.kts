@@ -80,14 +80,6 @@ tasks.withType<BootBuildImage> {
     environment = mapOf(
             "BP_NATIVE_IMAGE_BUILD_ARGUMENTS" to "-march=compatibility"
     )
-
-    docker {
-        publishRegistry {
-            username.set(project.findProperty("dockerUser") as String?)
-            password.set(project.findProperty("dockerToken") as String?)
-            url.set(project.findProperty("dockerRepository") as String?)
-        }
-    }
 }
 
 springBoot {
