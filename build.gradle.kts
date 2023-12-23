@@ -77,8 +77,6 @@ tasks.withType<JavaCompile>() {
 tasks.withType<BootBuildImage> {
     builder = "paketobuildpacks/builder:tiny"
 
-    imageName.set(project.findProperty("dockerImage") as String?)
-
     docker {
         publishRegistry {
             username.set(project.findProperty("dockerUser") as String?)

@@ -50,5 +50,4 @@ jobs:
           arguments: |
             bootBuildImage
             --publishImage
-            -
-            imageName=${{ secrets.DOCKER_REPO }}/${{ vars.DOCKER_IMAGE }}:${{ steps.image-tag.outputs.tag }}
+            --imageName=${{ secrets.DOCKER_REPO }}/${{ vars.DOCKER_IMAGE }}:${{ steps.image-tag.outputs.tag }}
