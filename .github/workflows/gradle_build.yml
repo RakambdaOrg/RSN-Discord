@@ -14,15 +14,39 @@ jobs:
       java-version: ${{ vars.JAVA_VERSION }}
 
   docker:
-    uses: Rakambda/rakambda-github-workflows/.github/workflows/gradle-jib-publish.yml@main
-    if: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
     needs:
       - build
-    with:
-      java-version: ${{ vars.JAVA_VERSION }}
-      docker-image: ${{ vars.DOCKER_IMAGE }}
-      docker-tag: latest
-    secrets:
-      docker-repo: ${{ secrets.DOCKER_REPO }}
-      docker-username: ${{ secrets.DOCKER_USERNAME }}
-      docker-token: ${{ secrets.DOCKER_TOKEN }}
+    name: Gradle - Publish Docker Native
+    runs-on: [ "ubuntu-latest"]
+    concurrency: docker-${{ inputs.docker-tag }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: graalvm/setup-graalvm@v1
+        with:
+          version: 'latest'
+          java-version: ${{ vars.JAVA_VERSION }}
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          native-image-job-reports: "true"
+      - name: Calculate image tag
+        id: image-tag
+        run: |
+          if [ -z "${{ inputs.docker-tag }}" ]; then
+            echo "tag=${GITHUB_REF##*/}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${{ inputs.docker-tag }}" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Jib
+        uses: gradle/gradle-build-action@v2.8.0
+        env:
+          ORG_GRADLE_PROJECT_dockerImage: ${{ secrets.DOCKER_REPO }}/${{ inputs.docker-image }}:${{ steps.image-tag.outputs.tag }}
+          ORG_GRADLE_PROJECT_dockerRepository: ${{ secrets.DOCKER_REPO }}
+          ORG_GRADLE_PROJECT_dockerUser: ${{ secrets.DOCKER_USERNAME }}
+          ORG_GRADLE_PROJECT_dockerToken: ${{ secrets.DOCKER_TOKEN }}
+        with:
+          cache-disabled: true
+          arguments: |
+            bootBuildImage
+            --publishImage

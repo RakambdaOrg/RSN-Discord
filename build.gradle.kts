@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.jib)
     alias(libs.plugins.sptringbootDependencyManagement)
     alias(libs.plugins.sptringboot)
+    id("org.graalvm.buildtools.native").version("0.9.17")
 }
 
 group = "fr.rakambda"
@@ -67,8 +68,22 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
-tasks.withType<JavaCompile>(){
+tasks.withType<JavaCompile>() {
     options.compilerArgs.addAll(listOf("-Xlint:deprecation"))
+}
+
+tasks {
+    bootBuildImage {
+        imageName.set(project.findProperty("dockerImage") as String?)
+
+        docker {
+            publishRegistry {
+                username.set(project.findProperty("dockerUser") as String?)
+                password.set(project.findProperty("dockerToken") as String?)
+                url.set(project.findProperty("dockerRepository") as String?)
+            }
+        }
+    }
 }
 
 springBoot {
