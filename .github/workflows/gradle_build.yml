@@ -44,7 +44,6 @@ jobs:
           ORG_GRADLE_PROJECT_dockerRepository: ${{ secrets.DOCKER_REPO }}
           ORG_GRADLE_PROJECT_dockerUser: ${{ secrets.DOCKER_USERNAME }}
           ORG_GRADLE_PROJECT_dockerToken: ${{ secrets.DOCKER_TOKEN }}
-          BP_NATIVE_IMAGE_BUILD_ARGUMENTS: -march=compatibility
         with:
           cache-disabled: true
           arguments: |

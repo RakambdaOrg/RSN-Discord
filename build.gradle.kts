@@ -75,7 +75,11 @@ tasks.withType<JavaCompile>() {
 }
 
 tasks.withType<BootBuildImage> {
-    builder = "paketobuildpacks/builder:tiny"
+    builder = "paketobuildpacks/builder-jammy-tiny"
+
+    environment = mapOf(
+            "BP_NATIVE_IMAGE_BUILD_ARGUMENTS" to "-march=compatibility"
+    )
 
     docker {
         publishRegistry {
