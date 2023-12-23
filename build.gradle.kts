@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.jib)
     alias(libs.plugins.sptringbootDependencyManagement)
     alias(libs.plugins.sptringboot)
-    id("org.graalvm.buildtools.native").version("0.9.17")
+    alias(libs.plugins.graalvm)
 }
 
 group = "fr.rakambda"

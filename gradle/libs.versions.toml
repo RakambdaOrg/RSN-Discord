@@ -10,6 +10,7 @@ jib-version = "3.4.0"
 git-properties-version = "2.4.1"
 sptringboot-version = "3.2.1"
 sptringboot-dm-version = "1.1.4"
+graalvm-version = "0.9.28"
 
 [libraries]
 jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda-version" }
@@ -28,3 +29,4 @@ jib = { id = "com.google.cloud.tools.jib", version.ref = "jib-version" }
 gitProperties = { id = "com.gorylenko.gradle-git-properties", version.ref = "git-properties-version" }
 sptringboot = { id = "org.springframework.boot", version.ref = "sptringboot-version" }
 sptringbootDependencyManagement = { id = "io.spring.dependency-management", version.ref = "sptringboot-dm-version" }
+graalvm = { id = "org.graalvm.buildtools.native", version.ref = "graalvm-version" }
