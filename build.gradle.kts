@@ -76,6 +76,10 @@ tasks.withType<BootBuildImage> {
     )
 }
 
+tasks.withType<org.springframework.boot.gradle.tasks.aot.ProcessAot> {
+    args("--spring.profiles.active=docker")
+}
+
 springBoot {
     val className: String by project
 
