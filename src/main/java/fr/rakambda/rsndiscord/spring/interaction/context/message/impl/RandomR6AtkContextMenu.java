@@ -1,6 +1,7 @@
 package fr.rakambda.rsndiscord.spring.interaction.context.message.impl;
 
 import fr.rakambda.rsndiscord.spring.BotException;
+import fr.rakambda.rsndiscord.spring.amqp.RabbitService;
 import fr.rakambda.rsndiscord.spring.interaction.context.message.api.IExecutableMessageContextMenuGuild;
 import fr.rakambda.rsndiscord.spring.interaction.context.message.api.IRegistrableMessageContextMenu;
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
@@ -20,42 +21,48 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class RandomR6AtkContextMenu implements IRegistrableMessageContextMenu, IExecutableMessageContextMenuGuild{
 	private static final String[] NAMES = new String[]{
-            "Ace",
-            "Amaru",
-            "Ash",
-            "Blackbeard",
-            "Blitz",
-            "Brava",
-            "Buck",
-            "Capitão",
-            "Dokkaebi",
-            "Finka",
-            "Flores",
-            "Fuze",
-            "Glaz",
-            "Gridlock",
-            "Grim",
-            "Hibana",
-            "IQ",
-            "Iana",
-            "Jackal",
-            "Kali",
-            "Lion",
-            "Maverick",
-            "Montagne",
-            "Nokk",
-            "Nomad",
-            "Osa",
-            "Ram",
-            "Sens",
-            "Sledge",
-            "Tatcher",
-            "Thermite",
-            "Twitch",
-            "Ying",
-            "Zero",
-            "Zofia"
-    };
+			"Ace",
+			"Amaru",
+			"Ash",
+			"Blackbeard",
+			"Blitz",
+			"Brava",
+			"Buck",
+			"Capitão",
+			"Dokkaebi",
+			"Finka",
+			"Flores",
+			"Fuze",
+			"Glaz",
+			"Gridlock",
+			"Grim",
+			"Hibana",
+			"IQ",
+			"Iana",
+			"Jackal",
+			"Kali",
+			"Lion",
+			"Maverick",
+			"Montagne",
+			"Nokk",
+			"Nomad",
+			"Osa",
+			"Ram",
+			"Sens",
+			"Sledge",
+			"Tatcher",
+			"Thermite",
+			"Twitch",
+			"Ying",
+			"Zero",
+			"Zofia"
+	};
+	
+	private final RabbitService rabbitService;
+	
+	public RandomR6AtkContextMenu(RabbitService rabbitService){
+		this.rabbitService = rabbitService;
+	}
 	
 	@Override
 	@NotNull
@@ -72,10 +79,11 @@ public class RandomR6AtkContextMenu implements IRegistrableMessageContextMenu, I
 	}
 	
 	@Override
-	public @NotNull CompletableFuture<?> executeGuild(@NotNull MessageContextInteractionEvent event, @NotNull Guild guild, @NotNull Member member) throws BotException{
+	@NotNull
+	public CompletableFuture<?> executeGuild(@NotNull MessageContextInteractionEvent event, @NotNull Guild guild, @NotNull Member member) throws BotException{
 		var deferred = event.deferReply(false).submit();
 		
 		var name = NAMES[ThreadLocalRandom.current().nextInt(NAMES.length)];
-		return deferred.thenCompose(empty -> JDAWrappers.reply(event, name).submit());
+		return deferred.thenCompose(empty -> JDAWrappers.reply(event, name).submitAndDelete(3, rabbitService));
 	}
 }
