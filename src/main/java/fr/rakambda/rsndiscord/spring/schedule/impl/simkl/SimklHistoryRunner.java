@@ -1,22 +1,23 @@
-package fr.rakambda.rsndiscord.spring.schedule.impl.trakt;
+package fr.rakambda.rsndiscord.spring.schedule.impl.simkl;
 
 import fr.rakambda.rsndiscord.spring.api.exceptions.RequestFailedException;
+import fr.rakambda.rsndiscord.spring.api.simkl.SimklService;
+import fr.rakambda.rsndiscord.spring.api.simkl.response.history.MediaIds;
+import fr.rakambda.rsndiscord.spring.api.simkl.response.history.UserAnimeHistory;
+import fr.rakambda.rsndiscord.spring.api.simkl.response.history.UserHistory;
+import fr.rakambda.rsndiscord.spring.api.simkl.response.history.UserMovieHistory;
+import fr.rakambda.rsndiscord.spring.api.simkl.response.history.UserSeriesHistory;
 import fr.rakambda.rsndiscord.spring.api.themoviedb.TheMovieDbService;
 import fr.rakambda.rsndiscord.spring.api.themoviedb.TmdbImageSize;
+import fr.rakambda.rsndiscord.spring.api.themoviedb.model.Genre;
 import fr.rakambda.rsndiscord.spring.api.themoviedb.model.MovieDetails;
-import fr.rakambda.rsndiscord.spring.api.themoviedb.model.Season;
 import fr.rakambda.rsndiscord.spring.api.themoviedb.model.TvDetails;
-import fr.rakambda.rsndiscord.spring.api.trakt.TraktService;
-import fr.rakambda.rsndiscord.spring.api.trakt.response.data.history.MediaIds;
-import fr.rakambda.rsndiscord.spring.api.trakt.response.data.history.UserHistory;
-import fr.rakambda.rsndiscord.spring.api.trakt.response.data.history.UserMovieHistory;
-import fr.rakambda.rsndiscord.spring.api.trakt.response.data.history.UserSeriesHistory;
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.schedule.WrappedTriggerTask;
 import fr.rakambda.rsndiscord.spring.storage.entity.ChannelType;
-import fr.rakambda.rsndiscord.spring.storage.entity.TraktEntity;
+import fr.rakambda.rsndiscord.spring.storage.entity.SimklEntity;
 import fr.rakambda.rsndiscord.spring.storage.repository.ChannelRepository;
-import fr.rakambda.rsndiscord.spring.storage.repository.TraktRepository;
+import fr.rakambda.rsndiscord.spring.storage.repository.SimklRepository;
 import fr.rakambda.rsndiscord.spring.util.LocalizationService;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -29,7 +30,7 @@ import net.dv8tion.jda.api.interactions.DiscordLocale;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
-import java.awt.Color;
+import java.awt.*;
 import java.time.Instant;
 import java.time.chrono.ChronoZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -43,25 +44,22 @@ import java.util.stream.Stream;
 
 @Component
 @Slf4j
-public class TraktHistoryRunner extends WrappedTriggerTask{
-	private static final Comparator<UserHistory> USER_HISTORY_COMPARATOR = Comparator
-			.<UserHistory, Instant>comparing(h -> extractDate(h).orElse(Instant.EPOCH))
-			.thenComparing(h -> extractSeason(h).orElse(0))
-			.thenComparing(h -> extractEpisode(h).orElse(0));
+public class SimklHistoryRunner extends WrappedTriggerTask{
+	private static final Comparator<UserHistory> USER_HISTORY_COMPARATOR = Comparator.comparing(h -> extractDate(h).orElse(Instant.EPOCH));
 	private static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
 	private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	
 	private final ChannelRepository channelRepository;
-	private final TraktRepository traktRepository;
-	private final TraktService traktService;
+	private final SimklRepository simklRepository;
+	private final SimklService simklService;
 	private final LocalizationService localizationService;
 	private final TheMovieDbService theMovieDbService;
 	
-	public TraktHistoryRunner(@NotNull JDA jda, ChannelRepository channelRepository, TraktRepository traktRepository, TraktService traktService, LocalizationService localizationService, TheMovieDbService theMovieDbService){
+	public SimklHistoryRunner(@NotNull JDA jda, ChannelRepository channelRepository, SimklRepository simklRepository, SimklService simklService, LocalizationService localizationService, TheMovieDbService theMovieDbService){
 		super(jda);
 		this.channelRepository = channelRepository;
-		this.traktRepository = traktRepository;
-		this.traktService = traktService;
+		this.simklRepository = simklRepository;
+		this.simklService = simklService;
 		this.localizationService = localizationService;
 		this.theMovieDbService = theMovieDbService;
 	}
@@ -69,13 +67,13 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 	@Override
 	@NotNull
 	public String getId(){
-		return "trakt.history";
+		return "simkl.history";
 	}
 	
 	@Override
 	@NotNull
 	protected String getName(){
-		return "Trakt user history";
+		return "Simkl user history";
 	}
 	
 	@Override
@@ -107,11 +105,11 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 				.flatMap(e -> processUser(jda, e, channels))
 				.toList();
 		
-		traktRepository.saveAll(processedEntities);
+		simklRepository.saveAll(processedEntities);
 	}
 	
 	@NotNull
-	private Stream<TraktEntity> processUser(@NotNull JDA jda, @NotNull TraktEntity entity, @NotNull Collection<GuildMessageChannel> channels){
+	private Stream<SimklEntity> processUser(@NotNull JDA jda, @NotNull SimklEntity entity, @NotNull Collection<GuildMessageChannel> channels){
 		try{
 			var userOptional = JDAWrappers.findUser(jda, entity.getId());
 			if(userOptional.isEmpty()){
@@ -127,7 +125,7 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 			}
 			
 			var lastActivityDate = entity.getLastActivityDate();
-			var histories = traktService.getAllUserHistory(user.getIdLong(), lastActivityDate, null).stream()
+			var histories = simklService.getAllUserHistory(user.getIdLong(), lastActivityDate).stream()
 					.filter(h -> isNewer(h, lastActivityDate))
 					.sorted(USER_HISTORY_COMPARATOR)
 					.toList();
@@ -135,7 +133,7 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 			sendUserElements(user, histories, channels);
 			
 			histories.stream()
-					.map(TraktHistoryRunner::extractDate)
+					.map(SimklHistoryRunner::extractDate)
 					.flatMap(Optional::stream)
 					.max(Comparator.naturalOrder())
 					.ifPresent(entity::setLastActivityDate);
@@ -184,7 +182,7 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 	
 	@NotNull
 	private MessageEmbed buildEmbed(@NotNull UserHistory history, @NotNull User user, @NotNull DiscordLocale locale){
-		return switch (history) {
+		return switch(history){
 			case UserMovieHistory userMovieHistory -> buildTypeEmbed(userMovieHistory, user, locale);
 			case UserSeriesHistory userSeriesHistory -> buildTypeEmbed(userSeriesHistory, user, locale);
 		};
@@ -194,24 +192,30 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 	private MessageEmbed buildTypeEmbed(@NotNull UserMovieHistory history, @NotNull User user, @NotNull DiscordLocale locale){
 		var movie = history.getMovie();
 		
-		var movieDetails = Optional.ofNullable(history.getMovie().getIds())
+		var movieDetails = Optional.of(history.getMovie().getIds())
 				.map(MediaIds::getTmdb)
 				.flatMap(this::getMovieDetails);
 		
 		var builder = new EmbedBuilder()
 				.setAuthor(user.getName(), null, user.getAvatarUrl())
-				.setTitle(localizationService.translate(locale, "trakt.watched.movie"), movie.getTrailer())
+				.setTitle(localizationService.translate(locale, "trakt.watched.movie"), getLink(history))
 				.setColor(Color.GREEN)
 				.addField(localizationService.translate(locale, "trakt.title"), movie.getTitle(), true)
-				.addField(localizationService.translate(locale, "trakt.year"), Integer.toString(movie.getYear()), true)
-				.addField(localizationService.translate(locale, "trakt.status"), movie.getStatus(), true)
-				.addField(localizationService.translate(locale, "trakt.aired"), movie.getReleased().format(DATE_FORMAT), true)
-				.addField(localizationService.translate(locale, "trakt.genres"), String.join(", ", movie.getGenres()), true)
-				.addField(localizationService.translate(locale, "trakt.overview"), movie.getOverview(), false)
-				.addBlankField(false)
-				.addField(localizationService.translate(locale, "trakt.watched"), history.getWatchedAt().format(DATETIME_FORMAT), true)
+				.addField(localizationService.translate(locale, "trakt.year"), Integer.toString(movie.getYear()), true);
+		
+		movieDetails.map(MovieDetails::getStatus)
+				.ifPresent(o -> builder.addField(localizationService.translate(locale, "trakt.status"), o, true));
+		movieDetails.map(MovieDetails::getReleaseDate)
+				.ifPresent(o -> builder.addField(localizationService.translate(locale, "trakt.aired"), o.format(DATE_FORMAT), true));
+		movieDetails.map(MovieDetails::getGenres)
+				.ifPresent(o -> builder.addField(localizationService.translate(locale, "trakt.genres"), String.join(", ", o.stream().map(Genre::getName).toList()), true));
+		movieDetails.map(MovieDetails::getOverview)
+				.ifPresent(o -> builder.addField(localizationService.translate(locale, "trakt.overview"), o, false));
+		
+		builder.addBlankField(false)
+				.addField(localizationService.translate(locale, "trakt.watched"), history.getLastWatchedAt().format(DATETIME_FORMAT), true)
 				.setFooter(Long.toString(history.getId()))
-				.setTimestamp(history.getWatchedAt());
+				.setTimestamp(history.getLastWatchedAt());
 		
 		movieDetails.map(MovieDetails::getPosterPath)
 				.map(p -> theMovieDbService.getImageURL(p, TmdbImageSize.ORIGINAL))
@@ -223,31 +227,25 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 	@NotNull
 	private MessageEmbed buildTypeEmbed(@NotNull UserSeriesHistory history, @NotNull User user, @NotNull DiscordLocale locale){
 		var show = history.getShow();
-		var episode = history.getEpisode();
 		
-		var tvDetails = Optional.ofNullable(show.getIds())
+		var tvDetails = Optional.of(show.getIds())
 				.map(MediaIds::getTmdb)
 				.flatMap(this::getTvDetails);
-		var seasonDetails = tvDetails.stream().map(TvDetails::getSeasons)
-				.flatMap(Collection::stream)
-				.filter(s -> Objects.equals(s.getSeasonNumber(), episode.getSeason()))
-				.findFirst();
 		
 		var totalSeason = tvDetails.map(TvDetails::getNumberOfSeasons);
-		var seasonProgress = totalSeason.map(t -> "%d/%d".formatted(episode.getSeason(), t)).orElseGet(() -> Integer.toString(episode.getSeason()));
 		
-		var totalEpisodes = seasonDetails.map(Season::getEpisodeCount);
-		var episodeProgress = totalEpisodes.map(t -> "%d/%d".formatted(episode.getNumber(), t)).orElseGet(() -> Integer.toString(episode.getNumber()));
+		var totalEpisodes = Optional.ofNullable(history.getTotalEpisodesCount());
+		var episodeProgress = totalEpisodes.map(t -> "%d/%d".formatted(history.getWatchedEpisodesCount(), t))
+				.or(() -> Optional.ofNullable(history.getWatchedEpisodesCount()).map(i -> Integer.toString(i)))
+				.orElse("Unknown");
 		
 		var builder = new EmbedBuilder()
 				.setAuthor(user.getName(), null, user.getAvatarUrl())
-				.setTitle(localizationService.translate(locale, "trakt.watched.episode"), show.getTrailer())
-				.addField(localizationService.translate(locale, "trakt.season"), seasonProgress, true)
-				.addField(localizationService.translate(locale, "trakt.episode"), episodeProgress, true)
-				.addField(localizationService.translate(locale, "trakt.aired"), episode.getFirstAired().format(DATETIME_FORMAT), true);
+				.setTitle(localizationService.translate(locale, "trakt.watched.episode"), getLink(history))
+				.addField(localizationService.translate(locale, "trakt.episode"), episodeProgress, true);
 		
-		Optional.ofNullable(episode.getOverview())
-				.ifPresent(o -> builder.addField(localizationService.translate(locale, "trakt.overview"), o, false));
+		tvDetails.map(TvDetails::getFirstAirDate)
+				.ifPresent(o -> builder.addField(localizationService.translate(locale, "trakt.aired"), o.format(DATETIME_FORMAT), true));
 		
 		builder.addBlankField(false)
 				.addField(localizationService.translate(locale, "trakt.title"), show.getTitle(), true)
@@ -255,21 +253,34 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 		
 		totalSeason.ifPresent(s -> builder.addField(localizationService.translate(locale, "trakt.seasons"), Integer.toString(s), true));
 		
-		builder.addField(localizationService.translate(locale, "trakt.episodes"), Integer.toString(show.getAiredEpisodes()), true)
-				.addField(localizationService.translate(locale, "trakt.status"), show.getStatus(), true)
-				.addField(localizationService.translate(locale, "trakt.genres"), String.join(", ", show.getGenres()), true)
-				.addField(localizationService.translate(locale, "trakt.overview"), show.getOverview(), false)
-				.addBlankField(false)
-				.addField(localizationService.translate(locale, "trakt.watched"), history.getWatchedAt().format(DATETIME_FORMAT), true)
-				.setFooter(Long.toString(history.getId()))
-				.setTimestamp(history.getWatchedAt());
+		Optional.ofNullable(history.getTotalEpisodesCount())
+				.ifPresent(o -> builder.addField(localizationService.translate(locale, "trakt.episodes"), Integer.toString(o), true));
+		tvDetails.map(TvDetails::getStatus)
+				.ifPresent(o -> builder.addField(localizationService.translate(locale, "trakt.status"), o, true));
+		tvDetails.map(TvDetails::getGenres)
+				.ifPresent(o -> builder.addField(localizationService.translate(locale, "trakt.genres"), String.join(", ", o.stream().map(Genre::getName).toList()), true));
+		tvDetails.map(TvDetails::getOverview)
+				.ifPresent(o -> builder.addField(localizationService.translate(locale, "trakt.overview"), o, true));
 		
-		seasonDetails.map(Season::getPosterPath)
-				.or(() -> tvDetails.map(TvDetails::getPosterPath))
+		builder.addBlankField(false)
+				.addField(localizationService.translate(locale, "trakt.watched"), history.getLastWatchedAt().format(DATETIME_FORMAT), true)
+				.setFooter(Long.toString(history.getId()))
+				.setTimestamp(history.getLastWatchedAt());
+		
+		tvDetails.map(TvDetails::getPosterPath)
 				.map(p -> theMovieDbService.getImageURL(p, TmdbImageSize.ORIGINAL))
 				.ifPresent(builder::setImage);
 		
 		return builder.build();
+	}
+	
+	private String getLink(UserHistory history){
+		var type = switch(history){
+			case UserMovieHistory ignored -> "movies";
+			case UserAnimeHistory ignored -> "anime";
+			case UserSeriesHistory ignored -> "tv";
+		};
+		return "https://simkl.com/%s/%s".formatted(type, history.getId());
 	}
 	
 	private boolean isNewer(@NotNull UserHistory history, @Nullable Instant reference){
@@ -283,36 +294,20 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 	
 	@NotNull
 	private static Optional<Instant> extractDate(@NotNull UserHistory history){
-		return Optional.ofNullable(history.getWatchedAt()).map(ChronoZonedDateTime::toInstant);
-	}
-	
-	@NotNull
-	private static Optional<Integer> extractSeason(@NotNull UserHistory history){
-		if(history instanceof UserSeriesHistory serieHistory){
-			return Optional.of(serieHistory.getEpisode().getSeason());
-		}
-		return Optional.empty();
-	}
-	
-	@NotNull
-	private static Optional<Integer> extractEpisode(@NotNull UserHistory history){
-		if(history instanceof UserSeriesHistory serieHistory){
-			return Optional.of(serieHistory.getEpisode().getNumber());
-		}
-		return Optional.empty();
+		return Optional.ofNullable(history.getLastWatchedAt()).map(ChronoZonedDateTime::toInstant);
 	}
 	
 	@NotNull
 	private Collection<GuildMessageChannel> getChannels(@NotNull JDA jda){
-		return channelRepository.findAllByType(ChannelType.TRAKT_MEDIA_CHANGE).stream()
+		return channelRepository.findAllByType(ChannelType.SIMKL_MEDIA_CHANGE).stream()
 				.map(entity -> JDAWrappers.findChannel(jda, entity.getChannelId()))
 				.flatMap(Optional::stream)
 				.toList();
 	}
 	
 	@NotNull
-	private Collection<TraktEntity> getUsers(){
-		return traktRepository.findAllByEnabledIsTrue();
+	private Collection<SimklEntity> getUsers(){
+		return simklRepository.findAllByEnabledIsTrue();
 	}
 	
 	@Override

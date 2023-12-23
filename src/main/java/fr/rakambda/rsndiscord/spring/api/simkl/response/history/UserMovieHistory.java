@@ -1,6 +1,5 @@
-package fr.rakambda.rsndiscord.spring.api.trakt.response.data.history;
+package fr.rakambda.rsndiscord.spring.api.simkl.response.history;
 
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,14 +12,13 @@ import org.jetbrains.annotations.NotNull;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@JsonTypeName("episode")
-public final class UserSerieHistory extends UserHistory{
-	private Episode episode;
-	private Show show;
+public final class UserMovieHistory extends UserHistory{
+	@NotNull
+	private Movie movie;
 	
 	@Override
 	@NotNull
-	public TraktMediaType getType(){
-		return TraktMediaType.EPISODE;
+	public Long getId(){
+		return movie.getIds().getSimkl();
 	}
 }

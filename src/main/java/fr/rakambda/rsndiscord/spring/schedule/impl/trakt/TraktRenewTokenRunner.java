@@ -1,8 +1,8 @@
 package fr.rakambda.rsndiscord.spring.schedule.impl.trakt;
 
 import fr.rakambda.rsndiscord.spring.api.trakt.TraktService;
-import fr.rakambda.rsndiscord.spring.interaction.slash.impl.external.TraktRegisterCommand;
-import fr.rakambda.rsndiscord.spring.interaction.slash.impl.external.TraktUnregisterCommand;
+import fr.rakambda.rsndiscord.spring.interaction.slash.impl.trakt.TraktRegisterCommand;
+import fr.rakambda.rsndiscord.spring.interaction.slash.impl.trakt.TraktUnregisterCommand;
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.schedule.WrappedTriggerTask;
 import fr.rakambda.rsndiscord.spring.storage.entity.TraktEntity;

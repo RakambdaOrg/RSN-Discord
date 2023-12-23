@@ -27,4 +27,6 @@ public class ApplicationSettings{
 	private TheMovieDbSettings theMovieDb;
 	@NestedConfigurationProperty
 	private TraktSettings trakt;
+	@NestedConfigurationProperty
+	private SimklSettings simkl;
 }
