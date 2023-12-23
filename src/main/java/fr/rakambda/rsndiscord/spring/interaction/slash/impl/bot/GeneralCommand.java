@@ -1,4 +1,4 @@
-package fr.rakambda.rsndiscord.spring.interaction.slash.impl.info;
+package fr.rakambda.rsndiscord.spring.interaction.slash.impl.bot;
 
 import fr.rakambda.rsndiscord.spring.Application;
 import fr.rakambda.rsndiscord.spring.interaction.slash.api.IExecutableSlashCommandGuild;

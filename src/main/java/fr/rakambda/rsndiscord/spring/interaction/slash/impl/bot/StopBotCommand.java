@@ -1,4 +1,4 @@
-package fr.rakambda.rsndiscord.spring.interaction.slash.impl.info;
+package fr.rakambda.rsndiscord.spring.interaction.slash.impl.bot;
 
 import fr.rakambda.rsndiscord.spring.StopService;
 import fr.rakambda.rsndiscord.spring.interaction.slash.api.IExecutableSlashCommandGuild;
@@ -14,59 +14,62 @@ import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @Component
-public class StopBotCommand implements IExecutableSlashCommandGuild, IExecutableSlashCommandUser {
+public class StopBotCommand implements IExecutableSlashCommandGuild, IExecutableSlashCommandUser{
 	private final StopService stopService;
-
+	
 	@Autowired
-	public StopBotCommand(StopService stopService) {
+	public StopBotCommand(StopService stopService){
 		this.stopService = stopService;
 	}
-
+	
 	@Override
 	@NotNull
-	public String getId() {
+	public String getId(){
 		return "stop";
 	}
-
+	
 	@Override
 	@NotNull
-	public String getPath() {
+	public String getPath(){
 		return "bot/stop";
 	}
-
+	
 	@Override
 	@NotNull
-	public IPermission getPermission() {
+	public IPermission getPermission(){
 		return new CreatorPermission();
 	}
-
+	
 	@Override
 	@NotNull
-	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member) {
+	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
 		return execute(event);
 	}
-
+	
 	@Override
 	@NotNull
-	public CompletableFuture<?> executeUser(@NotNull SlashCommandInteraction event) {
+	public CompletableFuture<?> executeUser(@NotNull SlashCommandInteraction event){
 		return execute(event);
 	}
-
+	
 	@NotNull
-	private CompletableFuture<Message> execute(@NotNull SlashCommandInteraction event) {
-		try {
-			var reply = JDAWrappers.reply(event, "Stopping").ephemeral(true).submit();
-			stopService.shutdown(event.getJDA());
-			return reply;
-		} catch (InterruptedException | ExecutionException | TimeoutException e) {
-			throw new RuntimeException("Failed to stop bot", e);
-		}
+	private CompletableFuture<Message> execute(@NotNull SlashCommandInteraction event){
+		return event.deferReply(true).submit()
+				.thenCompose(empty -> JDAWrappers.reply(event, "Stopping").ephemeral(true).submit())
+				.thenCompose(empty -> {
+					try{
+						stopService.shutdown(event.getJDA());
+						return CompletableFuture.completedFuture(null);
+					}
+					catch(InterruptedException | ExecutionException | TimeoutException e){
+						throw new RuntimeException("Failed to stop bot", e);
+					}
+				});
 	}
 }
