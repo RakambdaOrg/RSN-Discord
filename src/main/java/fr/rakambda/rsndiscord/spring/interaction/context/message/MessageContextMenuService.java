@@ -96,6 +96,14 @@ public class MessageContextMenuService{
 		return Optional.ofNullable(executableMessageContextMenus.get(name));
 	}
 	
+	@NotNull
+	public Collection<String> getRegistrableContextMenu(){
+		return registrableMessageContextMenus.stream()
+				.filter(cmd -> !cmd.isIncludeAllServers())
+				.map(IRegistrableMessageContextMenu::getRegisterName)
+				.toList();
+	}
+	
 	public void addCommand(@NotNull JDA jda, long guildId, @NotNull String value){
 		registrableMessageContextMenus.stream()
 				.filter(cmd -> Objects.equals(cmd.getRegisterName(), value))

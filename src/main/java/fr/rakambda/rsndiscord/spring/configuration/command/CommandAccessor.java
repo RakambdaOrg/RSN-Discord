@@ -11,13 +11,18 @@ import jakarta.transaction.Transactional;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class CommandAccessor implements IConfigurationAccessor{
@@ -87,5 +92,24 @@ public class CommandAccessor implements IConfigurationAccessor{
 	@NotNull
 	public String getName(){
 		return "commands";
+	}
+	
+	@Override
+	@NotNull
+	public Collection<Command.Choice> autoComplete(@NotNull CommandAutoCompleteInteractionEvent event){
+		return getCommandsStartingWith(event.getFocusedOption().getValue())
+				.limit(OptionData.MAX_CHOICES)
+				.sorted()
+				.map(name -> new Command.Choice(name, name))
+				.toList();
+	}
+	
+	@NotNull
+	private Stream<String> getCommandsStartingWith(@NotNull String value){
+		var commands = Stream.concat(slashCommandService.getRegistrableCommandNames().stream(), messageContextMenuService.getRegistrableContextMenu().stream());
+		if(value.isBlank()){
+			return commands;
+		}
+		return commands.filter(name -> name.startsWith(value));
 	}
 }

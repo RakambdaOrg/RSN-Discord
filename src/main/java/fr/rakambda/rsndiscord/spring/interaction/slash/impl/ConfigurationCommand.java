@@ -7,6 +7,7 @@ import fr.rakambda.rsndiscord.spring.interaction.exception.OperationNotSupported
 import fr.rakambda.rsndiscord.spring.interaction.exception.UnknownAccessorException;
 import fr.rakambda.rsndiscord.spring.interaction.slash.api.IExecutableSlashCommandGuild;
 import fr.rakambda.rsndiscord.spring.interaction.slash.api.IRegistrableSlashCommand;
+import fr.rakambda.rsndiscord.spring.jda.ActionWrapper;
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
@@ -16,6 +17,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -26,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -89,7 +90,8 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 								.addChoice("show", SHOW_OPERATION_TYPE)
 								.setRequired(true),
 						new OptionData(STRING, VALUE_OPTION_ID, "Value to set")
-								.setRequired(false));
+								.setRequired(false)
+								.setAutoComplete(true));
 	}
 	
 	@Override
@@ -188,10 +190,11 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 	@Override
 	@NotNull
 	public CompletableFuture<?> autoCompleteGuild(@NotNull CommandAutoCompleteInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
-		if(!Objects.equals(NAME_OPTION_ID, event.getFocusedOption().getName())){
-			return CompletableFuture.completedFuture(null);
-		}
-		return autoCompleteName(event);
+		return switch(event.getFocusedOption().getName()){
+			case NAME_OPTION_ID -> autoCompleteName(event);
+			case VALUE_OPTION_ID -> autoCompleteValue(event);
+			default -> CompletableFuture.completedFuture(null);
+		};
 	}
 	
 	@NotNull
@@ -202,6 +205,18 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 				.map(name -> new Command.Choice(name, name))
 				.toList();
 		return JDAWrappers.reply(event, choices).submit();
+	}
+	
+	@NotNull
+	private CompletableFuture<Void> autoCompleteValue(@NotNull CommandAutoCompleteInteractionEvent event){
+		return Optional.ofNullable(event.getOption(NAME_OPTION_ID))
+				.map(OptionMapping::getAsString)
+				.map(accessors::get)
+				.map(accessor -> accessor.autoComplete(event))
+				.filter(c -> !c.isEmpty())
+				.map(choices -> JDAWrappers.reply(event, choices))
+				.map(ActionWrapper::submit)
+				.orElseGet(() -> CompletableFuture.completedFuture(null));
 	}
 	
 	@NotNull

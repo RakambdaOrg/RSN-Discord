@@ -96,6 +96,14 @@ public class SlashCommandService{
 		return Optional.ofNullable(executableSlashCommands.get(fullCommandName.replace(" ", "/")));
 	}
 	
+	@NotNull
+	public Collection<String> getRegistrableCommandNames(){
+		return registrableSlashCommands.stream()
+				.filter(cmd -> !cmd.isIncludeAllServers())
+				.map(IRegistrableSlashCommand::getRegisterName)
+				.toList();
+	}
+	
 	public void addCommand(@NotNull JDA jda, long guildId, @NotNull String value){
 		registrableSlashCommands.stream()
 				.filter(cmd -> Objects.equals(cmd.getRegisterName(), value))
