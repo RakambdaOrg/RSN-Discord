@@ -1,5 +1,6 @@
 package fr.rakambda.rsndiscord.spring.schedule.impl.trakt;
 
+import fr.rakambda.rsndiscord.spring.api.exceptions.NotLoggedInException;
 import fr.rakambda.rsndiscord.spring.api.exceptions.RequestFailedException;
 import fr.rakambda.rsndiscord.spring.api.themoviedb.TheMovieDbService;
 import fr.rakambda.rsndiscord.spring.api.themoviedb.TmdbImageSize;
@@ -29,7 +30,7 @@ import net.dv8tion.jda.api.interactions.DiscordLocale;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
-import java.awt.Color;
+import java.awt.*;
 import java.time.Instant;
 import java.time.chrono.ChronoZonedDateTime;
 import java.time.format.DateTimeFormatter;

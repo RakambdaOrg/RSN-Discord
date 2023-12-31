@@ -1,15 +1,19 @@
 package fr.rakambda.rsndiscord.spring.configuration.command;
 
 import fr.rakambda.rsndiscord.spring.configuration.IConfigurationAccessor;
+import fr.rakambda.rsndiscord.spring.interaction.InteractionType;
+import fr.rakambda.rsndiscord.spring.interaction.context.message.MessageContextMenuService;
 import fr.rakambda.rsndiscord.spring.interaction.exception.OperationNotSupportedException;
 import fr.rakambda.rsndiscord.spring.interaction.slash.SlashCommandService;
 import fr.rakambda.rsndiscord.spring.storage.entity.CommandEntity;
 import fr.rakambda.rsndiscord.spring.storage.repository.CommandRepository;
 import jakarta.transaction.Transactional;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import java.util.Objects;
 import java.util.Optional;
@@ -19,31 +23,47 @@ import java.util.stream.Collectors;
 public class CommandAccessor implements IConfigurationAccessor{
 	private final CommandRepository commandRepository;
 	private final SlashCommandService slashCommandService;
+	private final MessageContextMenuService messageContextMenuService;
 	
 	@Autowired
-	public CommandAccessor(CommandRepository commandRepository, SlashCommandService slashCommandService){
+	public CommandAccessor(CommandRepository commandRepository,
+			@Lazy SlashCommandService slashCommandService,
+			@Lazy MessageContextMenuService messageContextMenuService){
 		this.commandRepository = commandRepository;
-        this.slashCommandService = slashCommandService;
-    }
+		this.slashCommandService = slashCommandService;
+		this.messageContextMenuService = messageContextMenuService;
+	}
 	
 	@Override
 	@Transactional
-	public boolean add(long guildId, @NotNull String value) throws OperationNotSupportedException{
+	public boolean add(@NotNull JDA jda, long guildId, @NotNull String value) throws OperationNotSupportedException{
 		commandRepository.save(CommandEntity.builder()
 				.name(value)
 				.guildId(guildId)
 				.enabled(true)
 				.build());
-		slashCommandService.addCommand(guildId, value);
+		
+		if(value.startsWith(InteractionType.SLASH.getPrefix())){
+			slashCommandService.addCommand(jda, guildId, value);
+		}
+		else if(value.startsWith(InteractionType.CONTEXT_MESSAGE.getPrefix())){
+			messageContextMenuService.addCommand(jda, guildId, value);
+		}
 		return true;
 	}
 	
 	@Override
 	@Transactional
-	public boolean remove(long guildId, @NotNull String value) throws OperationNotSupportedException{
+	public boolean remove(@NotNull JDA jda, long guildId, @NotNull String value) throws OperationNotSupportedException{
 		var result = commandRepository.deleteAllByGuildIdAndName(guildId, value) > 0;
+		
 		if(result){
-			slashCommandService.deleteCommand(guildId, value);
+			if(value.startsWith(InteractionType.SLASH.getPrefix())){
+				slashCommandService.deleteCommand(jda, guildId, value);
+			}
+			else if(value.startsWith(InteractionType.CONTEXT_MESSAGE.getPrefix())){
+				messageContextMenuService.deleteCommand(jda, guildId, value);
+			}
 		}
 		return result;
 	}

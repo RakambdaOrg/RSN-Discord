@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -24,15 +25,15 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class MessageContextMenuService {
+public class MessageContextMenuService{
 	private final InteractionsService interactionsService;
 	private final Collection<IRegistrableMessageContextMenu> registrableMessageContextMenus;
 	private final Map<String, IExecutableMessageContextMenu> executableMessageContextMenus;
 	
 	@Autowired
 	public MessageContextMenuService(InteractionsService interactionsService, Collection<IRegistrableMessageContextMenu> registrableMessageContextMenus, Collection<IExecutableMessageContextMenu> executableMessageContextMenus){
-        this.interactionsService = interactionsService;
-        this.registrableMessageContextMenus = registrableMessageContextMenus;
+		this.interactionsService = interactionsService;
+		this.registrableMessageContextMenus = registrableMessageContextMenus;
 		this.executableMessageContextMenus = executableMessageContextMenus.stream()
 				.collect(Collectors.toMap(IExecutableMessageContextMenu::getName, e -> e));
 	}
@@ -93,5 +94,17 @@ public class MessageContextMenuService {
 	@NotNull
 	public Optional<IExecutableMessageContextMenu> getExecutableContextMenu(@NotNull String name){
 		return Optional.ofNullable(executableMessageContextMenus.get(name));
+	}
+	
+	public void addCommand(@NotNull JDA jda, long guildId, @NotNull String value){
+		registrableMessageContextMenus.stream()
+				.filter(cmd -> Objects.equals(cmd.getRegisterName(), value))
+				.forEach(cmd -> jda.getGuildById(guildId).upsertCommand(cmd.getDefinition(getLocalizedFunction())).submit());
+	}
+	
+	public void deleteCommand(@NotNull JDA jda, long guildId, @NotNull String value){
+		registrableMessageContextMenus.stream()
+				.filter(cmd -> Objects.equals(cmd.getRegisterName(), value))
+				.forEach(cmd -> jda.getGuildById(guildId).deleteCommandById(cmd.getDefinition(getLocalizedFunction()).getName()).submit());
 	}
 }

@@ -26,14 +26,12 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class SlashCommandService{
-	private final JDA jda;
-	private final InteractionsService interactionsService;
+    private final InteractionsService interactionsService;
 	private final Collection<IRegistrableSlashCommand> registrableSlashCommands;
 	private final Map<String, IExecutableSlashCommand> executableSlashCommands;
 	
 	@Autowired
-	public SlashCommandService(JDA jda, InteractionsService interactionsService, Collection<IRegistrableSlashCommand> registrableSlashCommands, Collection<IExecutableSlashCommand> executableSlashCommands){
-        this.jda = jda;
+	public SlashCommandService(InteractionsService interactionsService, Collection<IRegistrableSlashCommand> registrableSlashCommands, Collection<IExecutableSlashCommand> executableSlashCommands){
         this.interactionsService = interactionsService;
 		this.registrableSlashCommands = registrableSlashCommands;
 		this.executableSlashCommands = executableSlashCommands.stream()
@@ -98,13 +96,13 @@ public class SlashCommandService{
 		return Optional.ofNullable(executableSlashCommands.get(fullCommandName.replace(" ", "/")));
 	}
 	
-	public void addCommand(long guildId, @NotNull String value){
+	public void addCommand(@NotNull JDA jda, long guildId, @NotNull String value){
 		registrableSlashCommands.stream()
 				.filter(cmd -> Objects.equals(cmd.getRegisterName(), value))
 				.forEach(cmd -> jda.getGuildById(guildId).upsertCommand(cmd.getDefinition(getLocalizedFunction())).submit());
 	}
 	
-	public void deleteCommand(long guildId, @NotNull String value){
+	public void deleteCommand(@NotNull JDA jda, long guildId, @NotNull String value){
 		registrableSlashCommands.stream()
 				.filter(cmd -> Objects.equals(cmd.getRegisterName(), value))
 				.forEach(cmd -> jda.getGuildById(guildId).deleteCommandById(cmd.getDefinition(getLocalizedFunction()).getName()).submit());

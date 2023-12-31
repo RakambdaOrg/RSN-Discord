@@ -124,7 +124,7 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 	@NotNull
 	private CompletableFuture<Message> handleSetOperation(@NotNull SlashCommandInteraction event, long guildId, @NotNull IConfigurationAccessor accessor){
 		try{
-			if(accessor.set(guildId, event.getOption(VALUE_OPTION_ID).getAsString())){
+			if(accessor.set(event.getJDA(), guildId, event.getOption(VALUE_OPTION_ID).getAsString())){
 				return JDAWrappers.edit(event, "Value modified").submit();
 			}
 			return JDAWrappers.edit(event, "Failed to set value").submit();
@@ -137,7 +137,7 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 	@NotNull
 	private CompletableFuture<Message> handleResetOperation(@NotNull SlashCommandInteraction event, long guildId, @NotNull IConfigurationAccessor accessor){
 		try{
-			if(accessor.reset(guildId)){
+			if(accessor.reset(event.getJDA(), guildId)){
 				return JDAWrappers.edit(event, "Value reset").submit();
 			}
 			return JDAWrappers.edit(event, "Failed to reset value").submit();
@@ -150,7 +150,7 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 	@NotNull
 	private CompletableFuture<Message> handleAddOperation(@NotNull SlashCommandInteraction event, long guildId, @NotNull IConfigurationAccessor accessor){
 		try{
-			if(accessor.add(guildId, event.getOption(VALUE_OPTION_ID).getAsString())){
+			if(accessor.add(event.getJDA(), guildId, event.getOption(VALUE_OPTION_ID).getAsString())){
 				return JDAWrappers.edit(event, "Value added").submit();
 			}
 			return JDAWrappers.edit(event, "Failed to add value").submit();
@@ -163,7 +163,7 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 	@NotNull
 	private CompletableFuture<Message> handleRemoveOperation(@NotNull SlashCommandInteraction event, long guildId, @NotNull IConfigurationAccessor accessor){
 		try{
-			if(accessor.remove(guildId, event.getOption(VALUE_OPTION_ID).getAsString())){
+			if(accessor.remove(event.getJDA(), guildId, event.getOption(VALUE_OPTION_ID).getAsString())){
 				return JDAWrappers.edit(event, "Value removed").submit();
 			}
 			return JDAWrappers.edit(event, "Failed to remove value").submit();

@@ -5,6 +5,7 @@ import fr.rakambda.rsndiscord.spring.storage.entity.ChannelType;
 import fr.rakambda.rsndiscord.spring.storage.repository.ChannelRepository;
 import jakarta.transaction.Transactional;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
@@ -22,7 +23,7 @@ public abstract class ChannelAccessor implements IConfigurationAccessor{
 	
 	@Override
 	@Transactional
-	public boolean add(long guildId, @NotNull String value){
+	public boolean add(@NotNull JDA jda, long guildId, @NotNull String value){
 		channelRepository.save(ChannelEntity.builder()
 				.channelId(Long.parseLong(value))
 				.type(channelType)
@@ -33,13 +34,13 @@ public abstract class ChannelAccessor implements IConfigurationAccessor{
 	
 	@Override
 	@Transactional
-	public boolean remove(long guildId, @NotNull String value){
+	public boolean remove(@NotNull JDA jda, long guildId, @NotNull String value){
 		return channelRepository.deleteAllByGuildIdAndTypeAndChannelId(guildId, channelType, Long.parseLong(value)) > 0;
 	}
 	
 	@Override
 	@Transactional
-	public boolean reset(long guildId){
+	public boolean reset(@NotNull JDA jda, long guildId){
 		channelRepository.deleteAllByGuildIdAndType(guildId, channelType);
 		return true;
 	}
