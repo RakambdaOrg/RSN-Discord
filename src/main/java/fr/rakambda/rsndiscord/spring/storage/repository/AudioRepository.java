@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface AudioRepository extends JpaRepository<AudioEntity, Integer>{
 	@NotNull
 	Optional<AudioEntity> findByGuildId(long guildId);
+	
+	boolean existsByGuildId(long guildId);
 }

@@ -81,14 +81,20 @@ public class ReadyEventListener extends ListenerAdapter{
 	}
 	
 	private void ensureGuildStorage(@NotNull GenericGuildEvent event){
-		var guildId = event.getGuild().getIdLong();
-		if(guildRepository.existsById(guildId)){
-			return;
-		}
-		
 		log.info("Adding {} to storage", event.getGuild());
-		guildRepository.save(GuildEntity.builder().id(guildId).build());
-		audioRepository.save(AudioEntity.builder().volume(100).guildId(guildId).build());
+		
+		var guildId = event.getGuild().getIdLong();
+		var guildName = event.getGuild().getName();
+		guildRepository.save(guildRepository.findById(guildId)
+				.map(e -> e.withName(guildName))
+				.orElseGet(() -> GuildEntity.builder()
+						.id(guildId)
+						.name(guildName)
+						.build()));
+		
+		if(!audioRepository.existsByGuildId(guildId)){
+			audioRepository.save(AudioEntity.builder().volume(100).guildId(guildId).build());
+		}
 	}
 	
 	@NotNull
