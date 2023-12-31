@@ -25,6 +25,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.localization.LocalizationFunction;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.Map;
@@ -105,22 +106,23 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 		var guildId = event.getGuild().getIdLong();
 		var operationType = ConfigurationOperation.fromValue(operation).orElseThrow(InvalidOperationTypeException::new);
 		
-		if(operationType == ConfigurationOperation.SET){
-			return deferred.thenCompose(empty -> handleSetOperation(event, guildId, accessor));
-		}
-		if(operationType == ConfigurationOperation.RESET){
-			return deferred.thenCompose(empty -> handleResetOperation(event, guildId, accessor));
-		}
-		if(operationType == ConfigurationOperation.ADD){
-			return deferred.thenCompose(empty -> handleAddOperation(event, guildId, accessor));
-		}
-		if(operationType == ConfigurationOperation.REMOVE){
-			return deferred.thenCompose(empty -> handleRemoveOperation(event, guildId, accessor));
-		}
-		if(operationType == ConfigurationOperation.SHOW){
-			return deferred.thenCompose(empty -> handleShowOperation(event, guildId, accessor));
-		}
-		return deferred.thenCompose(empty -> CompletableFuture.failedFuture(new InvalidOperationTypeException()));
+		return deferred
+				.thenCompose(switch(operationType){
+					case SET -> empty -> handleSetOperation(event, guildId, accessor);
+					case RESET -> empty -> handleResetOperation(event, guildId, accessor);
+					case ADD -> empty -> handleAddOperation(event, guildId, accessor);
+					case REMOVE -> empty -> handleRemoveOperation(event, guildId, accessor);
+					case SHOW -> empty -> handleShowOperation(event, guildId, accessor);
+				})
+				.exceptionally(e -> {
+					if(e instanceof DataAccessException){
+						throw new RuntimeException("Failed to perform database update", e);
+					}
+					if(e instanceof RuntimeException runtimeException){
+						throw runtimeException;
+					}
+					throw new RuntimeException(e);
+				});
 	}
 	
 	@NotNull
