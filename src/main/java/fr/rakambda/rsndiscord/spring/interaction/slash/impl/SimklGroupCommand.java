@@ -13,11 +13,17 @@ public class SimklGroupCommand implements IRegistrableSlashCommand{
 	@Override
 	@NotNull
 	public CommandData getDefinition(@NotNull LocalizationFunction localizationFunction){
-		return Commands.slash("simkl", "Simkl")
+		return Commands.slash(getId(), "Simkl")
 				.setLocalizationFunction(localizationFunction)
 				.addSubcommands(
 						new SubcommandData("register", "Register an account"),
 						new SubcommandData("unregister", "Unregister an account")
 				);
+	}
+	
+	@Override
+	@NotNull
+	public String getId(){
+		return "simkl";
 	}
 }

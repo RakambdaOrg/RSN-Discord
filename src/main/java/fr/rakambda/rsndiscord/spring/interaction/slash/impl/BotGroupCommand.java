@@ -13,12 +13,18 @@ public class BotGroupCommand implements IRegistrableSlashCommand{
 	@Override
 	@NotNull
 	public CommandData getDefinition(@NotNull LocalizationFunction localizationFunction){
-		return Commands.slash("bot", "Bot's info")
+		return Commands.slash(getId(), "Bot's info")
 				.setLocalizationFunction(localizationFunction)
 				.addSubcommands(
 						new SubcommandData("general", "Generic information"),
 						new SubcommandData("stop", "Stops the bot"),
 						new SubcommandData("time", "Current bot's time")
 				);
+	}
+	
+	@Override
+	@NotNull
+	public String getId(){
+		return "bot";
 	}
 }

@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import static net.dv8tion.jda.api.OnlineStatus.ONLINE;
 
@@ -40,10 +39,10 @@ public class ReadyEventListener extends ListenerAdapter{
 	@Autowired
 	public ReadyEventListener(ApplicationSettings applicationSettings, InteractionsService interactionsService, SlashCommandService slashCommandService, MessageContextMenuService messageContextMenuService, GuildRepository guildRepository, AudioRepository audioRepository){
 		this.applicationSettings = applicationSettings;
-        this.interactionsService = interactionsService;
-        this.slashCommandService = slashCommandService;
-        this.messageContextMenuService = messageContextMenuService;
-        this.guildRepository = guildRepository;
+		this.interactionsService = interactionsService;
+		this.slashCommandService = slashCommandService;
+		this.messageContextMenuService = messageContextMenuService;
+		this.guildRepository = guildRepository;
 		this.audioRepository = audioRepository;
 	}
 	
@@ -103,18 +102,16 @@ public class ReadyEventListener extends ListenerAdapter{
 	
 	@NotNull
 	private CompletableFuture<Void> registerCommands(@NotNull JDA jda){
-		if(applicationSettings.isDevelopment()){
-			return applicationSettings.getDevelopmentGuilds().stream()
-					.map(jda::getGuildById)
-					.filter(Objects::nonNull)
-					.map(guild -> interactionsService.clearGuildCommands(guild)
-							.thenCompose(empty -> slashCommandService.registerGuildCommands(guild))
-							.thenCompose(empty -> messageContextMenuService.registerGuildMenus(guild)))
-					.reduce((left, right) -> left.thenCombine(right, (v1, v2) -> null))
-					.orElseGet(() -> CompletableFuture.completedFuture(null));
-		}
-		
 		return slashCommandService.registerGlobalCommands(jda)
-				.thenCompose(empty -> messageContextMenuService.registerGlobalMenus(jda));
+				.thenCompose(empty -> messageContextMenuService.registerGlobalMenus(jda))
+				.thenCompose(empty -> registerGuildCommands(jda.getGuilds()));
+	}
+	
+	private CompletableFuture<Void> registerGuildCommands(@NotNull Collection<Guild> guilds){
+		return guilds.stream()
+				.map(guild -> slashCommandService.registerGuildCommands(guild)
+						.thenCompose(empty -> messageContextMenuService.registerGuildMenus(guild)))
+				.reduce((left, right) -> left.thenCombine(right, (v1, v2) -> null))
+				.orElseGet(() -> CompletableFuture.completedFuture(null));
 	}
 }

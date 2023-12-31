@@ -1,5 +1,6 @@
 package fr.rakambda.rsndiscord.spring.interaction.slash;
 
+import fr.rakambda.rsndiscord.spring.interaction.InteractionsService;
 import fr.rakambda.rsndiscord.spring.interaction.slash.api.IExecutableSlashCommand;
 import fr.rakambda.rsndiscord.spring.interaction.slash.api.IRegistrableSlashCommand;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -24,11 +26,15 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class SlashCommandService{
+	private final JDA jda;
+	private final InteractionsService interactionsService;
 	private final Collection<IRegistrableSlashCommand> registrableSlashCommands;
 	private final Map<String, IExecutableSlashCommand> executableSlashCommands;
 	
 	@Autowired
-	public SlashCommandService(Collection<IRegistrableSlashCommand> registrableSlashCommands, Collection<IExecutableSlashCommand> executableSlashCommands){
+	public SlashCommandService(JDA jda, InteractionsService interactionsService, Collection<IRegistrableSlashCommand> registrableSlashCommands, Collection<IExecutableSlashCommand> executableSlashCommands){
+        this.jda = jda;
+        this.interactionsService = interactionsService;
 		this.registrableSlashCommands = registrableSlashCommands;
 		this.executableSlashCommands = executableSlashCommands.stream()
 				.collect(Collectors.toMap(IExecutableSlashCommand::getPath, e -> e));
@@ -47,6 +53,7 @@ public class SlashCommandService{
 		
 		var localizationFunction = getLocalizedFunction();
 		var commands = registrableSlashCommands.stream()
+				.filter(IRegistrableSlashCommand::isIncludeAllServers)
 				.map(cmd -> cmd.getDefinition(localizationFunction))
 				.collect(Collectors.toSet());
 		
@@ -59,6 +66,7 @@ public class SlashCommandService{
 		
 		var localizationFunction = getLocalizedFunction();
 		var commands = registrableSlashCommands.stream()
+				.filter(cmd -> interactionsService.isCommandActivatedOnGuild(guild, cmd.getRegisterName()))
 				.map(cmd -> cmd.getDefinition(localizationFunction))
 				.collect(Collectors.toSet());
 		
@@ -88,5 +96,17 @@ public class SlashCommandService{
 	@NotNull
 	public Optional<IExecutableSlashCommand> getExecutableCommand(@NotNull String fullCommandName){
 		return Optional.ofNullable(executableSlashCommands.get(fullCommandName.replace(" ", "/")));
+	}
+	
+	public void addCommand(long guildId, @NotNull String value){
+		registrableSlashCommands.stream()
+				.filter(cmd -> Objects.equals(cmd.getRegisterName(), value))
+				.forEach(cmd -> jda.getGuildById(guildId).upsertCommand(cmd.getDefinition(getLocalizedFunction())).submit());
+	}
+	
+	public void deleteCommand(long guildId, @NotNull String value){
+		registrableSlashCommands.stream()
+				.filter(cmd -> Objects.equals(cmd.getRegisterName(), value))
+				.forEach(cmd -> jda.getGuildById(guildId).deleteCommandById(cmd.getDefinition(getLocalizedFunction()).getName()).submit());
 	}
 }

@@ -21,7 +21,7 @@ public class MusicGroupCommand implements IRegistrableSlashCommand{
 	@Override
 	@NotNull
 	public CommandData getDefinition(@NotNull LocalizationFunction localizationFunction){
-		return Commands.slash("music", "Music commands")
+		return Commands.slash(getId(), "Music commands")
 				.setLocalizationFunction(localizationFunction)
 				.setGuildOnly(true)
 				.addSubcommands(
@@ -55,5 +55,11 @@ public class MusicGroupCommand implements IRegistrableSlashCommand{
 												.setRequired(true)
 								)
 				);
+	}
+	
+	@Override
+	@NotNull
+	public String getId(){
+		return "music";
 	}
 }

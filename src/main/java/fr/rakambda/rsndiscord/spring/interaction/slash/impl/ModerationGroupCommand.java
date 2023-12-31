@@ -24,7 +24,7 @@ public class ModerationGroupCommand implements IRegistrableSlashCommand{
 	@Override
 	@NotNull
 	public CommandData getDefinition(@NotNull LocalizationFunction localizationFunction){
-		return Commands.slash("mod", "Moderation commands")
+		return Commands.slash(getId(), "Moderation commands")
 				.setLocalizationFunction(localizationFunction)
 				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_CHANNEL))
 				.setGuildOnly(true)
@@ -58,5 +58,11 @@ public class ModerationGroupCommand implements IRegistrableSlashCommand{
 												.setRequired(true)),
 						new SubcommandData("count", "Count messages in a channel")
 				);
+	}
+	
+	@Override
+	@NotNull
+	public String getId(){
+		return "mod";
 	}
 }

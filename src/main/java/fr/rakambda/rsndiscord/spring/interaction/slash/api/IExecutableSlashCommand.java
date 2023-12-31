@@ -8,10 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.function.Function;
 
-public interface IExecutableSlashCommand{
-	@NotNull
-	String getId();
-	
+public interface IExecutableSlashCommand extends ISlashCommand{
 	@NotNull
 	String getPath();
 	

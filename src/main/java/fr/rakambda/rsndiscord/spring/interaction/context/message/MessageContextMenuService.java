@@ -1,5 +1,6 @@
 package fr.rakambda.rsndiscord.spring.interaction.context.message;
 
+import fr.rakambda.rsndiscord.spring.interaction.InteractionsService;
 import fr.rakambda.rsndiscord.spring.interaction.context.message.api.IExecutableMessageContextMenu;
 import fr.rakambda.rsndiscord.spring.interaction.context.message.api.IRegistrableMessageContextMenu;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +25,14 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class MessageContextMenuService {
+	private final InteractionsService interactionsService;
 	private final Collection<IRegistrableMessageContextMenu> registrableMessageContextMenus;
 	private final Map<String, IExecutableMessageContextMenu> executableMessageContextMenus;
 	
 	@Autowired
-	public MessageContextMenuService(Collection<IRegistrableMessageContextMenu> registrableMessageContextMenus, Collection<IExecutableMessageContextMenu> executableMessageContextMenus){
-		this.registrableMessageContextMenus = registrableMessageContextMenus;
+	public MessageContextMenuService(InteractionsService interactionsService, Collection<IRegistrableMessageContextMenu> registrableMessageContextMenus, Collection<IExecutableMessageContextMenu> executableMessageContextMenus){
+        this.interactionsService = interactionsService;
+        this.registrableMessageContextMenus = registrableMessageContextMenus;
 		this.executableMessageContextMenus = executableMessageContextMenus.stream()
 				.collect(Collectors.toMap(IExecutableMessageContextMenu::getName, e -> e));
 	}
@@ -47,6 +50,7 @@ public class MessageContextMenuService {
 		
 		var localizationFunction = getLocalizedFunction();
 		var commands = registrableMessageContextMenus.stream()
+				.filter(IRegistrableMessageContextMenu::isIncludeAllServers)
 				.map(cmd -> cmd.getDefinition(localizationFunction))
 				.collect(Collectors.toSet());
 		
@@ -59,6 +63,7 @@ public class MessageContextMenuService {
 		
 		var localizationFunction = getLocalizedFunction();
 		var commands = registrableMessageContextMenus.stream()
+				.filter(cmd -> interactionsService.isCommandActivatedOnGuild(guild, cmd.getRegisterName()))
 				.map(cmd -> cmd.getDefinition(localizationFunction))
 				.collect(Collectors.toSet());
 		

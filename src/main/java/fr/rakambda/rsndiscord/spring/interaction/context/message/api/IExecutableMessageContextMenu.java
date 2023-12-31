@@ -4,7 +4,7 @@ import fr.rakambda.rsndiscord.spring.interaction.slash.permission.IPermission;
 import fr.rakambda.rsndiscord.spring.interaction.slash.permission.NoPermission;
 import org.jetbrains.annotations.NotNull;
 
-public interface IExecutableMessageContextMenu {
+public interface IExecutableMessageContextMenu extends IMessageContextMenu {
 	@NotNull
 	String getName();
 	

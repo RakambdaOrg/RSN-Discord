@@ -211,4 +211,9 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 		}
 		return accessors.keySet().stream().filter(name -> name.startsWith(value));
 	}
+	
+	@Override
+	public boolean isIncludeAllServers(){
+		return true;
+	}
 }
