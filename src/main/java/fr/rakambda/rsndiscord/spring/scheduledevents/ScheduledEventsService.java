@@ -3,6 +3,7 @@ package fr.rakambda.rsndiscord.spring.scheduledevents;
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.storage.entity.ChannelType;
 import fr.rakambda.rsndiscord.spring.storage.repository.ChannelRepository;
+import fr.rakambda.rsndiscord.spring.util.LocalizationService;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.ScheduledEvent;
@@ -10,6 +11,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.utils.TimeFormat;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -22,9 +24,11 @@ public class ScheduledEventsService{
 	private static final Collection<ScheduledEvent.Status> WANTED_STATUS = Set.of(ScheduledEvent.Status.SCHEDULED, ScheduledEvent.Status.ACTIVE);
 	
 	private final ChannelRepository channelRepository;
+	private final LocalizationService localizationService;
 	
-	public ScheduledEventsService(ChannelRepository channelRepository){
+	public ScheduledEventsService(ChannelRepository channelRepository, LocalizationService localizationService){
 		this.channelRepository = channelRepository;
+		this.localizationService = localizationService;
 	}
 	
 	public void update(@NotNull Guild guild){
@@ -52,23 +56,18 @@ public class ScheduledEventsService{
 		StringBuilder stringBuilder = new StringBuilder();
 		
 		if(event.getStatus() == ScheduledEvent.Status.ACTIVE){
-			stringBuilder.append("🔴 NOW");
+			stringBuilder.append("🔴 ")
+					.append(localizationService.translate(event.getGuild().getLocale(), "scheduled.event.live"));
 		}
 		else{
-			stringBuilder.append(TimeFormat.RELATIVE.format(event.getStartTime().toEpochSecond() * 1000));
-		}
-		
-		if(Objects.nonNull(event.getEndTime())){
-			stringBuilder.append(" (ending ")
-					.append(TimeFormat.RELATIVE.format(event.getEndTime().toEpochSecond() * 1000))
-					.append(")");
+			stringBuilder.append(TimeFormat.DATE_TIME_LONG.format(event.getStartTime().toEpochSecond() * 1000));
 		}
 		
 		stringBuilder.append(": **")
 				.append(event.getName())
 				.append("**");
 		
-		if(Objects.nonNull(event.getDescription())){
+		if(StringUtils.hasText(event.getDescription())){
 			stringBuilder.append(" - ")
 					.append(event.getDescription());
 		}

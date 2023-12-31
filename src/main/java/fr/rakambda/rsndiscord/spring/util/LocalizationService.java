@@ -33,6 +33,11 @@ public class LocalizationService{
 	}
 	
 	@NotNull
+	public String translate(@NotNull DiscordLocale locale, @NotNull String key, Object... args){
+		return translate(Locale.forLanguageTag(locale.getLocale()), key, args);
+	}
+	
+	@NotNull
 	private Optional<ResourceBundle> getBundle(@NotNull Locale locale){
 		var bundle = bundles.computeIfAbsent(locale, this::buildBundle);
 		return Optional.ofNullable(bundle);
@@ -47,10 +52,5 @@ public class LocalizationService{
 			log.warn("Failed to get resource bundle for language " + locale, e);
 			return null;
 		}
-	}
-	
-	@NotNull
-	public String translate(@NotNull DiscordLocale locale, @NotNull String key, Object... args){
-		return translate(Locale.forLanguageTag(locale.getLocale()), key, args);
 	}
 }
