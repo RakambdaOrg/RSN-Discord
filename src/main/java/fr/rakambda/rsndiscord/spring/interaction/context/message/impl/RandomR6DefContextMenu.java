@@ -16,48 +16,12 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
+import static fr.rakambda.rsndiscord.spring.interaction.context.message.impl.R6ContextMenu.Side.ATK;
+import static fr.rakambda.rsndiscord.spring.interaction.context.message.impl.R6ContextMenu.Side.DEF;
 
 @Component
 @Slf4j
-public class RandomR6DefContextMenu implements IRegistrableMessageContextMenu, IExecutableMessageContextMenuGuild{
-	private static final String[] NAMES = new String[]{
-			"Alibi",
-			"Aruni",
-			"Azami",
-			"Bandit",
-			"Castle",
-			"Caveira",
-			"Clash",
-			"Doc",
-			"Echo",
-			"Ela",
-			"Fenrir",
-			"Frost",
-			"Goyo",
-			"Jäger",
-			"Kaid",
-			"Kapkan",
-			"Lesion",
-			"Maestro",
-			"Melusi",
-			"Mira",
-			"Mozzie",
-			"Mute",
-			"Oryx",
-			"Pulse",
-			"Rook",
-			"Smoke",
-			"Solis",
-			"Tachanka",
-			"Thorn",
-			"Thunderbird",
-			"Tubarão",
-			"Valkyrie",
-			"Vigil",
-			"Wamai",
-			"Warden"
-	};
-	
+public class RandomR6DefContextMenu extends R6ContextMenu implements IRegistrableMessageContextMenu, IExecutableMessageContextMenuGuild{
 	private final RabbitService rabbitService;
 	
 	public RandomR6DefContextMenu(RabbitService rabbitService){
@@ -81,9 +45,7 @@ public class RandomR6DefContextMenu implements IRegistrableMessageContextMenu, I
 	@Override
 	@NotNull
 	public CompletableFuture<?> executeGuild(@NotNull MessageContextInteractionEvent event, @NotNull Guild guild, @NotNull Member member) throws BotException{
-		var deferred = event.deferReply(false).submit();
-		
-		var name = NAMES[ThreadLocalRandom.current().nextInt(NAMES.length)];
-		return deferred.thenCompose(empty -> JDAWrappers.reply(event, name).submitAndDelete(3, rabbitService));
+		return event.deferReply(false).submit()
+				.thenCompose(empty -> JDAWrappers.reply(event, getOperatorMessage(DEF)).submitAndDelete(3, rabbitService));
 	}
 }
