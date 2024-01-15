@@ -57,7 +57,7 @@ public class ReadyEventListener extends ListenerAdapter{
 		
 		jda.getGuilds().forEach(Guild::loadMembers);
 		
-		clearGuildCommands(jda.getGuilds())
+		clearGlobalCommands(jda)
 				.thenCompose(empty -> registerCommands(jda))
 				.exceptionally(this::handleException);
 	}
@@ -98,12 +98,17 @@ public class ReadyEventListener extends ListenerAdapter{
 	}
 	
 	@NotNull
+	private CompletableFuture<Void> clearGlobalCommands(JDA jda){
+		return jda.updateCommands().submit()
+				.thenCompose(empty -> clearGuildCommands(jda.getGuilds()));
+	}
+	
+	@NotNull
 	private CompletableFuture<Void> clearGuildCommands(@NotNull Collection<Guild> guilds){
-		var future = CompletableFuture.<Void> completedFuture(null);
-		for(var guild : guilds){
-			future = future.thenCompose(empty2 -> interactionsService.clearGuildCommands(guild));
-		}
-		return future;
+		return guilds.stream()
+				.map(interactionsService::clearGuildCommands)
+				.reduce((left, right) -> left.thenCombine(right, (v1, v2) -> null))
+				.orElseGet(() -> CompletableFuture.completedFuture(null));
 	}
 	
 	@NotNull
