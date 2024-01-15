@@ -1,15 +1,22 @@
 package fr.rakambda.rsndiscord.spring.interaction.context.message.impl;
 
+import fr.rakambda.rsndiscord.spring.amqp.RabbitService;
+import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import org.jetbrains.annotations.NotNull;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import static fr.rakambda.rsndiscord.spring.interaction.context.message.impl.R6ContextMenu.Side.ATK;
 import static fr.rakambda.rsndiscord.spring.interaction.context.message.impl.R6ContextMenu.Side.DEF;
 
+@RequiredArgsConstructor
 public class R6ContextMenu{
 	private static final int OPERATOR_COUNT = 3;
 	private static final Map<Side, Operator[]> OPERATORS = Map.of(ATK, new Operator[]{
@@ -88,6 +95,14 @@ public class R6ContextMenu{
 					}
 	);
 	
+	private final RabbitService rabbitService;
+	
+	@NotNull
+	protected CompletableFuture<Message> executeGuild(@NotNull MessageContextInteractionEvent event, @NotNull Side side){
+		return event.deferReply(false).submit()
+				.thenCompose(empty -> JDAWrappers.reply(event, getOperatorMessage(side)).addActionRow().submitAndDelete(15, rabbitService));
+	}
+	
 	@NotNull
 	protected Operator getRandomOperator(@NotNull Side side){
 		var sideOperators = OPERATORS.get(side);
@@ -113,7 +128,7 @@ public class R6ContextMenu{
 		
 		public String getIconUrl(){
 			return "https://r6operators.marcopixel.eu/icons/png/%s.png".formatted(
-				getName().replace("ã", "a").toLowerCase(Locale.ROOT)
+					getName().replace("ã", "a").toLowerCase(Locale.ROOT)
 			);
 		}
 	}
