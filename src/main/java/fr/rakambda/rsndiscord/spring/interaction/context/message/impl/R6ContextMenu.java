@@ -100,7 +100,7 @@ public class R6ContextMenu{
 	@NotNull
 	protected CompletableFuture<Message> executeGuild(@NotNull MessageContextInteractionEvent event, @NotNull Side side){
 		return event.deferReply(false).submit()
-				.thenCompose(empty -> JDAWrappers.reply(event, getOperatorMessage(side)).addActionRow().submitAndDelete(15, rabbitService));
+				.thenCompose(empty -> JDAWrappers.reply(event, getOperatorMessage(side)).submitAndDelete(15, rabbitService));
 	}
 	
 	@NotNull
