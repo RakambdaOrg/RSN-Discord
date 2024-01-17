@@ -128,7 +128,9 @@ public class R6ContextMenu{
 		
 		public String getIconUrl(){
 			return "https://r6operators.marcopixel.eu/icons/png/%s.png".formatted(
-					getName().replace("ã", "a").toLowerCase(Locale.ROOT)
+					getName().replace("ã", "a")
+							.replace("ø", "o")
+							.toLowerCase(Locale.ROOT)
 			);
 		}
 	}
