@@ -8,7 +8,7 @@ opus-version = "1.1.1"
 names-version = "0.50.0"
 jib-version = "3.4.0"
 git-properties-version = "2.4.1"
-sptringboot-version = "3.2.1"
+sptringboot-version = "3.2.2"
 sptringboot-dm-version = "1.1.4"
 
 [libraries]
