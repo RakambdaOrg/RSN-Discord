@@ -50,6 +50,7 @@ public class SimklService{
 				.baseUrl(API_URL)
 				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
 				.defaultHeader("simkl-api-key", applicationSettings.getSimkl().getClientId())
+				.filter(HttpUtils.logErrorFilter())
 				.build();
 	}
 	

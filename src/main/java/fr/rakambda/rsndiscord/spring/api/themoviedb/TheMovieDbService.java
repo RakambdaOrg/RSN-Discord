@@ -27,6 +27,7 @@ public class TheMovieDbService{
 				.baseUrl(API_URL)
 				.defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + applicationSettings.getTheMovieDb().getAccessToken())
 				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+				.filter(HttpUtils.logErrorFilter())
 				.build();
 	}
 	

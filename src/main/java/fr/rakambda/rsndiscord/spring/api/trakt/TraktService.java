@@ -55,6 +55,7 @@ public class TraktService{
 				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
 				.defaultHeader("trakt-api-key", applicationSettings.getTrakt().getClientId())
 				.defaultHeader("trakt-api-version", "2")
+				.filter(HttpUtils.logErrorFilter())
 				.build();
 	}
 	
