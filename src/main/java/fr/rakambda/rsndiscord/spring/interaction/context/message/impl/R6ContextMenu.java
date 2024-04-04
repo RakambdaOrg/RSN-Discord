@@ -55,6 +55,7 @@ public class R6ContextMenu{
 					new Operator(ATK, "Ying"),
 					new Operator(ATK, "Zero"),
 					new Operator(ATK, "Zofia"),
+					new Operator(ATK, "Deimos"),
 					},
 			DEF, new Operator[]{
 					new Operator(DEF, "Alibi"),
