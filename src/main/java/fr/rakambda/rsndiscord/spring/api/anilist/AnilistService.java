@@ -57,13 +57,13 @@ public class AnilistService{
 				.baseUrl(API_URL)
 				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString())
 				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-				.filter(HttpUtils.logErrorFilter())
+				.clientConnector(HttpUtils.wiretapClientConnector(AnilistService.class))
 				.build();
 		graphQlClient = WebClient.builder()
 				.baseUrl(GRAPH_QL_URL)
 				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString())
 				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-				.filter(HttpUtils.logErrorFilter())
+				.clientConnector(HttpUtils.wiretapClientConnector(AnilistService.class))
 				.build();
 	}
 	
