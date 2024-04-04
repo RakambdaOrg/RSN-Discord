@@ -19,6 +19,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class AnilistWrappedTriggerTask extends WrappedTriggerTask{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -33,21 +35,16 @@ public abstract class AnilistWrappedTriggerTask extends WrappedTriggerTask{
 	protected void fillEmbed(@NotNull EmbedBuilder builder, @NotNull Media media, @NotNull DiscordLocale locale){
 		builder.setDescription(media.getTitle().getRomaji());
 		
-		Optional.of(media.getType())
-				.filter(MediaType::isShouldDisplay)
-				.ifPresent(t -> builder.addField(localizationService.translate(locale, "anilist.type"), t.getValue(), true));
+		var type = Stream.of(
+						Optional.of(media.getType()).filter(MediaType::isShouldDisplay).map(MediaType::getValue),
+						Optional.ofNullable(media.getFormat()).map(MediaFormat::getValue),
+						Optional.ofNullable(media.getStatus()).map(MediaStatus::getValue),
+						Optional.of(media.isAdult()).filter(a -> a).map(a -> "\uD83D\uDD1E Adult")
+				)
+				.flatMap(Optional::stream)
+				.collect(Collectors.joining(" - "));
 		
-		Optional.ofNullable(media.getFormat())
-				.map(MediaFormat::getValue)
-				.ifPresent(f -> builder.addField(localizationService.translate(locale, "anilist.format"), f, true));
-		
-		Optional.ofNullable(media.getStatus())
-				.map(MediaStatus::getValue)
-				.ifPresent(f -> builder.addField(localizationService.translate(locale, "anilist.status"), f, true));
-		
-		Optional.of(media.isAdult())
-				.filter(a -> a)
-				.ifPresent(a -> builder.addField(localizationService.translate(locale, "anilist.adult"), "\uD83D\uDD1E Yes", true));
+		builder.addField(localizationService.translate(locale, "anilist.type"), type, true);
 		
 		if(media instanceof AnimeMedia animeMedia){
 			fillTypeEmbed(builder, animeMedia, locale);
@@ -56,17 +53,21 @@ public abstract class AnilistWrappedTriggerTask extends WrappedTriggerTask{
 			fillTypeEmbed(builder, mangaMedia, locale);
 		}
 		
-		media.getStartDate().asDate()
-				.map(DF::format)
-				.ifPresent(d -> builder.addField(localizationService.translate(locale, "anilist.started"), d, true));
+		var dates = Stream.of(
+						media.getStartDate().asDate().map(DF::format).map("Start: %s"::formatted),
+						media.getEndDate().asDate().map(DF::format).map("End: %s"::formatted)
+				)
+				.flatMap(Optional::stream)
+				.collect(Collectors.joining("\n"));
+		builder.addField(localizationService.translate(locale, "anilist.started"), dates, true);
 		
-		media.getEndDate().asDate()
-				.map(DF::format)
-				.ifPresent(d -> builder.addField(localizationService.translate(locale, "anilist.ended"), d, true));
-		
-		Optional.ofNullable(media.getRankings()).orElse(Set.of()).stream()
-				.map(this::mapRanking)
-				.forEach(ranking -> builder.addField(localizationService.translate(locale, "anilist.ranking"), ranking, true));
+		var rankings = Optional.ofNullable(media.getRankings()).orElse(Set.of());
+		if(!rankings.isEmpty()){
+			var rankingsStr = rankings.stream()
+					.map(this::mapRanking)
+					.collect(Collectors.joining("\n"));
+			builder.addField(localizationService.translate(locale, "anilist.ranking"), rankingsStr, true);
+		}
 		
 		Optional.ofNullable(media.getGenres())
 				.filter(g -> !g.isEmpty())

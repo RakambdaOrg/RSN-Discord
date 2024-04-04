@@ -192,12 +192,15 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 		
 		mediaList.getCompletedAt().asDate()
 				.ifPresent(date -> {
-					builder.addField(localizationService.translate(locale, "anilist.list-complete"), date.format(DF), true);
+					var days = mediaList.getStartedAt().durationTo(date)
+							.map(d -> d.get(ChronoUnit.DAYS));
 					
-					mediaList.getStartedAt().durationTo(date)
-							.map(d -> d.get(ChronoUnit.DAYS))
-							.map("%d days"::formatted)
-							.ifPresent(d -> builder.addField(localizationService.translate(locale, "anilist.list-time"), d, true));
+					if(days.isPresent()){
+						builder.addField(localizationService.translate(locale, "anilist.list-complete"), "%s (%d days)".formatted(date.format(DF), days.get()), true);
+					}
+					else{
+						builder.addField(localizationService.translate(locale, "anilist.list-complete"), date.format(DF), true);
+					}
 				});
 		
 		builder.addField(localizationService.translate(locale, "anilist.list-progress"), mediaList.getProgress() + "/" + totalElements, true);
