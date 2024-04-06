@@ -1,6 +1,5 @@
 package fr.rakambda.rsndiscord.spring.api.anilist;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.rakambda.rsndiscord.spring.api.HttpUtils;
 import fr.rakambda.rsndiscord.spring.api.anilist.request.GraphQlRequest;
 import fr.rakambda.rsndiscord.spring.api.anilist.request.TokenRequest;
@@ -48,7 +47,7 @@ public class AnilistService{
 	private final AnilistRepository anilistRepository;
 	private final GraphQlService graphQlService;
 	
-	public AnilistService(ApplicationSettings settings, AnilistRepository anilistRepository, GraphQlService graphQlService, ObjectMapper jsonMapper){
+	public AnilistService(ApplicationSettings settings, AnilistRepository anilistRepository, GraphQlService graphQlService){
 		this.settings = settings;
 		this.anilistRepository = anilistRepository;
 		this.graphQlService = graphQlService;
@@ -57,13 +56,13 @@ public class AnilistService{
 				.baseUrl(API_URL)
 				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString())
 				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-				.clientConnector(HttpUtils.wiretapClientConnector(AnilistService.class))
+				.filter(HttpUtils.logErrorFilter())
 				.build();
 		graphQlClient = WebClient.builder()
 				.baseUrl(GRAPH_QL_URL)
 				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString())
 				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-				.clientConnector(HttpUtils.wiretapClientConnector(AnilistService.class))
+				.filter(HttpUtils.logErrorFilter())
 				.build();
 	}
 	
