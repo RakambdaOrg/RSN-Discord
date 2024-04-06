@@ -196,12 +196,14 @@ public class AnilistService{
 	@NotNull
 	private <T> T gqlQuery(@NotNull String token, @NotNull String definition, @NotNull Map<String, Object> variables, @NotNull ParameterizedTypeReference<GqlResponse<T>> type) throws RequestFailedException{
 		try{
-			log.info("Sending gql query {}", definition);
+			log.debug("Sending gql query from definition {}", definition);
 			
 			var gqlQuery = GraphQlRequest.builder()
 					.query(graphQlService.readQuery(definition))
 					.variables(variables)
 					.build();
+			
+			log.info("Sending gql query {}", gqlQuery);
 			
 			var response = HttpUtils.withStatusOkAndBody(graphQlClient.post()
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
