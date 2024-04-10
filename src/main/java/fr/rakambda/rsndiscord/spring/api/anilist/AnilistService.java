@@ -25,14 +25,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -62,7 +69,7 @@ public class AnilistService{
 				.baseUrl(GRAPH_QL_URL)
 				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString())
 				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-				.filter(HttpUtils.logErrorFilter())
+				.filter(HttpUtils.logErrorFilter(Set.of(HttpStatus.TOO_MANY_REQUESTS)))
 				.build();
 	}
 	
@@ -210,6 +217,9 @@ public class AnilistService{
 					.bodyValue(gqlQuery)
 					.retrieve()
 					.toEntity(type)
+					.retryWhen(Retry.indefinitely()
+							.filter(WebClientResponseException.TooManyRequests.class::isInstance)
+							.doBeforeRetryAsync(signal -> Mono.delay(calculateDelay(signal.failure())).then()))
 					.blockOptional()
 					.orElseThrow(RequestFailedException::new));
 			
@@ -222,5 +232,21 @@ public class AnilistService{
 		catch(ParseException e){
 			throw new RequestFailedException("Failed to construct request", e);
 		}
+	}
+	
+	@NotNull
+	private static Duration calculateDelay(@NotNull Throwable failure){
+		if(!(failure instanceof WebClientResponseException.TooManyRequests webClientResponseException)){
+			return Duration.ofMinutes(1);
+		}
+		
+		var retryAfterHeader = webClientResponseException.getHeaders().getFirst("Retry-After");
+		var retryAfter = Duration.ofSeconds(Optional.ofNullable(retryAfterHeader)
+				.filter(s -> !s.isBlank())
+				.map(Integer::parseInt)
+				.orElse(60));
+		
+		log.warn("Anilist graphql api retry later : {}", retryAfter);
+		return retryAfter;
 	}
 }
