@@ -23,8 +23,7 @@ dependencies {
         isChanging = true
     }
     implementation(libs.bundles.opus)
-    implementation(libs.lavaplayer)
-    implementation(libs.lpCross)
+    implementation(libs.bundles.lavalink)
 
     implementation("org.springframework.boot:spring-boot-starter-amqp")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -55,6 +54,10 @@ repositories {
     maven {
         name = "m2-dv8tion"
         url = uri("https://m2.dv8tion.net/releases")
+    }
+    maven {
+        name = "Lavalink"
+        url = uri("https://maven.lavalink.dev/releases")
     }
     maven {
         name = "jitpack"
