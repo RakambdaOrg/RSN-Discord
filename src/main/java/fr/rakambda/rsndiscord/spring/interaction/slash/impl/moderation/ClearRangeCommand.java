@@ -80,6 +80,9 @@ public class ClearRangeCommand implements IExecutableSlashCommandGuild{
 						.skipTo(fromId)
 						.foreachAsync(m -> {
 							try{
+								if(m.getTimeCreated().isBefore(toMessage.getTimeCreated())){
+									return false;
+								}
 								processMessage(m).get();
 							}
 							catch(Exception e){
