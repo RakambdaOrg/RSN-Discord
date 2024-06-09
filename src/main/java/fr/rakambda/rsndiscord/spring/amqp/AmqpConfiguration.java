@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.backoff.ExponentialBackOffPolicy;
+import org.springframework.retry.support.RetryTemplate;
 import java.util.Map;
 
 @Configuration
@@ -46,8 +48,17 @@ public class AmqpConfiguration{
 	
 	@Bean
 	public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, Jackson2JsonMessageConverter messageConverter){
+		var backOffPolicy = new ExponentialBackOffPolicy();
+		backOffPolicy.setInitialInterval(1000);
+		backOffPolicy.setMultiplier(10);
+		backOffPolicy.setMaxInterval(60000);
+		
+		var retryTemplate = new RetryTemplate();
+		retryTemplate.setBackOffPolicy(backOffPolicy);
+		
 		var rabbitTemplate = new RabbitTemplate(connectionFactory);
 		rabbitTemplate.setMessageConverter(messageConverter);
+		rabbitTemplate.setRetryTemplate(retryTemplate);
 		return rabbitTemplate;
 	}
 	
