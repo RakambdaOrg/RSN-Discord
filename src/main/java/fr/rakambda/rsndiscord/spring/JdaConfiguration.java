@@ -19,7 +19,6 @@ public class JdaConfiguration{
 	public JDA getJda(List<ListenerAdapter> listenerAdapters, ApplicationSettings applicationSettings) throws InterruptedException{
 		log.info("Building JDA");
 		var jda = JDABuilder.createDefault(applicationSettings.getBotToken())
-				.enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT)
 				.setMemberCachePolicy(MemberCachePolicy.ALL)
 				.enableCache(CacheFlag.EMOJI)
 				.setAutoReconnect(true)

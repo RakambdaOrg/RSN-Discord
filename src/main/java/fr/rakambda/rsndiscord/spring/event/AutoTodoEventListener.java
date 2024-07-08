@@ -36,12 +36,10 @@ public class AutoTodoEventListener extends ListenerAdapter{
 	};
 	
 	private final ChannelRepository channelRepository;
-	private final FixLinksEventListener fixLinksEventListener;
 	
 	@Autowired
-	public AutoTodoEventListener(ChannelRepository channelRepository, FixLinksEventListener fixLinksEventListener){
+	public AutoTodoEventListener(ChannelRepository channelRepository){
 		this.channelRepository = channelRepository;
-		this.fixLinksEventListener = fixLinksEventListener;
 	}
 	
 	@Override
@@ -64,19 +62,9 @@ public class AutoTodoEventListener extends ListenerAdapter{
 				case CHANNEL_PINNED_ADD, THREAD_CREATED -> JDAWrappers.delete(message).submit();
 				case DEFAULT, INLINE_REPLY, SLASH_COMMAND, CONTEXT_COMMAND -> JDAWrappers
 						.createThread(message, "reply-" + event.getMessageId()).submit()
-						.thenCompose(thread -> JDAWrappers.message(thread, ActionRow.of(BUTTONS_NORMAL)).submit()
-								.thenCompose(m -> fixLinks(thread)));
+						.thenCompose(thread -> JDAWrappers.message(thread, ActionRow.of(BUTTONS_NORMAL)).submit());
 			}
 		}
-	}
-	
-	@NotNull
-	private CompletableFuture<Message> fixLinks(@NotNull ThreadChannel thread){
-		return thread.retrieveParentMessage().submit()
-				.thenApply(message -> fixLinksEventListener.extractFixedLinks(message.getContentRaw()))
-				.thenCompose(links -> links.isEmpty()
-						? CompletableFuture.completedFuture(null)
-						: JDAWrappers.message(thread, String.join("\n", links)).submit());
 	}
 	
 	@Override
