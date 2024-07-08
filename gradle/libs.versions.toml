@@ -1,5 +1,5 @@
 [versions]
-jda-version = "5.0.0-beta.24"
+jda-version = "5.0.0"
 lavaplayer-version = "2.2.0"
 lavaplayer-youtube-v2-version = "1.3.0"
 lp_cross-version = "0.1.1"
