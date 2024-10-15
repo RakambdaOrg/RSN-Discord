@@ -116,7 +116,9 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 				return Stream.empty();
 			}
 			
-			var lastMediaListDate = entity.getLastMediaListDate();
+			var lastMediaListDate = Optional.ofNullable(entity.getLastMediaListDate())
+					.filter(i -> i.isBefore(Instant.now()))
+					.orElse(null);
 			var mediaLists = anilistService.getAllMediaList(user.getIdLong(), entity.getUserId()).stream()
 					.filter(e -> isNewer(e, lastMediaListDate))
 					.sorted(Comparator.comparing(e -> extractDate(e).orElse(Instant.EPOCH)))

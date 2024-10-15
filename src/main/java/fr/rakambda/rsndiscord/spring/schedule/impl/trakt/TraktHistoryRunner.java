@@ -1,6 +1,5 @@
 package fr.rakambda.rsndiscord.spring.schedule.impl.trakt;
 
-import fr.rakambda.rsndiscord.spring.api.exceptions.NotLoggedInException;
 import fr.rakambda.rsndiscord.spring.api.exceptions.RequestFailedException;
 import fr.rakambda.rsndiscord.spring.api.themoviedb.TheMovieDbService;
 import fr.rakambda.rsndiscord.spring.api.themoviedb.TmdbImageSize;
@@ -127,7 +126,9 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 				return Stream.empty();
 			}
 			
-			var lastActivityDate = entity.getLastActivityDate();
+			var lastActivityDate = Optional.ofNullable(entity.getLastActivityDate())
+					.filter(i -> i.isBefore(Instant.now()))
+					.orElse(null);
 			var histories = traktService.getAllUserHistory(user.getIdLong(), lastActivityDate, null).stream()
 					.filter(h -> isNewer(h, lastActivityDate))
 					.sorted(USER_HISTORY_COMPARATOR)

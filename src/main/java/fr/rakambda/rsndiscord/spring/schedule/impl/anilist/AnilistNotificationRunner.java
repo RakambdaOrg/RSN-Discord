@@ -118,7 +118,9 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 				return Stream.empty();
 			}
 			
-			var lastNotificationDate = entity.getLastNotificationDate();
+			var lastNotificationDate = Optional.ofNullable(entity.getLastNotificationDate())
+					.filter(i -> i.isBefore(Instant.now()))
+					.orElse(null);
 			var notifications = anilistService.getAllNotifications(user.getIdLong(), NOTIFICATION_TYPES, true).stream()
 					.filter(e -> isNewer(e, lastNotificationDate))
 					.sorted(Comparator.comparing(e -> extractDate(e).orElse(Instant.EPOCH)))

@@ -124,7 +124,9 @@ public class SimklHistoryRunner extends WrappedTriggerTask{
 				return Stream.empty();
 			}
 			
-			var lastActivityDate = entity.getLastActivityDate();
+			var lastActivityDate = Optional.ofNullable(entity.getLastActivityDate())
+					.filter(i -> i.isBefore(Instant.now()))
+					.orElse(null);
 			var histories = simklService.getAllUserHistory(user.getIdLong(), lastActivityDate).stream()
 					.filter(h -> isNewer(h, lastActivityDate))
 					.sorted(USER_HISTORY_COMPARATOR)
