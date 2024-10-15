@@ -133,6 +133,7 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 			notifications.stream()
 					.map(this::extractDate)
 					.flatMap(Optional::stream)
+					.filter(i -> i.isBefore(Instant.now()))
 					.max(Comparator.naturalOrder())
 					.ifPresent(entity::setLastNotificationDate);
 			

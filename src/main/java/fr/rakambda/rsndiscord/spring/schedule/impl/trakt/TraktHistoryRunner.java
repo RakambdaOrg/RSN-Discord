@@ -139,6 +139,7 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 			histories.stream()
 					.map(TraktHistoryRunner::extractDate)
 					.flatMap(Optional::stream)
+					.filter(i -> i.isBefore(Instant.now()))
 					.max(Comparator.naturalOrder())
 					.ifPresent(entity::setLastActivityDate);
 			

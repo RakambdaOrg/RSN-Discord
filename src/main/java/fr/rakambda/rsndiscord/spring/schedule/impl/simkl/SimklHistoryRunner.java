@@ -137,6 +137,7 @@ public class SimklHistoryRunner extends WrappedTriggerTask{
 			histories.stream()
 					.map(SimklHistoryRunner::extractDate)
 					.flatMap(Optional::stream)
+					.filter(i -> i.isBefore(Instant.now()))
 					.max(Comparator.naturalOrder())
 					.ifPresent(entity::setLastActivityDate);
 			

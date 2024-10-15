@@ -131,6 +131,7 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 			mediaLists.stream()
 					.map(this::extractDate)
 					.flatMap(Optional::stream)
+					.filter(i -> i.isBefore(Instant.now()))
 					.max(Comparator.naturalOrder())
 					.ifPresent(entity::setLastMediaListDate);
 			
