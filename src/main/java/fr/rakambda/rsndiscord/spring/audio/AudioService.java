@@ -37,7 +37,7 @@ public class AudioService implements ITrackSchedulerStatusListener, ITrackLoadLi
 	@Getter
 	private final ITrackScheduler trackScheduler;
 	
-	public AudioService(@NotNull Guild guild, int volume){
+	public AudioService(@NotNull Guild guild, int volume, @Nullable String refreshToken){
 		this.guild = guild;
 		
 		var youtubeAudioSourceManager = new YoutubeAudioSourceManager(true,
@@ -46,7 +46,12 @@ public class AudioService implements ITrackSchedulerStatusListener, ITrackLoadLi
 				new AndroidTestsuiteWithThumbnail(),
 				new TvHtml5EmbeddedWithThumbnail()
 		);
-		youtubeAudioSourceManager.useOauth2(null, false);
+		if(Objects.nonNull(refreshToken)){
+			youtubeAudioSourceManager.useOauth2(refreshToken, true);
+		}
+		else{
+			youtubeAudioSourceManager.useOauth2(null, false);
+		}
 		
 		audioPlayerManager = new DefaultAudioPlayerManager();
 		audioPlayerManager.registerSourceManager(youtubeAudioSourceManager);

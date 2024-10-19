@@ -1,5 +1,6 @@
 package fr.rakambda.rsndiscord.spring.audio;
 
+import fr.rakambda.rsndiscord.spring.settings.ApplicationSettings;
 import fr.rakambda.rsndiscord.spring.storage.repository.AudioRepository;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
@@ -13,10 +14,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class AudioServiceFactory{
 	private final AudioRepository audioRepository;
+	private final String refreshToken;
 	private final Map<Long, AudioService> services;
 	
-	public AudioServiceFactory(AudioRepository audioRepository){
+	public AudioServiceFactory( AudioRepository audioRepository, ApplicationSettings applicationSettings){
 		this.audioRepository = audioRepository;
+		refreshToken = applicationSettings.getYoutubeRefreshToken();
 		
 		services = new ConcurrentHashMap<>();
 	}
@@ -31,7 +34,7 @@ public class AudioServiceFactory{
 		var guildEntity = audioRepository.findByGuildId(guild.getIdLong()).orElseThrow();
 		var volume = Math.min(100, Math.max(0, guildEntity.getVolume()));
 		
-		return new AudioService(guild, volume);
+		return new AudioService(guild, volume, refreshToken);
 	}
 	
 	@NotNull
