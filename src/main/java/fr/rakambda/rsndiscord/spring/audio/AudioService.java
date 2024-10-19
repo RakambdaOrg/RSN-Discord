@@ -6,6 +6,10 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
+import dev.lavalink.youtube.clients.AndroidTestsuiteWithThumbnail;
+import dev.lavalink.youtube.clients.MusicWithThumbnail;
+import dev.lavalink.youtube.clients.TvHtml5EmbeddedWithThumbnail;
+import dev.lavalink.youtube.clients.WebWithThumbnail;
 import fr.rakambda.rsndiscord.spring.audio.exception.LoadFailureException;
 import fr.rakambda.rsndiscord.spring.audio.exception.TrackLoadException;
 import fr.rakambda.rsndiscord.spring.audio.load.AudioLoadHandler;
@@ -36,8 +40,16 @@ public class AudioService implements ITrackSchedulerStatusListener, ITrackLoadLi
 	public AudioService(@NotNull Guild guild, int volume){
 		this.guild = guild;
 		
+		var youtubeAudioSourceManager = new YoutubeAudioSourceManager(true,
+				new MusicWithThumbnail(),
+				new WebWithThumbnail(),
+				new AndroidTestsuiteWithThumbnail(),
+				new TvHtml5EmbeddedWithThumbnail()
+		);
+		youtubeAudioSourceManager.useOauth2(null, false);
+		
 		audioPlayerManager = new DefaultAudioPlayerManager();
-		audioPlayerManager.registerSourceManager(new YoutubeAudioSourceManager());
+		audioPlayerManager.registerSourceManager(youtubeAudioSourceManager);
 		audioPlayer = audioPlayerManager.createPlayer();
 		
 		var trackScheduler = new TrackScheduler(audioPlayer);
