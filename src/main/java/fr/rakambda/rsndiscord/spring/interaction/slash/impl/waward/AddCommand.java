@@ -117,7 +117,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 	@Override
 	@NotNull
 	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member) throws RequestFailedException{
-		var deferred = event.deferReply(true).submit();
+		var deferred = event.deferReply(false).submit();
 		var locale = event.getUserLocale();
 		
 		var content = localizationService.translate(locale, "weward.card-added",

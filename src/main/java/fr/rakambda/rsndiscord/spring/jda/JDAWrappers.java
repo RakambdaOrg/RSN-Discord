@@ -5,6 +5,7 @@ import fr.rakambda.rsndiscord.spring.jda.wrappers.channel.DeleteChannelWrapper;
 import fr.rakambda.rsndiscord.spring.jda.wrappers.channel.EditChannelWrapper;
 import fr.rakambda.rsndiscord.spring.jda.wrappers.channel.HistoryChannelWrapper;
 import fr.rakambda.rsndiscord.spring.jda.wrappers.interaction.AutoCompleteWrapper;
+import fr.rakambda.rsndiscord.spring.jda.wrappers.interaction.EditHookWrapper;
 import fr.rakambda.rsndiscord.spring.jda.wrappers.member.AddRoleWrapper;
 import fr.rakambda.rsndiscord.spring.jda.wrappers.member.BanWrapper;
 import fr.rakambda.rsndiscord.spring.jda.wrappers.member.DeafenWrapper;
@@ -45,15 +46,17 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.callbacks.IModalCallback;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.awt.Color;
+import java.awt.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -105,6 +108,11 @@ public class JDAWrappers{
 	@NotNull
 	public static EditMessageWrapper editComponents(@NotNull Message message, @NotNull List<ItemComponent> components){
 		return new EditMessageWrapper(message).setActionRow(components);
+	}
+	
+	@NotNull
+	public static EditHookWrapper editComponents(@NotNull InteractionHook hook, @NotNull ItemComponent... components){
+		return new EditHookWrapper(hook, ActionRow.of(components));
 	}
 	
 	@NotNull

@@ -61,6 +61,6 @@ public class WewardDeleteButtonHandler implements IExecutableButtonGuild{
 	
 	@NotNull
 	public static Supplier<Button> builder(){
-		return () -> Button.danger(COMPONENT_ID, "Delete").withEmoji(Emoji.fromUnicode("U+1F5D1"));
+		return () -> Button.danger(COMPONENT_ID, "No longer available").withEmoji(Emoji.fromUnicode("U+1F5D1"));
 	}
 }
