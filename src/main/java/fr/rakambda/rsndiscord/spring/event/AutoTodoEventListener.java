@@ -1,15 +1,13 @@
 package fr.rakambda.rsndiscord.spring.event;
 
-import fr.rakambda.rsndiscord.spring.interaction.button.impl.TodoMessageDeleteButtonHandler;
-import fr.rakambda.rsndiscord.spring.interaction.button.impl.TodoMessageKeepButtonHandler;
-import fr.rakambda.rsndiscord.spring.interaction.button.impl.TodoMessageKeepWithoutThreadButtonHandler;
+import fr.rakambda.rsndiscord.spring.interaction.button.impl.todo.TodoMessageDeleteButtonHandler;
+import fr.rakambda.rsndiscord.spring.interaction.button.impl.todo.TodoMessageKeepButtonHandler;
+import fr.rakambda.rsndiscord.spring.interaction.button.impl.todo.TodoMessageKeepWithoutThreadButtonHandler;
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.log.LogContext;
 import fr.rakambda.rsndiscord.spring.storage.repository.ChannelRepository;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -20,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 @Component
 @Slf4j

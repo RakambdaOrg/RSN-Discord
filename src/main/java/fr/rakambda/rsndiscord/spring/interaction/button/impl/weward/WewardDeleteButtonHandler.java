@@ -1,4 +1,4 @@
-package fr.rakambda.rsndiscord.spring.interaction.button.impl;
+package fr.rakambda.rsndiscord.spring.interaction.button.impl.weward;
 
 import fr.rakambda.rsndiscord.spring.interaction.button.api.IExecutableButtonGuild;
 import fr.rakambda.rsndiscord.spring.interaction.exception.InvalidChannelTypeException;
@@ -18,8 +18,8 @@ import java.util.function.Supplier;
 
 @Slf4j
 @Component
-public class TodoMessageDeleteButtonHandler implements IExecutableButtonGuild{
-	private static final String COMPONENT_ID = "todo-message-delete";
+public class WewardDeleteButtonHandler implements IExecutableButtonGuild{
+	private static final String COMPONENT_ID = "weward-delete";
 	
 	@Override
 	@NotNull
@@ -30,19 +30,22 @@ public class TodoMessageDeleteButtonHandler implements IExecutableButtonGuild{
 	@NotNull
 	@Override
 	public CompletableFuture<?> executeGuild(@NotNull ButtonInteraction event, @NotNull Guild guild, @NotNull Member member) throws InvalidChannelTypeException{
-		if(event.getChannelType() != ChannelType.GUILD_PUBLIC_THREAD){
-			throw new InvalidChannelTypeException(event.getChannelType());
-		}
-		
 		var deferred = event.deferEdit().submit();
-		
 		var channel = event.getChannel();
-		var threadChannel = channel.asThreadChannel();
-		if(threadChannel.getParentChannel().getType() == ChannelType.FORUM){
-			return deferred.thenCompose(empty -> JDAWrappers.delete(threadChannel).submit());
+		
+		if(event.getChannelType() == ChannelType.GUILD_PUBLIC_THREAD){
+			var threadChannel = channel.asThreadChannel();
+			if(threadChannel.getParentChannel().getType() == ChannelType.FORUM){
+				return deferred.thenCompose(empty -> JDAWrappers.delete(threadChannel).submit());
+			}
+			
+			return deferred.thenCompose(m -> handleThreadChannel(threadChannel));
+		}
+		if(event.getChannelType() == ChannelType.TEXT){
+			return deferred.thenCompose(empty -> JDAWrappers.delete(event.getMessage()).submit());
 		}
 		
-		return deferred.thenCompose(m -> handleThreadChannel(threadChannel));
+		throw new InvalidChannelTypeException(event.getChannelType());
 	}
 	
 	@NotNull

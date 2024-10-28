@@ -1,4 +1,4 @@
-package fr.rakambda.rsndiscord.spring.interaction.button.impl;
+package fr.rakambda.rsndiscord.spring.interaction.button.impl.todo;
 
 import fr.rakambda.rsndiscord.spring.interaction.button.api.IExecutableButtonGuild;
 import fr.rakambda.rsndiscord.spring.interaction.exception.InvalidChannelTypeException;
