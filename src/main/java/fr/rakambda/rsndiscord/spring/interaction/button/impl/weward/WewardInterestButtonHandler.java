@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -59,10 +58,9 @@ public class WewardInterestButtonHandler implements IExecutableButtonGuild{
 		}
 		
 		var deferred = event.deferEdit().submit();
+		var owner = event.getMessage().getMentions().getUsers().stream().findFirst();
 		var content = localizationService.translate(locale, "weward.card-interest",
-				event.getMessage().getMentions().getUsers().stream()
-						.map(IMentionable::getAsMention)
-						.collect(Collectors.joining(" & ")),
+				owner.map(IMentionable::getAsMention).orElse("Unknown"),
 				member.getAsMention()
 		);
 		return deferred.thenCompose(hook -> JDAWrappers.editComponents(hook, BUTTONS_ORIGINAL).submit())

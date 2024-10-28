@@ -3,16 +3,20 @@ package fr.rakambda.rsndiscord.spring.interaction.button.impl.weward;
 import fr.rakambda.rsndiscord.spring.interaction.button.api.IExecutableButtonGuild;
 import fr.rakambda.rsndiscord.spring.interaction.exception.InvalidChannelTypeException;
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
+import fr.rakambda.rsndiscord.spring.util.LocalizationService;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
@@ -20,6 +24,13 @@ import java.util.function.Supplier;
 @Component
 public class WewardDeleteButtonHandler implements IExecutableButtonGuild{
 	private static final String COMPONENT_ID = "weward-delete";
+	
+	private final LocalizationService localizationService;
+	
+	@Autowired
+	public WewardDeleteButtonHandler(LocalizationService localizationService){
+		this.localizationService = localizationService;
+	}
 	
 	@Override
 	@NotNull
@@ -30,22 +41,42 @@ public class WewardDeleteButtonHandler implements IExecutableButtonGuild{
 	@NotNull
 	@Override
 	public CompletableFuture<?> executeGuild(@NotNull ButtonInteraction event, @NotNull Guild guild, @NotNull Member member) throws InvalidChannelTypeException{
-		var deferred = event.deferEdit().submit();
 		var channel = event.getChannel();
+		var notOwnerContent = localizationService.translate(event.getGuildLocale(), "weward.card-delete-not-owner");
 		
 		if(event.getChannelType() == ChannelType.GUILD_PUBLIC_THREAD){
 			var threadChannel = channel.asThreadChannel();
-			if(threadChannel.getParentChannel().getType() == ChannelType.FORUM){
-				return deferred.thenCompose(empty -> JDAWrappers.delete(threadChannel).submit());
-			}
-			
-			return deferred.thenCompose(m -> handleThreadChannel(threadChannel));
+			return threadChannel.retrieveParentMessage().submit()
+					.thenApply(parentMessage -> {
+						var owner = parentMessage.getMentions().getUsers().stream().findFirst();
+						if(owner.map(u -> Objects.equals(u.getId(), member.getId())).orElse(false)){
+							var deferred = event.deferReply(true).submit();
+							return deferred.thenCompose(empty -> JDAWrappers.reply(event, notOwnerContent).submit());
+						}
+						var deferred = event.deferEdit().submit();
+						return deleteThread(threadChannel, deferred);
+					});
 		}
 		if(event.getChannelType() == ChannelType.TEXT){
+			var owner = event.getMessage().getMentions().getUsers().stream().findFirst();
+			if(owner.map(u -> Objects.equals(u.getId(), member.getId())).orElse(false)){
+				var deferred = event.deferReply(true).submit();
+				return deferred.thenCompose(empty -> JDAWrappers.reply(event, notOwnerContent).submit());
+			}
+			var deferred = event.deferEdit().submit();
 			return deferred.thenCompose(empty -> JDAWrappers.delete(event.getMessage()).submit());
 		}
 		
 		throw new InvalidChannelTypeException(event.getChannelType());
+	}
+	
+	@NotNull
+	private CompletableFuture<Void> deleteThread(@NotNull ThreadChannel threadChannel, @NotNull CompletableFuture<InteractionHook> deferred){
+		if(threadChannel.getParentChannel().getType() == ChannelType.FORUM){
+			return deferred.thenCompose(empty -> JDAWrappers.delete(threadChannel).submit());
+		}
+		
+		return deferred.thenCompose(m -> handleThreadChannel(threadChannel));
 	}
 	
 	@NotNull
