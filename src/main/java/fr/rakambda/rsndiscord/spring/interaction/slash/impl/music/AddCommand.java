@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
 import static java.util.Optional.ofNullable;
 
-@Component
+@Component(value = "musicAddCommand")
 public class AddCommand implements IExecutableSlashCommandGuild{
 	public static final String QUERY_OPTION_ID = "query";
 	public static final String SKIP_OPTION_ID = "skip";

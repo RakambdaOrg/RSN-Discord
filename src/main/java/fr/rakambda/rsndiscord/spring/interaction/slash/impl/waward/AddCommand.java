@@ -23,7 +23,7 @@ import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-@Component
+@Component(value = "wewardAddCommand")
 @Slf4j
 public class AddCommand implements IExecutableSlashCommandGuild{
 	public static final String PACK_OPTION_ID = "pack";
