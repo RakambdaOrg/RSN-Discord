@@ -50,7 +50,7 @@ public class WewardInterestButtonHandler implements IExecutableButtonGuild{
 	@NotNull
 	@Override
 	public CompletableFuture<?> executeGuild(@NotNull ButtonInteraction event, @NotNull Guild guild, @NotNull Member member) throws InvalidChannelTypeException{
-		var locale = event.getUserLocale();
+		var locale = event.getGuildLocale();
 		
 		if(Objects.nonNull(event.getMessage().getStartedThread())){
 			var deferred = event.deferReply(true).submit();
