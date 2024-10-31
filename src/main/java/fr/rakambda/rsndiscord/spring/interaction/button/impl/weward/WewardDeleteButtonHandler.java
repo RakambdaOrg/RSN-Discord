@@ -49,7 +49,7 @@ public class WewardDeleteButtonHandler implements IExecutableButtonGuild{
 			return threadChannel.retrieveParentMessage().submit()
 					.thenApply(parentMessage -> {
 						var owner = parentMessage.getMentions().getUsers().stream().findFirst();
-						if(owner.map(u -> Objects.equals(u.getId(), member.getId())).orElse(false)){
+						if(owner.map(u -> !Objects.equals(u.getId(), member.getId())).orElse(false)){
 							var deferred = event.deferReply(true).submit();
 							return deferred.thenCompose(empty -> JDAWrappers.reply(event, notOwnerContent).submit());
 						}
@@ -59,7 +59,7 @@ public class WewardDeleteButtonHandler implements IExecutableButtonGuild{
 		}
 		if(event.getChannelType() == ChannelType.TEXT){
 			var owner = event.getMessage().getMentions().getUsers().stream().findFirst();
-			if(owner.map(u -> Objects.equals(u.getId(), member.getId())).orElse(false)){
+			if(owner.map(u -> !Objects.equals(u.getId(), member.getId())).orElse(false)){
 				var deferred = event.deferReply(true).submit();
 				return deferred.thenCompose(empty -> JDAWrappers.reply(event, notOwnerContent).submit());
 			}
