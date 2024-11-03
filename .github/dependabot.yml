@@ -12,7 +12,6 @@ registries:
     username: ${{ secrets.DOCKER_RAKAMBDA_USERNAME }}
     password: ${{ secrets.DOCKER_RAKAMBDA_TOKEN }}
     replaces-base: true
-
 updates:
   - package-ecosystem: "gradle"
     directory: "/"
