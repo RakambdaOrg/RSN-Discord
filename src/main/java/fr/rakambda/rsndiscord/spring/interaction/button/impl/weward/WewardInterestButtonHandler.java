@@ -6,8 +6,11 @@ import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.util.LocalizationService;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.IMentionable;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
@@ -17,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
@@ -58,9 +62,8 @@ public class WewardInterestButtonHandler implements IExecutableButtonGuild{
 		}
 		
 		var deferred = event.deferEdit().submit();
-		var owner = event.getMessage().getMentions().getUsers().stream().findFirst();
 		var content = localizationService.translate(locale, "weward.card-interest",
-				owner.map(IMentionable::getAsMention).orElse("Unknown"),
+				getOwner(event.getMessage()).map(UserSnowflake::getAsMention).orElse("Unknown"),
 				member.getAsMention()
 		);
 		return deferred.thenCompose(hook -> JDAWrappers.editComponents(hook, BUTTONS_ORIGINAL).submit())
@@ -69,6 +72,18 @@ public class WewardInterestButtonHandler implements IExecutableButtonGuild{
 						.thenCompose(thread -> JDAWrappers.message(thread, content)
 								.setActionRows(ActionRow.of(BUTTONS_NORMAL))
 								.submit()));
+	}
+	
+	@NotNull
+	private Optional<UserSnowflake> getOwner(@NotNull Message message){
+		return message.getEmbeds().stream()
+				.filter(Objects::nonNull)
+				.map(MessageEmbed::getFooter)
+				.filter(Objects::nonNull)
+				.map(MessageEmbed.Footer::getText)
+				.filter(Objects::nonNull)
+				.findFirst()
+				.map(User::fromId);
 	}
 	
 	@NotNull

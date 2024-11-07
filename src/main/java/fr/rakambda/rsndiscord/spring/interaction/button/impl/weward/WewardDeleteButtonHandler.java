@@ -7,6 +7,10 @@ import fr.rakambda.rsndiscord.spring.util.LocalizationService;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -17,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
@@ -48,8 +53,7 @@ public class WewardDeleteButtonHandler implements IExecutableButtonGuild{
 			var threadChannel = channel.asThreadChannel();
 			return threadChannel.retrieveParentMessage().submit()
 					.thenApply(parentMessage -> {
-						var owner = parentMessage.getMentions().getUsers().stream().findFirst();
-						if(owner.map(u -> !Objects.equals(u.getId(), member.getId())).orElse(false)){
+						if(getOwner(parentMessage).map(u -> !Objects.equals(u.getId(), member.getId())).orElse(false)){
 							var deferred = event.deferReply(true).submit();
 							return deferred.thenCompose(empty -> JDAWrappers.reply(event, notOwnerContent).submit());
 						}
@@ -58,8 +62,7 @@ public class WewardDeleteButtonHandler implements IExecutableButtonGuild{
 					});
 		}
 		if(event.getChannelType() == ChannelType.TEXT){
-			var owner = event.getMessage().getMentions().getUsers().stream().findFirst();
-			if(owner.map(u -> !Objects.equals(u.getId(), member.getId())).orElse(false)){
+			if(getOwner(event.getMessage()).map(u -> !Objects.equals(u.getId(), member.getId())).orElse(false)){
 				var deferred = event.deferReply(true).submit();
 				return deferred.thenCompose(empty -> JDAWrappers.reply(event, notOwnerContent).submit());
 			}
@@ -68,6 +71,18 @@ public class WewardDeleteButtonHandler implements IExecutableButtonGuild{
 		}
 		
 		throw new InvalidChannelTypeException(event.getChannelType());
+	}
+	
+	@NotNull
+	private Optional<UserSnowflake> getOwner(@NotNull Message message){
+		return message.getEmbeds().stream()
+				.filter(Objects::nonNull)
+				.map(MessageEmbed::getFooter)
+				.filter(Objects::nonNull)
+				.map(MessageEmbed.Footer::getText)
+				.filter(Objects::nonNull)
+				.findFirst()
+				.map(User::fromId);
 	}
 	
 	@NotNull

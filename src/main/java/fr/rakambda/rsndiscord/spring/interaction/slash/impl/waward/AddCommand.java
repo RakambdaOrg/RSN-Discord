@@ -7,6 +7,7 @@ import fr.rakambda.rsndiscord.spring.interaction.slash.api.IExecutableSlashComma
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.util.LocalizationService;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
@@ -120,12 +121,14 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		var deferred = event.deferReply(false).submit();
 		var locale = event.getGuildLocale();
 		
-		var content = localizationService.translate(locale, "weward.card-added",
-				member.getAsMention(),
-				event.getOption(PACK_OPTION_ID).getAsString(),
-				event.getOption(NAME_OPTION_ID).getAsString()
-		);
-		return deferred.thenCompose(empty -> JDAWrappers.reply(event, content)
+		var builder = new EmbedBuilder()
+				.setTitle(localizationService.translate(locale, "weward.card-added.title"))
+				.addField(localizationService.translate(locale, "weward.card-added.owner"), member.getAsMention(), false)
+				.addField(localizationService.translate(locale, "weward.card-added.pack"), event.getOption(PACK_OPTION_ID).getAsString(), true)
+				.addField(localizationService.translate(locale, "weward.card-added.name"), event.getOption(NAME_OPTION_ID).getAsString(), true)
+				.setFooter(member.getId())
+				;
+		return deferred.thenCompose(empty -> JDAWrappers.reply(event, builder.build())
 				.addActionRow(BUTTONS_CARD)
 				.submit());
 	}
