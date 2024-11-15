@@ -30,7 +30,8 @@ public class WewardInterestButtonHandler implements IExecutableButtonGuild{
 	private static final String COMPONENT_ID = "weward-interest";
 	private static final ItemComponent[] BUTTONS_NORMAL = {
 			WewardTradedButtonHandler.builder().get(),
-			WewardDeleteButtonHandler.builder().get()
+			WewardDeleteButtonHandler.builder().get(),
+			WewardNoLongerNeededButtonHandler.builder().get()
 	};
 	private static final ItemComponent[] BUTTONS_ORIGINAL = {
 			WewardInterestButtonHandler.builder().get().asDisabled(),
