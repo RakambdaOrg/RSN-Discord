@@ -66,6 +66,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		packs.add("Paris");
 		packs.add("Peru");
 		packs.add("Portugal");
+		packs.add("Reunion Island");
 		packs.add("Rio de Janeiro");
 		packs.add("Rome");
 		packs.add("Scotland");
