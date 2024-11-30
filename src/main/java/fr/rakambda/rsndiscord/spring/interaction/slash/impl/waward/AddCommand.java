@@ -463,7 +463,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		var choices = getStartingWith(packs.values(), event.getFocusedOption().getValue())
 				.limit(OptionData.MAX_CHOICES)
 				.sorted()
-				.map(name -> new Command.Choice(name, name))
+				.map(pack -> new Command.Choice(pack.name(), pack.name()))
 				.toList();
 		return JDAWrappers.reply(event, choices).submit();
 	}
@@ -476,20 +476,17 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				.flatMap(c -> getStartingWith(c, event.getFocusedOption().getValue()))
 				.limit(OptionData.MAX_CHOICES)
 				.sorted()
-				.map(name -> new Command.Choice(name, name))
+				.map(card -> new Command.Choice("%s (%s)".formatted(card.name(), "⭐".repeat(card.stars())), card.name()))
 				.toList();
 		return JDAWrappers.reply(event, choices).submit();
 	}
 	
 	@NotNull
-	private Stream<String> getStartingWith(@NotNull Collection<? extends INamed> values, @NotNull String value){
+	private <T extends INamed> Stream<T> getStartingWith(@NotNull Collection<T> values, @NotNull String value){
 		if(value.isBlank()){
-			return values.stream().map(INamed::name);
+			return values.stream();
 		}
-		return values.stream()
-				.map(INamed::name)
-				.map(v -> v.toLowerCase(Locale.ROOT))
-				.filter(v -> v.contains(value.toLowerCase(Locale.ROOT)));
+		return values.stream().filter(v -> v.name().toLowerCase(Locale.ROOT).contains(value.toLowerCase(Locale.ROOT)));
 	}
 	
 	@Override
