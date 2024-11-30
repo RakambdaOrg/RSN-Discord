@@ -9,7 +9,7 @@ import java.util.Optional;
 public record Pack(
 		@NotNull String name,
 		@NotNull Collection<Card> cards
-) implements INamed{
+) implements INamed, Comparable<Pack>{
 	public Pack(@NotNull String name, @NotNull Card... cards){
 		this(name, Arrays.asList(cards));
 	}
@@ -19,5 +19,10 @@ public record Pack(
 		return cards.stream()
 				.filter(c -> Objects.equals(c.name(), name))
 				.findAny();
+	}
+	
+	@Override
+	public int compareTo(@NotNull Pack o){
+		return name().compareTo(o.name());
 	}
 }
