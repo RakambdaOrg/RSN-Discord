@@ -25,6 +25,7 @@ public class WeWardGroupCommand implements IRegistrableSlashCommand{
 												.setAutoComplete(true)
 												.setRequired(true),
 										new OptionData(STRING, AddCommand.NAME_OPTION_ID, "Card name")
+												.setAutoComplete(true)
 												.setRequired(true)
 								)
 				);
