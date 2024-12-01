@@ -506,7 +506,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				.addField(localizationService.translate(locale, "weward.card-added.name"), name, true)
 				.setFooter(member.getId());
 		
-		card.ifPresent(c -> builder.addField(localizationService.translate(locale, "weward.card-added.stars"), Integer.toString(c.stars()), true));
+		card.ifPresent(c -> builder.addField(localizationService.translate(locale, "weward.card-added.stars"), "⭐".repeat(c.stars()), true));
 		
 		return deferred.thenCompose(empty -> JDAWrappers.reply(event, builder.build())
 				.addActionRow(BUTTONS_CARD)
