@@ -52,7 +52,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Sydney Harbour Bridge", 2),
 				new Card("Aboriginal Drawing", 2),
 				new Card("Koala Bear", 2),
-				new Card("TBD", 3),
+				new Card("Akubra Hat", 3),
 				new Card("TBD", 3),
 				new Card("TBD", 4)
 		));
@@ -189,7 +189,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Bedouin Wardy", 4)
 		));
 		addPack(new Pack("Kuala Lumpur",
-				new Card("TBD", 1),
+				new Card("Bamboo Forest", 1),
 				new Card("Thaipusam", 1),
 				new Card("Nasi Lemak", 1),
 				new Card("TBD", 2),
@@ -228,7 +228,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Gobi Desert", 2),
 				new Card("Yurt", 2),
 				new Card("Gandan Monastery", 2),
-				new Card("Tarelj Park", 3),
+				new Card("Terelj Park", 3),
 				new Card("Orkhon Valley", 3),
 				new Card("TBD", 4)
 		));
