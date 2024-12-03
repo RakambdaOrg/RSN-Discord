@@ -369,7 +369,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Lantern Festival", 1),
 				new Card("Corn Dog", 1),
 				new Card("Karaoke Night", 2),
-				new Card("TBD", 2),
+				new Card("K-Pop Poster", 2),
 				new Card("Lotte World Tower", 2),
 				new Card("Hongdae Shopping", 3),
 				new Card("TBD", 3),
