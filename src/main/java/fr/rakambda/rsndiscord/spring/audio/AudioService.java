@@ -6,7 +6,8 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
-import dev.lavalink.youtube.clients.AndroidTestsuiteWithThumbnail;
+import dev.lavalink.youtube.clients.AndroidVrWithThumbnail;
+import dev.lavalink.youtube.clients.MWebWithThumbnail;
 import dev.lavalink.youtube.clients.MusicWithThumbnail;
 import dev.lavalink.youtube.clients.TvHtml5EmbeddedWithThumbnail;
 import dev.lavalink.youtube.clients.WebWithThumbnail;
@@ -43,8 +44,9 @@ public class AudioService implements ITrackSchedulerStatusListener, ITrackLoadLi
 		var youtubeAudioSourceManager = new YoutubeAudioSourceManager(true,
 				new MusicWithThumbnail(),
 				new WebWithThumbnail(),
-				new AndroidTestsuiteWithThumbnail(),
-				new TvHtml5EmbeddedWithThumbnail()
+				new AndroidVrWithThumbnail(),
+				new TvHtml5EmbeddedWithThumbnail(),
+				new MWebWithThumbnail()
 		);
 		if(Objects.nonNull(refreshToken)){
 			youtubeAudioSourceManager.useOauth2(refreshToken, true);
