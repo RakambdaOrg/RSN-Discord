@@ -62,7 +62,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Traditional Tapas", 1),
 				new Card("TBD", 2),
 				new Card("Flamenco Fan", 2),
-				new Card("TBD", 2),
+				new Card("Camp Nou Stadium", 2),
 				new Card("TBD", 3),
 				new Card("TBD", 3),
 				new Card("TBD", 4)
@@ -213,7 +213,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		addPack(new Pack("London",
 				new Card("River Thames", 1),
 				new Card("Thames Festival", 1),
-				new Card("TBD", 1),
+				new Card("Afternoon Tea", 1),
 				new Card("Big Ben", 2),
 				new Card("Red Phone Box", 2),
 				new Card("London Eye", 2),
