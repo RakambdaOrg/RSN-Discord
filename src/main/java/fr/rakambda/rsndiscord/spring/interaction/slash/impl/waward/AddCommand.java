@@ -207,7 +207,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Moon Kite", 2),
 				new Card("TBD", 2),
 				new Card("TBD", 3),
-				new Card("TBD", 3),
+				new Card("City Center Stroll", 3),
 				new Card("TBD", 4)
 		));
 		addPack(new Pack("London",
@@ -226,7 +226,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Día de los Muertos", 1),
 				new Card("Spicy Tacos", 1),
 				new Card("Frida Kahlo Museum", 2),
-				new Card("TBD", 2),
+				new Card("Sombrero", 2),
 				new Card("Xochimilco's canals", 2),
 				new Card("TBD", 3),
 				new Card("TBD", 3),
@@ -258,7 +258,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Sand Cat", 1),
 				new Card("Rose Festival", 1),
 				new Card("Chicken Tagine", 1),
-				new Card("TBD", 2),
+				new Card("Chefchaouen Medina", 2),
 				new Card("Moroccan Slippers", 2),
 				new Card("Ouzoud Waterfalls", 2),
 				new Card("Souk Stroll", 3),
