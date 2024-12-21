@@ -57,8 +57,8 @@ public class AutoTodoEventListener extends ListenerAdapter{
 			var message = event.getMessage();
 			switch(message.getType()){
 				case CHANNEL_PINNED_ADD, THREAD_CREATED -> JDAWrappers.delete(message).submit();
-				case DEFAULT, INLINE_REPLY, SLASH_COMMAND, CONTEXT_COMMAND -> JDAWrappers
-						.createThread(message, "reply-" + event.getMessageId()).submit()
+				case DEFAULT, INLINE_REPLY, SLASH_COMMAND, CONTEXT_COMMAND -> JDAWrappers.delay(5)
+						.thenCompose(empty -> JDAWrappers.createThread(message, "reply-" + event.getMessageId()).submit())
 						.thenCompose(thread -> JDAWrappers.message(thread, ActionRow.of(BUTTONS_NORMAL)).submit());
 			}
 		}
@@ -84,7 +84,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 			
 			log.info("Handling auto-todo in {}", event.getChannel());
 			
-			JDAWrappers.delay(2)
+			JDAWrappers.delay(5)
 					.thenCompose(empty -> JDAWrappers.message(threadChannel, ActionRow.of(BUTTONS_FORUM)).submit());
 		}
 	}
