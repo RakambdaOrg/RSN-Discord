@@ -60,7 +60,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Park Güell Wildlife", 1),
 				new Card("Sónar Music Festival", 1),
 				new Card("Traditional Tapas", 1),
-				new Card("TBD", 2),
+				new Card("Sagrada Família", 2),
 				new Card("Flamenco Fan", 2),
 				new Card("Camp Nou Stadium", 2),
 				new Card("Terre Glòries", 3),
@@ -108,7 +108,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Christmas Ornament", 2),
 				new Card("Santa's Village", 2),
 				new Card("Gift Hunt Under the Tree", 3),
-				new Card("TBD", 3),
+				new Card("Christmas Light Park", 3),
 				new Card("TBD", 4)
 		));
 		addPack(new Pack("Cuba",
@@ -239,7 +239,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Frida Kahlo Museum", 2),
 				new Card("Sombrero", 2),
 				new Card("Xochimilco's canals", 2),
-				new Card("TBD", 3),
+				new Card("La Roma Neighborhood", 3),
 				new Card("TBD", 3),
 				new Card("Luchador Wardy", 4)
 		));
