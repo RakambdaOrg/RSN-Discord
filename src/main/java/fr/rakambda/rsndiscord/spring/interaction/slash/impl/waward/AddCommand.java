@@ -116,7 +116,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("TBD", 1),
 				new Card("Moros y Cristianos", 1),
 				new Card("TBD", 2),
-				new Card("TBD", 2),
+				new Card("Maracas", 2),
 				new Card("TBD", 2),
 				new Card("TBD", 3),
 				new Card("TBD", 3),
@@ -360,7 +360,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Wild Macaw", 2),
 				new Card("Selarón Steps", 2),
 				new Card("Ipanema beach", 2),
-				new Card("beach Flip-Flops", 3),
+				new Card("Beach Flip-Flops", 3),
 				new Card("TBD", 3),
 				new Card("TBD", 4)
 		));
