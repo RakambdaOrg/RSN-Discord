@@ -141,7 +141,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Wooden Town", 2),
 				new Card("Karelian Pie", 2),
 				new Card("TBD", 3),
-				new Card("TBD", 3),
+				new Card("Snow Hotel", 3),
 				new Card("TBD", 4)
 		));
 		addPack(new Pack("Global Walk Cup",
@@ -427,7 +427,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Katana Sword", 2),
 				new Card("Senso-ji Temple", 2),
 				new Card("TBD", 3),
-				new Card("TBD", 3),
+				new Card("Tea Ceremony", 3),
 				new Card("TBD", 4)
 		));
 		addPack(new Pack("Venice",
