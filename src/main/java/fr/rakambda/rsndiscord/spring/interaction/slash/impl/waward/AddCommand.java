@@ -96,8 +96,8 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("San Telmo Market", 2),
 				new Card("Mate Bowl", 2),
 				new Card("Caminto Street", 2),
-				new Card("TBD", 3),
-				new Card("mataderos Market", 3),
+				new Card("Art Stroll", 3),
+				new Card("Mataderos Market", 3),
 				new Card("TBD", 4)
 		));
 		addPack(new Pack("Christmas",
@@ -216,10 +216,10 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Nasi Lemak", 1),
 				new Card("Batu Caves", 2),
 				new Card("Moon Kite", 2),
-				new Card("TBD", 2),
+				new Card("Petronas Twin Towers", 2),
 				new Card("TBD", 3),
 				new Card("City Center Stroll", 3),
-				new Card("TBD", 4)
+				new Card("Monkey Lover Wardy", 4)
 		));
 		addPack(new Pack("London",
 				new Card("River Thames", 1),
@@ -257,7 +257,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		addPack(new Pack("Montreal",
 				new Card("Maple Leaf", 1),
 				new Card("Nuit Blanche", 1),
-				new Card("TBD", 1),
+				new Card("Sugar Shack Pancakes", 1),
 				new Card("Montreal Poutine", 2),
 				new Card("Ice Skates", 2),
 				new Card("Old Montreal", 2),
@@ -349,9 +349,9 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("TBD", 2),
 				new Card("Woven Bowl", 2),
 				new Card("Piton de la Fournaise", 2),
-				new Card("TBD", 3),
+				new Card("Waterfall Swimming", 3),
 				new Card("Cirques Hiking", 3),
-				new Card("TBD", 4)
+				new Card("Chillin' Wardy", 4)
 		));
 		addPack(new Pack("Rio de Janeiro",
 				new Card("Carnival", 1),
