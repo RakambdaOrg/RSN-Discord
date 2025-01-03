@@ -113,7 +113,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		));
 		addPack(new Pack("Cuba",
 				new Card("TBD", 1),
-				new Card("TBD", 1),
+				new Card("Fiesta del Tambor", 1),
 				new Card("Moros y Cristianos", 1),
 				new Card("TBD", 2),
 				new Card("Maracas", 2),
