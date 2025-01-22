@@ -54,7 +54,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Koala Bear", 2),
 				new Card("Akubra Hat", 3),
 				new Card("Kings Canyon", 3),
-				new Card("TBD", 4)
+				new Card("Surfer Wardy", 4)
 		));
 		addPack(new Pack("Barcelona",
 				new Card("Park Güell Wildlife", 1),
@@ -64,7 +64,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Flamenco Fan", 2),
 				new Card("Camp Nou Stadium", 2),
 				new Card("Terre Glòries", 3),
-				new Card("TBD", 3),
+				new Card("Boqueria Market", 3),
 				new Card("Dalí Wardy", 4)
 		));
 		addPack(new Pack("Berlin",
@@ -122,13 +122,24 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Christmas Light Park", 3),
 				new Card("TBD", 4)
 		));
-		addPack(new Pack("Cuba",
+		addPack(new Pack("Colombia",
+				new Card("Coffee plantation", 1),
 				new Card("TBD", 1),
+				new Card("Grilled Arepas", 1),
+				new Card("Tayrona Park", 2),
+				new Card("TBD", 2),
+				new Card("TBD", 2),
+				new Card("TBD", 3),
+				new Card("TBD", 3),
+				new Card("TBD", 4)
+		));
+		addPack(new Pack("Cuba",
+				new Card("Cuban Trogon", 1),
 				new Card("Fiesta del Tambor", 1),
 				new Card("Moros y Cristianos", 1),
 				new Card("TBD", 2),
 				new Card("Maracas", 2),
-				new Card("TBD", 2),
+				new Card("Varadero Beach", 2),
 				new Card("TBD", 3),
 				new Card("TBD", 3),
 				new Card("TBD", 4)
@@ -372,7 +383,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Selarón Steps", 2),
 				new Card("Ipanema beach", 2),
 				new Card("Beach Flip-Flops", 3),
-				new Card("TBD", 3),
+				new Card("Carnival Dancer", 3),
 				new Card("TBD", 4)
 		));
 		addPack(new Pack("Rome",
@@ -428,7 +439,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("TBD", 2),
 				new Card("TBD", 3),
 				new Card("TBD", 3),
-				new Card("TBD", 4)
+				new Card("Wardy van Gogh", 4)
 		));
 		addPack(new Pack("Tokyo",
 				new Card("Kohaku Koi", 1),
