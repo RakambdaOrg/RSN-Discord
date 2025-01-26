@@ -83,7 +83,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("TBD", 1),
 				new Card("TBD", 1),
 				new Card("TBD", 2),
-				new Card("TBD", 2),
+				new Card("BoSox Cap", 2),
 				new Card("TBD", 2),
 				new Card("TBD", 3),
 				new Card("TBD", 3),
@@ -239,7 +239,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Batu Caves", 2),
 				new Card("Moon Kite", 2),
 				new Card("Petronas Twin Towers", 2),
-				new Card("TBD", 3),
+				new Card("Batik Learning", 3),
 				new Card("City Center Stroll", 3),
 				new Card("Monkey Lover Wardy", 4)
 		));
@@ -254,6 +254,17 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("TBD", 3),
 				new Card("King's Guard Wardy", 4)
 		));
+		addPack(new Pack("Marseille",
+				new Card("TBD", 1),
+				new Card("TBD", 1),
+				new Card("TBD", 1),
+				new Card("TBD", 2),
+				new Card("Ferry Boat", 2),
+				new Card("TBD", 2),
+				new Card("TBD", 3),
+				new Card("TBD", 3),
+				new Card("TBD", 4)
+		));
 		addPack(new Pack("Mexico City",
 				new Card("Hummingbird", 1),
 				new Card("Día de los Muertos", 1),
@@ -262,7 +273,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Sombrero", 2),
 				new Card("Xochimilco's canals", 2),
 				new Card("La Roma Neighborhood", 3),
-				new Card("TBD", 3),
+				new Card("The Angel of Independence", 3),
 				new Card("Luchador Wardy", 4)
 		));
 		addPack(new Pack("Mongolia",
