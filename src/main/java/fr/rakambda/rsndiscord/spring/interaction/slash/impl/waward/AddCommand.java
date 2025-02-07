@@ -142,7 +142,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Varadero Beach", 2),
 				new Card("TBD", 3),
 				new Card("Old Havana", 3),
-				new Card("TBD", 4)
+				new Card("Cuban Wardy", 4)
 		));
 		addPack(new Pack("Egypt",
 				new Card("Pyramids of Giza", 1),
@@ -260,7 +260,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("TBD", 1),
 				new Card("TBD", 2),
 				new Card("Ferry Boat", 2),
-				new Card("TBD", 2),
+				new Card("Vibrant Velodrome", 2),
 				new Card("TBD", 3),
 				new Card("TBD", 3),
 				new Card("TBD", 4)
@@ -461,6 +461,17 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Senso-ji Temple", 2),
 				new Card("TBD", 3),
 				new Card("Tea Ceremony", 3),
+				new Card("TBD", 4)
+		));
+		addPack(new Pack("Valentine's Day",
+				new Card("A Calm Afternoon", 1),
+				new Card("A Graceful Entrance", 1),
+				new Card("A Sudden Mishap", 1),
+				new Card("TBD", 2),
+				new Card("TBD", 2),
+				new Card("TBD", 2),
+				new Card("TBD", 3),
+				new Card("TBD", 3),
 				new Card("TBD", 4)
 		));
 		addPack(new Pack("Venice",
