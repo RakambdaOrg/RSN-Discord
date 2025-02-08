@@ -257,7 +257,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		addPack(new Pack("Marseille",
 				new Card("TBD", 1),
 				new Card("TBD", 1),
-				new Card("TBD", 1),
+				new Card("Bouillabaisse", 1),
 				new Card("TBD", 2),
 				new Card("Ferry Boat", 2),
 				new Card("Vibrant Velodrome", 2),
