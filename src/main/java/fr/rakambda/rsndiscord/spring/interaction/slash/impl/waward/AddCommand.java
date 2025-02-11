@@ -372,7 +372,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Azulejos", 2),
 				new Card("Sintra Palace", 2),
 				new Card("Kayak on the Douro", 3),
-				new Card("TBD", 3),
+				new Card("Belém Tower", 3),
 				new Card("TBD", 4)
 		));
 		addPack(new Pack("Reunion Island",
@@ -439,6 +439,17 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Bo-Kaap Stroll", 2),
 				new Card("Lion's Head Hike", 3),
 				new Card("Kruger Park Safari", 3),
+				new Card("TBD", 4)
+		));
+		addPack(new Pack("Tahiti",
+				new Card("TBD", 1),
+				new Card("Heiva Festival", 1),
+				new Card("Tahitian-Style Fish", 1),
+				new Card("TBD", 2),
+				new Card("Va'a Canoe", 2),
+				new Card("TBD", 2),
+				new Card("TBD", 3),
+				new Card("TBD", 3),
 				new Card("TBD", 4)
 		));
 		addPack(new Pack("The Netherlands",
