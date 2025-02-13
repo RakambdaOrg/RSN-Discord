@@ -404,7 +404,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Trevi Fountain", 2),
 				new Card("Vespa", 2),
 				new Card("Colesseum", 2),
-				new Card("TBD", 3),
+				new Card("Sistine Chapel", 3),
 				new Card("Pantheon", 3),
 				new Card("TBD", 4)
 		));
