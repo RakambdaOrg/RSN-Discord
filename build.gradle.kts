@@ -62,6 +62,10 @@ repositories {
         url = uri("https://maven.lavalink.dev/releases")
     }
     maven {
+        name = "topi314"
+        url = uri("https://maven.topi.wtf/releases")
+    }
+    maven {
         name = "jitpack"
         url = uri("https://jitpack.io")
     }

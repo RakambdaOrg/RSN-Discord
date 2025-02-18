@@ -1,8 +1,15 @@
 package fr.rakambda.rsndiscord.spring.audio;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import com.github.topi314.lavasrc.mirror.DefaultMirroringAudioTrackResolver;
+import com.github.topi314.lavasrc.spotify.SpotifySourceManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
@@ -18,6 +25,7 @@ import fr.rakambda.rsndiscord.spring.audio.load.ITrackLoadListener;
 import fr.rakambda.rsndiscord.spring.audio.scheduler.ITrackScheduler;
 import fr.rakambda.rsndiscord.spring.audio.scheduler.ITrackSchedulerStatusListener;
 import fr.rakambda.rsndiscord.spring.audio.scheduler.TrackScheduler;
+import fr.rakambda.rsndiscord.spring.settings.MusicSettings;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
@@ -25,10 +33,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 public class AudioService implements ITrackSchedulerStatusListener, ITrackLoadListener{
@@ -38,9 +42,31 @@ public class AudioService implements ITrackSchedulerStatusListener, ITrackLoadLi
 	@Getter
 	private final ITrackScheduler trackScheduler;
 	
-	public AudioService(@NotNull Guild guild, int volume, @Nullable String refreshToken){
+	public AudioService(@NotNull Guild guild, int volume, @NotNull MusicSettings musicSettings){
 		this.guild = guild;
 		
+		audioPlayerManager = new DefaultAudioPlayerManager();
+		audioPlayerManager.registerSourceManager(createYoutubeSourceManager(musicSettings.getYoutubeRefreshToken()));
+		audioPlayerManager.registerSourceManager(createSpotifySourceManager(musicSettings.getSpotifyClientId(), musicSettings.getSpotifyClientSecret(), musicSettings.getSpotifyCountryCode()));
+		audioPlayer = audioPlayerManager.createPlayer();
+		
+		var trackScheduler = new TrackScheduler(audioPlayer);
+		trackScheduler.addListener(this);
+		this.trackScheduler = trackScheduler;
+		
+		audioPlayer.setVolume(volume);
+		audioPlayer.addListener(trackScheduler);
+		
+		AudioSourceManagers.registerRemoteSources(audioPlayerManager);
+	}
+	
+	@NotNull
+	private AudioSourceManager createSpotifySourceManager(@NotNull String clientId, @NotNull String clientSecret, @Nullable String countryCode){
+		return new SpotifySourceManager(clientId, clientSecret, countryCode, audioPlayerManager, new DefaultMirroringAudioTrackResolver(null));
+	}
+	
+	@NotNull
+	private AudioSourceManager createYoutubeSourceManager(@Nullable String refreshToken){
 		var youtubeAudioSourceManager = new YoutubeAudioSourceManager(true,
 				new MusicWithThumbnail(),
 				new WebWithThumbnail(),
@@ -54,19 +80,7 @@ public class AudioService implements ITrackSchedulerStatusListener, ITrackLoadLi
 		else{
 			youtubeAudioSourceManager.useOauth2(null, false);
 		}
-		
-		audioPlayerManager = new DefaultAudioPlayerManager();
-		audioPlayerManager.registerSourceManager(youtubeAudioSourceManager);
-		audioPlayer = audioPlayerManager.createPlayer();
-		
-		var trackScheduler = new TrackScheduler(audioPlayer);
-		trackScheduler.addListener(this);
-		this.trackScheduler = trackScheduler;
-		
-		audioPlayer.setVolume(volume);
-		audioPlayer.addListener(trackScheduler);
-		
-		AudioSourceManagers.registerRemoteSources(audioPlayerManager);
+		return youtubeAudioSourceManager;
 	}
 	
 	@Override

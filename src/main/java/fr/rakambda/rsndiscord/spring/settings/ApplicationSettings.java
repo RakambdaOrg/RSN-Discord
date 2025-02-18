@@ -18,7 +18,6 @@ public class ApplicationSettings{
 	private boolean development;
 	private List<Long> developmentGuilds = new LinkedList<>();
 	private String botToken;
-	private String youtubeRefreshToken;
 	private String amqpPrefix;
 	@NestedConfigurationProperty
 	private AnilistSettings anilist;
@@ -30,4 +29,6 @@ public class ApplicationSettings{
 	private TraktSettings trakt;
 	@NestedConfigurationProperty
 	private SimklSettings simkl;
+	@NestedConfigurationProperty
+	private MusicSettings music;
 }
