@@ -85,7 +85,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("TBD", 2),
 				new Card("BoSox Cap", 2),
 				new Card("TBD", 2),
-				new Card("TBD", 3),
+				new Card("Freedom Trail", 3),
 				new Card("TBD", 3),
 				new Card("Graduate Wardy", 4)
 		));
@@ -148,7 +148,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Pyramids of Giza", 1),
 				new Card("Luxor", 1),
 				new Card("Abu Simbel", 1),
-				new Card("TBD", 2),
+				new Card("Nile Cruise", 2),
 				new Card("Cairo Souk", 2),
 				new Card("The Great Sphinx", 2),
 				new Card("Siwa Oasis", 3),
@@ -174,7 +174,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Legendary Trainers", 2),
 				new Card("Protein Bar", 2),
 				new Card("Walk Championship", 3),
-				new Card("TBD", 3),
+				new Card("Laurel wreath", 3),
 				new Card("Medalist Wardy", 4)
 		));
 		addPack(new Pack("Greece",
