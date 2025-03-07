@@ -82,7 +82,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("American Lobster", 1),
 				new Card("Legendary Marathon", 1),
 				new Card("Clam Chowder", 1),
-				new Card("TBD", 2),
+				new Card("Baseball Match", 2),
 				new Card("BoSox Cap", 2),
 				new Card("TBD", 2),
 				new Card("Freedom Trail", 3),
@@ -445,7 +445,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("TBD", 1),
 				new Card("Heiva Festival", 1),
 				new Card("Tahitian-Style Fish", 1),
-				new Card("TBD", 2),
+				new Card("Snorkeling", 2),
 				new Card("Va'a Canoe", 2),
 				new Card("Point Venus", 2),
 				new Card("TBD", 3),
@@ -494,6 +494,17 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Doge's Palace", 2),
 				new Card("Burano Stroll", 3),
 				new Card("Rialto Bridge", 3),
+				new Card("TBD", 4)
+		));
+		addPack(new Pack("Vienna",
+				new Card("TBD", 1),
+				new Card("Danube Island Festival", 1),
+				new Card("TBD", 1),
+				new Card("TBD", 2),
+				new Card("TBD", 2),
+				new Card("TBD", 2),
+				new Card("TBD", 3),
+				new Card("TBD", 3),
 				new Card("TBD", 4)
 		));
 		addPack(new Pack("Vietnam",
