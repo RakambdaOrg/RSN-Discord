@@ -8,7 +8,7 @@ jetbrains-annotations-version = "26.0.2"
 opus-version = "1.1.1"
 
 names-version = "0.52.0"
-jib-version = "3.4.4"
+jib-version = "3.4.5"
 git-properties-version = "2.5.0"
 sptringboot-version = "3.4.3"
 sptringboot-dm-version = "1.1.7"
