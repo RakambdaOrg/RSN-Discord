@@ -134,7 +134,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("TBD", 4)
 		));
 		addPack(new Pack("Corsica",
-				new Card("TBD", 1),
+				new Card("Corsican Pig", 1),
 				new Card("TBD", 1),
 				new Card("Brocciu & Lonzu", 1),
 				new Card("TBD", 2),
@@ -197,7 +197,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Olympia", 2),
 				new Card("Acropolis Visit", 3),
 				new Card("Paradise Beaches", 3),
-				new Card("TBD", 4)
+				new Card("Sea God Wardy", 4)
 		));
 		addPack(new Pack("Halloween",
 				new Card("Grimalkin", 1),
@@ -492,7 +492,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Bicycle Tour", 2),
 				new Card("Delfware", 2),
 				new Card("Heusden's Mills", 2),
-				new Card("TBD", 3),
+				new Card("Canals Wandeling", 3),
 				new Card("TBD", 3),
 				new Card("Wardy van Gogh", 4)
 		));
