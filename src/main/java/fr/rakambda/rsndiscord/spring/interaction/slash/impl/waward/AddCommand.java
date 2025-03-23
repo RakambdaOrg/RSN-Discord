@@ -545,7 +545,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Mid-Autumn Festival", 1),
 				new Card("Hanoi-Style Pho", 1),
 				new Card("Ha Long Bay Cruise", 2),
-				new Card("TBD", 2),
+				new Card("Conical Hat", 2),
 				new Card("Hue Historic Citadel", 2),
 				new Card("Rice Terraces Hike", 3),
 				new Card("Golden Bridge", 3),
