@@ -6,6 +6,7 @@ import fr.rakambda.rsndiscord.spring.interaction.slash.impl.moderation.ClearRang
 import fr.rakambda.rsndiscord.spring.interaction.slash.impl.moderation.ClearThreadsCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -27,7 +28,7 @@ public class ModerationGroupCommand implements IRegistrableSlashCommand{
 		return Commands.slash(getId(), "Moderation commands")
 				.setLocalizationFunction(localizationFunction)
 				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_CHANNEL))
-				.setGuildOnly(true)
+				.setContexts(InteractionContextType.GUILD)
 				.addSubcommands(
 						new SubcommandData("clear", "Clear messages from a channel")
 								.addOptions(

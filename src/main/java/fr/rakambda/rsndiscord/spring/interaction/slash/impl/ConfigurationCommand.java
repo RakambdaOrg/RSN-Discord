@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -78,7 +79,7 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 		return Commands.slash("configuration", "Change the bot's configuration")
 				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR))
 				.setLocalizationFunction(localizationFunction)
-				.setGuildOnly(true)
+				.setContexts(InteractionContextType.GUILD)
 				.addOptions(
 						new OptionData(STRING, NAME_OPTION_ID, "Name of the configuration to change")
 								.setRequired(true)

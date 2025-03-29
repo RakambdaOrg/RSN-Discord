@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.localization.LocalizationFunction;
@@ -36,7 +37,7 @@ public class RandomR6DefContextMenu extends R6ContextMenu implements IRegistrabl
 	public CommandData getDefinition(@NotNull LocalizationFunction localizationFunction){
 		return Commands.message(getName())
 				.setLocalizationFunction(localizationFunction)
-				.setGuildOnly(true);
+				.setContexts(InteractionContextType.GUILD);
 	}
 	
 	@Override

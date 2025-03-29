@@ -5,6 +5,7 @@ import fr.rakambda.rsndiscord.spring.interaction.slash.impl.music.AddCommand;
 import fr.rakambda.rsndiscord.spring.interaction.slash.impl.music.QueueCommand;
 import fr.rakambda.rsndiscord.spring.interaction.slash.impl.music.SeekCommand;
 import fr.rakambda.rsndiscord.spring.interaction.slash.impl.music.VolumeCommand;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -23,7 +24,7 @@ public class MusicGroupCommand implements IRegistrableSlashCommand{
 	public CommandData getDefinition(@NotNull LocalizationFunction localizationFunction){
 		return Commands.slash(getId(), "Music commands")
 				.setLocalizationFunction(localizationFunction)
-				.setGuildOnly(true)
+				.setContexts(InteractionContextType.GUILD)
 				.addSubcommands(
 						new SubcommandData("add", "Add music")
 								.addOptions(
