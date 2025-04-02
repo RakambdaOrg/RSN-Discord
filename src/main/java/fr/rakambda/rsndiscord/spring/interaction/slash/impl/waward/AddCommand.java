@@ -140,7 +140,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("TBD", 2),
 				new Card("TBD", 2),
 				new Card("Cucuruzzu Site", 2),
-				new Card("TBD", 3),
+				new Card("Palombaggia Beach", 3),
 				new Card("TBD", 3),
 				new Card("TBD", 4)
 		));
@@ -240,15 +240,15 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("TBD", 2),
 				new Card("TBD", 2),
 				new Card("TBD", 3),
-				new Card("TBD", 3),
+				new Card("Giant's Causeway", 3),
 				new Card("TBD", 4)
 		));
 		addPack(new Pack("Istanbul",
-				new Card("TBD", 1),
+				new Card("Byzantine Colchicum", 1),
 				new Card("Balloon Ride", 1),
 				new Card("TBD", 1),
 				new Card("TBD", 2),
-				new Card("TBD", 2),
+				new Card("Tea Set", 2),
 				new Card("TBD", 2),
 				new Card("TBD", 3),
 				new Card("TBD", 3),
@@ -366,7 +366,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		));
 		addPack(new Pack("Orlinski",
 				new Card("TBD", 1),
-				new Card("TBD", 1),
+				new Card("Roaring Lion in Bastia", 1),
 				new Card("Wild Kong Oil in Venice", 1),
 				new Card("TBD", 2),
 				new Card("Shark in Sardinia", 2),
@@ -560,7 +560,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Hue Historic Citadel", 2),
 				new Card("Rice Terraces Hike", 3),
 				new Card("Golden Bridge", 3),
-				new Card("TBD", 4)
+				new Card("Pirogue Pilot Wardy", 4)
 		));
 	}
 	
