@@ -230,7 +230,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Taj Mahal", 2),
 				new Card("TBD", 3),
 				new Card("Lotus Temple", 3),
-				new Card("TBD", 4)
+				new Card("Fakir Wardy", 4)
 		));
 		addPack(new Pack("Ireland",
 				new Card("TBD", 1),
@@ -247,7 +247,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Byzantine Colchicum", 1),
 				new Card("Balloon Ride", 1),
 				new Card("TBD", 1),
-				new Card("TBD", 2),
+				new Card("Spice Bazaar", 2),
 				new Card("Tea Set", 2),
 				new Card("TBD", 2),
 				new Card("TBD", 3),
