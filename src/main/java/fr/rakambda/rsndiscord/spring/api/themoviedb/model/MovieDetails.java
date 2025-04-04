@@ -39,7 +39,7 @@ public class MovieDetails{
 	@JsonProperty("release_date")
 	@JsonDeserialize(using = ISO8601LocalDateDeserializer.class)
 	private LocalDate releaseDate;
-	private int revenue;
+	private long revenue;
 	private int runtime;
 	@JsonProperty("spoken_languages")
 	private Set<Language> spokenLanguages;
