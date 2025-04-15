@@ -6,7 +6,7 @@ lavasrc-version = "4.5.0"
 lp_cross-version = "0.1.1"
 jetbrains-annotations-version = "26.0.2"
 opus-version = "1.1.1"
-log4j-ecs-version = "1.6.0"
+log4j-ecs-version = "1.7.0"
 
 names-version = "0.52.0"
 jib-version = "3.4.5"
