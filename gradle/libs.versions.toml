@@ -1,7 +1,7 @@
 [versions]
 jda-version = "5.4.0"
 lavaplayer-version = "2.2.3"
-lavaplayer-youtube-v2-version = "1.12.0"
+lavaplayer-youtube-v2-version = "1.13.0"
 lavasrc-version = "4.6.0"
 lp_cross-version = "0.1.1"
 jetbrains-annotations-version = "26.0.2"
