@@ -57,7 +57,8 @@ public class ModerationGroupCommand implements IRegistrableSlashCommand{
 										new OptionData(CHANNEL, ClearCommand.CHANNEL_OPTION_ID, "Thread to get the tags from")
 												.setChannelTypes(ChannelType.GUILD_PUBLIC_THREAD)
 												.setRequired(true)),
-						new SubcommandData("count", "Count messages in a channel")
+						new SubcommandData("count", "Count messages in a channel"),
+						new SubcommandData("regenerate-events", "Regenerate events in a channel")
 				);
 	}
 	
