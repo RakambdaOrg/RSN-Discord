@@ -42,20 +42,19 @@ public class ScheduledEventsService{
 				return;
 			}
 			
-			var events = guild.getScheduledEvents();
-			var messageContent = events.stream()
-					.filter(e -> WANTED_STATUS.contains(e.getStatus()))
-					.sorted()
-					.map(this::getEventText)
-					.map("* %s"::formatted)
-					.collect(Collectors.joining("\n"));
-			
 			log.info("Updating scheduled events for guild {}", guild);
-			
-			channels.stream()
-					.map(entity -> JDAWrappers.findChannel(guild.getJDA(), entity.getChannelId()))
-					.flatMap(Optional::stream)
-					.forEach(c -> clearChannel(c).thenCompose(empty -> JDAWrappers.message(c, messageContent).submit()));
+			guild.retrieveScheduledEvents()
+					.submit()
+					.thenApply(events -> events.stream()
+							.filter(e -> WANTED_STATUS.contains(e.getStatus()))
+							.sorted()
+							.map(this::getEventText)
+							.map("* %s"::formatted)
+							.collect(Collectors.joining("\n")))
+					.thenAccept(messageContent -> channels.stream()
+							.map(entity -> JDAWrappers.findChannel(guild.getJDA(), entity.getChannelId()))
+							.flatMap(Optional::stream)
+							.forEach(c -> clearChannel(c).thenCompose(empty -> JDAWrappers.message(c, messageContent).submit())));
 		}
 	}
 	
