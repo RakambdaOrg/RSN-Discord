@@ -1,9 +1,11 @@
 package fr.rakambda.rsndiscord.spring.scheduledevents;
 
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
+import fr.rakambda.rsndiscord.spring.log.LogContext;
 import fr.rakambda.rsndiscord.spring.storage.entity.ChannelType;
 import fr.rakambda.rsndiscord.spring.storage.repository.ChannelRepository;
 import fr.rakambda.rsndiscord.spring.util.LocalizationService;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.ScheduledEvent;
@@ -17,8 +19,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class ScheduledEventsService{
 	private static final Collection<ScheduledEvent.Status> WANTED_STATUS = Set.of(ScheduledEvent.Status.SCHEDULED, ScheduledEvent.Status.ACTIVE);
@@ -32,23 +36,27 @@ public class ScheduledEventsService{
 	}
 	
 	public void update(@NotNull Guild guild){
-		var channels = channelRepository.findAllByGuildIdAndType(guild.getIdLong(), ChannelType.SCHEDULED_EVENTS);
-		if(channels.isEmpty()){
-			return;
+		try(var ignored = LogContext.with(guild)){
+			var channels = channelRepository.findAllByGuildIdAndType(guild.getIdLong(), ChannelType.SCHEDULED_EVENTS);
+			if(channels.isEmpty()){
+				return;
+			}
+			
+			var events = guild.getScheduledEvents();
+			var messageContent = events.stream()
+					.filter(e -> WANTED_STATUS.contains(e.getStatus()))
+					.sorted()
+					.map(this::getEventText)
+					.map("* %s"::formatted)
+					.collect(Collectors.joining("\n"));
+			
+			log.info("Updating scheduled events for guild {}", guild);
+			
+			channels.stream()
+					.map(entity -> JDAWrappers.findChannel(guild.getJDA(), entity.getChannelId()))
+					.flatMap(Optional::stream)
+					.forEach(c -> clearChannel(c).thenCompose(empty -> JDAWrappers.message(c, messageContent).submit()));
 		}
-		
-		var events = guild.getScheduledEvents();
-		var messageContent = events.stream()
-				.filter(e -> WANTED_STATUS.contains(e.getStatus()))
-				.sorted()
-				.map(this::getEventText)
-				.map("* %s"::formatted)
-				.collect(Collectors.joining("\n"));
-		
-		channels.stream()
-				.map(entity -> JDAWrappers.findChannel(guild.getJDA(), entity.getChannelId()))
-				.flatMap(Optional::stream)
-				.forEach(c -> clearChannel(c).thenCompose(empty -> JDAWrappers.message(c, messageContent).submit()));
 	}
 	
 	@NotNull
