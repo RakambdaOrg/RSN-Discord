@@ -45,6 +45,17 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		this.localizationService = localizationService;
 		
 		packs = new HashMap<>();
+		addPack(new Pack("Antarctica",
+				new Card("Antarctica Ice Ultra", 1),
+				new Card("TBD", 1),
+				new Card("TBD", 1),
+				new Card("Photo Shoot on Ice Floe", 2),
+				new Card("TBD", 2),
+				new Card("TBD", 2),
+				new Card("TBD", 3),
+				new Card("TBD", 3),
+				new Card("TBD", 4)
+		));
 		addPack(new Pack("Australia",
 				new Card("Sydney Opera House", 1),
 				new Card("Kangaroo Boxing", 1),
@@ -244,7 +255,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Fakir Wardy", 4)
 		));
 		addPack(new Pack("Ireland",
-				new Card("TBD", 1),
+				new Card("Horned Sheep", 1),
 				new Card("St. Patrick's Day", 1),
 				new Card("Irish Stew", 1),
 				new Card("TBD", 2),
@@ -257,7 +268,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		addPack(new Pack("Istanbul",
 				new Card("Byzantine Colchicum", 1),
 				new Card("Balloon Ride", 1),
-				new Card("TBD", 1),
+				new Card("Adana Kebap", 1),
 				new Card("Spice Bazaar", 2),
 				new Card("Tea Set", 2),
 				new Card("TBD", 2),
@@ -295,7 +306,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Red Phone Box", 2),
 				new Card("London Eye", 2),
 				new Card("Picadilly Stroll", 3),
-				new Card("TBD", 3),
+				new Card("Camden Market", 3),
 				new Card("King's Guard Wardy", 4)
 		));
 		addPack(new Pack("Marseille",
@@ -307,6 +318,17 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Vibrant Velodrome", 2),
 				new Card("Calanques Stroll", 3),
 				new Card("La Bonne Mère", 3),
+				new Card("TBD", 4)
+		));
+		addPack(new Pack("Memphis",
+				new Card("Mud Island Park", 1),
+				new Card("TBD", 1),
+				new Card("TBD", 1),
+				new Card("TBD", 2),
+				new Card("TBD", 2),
+				new Card("TBD", 2),
+				new Card("TBD", 3),
+				new Card("TBD", 3),
 				new Card("TBD", 4)
 		));
 		addPack(new Pack("Mexico City",
@@ -472,6 +494,17 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Colesseum", 2),
 				new Card("Sistine Chapel", 3),
 				new Card("Pantheon", 3),
+				new Card("Gladiator Wardy", 4)
+		));
+		addPack(new Pack("San Francisco",
+				new Card("TBD", 1),
+				new Card("TBD", 1),
+				new Card("TBD", 1),
+				new Card("Aquarium of the Bay", 2),
+				new Card("TBD", 2),
+				new Card("TBD", 2),
+				new Card("TBD", 3),
+				new Card("TBD", 3),
 				new Card("TBD", 4)
 		));
 		addPack(new Pack("Scotland",
