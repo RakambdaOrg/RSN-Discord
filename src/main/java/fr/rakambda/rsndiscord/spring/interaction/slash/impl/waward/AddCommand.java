@@ -457,7 +457,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("TBD", 1),
 				new Card("TBD", 1),
 				new Card("TBD", 2),
-				new Card("TBD", 2),
+				new Card("Charles Bridge", 2),
 				new Card("TBD", 2),
 				new Card("TBD", 3),
 				new Card("TBD", 3),
