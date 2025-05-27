@@ -95,7 +95,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Clam Chowder", 1),
 				new Card("Baseball Match", 2),
 				new Card("BoSox Cap", 2),
-				new Card("TBD", 2),
+				new Card("Beacon Hill Stroll", 2),
 				new Card("Freedom Trail", 3),
 				new Card("TBD", 3),
 				new Card("Graduate Wardy", 4)
@@ -146,7 +146,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		));
 		addPack(new Pack("Corsica",
 				new Card("Corsican Pig", 1),
-				new Card("TBD", 1),
+				new Card("Calvi on the Rocks", 1),
 				new Card("Brocciu & Lonzu", 1),
 				new Card("TBD", 2),
 				new Card("Cumicciolu Knife", 2),
@@ -258,8 +258,8 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Horned Sheep", 1),
 				new Card("St. Patrick's Day", 1),
 				new Card("Irish Stew", 1),
-				new Card("TBD", 2),
-				new Card("TBD", 2),
+				new Card("Temple Bar", 2),
+				new Card("Cliffs of Moher", 2),
 				new Card("TBD", 2),
 				new Card("TBD", 3),
 				new Card("Giant's Causeway", 3),
@@ -326,7 +326,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("TBD", 1),
 				new Card("Beale Street", 2),
 				new Card("Gibson Guitar", 2),
-				new Card("TBD", 2),
+				new Card("Music Studio", 2),
 				new Card("TBD", 3),
 				new Card("TBD", 3),
 				new Card("TBD", 4)
@@ -454,12 +454,12 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		));
 		addPack(new Pack("Prague",
 				new Card("Przewalski's Horse", 1),
-				new Card("TBD", 1),
+				new Card("Old-New Synagogue", 1),
 				new Card("TBD", 1),
 				new Card("TBD", 2),
 				new Card("Charles Bridge", 2),
 				new Card("TBD", 2),
-				new Card("TBD", 3),
+				new Card("Týn Church", 3),
 				new Card("TBD", 3),
 				new Card("TBD", 4)
 		));
@@ -501,9 +501,9 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("TBD", 1),
 				new Card("TBD", 1),
 				new Card("Aquarium of the Bay", 2),
+				new Card("Transamerica Pyramid", 2),
 				new Card("TBD", 2),
-				new Card("TBD", 2),
-				new Card("TBD", 3),
+				new Card("Golden Gate Bridge", 3),
 				new Card("TBD", 3),
 				new Card("TBD", 4)
 		));
@@ -559,7 +559,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Delfware", 2),
 				new Card("Heusden's Mills", 2),
 				new Card("Canals Wandeling", 3),
-				new Card("TBD", 3),
+				new Card("Canal Houses", 3),
 				new Card("Wardy van Gogh", 4)
 		));
 		addPack(new Pack("Tokyo",
@@ -600,7 +600,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Danube Island Festival", 1),
 				new Card("Viennese Schnitzel", 1),
 				new Card("Schönbrunn Garden Stroll", 2),
-				new Card("TBD", 2),
+				new Card("Australian Hat", 2),
 				new Card("Vienna Opera", 2),
 				new Card("TBD", 3),
 				new Card("TBD", 3),
