@@ -460,7 +460,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Charles Bridge", 2),
 				new Card("TBD", 2),
 				new Card("Týn Church", 3),
-				new Card("TBD", 3),
+				new Card("Wallenstein Garden", 3),
 				new Card("TBD", 4)
 		));
 		addPack(new Pack("Reunion Island",
@@ -613,7 +613,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Schönbrunn Garden Stroll", 2),
 				new Card("Australian Hat", 2),
 				new Card("Vienna Opera", 2),
-				new Card("TBD", 3),
+				new Card("Coffee at Café Central", 3),
 				new Card("TBD", 3),
 				new Card("TBD", 4)
 		));
