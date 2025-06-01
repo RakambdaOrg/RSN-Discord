@@ -135,7 +135,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		));
 		addPack(new Pack("Colombia",
 				new Card("Coffee plantation", 1),
-				new Card("TBD", 1),
+				new Card("Barranquilla Carnaval", 1),
 				new Card("Grilled Arepas", 1),
 				new Card("Tayrona Park", 2),
 				new Card("TBD", 2),
@@ -498,8 +498,8 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		));
 		addPack(new Pack("San Francisco",
 				new Card("TBD", 1),
-				new Card("TBD", 1),
-				new Card("TBD", 1),
+				new Card("Walter S. Johnson Park", 1),
+				new Card("Clam Chowder Bread", 1),
 				new Card("Aquarium of the Bay", 2),
 				new Card("Transamerica Pyramid", 2),
 				new Card("TBD", 2),
