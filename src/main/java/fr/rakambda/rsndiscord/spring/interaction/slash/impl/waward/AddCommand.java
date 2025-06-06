@@ -52,7 +52,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Photo Shoot on Ice Floe", 2),
 				new Card("Blood Falls", 2),
 				new Card("TBD", 2),
-				new Card("TBD", 3),
+				new Card("Polar Base", 3),
 				new Card("TBD", 3),
 				new Card("TBD", 4)
 		));
@@ -120,6 +120,17 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Caminto Street", 2),
 				new Card("Art Stroll", 3),
 				new Card("Mataderos Market", 3),
+				new Card("TBD", 4)
+		));
+		addPack(new Pack("Cartagena",
+				new Card("TBD", 1),
+				new Card("TBD", 1),
+				new Card("TBD", 1),
+				new Card("Old City Wall Walk", 2),
+				new Card("TBD", 2),
+				new Card("TBD", 2),
+				new Card("TBD", 3),
+				new Card("TBD", 3),
 				new Card("TBD", 4)
 		));
 		addPack(new Pack("Christmas",
@@ -585,8 +596,8 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("TBD", 4)
 		));
 		addPack(new Pack("Valencia",
-				new Card("TBD", 1),
-				new Card("TBD", 1),
+				new Card("Las Fallas", 1),
+				new Card("Horchata and Fartons", 1),
 				new Card("TBD", 1),
 				new Card("Fireworks", 2),
 				new Card("TBD", 2),
