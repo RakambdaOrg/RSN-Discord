@@ -159,7 +159,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Corsican Pig", 1),
 				new Card("Calvi on the Rocks", 1),
 				new Card("Brocciu & Lonzu", 1),
-				new Card("TBD", 2),
+				new Card("GR20 Trekking", 2),
 				new Card("Cumicciolu Knife", 2),
 				new Card("Cucuruzzu Site", 2),
 				new Card("Palombaggia Beach", 3),
@@ -558,7 +558,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 				new Card("Snorkeling", 2),
 				new Card("Va'a Canoe", 2),
 				new Card("Point Venus", 2),
-				new Card("TBD", 3),
+				new Card("Whale Watching", 3),
 				new Card("TBD", 3),
 				new Card("TBD", 4)
 		));
@@ -598,7 +598,7 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		addPack(new Pack("Valencia",
 				new Card("Las Fallas", 1),
 				new Card("Horchata and Fartons", 1),
-				new Card("TBD", 1),
+				new Card("Albufera", 1),
 				new Card("Fireworks", 2),
 				new Card("TBD", 2),
 				new Card("TBD", 2),
