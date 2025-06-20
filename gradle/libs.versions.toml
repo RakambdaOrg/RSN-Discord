@@ -11,7 +11,7 @@ log4j-ecs-version = "1.7.0"
 names-version = "0.52.0"
 jib-version = "3.4.5"
 git-properties-version = "2.5.0"
-sptringboot-version = "3.5.0"
+sptringboot-version = "3.5.2"
 sptringboot-dm-version = "1.1.7"
 
 [libraries]
