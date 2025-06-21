@@ -9,7 +9,8 @@ public enum MediaStatus{
 	CANCELLED("Cancelled"),
 	FINISHED("Finished"),
 	NOT_YET_RELEASED("Not yet released"),
-	RELEASING("Releasing");
+	RELEASING("Releasing"),
+	HIATUS("Hiatus");
 	
 	private final String value;
 }

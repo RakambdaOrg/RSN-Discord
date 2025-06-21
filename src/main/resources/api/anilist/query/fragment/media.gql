@@ -3,7 +3,7 @@ fragment MediaParts on Media {
     season
     type
     format
-    status
+    status(version: 2)
     episodes
     chapters
     volumes
