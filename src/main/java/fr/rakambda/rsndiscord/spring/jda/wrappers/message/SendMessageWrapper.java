@@ -1,14 +1,13 @@
 package fr.rakambda.rsndiscord.spring.jda.wrappers.message;
 
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.components.MessageTopLevelComponent;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.entities.IMentionable;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageReference;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
-import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -39,7 +38,7 @@ public class SendMessageWrapper extends MessageWrapper<MessageCreateAction>{
 		this.channel = channel;
 	}
 	
-	public SendMessageWrapper(@NotNull MessageChannel channel, @NotNull LayoutComponent component, @NotNull LayoutComponent... components){
+	public SendMessageWrapper(@NotNull MessageChannel channel, @NotNull MessageTopLevelComponent component, @NotNull MessageTopLevelComponent... components){
 		super(channel.sendMessageComponents(component, components));
 		this.channel = channel;
 	}
@@ -99,14 +98,14 @@ public class SendMessageWrapper extends MessageWrapper<MessageCreateAction>{
 	}
 	
 	@NotNull
-	public SendMessageWrapper addActionRow(@NotNull Collection<ItemComponent> components){
-		getAction().setActionRow(components);
+	public SendMessageWrapper addActionRow(@NotNull Collection<MessageTopLevelComponent> components){
+		getAction().addComponents(components);
 		return this;
 	}
 	
 	@NotNull
-	public SendMessageWrapper addActionRow(@NotNull ItemComponent... components){
-		getAction().setActionRow(components);
+	public SendMessageWrapper addActionRow(@NotNull MessageTopLevelComponent... components){
+		getAction().addComponents(components);
 		return this;
 	}
 	

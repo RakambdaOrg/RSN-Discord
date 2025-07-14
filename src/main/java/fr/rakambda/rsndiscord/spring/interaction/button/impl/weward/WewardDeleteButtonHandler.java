@@ -5,6 +5,7 @@ import fr.rakambda.rsndiscord.spring.interaction.exception.InvalidChannelTypeExc
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.util.LocalizationService;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -15,7 +16,6 @@ import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.InteractionHook;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -4,12 +4,13 @@ import fr.rakambda.rsndiscord.spring.interaction.button.api.IExecutableButtonGui
 import fr.rakambda.rsndiscord.spring.interaction.exception.InvalidChannelTypeException;
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.components.MessageTopLevelComponent;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
@@ -20,10 +21,10 @@ import java.util.function.Supplier;
 @Component
 public class WewardNoLongerNeededButtonHandler implements IExecutableButtonGuild{
 	private static final String COMPONENT_ID = "weward-no-longer-needed";
-	private static final ItemComponent[] BUTTONS_ORIGINAL = {
+	private static final MessageTopLevelComponent BUTTONS_ORIGINAL = ActionRow.of(
 			WewardInterestButtonHandler.builder().get(),
 			WewardDeleteButtonHandler.builder().get()
-	};
+	);
 	
 	@Override
 	@NotNull

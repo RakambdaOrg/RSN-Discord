@@ -7,13 +7,13 @@ import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.log.LogContext;
 import fr.rakambda.rsndiscord.spring.storage.repository.ChannelRepository;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.components.MessageTopLevelComponent;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,15 +22,15 @@ import java.util.Objects;
 @Component
 @Slf4j
 public class AutoTodoEventListener extends ListenerAdapter{
-	private static final ItemComponent[] BUTTONS_NORMAL = {
+	private static final MessageTopLevelComponent BUTTONS_NORMAL = ActionRow.of(
 			TodoMessageDeleteButtonHandler.builder().get(),
 			TodoMessageKeepButtonHandler.builder().get(),
 			TodoMessageKeepWithoutThreadButtonHandler.builder().get()
-	};
-	private static final ItemComponent[] BUTTONS_FORUM = {
+	);
+	private static final MessageTopLevelComponent BUTTONS_FORUM = ActionRow.of(
 			TodoMessageDeleteButtonHandler.builder().get(),
 			TodoMessageKeepButtonHandler.builder().get()
-	};
+	);
 	
 	private final ChannelRepository channelRepository;
 	
@@ -59,7 +59,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 				case CHANNEL_PINNED_ADD, THREAD_CREATED -> JDAWrappers.delete(message).submit();
 				case DEFAULT, INLINE_REPLY, SLASH_COMMAND, CONTEXT_COMMAND -> JDAWrappers.delay(5)
 						.thenCompose(empty -> JDAWrappers.createThread(message, "reply-" + event.getMessageId()).submit())
-						.thenCompose(thread -> JDAWrappers.message(thread, ActionRow.of(BUTTONS_NORMAL)).submit());
+						.thenCompose(thread -> JDAWrappers.message(thread, BUTTONS_NORMAL).submit());
 			}
 		}
 	}
@@ -85,7 +85,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 			log.info("Handling auto-todo in {}", event.getChannel());
 			
 			JDAWrappers.delay(5)
-					.thenCompose(empty -> JDAWrappers.message(threadChannel, ActionRow.of(BUTTONS_FORUM)).submit());
+					.thenCompose(empty -> JDAWrappers.message(threadChannel, BUTTONS_FORUM).submit());
 		}
 	}
 	

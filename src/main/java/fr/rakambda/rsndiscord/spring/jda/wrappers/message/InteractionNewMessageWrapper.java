@@ -1,11 +1,11 @@
 package fr.rakambda.rsndiscord.spring.jda.wrappers.message;
 
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.components.MessageTopLevelComponent;
 import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.InteractionHook;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,14 +32,14 @@ public class InteractionNewMessageWrapper extends MessageWrapper<WebhookMessageC
 	}
 	
 	@NotNull
-	public InteractionNewMessageWrapper addActionRow(@NotNull ItemComponent... components){
-		getAction().addActionRow(components);
+	public InteractionNewMessageWrapper addActionRow(@NotNull MessageTopLevelComponent... components){
+		getAction().addComponents(components);
 		return this;
 	}
 	
 	@NotNull
-	public InteractionNewMessageWrapper addActionRow(@NotNull Collection<? extends ItemComponent> components){
-		getAction().addActionRow(components);
+	public InteractionNewMessageWrapper addActionRow(@NotNull Collection<? extends MessageTopLevelComponent> components){
+		getAction().addComponents(components);
 		return this;
 	}
 	

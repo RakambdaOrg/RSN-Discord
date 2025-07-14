@@ -31,6 +31,7 @@ import fr.rakambda.rsndiscord.spring.jda.wrappers.thread.DeleteThreadWrapper;
 import fr.rakambda.rsndiscord.spring.jda.wrappers.thread.EditThreadWrapper;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.components.MessageTopLevelComponent;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -50,9 +51,6 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.callbacks.IModalCallback;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.commands.Command;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
-import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -71,7 +69,7 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static SendMessageWrapper message(@NotNull MessageChannel channel, @NotNull LayoutComponent component, @NotNull LayoutComponent... components){
+	public static SendMessageWrapper message(@NotNull MessageChannel channel, @NotNull MessageTopLevelComponent component, @NotNull MessageTopLevelComponent... components){
 		return new SendMessageWrapper(channel, component, components);
 	}
 	
@@ -101,18 +99,18 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static EditMessageWrapper editComponents(@NotNull Message message, @NotNull ItemComponent... components){
+	public static EditMessageWrapper editComponents(@NotNull Message message, @NotNull MessageTopLevelComponent... components){
 		return new EditMessageWrapper(message).setActionRow(components);
 	}
 	
 	@NotNull
-	public static EditMessageWrapper editComponents(@NotNull Message message, @NotNull List<ItemComponent> components){
+	public static EditMessageWrapper editComponents(@NotNull Message message, @NotNull List<MessageTopLevelComponent> components){
 		return new EditMessageWrapper(message).setActionRow(components);
 	}
 	
 	@NotNull
-	public static EditHookWrapper editComponents(@NotNull InteractionHook hook, @NotNull ItemComponent... components){
-		return new EditHookWrapper(hook, ActionRow.of(components));
+	public static EditHookWrapper editComponents(@NotNull InteractionHook hook, @NotNull MessageTopLevelComponent... components){
+		return new EditHookWrapper(hook, components);
 	}
 	
 	@NotNull
@@ -191,7 +189,7 @@ public class JDAWrappers{
 	}
 	
 	@NotNull
-	public static InteractionEditMessageWrapper edit(@NotNull IReplyCallback event, @NotNull LayoutComponent... layouts){
+	public static InteractionEditMessageWrapper edit(@NotNull IReplyCallback event, @NotNull MessageTopLevelComponent... layouts){
 		return new InteractionEditMessageWrapper(event.getGuild(), event.getHook(), layouts);
 	}
 	
