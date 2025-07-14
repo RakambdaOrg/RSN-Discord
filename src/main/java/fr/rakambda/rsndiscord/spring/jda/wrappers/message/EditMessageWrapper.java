@@ -1,9 +1,9 @@
 package fr.rakambda.rsndiscord.spring.jda.wrappers.message;
 
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.components.MessageTopLevelComponent;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.requests.restaction.MessageEditAction;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -29,14 +29,14 @@ public class EditMessageWrapper extends MessageWrapper<MessageEditAction>{
 	}
 	
 	@NotNull
-	public EditMessageWrapper setActionRow(@NotNull Collection<ItemComponent> components){
-		getAction().setActionRow(components);
+	public EditMessageWrapper setActionRow(@NotNull Collection<MessageTopLevelComponent> components){
+		getAction().setComponents(components);
 		return this;
 	}
 	
 	@NotNull
-	public EditMessageWrapper setActionRow(@NotNull ItemComponent... components){
-		getAction().setActionRow(components);
+	public EditMessageWrapper setActionRow(@NotNull MessageTopLevelComponent... components){
+		getAction().setComponents(components);
 		return this;
 	}
 	

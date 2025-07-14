@@ -8,13 +8,14 @@ import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.util.LocalizationService;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.components.MessageTopLevelComponent;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 @Component(value = "wewardAddCommand")
@@ -32,10 +34,10 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 	public static final String PACK_OPTION_ID = "pack";
 	public static final String NAME_OPTION_ID = "name";
 	
-	private static final ItemComponent[] BUTTONS_CARD = {
+	private static final MessageTopLevelComponent BUTTONS_CARD = ActionRow.of(
 			WewardInterestButtonHandler.builder().get(),
 			WewardDeleteButtonHandler.builder().get()
-	};
+	);
 	
 	private final LocalizationService localizationService;
 	private final Map<String, Pack> packs;
@@ -726,8 +728,8 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		var deferred = event.deferReply(false).submit();
 		var locale = event.getGuildLocale();
 		
-		var pack = event.getOption(PACK_OPTION_ID).getAsString();
-		var name = event.getOption(NAME_OPTION_ID).getAsString();
+		var pack = getOptionAs(event.getOption(PACK_OPTION_ID), Function.identity()).orElseThrow();
+		var name = getOptionAs(event.getOption(NAME_OPTION_ID), Function.identity()).orElseThrow();
 		var card = Optional.ofNullable(packs.get(pack)).flatMap(p -> p.getCard(name));
 		
 		var builder = new EmbedBuilder()

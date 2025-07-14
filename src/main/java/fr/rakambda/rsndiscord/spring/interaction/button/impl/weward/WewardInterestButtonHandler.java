@@ -5,6 +5,9 @@ import fr.rakambda.rsndiscord.spring.interaction.exception.InvalidChannelTypeExc
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.util.LocalizationService;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.actionrow.ActionRowChildComponent;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -12,9 +15,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +28,12 @@ import java.util.function.Supplier;
 @Component
 public class WewardInterestButtonHandler implements IExecutableButtonGuild{
 	private static final String COMPONENT_ID = "weward-interest";
-	private static final ItemComponent[] BUTTONS_NORMAL = {
+	private static final ActionRowChildComponent[] BUTTONS_NORMAL = {
 			WewardTradedButtonHandler.builder().get(),
 			WewardDeleteButtonHandler.builder().get(),
 			WewardNoLongerNeededButtonHandler.builder().get()
 	};
-	private static final ItemComponent[] BUTTONS_ORIGINAL = {
+	private static final ActionRowChildComponent[] BUTTONS_ORIGINAL = {
 			WewardInterestButtonHandler.builder().get().asDisabled(),
 			WewardDeleteButtonHandler.builder().get()
 	};
@@ -67,7 +67,7 @@ public class WewardInterestButtonHandler implements IExecutableButtonGuild{
 				getOwner(event.getMessage()).map(UserSnowflake::getAsMention).orElse("Unknown"),
 				member.getAsMention()
 		);
-		return deferred.thenCompose(hook -> JDAWrappers.editComponents(hook, BUTTONS_ORIGINAL).submit())
+		return deferred.thenCompose(hook -> JDAWrappers.editComponents(hook, ActionRow.of(BUTTONS_ORIGINAL)).submit())
 				.thenCompose(hook -> JDAWrappers
 						.createThread(event.getMessage(), "trade-" + event.getMessageId()).submit()
 						.thenCompose(thread -> JDAWrappers.message(thread, content)
