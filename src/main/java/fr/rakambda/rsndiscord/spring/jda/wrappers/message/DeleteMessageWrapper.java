@@ -15,7 +15,7 @@ public class DeleteMessageWrapper extends ActionWrapper<Void, RestAction<Void>>{
 	public DeleteMessageWrapper(@NotNull Message message){
 		super(message.delete());
 		channel = message.getChannel();
-		this.message = message.toString();
+		this.message = "%s (author: %s)".formatted(message.getId(), message.getAuthor());
 	}
 	
 	public DeleteMessageWrapper(@NotNull MessageChannel channel, long messageId){
