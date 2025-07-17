@@ -6,11 +6,9 @@ lavasrc-version = "4.7.2"
 lp_cross-version = "0.1.1"
 jetbrains-annotations-version = "26.0.2"
 opus-version = "1.1.1"
-log4j-ecs-version = "1.7.0"
 
 names-version = "0.52.0"
 jib-version = "3.4.5"
-git-properties-version = "2.5.2"
 sptringboot-version = "3.5.3"
 sptringboot-dm-version = "1.1.7"
 
@@ -24,7 +22,6 @@ lpCross = { group = "com.github.natanbc", name = "lp-cross", version.ref = "lp_c
 jetbrainsAnnotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations-version" }
 opus-api = { group = "club.minnced", name = "opus-java-api", version.ref = "opus-version" }
 opus-natives = { group = "club.minnced", name = "opus-java-natives", version.ref = "opus-version" }
-log4jEcs = { group = "co.elastic.logging", name = "log4j2-ecs-layout", version.ref = "log4j-ecs-version" }
 
 [bundles]
 opus = ["opus-api", "opus-natives"]
@@ -33,6 +30,5 @@ lavalink = ["lavaplayer", "lavaplayer-youtube-v2", "lpCross", "lavasrc", "lavasr
 [plugins]
 names = { id = "com.github.ben-manes.versions", version.ref = "names-version" }
 jib = { id = "com.google.cloud.tools.jib", version.ref = "jib-version" }
-gitProperties = { id = "com.gorylenko.gradle-git-properties", version.ref = "git-properties-version" }
 sptringboot = { id = "org.springframework.boot", version.ref = "sptringboot-version" }
 sptringbootDependencyManagement = { id = "io.spring.dependency-management", version.ref = "sptringboot-dm-version" }
