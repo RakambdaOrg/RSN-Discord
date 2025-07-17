@@ -45,7 +45,7 @@ import java.util.stream.Stream;
 @Slf4j
 public class TraktHistoryRunner extends WrappedTriggerTask{
 	private static final Comparator<UserHistory> USER_HISTORY_COMPARATOR = Comparator
-			.<UserHistory, Instant>comparing(h -> extractDate(h).orElse(Instant.EPOCH))
+			.<UserHistory, Instant> comparing(h -> extractDate(h).orElse(Instant.EPOCH))
 			.thenComparing(h -> extractSeason(h).orElse(0))
 			.thenComparing(h -> extractEpisode(h).orElse(0));
 	private static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
@@ -187,7 +187,7 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 	
 	@NotNull
 	private MessageEmbed buildEmbed(@NotNull UserHistory history, @NotNull User user, @NotNull DiscordLocale locale){
-		return switch (history) {
+		return switch(history){
 			case UserMovieHistory userMovieHistory -> buildTypeEmbed(userMovieHistory, user, locale);
 			case UserSeriesHistory userSeriesHistory -> buildTypeEmbed(userSeriesHistory, user, locale);
 		};
@@ -260,8 +260,11 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 		
 		builder.addField(localizationService.translate(locale, "trakt.episodes"), Integer.toString(show.getAiredEpisodes()), true)
 				.addField(localizationService.translate(locale, "trakt.status"), show.getStatus(), true)
-				.addField(localizationService.translate(locale, "trakt.genres"), String.join(", ", show.getGenres()), true)
-				.addField(localizationService.translate(locale, "trakt.overview"), show.getOverview(), false)
+				.addField(localizationService.translate(locale, "trakt.genres"), String.join(", ", show.getGenres()), true);
+		
+		Optional.ofNullable(show.getOverview()).ifPresent(o -> builder.addField(localizationService.translate(locale, "trakt.overview"), o, false));
+		
+		builder
 				.addBlankField(false)
 				.addField(localizationService.translate(locale, "trakt.watched"), history.getWatchedAt().format(DATETIME_FORMAT), true)
 				.setFooter(Long.toString(history.getId()))

@@ -6,6 +6,7 @@ import fr.rakambda.rsndiscord.spring.json.converter.ISO8601ZonedDateTimeDeserial
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
@@ -16,6 +17,7 @@ public class Show {
 	private String title;
 	private int year;
 	private MediaIds ids;
+	@Nullable
 	private String overview;
 	@JsonProperty("first_aired")
 	@JsonDeserialize(using = ISO8601ZonedDateTimeDeserializer.class)
