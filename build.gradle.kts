@@ -1,3 +1,5 @@
+import com.google.cloud.tools.jib.gradle.JibTask
+
 plugins {
     idea
     java
@@ -84,6 +86,10 @@ springBoot {
     val className: String by project
 
     mainClass.set(className)
+}
+
+tasks.withType<JibTask>().configureEach {
+    notCompatibleWithConfigurationCache("because https://github.com/GoogleContainerTools/jib/issues/3132")
 }
 
 jib {
