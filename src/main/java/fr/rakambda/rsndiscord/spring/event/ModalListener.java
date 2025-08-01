@@ -33,7 +33,7 @@ public class ModalListener extends ListenerAdapter{
 	@NotNull
 	private String getArgsForLogs(@NotNull List<ModalMapping> options){
 		return options.stream()
-				.map(option -> "%s(%s)[%s]".formatted(option.getId(), option.getType(), option.getAsString()))
+				.map(option -> "%s(%s)[%s]".formatted(option.getCustomId(), option.getType(), option.getAsString()))
 				.collect(Collectors.joining(", "));
 	}
 }
