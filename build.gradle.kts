@@ -88,10 +88,6 @@ springBoot {
     mainClass.set(className)
 }
 
-tasks.withType<JibTask>().configureEach {
-    notCompatibleWithConfigurationCache("because https://github.com/GoogleContainerTools/jib/issues/3132")
-}
-
 jib {
     from {
         image = "eclipse-temurin:21-jdk"
