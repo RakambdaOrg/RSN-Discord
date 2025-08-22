@@ -9,7 +9,7 @@ opus-version = "1.1.1"
 
 names-version = "0.52.0"
 jib-version = "3.4.5"
-sptringboot-version = "3.5.4"
+sptringboot-version = "3.5.5"
 sptringboot-dm-version = "1.1.7"
 
 [libraries]
