@@ -42,11 +42,11 @@ dependencies {
     }
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-mysql")
+    implementation("org.jspecify:jspecify")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     annotationProcessor("org.projectlombok:lombok")
     compileOnly("org.projectlombok:lombok")
-    compileOnly(libs.jetbrainsAnnotations)
 
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 

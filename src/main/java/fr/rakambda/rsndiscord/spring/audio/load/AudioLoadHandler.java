@@ -11,7 +11,7 @@ import fr.rakambda.rsndiscord.spring.audio.scheduler.ITrackScheduler;
 import fr.rakambda.rsndiscord.spring.audio.scheduler.TrackUserDataFields;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import java.util.Collection;
 
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class AudioLoadHandler implements AudioLoadResultHandler{
 	private final int maxTracks;
 	
 	@Override
-	public void trackLoaded(@NotNull AudioTrack track){
+	public void trackLoaded(@NonNull AudioTrack track){
 		log.info("Added `{}` to the audio queue", track.getIdentifier());
 		track.setUserData(TrackUserDataFields.builder()
 				.repeat(repeat)
@@ -43,7 +43,7 @@ public class AudioLoadHandler implements AudioLoadResultHandler{
 	}
 	
 	@Override
-	public void playlistLoaded(@NotNull AudioPlaylist playlist){
+	public void playlistLoaded(@NonNull AudioPlaylist playlist){
 		log.info("Added `{}`(size: {}) to the audio queue", playlist.getName(), playlist.getTracks().size());
 		playlist.getTracks().stream()
 				.skip(skipCount)
@@ -62,7 +62,7 @@ public class AudioLoadHandler implements AudioLoadResultHandler{
 	}
 	
 	@Override
-	public void loadFailed(@NotNull FriendlyException throwable){
+	public void loadFailed(@NonNull FriendlyException throwable){
 		log.warn("Failed to load track", throwable);
 		
 		var error = new LoadFailureException(throwable);

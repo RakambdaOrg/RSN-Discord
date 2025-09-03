@@ -31,8 +31,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 @Slf4j
 public class AudioService implements ITrackSchedulerStatusListener, ITrackLoadListener{
@@ -42,7 +42,7 @@ public class AudioService implements ITrackSchedulerStatusListener, ITrackLoadLi
 	@Getter
 	private final ITrackScheduler trackScheduler;
 	
-	public AudioService(@NotNull Guild guild, int volume, @NotNull MusicSettings musicSettings){
+	public AudioService(@NonNull Guild guild, int volume, @NonNull MusicSettings musicSettings){
 		this.guild = guild;
 		
 		audioPlayerManager = new DefaultAudioPlayerManager();
@@ -60,12 +60,12 @@ public class AudioService implements ITrackSchedulerStatusListener, ITrackLoadLi
 		AudioSourceManagers.registerRemoteSources(audioPlayerManager);
 	}
 	
-	@NotNull
-	private AudioSourceManager createSpotifySourceManager(@NotNull String clientId, @NotNull String clientSecret, @Nullable String countryCode){
+	@NonNull
+	private AudioSourceManager createSpotifySourceManager(@NonNull String clientId, @NonNull String clientSecret, @Nullable String countryCode){
 		return new SpotifySourceManager(clientId, clientSecret, countryCode, audioPlayerManager, new DefaultMirroringAudioTrackResolver(null));
 	}
 	
-	@NotNull
+	@NonNull
 	private AudioSourceManager createYoutubeSourceManager(@Nullable String refreshToken){
 		var youtubeAudioSourceManager = new YoutubeAudioSourceManager(true,
 				new MusicWithThumbnail(),
@@ -89,23 +89,23 @@ public class AudioService implements ITrackSchedulerStatusListener, ITrackLoadLi
 	}
 	
 	@Override
-	public void onTrackEnd(@NotNull AudioTrack track){
+	public void onTrackEnd(@NonNull AudioTrack track){
 	}
 	
 	@Override
-	public void onTrackStart(@NotNull AudioTrack track){
+	public void onTrackStart(@NonNull AudioTrack track){
 	}
 	
 	@Override
-	public void onTrackLoaded(@NotNull AudioTrack track){
+	public void onTrackLoaded(@NonNull AudioTrack track){
 	}
 	
 	@Override
-	public void onPlaylistLoaded(@NotNull Collection<AudioTrack> tracks){
+	public void onPlaylistLoaded(@NonNull Collection<AudioTrack> tracks){
 	}
 	
 	@Override
-	public void onLoadFailure(@NotNull TrackLoadException throwable){
+	public void onLoadFailure(@NonNull TrackLoadException throwable){
 		if(trackScheduler.getCurrentTrack().isEmpty() && trackScheduler.getQueue().isEmpty()){
 			onTrackSchedulerEmpty();
 		}
@@ -115,7 +115,7 @@ public class AudioService implements ITrackSchedulerStatusListener, ITrackLoadLi
 		return guild.getAudioManager().isConnected();
 	}
 	
-	public boolean join(@NotNull AudioChannelUnion audioChannel){
+	public boolean join(@NonNull AudioChannelUnion audioChannel){
 		var audioManager = guild.getAudioManager();
 		if(isConnected()){
 			var connectedChannel = audioManager.getConnectedChannel();
@@ -147,7 +147,7 @@ public class AudioService implements ITrackSchedulerStatusListener, ITrackLoadLi
 		log.info("Audio service shutdown");
 	}
 	
-	public void play(@NotNull User requester, @NotNull String identifier, boolean repeat, int skipCount, int maxTracks, @Nullable ITrackLoadListener listener) throws LoadFailureException{
+	public void play(@NonNull User requester, @NonNull String identifier, boolean repeat, int skipCount, int maxTracks, @Nullable ITrackLoadListener listener) throws LoadFailureException{
 		try{
 			var listeners = Objects.isNull(listener) ? List.<ITrackLoadListener> of(this) : List.of(this, listener);
 			var audioLoadResultHandler = new AudioLoadHandler(trackScheduler, listeners, repeat, requester.getIdLong(), skipCount, maxTracks);

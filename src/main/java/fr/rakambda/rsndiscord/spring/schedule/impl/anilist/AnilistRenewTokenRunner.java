@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.RestAction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.time.Instant;
@@ -27,20 +27,20 @@ public class AnilistRenewTokenRunner extends WrappedTriggerTask{
 	private final AnilistService anilistService;
 	
 	@Autowired
-	protected AnilistRenewTokenRunner(@NotNull JDA jda, AnilistRepository anilistRepository, AnilistService anilistService){
+	protected AnilistRenewTokenRunner(@NonNull JDA jda, AnilistRepository anilistRepository, AnilistService anilistService){
 		super(jda);
 		this.anilistRepository = anilistRepository;
 		this.anilistService = anilistService;
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "anilist.token.renew";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	protected String getName(){
 		return "Anilist renew token";
 	}
@@ -51,17 +51,17 @@ public class AnilistRenewTokenRunner extends WrappedTriggerTask{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	protected TemporalUnit getPeriodUnit(){
 		return ChronoUnit.HOURS;
 	}
 	
 	@Override
-	protected void executeGlobal(@NotNull JDA jda){
+	protected void executeGlobal(@NonNull JDA jda){
 		anilistRepository.findAllByEnabledIsTrue().forEach(this::processEntity);
 	}
 	
-	private void processEntity(@NotNull AnilistEntity entity){
+	private void processEntity(@NonNull AnilistEntity entity){
 		if(Objects.nonNull(entity.getRefreshTokenExpire()) && Instant.now().isBefore(entity.getRefreshTokenExpire().minus(getPeriod() * 4, getPeriodUnit()))){
 			return;
 		}
@@ -75,10 +75,10 @@ public class AnilistRenewTokenRunner extends WrappedTriggerTask{
 	}
 	
 	@Override
-	protected void executeGuild(@NotNull Guild guild) throws Exception{
+	protected void executeGuild(@NonNull Guild guild) throws Exception{
 	}
 	
-	public void renewToken(@NotNull AnilistEntity entity){
+	public void renewToken(@NonNull AnilistEntity entity){
 		var userId = entity.getId();
 		log.info("Renewing token for {}", userId);
 		

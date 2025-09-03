@@ -7,38 +7,38 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 
 @Slf4j
 public class InteractionNewMessageWrapper extends MessageWrapper<WebhookMessageCreateAction<Message>>{
 	private final ISnowflake target;
 	
-	public InteractionNewMessageWrapper(@Nullable ISnowflake target, @NotNull InteractionHook hook, @NotNull MessageEmbed embed){
+	public InteractionNewMessageWrapper(@Nullable ISnowflake target, @NonNull InteractionHook hook, @NonNull MessageEmbed embed){
 		super(hook.sendMessageEmbeds(embed));
 		this.target = target;
 	}
 	
-	public InteractionNewMessageWrapper(@Nullable ISnowflake target, @NotNull InteractionHook hook, @NotNull String message){
+	public InteractionNewMessageWrapper(@Nullable ISnowflake target, @NonNull InteractionHook hook, @NonNull String message){
 		super(hook.sendMessage(message));
 		this.target = target;
 	}
 	
-	@NotNull
+	@NonNull
 	public InteractionNewMessageWrapper ephemeral(boolean state){
 		getAction().setEphemeral(state);
 		return this;
 	}
 	
-	@NotNull
-	public InteractionNewMessageWrapper addActionRow(@NotNull MessageTopLevelComponent... components){
+	@NonNull
+	public InteractionNewMessageWrapper addActionRow(@NonNull MessageTopLevelComponent... components){
 		getAction().addComponents(components);
 		return this;
 	}
 	
-	@NotNull
-	public InteractionNewMessageWrapper addActionRow(@NotNull Collection<? extends MessageTopLevelComponent> components){
+	@NonNull
+	public InteractionNewMessageWrapper addActionRow(@NonNull Collection<? extends MessageTopLevelComponent> components){
 		getAction().addComponents(components);
 		return this;
 	}

@@ -26,8 +26,8 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import java.awt.*;
 import java.time.Instant;
@@ -57,7 +57,7 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 	private final LocalizationService localizationService;
 	private final TheMovieDbService theMovieDbService;
 	
-	public TraktHistoryRunner(@NotNull JDA jda, ChannelRepository channelRepository, TraktRepository traktRepository, TraktService traktService, LocalizationService localizationService, TheMovieDbService theMovieDbService){
+	public TraktHistoryRunner(@NonNull JDA jda, ChannelRepository channelRepository, TraktRepository traktRepository, TraktService traktService, LocalizationService localizationService, TheMovieDbService theMovieDbService){
 		super(jda);
 		this.channelRepository = channelRepository;
 		this.traktRepository = traktRepository;
@@ -67,13 +67,13 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "trakt.history";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	protected String getName(){
 		return "Trakt user history";
 	}
@@ -84,13 +84,13 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	protected TemporalUnit getPeriodUnit(){
 		return ChronoUnit.HOURS;
 	}
 	
 	@Override
-	protected void executeGlobal(@NotNull JDA jda){
+	protected void executeGlobal(@NonNull JDA jda){
 		var channels = getChannels(jda);
 		if(channels.isEmpty()){
 			log.info("No channels configured, skipping");
@@ -110,8 +110,8 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 		traktRepository.saveAll(processedEntities);
 	}
 	
-	@NotNull
-	private Stream<TraktEntity> processUser(@NotNull JDA jda, @NotNull TraktEntity entity, @NotNull Collection<GuildMessageChannel> channels){
+	@NonNull
+	private Stream<TraktEntity> processUser(@NonNull JDA jda, @NonNull TraktEntity entity, @NonNull Collection<GuildMessageChannel> channels){
 		try{
 			var userOptional = JDAWrappers.findUser(jda, entity.getId());
 			if(userOptional.isEmpty()){
@@ -151,19 +151,19 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 		}
 	}
 	
-	private void sendUserElements(@NotNull User user, @NotNull Collection<UserHistory> histories, @NotNull Collection<GuildMessageChannel> channels){
+	private void sendUserElements(@NonNull User user, @NonNull Collection<UserHistory> histories, @NonNull Collection<GuildMessageChannel> channels){
 		channels.stream()
 				.filter(c -> JDAWrappers.isMember(c.getGuild(), user.getIdLong()))
 				.forEach(c -> sendUserElements(c, user, histories));
 	}
 	
-	private void sendUserElements(@NotNull GuildMessageChannel channel, @NotNull User user, @NotNull Collection<UserHistory> histories){
+	private void sendUserElements(@NonNull GuildMessageChannel channel, @NonNull User user, @NonNull Collection<UserHistory> histories){
 		histories.stream()
 				.map(h -> buildEmbed(h, user, channel.getGuild().getLocale()))
 				.forEach(e -> JDAWrappers.message(channel, e).submit());
 	}
 	
-	@NotNull
+	@NonNull
 	private Optional<MovieDetails> getMovieDetails(long id){
 		try{
 			return Optional.of(theMovieDbService.getMovieDetails(id));
@@ -174,7 +174,7 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 		}
 	}
 	
-	@NotNull
+	@NonNull
 	private Optional<TvDetails> getTvDetails(long id){
 		try{
 			return Optional.of(theMovieDbService.getTvDetails(id));
@@ -185,16 +185,16 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 		}
 	}
 	
-	@NotNull
-	private MessageEmbed buildEmbed(@NotNull UserHistory history, @NotNull User user, @NotNull DiscordLocale locale){
+	@NonNull
+	private MessageEmbed buildEmbed(@NonNull UserHistory history, @NonNull User user, @NonNull DiscordLocale locale){
 		return switch(history){
 			case UserMovieHistory userMovieHistory -> buildTypeEmbed(userMovieHistory, user, locale);
 			case UserSeriesHistory userSeriesHistory -> buildTypeEmbed(userSeriesHistory, user, locale);
 		};
 	}
 	
-	@NotNull
-	private MessageEmbed buildTypeEmbed(@NotNull UserMovieHistory history, @NotNull User user, @NotNull DiscordLocale locale){
+	@NonNull
+	private MessageEmbed buildTypeEmbed(@NonNull UserMovieHistory history, @NonNull User user, @NonNull DiscordLocale locale){
 		var movie = history.getMovie();
 		
 		var movieDetails = Optional.ofNullable(history.getMovie().getIds())
@@ -223,8 +223,8 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 		return builder.build();
 	}
 	
-	@NotNull
-	private MessageEmbed buildTypeEmbed(@NotNull UserSeriesHistory history, @NotNull User user, @NotNull DiscordLocale locale){
+	@NonNull
+	private MessageEmbed buildTypeEmbed(@NonNull UserSeriesHistory history, @NonNull User user, @NonNull DiscordLocale locale){
 		var show = history.getShow();
 		var episode = history.getEpisode();
 		
@@ -278,7 +278,7 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 		return builder.build();
 	}
 	
-	private boolean isNewer(@NotNull UserHistory history, @Nullable Instant reference){
+	private boolean isNewer(@NonNull UserHistory history, @Nullable Instant reference){
 		if(Objects.isNull(reference)){
 			return true;
 		}
@@ -287,41 +287,41 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 				.orElse(false);
 	}
 	
-	@NotNull
-	private static Optional<Instant> extractDate(@NotNull UserHistory history){
+	@NonNull
+	private static Optional<Instant> extractDate(@NonNull UserHistory history){
 		return Optional.ofNullable(history.getWatchedAt()).map(ChronoZonedDateTime::toInstant);
 	}
 	
-	@NotNull
-	private static Optional<Integer> extractSeason(@NotNull UserHistory history){
+	@NonNull
+	private static Optional<Integer> extractSeason(@NonNull UserHistory history){
 		if(history instanceof UserSeriesHistory serieHistory){
 			return Optional.of(serieHistory.getEpisode().getSeason());
 		}
 		return Optional.empty();
 	}
 	
-	@NotNull
-	private static Optional<Integer> extractEpisode(@NotNull UserHistory history){
+	@NonNull
+	private static Optional<Integer> extractEpisode(@NonNull UserHistory history){
 		if(history instanceof UserSeriesHistory serieHistory){
 			return Optional.of(serieHistory.getEpisode().getNumber());
 		}
 		return Optional.empty();
 	}
 	
-	@NotNull
-	private Collection<GuildMessageChannel> getChannels(@NotNull JDA jda){
+	@NonNull
+	private Collection<GuildMessageChannel> getChannels(@NonNull JDA jda){
 		return channelRepository.findAllByType(ChannelType.TRAKT_MEDIA_CHANGE).stream()
 				.map(entity -> JDAWrappers.findChannel(jda, entity.getChannelId()))
 				.flatMap(Optional::stream)
 				.toList();
 	}
 	
-	@NotNull
+	@NonNull
 	private Collection<TraktEntity> getUsers(){
 		return traktRepository.findAllByEnabledIsTrue();
 	}
 	
 	@Override
-	protected void executeGuild(@NotNull Guild guild){
+	protected void executeGuild(@NonNull Guild guild){
 	}
 }

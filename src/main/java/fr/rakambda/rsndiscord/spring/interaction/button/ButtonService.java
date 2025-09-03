@@ -1,7 +1,7 @@
 package fr.rakambda.rsndiscord.spring.interaction.button;
 
 import fr.rakambda.rsndiscord.spring.interaction.button.api.IExecutableButton;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Collection;
@@ -19,8 +19,8 @@ public class ButtonService{
 				.collect(Collectors.toMap(IExecutableButton::getComponentId, m -> m));
 	}
 	
-	@NotNull
-	public Optional<IExecutableButton> getExecutableButton(@NotNull String componentId){
+	@NonNull
+	public Optional<IExecutableButton> getExecutableButton(@NonNull String componentId){
 		return Optional.of(executableButtons.get(componentId));
 	}
 }

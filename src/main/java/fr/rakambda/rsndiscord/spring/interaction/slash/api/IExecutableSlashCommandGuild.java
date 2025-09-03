@@ -5,15 +5,15 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import java.util.concurrent.CompletableFuture;
 
 public interface IExecutableSlashCommandGuild extends IExecutableSlashCommand{
-	@NotNull
-	CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member) throws BotException;
+	@NonNull
+	CompletableFuture<?> executeGuild(@NonNull SlashCommandInteraction event, @NonNull Guild guild, @NonNull Member member) throws BotException;
 	
-	@NotNull
-	default CompletableFuture<?> autoCompleteGuild(@NotNull CommandAutoCompleteInteractionEvent event, @NotNull Guild guild, @NotNull Member member) throws BotException{
+	@NonNull
+	default CompletableFuture<?> autoCompleteGuild(@NonNull CommandAutoCompleteInteractionEvent event, @NonNull Guild guild, @NonNull Member member) throws BotException{
 		return CompletableFuture.completedFuture(null);
 	}
 }

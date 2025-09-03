@@ -1,8 +1,8 @@
 package fr.rakambda.rsndiscord.spring.interaction.modal.api;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public interface IExecutableModal{
-	@NotNull
+	@NonNull
 	String getComponentId();
 }

@@ -1,7 +1,7 @@
 package fr.rakambda.rsndiscord.spring.audio.scheduler;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public interface ITrackSchedulerStatusListener{
 	/**
@@ -14,12 +14,12 @@ public interface ITrackSchedulerStatusListener{
 	 *
 	 * @param track The track that ended.
 	 */
-	void onTrackEnd(@NotNull AudioTrack track);
+	void onTrackEnd(@NonNull AudioTrack track);
 	
 	/**
 	 * Called when a track starts.
 	 *
 	 * @param track The track that started.
 	 */
-	void onTrackStart(@NotNull AudioTrack track);
+	void onTrackStart(@NonNull AudioTrack track);
 }

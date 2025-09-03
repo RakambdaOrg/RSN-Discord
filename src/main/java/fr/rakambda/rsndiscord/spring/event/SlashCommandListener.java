@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.List;
@@ -27,7 +27,7 @@ public class SlashCommandListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event){
+	public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event){
 		try(var ignored = LogContext.with(event.getGuild()).with(event.getUser())){
 			log.info("Received slash-command {} from {} with args {}", event.getFullCommandName(), event.getUser(), getArgsForLogs(event.getOptions()));
 			slashCommandRunner.execute(event);
@@ -35,15 +35,15 @@ public class SlashCommandListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onCommandAutoCompleteInteraction(@NotNull CommandAutoCompleteInteractionEvent event){
+	public void onCommandAutoCompleteInteraction(@NonNull CommandAutoCompleteInteractionEvent event){
 		try(var ignored = LogContext.with(event.getGuild()).with(event.getUser())){
 			log.info("Received auto-complete {} from {} with args {}", event.getFullCommandName(), event.getUser(), event.getFocusedOption());
 			slashCommandCompletionRunner.complete(event);
 		}
 	}
 	
-	@NotNull
-	private String getArgsForLogs(@NotNull List<OptionMapping> options){
+	@NonNull
+	private String getArgsForLogs(@NonNull List<OptionMapping> options){
 		return options.stream()
 				.map(option -> "%s(%s)[%s]".formatted(option.getName(), option.getType(), option.getAsString()))
 				.collect(Collectors.joining(", "));

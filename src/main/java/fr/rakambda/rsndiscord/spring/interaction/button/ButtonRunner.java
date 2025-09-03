@@ -11,8 +11,8 @@ import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.util.LocalizationService;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Objects;
@@ -32,7 +32,7 @@ public class ButtonRunner{
 		this.rabbitService = rabbitService;
 	}
 	
-	public void execute(@NotNull ButtonInteraction event){
+	public void execute(@NonNull ButtonInteraction event){
 		CompletableFuture.completedFuture(event.getComponentId())
 				.thenApply(id -> buttonService.getExecutableButton(id)
 						.orElseThrow(() -> new IllegalStateException("Unknown button %s".formatted(id))))
@@ -40,8 +40,8 @@ public class ButtonRunner{
 				.exceptionally(ex -> handleExecutionError(event, ex));
 	}
 	
-	@NotNull
-	private CompletableFuture<?> runButton(@NotNull ButtonInteraction event, @NotNull IExecutableButton modal){
+	@NonNull
+	private CompletableFuture<?> runButton(@NonNull ButtonInteraction event, @NonNull IExecutableButton modal){
 		try{
 			if(event.isFromGuild()){
 				if(!(modal instanceof IExecutableButtonGuild modalGuild)){
@@ -62,7 +62,7 @@ public class ButtonRunner{
 	}
 	
 	@Nullable
-	private <T> T handleExecutionError(@NotNull ButtonInteraction event, @NotNull Throwable ex){
+	private <T> T handleExecutionError(@NonNull ButtonInteraction event, @NonNull Throwable ex){
 		log.error("Failed to execute button {}", event.getComponentId(), ex);
 		
 		var exceptionMessage = ex instanceof BotException bex

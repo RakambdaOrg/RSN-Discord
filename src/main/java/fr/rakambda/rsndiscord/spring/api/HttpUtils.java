@@ -6,8 +6,8 @@ import io.netty.handler.logging.LogLevel;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.reactive.ClientHttpConnector;
@@ -24,46 +24,46 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class HttpUtils{
 	@Nullable
-	public static <T> T withStatusOk(@NotNull ResponseEntity<T> entity) throws StatusCodeException{
+	public static <T> T withStatusOk(@NonNull ResponseEntity<T> entity) throws StatusCodeException{
 		if(!entity.getStatusCode().is2xxSuccessful()){
 			throw new StatusCodeException(entity.getStatusCode());
 		}
 		return entity.getBody();
 	}
 	
-	@NotNull
-	public static <T> T withStatusOkAndBody(@NotNull ResponseEntity<T> entity) throws RequestFailedException{
+	@NonNull
+	public static <T> T withStatusOkAndBody(@NonNull ResponseEntity<T> entity) throws RequestFailedException{
 		return verifyBody(verifyStatus(entity)).getBody();
 	}
 	
-	@NotNull
-	public static <T> ResponseEntity<T> verifyStatus(@NotNull ResponseEntity<T> entity) throws StatusCodeException{
+	@NonNull
+	public static <T> ResponseEntity<T> verifyStatus(@NonNull ResponseEntity<T> entity) throws StatusCodeException{
 		if(!entity.getStatusCode().is2xxSuccessful()){
 			throw new StatusCodeException(entity.getStatusCode());
 		}
 		return entity;
 	}
 	
-	@NotNull
-	public static <T> ResponseEntity<T> verifyBody(@NotNull ResponseEntity<T> entity) throws RequestFailedException{
+	@NonNull
+	public static <T> ResponseEntity<T> verifyBody(@NonNull ResponseEntity<T> entity) throws RequestFailedException{
 		if(Objects.isNull(entity.getBody())){
 			throw new RequestFailedException("No body received");
 		}
 		return entity;
 	}
 	
-	@NotNull
-	public static ClientHttpConnector wiretapClientConnector(@NotNull Class<?> clazz){
+	@NonNull
+	public static ClientHttpConnector wiretapClientConnector(@NonNull Class<?> clazz){
 		return new ReactorClientHttpConnector(HttpClient.create().wiretap(clazz.getCanonicalName(), LogLevel.DEBUG, AdvancedByteBufFormat.TEXTUAL));
 	}
 	
-	@NotNull
+	@NonNull
 	public static ExchangeFilterFunction logErrorFilter(){
 		return logErrorFilter(Set.of());
 	}
 	
-	@NotNull
-	public static ExchangeFilterFunction logErrorFilter(@NotNull Collection<HttpStatusCode> ignoreStatuses){
+	@NonNull
+	public static ExchangeFilterFunction logErrorFilter(@NonNull Collection<HttpStatusCode> ignoreStatuses){
 		return ExchangeFilterFunction.ofResponseProcessor(response -> {
 			if(response.statusCode().isError() && !ignoreStatuses.contains(response.statusCode())){
 				return response.bodyToMono(String.class)

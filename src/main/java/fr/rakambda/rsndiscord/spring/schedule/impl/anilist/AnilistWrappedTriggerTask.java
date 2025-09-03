@@ -13,7 +13,7 @@ import fr.rakambda.rsndiscord.spring.util.LocalizationService;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -27,12 +27,12 @@ public abstract class AnilistWrappedTriggerTask extends WrappedTriggerTask{
 	
 	private final LocalizationService localizationService;
 	
-	protected AnilistWrappedTriggerTask(@NotNull JDA jda, @NotNull LocalizationService localizationService){
+	protected AnilistWrappedTriggerTask(@NonNull JDA jda, @NonNull LocalizationService localizationService){
 		super(jda);
 		this.localizationService = localizationService;
 	}
 	
-	protected void fillEmbed(@NotNull EmbedBuilder builder, @NotNull Media media, @NotNull DiscordLocale locale){
+	protected void fillEmbed(@NonNull EmbedBuilder builder, @NonNull Media media, @NonNull DiscordLocale locale){
 		builder.setDescription(media.getTitle().getRomaji());
 		
 		var type = Stream.of(
@@ -89,8 +89,8 @@ public abstract class AnilistWrappedTriggerTask extends WrappedTriggerTask{
 				.setFooter("ID: " + media.getId());
 	}
 	
-	@NotNull
-	private String mapRanking(@NotNull MediaRank ranking){
+	@NonNull
+	private String mapRanking(@NonNull MediaRank ranking){
 		var sb = new StringBuilder(ranking.getType().getIcon())
 				.append(" ")
 				.append("#")
@@ -109,7 +109,7 @@ public abstract class AnilistWrappedTriggerTask extends WrappedTriggerTask{
 		return sb.toString();
 	}
 	
-	private void fillTypeEmbed(@NotNull EmbedBuilder builder, @NotNull AnimeMedia media, @NotNull DiscordLocale locale){
+	private void fillTypeEmbed(@NonNull EmbedBuilder builder, @NonNull AnimeMedia media, @NonNull DiscordLocale locale){
 		var year = Optional.ofNullable(media.getStartDate())
 				.flatMap(FuzzyDate::asDate)
 				.map(LocalDate::getYear);
@@ -124,7 +124,7 @@ public abstract class AnilistWrappedTriggerTask extends WrappedTriggerTask{
 				.ifPresent(s -> builder.addField(localizationService.translate(locale, "anilist.season"), s, true));
 	}
 	
-	private void fillTypeEmbed(@NotNull EmbedBuilder builder, @NotNull MangaMedia media, @NotNull DiscordLocale locale){
+	private void fillTypeEmbed(@NonNull EmbedBuilder builder, @NonNull MangaMedia media, @NonNull DiscordLocale locale){
 		Optional.ofNullable(media.getChapters())
 				.map(Object::toString)
 				.ifPresent(c -> builder.addField(localizationService.translate(locale, "anilist.chapters"), c, true));

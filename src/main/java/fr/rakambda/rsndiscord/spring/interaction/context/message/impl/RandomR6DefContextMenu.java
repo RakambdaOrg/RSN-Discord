@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.localization.LocalizationFunction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
@@ -27,22 +27,22 @@ public class RandomR6DefContextMenu extends R6ContextMenu implements IRegistrabl
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getName(){
 		return "Random R6 DEF Operator";
 	}
 	
 	@Override
-	@NotNull
-	public CommandData getDefinition(@NotNull LocalizationFunction localizationFunction){
+	@NonNull
+	public CommandData getDefinition(@NonNull LocalizationFunction localizationFunction){
 		return Commands.message(getName())
 				.setLocalizationFunction(localizationFunction)
 				.setContexts(InteractionContextType.GUILD);
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> executeGuild(@NotNull MessageContextInteractionEvent event, @NotNull Guild guild, @NotNull Member member) throws BotException{
+	@NonNull
+	public CompletableFuture<?> executeGuild(@NonNull MessageContextInteractionEvent event, @NonNull Guild guild, @NonNull Member member) throws BotException{
 		return executeGuild(event, DEF);
 	}
 }

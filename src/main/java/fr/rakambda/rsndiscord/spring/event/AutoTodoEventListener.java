@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.Objects;
@@ -40,7 +40,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onMessageReceived(@NotNull MessageReceivedEvent event){
+	public void onMessageReceived(@NonNull MessageReceivedEvent event){
 		if(!event.isFromGuild() || event.getChannelType() != ChannelType.TEXT){
 			return;
 		}
@@ -65,7 +65,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onChannelCreate(@NotNull ChannelCreateEvent event){
+	public void onChannelCreate(@NonNull ChannelCreateEvent event){
 		if(!event.isFromGuild() || event.getChannelType() != ChannelType.GUILD_PUBLIC_THREAD){
 			return;
 		}
@@ -89,7 +89,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 		}
 	}
 	
-	public boolean isChannelNotRegistered(@NotNull GuildChannel channel){
+	public boolean isChannelNotRegistered(@NonNull GuildChannel channel){
 		return channelRepository.findAllByGuildIdAndType(channel.getGuild().getIdLong(), fr.rakambda.rsndiscord.spring.storage.entity.ChannelType.AUTO_TODO).stream()
 				.noneMatch(channelEntity -> Objects.equals(channelEntity.getChannelId(), channel.getIdLong()));
 	}

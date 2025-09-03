@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.requests.RestAction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -16,8 +16,8 @@ public abstract class ActionWrapper<R, T extends RestAction<R>>{
 	@Setter(AccessLevel.PROTECTED)
 	private T action;
 	
-	@NotNull
-	protected CompletableFuture<R> logAction(@NotNull CompletableFuture<R> future){
+	@NonNull
+	protected CompletableFuture<R> logAction(@NonNull CompletableFuture<R> future){
 		return future
 				.thenApply(value -> {
 					logSuccess(value);
@@ -32,17 +32,17 @@ public abstract class ActionWrapper<R, T extends RestAction<R>>{
 				});
 	}
 	
-	@NotNull
+	@NonNull
 	public CompletableFuture<R> submit(){
 		return logAction(getAction().submit());
 	}
 	
-	@NotNull
-	public CompletableFuture<R> delay(@NotNull Duration duration){
+	@NonNull
+	public CompletableFuture<R> delay(@NonNull Duration duration){
 		return logAction(getAction().delay(duration).submit());
 	}
 	
-	@NotNull
+	@NonNull
 	public CompletableFuture<R> delay(int seconds){
 		return delay(Duration.ofSeconds(seconds));
 	}

@@ -5,20 +5,20 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.requests.RestAction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 @Slf4j
 public class DeleteMessageWrapper extends ActionWrapper<Void, RestAction<Void>>{
 	private final MessageChannel channel;
 	private final String message;
 	
-	public DeleteMessageWrapper(@NotNull Message message){
+	public DeleteMessageWrapper(@NonNull Message message){
 		super(message.delete());
 		channel = message.getChannel();
 		this.message = "%s (author: %s)".formatted(message.getId(), message.getAuthor());
 	}
 	
-	public DeleteMessageWrapper(@NotNull MessageChannel channel, long messageId){
+	public DeleteMessageWrapper(@NonNull MessageChannel channel, long messageId){
 		super(channel.deleteMessageById(messageId));
 		this.channel = channel;
 		message = Long.toString(messageId);

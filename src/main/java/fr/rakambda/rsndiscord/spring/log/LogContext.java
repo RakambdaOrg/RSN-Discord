@@ -3,8 +3,8 @@ package fr.rakambda.rsndiscord.spring.log;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import org.apache.logging.log4j.CloseableThreadContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import java.util.Objects;
 
 public class LogContext implements AutoCloseable{
@@ -25,18 +25,18 @@ public class LogContext implements AutoCloseable{
 		}
 	}
 	
-	@NotNull
+	@NonNull
 	public static LogContext empty(){
 		return new LogContext(null);
 	}
 	
-	@NotNull
+	@NonNull
 	public static LogContext with(@Nullable Guild guild){
 		return new LogContext(guild);
 	}
 	
-	@NotNull
-	public LogContext with(@NotNull User user){
+	@NonNull
+	public LogContext with(@NonNull User user){
 		ctc.put(USER_ID_KEY, user.getId());
 		return this;
 	}

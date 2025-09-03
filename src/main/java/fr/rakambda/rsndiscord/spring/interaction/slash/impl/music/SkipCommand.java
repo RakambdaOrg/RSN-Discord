@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
@@ -30,20 +30,20 @@ public class SkipCommand implements IExecutableSlashCommandGuild{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "skip";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getPath(){
 		return "music/skip";
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member) throws NoTrackPlayingException{
+	@NonNull
+	public CompletableFuture<?> executeGuild(@NonNull SlashCommandInteraction event, @NonNull Guild guild, @NonNull Member member) throws NoTrackPlayingException{
 		var deferred = event.deferReply().submit();
 		
 		var trackScheduler = audioServiceFactory.get(guild).getTrackScheduler();

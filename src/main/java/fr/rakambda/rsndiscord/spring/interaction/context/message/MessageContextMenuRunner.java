@@ -12,8 +12,8 @@ import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.util.LocalizationService;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Objects;
@@ -33,7 +33,7 @@ public class MessageContextMenuRunner {
 		this.rabbitService = rabbitService;
 	}
 	
-	public void execute(@NotNull MessageContextInteractionEvent event){
+	public void execute(@NonNull MessageContextInteractionEvent event){
 		CompletableFuture.completedFuture(event.getName())
 				.thenApply(name -> messageContextMenuService.getExecutableContextMenu(name)
 						.orElseThrow(() -> new IllegalStateException("Unknown message context menu %s".formatted(name))))
@@ -42,8 +42,8 @@ public class MessageContextMenuRunner {
 				.exceptionally(ex -> handleExecutionError(event, ex));
 	}
 	
-	@NotNull
-	private CompletableFuture<?> runMenu(@NotNull MessageContextInteractionEvent event, @NotNull IExecutableMessageContextMenu menu){
+	@NonNull
+	private CompletableFuture<?> runMenu(@NonNull MessageContextInteractionEvent event, @NonNull IExecutableMessageContextMenu menu){
 		try{
 			if(event.isFromGuild()){
 				
@@ -64,8 +64,8 @@ public class MessageContextMenuRunner {
 		}
 	}
 	
-	@NotNull
-	private CompletableFuture<IExecutableMessageContextMenu> verifyAllowed(@NotNull MessageContextInteractionEvent event, @NotNull IExecutableMessageContextMenu menu){
+	@NonNull
+	private CompletableFuture<IExecutableMessageContextMenu> verifyAllowed(@NonNull MessageContextInteractionEvent event, @NonNull IExecutableMessageContextMenu menu){
 		if(!menu.getPermission().isAllowed(event.getUser())){
 			return CompletableFuture.failedFuture(new NotAllowedException());
 		}
@@ -73,7 +73,7 @@ public class MessageContextMenuRunner {
 	}
 	
 	@Nullable
-	private <T> T handleExecutionError(@NotNull MessageContextInteractionEvent event, @NotNull Throwable ex){
+	private <T> T handleExecutionError(@NonNull MessageContextInteractionEvent event, @NonNull Throwable ex){
 		log.error("Failed to execute message context menu {}", event.getName(), ex);
 		
 		var exceptionMessage = ex instanceof BotException bex

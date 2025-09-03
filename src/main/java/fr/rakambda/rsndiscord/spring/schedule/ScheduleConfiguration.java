@@ -1,7 +1,7 @@
 package fr.rakambda.rsndiscord.spring.schedule;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.task.ThreadPoolTaskSchedulerBuilder;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +27,7 @@ public class ScheduleConfiguration implements SchedulingConfigurer{
 	}
 	
 	@Override
-	public void configureTasks(@NotNull ScheduledTaskRegistrar taskRegistrar){
+	public void configureTasks(@NonNull ScheduledTaskRegistrar taskRegistrar){
 		taskRegistrar.setScheduler(taskExecutor());
 		
 		triggers.forEach(trigger -> addTriggerTask(taskRegistrar, trigger));

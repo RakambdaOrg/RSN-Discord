@@ -2,7 +2,7 @@ package fr.rakambda.rsndiscord.spring.interaction.slash.permission;
 
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.entities.User;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -12,7 +12,7 @@ public class CreatorPermission implements IPermission{
 	private static final Set<Long> ACCOUNTS = Set.of(MAIN_ACCOUNT, SECONDARY_ACCOUNT);
 	
 	@Override
-	public boolean isAllowed(@NotNull User user){
+	public boolean isAllowed(@NonNull User user){
 		return ACCOUNTS.contains(user.getIdLong());
 	}
 }

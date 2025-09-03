@@ -19,8 +19,8 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -57,13 +57,13 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "anilist.media";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	protected String getName(){
 		return "Anilist media list";
 	}
@@ -74,13 +74,13 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	protected TemporalUnit getPeriodUnit(){
 		return ChronoUnit.HOURS;
 	}
 	
 	@Override
-	protected void executeGlobal(@NotNull JDA jda){
+	protected void executeGlobal(@NonNull JDA jda){
 		var channels = getChannels(jda);
 		if(channels.isEmpty()){
 			log.info("No channels configured, skipping");
@@ -100,8 +100,8 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 		anilistRepository.saveAll(processedEntities);
 	}
 	
-	@NotNull
-	private Stream<AnilistEntity> processUser(@NotNull JDA jda, @NotNull AnilistEntity entity, @NotNull Collection<GuildMessageChannel> channels){
+	@NonNull
+	private Stream<AnilistEntity> processUser(@NonNull JDA jda, @NonNull AnilistEntity entity, @NonNull Collection<GuildMessageChannel> channels){
 		try{
 			var userOptional = JDAWrappers.findUser(jda, entity.getId());
 			if(userOptional.isEmpty()){
@@ -143,7 +143,7 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 		}
 	}
 	
-	private boolean isNewer(@NotNull MediaList mediaList, @Nullable Instant reference){
+	private boolean isNewer(@NonNull MediaList mediaList, @Nullable Instant reference){
 		if(Objects.isNull(reference)){
 			return true;
 		}
@@ -152,25 +152,25 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 				.orElse(false);
 	}
 	
-	@NotNull
-	private Optional<Instant> extractDate(@NotNull MediaList mediaList){
+	@NonNull
+	private Optional<Instant> extractDate(@NonNull MediaList mediaList){
 		return Optional.ofNullable(mediaList.getUpdatedAt()).map(ChronoZonedDateTime::toInstant);
 	}
 	
-	private void sendUserElements(@NotNull User user, @NotNull Collection<MediaList> mediaLists, @NotNull Collection<GuildMessageChannel> channels){
+	private void sendUserElements(@NonNull User user, @NonNull Collection<MediaList> mediaLists, @NonNull Collection<GuildMessageChannel> channels){
 		channels.stream()
 				.filter(c -> JDAWrappers.isMember(c.getGuild(), user.getIdLong()))
 				.forEach(c -> sendUserElements(c, user, mediaLists));
 	}
 	
-	private void sendUserElements(@NotNull GuildMessageChannel channel, @NotNull User user, @NotNull Collection<MediaList> mediaLists){
+	private void sendUserElements(@NonNull GuildMessageChannel channel, @NonNull User user, @NonNull Collection<MediaList> mediaLists){
 		mediaLists.stream()
 				.map(ml -> buildEmbed(ml, user, channel.getGuild().getLocale()))
 				.forEach(e -> JDAWrappers.message(channel, e).submit());
 	}
 	
-	@NotNull
-	private MessageEmbed buildEmbed(@NotNull MediaList mediaList, @NotNull User user, @NotNull DiscordLocale locale){
+	@NonNull
+	private MessageEmbed buildEmbed(@NonNull MediaList mediaList, @NonNull User user, @NonNull DiscordLocale locale){
 		var media = mediaList.getMedia();
 		var totalElements = getTotalElements(media).map(Objects::toString).orElse("?");
 		
@@ -241,8 +241,8 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 		return builder.build();
 	}
 	
-	@NotNull
-	private Optional<Integer> getTotalElements(@NotNull Media media){
+	@NonNull
+	private Optional<Integer> getTotalElements(@NonNull Media media){
 		if(media instanceof AnimeMedia animeMedia){
 			return Optional.ofNullable(animeMedia.getEpisodes());
 		}
@@ -252,20 +252,20 @@ public class AnilistMediaListRunner extends AnilistWrappedTriggerTask{
 		throw new IllegalStateException("Unknown type " + media.getClass().getSimpleName());
 	}
 	
-	@NotNull
-	private Collection<GuildMessageChannel> getChannels(@NotNull JDA jda){
+	@NonNull
+	private Collection<GuildMessageChannel> getChannels(@NonNull JDA jda){
 		return channelRepository.findAllByType(ChannelType.ANILIST_MEDIA_CHANGE).stream()
 				.map(entity -> JDAWrappers.findChannel(jda, entity.getChannelId()))
 				.flatMap(Optional::stream)
 				.toList();
 	}
 	
-	@NotNull
+	@NonNull
 	private Collection<AnilistEntity> getUsers(){
 		return anilistRepository.findAllByEnabledIsTrue();
 	}
 	
 	@Override
-	protected void executeGuild(@NotNull Guild guild){
+	protected void executeGuild(@NonNull Guild guild){
 	}
 }

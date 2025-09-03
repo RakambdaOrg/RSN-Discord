@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 @Data
 @AllArgsConstructor
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public sealed class UserSeriesHistory extends UserHistory permits UserAnimeHistory {
-	@NotNull
+	@NonNull
 	private Show show;
 	@Nullable
 	@JsonProperty("last_watched")
@@ -34,7 +34,7 @@ public sealed class UserSeriesHistory extends UserHistory permits UserAnimeHisto
 	private Integer notAiredEpisodesCount;
 	
 	@Override
-	@NotNull
+	@NonNull
 	public Long getId(){
 		return show.getIds().getSimkl();
 	}

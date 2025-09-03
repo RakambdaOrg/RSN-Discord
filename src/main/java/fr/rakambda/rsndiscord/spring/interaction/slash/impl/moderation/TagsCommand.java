@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
@@ -27,20 +27,20 @@ public class TagsCommand implements IExecutableSlashCommandGuild{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "tags";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getPath(){
 		return "mod/tags";
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member) throws InvalidChannelTypeException{
+	@NonNull
+	public CompletableFuture<?> executeGuild(@NonNull SlashCommandInteraction event, @NonNull Guild guild, @NonNull Member member) throws InvalidChannelTypeException{
 		var deferred = event.deferReply(true).submit();
 		
 		var channel = event.getOption(CHANNEL_OPTION_ID).getAsChannel().asThreadChannel();

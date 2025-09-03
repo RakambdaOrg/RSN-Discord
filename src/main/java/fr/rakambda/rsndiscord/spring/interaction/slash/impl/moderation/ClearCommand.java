@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.entities.channel.unions.GuildChannelUnion;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.requests.restaction.pagination.PaginationAction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.Collection;
@@ -41,20 +41,20 @@ public class ClearCommand implements IExecutableSlashCommandGuild{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "clear";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getPath(){
 		return "mod/clear";
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
+	@NonNull
+	public CompletableFuture<?> executeGuild(@NonNull SlashCommandInteraction event, @NonNull Guild guild, @NonNull Member member){
 		var deferred = event.deferReply(true).submit();
 		
 		var channel = event.getGuildChannel();
@@ -79,8 +79,8 @@ public class ClearCommand implements IExecutableSlashCommandGuild{
 				.thenCompose(empty -> JDAWrappers.edit(event, "Clear messages done").submit());
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> deleteAll(@NotNull SlashCommandInteraction event, @NotNull Collection<Message> messages){
+	@NonNull
+	private CompletableFuture<Void> deleteAll(@NonNull SlashCommandInteraction event, @NonNull Collection<Message> messages){
 		var size = messages.size();
 		var counter = new AtomicInteger(0);
 		
@@ -100,8 +100,8 @@ public class ClearCommand implements IExecutableSlashCommandGuild{
 				.orElseGet(() -> CompletableFuture.completedFuture(null));
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> processMessage(@NotNull Message message){
+	@NonNull
+	private CompletableFuture<Void> processMessage(@NonNull Message message){
 		var thread = message.getStartedThread();
 		if(Objects.isNull(thread)){
 			return JDAWrappers.delete(message).submit();

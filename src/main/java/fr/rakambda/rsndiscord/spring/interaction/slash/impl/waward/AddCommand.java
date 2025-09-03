@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.Collection;
@@ -665,25 +665,25 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		));
 	}
 	
-	private void addPack(@NotNull Pack pack){
+	private void addPack(@NonNull Pack pack){
 		packs.put(pack.name(), pack);
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "add";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getPath(){
 		return "weward/add";
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> autoCompleteGuild(@NotNull CommandAutoCompleteInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
+	@NonNull
+	public CompletableFuture<?> autoCompleteGuild(@NonNull CommandAutoCompleteInteractionEvent event, @NonNull Guild guild, @NonNull Member member){
 		return switch(event.getFocusedOption().getName()){
 			case PACK_OPTION_ID -> autoCompletePack(event);
 			case NAME_OPTION_ID -> autoCompleteName(event, event.getOption(PACK_OPTION_ID).getAsString());
@@ -691,8 +691,8 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		};
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> autoCompletePack(@NotNull CommandAutoCompleteInteractionEvent event){
+	@NonNull
+	private CompletableFuture<Void> autoCompletePack(@NonNull CommandAutoCompleteInteractionEvent event){
 		var choices = getStartingWith(packs.values(), event.getFocusedOption().getValue())
 				.limit(OptionData.MAX_CHOICES)
 				.sorted()
@@ -701,8 +701,8 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		return JDAWrappers.reply(event, choices).submit();
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> autoCompleteName(@NotNull CommandAutoCompleteInteractionEvent event, @NotNull String pack){
+	@NonNull
+	private CompletableFuture<Void> autoCompleteName(@NonNull CommandAutoCompleteInteractionEvent event, @NonNull String pack){
 		var choices = Optional.ofNullable(packs.get(pack))
 				.map(Pack::cards)
 				.stream()
@@ -714,8 +714,8 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 		return JDAWrappers.reply(event, choices).submit();
 	}
 	
-	@NotNull
-	private <T extends INamed> Stream<T> getStartingWith(@NotNull Collection<T> values, @NotNull String value){
+	@NonNull
+	private <T extends INamed> Stream<T> getStartingWith(@NonNull Collection<T> values, @NonNull String value){
 		if(value.isBlank()){
 			return values.stream();
 		}
@@ -723,8 +723,8 @@ public class AddCommand implements IExecutableSlashCommandGuild{
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member) throws RequestFailedException{
+	@NonNull
+	public CompletableFuture<?> executeGuild(@NonNull SlashCommandInteraction event, @NonNull Guild guild, @NonNull Member member) throws RequestFailedException{
 		var deferred = event.deferReply(false).submit();
 		var locale = event.getGuildLocale();
 		

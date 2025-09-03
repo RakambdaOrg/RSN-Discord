@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.entities.channel.unions.GuildChannelUnion;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.requests.restaction.pagination.PaginationAction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.Collection;
@@ -26,20 +26,20 @@ import java.util.function.Consumer;
 @Component
 public class CountCommand implements IExecutableSlashCommandGuild{
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "count";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getPath(){
 		return "mod/count";
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
+	@NonNull
+	public CompletableFuture<?> executeGuild(@NonNull SlashCommandInteraction event, @NonNull Guild guild, @NonNull Member member){
 		var deferred = event.deferReply(true).submit();
 		
 		var channel = event.getGuildChannel();

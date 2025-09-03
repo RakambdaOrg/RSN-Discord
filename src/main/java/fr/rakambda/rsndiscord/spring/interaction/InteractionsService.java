@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.requests.RestAction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -24,20 +24,20 @@ public class InteractionsService{
 		this.commandRepository = commandRepository;
 	}
 	
-	@NotNull
-	public CompletableFuture<Void> clearGuildCommands(@NotNull Guild guild){
+	@NonNull
+	public CompletableFuture<Void> clearGuildCommands(@NonNull Guild guild){
 		log.info("Clearing guild commands for guild {}", guild);
 		return clearCommands(guild.retrieveCommands(), guild::deleteCommandById);
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> clearGlobalCommands(@NotNull JDA jda){
+	@NonNull
+	private CompletableFuture<Void> clearGlobalCommands(@NonNull JDA jda){
 		log.info("Clearing global slash commands");
 		return clearCommands(jda.retrieveCommands(), jda::deleteCommandById);
 	}
 	
-	@NotNull
-	public CompletableFuture<Void> removeAllCommands(@NotNull JDA jda){
+	@NonNull
+	public CompletableFuture<Void> removeAllCommands(@NonNull JDA jda){
 		log.info("Removing All commands");
 		
 		return clearGlobalCommands(jda)
@@ -47,8 +47,8 @@ public class InteractionsService{
 						.orElseGet(() -> CompletableFuture.completedFuture(null)));
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> clearCommands(@NotNull RestAction<List<Command>> retrieve, @NotNull Function<String, RestAction<Void>> deleteCommand){
+	@NonNull
+	private CompletableFuture<Void> clearCommands(@NonNull RestAction<List<Command>> retrieve, @NonNull Function<String, RestAction<Void>> deleteCommand){
 		return retrieve.submit().thenCompose(commands -> commands.stream()
 				.map(command -> {
 					log.info("Clearing command {}", command);
@@ -58,7 +58,7 @@ public class InteractionsService{
 				.orElseGet(() -> CompletableFuture.completedFuture(null)));
 	}
 	
-	public boolean isCommandActivatedOnGuild(@NotNull Guild guild, @NotNull String name){
+	public boolean isCommandActivatedOnGuild(@NonNull Guild guild, @NonNull String name){
 		return commandRepository.findByGuildIdAndName(guild.getIdLong(), name).map(CommandEntity::isEnabled).orElse(false);
 	}
 }

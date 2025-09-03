@@ -10,8 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
@@ -39,20 +39,20 @@ public class SeekCommand implements IExecutableSlashCommandGuild{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "seek";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getPath(){
 		return "music/seek";
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member) throws NoTrackPlayingException{
+	@NonNull
+	public CompletableFuture<?> executeGuild(@NonNull SlashCommandInteraction event, @NonNull Guild guild, @NonNull Member member) throws NoTrackPlayingException{
 		var deferred = event.deferReply().submit();
 		var locale = event.getUserLocale();
 		var time = SeekCommand.parseTime(event.getOption(TIME_OPTION_ID).getAsString());
@@ -69,7 +69,7 @@ public class SeekCommand implements IExecutableSlashCommandGuild{
 				.submitAndDelete(5, rabbitService));
 	}
 	
-	private static long parseTime(@NotNull String time){
+	private static long parseTime(@NonNull String time){
 		var matcher = TIME_PATTERN.matcher(time);
 		if(!matcher.matches()){
 			return -1;

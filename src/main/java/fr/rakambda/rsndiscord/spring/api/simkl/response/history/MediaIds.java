@@ -3,14 +3,14 @@ package fr.rakambda.rsndiscord.spring.api.simkl.response.history;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class MediaIds {
-	@NotNull
+	@NonNull
 	private Long simkl;
 	@Nullable
 	private String slug;

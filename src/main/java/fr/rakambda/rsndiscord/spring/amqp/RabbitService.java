@@ -2,7 +2,7 @@ package fr.rakambda.rsndiscord.spring.amqp;
 
 import fr.rakambda.rsndiscord.spring.amqp.message.IDelayedMessage;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,17 +21,17 @@ public class RabbitService{
 		this.amqpNameProvider = amqpNameProvider;
 	}
 	
-	public void scheduleMessage(@NotNull Duration delay, @NotNull IDelayedMessage message){
+	public void scheduleMessage(@NonNull Duration delay, @NonNull IDelayedMessage message){
 		scheduleMessage(delay, 5, message);
 	}
 	
-	public void scheduleMessage(@NotNull Duration delay, int retryCount, @NotNull IDelayedMessage message){
+	public void scheduleMessage(@NonNull Duration delay, int retryCount, @NonNull IDelayedMessage message){
 		log.info("Delaying by {} message {}", delay, message);
 		rabbitTemplate.convertAndSend(amqpNameProvider.getExchangeDelayName(), amqpNameProvider.getRoutingKeyDelay(), message, getMessagePostProcessor(delay, retryCount));
 	}
 	
-	@NotNull
-	private MessagePostProcessor getMessagePostProcessor(@NotNull Duration delay, int retryCount){
+	@NonNull
+	private MessagePostProcessor getMessagePostProcessor(@NonNull Duration delay, int retryCount){
 		return m -> {
 			m.getMessageProperties().setHeader("x-delay", delay.toMillis());
 			m.getMessageProperties().setHeader(amqpNameProvider.getXRedeliverCountRemainingHeader(), retryCount);

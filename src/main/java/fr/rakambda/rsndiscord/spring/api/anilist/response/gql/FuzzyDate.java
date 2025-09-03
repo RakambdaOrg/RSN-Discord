@@ -4,7 +4,7 @@ import fr.rakambda.rsndiscord.spring.util.DayDuration;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import java.time.LocalDate;
 import java.util.Optional;
 import static java.time.Duration.between;
@@ -19,12 +19,12 @@ public class FuzzyDate{
 	private Integer month;
 	private Integer year;
 	
-	@NotNull
-	public Optional<DayDuration> durationTo(@NotNull LocalDate toDate){
+	@NonNull
+	public Optional<DayDuration> durationTo(@NonNull LocalDate toDate){
 		return asDate().map(date -> new DayDuration(between(date.atStartOfDay(), toDate.atStartOfDay())));
 	}
 	
-	@NotNull
+	@NonNull
 	public Optional<LocalDate> asDate(){
 		return nonNull(day) && nonNull(month) && nonNull(year)
 				? Optional.of(LocalDate.of(year, month, day))

@@ -6,7 +6,7 @@ import fr.rakambda.rsndiscord.spring.json.converter.ISO8601ZonedDateTimeDeserial
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.time.ZonedDateTime;
 import java.util.Set;
 

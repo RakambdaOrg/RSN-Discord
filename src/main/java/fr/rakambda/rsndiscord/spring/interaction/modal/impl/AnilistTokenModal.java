@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.interactions.modals.ModalInteraction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
@@ -36,14 +36,14 @@ public class AnilistTokenModal implements IExecutableModalGuild{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getComponentId(){
 		return COMPONENT_ID;
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> executeGuild(@NotNull ModalInteraction event, @NotNull Guild guild, @NotNull Member member) throws RequestFailedException, AuthFailureException{
+	@NonNull
+	public CompletableFuture<?> executeGuild(@NonNull ModalInteraction event, @NonNull Guild guild, @NonNull Member member) throws RequestFailedException, AuthFailureException{
 		var deferred = event.deferReply(true).submit();
 		
 		var code = event.getValue(CODE_OPTION).getAsString();
@@ -56,7 +56,7 @@ public class AnilistTokenModal implements IExecutableModalGuild{
 				.submit());
 	}
 	
-	@NotNull
+	@NonNull
 	public static Supplier<Modal> builder(String codeLink){
 		return () -> {
 			var code = TextInput.create(CODE_OPTION, "Auth code", TextInputStyle.PARAGRAPH)

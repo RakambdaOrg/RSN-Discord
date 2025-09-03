@@ -5,38 +5,38 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
 public interface IConfigurationAccessor{
-	default boolean set(@NotNull JDA jda, long guildId, @NotNull String value) throws OperationNotSupportedException{
+	default boolean set(@NonNull JDA jda, long guildId, @NonNull String value) throws OperationNotSupportedException{
 		throw new OperationNotSupportedException(ConfigurationOperation.SET);
 	}
 	
-	default boolean add(@NotNull JDA jda, long guildId, @NotNull String value) throws OperationNotSupportedException{
+	default boolean add(@NonNull JDA jda, long guildId, @NonNull String value) throws OperationNotSupportedException{
 		throw new OperationNotSupportedException(ConfigurationOperation.ADD);
 	}
 	
-	default boolean remove(@NotNull JDA jda, long guildId, @NotNull String value) throws OperationNotSupportedException{
+	default boolean remove(@NonNull JDA jda, long guildId, @NonNull String value) throws OperationNotSupportedException{
 		throw new OperationNotSupportedException(ConfigurationOperation.REMOVE);
 	}
 	
-	default boolean reset(@NotNull JDA jda, long guildId) throws OperationNotSupportedException{
+	default boolean reset(@NonNull JDA jda, long guildId) throws OperationNotSupportedException{
 		throw new OperationNotSupportedException(ConfigurationOperation.RESET);
 	}
 	
-	@NotNull
+	@NonNull
 	default Optional<MessageEmbed> show(long guildId) throws OperationNotSupportedException{
 		throw new OperationNotSupportedException(ConfigurationOperation.SHOW);
 	}
 	
-	@NotNull
+	@NonNull
 	String getName();
 	
-	@NotNull
-	default Collection<Command.Choice> autoComplete(@NotNull CommandAutoCompleteInteractionEvent event){
+	@NonNull
+	default Collection<Command.Choice> autoComplete(@NonNull CommandAutoCompleteInteractionEvent event){
 		return Set.of();
 	}
 }

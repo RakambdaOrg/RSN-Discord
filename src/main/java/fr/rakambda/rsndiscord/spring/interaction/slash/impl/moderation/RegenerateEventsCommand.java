@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
@@ -24,20 +24,20 @@ public class RegenerateEventsCommand implements IExecutableSlashCommandGuild{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "regenerate-events";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getPath(){
 		return "mod/regenerate-events";
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
+	@NonNull
+	public CompletableFuture<?> executeGuild(@NonNull SlashCommandInteraction event, @NonNull Guild guild, @NonNull Member member){
 		var deferred = event.deferReply(true).submit();
 		scheduledEventsService.update(guild);
 		return deferred.thenCompose(empty -> JDAWrappers.edit(event, "Ok").submit());

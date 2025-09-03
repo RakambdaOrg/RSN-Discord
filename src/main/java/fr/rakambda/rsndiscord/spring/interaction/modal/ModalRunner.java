@@ -11,8 +11,8 @@ import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.util.LocalizationService;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.interactions.modals.ModalInteraction;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Objects;
@@ -32,7 +32,7 @@ public class ModalRunner{
 		this.rabbitService = rabbitService;
 	}
 	
-	public void execute(@NotNull ModalInteraction event){
+	public void execute(@NonNull ModalInteraction event){
 		CompletableFuture.completedFuture(event.getModalId())
 				.thenApply(id -> modalService.getExecutableModal(id)
 						.orElseThrow(() -> new IllegalStateException("Unknown modal %s".formatted(id))))
@@ -40,8 +40,8 @@ public class ModalRunner{
 				.exceptionally(ex -> handleExecutionError(event, ex));
 	}
 	
-	@NotNull
-	private CompletableFuture<?> runModal(@NotNull ModalInteraction event, @NotNull IExecutableModal modal){
+	@NonNull
+	private CompletableFuture<?> runModal(@NonNull ModalInteraction event, @NonNull IExecutableModal modal){
 		try{
 			if(event.isFromGuild()){
 				if(!(modal instanceof IExecutableModalGuild modalGuild)){
@@ -62,7 +62,7 @@ public class ModalRunner{
 	}
 	
 	@Nullable
-	private <T> T handleExecutionError(@NotNull ModalInteraction event, @NotNull Throwable ex){
+	private <T> T handleExecutionError(@NonNull ModalInteraction event, @NonNull Throwable ex){
 		log.error("Failed to execute modal {}", event.getModalId(), ex);
 		
 		var exceptionMessage = ex instanceof BotException bex

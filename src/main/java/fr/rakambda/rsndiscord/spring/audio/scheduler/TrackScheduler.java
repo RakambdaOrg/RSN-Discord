@@ -7,7 +7,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import fr.rakambda.rsndiscord.spring.audio.exception.AlreadyInQueueException;
 import fr.rakambda.rsndiscord.spring.audio.exception.NoTrackPlayingException;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -22,7 +22,7 @@ public class TrackScheduler extends AudioEventAdapter implements ITrackScheduler
 	private final Set<ITrackSchedulerStatusListener> listeners;
 	private final LinkedList<AudioTrack> queue;
 	
-	public TrackScheduler(@NotNull AudioPlayer player){
+	public TrackScheduler(@NonNull AudioPlayer player){
 		this.player = player;
 		
 		queue = new LinkedList<>();
@@ -30,7 +30,7 @@ public class TrackScheduler extends AudioEventAdapter implements ITrackScheduler
 	}
 	
 	@Override
-	public void onTrackStart(@NotNull AudioPlayer player, @NotNull AudioTrack track){
+	public void onTrackStart(@NonNull AudioPlayer player, @NonNull AudioTrack track){
 		super.onTrackStart(player, track);
 		log.info("Audio track started {}", track.getIdentifier());
 		
@@ -38,7 +38,7 @@ public class TrackScheduler extends AudioEventAdapter implements ITrackScheduler
 	}
 	
 	@Override
-	public void onTrackEnd(@NotNull AudioPlayer player, @NotNull AudioTrack track, @NotNull AudioTrackEndReason endReason){
+	public void onTrackEnd(@NonNull AudioPlayer player, @NonNull AudioTrack track, @NonNull AudioTrackEndReason endReason){
 		super.onTrackEnd(player, track, endReason);
 		log.info("Track ended ({}): {}", endReason.name(), track.getIdentifier());
 		
@@ -71,12 +71,12 @@ public class TrackScheduler extends AudioEventAdapter implements ITrackScheduler
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public List<AudioTrack> getQueue(){
 		return Collections.unmodifiableList(queue);
 	}
 	
-	@NotNull
+	@NonNull
 	public Optional<AudioTrack> getCurrentTrack(){
 		return Optional.ofNullable(player.getPlayingTrack());
 	}
@@ -111,7 +111,7 @@ public class TrackScheduler extends AudioEventAdapter implements ITrackScheduler
 		player.setVolume(volume);
 	}
 	
-	public void queue(@NotNull AudioTrack track) throws AlreadyInQueueException{
+	public void queue(@NonNull AudioTrack track) throws AlreadyInQueueException{
 		log.info("Queuing new track {}", track.getIdentifier());
 		
 		var alreadyExists = queue.stream().anyMatch(track2 -> Objects.equals(track2.getIdentifier(), track.getIdentifier()));
@@ -122,7 +122,7 @@ public class TrackScheduler extends AudioEventAdapter implements ITrackScheduler
 		internalQueue(track);
 	}
 	
-	private void internalQueue(@NotNull AudioTrack track){
+	private void internalQueue(@NonNull AudioTrack track){
 		queue.offer(track);
 		tryStartNext();
 	}
@@ -144,7 +144,7 @@ public class TrackScheduler extends AudioEventAdapter implements ITrackScheduler
 		return false;
 	}
 	
-	public void addListener(@NotNull ITrackSchedulerStatusListener listener){
+	public void addListener(@NonNull ITrackSchedulerStatusListener listener){
 		listeners.add(listener);
 	}
 }

@@ -8,7 +8,7 @@ import fr.rakambda.rsndiscord.spring.json.converter.ISO8601ZonedDateTimeDeserial
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -30,6 +30,6 @@ public sealed abstract class UserHistory permits UserMovieHistory, UserSeriesHis
 	private ZonedDateTime watchedAt;
 	private String action;
 	
-	@NotNull
+	@NonNull
 	public abstract TraktMediaType getType();
 }

@@ -22,7 +22,7 @@ import fr.rakambda.rsndiscord.spring.storage.repository.AnilistRepository;
 import fr.rakambda.rsndiscord.spring.util.GraphQlService;
 import fr.rakambda.rsndiscord.spring.util.ParseException;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -73,12 +73,12 @@ public class AnilistService{
 				.build();
 	}
 	
-	@NotNull
+	@NonNull
 	public String getCodeLink(){
 		return String.format("%s/oauth/authorize?client_id=%s&response_type=code&redirect_uri=%s", API_URL, settings.getAnilist().getAppId(), settings.getAnilist().getRedirectUri());
 	}
 	
-	public void login(long userId, @NotNull String code) throws AuthFailureException, RequestFailedException{
+	public void login(long userId, @NonNull String code) throws AuthFailureException, RequestFailedException{
 		log.info("Getting access token for {}", userId);
 		
 		var response = HttpUtils.withStatusOkAndBody(apiClient.post()
@@ -111,7 +111,7 @@ public class AnilistService{
 		anilistRepository.save(entity);
 	}
 	
-	@NotNull
+	@NonNull
 	private AnilistEntity getEntity(long userId) throws NotLoggedInException{
 		log.trace("Getting previous access token for {}", userId);
 		return anilistRepository.findById(userId)
@@ -119,7 +119,7 @@ public class AnilistService{
 				.orElseThrow(NotLoggedInException::new);
 	}
 	
-	@NotNull
+	@NonNull
 	private String getUserToken(long userId) throws NotLoggedInException{
 		var entity = getEntity(userId);
 		if(entity.getRefreshTokenExpire().isAfter(Instant.now())){
@@ -134,13 +134,13 @@ public class AnilistService{
 		throw new NotLoggedInException();
 	}
 	
-	@NotNull
-	private ViewerResponse getViewerId(@NotNull String token) throws RequestFailedException{
+	@NonNull
+	private ViewerResponse getViewerId(@NonNull String token) throws RequestFailedException{
 		return gqlQuery(token, "api/anilist/query/viewer.gql", Map.of(), new ParameterizedTypeReference<>(){});
 	}
 	
-	@NotNull
-	public Collection<Notification> getAllNotifications(long userId, @NotNull Collection<NotificationType> types, boolean resetNotificationCount) throws RequestFailedException, NotLoggedInException{
+	@NonNull
+	public Collection<Notification> getAllNotifications(long userId, @NonNull Collection<NotificationType> types, boolean resetNotificationCount) throws RequestFailedException, NotLoggedInException{
 		log.info("Getting notifications for {}", userId);
 		
 		Collection<Notification> elements = new LinkedList<>();
@@ -159,8 +159,8 @@ public class AnilistService{
 		return elements;
 	}
 	
-	@NotNull
-	private PageResponse<NotificationPagedResponse> getNotifications(@NotNull String token, @NotNull Collection<NotificationType> types, boolean resetNotificationCount, int page) throws RequestFailedException{
+	@NonNull
+	private PageResponse<NotificationPagedResponse> getNotifications(@NonNull String token, @NonNull Collection<NotificationType> types, boolean resetNotificationCount, int page) throws RequestFailedException{
 		var params = Map.of(
 				"page", page,
 				"perPage", 150,
@@ -170,7 +170,7 @@ public class AnilistService{
 		return gqlQuery(token, "api/anilist/query/notification.gql", params, new ParameterizedTypeReference<>(){});
 	}
 	
-	@NotNull
+	@NonNull
 	public Collection<MediaList> getAllMediaList(long userId, int anilistUserId) throws NotLoggedInException, RequestFailedException{
 		log.info("Getting media list for {}", userId);
 		
@@ -190,8 +190,8 @@ public class AnilistService{
 		return elements;
 	}
 	
-	@NotNull
-	private PageResponse<MediaListPagedResponse> getMediaList(@NotNull String token, long anilistUserId, int page) throws RequestFailedException{
+	@NonNull
+	private PageResponse<MediaListPagedResponse> getMediaList(@NonNull String token, long anilistUserId, int page) throws RequestFailedException{
 		var params = Map.<String, Object> of(
 				"page", page,
 				"perPage", 150,
@@ -200,8 +200,8 @@ public class AnilistService{
 		return gqlQuery(token, "api/anilist/query/mediaList.gql", params, new ParameterizedTypeReference<>(){});
 	}
 	
-	@NotNull
-	private <T> T gqlQuery(@NotNull String token, @NotNull String definition, @NotNull Map<String, Object> variables, @NotNull ParameterizedTypeReference<GqlResponse<T>> type) throws RequestFailedException{
+	@NonNull
+	private <T> T gqlQuery(@NonNull String token, @NonNull String definition, @NonNull Map<String, Object> variables, @NonNull ParameterizedTypeReference<GqlResponse<T>> type) throws RequestFailedException{
 		try{
 			log.debug("Sending gql query from definition {}", definition);
 			
@@ -234,8 +234,8 @@ public class AnilistService{
 		}
 	}
 	
-	@NotNull
-	private static Duration calculateDelay(@NotNull Throwable failure){
+	@NonNull
+	private static Duration calculateDelay(@NonNull Throwable failure){
 		if(!(failure instanceof WebClientResponseException.TooManyRequests webClientResponseException)){
 			return Duration.ofMinutes(1);
 		}

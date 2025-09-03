@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.Objects;
@@ -38,14 +38,14 @@ public class WewardDeleteButtonHandler implements IExecutableButtonGuild{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getComponentId(){
 		return COMPONENT_ID;
 	}
 	
-	@NotNull
+	@NonNull
 	@Override
-	public CompletableFuture<?> executeGuild(@NotNull ButtonInteraction event, @NotNull Guild guild, @NotNull Member member) throws InvalidChannelTypeException{
+	public CompletableFuture<?> executeGuild(@NonNull ButtonInteraction event, @NonNull Guild guild, @NonNull Member member) throws InvalidChannelTypeException{
 		var channel = event.getChannel();
 		var notOwnerContent = localizationService.translate(event.getGuildLocale(), "weward.card-delete-not-owner");
 		
@@ -73,8 +73,8 @@ public class WewardDeleteButtonHandler implements IExecutableButtonGuild{
 		throw new InvalidChannelTypeException(event.getChannelType());
 	}
 	
-	@NotNull
-	private Optional<UserSnowflake> getOwner(@NotNull Message message){
+	@NonNull
+	private Optional<UserSnowflake> getOwner(@NonNull Message message){
 		return message.getEmbeds().stream()
 				.filter(Objects::nonNull)
 				.map(MessageEmbed::getFooter)
@@ -85,8 +85,8 @@ public class WewardDeleteButtonHandler implements IExecutableButtonGuild{
 				.map(User::fromId);
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> deleteThread(@NotNull ThreadChannel threadChannel, @NotNull CompletableFuture<InteractionHook> deferred){
+	@NonNull
+	private CompletableFuture<Void> deleteThread(@NonNull ThreadChannel threadChannel, @NonNull CompletableFuture<InteractionHook> deferred){
 		if(threadChannel.getParentChannel().getType() == ChannelType.FORUM){
 			return deferred.thenCompose(empty -> JDAWrappers.delete(threadChannel).submit());
 		}
@@ -94,8 +94,8 @@ public class WewardDeleteButtonHandler implements IExecutableButtonGuild{
 		return deferred.thenCompose(m -> handleThreadChannel(threadChannel));
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> handleThreadChannel(@NotNull ThreadChannel threadChannel){
+	@NonNull
+	private CompletableFuture<Void> handleThreadChannel(@NonNull ThreadChannel threadChannel){
 		return threadChannel.retrieveParentMessage().submit()
 				.thenCompose(message -> JDAWrappers.delete(message).submit())
 				.exceptionally(throwable -> {
@@ -105,7 +105,7 @@ public class WewardDeleteButtonHandler implements IExecutableButtonGuild{
 				.thenCompose(empty -> JDAWrappers.delete(threadChannel).submit());
 	}
 	
-	@NotNull
+	@NonNull
 	public static Supplier<Button> builder(){
 		return () -> Button.danger(COMPONENT_ID, "No longer available").withEmoji(Emoji.fromUnicode("U+1F5D1"));
 	}

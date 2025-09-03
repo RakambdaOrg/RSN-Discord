@@ -24,7 +24,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.localization.LocalizationFunction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
@@ -62,20 +62,20 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "configuration";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getPath(){
 		return getId();
 	}
 	
 	@Override
-	@NotNull
-	public CommandData getDefinition(@NotNull LocalizationFunction localizationFunction){
+	@NonNull
+	public CommandData getDefinition(@NonNull LocalizationFunction localizationFunction){
 		return Commands.slash("configuration", "Change the bot's configuration")
 				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR))
 				.setLocalizationFunction(localizationFunction)
@@ -97,8 +97,8 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member) throws UnknownAccessorException, InvalidOperationTypeException, OperationNotSupportedException{
+	@NonNull
+	public CompletableFuture<?> executeGuild(@NonNull SlashCommandInteraction event, @NonNull Guild guild, @NonNull Member member) throws UnknownAccessorException, InvalidOperationTypeException, OperationNotSupportedException{
 		var deferred = event.deferReply(true).submit();
 		
 		var accessor = Optional.ofNullable(accessors.get(event.getOption(NAME_OPTION_ID).getAsString())).orElseThrow(unknownAccessorExceptionGenerator);
@@ -126,8 +126,8 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 				});
 	}
 	
-	@NotNull
-	private CompletableFuture<Message> handleSetOperation(@NotNull SlashCommandInteraction event, long guildId, @NotNull IConfigurationAccessor accessor){
+	@NonNull
+	private CompletableFuture<Message> handleSetOperation(@NonNull SlashCommandInteraction event, long guildId, @NonNull IConfigurationAccessor accessor){
 		try{
 			if(accessor.set(event.getJDA(), guildId, event.getOption(VALUE_OPTION_ID).getAsString())){
 				return JDAWrappers.edit(event, "Value modified").submit();
@@ -139,8 +139,8 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 		}
 	}
 	
-	@NotNull
-	private CompletableFuture<Message> handleResetOperation(@NotNull SlashCommandInteraction event, long guildId, @NotNull IConfigurationAccessor accessor){
+	@NonNull
+	private CompletableFuture<Message> handleResetOperation(@NonNull SlashCommandInteraction event, long guildId, @NonNull IConfigurationAccessor accessor){
 		try{
 			if(accessor.reset(event.getJDA(), guildId)){
 				return JDAWrappers.edit(event, "Value reset").submit();
@@ -152,8 +152,8 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 		}
 	}
 	
-	@NotNull
-	private CompletableFuture<Message> handleAddOperation(@NotNull SlashCommandInteraction event, long guildId, @NotNull IConfigurationAccessor accessor){
+	@NonNull
+	private CompletableFuture<Message> handleAddOperation(@NonNull SlashCommandInteraction event, long guildId, @NonNull IConfigurationAccessor accessor){
 		try{
 			if(accessor.add(event.getJDA(), guildId, event.getOption(VALUE_OPTION_ID).getAsString())){
 				return JDAWrappers.edit(event, "Value added").submit();
@@ -165,8 +165,8 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 		}
 	}
 	
-	@NotNull
-	private CompletableFuture<Message> handleRemoveOperation(@NotNull SlashCommandInteraction event, long guildId, @NotNull IConfigurationAccessor accessor){
+	@NonNull
+	private CompletableFuture<Message> handleRemoveOperation(@NonNull SlashCommandInteraction event, long guildId, @NonNull IConfigurationAccessor accessor){
 		try{
 			if(accessor.remove(event.getJDA(), guildId, event.getOption(VALUE_OPTION_ID).getAsString())){
 				return JDAWrappers.edit(event, "Value removed").submit();
@@ -178,8 +178,8 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 		}
 	}
 	
-	@NotNull
-	private CompletableFuture<Message> handleShowOperation(@NotNull SlashCommandInteraction event, long guildId, @NotNull IConfigurationAccessor accessor){
+	@NonNull
+	private CompletableFuture<Message> handleShowOperation(@NonNull SlashCommandInteraction event, long guildId, @NonNull IConfigurationAccessor accessor){
 		try{
 			return accessor.show(guildId)
 					.map(embed -> JDAWrappers.edit(event, embed).submit())
@@ -191,8 +191,8 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> autoCompleteGuild(@NotNull CommandAutoCompleteInteractionEvent event, @NotNull Guild guild, @NotNull Member member){
+	@NonNull
+	public CompletableFuture<?> autoCompleteGuild(@NonNull CommandAutoCompleteInteractionEvent event, @NonNull Guild guild, @NonNull Member member){
 		return switch(event.getFocusedOption().getName()){
 			case NAME_OPTION_ID -> autoCompleteName(event);
 			case VALUE_OPTION_ID -> autoCompleteValue(event);
@@ -200,8 +200,8 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 		};
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> autoCompleteName(@NotNull CommandAutoCompleteInteractionEvent event){
+	@NonNull
+	private CompletableFuture<Void> autoCompleteName(@NonNull CommandAutoCompleteInteractionEvent event){
 		var choices = getConfigNamesStartingWith(event.getFocusedOption().getValue())
 				.limit(OptionData.MAX_CHOICES)
 				.sorted()
@@ -210,8 +210,8 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 		return JDAWrappers.reply(event, choices).submit();
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> autoCompleteValue(@NotNull CommandAutoCompleteInteractionEvent event){
+	@NonNull
+	private CompletableFuture<Void> autoCompleteValue(@NonNull CommandAutoCompleteInteractionEvent event){
 		return Optional.ofNullable(event.getOption(NAME_OPTION_ID))
 				.map(OptionMapping::getAsString)
 				.map(accessors::get)
@@ -222,8 +222,8 @@ public class ConfigurationCommand implements IRegistrableSlashCommand, IExecutab
 				.orElseGet(() -> CompletableFuture.completedFuture(null));
 	}
 	
-	@NotNull
-	private Stream<String> getConfigNamesStartingWith(@NotNull String value){
+	@NonNull
+	private Stream<String> getConfigNamesStartingWith(@NonNull String value){
 		if(value.isBlank()){
 			return accessors.keySet().stream();
 		}

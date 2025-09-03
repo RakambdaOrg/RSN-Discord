@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -27,14 +27,14 @@ public class WewardNoLongerNeededButtonHandler implements IExecutableButtonGuild
 	);
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getComponentId(){
 		return COMPONENT_ID;
 	}
 	
-	@NotNull
+	@NonNull
 	@Override
-	public CompletableFuture<?> executeGuild(@NotNull ButtonInteraction event, @NotNull Guild guild, @NotNull Member member) throws InvalidChannelTypeException{
+	public CompletableFuture<?> executeGuild(@NonNull ButtonInteraction event, @NonNull Guild guild, @NonNull Member member) throws InvalidChannelTypeException{
 		var channel = event.getChannel();
 		
 		if(event.getChannelType() == ChannelType.GUILD_PUBLIC_THREAD){
@@ -48,7 +48,7 @@ public class WewardNoLongerNeededButtonHandler implements IExecutableButtonGuild
 		throw new InvalidChannelTypeException(event.getChannelType());
 	}
 	
-	@NotNull
+	@NonNull
 	public static Supplier<Button> builder(){
 		return () -> Button.secondary(COMPONENT_ID, "No longer needed").withEmoji(Emoji.fromUnicode("U+1F6D1"));
 	}

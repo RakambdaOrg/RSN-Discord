@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 @Data
 @AllArgsConstructor
@@ -13,11 +13,11 @@ import org.jetbrains.annotations.NotNull;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public final class UserMovieHistory extends UserHistory{
-	@NotNull
+	@NonNull
 	private Movie movie;
 	
 	@Override
-	@NotNull
+	@NonNull
 	public Long getId(){
 		return movie.getIds().getSimkl();
 	}

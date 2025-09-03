@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.RestAction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -28,20 +28,20 @@ public class TraktRenewTokenRunner extends WrappedTriggerTask{
 	private final TraktService traktService;
 	
 	@Autowired
-	protected TraktRenewTokenRunner(@NotNull JDA jda, TraktRepository traktRepository, TraktService traktService){
+	protected TraktRenewTokenRunner(@NonNull JDA jda, TraktRepository traktRepository, TraktService traktService){
 		super(jda);
 		this.traktRepository = traktRepository;
 		this.traktService = traktService;
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "trakt.token.renew";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	protected String getName(){
 		return "Trakt renew token";
 	}
@@ -52,17 +52,17 @@ public class TraktRenewTokenRunner extends WrappedTriggerTask{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	protected TemporalUnit getPeriodUnit(){
 		return ChronoUnit.HOURS;
 	}
 	
 	@Override
-	protected void executeGlobal(@NotNull JDA jda){
+	protected void executeGlobal(@NonNull JDA jda){
 		traktRepository.findAllByEnabledIsTrue().forEach(this::processEntity);
 	}
 	
-	private void processEntity(@NotNull TraktEntity entity){
+	private void processEntity(@NonNull TraktEntity entity){
 		if(Objects.isNull(entity.getAccessToken())){
 			return;
 		}
@@ -97,7 +97,7 @@ public class TraktRenewTokenRunner extends WrappedTriggerTask{
 	}
 	
 	@Override
-	protected void executeGuild(@NotNull Guild guild) throws Exception{
+	protected void executeGuild(@NonNull Guild guild) throws Exception{
 	
 	}
 }

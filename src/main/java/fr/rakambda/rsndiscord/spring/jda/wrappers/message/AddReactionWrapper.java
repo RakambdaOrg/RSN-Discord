@@ -5,14 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.requests.RestAction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 @Slf4j
 public class AddReactionWrapper extends ActionWrapper<Void, RestAction<Void>>{
 	private final Message message;
 	private final Emoji reaction;
 	
-	public AddReactionWrapper(@NotNull Message message, @NotNull Emoji reaction){
+	public AddReactionWrapper(@NonNull Message message, @NonNull Emoji reaction){
 		super(message.addReaction(reaction));
 		this.message = message;
 		this.reaction = reaction;

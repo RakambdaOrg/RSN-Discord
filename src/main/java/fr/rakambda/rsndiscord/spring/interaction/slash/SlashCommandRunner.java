@@ -13,8 +13,8 @@ import fr.rakambda.rsndiscord.spring.util.LocalizationService;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Objects;
@@ -34,7 +34,7 @@ public class SlashCommandRunner{
 		this.rabbitService = rabbitService;
 	}
 	
-	public void execute(@NotNull SlashCommandInteractionEvent event){
+	public void execute(@NonNull SlashCommandInteractionEvent event){
 		CompletableFuture.completedFuture(event.getFullCommandName())
 				.thenApply(fullCommandName -> slashCommandService.getExecutableCommand(fullCommandName)
 						.orElseThrow(() -> new IllegalStateException("Unknown command %s".formatted(fullCommandName))))
@@ -43,8 +43,8 @@ public class SlashCommandRunner{
 				.exceptionally(ex -> handleExecutionError(event, ex));
 	}
 	
-	@NotNull
-	private CompletableFuture<?> runCommand(@NotNull SlashCommandInteractionEvent event, @NotNull IExecutableSlashCommand command){
+	@NonNull
+	private CompletableFuture<?> runCommand(@NonNull SlashCommandInteractionEvent event, @NonNull IExecutableSlashCommand command){
 		try{
 			if(event.isFromGuild()){
 				
@@ -65,8 +65,8 @@ public class SlashCommandRunner{
 		}
 	}
 	
-	@NotNull
-	private CompletableFuture<IExecutableSlashCommand> verifyAllowed(@NotNull SlashCommandInteraction event, @NotNull IExecutableSlashCommand command){
+	@NonNull
+	private CompletableFuture<IExecutableSlashCommand> verifyAllowed(@NonNull SlashCommandInteraction event, @NonNull IExecutableSlashCommand command){
 		if(!command.getPermission().isAllowed(event.getUser())){
 			return CompletableFuture.failedFuture(new NotAllowedException());
 		}
@@ -74,7 +74,7 @@ public class SlashCommandRunner{
 	}
 	
 	@Nullable
-	private <T> T handleExecutionError(@NotNull SlashCommandInteractionEvent event, @NotNull Throwable ex){
+	private <T> T handleExecutionError(@NonNull SlashCommandInteractionEvent event, @NonNull Throwable ex){
 		log.error("Failed to execute command {}", event.getFullCommandName(), ex);
 		
 		var exceptionMessage = ex instanceof BotException bex

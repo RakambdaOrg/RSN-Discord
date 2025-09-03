@@ -4,7 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.nio.ByteBuffer;
 import static java.nio.ByteBuffer.wrap;
 import static java.util.Objects.isNull;

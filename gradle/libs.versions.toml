@@ -4,7 +4,6 @@ lavaplayer-version = "2.2.4"
 lavaplayer-youtube-v2-version = "1.13.5"
 lavasrc-version = "4.8.0"
 lp_cross-version = "0.1.1"
-jetbrains-annotations-version = "26.0.2"
 opus-version = "1.1.1"
 
 names-version = "0.52.0"
@@ -19,7 +18,6 @@ lavaplayer-youtube-v2 = { group = "dev.lavalink.youtube", name = "v2", version.r
 lavasrc = { group = "com.github.topi314.lavasrc", name = "lavasrc", version.ref = "lavasrc-version"}
 lavasrc-protocol = { group = "com.github.topi314.lavasrc", name = "lavasrc-protocol", version.ref = "lavasrc-version"}
 lpCross = { group = "com.github.natanbc", name = "lp-cross", version.ref = "lp_cross-version" }
-jetbrainsAnnotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations-version" }
 opus-api = { group = "club.minnced", name = "opus-java-api", version.ref = "opus-version" }
 opus-natives = { group = "club.minnced", name = "opus-java-natives", version.ref = "opus-version" }
 

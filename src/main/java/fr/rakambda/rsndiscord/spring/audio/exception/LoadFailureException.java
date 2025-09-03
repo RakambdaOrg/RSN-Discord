@@ -1,9 +1,9 @@
 package fr.rakambda.rsndiscord.spring.audio.exception;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class LoadFailureException extends TrackLoadException{
-	public LoadFailureException(@NotNull Throwable throwable){
+	public LoadFailureException(@NonNull Throwable throwable){
 		super("Failed to load track", throwable);
 	}
 }

@@ -1,8 +1,8 @@
 package fr.rakambda.rsndiscord.spring.interaction.slash.permission;
 
 import net.dv8tion.jda.api.entities.User;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public interface IPermission{
-	boolean isAllowed(@NotNull User user);
+	boolean isAllowed(@NonNull User user);
 }

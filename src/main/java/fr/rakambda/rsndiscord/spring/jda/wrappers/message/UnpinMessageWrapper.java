@@ -4,13 +4,13 @@ import fr.rakambda.rsndiscord.spring.jda.ActionWrapper;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.requests.RestAction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 @Slf4j
 public class UnpinMessageWrapper extends ActionWrapper<Void, RestAction<Void>>{
 	private final Message message;
 	
-	public UnpinMessageWrapper(@NotNull Message message){
+	public UnpinMessageWrapper(@NonNull Message message){
 		super(message.unpin());
 		this.message = message;
 	}

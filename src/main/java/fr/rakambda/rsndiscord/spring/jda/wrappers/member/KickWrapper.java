@@ -5,20 +5,20 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 @Slf4j
 public class KickWrapper extends ActionWrapper<Void, AuditableRestAction<Void>>{
 	private final Member member;
 	private String reason;
 	
-	public KickWrapper(@NotNull Guild guild, @NotNull Member member){
+	public KickWrapper(@NonNull Guild guild, @NonNull Member member){
 		super(guild.kick(member));
 		this.member = member;
 	}
 	
-	@NotNull
+	@NonNull
 	public KickWrapper reason(@Nullable String reason){
 		getAction().reason(reason);
 		this.reason = reason;

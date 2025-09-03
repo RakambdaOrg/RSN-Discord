@@ -52,8 +52,8 @@ import net.dv8tion.jda.api.interactions.callbacks.IModalCallback;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.modals.Modal;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import java.awt.*;
 import java.util.Collection;
 import java.util.List;
@@ -63,238 +63,238 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class JDAWrappers{
-	@NotNull
-	public static SendMessageWrapper message(@NotNull MessageChannel channel, @NotNull String message){
+	@NonNull
+	public static SendMessageWrapper message(@NonNull MessageChannel channel, @NonNull String message){
 		return new SendMessageWrapper(channel, message);
 	}
 	
-	@NotNull
-	public static SendMessageWrapper message(@NotNull MessageChannel channel, @NotNull MessageTopLevelComponent component, @NotNull MessageTopLevelComponent... components){
+	@NonNull
+	public static SendMessageWrapper message(@NonNull MessageChannel channel, @NonNull MessageTopLevelComponent component, @NonNull MessageTopLevelComponent... components){
 		return new SendMessageWrapper(channel, component, components);
 	}
 	
-	@NotNull
-	public static SendMessageWrapper message(@NotNull MessageChannel channel, @NotNull MessageEmbed embed){
+	@NonNull
+	public static SendMessageWrapper message(@NonNull MessageChannel channel, @NonNull MessageEmbed embed){
 		return new SendMessageWrapper(channel, embed);
 	}
 	
-	@NotNull
-	public static SendMessageWrapper message(@NotNull MessageChannel channel, @NotNull Message message){
+	@NonNull
+	public static SendMessageWrapper message(@NonNull MessageChannel channel, @NonNull Message message){
 		return new SendMessageWrapper(channel, message);
 	}
 	
-	@NotNull
-	public static SendMessageWrapper message(@NotNull GenericMessageEvent event, @NotNull String message){
+	@NonNull
+	public static SendMessageWrapper message(@NonNull GenericMessageEvent event, @NonNull String message){
 		return message(event.getChannel(), message);
 	}
 	
-	@NotNull
-	public static EditMessageWrapper edit(@NotNull Message message, @NotNull String content){
+	@NonNull
+	public static EditMessageWrapper edit(@NonNull Message message, @NonNull String content){
 		return new EditMessageWrapper(message, content);
 	}
 	
-	@NotNull
-	public static EditMessageWrapper edit(@NotNull Message message, @NotNull MessageEmbed embed){
+	@NonNull
+	public static EditMessageWrapper edit(@NonNull Message message, @NonNull MessageEmbed embed){
 		return new EditMessageWrapper(message, embed);
 	}
 	
-	@NotNull
-	public static EditMessageWrapper editComponents(@NotNull Message message, @NotNull MessageTopLevelComponent... components){
+	@NonNull
+	public static EditMessageWrapper editComponents(@NonNull Message message, @NonNull MessageTopLevelComponent... components){
 		return new EditMessageWrapper(message).setActionRow(components);
 	}
 	
-	@NotNull
-	public static EditMessageWrapper editComponents(@NotNull Message message, @NotNull List<MessageTopLevelComponent> components){
+	@NonNull
+	public static EditMessageWrapper editComponents(@NonNull Message message, @NonNull List<MessageTopLevelComponent> components){
 		return new EditMessageWrapper(message).setActionRow(components);
 	}
 	
-	@NotNull
-	public static EditHookWrapper editComponents(@NotNull InteractionHook hook, @NotNull MessageTopLevelComponent... components){
+	@NonNull
+	public static EditHookWrapper editComponents(@NonNull InteractionHook hook, @NonNull MessageTopLevelComponent... components){
 		return new EditHookWrapper(hook, components);
 	}
 	
-	@NotNull
-	public static SendMessageWrapper reply(@NotNull Message replyToMessage, @NotNull String message){
+	@NonNull
+	public static SendMessageWrapper reply(@NonNull Message replyToMessage, @NonNull String message){
 		return new SendMessageWrapper(replyToMessage.getChannel(), message).replyTo(replyToMessage);
 	}
 	
-	@NotNull
-	public static AddReactionWrapper addReaction(@NotNull Message message, @NotNull Emoji emote){
+	@NonNull
+	public static AddReactionWrapper addReaction(@NonNull Message message, @NonNull Emoji emote){
 		return new AddReactionWrapper(message, emote);
 	}
 	
-	@NotNull
-	public static RemoveAllReactionWrapper removeAllReactions(@NotNull MessageReaction messageReaction){
+	@NonNull
+	public static RemoveAllReactionWrapper removeAllReactions(@NonNull MessageReaction messageReaction){
 		return new RemoveAllReactionWrapper(messageReaction);
 	}
 	
-	@NotNull
-	public static RemoveAllReactionWrapper removeAllReactions(@NotNull Message message, @NotNull Emoji emoji){
+	@NonNull
+	public static RemoveAllReactionWrapper removeAllReactions(@NonNull Message message, @NonNull Emoji emoji){
 		return new RemoveAllReactionWrapper(message, emoji);
 	}
 	
-	@NotNull
-	public static ClearReactionsWrapper clearReactions(@NotNull Message message){
+	@NonNull
+	public static ClearReactionsWrapper clearReactions(@NonNull Message message){
 		return new ClearReactionsWrapper(message);
 	}
 	
-	@NotNull
-	public static UnpinMessageWrapper unpin(@NotNull Message message){
+	@NonNull
+	public static UnpinMessageWrapper unpin(@NonNull Message message){
 		return new UnpinMessageWrapper(message);
 	}
 	
-	@NotNull
-	public static DeleteMessageWrapper delete(@NotNull Message message){
+	@NonNull
+	public static DeleteMessageWrapper delete(@NonNull Message message){
 		return new DeleteMessageWrapper(message);
 	}
 	
-	@NotNull
-	public static DeleteMessageWrapper delete(@NotNull MessageChannel channel, long messageId){
+	@NonNull
+	public static DeleteMessageWrapper delete(@NonNull MessageChannel channel, long messageId){
 		return new DeleteMessageWrapper(channel, messageId);
 	}
 	
-	@NotNull
-	public static CreateThreadWrapper createThread(@NotNull Message message, @NotNull String name){
+	@NonNull
+	public static CreateThreadWrapper createThread(@NonNull Message message, @NonNull String name){
 		return new CreateThreadWrapper(message, name);
 	}
 	
-	@NotNull
-	public static EditThreadWrapper editThread(@NotNull ThreadChannel threadChannel){
+	@NonNull
+	public static EditThreadWrapper editThread(@NonNull ThreadChannel threadChannel){
 		return new EditThreadWrapper(threadChannel);
 	}
 	
-	@NotNull
-	public static AddThreadMemberWrapper addThreadMember(@NotNull ThreadChannel thread, @NotNull User user){
+	@NonNull
+	public static AddThreadMemberWrapper addThreadMember(@NonNull ThreadChannel thread, @NonNull User user){
 		return new AddThreadMemberWrapper(thread, user);
 	}
 	
-	@NotNull
-	public static AddThreadMemberWrapper addThreadMember(@NotNull ThreadChannel thread, @NotNull Member member){
+	@NonNull
+	public static AddThreadMemberWrapper addThreadMember(@NonNull ThreadChannel thread, @NonNull Member member){
 		return new AddThreadMemberWrapper(thread, member);
 	}
 	
-	@NotNull
-	public static DeleteThreadWrapper delete(@NotNull ThreadChannel thread){
+	@NonNull
+	public static DeleteThreadWrapper delete(@NonNull ThreadChannel thread){
 		return new DeleteThreadWrapper(thread);
 	}
 	
-	@NotNull
-	public static InteractionEditMessageWrapper edit(@NotNull IReplyCallback event, @NotNull String message){
+	@NonNull
+	public static InteractionEditMessageWrapper edit(@NonNull IReplyCallback event, @NonNull String message){
 		return new InteractionEditMessageWrapper(event.getGuild(), event.getHook(), message);
 	}
 	
-	@NotNull
-	public static InteractionEditMessageWrapper edit(@NotNull IReplyCallback event, @NotNull MessageEmbed embed){
+	@NonNull
+	public static InteractionEditMessageWrapper edit(@NonNull IReplyCallback event, @NonNull MessageEmbed embed){
 		return new InteractionEditMessageWrapper(event.getGuild(), event.getHook(), embed);
 	}
 	
-	@NotNull
-	public static InteractionEditMessageWrapper edit(@NotNull IReplyCallback event, @NotNull MessageTopLevelComponent... layouts){
+	@NonNull
+	public static InteractionEditMessageWrapper edit(@NonNull IReplyCallback event, @NonNull MessageTopLevelComponent... layouts){
 		return new InteractionEditMessageWrapper(event.getGuild(), event.getHook(), layouts);
 	}
 	
-	@NotNull
-	public static InteractionNewMessageWrapper reply(@NotNull IReplyCallback event, @NotNull String message){
+	@NonNull
+	public static InteractionNewMessageWrapper reply(@NonNull IReplyCallback event, @NonNull String message){
 		return new InteractionNewMessageWrapper(event.getGuild(), event.getHook(), message);
 	}
 	
-	@NotNull
-	public static InteractionNewMessageWrapper reply(@NotNull IReplyCallback event, @NotNull MessageEmbed embed){
+	@NonNull
+	public static InteractionNewMessageWrapper reply(@NonNull IReplyCallback event, @NonNull MessageEmbed embed){
 		return new InteractionNewMessageWrapper(event.getGuild(), event.getHook(), embed);
 	}
 	
-	@NotNull
-	public static InteractionReplyModalWrapper reply(@NotNull IModalCallback event, @NotNull Modal modal){
+	@NonNull
+	public static InteractionReplyModalWrapper reply(@NonNull IModalCallback event, @NonNull Modal modal){
 		return new InteractionReplyModalWrapper(event.getGuild(), event, modal);
 	}
 	
-	@NotNull
-	public static InteractionEditMessageWrapper removeComponents(@NotNull IReplyCallback event){
+	@NonNull
+	public static InteractionEditMessageWrapper removeComponents(@NonNull IReplyCallback event){
 		return new InteractionEditMessageWrapper(event.getGuild(), event.getHook()).clearActionRows();
 	}
 	
-	@NotNull
-	public static EditChannelWrapper edit(@NotNull TextChannel channel){
+	@NonNull
+	public static EditChannelWrapper edit(@NonNull TextChannel channel){
 		return new EditChannelWrapper(channel);
 	}
 	
-	@NotNull
-	public static DeleteChannelWrapper delete(@NotNull TextChannel channel){
+	@NonNull
+	public static DeleteChannelWrapper delete(@NonNull TextChannel channel){
 		return new DeleteChannelWrapper(channel);
 	}
 	
-	@NotNull
-	public static KickWrapper kick(@NotNull Member member){
+	@NonNull
+	public static KickWrapper kick(@NonNull Member member){
 		return new KickWrapper(member.getGuild(), member);
 	}
 	
-	@NotNull
-	public static BanWrapper ban(@NotNull Member target, int deletionDays){
+	@NonNull
+	public static BanWrapper ban(@NonNull Member target, int deletionDays){
 		return new BanWrapper(target.getGuild(), target, deletionDays);
 	}
 	
-	@NotNull
-	public static MuteWrapper mute(@NotNull Member member, boolean state){
+	@NonNull
+	public static MuteWrapper mute(@NonNull Member member, boolean state){
 		return new MuteWrapper(member.getGuild(), member, state);
 	}
 	
-	@NotNull
-	public static DeafenWrapper deafen(@NotNull Member member, boolean state){
+	@NonNull
+	public static DeafenWrapper deafen(@NonNull Member member, boolean state){
 		return new DeafenWrapper(member.getGuild(), member, state);
 	}
 	
-	@NotNull
-	public static RemoveRoleWrapper removeRole(@NotNull Member member, @NotNull Role role){
+	@NonNull
+	public static RemoveRoleWrapper removeRole(@NonNull Member member, @NonNull Role role){
 		return new RemoveRoleWrapper(member.getGuild(), member, role);
 	}
 	
-	@NotNull
-	public static AddRoleWrapper addRole(@NotNull Member member, @NotNull Role role){
+	@NonNull
+	public static AddRoleWrapper addRole(@NonNull Member member, @NonNull Role role){
 		return new AddRoleWrapper(member.getGuild(), member, role);
 	}
 	
-	@NotNull
-	public static ModifyNicknameWrapper modifyNickname(@NotNull Member target, @Nullable String nickname){
+	@NonNull
+	public static ModifyNicknameWrapper modifyNickname(@NonNull Member target, @Nullable String nickname){
 		return new ModifyNicknameWrapper(target.getGuild(), target, nickname);
 	}
 	
-	@NotNull
-	public static SetColorWrapper setColor(@NotNull Role role, int color){
+	@NonNull
+	public static SetColorWrapper setColor(@NonNull Role role, int color){
 		return new SetColorWrapper(role, new Color(color));
 	}
 	
-	@NotNull
-	public static SetColorWrapper setColor(@NotNull Role role, @Nullable Color color){
+	@NonNull
+	public static SetColorWrapper setColor(@NonNull Role role, @Nullable Color color){
 		return new SetColorWrapper(role, color);
 	}
 	
-	@NotNull
-	public static UnbanWrapper unban(@NotNull Guild guild, @NotNull UserSnowflake userId){
+	@NonNull
+	public static UnbanWrapper unban(@NonNull Guild guild, @NonNull UserSnowflake userId){
 		return new UnbanWrapper(guild, userId);
 	}
 	
-	@NotNull
-	public static EditPresenceWrapper editPresence(@NotNull JDA jda){
+	@NonNull
+	public static EditPresenceWrapper editPresence(@NonNull JDA jda){
 		return new EditPresenceWrapper(jda);
 	}
 	
-	@NotNull
-	public static AutoCompleteWrapper reply(@NotNull CommandAutoCompleteInteractionEvent event, @NotNull Collection<Command.Choice> choices){
+	@NonNull
+	public static AutoCompleteWrapper reply(@NonNull CommandAutoCompleteInteractionEvent event, @NonNull Collection<Command.Choice> choices){
 		return new AutoCompleteWrapper(event, choices);
 	}
 	
-	@NotNull
-	public static HistoryChannelWrapper history(@NotNull MessageChannel channel){
+	@NonNull
+	public static HistoryChannelWrapper history(@NonNull MessageChannel channel){
 		return new HistoryChannelWrapper(channel);
 	}
 	
-	@NotNull
-	public static Optional<GuildMessageChannel> findChannel(@NotNull JDA jda, long channelId){
+	@NonNull
+	public static Optional<GuildMessageChannel> findChannel(@NonNull JDA jda, long channelId){
 		return Optional.ofNullable(jda.getTextChannelById(channelId));
 	}
 	
-	@NotNull
-	public static Optional<User> findUser(@NotNull JDA jda, long userId){
+	@NonNull
+	public static Optional<User> findUser(@NonNull JDA jda, long userId){
 		try{
 			return Optional.ofNullable(jda.retrieveUserById(userId).complete());
 		}
@@ -303,8 +303,8 @@ public class JDAWrappers{
 		}
 	}
 	
-	@NotNull
-	public static Optional<Member> findMember(@NotNull Guild guild, long userId){
+	@NonNull
+	public static Optional<Member> findMember(@NonNull Guild guild, long userId){
 		try{
 			return Optional.ofNullable(guild.retrieveMemberById(userId).complete());
 		}
@@ -313,7 +313,7 @@ public class JDAWrappers{
 		}
 	}
 	
-	public static boolean isMember(@NotNull Guild guild, long userId){
+	public static boolean isMember(@NonNull Guild guild, long userId){
 		if(guild.isLoaded()){
 			if(guild.isMember(UserSnowflake.fromId(userId))){
 				return true;
@@ -323,7 +323,7 @@ public class JDAWrappers{
 		return findMember(guild, userId).isPresent();
 	}
 	
-	@NotNull
+	@NonNull
 	public static CompletableFuture<Void> delay(int seconds){
 		var delay = CompletableFuture.delayedExecutor(seconds, TimeUnit.SECONDS);
 		return CompletableFuture.supplyAsync(() -> null, delay);

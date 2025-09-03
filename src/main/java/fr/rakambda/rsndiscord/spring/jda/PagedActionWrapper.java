@@ -4,8 +4,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.requests.restaction.pagination.PaginationAction;
+import net.dv8tion.jda.api.requests.restaction.pagination.PaginationAction.PaginationOrder;
 import net.dv8tion.jda.api.utils.Procedure;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -19,25 +20,25 @@ public abstract class PagedActionWrapper<R, T extends PaginationAction<R, T>> ex
 		pagedAction = action;
 	}
 	
-	@NotNull
-	public PagedActionWrapper<R, T> order(@NotNull PaginationAction.PaginationOrder order){
+	@NonNull
+	public PagedActionWrapper<R, T> order(@NonNull PaginationOrder order){
 		getAction().order(order);
 		return this;
 	}
 	
-	@NotNull
+	@NonNull
 	public PagedActionWrapper<R, T> skipTo(long id){
 		getAction().skipTo(id);
 		return this;
 	}
 	
-	@NotNull
+	@NonNull
 	public CompletableFuture<List<R>> takeAsync(int limit){
 		return logAction(pagedAction.takeAsync(limit));
 	}
 	
-	@NotNull
-	public CompletableFuture<?> foreachAsync(@NotNull Procedure<? super R> procedure){
+	@NonNull
+	public CompletableFuture<?> foreachAsync(@NonNull Procedure<? super R> procedure){
 		return pagedAction.forEachAsync(procedure);
 	}
 }

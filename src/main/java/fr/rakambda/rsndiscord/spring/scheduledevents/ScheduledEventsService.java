@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.ScheduledEvent;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.utils.TimeFormat;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import java.util.Collection;
@@ -35,7 +35,7 @@ public class ScheduledEventsService{
 		this.localizationService = localizationService;
 	}
 	
-	public void update(@NotNull Guild guild){
+	public void update(@NonNull Guild guild){
 		try(var ignored = LogContext.with(guild)){
 			var channels = channelRepository.findAllByGuildIdAndType(guild.getIdLong(), ChannelType.SCHEDULED_EVENTS);
 			if(channels.isEmpty()){
@@ -58,8 +58,8 @@ public class ScheduledEventsService{
 		}
 	}
 	
-	@NotNull
-	private String getEventText(@NotNull ScheduledEvent event){
+	@NonNull
+	private String getEventText(@NonNull ScheduledEvent event){
 		StringBuilder stringBuilder = new StringBuilder();
 		
 		if(event.getStatus() == ScheduledEvent.Status.ACTIVE){
@@ -82,23 +82,23 @@ public class ScheduledEventsService{
 		return stringBuilder.toString();
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> clearChannel(@NotNull GuildMessageChannel channel){
+	@NonNull
+	private CompletableFuture<Void> clearChannel(@NonNull GuildMessageChannel channel){
 		return JDAWrappers.history(channel)
 				.takeAsync(1000)
 				.thenCompose(this::deleteAll);
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> deleteAll(@NotNull Collection<Message> messages){
+	@NonNull
+	private CompletableFuture<Void> deleteAll(@NonNull Collection<Message> messages){
 		return messages.stream()
 				.map(this::processMessage)
 				.reduce((left, right) -> left.thenCombine(right, (v1, v2) -> null))
 				.orElseGet(() -> CompletableFuture.completedFuture(null));
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> processMessage(@NotNull Message message){
+	@NonNull
+	private CompletableFuture<Void> processMessage(@NonNull Message message){
 		var thread = message.getStartedThread();
 		if(Objects.isNull(thread)){
 			return JDAWrappers.delete(message).submit();

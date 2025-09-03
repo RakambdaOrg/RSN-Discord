@@ -11,8 +11,8 @@ import fr.rakambda.rsndiscord.spring.settings.ApplicationSettings;
 import fr.rakambda.rsndiscord.spring.storage.entity.SimklEntity;
 import fr.rakambda.rsndiscord.spring.storage.repository.SimklRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -54,7 +54,7 @@ public class SimklService{
 				.build();
 	}
 	
-	@NotNull
+	@NonNull
 	public DeviceCodeResponse getDeviceCode() throws RequestFailedException{
 		log.info("Getting new device code");
 		
@@ -68,7 +68,7 @@ public class SimklService{
 				.orElseThrow(() -> new RequestFailedException("Failed to get device code")));
 	}
 	
-	@NotNull
+	@NonNull
 	public List<UserHistory> getAllUserHistory(long userId, @Nullable Instant startDate) throws NotLoggedInException, RequestFailedException{
 		log.info("Getting user history for {}", userId);
 		
@@ -84,8 +84,8 @@ public class SimklService{
 		return histories;
 	}
 	
-	@NotNull
-	private UserHistoryResponse getUserHistory(@NotNull SimklEntity entity, @Nullable Instant startDate) throws RequestFailedException{
+	@NonNull
+	private UserHistoryResponse getUserHistory(@NonNull SimklEntity entity, @Nullable Instant startDate) throws RequestFailedException{
 		log.info("Getting user history");
 		
 		var startDateValue = Optional.ofNullable(startDate)
@@ -125,7 +125,7 @@ public class SimklService{
 		}
 	}
 	
-	@NotNull
+	@NonNull
 	private SimklEntity getEntity(long userId) throws NotLoggedInException{
 		log.trace("Getting previous access token for {}", userId);
 		return simklRepository.findById(userId)
@@ -133,8 +133,8 @@ public class SimklService{
 				.orElseThrow(NotLoggedInException::new);
 	}
 	
-	@NotNull
-	public CompletableFuture<SimklEntity> pollDeviceToken(long userId, @NotNull DeviceCodeResponse deviceCode){
+	@NonNull
+	public CompletableFuture<SimklEntity> pollDeviceToken(long userId, @NonNull DeviceCodeResponse deviceCode){
 		log.info("Polling device token every {} seconds for {} for code {} and user {}", deviceCode.getInterval(), deviceCode.getExpiresIn(), deviceCode.getDeviceCode(), userId);
 		
 		var retryCount = deviceCode.getExpiresIn() / deviceCode.getInterval();

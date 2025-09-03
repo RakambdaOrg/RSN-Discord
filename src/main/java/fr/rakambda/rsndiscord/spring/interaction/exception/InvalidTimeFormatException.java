@@ -1,9 +1,9 @@
 package fr.rakambda.rsndiscord.spring.interaction.exception;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class InvalidTimeFormatException extends InteractionException{
-	public InvalidTimeFormatException(@NotNull String value){
+	public InvalidTimeFormatException(@NonNull String value){
 		super("Failed to parse '" + value + "', not a proper time");
 	}
 }

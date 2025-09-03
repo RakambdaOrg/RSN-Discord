@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -22,14 +22,14 @@ public class TodoMessageDeleteButtonHandler implements IExecutableButtonGuild{
 	private static final String COMPONENT_ID = "todo-message-delete";
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getComponentId(){
 		return COMPONENT_ID;
 	}
 	
-	@NotNull
+	@NonNull
 	@Override
-	public CompletableFuture<?> executeGuild(@NotNull ButtonInteraction event, @NotNull Guild guild, @NotNull Member member) throws InvalidChannelTypeException{
+	public CompletableFuture<?> executeGuild(@NonNull ButtonInteraction event, @NonNull Guild guild, @NonNull Member member) throws InvalidChannelTypeException{
 		if(event.getChannelType() != ChannelType.GUILD_PUBLIC_THREAD){
 			throw new InvalidChannelTypeException(event.getChannelType());
 		}
@@ -45,8 +45,8 @@ public class TodoMessageDeleteButtonHandler implements IExecutableButtonGuild{
 		return deferred.thenCompose(m -> handleThreadChannel(threadChannel));
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> handleThreadChannel(@NotNull ThreadChannel threadChannel){
+	@NonNull
+	private CompletableFuture<Void> handleThreadChannel(@NonNull ThreadChannel threadChannel){
 		return threadChannel.retrieveParentMessage().submit()
 				.thenCompose(message -> JDAWrappers.delete(message).submit())
 				.exceptionally(throwable -> {
@@ -56,7 +56,7 @@ public class TodoMessageDeleteButtonHandler implements IExecutableButtonGuild{
 				.thenCompose(empty -> JDAWrappers.delete(threadChannel).submit());
 	}
 	
-	@NotNull
+	@NonNull
 	public static Supplier<Button> builder(){
 		return () -> Button.danger(COMPONENT_ID, "Delete").withEmoji(Emoji.fromUnicode("U+1F5D1"));
 	}

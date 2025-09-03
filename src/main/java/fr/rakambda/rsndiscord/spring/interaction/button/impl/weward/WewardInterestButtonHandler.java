@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.Objects;
@@ -46,14 +46,14 @@ public class WewardInterestButtonHandler implements IExecutableButtonGuild{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getComponentId(){
 		return COMPONENT_ID;
 	}
 	
-	@NotNull
+	@NonNull
 	@Override
-	public CompletableFuture<?> executeGuild(@NotNull ButtonInteraction event, @NotNull Guild guild, @NotNull Member member) throws InvalidChannelTypeException{
+	public CompletableFuture<?> executeGuild(@NonNull ButtonInteraction event, @NonNull Guild guild, @NonNull Member member) throws InvalidChannelTypeException{
 		var locale = event.getGuildLocale();
 		
 		if(Objects.nonNull(event.getMessage().getStartedThread())){
@@ -75,8 +75,8 @@ public class WewardInterestButtonHandler implements IExecutableButtonGuild{
 								.submit()));
 	}
 	
-	@NotNull
-	private Optional<UserSnowflake> getOwner(@NotNull Message message){
+	@NonNull
+	private Optional<UserSnowflake> getOwner(@NonNull Message message){
 		return message.getEmbeds().stream()
 				.filter(Objects::nonNull)
 				.map(MessageEmbed::getFooter)
@@ -87,7 +87,7 @@ public class WewardInterestButtonHandler implements IExecutableButtonGuild{
 				.map(User::fromId);
 	}
 	
-	@NotNull
+	@NonNull
 	public static Supplier<Button> builder(){
 		return () -> Button.success(COMPONENT_ID, "Show interest").withEmoji(Emoji.fromUnicode("U+1F4E9"));
 	}

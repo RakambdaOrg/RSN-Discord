@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTagSnowflake;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
@@ -34,14 +34,14 @@ public class TodoMessageKeepButtonHandler implements IExecutableButtonGuild{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getComponentId(){
 		return COMPONENT_ID;
 	}
 	
-	@NotNull
+	@NonNull
 	@Override
-	public CompletableFuture<?> executeGuild(@NotNull ButtonInteraction event, @NotNull Guild guild, @NotNull Member member) throws InvalidChannelTypeException{
+	public CompletableFuture<?> executeGuild(@NonNull ButtonInteraction event, @NonNull Guild guild, @NonNull Member member) throws InvalidChannelTypeException{
 		if(event.getChannelType() != ChannelType.GUILD_PUBLIC_THREAD){
 			throw new InvalidChannelTypeException(event.getChannelType());
 		}
@@ -54,8 +54,8 @@ public class TodoMessageKeepButtonHandler implements IExecutableButtonGuild{
 				.thenCompose(v -> getThreadEdit(threadChannel));
 	}
 	
-	@NotNull
-	private CompletionStage<Void> getThreadEdit(@NotNull ThreadChannel thread){
+	@NonNull
+	private CompletionStage<Void> getThreadEdit(@NonNull ThreadChannel thread){
 		var edit = JDAWrappers.editThread(thread).setArchived(true);
 		
 		var parentChannel = thread.getParentChannel();
@@ -69,7 +69,7 @@ public class TodoMessageKeepButtonHandler implements IExecutableButtonGuild{
 		return edit.submit();
 	}
 	
-	@NotNull
+	@NonNull
 	public static Supplier<Button> builder(){
 		return () -> Button.success(COMPONENT_ID, "Archive").withEmoji(Emoji.fromUnicode("U+1F4E6"));
 	}

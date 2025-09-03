@@ -3,7 +3,7 @@ package fr.rakambda.rsndiscord.spring.storage.repository;
 import fr.rakambda.rsndiscord.spring.storage.StorageConfiguration;
 import fr.rakambda.rsndiscord.spring.storage.entity.ChannelEntity;
 import fr.rakambda.rsndiscord.spring.storage.entity.ChannelType;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -15,22 +15,22 @@ import java.util.List;
 @Repository
 @CacheConfig(cacheNames = StorageConfiguration.CHANNEL)
 public interface ChannelRepository extends JpaRepository<ChannelEntity, Integer>{
-	@NotNull
+	@NonNull
 	@Cacheable
-	List<ChannelEntity> findAllByType(@NotNull ChannelType type);
+	List<ChannelEntity> findAllByType(@NonNull ChannelType type);
 	
-	@NotNull
+	@NonNull
 	@Cacheable
-	List<ChannelEntity> findAllByGuildIdAndType(long guildId, @NotNull ChannelType type);
+	List<ChannelEntity> findAllByGuildIdAndType(long guildId, @NonNull ChannelType type);
 	
 	@CacheEvict
-	int deleteAllByGuildIdAndTypeAndChannelId(long guildId, @NotNull ChannelType type, long channelId);
+	int deleteAllByGuildIdAndTypeAndChannelId(long guildId, @NonNull ChannelType type, long channelId);
 	
 	@CacheEvict
-	int deleteAllByGuildIdAndType(long guildId, @NotNull ChannelType type);
+	int deleteAllByGuildIdAndType(long guildId, @NonNull ChannelType type);
 	
 	@Override
 	@CachePut
-	@NotNull
-	<S extends ChannelEntity> S save(@NotNull S entity);
+	@NonNull
+	<S extends ChannelEntity> S save(@NonNull S entity);
 }

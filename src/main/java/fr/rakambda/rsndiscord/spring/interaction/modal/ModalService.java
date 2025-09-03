@@ -1,7 +1,7 @@
 package fr.rakambda.rsndiscord.spring.interaction.modal;
 
 import fr.rakambda.rsndiscord.spring.interaction.modal.api.IExecutableModal;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Collection;
@@ -19,8 +19,8 @@ public class ModalService{
 				.collect(Collectors.toMap(IExecutableModal::getComponentId, m -> m));
 	}
 	
-	@NotNull
-	public Optional<IExecutableModal> getExecutableModal(@NotNull String componentId){
+	@NonNull
+	public Optional<IExecutableModal> getExecutableModal(@NonNull String componentId){
 		return Optional.of(executableModals.get(componentId));
 	}
 }

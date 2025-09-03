@@ -6,36 +6,36 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.requests.restaction.MessageEditAction;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import java.util.Collection;
 
 @Slf4j
 public class EditMessageWrapper extends MessageWrapper<MessageEditAction>{
 	private final Message message;
 	
-	public EditMessageWrapper(@NotNull Message message, @NotNull String content){
+	public EditMessageWrapper(@NonNull Message message, @NonNull String content){
 		super(message.editMessage(content));
 		this.message = message;
 	}
 	
-	public EditMessageWrapper(@NotNull Message message, @NotNull MessageEmbed embed){
+	public EditMessageWrapper(@NonNull Message message, @NonNull MessageEmbed embed){
 		super(message.editMessageEmbeds(embed));
 		this.message = message;
 	}
 	
-	public EditMessageWrapper(@NotNull Message message){
+	public EditMessageWrapper(@NonNull Message message){
 		super(message.editMessage(MessageEditBuilder.fromMessage(message).build()));
 		this.message = message;
 	}
 	
-	@NotNull
-	public EditMessageWrapper setActionRow(@NotNull Collection<MessageTopLevelComponent> components){
+	@NonNull
+	public EditMessageWrapper setActionRow(@NonNull Collection<MessageTopLevelComponent> components){
 		getAction().setComponents(components);
 		return this;
 	}
 	
-	@NotNull
-	public EditMessageWrapper setActionRow(@NotNull MessageTopLevelComponent... components){
+	@NonNull
+	public EditMessageWrapper setActionRow(@NonNull MessageTopLevelComponent... components){
 		getAction().setComponents(components);
 		return this;
 	}

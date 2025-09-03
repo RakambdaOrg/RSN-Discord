@@ -3,13 +3,13 @@ package fr.rakambda.rsndiscord.spring.interaction.slash.api;
 import fr.rakambda.rsndiscord.spring.interaction.InteractionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.localization.LocalizationFunction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public interface IRegistrableSlashCommand extends ISlashCommand{
-	@NotNull
-	CommandData getDefinition(@NotNull LocalizationFunction localizationFunction);
+	@NonNull
+	CommandData getDefinition(@NonNull LocalizationFunction localizationFunction);
 	
-	@NotNull
+	@NonNull
 	default String getRegisterName(){
 		return InteractionType.SLASH.prefixed(getId());
 	}

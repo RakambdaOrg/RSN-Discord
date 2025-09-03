@@ -11,8 +11,8 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -23,106 +23,106 @@ import java.util.Set;
 public class SendMessageWrapper extends MessageWrapper<MessageCreateAction>{
 	private final MessageChannel channel;
 	
-	public SendMessageWrapper(@NotNull MessageChannel channel, @NotNull String message){
+	public SendMessageWrapper(@NonNull MessageChannel channel, @NonNull String message){
 		super(channel.sendMessage(message));
 		this.channel = channel;
 	}
 	
-	public SendMessageWrapper(@NotNull MessageChannel channel, @NotNull MessageEmbed embed){
+	public SendMessageWrapper(@NonNull MessageChannel channel, @NonNull MessageEmbed embed){
 		super(channel.sendMessageEmbeds(embed));
 		this.channel = channel;
 	}
 	
-	public SendMessageWrapper(@NotNull MessageChannel channel, @NotNull Message message){
+	public SendMessageWrapper(@NonNull MessageChannel channel, @NonNull Message message){
 		super(channel.sendMessage(MessageCreateBuilder.fromMessage(message).build()));
 		this.channel = channel;
 	}
 	
-	public SendMessageWrapper(@NotNull MessageChannel channel, @NotNull MessageTopLevelComponent component, @NotNull MessageTopLevelComponent... components){
+	public SendMessageWrapper(@NonNull MessageChannel channel, @NonNull MessageTopLevelComponent component, @NonNull MessageTopLevelComponent... components){
 		super(channel.sendMessageComponents(component, components));
 		this.channel = channel;
 	}
 	
-	@NotNull
+	@NonNull
 	public SendMessageWrapper allowedMentions(@Nullable Collection<Message.MentionType> mentionTypes){
 		getAction().setAllowedMentions(mentionTypes);
 		return this;
 	}
 	
-	@NotNull
-	public SendMessageWrapper mention(@NotNull Set<? extends IMentionable> mentions){
+	@NonNull
+	public SendMessageWrapper mention(@NonNull Set<? extends IMentionable> mentions){
 		getAction().mention(mentions);
 		return this;
 	}
 	
-	@NotNull
-	public SendMessageWrapper mention(@NotNull IMentionable... mentions){
+	@NonNull
+	public SendMessageWrapper mention(@NonNull IMentionable... mentions){
 		getAction().mention(mentions);
 		return this;
 	}
 	
-	@NotNull
+	@NonNull
 	public SendMessageWrapper tts(boolean state){
 		getAction().setTTS(state);
 		return this;
 	}
 	
-	@NotNull
-	public SendMessageWrapper replyTo(@NotNull Message message){
+	@NonNull
+	public SendMessageWrapper replyTo(@NonNull Message message){
 		getAction().setMessageReference(message);
 		return this;
 	}
 	
-	@NotNull
-	public SendMessageWrapper replyTo(@NotNull MessageReference messageReference){
+	@NonNull
+	public SendMessageWrapper replyTo(@NonNull MessageReference messageReference){
 		getAction().setMessageReference(messageReference.getMessageIdLong());
 		return this;
 	}
 	
-	@NotNull
-	public SendMessageWrapper addFile(@NotNull Path path){
+	@NonNull
+	public SendMessageWrapper addFile(@NonNull Path path){
 		getAction().addFiles(FileUpload.fromData(path));
 		return this;
 	}
 	
-	@NotNull
-	public SendMessageWrapper addFile(@NotNull InputStream inputStream, @NotNull String fileName){
+	@NonNull
+	public SendMessageWrapper addFile(@NonNull InputStream inputStream, @NonNull String fileName){
 		getAction().addFiles(FileUpload.fromData(inputStream, fileName));
 		return this;
 	}
 	
-	@NotNull
+	@NonNull
 	public SendMessageWrapper embed(@Nullable MessageEmbed embed){
 		getAction().setEmbeds(embed);
 		return this;
 	}
 	
-	@NotNull
-	public SendMessageWrapper addActionRow(@NotNull Collection<MessageTopLevelComponent> components){
+	@NonNull
+	public SendMessageWrapper addActionRow(@NonNull Collection<MessageTopLevelComponent> components){
 		getAction().addComponents(components);
 		return this;
 	}
 	
-	@NotNull
-	public SendMessageWrapper addActionRow(@NotNull MessageTopLevelComponent... components){
+	@NonNull
+	public SendMessageWrapper addActionRow(@NonNull MessageTopLevelComponent... components){
 		getAction().addComponents(components);
 		return this;
 	}
 	
-	@NotNull
+	@NonNull
 	public SendMessageWrapper clearActionRows(){
 		getAction().setComponents(List.of());
 		return this;
 	}
 	
-	@NotNull
+	@NonNull
 	public SendMessageWrapper content(String content){
 		getAction().setContent(content);
 		return this;
 	}
 	
-	@NotNull
-	public SendMessageWrapper setActionRows(@NotNull ActionRow... actionRows){
+	@NonNull
+	public SendMessageWrapper setActionRows(@NonNull ActionRow... actionRows){
 		getAction().setComponents(actionRows);
 		return this;
 	}

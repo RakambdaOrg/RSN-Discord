@@ -1,7 +1,7 @@
 package fr.rakambda.rsndiscord.spring.util;
 
 import fr.rakambda.rsndiscord.spring.Application;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
 public class GraphQlService{
 	private static final Pattern INCLUDE_PATTERN = Pattern.compile("#include \"(.*)\"");
 	
-	@NotNull
-	public String readQuery(@NotNull String definition) throws ParseException{
+	@NonNull
+	public String readQuery(@NonNull String definition) throws ParseException{
 		var resource = Application.class.getClassLoader().getResource(definition);
 		if(Objects.isNull(resource)){
 			throw new ParseException("Failed to read query resource " + definition);
@@ -23,8 +23,8 @@ public class GraphQlService{
 		return readQuery(resource);
 	}
 	
-	@NotNull
-	public String readQuery(@NotNull URL resource) throws ParseException{
+	@NonNull
+	public String readQuery(@NonNull URL resource) throws ParseException{
 		try{
 			var stringBuilder = new StringBuilder();
 			

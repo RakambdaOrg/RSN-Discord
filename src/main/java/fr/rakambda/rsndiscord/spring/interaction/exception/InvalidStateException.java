@@ -1,9 +1,9 @@
 package fr.rakambda.rsndiscord.spring.interaction.exception;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class InvalidStateException extends InteractionException{
-	public InvalidStateException(@NotNull String message){
+	public InvalidStateException(@NonNull String message){
 		super(message);
 	}
 }

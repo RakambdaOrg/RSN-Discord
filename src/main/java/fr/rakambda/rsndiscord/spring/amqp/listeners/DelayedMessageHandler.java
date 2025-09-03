@@ -8,8 +8,8 @@ import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ public class DelayedMessageHandler{
 	}
 	
 	@RabbitListener(queues = "#{amqpNameProvider.getQueueDelayName()}")
-	public void receive(@NotNull IDelayedMessage message, @Headers Map<String, Object> headers){
+	public void receive(@NonNull IDelayedMessage message, @Headers Map<String, Object> headers){
 		CompletableFuture<?> future;
 		if(message instanceof DeleteMessageDelayMessage deleteMessageDelayMessage){
 			future = handleDeleteMessage(deleteMessageDelayMessage);
@@ -49,7 +49,7 @@ public class DelayedMessageHandler{
 	}
 	
 	@Nullable
-	private <T> T handleError(@NotNull Throwable throwable, @NotNull Map<String, Object> header, @NotNull IDelayedMessage message){
+	private <T> T handleError(@NonNull Throwable throwable, @NonNull Map<String, Object> header, @NonNull IDelayedMessage message){
 		log.warn("Failed to handle message", throwable);
 		
 		var retry = Optional.ofNullable(header.get(amqpNameProvider.getXRedeliverCountRemainingHeader()))
@@ -65,8 +65,8 @@ public class DelayedMessageHandler{
 		return null;
 	}
 	
-	@NotNull
-	private CompletableFuture<?> handleDeleteMessage(@NotNull DeleteMessageDelayMessage message){
+	@NonNull
+	private CompletableFuture<?> handleDeleteMessage(@NonNull DeleteMessageDelayMessage message){
 		log.info("New delay message received {}", message);
 		
 		var channel = jda.getTextChannelById(message.getChannelId());
@@ -78,8 +78,8 @@ public class DelayedMessageHandler{
 				.thenCompose(m -> JDAWrappers.delete(m).submit());
 	}
 	
-	@NotNull
-	private CompletableFuture<Message> deleteThread(@NotNull Message m){
+	@NonNull
+	private CompletableFuture<Message> deleteThread(@NonNull Message m){
 		return Optional.ofNullable(m.getStartedThread())
 				.map(t -> JDAWrappers.delete(t).submit().thenApply(empty -> m))
 				.orElseGet(() -> CompletableFuture.completedFuture(m));

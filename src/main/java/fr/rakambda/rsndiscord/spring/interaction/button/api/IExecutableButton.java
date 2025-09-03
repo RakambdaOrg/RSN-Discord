@@ -1,8 +1,8 @@
 package fr.rakambda.rsndiscord.spring.interaction.button.api;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public interface IExecutableButton{
-	@NotNull
+	@NonNull
 	String getComponentId();
 }

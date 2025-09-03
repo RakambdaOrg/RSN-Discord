@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import java.time.ZonedDateTime;
 import java.util.concurrent.CompletableFuture;
@@ -20,31 +20,31 @@ import static java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME;
 @Component
 public class TimeCommand implements IExecutableSlashCommandGuild, IExecutableSlashCommandUser{
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "time";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getPath(){
 		return "bot/time";
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
+	@NonNull
+	public CompletableFuture<?> executeGuild(@NonNull SlashCommandInteraction event, @NonNull Guild guild, @NonNull Member member){
 		return execute(event);
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> executeUser(@NotNull SlashCommandInteraction event){
+	@NonNull
+	public CompletableFuture<?> executeUser(@NonNull SlashCommandInteraction event){
 		return execute(event);
 	}
 	
-	@NotNull
-	private CompletableFuture<Message> execute(@NotNull SlashCommandInteraction event){
+	@NonNull
+	private CompletableFuture<Message> execute(@NonNull SlashCommandInteraction event){
 		var embed = new EmbedBuilder()
 				.setColor(GREEN)
 				.setTitle("Server time")

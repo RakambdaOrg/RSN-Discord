@@ -1,6 +1,6 @@
 package fr.rakambda.rsndiscord.spring.util;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import java.time.Duration;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
@@ -15,17 +15,17 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 /**
  * Wraps a {@link Duration} and allow to perform a {@link Duration#get(TemporalUnit)} with {@link java.time.temporal.ChronoUnit#DAYS}.
  */
-public record DayDuration(@NotNull Duration duration)
+public record DayDuration(@NonNull Duration duration)
 		implements TemporalAmount, Comparable<DayDuration>{
 	static final List<TemporalUnit> UNITS = List.of(SECONDS, NANOS, DAYS);
 	
 	@Override
-	public int compareTo(@NotNull DayDuration o){
+	public int compareTo(@NonNull DayDuration o){
 		return duration.compareTo(o.duration);
 	}
 	
 	@Override
-	public long get(@NotNull TemporalUnit unit){
+	public long get(@NonNull TemporalUnit unit){
 		if(Objects.equals(unit, SECONDS) || Objects.equals(unit, NANOS)){
 			return duration.get(unit);
 		}
@@ -38,20 +38,20 @@ public record DayDuration(@NotNull Duration duration)
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public List<TemporalUnit> getUnits(){
 		return UNITS;
 	}
 	
 	@Override
-	@NotNull
-	public Temporal addTo(@NotNull Temporal temporal){
+	@NonNull
+	public Temporal addTo(@NonNull Temporal temporal){
 		return duration.addTo(temporal);
 	}
 	
 	@Override
-	@NotNull
-	public Temporal subtractFrom(@NotNull Temporal temporal){
+	@NonNull
+	public Temporal subtractFrom(@NonNull Temporal temporal){
 		return duration.subtractFrom(temporal);
 	}
 }

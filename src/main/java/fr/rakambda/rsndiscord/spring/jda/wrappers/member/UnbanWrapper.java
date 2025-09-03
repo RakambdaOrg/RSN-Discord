@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.requests.RestAction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 @Slf4j
 public class UnbanWrapper extends ActionWrapper<Void, RestAction<Void>>{
 	private final UserSnowflake user;
 	
-	public UnbanWrapper(@NotNull Guild guild, @NotNull UserSnowflake user){
+	public UnbanWrapper(@NonNull Guild guild, @NonNull UserSnowflake user){
 		super(guild.unban(user));
 		this.user = user;
 	}

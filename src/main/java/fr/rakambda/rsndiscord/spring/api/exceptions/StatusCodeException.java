@@ -1,10 +1,10 @@
 package fr.rakambda.rsndiscord.spring.api.exceptions;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatusCode;
 
 public class StatusCodeException extends RequestFailedException{
-	public StatusCodeException(@NotNull HttpStatusCode status){
+	public StatusCodeException(@NonNull HttpStatusCode status){
 		super("Invalid status code" + status);
 	}
 }

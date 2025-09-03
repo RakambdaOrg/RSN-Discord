@@ -3,9 +3,10 @@ package fr.rakambda.rsndiscord.spring.jda.wrappers.thread;
 import fr.rakambda.rsndiscord.spring.jda.ActionWrapper;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel.AutoArchiveDuration;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTagSnowflake;
 import net.dv8tion.jda.api.managers.channel.concrete.ThreadChannelManager;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
@@ -15,33 +16,33 @@ public class EditThreadWrapper extends ActionWrapper<Void, ThreadChannelManager>
 	private final ThreadChannel thread;
 	private final Collection<ForumTagSnowflake> currentTags;
 	
-	public EditThreadWrapper(@NotNull ThreadChannel thread){
+	public EditThreadWrapper(@NonNull ThreadChannel thread){
 		super(thread.getManager());
 		this.thread = thread;
 		
 		currentTags = new ArrayList<>(thread.getAppliedTags());
 	}
 	
-	@NotNull
-	public EditThreadWrapper setAutoArchiveDuration(@NotNull ThreadChannel.AutoArchiveDuration duration){
+	@NonNull
+	public EditThreadWrapper setAutoArchiveDuration(@NonNull AutoArchiveDuration duration){
 		getAction().setAutoArchiveDuration(duration);
 		return this;
 	}
 	
-	@NotNull
+	@NonNull
 	public EditThreadWrapper setArchived(boolean archived){
 		getAction().setArchived(archived);
 		return this;
 	}
 	
-	@NotNull
+	@NonNull
 	public EditThreadWrapper setLocked(boolean locked){
 		getAction().setLocked(locked);
 		return this;
 	}
 	
-	@NotNull
-	public EditThreadWrapper addTag(@NotNull ForumTagSnowflake tag){
+	@NonNull
+	public EditThreadWrapper addTag(@NonNull ForumTagSnowflake tag){
 		currentTags.add(tag);
 		getAction().setAppliedTags(currentTags);
 		return this;
@@ -57,7 +58,7 @@ public class EditThreadWrapper extends ActionWrapper<Void, ThreadChannelManager>
 		log.error("Failed to edit thread {}", thread, throwable);
 	}
 	
-	@NotNull
+	@NonNull
 	public CompletableFuture<ThreadChannel> submitAndGet(){
 		return submit().thenApply(empty -> thread);
 	}

@@ -1,6 +1,6 @@
 package fr.rakambda.rsndiscord.spring;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public abstract class BotException extends Exception{
 	public BotException(String message){
@@ -11,12 +11,12 @@ public abstract class BotException extends Exception{
 		super(message, cause);
 	}
 	
-	@NotNull
+	@NonNull
 	public String getFriendlyMessageKey(){
 		return "tbd"; //TODO abstract method
 	}
 	
-	@NotNull
+	@NonNull
 	public Object[] getFriendlyMessageArgs(){
 		return new Object[0]; //TODO abstract method
 	}

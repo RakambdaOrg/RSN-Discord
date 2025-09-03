@@ -10,8 +10,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
@@ -29,20 +29,20 @@ public class SimklRegisterCommand implements IExecutableSlashCommandGuild{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "register";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getPath(){
 		return "simkl/register";
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member) throws RequestFailedException{
+	@NonNull
+	public CompletableFuture<?> executeGuild(@NonNull SlashCommandInteraction event, @NonNull Guild guild, @NonNull Member member) throws RequestFailedException{
 		var deferred = event.deferReply(true).submit();
 		var locale = event.getUserLocale();
 		
@@ -62,7 +62,7 @@ public class SimklRegisterCommand implements IExecutableSlashCommandGuild{
 	}
 	
 	@Nullable
-	private <T> T handleError(@NotNull Throwable throwable, @NotNull IReplyCallback event){
+	private <T> T handleError(@NonNull Throwable throwable, @NonNull IReplyCallback event){
 		log.error("Failed to register user", throwable);
 		JDAWrappers.edit(event, localizationService.translate(event.getUserLocale(), "simkl.authentication-failed")).submit();
 		return null;

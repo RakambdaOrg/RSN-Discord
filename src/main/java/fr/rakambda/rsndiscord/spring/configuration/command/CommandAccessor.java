@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -41,7 +41,7 @@ public class CommandAccessor implements IConfigurationAccessor{
 	
 	@Override
 	@Transactional
-	public boolean add(@NotNull JDA jda, long guildId, @NotNull String value) throws OperationNotSupportedException{
+	public boolean add(@NonNull JDA jda, long guildId, @NonNull String value) throws OperationNotSupportedException{
 		commandRepository.save(CommandEntity.builder()
 				.name(value)
 				.guildId(guildId)
@@ -59,7 +59,7 @@ public class CommandAccessor implements IConfigurationAccessor{
 	
 	@Override
 	@Transactional
-	public boolean remove(@NotNull JDA jda, long guildId, @NotNull String value) throws OperationNotSupportedException{
+	public boolean remove(@NonNull JDA jda, long guildId, @NonNull String value) throws OperationNotSupportedException{
 		var result = commandRepository.deleteAllByGuildIdAndName(guildId, value) > 0;
 		
 		if(result){
@@ -74,7 +74,7 @@ public class CommandAccessor implements IConfigurationAccessor{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public Optional<MessageEmbed> show(long guildId) throws OperationNotSupportedException{
 		var value = commandRepository.findByGuildId(guildId).stream()
 				.map(CommandEntity::getName)
@@ -89,14 +89,14 @@ public class CommandAccessor implements IConfigurationAccessor{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getName(){
 		return "commands";
 	}
 	
 	@Override
-	@NotNull
-	public Collection<Command.Choice> autoComplete(@NotNull CommandAutoCompleteInteractionEvent event){
+	@NonNull
+	public Collection<Command.Choice> autoComplete(@NonNull CommandAutoCompleteInteractionEvent event){
 		return getCommandsStartingWith(event.getFocusedOption().getValue())
 				.limit(OptionData.MAX_CHOICES)
 				.sorted()
@@ -104,8 +104,8 @@ public class CommandAccessor implements IConfigurationAccessor{
 				.toList();
 	}
 	
-	@NotNull
-	private Stream<String> getCommandsStartingWith(@NotNull String value){
+	@NonNull
+	private Stream<String> getCommandsStartingWith(@NonNull String value){
 		var commands = Stream.concat(slashCommandService.getRegistrableCommandNames().stream(), messageContextMenuService.getRegistrableContextMenu().stream());
 		if(value.isBlank()){
 			return commands;

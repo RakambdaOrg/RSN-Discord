@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 @Data
 @AllArgsConstructor
@@ -18,7 +18,7 @@ public final class UserMovieHistory extends UserHistory{
 	private Movie movie;
 	
 	@Override
-	@NotNull
+	@NonNull
 	public TraktMediaType getType(){
 		return TraktMediaType.MOVIE;
 	}

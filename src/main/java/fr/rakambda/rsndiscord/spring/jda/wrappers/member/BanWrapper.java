@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -15,13 +15,13 @@ public class BanWrapper extends ActionWrapper<Void, AuditableRestAction<Void>>{
 	private final int deletionDays;
 	private String reason;
 	
-	public BanWrapper(@NotNull Guild guild, @NotNull Member member, int deletionDays){
+	public BanWrapper(@NonNull Guild guild, @NonNull Member member, int deletionDays){
 		super(guild.ban(member, deletionDays, TimeUnit.DAYS));
 		this.member = member;
 		this.deletionDays = deletionDays;
 	}
 	
-	@NotNull
+	@NonNull
 	public BanWrapper reason(@Nullable String reason){
 		getAction().reason(reason);
 		this.reason = reason;

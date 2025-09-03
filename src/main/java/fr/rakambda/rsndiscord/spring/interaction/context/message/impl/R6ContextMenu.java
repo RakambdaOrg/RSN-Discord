@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -98,27 +98,27 @@ public class R6ContextMenu{
 	
 	private final RabbitService rabbitService;
 	
-	@NotNull
-	protected CompletableFuture<Message> executeGuild(@NotNull MessageContextInteractionEvent event, @NotNull Side side){
+	@NonNull
+	protected CompletableFuture<Message> executeGuild(@NonNull MessageContextInteractionEvent event, @NonNull Side side){
 		return event.deferReply(false).submit()
 				.thenCompose(empty -> JDAWrappers.reply(event, getOperatorMessage(side)).submitAndDelete(15, rabbitService));
 	}
 	
-	@NotNull
-	protected Operator getRandomOperator(@NotNull Side side){
+	@NonNull
+	protected Operator getRandomOperator(@NonNull Side side){
 		var sideOperators = OPERATORS.get(side);
 		return sideOperators[ThreadLocalRandom.current().nextInt(sideOperators.length)];
 	}
 	
-	@NotNull
-	protected String getOperatorMessage(@NotNull Side side){
+	@NonNull
+	protected String getOperatorMessage(@NonNull Side side){
 		return IntStream.range(1, OPERATOR_COUNT + 1)
 				.mapToObj(i -> "* %d %s".formatted(i, getOperatorMessage(getRandomOperator(side))))
 				.collect(Collectors.joining("\n"));
 	}
 	
-	@NotNull
-	private String getOperatorMessage(@NotNull Operator operator){
+	@NonNull
+	private String getOperatorMessage(@NonNull Operator operator){
 		return "[%s](%s)".formatted(operator.getName(), operator.getIconUrl());
 	}
 	

@@ -4,7 +4,7 @@ import fr.rakambda.rsndiscord.spring.log.LogContext;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.scheduling.TriggerContext;
 import java.time.Instant;
 import java.time.temporal.TemporalUnit;
@@ -16,21 +16,21 @@ public abstract class WrappedTriggerTask implements TriggerTaskProvider{
 	
 	private Instant nextRun = Instant.EPOCH;
 	
-	protected WrappedTriggerTask(@NotNull JDA jda){
+	protected WrappedTriggerTask(@NonNull JDA jda){
 		this.jda = jda;
 	}
 	
-	@NotNull
+	@NonNull
 	protected abstract String getName();
 	
 	protected abstract long getPeriod();
 	
-	@NotNull
+	@NonNull
 	protected abstract TemporalUnit getPeriodUnit();
 	
-	protected abstract void executeGlobal(@NotNull JDA jda) throws Exception;
+	protected abstract void executeGlobal(@NonNull JDA jda) throws Exception;
 	
-	protected abstract void executeGuild(@NotNull Guild guild) throws Exception;
+	protected abstract void executeGuild(@NonNull Guild guild) throws Exception;
 	
 	@Override
 	public void run(){
@@ -59,7 +59,7 @@ public abstract class WrappedTriggerTask implements TriggerTaskProvider{
 	}
 	
 	@Override
-	public Instant nextExecution(@NotNull TriggerContext triggerContext){
+	public Instant nextExecution(@NonNull TriggerContext triggerContext){
 		return nextRun;
 	}
 }

@@ -5,14 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.requests.RestAction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 @Slf4j
 public class MuteWrapper extends ActionWrapper<Void, RestAction<Void>>{
 	private final Member member;
 	private final boolean state;
 	
-	public MuteWrapper(@NotNull Guild guild, @NotNull Member member, boolean state){
+	public MuteWrapper(@NonNull Guild guild, @NonNull Member member, boolean state){
 		super(guild.mute(member, state));
 		this.member = member;
 		this.state = state;

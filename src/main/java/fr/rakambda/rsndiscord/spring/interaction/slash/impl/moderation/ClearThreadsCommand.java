@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.Optional;
@@ -23,20 +23,20 @@ public class ClearThreadsCommand implements IExecutableSlashCommandGuild{
 	public static final String EXCLUDE_OPTION_ID = "exclude";
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "clear-threads";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getPath(){
 		return "mod/clear-threads";
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
+	@NonNull
+	public CompletableFuture<?> executeGuild(@NonNull SlashCommandInteraction event, @NonNull Guild guild, @NonNull Member member){
 		var deferred = event.deferReply(true).submit();
 		
 		var targetChannel = event.getOption(CHANNEL_OPTION_ID).getAsChannel().asForumChannel();

@@ -18,8 +18,8 @@ import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.Collection;
@@ -47,7 +47,7 @@ public class ReadyEventListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onReady(@NotNull ReadyEvent event){
+	public void onReady(@NonNull ReadyEvent event){
 		var jda = event.getJDA();
 		
 		log.info("JDA ready");
@@ -61,24 +61,24 @@ public class ReadyEventListener extends ListenerAdapter{
 	}
 	
 	@Nullable
-	private <T> T handleException(@NotNull Throwable throwable){
+	private <T> T handleException(@NonNull Throwable throwable){
 		log.error("Failed to handle commands", throwable);
 		return null;
 	}
 	
 	@Override
-	public void onGuildReady(@NotNull GuildReadyEvent event){
+	public void onGuildReady(@NonNull GuildReadyEvent event){
 		log.info("Guild ready {}", event.getGuild());
 		ensureGuildStorage(event);
 	}
 	
 	@Override
-	public void onGuildJoin(@NotNull GuildJoinEvent event){
+	public void onGuildJoin(@NonNull GuildJoinEvent event){
 		log.info("Guild joined {}", event.getGuild());
 		ensureGuildStorage(event);
 	}
 	
-	private void ensureGuildStorage(@NotNull GenericGuildEvent event){
+	private void ensureGuildStorage(@NonNull GenericGuildEvent event){
 		log.info("Adding {} to storage", event.getGuild());
 		
 		var guildId = event.getGuild().getIdLong();
@@ -95,28 +95,28 @@ public class ReadyEventListener extends ListenerAdapter{
 		}
 	}
 	
-	@NotNull
+	@NonNull
 	private CompletableFuture<Void> clearGlobalCommands(JDA jda){
 		return jda.updateCommands().submit()
 				.thenCompose(empty -> clearGuildCommands(jda.getGuilds()));
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> clearGuildCommands(@NotNull Collection<Guild> guilds){
+	@NonNull
+	private CompletableFuture<Void> clearGuildCommands(@NonNull Collection<Guild> guilds){
 		return guilds.stream()
 				.map(interactionsService::clearGuildCommands)
 				.reduce((left, right) -> left.thenCombine(right, (v1, v2) -> null))
 				.orElseGet(() -> CompletableFuture.completedFuture(null));
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> registerCommands(@NotNull JDA jda){
+	@NonNull
+	private CompletableFuture<Void> registerCommands(@NonNull JDA jda){
 		return slashCommandService.registerGlobalCommands(jda)
 				.thenCompose(empty -> messageContextMenuService.registerGlobalMenus(jda))
 				.thenCompose(empty -> registerGuildCommands(jda.getGuilds()));
 	}
 	
-	private CompletableFuture<Void> registerGuildCommands(@NotNull Collection<Guild> guilds){
+	private CompletableFuture<Void> registerGuildCommands(@NonNull Collection<Guild> guilds){
 		return guilds.stream()
 				.map(guild -> slashCommandService.registerGuildCommands(guild)
 						.thenCompose(empty -> messageContextMenuService.registerGuildMenus(guild)))

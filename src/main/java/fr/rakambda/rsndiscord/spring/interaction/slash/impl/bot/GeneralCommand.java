@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -33,8 +33,8 @@ public class GeneralCommand implements IExecutableSlashCommandGuild, IExecutable
 		commitId = gitProperties.getProperty("git.commit.id", "Unknown");
 	}
 	
-	@NotNull
-	private Properties loadProperties(@NotNull String resource){
+	@NonNull
+	private Properties loadProperties(@NonNull String resource){
 		var properties = new Properties();
 		try{
 			var versionPropertiesFile = Application.class.getResource(resource);
@@ -51,31 +51,31 @@ public class GeneralCommand implements IExecutableSlashCommandGuild, IExecutable
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "general";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getPath(){
 		return "bot/general";
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
+	@NonNull
+	public CompletableFuture<?> executeGuild(@NonNull SlashCommandInteraction event, @NonNull Guild guild, @NonNull Member member){
 		return execute(event);
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> executeUser(@NotNull SlashCommandInteraction event){
+	@NonNull
+	public CompletableFuture<?> executeUser(@NonNull SlashCommandInteraction event){
 		return execute(event);
 	}
 	
-	@NotNull
-	private CompletableFuture<Message> execute(@NotNull SlashCommandInteraction event){
+	@NonNull
+	private CompletableFuture<Message> execute(@NonNull SlashCommandInteraction event){
 		var now = ZonedDateTime.now();
 		var embed = new EmbedBuilder()
 				.setColor(GREEN)
@@ -88,8 +88,8 @@ public class GeneralCommand implements IExecutableSlashCommandGuild, IExecutable
 		return JDAWrappers.reply(event, embed).ephemeral(true).submit();
 	}
 	
-	@NotNull
-	private String durationToString(@NotNull Duration duration){
+	@NonNull
+	private String durationToString(@NonNull Duration duration){
 		if(duration.toDaysPart() > 0){
 			return String.format("%dd %dh%02dm%02ds", duration.toDaysPart(), duration.toHoursPart(), duration.toMinutesPart(), duration.toSecondsPart());
 		}

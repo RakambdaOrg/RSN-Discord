@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.requests.RestAction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 @Slf4j
 public class CreateThreadWrapper extends ActionWrapper<ThreadChannel, RestAction<ThreadChannel>>{
 	private final Message message;
 	
-	public CreateThreadWrapper(@NotNull Message message, @NotNull String name){
+	public CreateThreadWrapper(@NonNull Message message, @NonNull String name){
 		super(message.createThreadChannel(name));
 		this.message = message;
 	}

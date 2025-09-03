@@ -2,7 +2,7 @@ package fr.rakambda.rsndiscord.spring.interaction;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 @Getter
 @RequiredArgsConstructor
@@ -12,10 +12,10 @@ public enum InteractionType{
 	MODAL("modal"),
 	SLASH("slash");
 	
-	@NotNull
+	@NonNull
 	private final String prefix;
 	
-	public String prefixed(@NotNull String value){
+	public String prefixed(@NonNull String value){
 		return "%s/%s".formatted(getPrefix(), value);
 	}
 }

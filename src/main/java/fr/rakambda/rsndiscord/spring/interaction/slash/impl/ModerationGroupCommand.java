@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.localization.LocalizationFunction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Configuration;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.CHANNEL;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
@@ -23,8 +23,8 @@ import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 @Configuration
 public class ModerationGroupCommand implements IRegistrableSlashCommand{
 	@Override
-	@NotNull
-	public CommandData getDefinition(@NotNull LocalizationFunction localizationFunction){
+	@NonNull
+	public CommandData getDefinition(@NonNull LocalizationFunction localizationFunction){
 		return Commands.slash(getId(), "Moderation commands")
 				.setLocalizationFunction(localizationFunction)
 				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_CHANNEL))
@@ -63,7 +63,7 @@ public class ModerationGroupCommand implements IRegistrableSlashCommand{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "mod";
 	}

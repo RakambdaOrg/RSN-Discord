@@ -6,14 +6,14 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.requests.RestAction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 @Slf4j
 public class AddRoleWrapper extends ActionWrapper<Void, RestAction<Void>>{
 	private final Member member;
 	private final Role role;
 	
-	public AddRoleWrapper(@NotNull Guild guild, @NotNull Member member, @NotNull Role role){
+	public AddRoleWrapper(@NonNull Guild guild, @NonNull Member member, @NonNull Role role){
 		super(guild.addRoleToMember(member, role));
 		this.member = member;
 		this.role = role;

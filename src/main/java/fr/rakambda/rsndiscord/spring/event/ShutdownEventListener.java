@@ -4,7 +4,7 @@ import fr.rakambda.rsndiscord.spring.StopService;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,7 +17,7 @@ public class ShutdownEventListener extends ListenerAdapter{
 	}
 	
 	@Override
-	public void onShutdown(@NotNull ShutdownEvent event){
+	public void onShutdown(@NonNull ShutdownEvent event){
 		log.info("JDA shutting down");
 		stopService.startShutdownTimeout();
 	}

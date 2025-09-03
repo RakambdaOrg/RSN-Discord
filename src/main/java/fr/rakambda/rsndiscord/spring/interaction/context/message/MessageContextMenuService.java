@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.localization.LocalizationFunction;
 import net.dv8tion.jda.api.interactions.commands.localization.ResourceBundleLocalizationFunction;
 import net.dv8tion.jda.api.requests.RestAction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Collection;
@@ -38,15 +38,15 @@ public class MessageContextMenuService{
 				.collect(Collectors.toMap(IExecutableMessageContextMenu::getName, e -> e));
 	}
 	
-	@NotNull
+	@NonNull
 	private LocalizationFunction getLocalizedFunction(){
 		return ResourceBundleLocalizationFunction
 				.fromBundles("lang/context-messages", DiscordLocale.ENGLISH_US, DiscordLocale.FRENCH)
 				.build();
 	}
 	
-	@NotNull
-	public CompletableFuture<Void> registerGlobalMenus(@NotNull JDA jda){
+	@NonNull
+	public CompletableFuture<Void> registerGlobalMenus(@NonNull JDA jda){
 		log.info("Registering global message context menus");
 		
 		var localizationFunction = getLocalizedFunction();
@@ -58,8 +58,8 @@ public class MessageContextMenuService{
 		return registerMenus(jda::upsertCommand, commands);
 	}
 	
-	@NotNull
-	public CompletableFuture<Void> registerGuildMenus(@NotNull Guild guild){
+	@NonNull
+	public CompletableFuture<Void> registerGuildMenus(@NonNull Guild guild){
 		log.info("Registering guild message context menus for {}", guild);
 		
 		var localizationFunction = getLocalizedFunction();
@@ -71,8 +71,8 @@ public class MessageContextMenuService{
 		return registerMenus(guild::upsertCommand, commands);
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> registerMenus(@NotNull Function<CommandData, RestAction<Command>> action, @NotNull Collection<CommandData> commands){
+	@NonNull
+	private CompletableFuture<Void> registerMenus(@NonNull Function<CommandData, RestAction<Command>> action, @NonNull Collection<CommandData> commands){
 		if(commands.isEmpty()){
 			log.info("No message context menus to register");
 			return CompletableFuture.completedFuture(null);
@@ -91,12 +91,12 @@ public class MessageContextMenuService{
 				});
 	}
 	
-	@NotNull
-	public Optional<IExecutableMessageContextMenu> getExecutableContextMenu(@NotNull String name){
+	@NonNull
+	public Optional<IExecutableMessageContextMenu> getExecutableContextMenu(@NonNull String name){
 		return Optional.ofNullable(executableMessageContextMenus.get(name));
 	}
 	
-	@NotNull
+	@NonNull
 	public Collection<String> getRegistrableContextMenu(){
 		return registrableMessageContextMenus.stream()
 				.filter(cmd -> !cmd.isIncludeAllServers())
@@ -104,13 +104,13 @@ public class MessageContextMenuService{
 				.toList();
 	}
 	
-	public void addCommand(@NotNull JDA jda, long guildId, @NotNull String value){
+	public void addCommand(@NonNull JDA jda, long guildId, @NonNull String value){
 		registrableMessageContextMenus.stream()
 				.filter(cmd -> Objects.equals(cmd.getRegisterName(), value))
 				.forEach(cmd -> jda.getGuildById(guildId).upsertCommand(cmd.getDefinition(getLocalizedFunction())).submit());
 	}
 	
-	public void deleteCommand(@NotNull JDA jda, long guildId, @NotNull String value){
+	public void deleteCommand(@NonNull JDA jda, long guildId, @NonNull String value){
 		registrableMessageContextMenus.stream()
 				.filter(cmd -> Objects.equals(cmd.getRegisterName(), value))
 				.forEach(cmd -> jda.getGuildById(guildId).deleteCommandById(cmd.getDefinition(getLocalizedFunction()).getName()).submit());

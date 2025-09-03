@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.entities.IMentionable;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.time.Duration;
@@ -32,20 +32,20 @@ public class NowPlayingCommand implements IExecutableSlashCommandGuild{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "playing";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getPath(){
 		return "music/playing";
 	}
 	
 	@Override
-	@NotNull
-	public CompletableFuture<?> executeGuild(@NotNull SlashCommandInteraction event, @NotNull Guild guild, @NotNull Member member){
+	@NonNull
+	public CompletableFuture<?> executeGuild(@NonNull SlashCommandInteraction event, @NonNull Guild guild, @NonNull Member member){
 		var deferred = event.deferReply().submit();
 		
 		var currentTrackOptional = audioServiceFactory.get(guild).getTrackScheduler().getCurrentTrack();
@@ -88,7 +88,7 @@ public class NowPlayingCommand implements IExecutableSlashCommandGuild{
 		return deferred.thenCompose(empty -> JDAWrappers.edit(event, embed).submit());
 	}
 	
-	@NotNull
+	@NonNull
 	private static String buildBar(double current, double total){
 		var charCount = 10;
 		if(current > total){
@@ -107,7 +107,7 @@ public class NowPlayingCommand implements IExecutableSlashCommandGuild{
 	 *
 	 * @return A readable version of this duration.
 	 */
-	@NotNull
+	@NonNull
 	public static String getDuration(long time){
 		var duration = Duration.ofMillis(time);
 		if(duration.toHoursPart() > 0){

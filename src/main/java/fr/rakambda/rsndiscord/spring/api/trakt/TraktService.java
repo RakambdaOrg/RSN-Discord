@@ -15,8 +15,8 @@ import fr.rakambda.rsndiscord.spring.settings.ApplicationSettings;
 import fr.rakambda.rsndiscord.spring.storage.entity.TraktEntity;
 import fr.rakambda.rsndiscord.spring.storage.repository.TraktRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -59,8 +59,8 @@ public class TraktService{
 				.build();
 	}
 	
-	@NotNull
-	public Mono<UserSettingsResponse> getUserSettings(@NotNull String token){
+	@NonNull
+	public Mono<UserSettingsResponse> getUserSettings(@NonNull String token){
 		return client.get()
 				.uri(b -> b.pathSegment("users", "settings").build())
 				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -68,7 +68,7 @@ public class TraktService{
 				.bodyToMono(new ParameterizedTypeReference<>(){});
 	}
 	
-	@NotNull
+	@NonNull
 	public DeviceCodeResponse getDeviceCode() throws RequestFailedException{
 		log.info("Getting new device code");
 		
@@ -82,7 +82,7 @@ public class TraktService{
 				.orElseThrow(() -> new RequestFailedException("Failed to get device code")));
 	}
 	
-	@NotNull
+	@NonNull
 	public List<UserHistory> getAllUserHistory(long userId, @Nullable Instant startDate, @Nullable Instant endDate) throws NotLoggedInException, RequestFailedException{
 		log.info("Getting user history for {}", userId);
 		
@@ -103,8 +103,8 @@ public class TraktService{
 		return histories;
 	}
 	
-	@NotNull
-	private UserHistoryResponse getUserHistory(@NotNull TraktEntity entity, int page, @Nullable Instant startDate, @Nullable Instant endDate) throws RequestFailedException{
+	@NonNull
+	private UserHistoryResponse getUserHistory(@NonNull TraktEntity entity, int page, @Nullable Instant startDate, @Nullable Instant endDate) throws RequestFailedException{
 		log.info("Getting user history at page {}", page);
 		
 		var startDateValue = Optional.ofNullable(startDate)
@@ -154,7 +154,7 @@ public class TraktService{
 		}
 	}
 	
-	private void verifyAccessToken(@NotNull TraktEntity entity) throws NotLoggedInException{
+	private void verifyAccessToken(@NonNull TraktEntity entity) throws NotLoggedInException{
 		if(entity.getRefreshTokenExpire().isAfter(Instant.now())){
 			return;
 		}
@@ -167,7 +167,7 @@ public class TraktService{
 		throw new NotLoggedInException();
 	}
 	
-	@NotNull
+	@NonNull
 	private TraktEntity getEntity(long userId) throws NotLoggedInException{
 		log.trace("Getting previous access token for {}", userId);
 		return traktRepository.findById(userId)
@@ -175,8 +175,8 @@ public class TraktService{
 				.orElseThrow(NotLoggedInException::new);
 	}
 	
-	@NotNull
-	public CompletableFuture<TraktEntity> pollDeviceToken(long userId, @NotNull DeviceCodeResponse deviceCode){
+	@NonNull
+	public CompletableFuture<TraktEntity> pollDeviceToken(long userId, @NonNull DeviceCodeResponse deviceCode){
 		log.info("Polling device token every {} seconds for {} for code {} and user {}", deviceCode.getInterval(), deviceCode.getExpiresIn(), deviceCode.getDeviceCode(), userId);
 		
 		var retryCount = deviceCode.getExpiresIn() / deviceCode.getInterval();

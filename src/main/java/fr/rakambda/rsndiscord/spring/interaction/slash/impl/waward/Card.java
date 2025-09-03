@@ -1,13 +1,13 @@
 package fr.rakambda.rsndiscord.spring.interaction.slash.impl.waward;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public record Card(
-		@NotNull String name,
+		@NonNull String name,
 		int stars
 ) implements INamed, Comparable<Card>{
 	@Override
-	public int compareTo(@NotNull Card o){
+	public int compareTo(@NonNull Card o){
 		return name().compareTo(o.name());
 	}
 }

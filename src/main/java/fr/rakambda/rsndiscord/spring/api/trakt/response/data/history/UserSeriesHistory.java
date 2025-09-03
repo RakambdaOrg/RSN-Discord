@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 @Data
 @AllArgsConstructor
@@ -19,7 +19,7 @@ public final class UserSeriesHistory extends UserHistory{
 	private Show show;
 	
 	@Override
-	@NotNull
+	@NonNull
 	public TraktMediaType getType(){
 		return TraktMediaType.EPISODE;
 	}

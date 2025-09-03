@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -21,14 +21,14 @@ public class TodoMessageKeepWithoutThreadButtonHandler implements IExecutableBut
 	private static final String COMPONENT_ID = "todo-message-keep-no-thread";
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getComponentId(){
 		return COMPONENT_ID;
 	}
 	
-	@NotNull
+	@NonNull
 	@Override
-	public CompletableFuture<?> executeGuild(@NotNull ButtonInteraction event, @NotNull Guild guild, @NotNull Member member) throws InvalidChannelTypeException{
+	public CompletableFuture<?> executeGuild(@NonNull ButtonInteraction event, @NonNull Guild guild, @NonNull Member member) throws InvalidChannelTypeException{
 		var channelType = event.getChannelType();
 		if(channelType != ChannelType.GUILD_PUBLIC_THREAD){
 			throw new InvalidChannelTypeException(channelType);
@@ -47,7 +47,7 @@ public class TodoMessageKeepWithoutThreadButtonHandler implements IExecutableBut
 				.thenCompose(v -> JDAWrappers.delete(threadChannel).submit());
 	}
 	
-	@NotNull
+	@NonNull
 	public static Supplier<Button> builder(){
 		return () -> Button.primary(COMPONENT_ID, "Archive (only message)").withEmoji(Emoji.fromUnicode("U+1F4E8"));
 	}

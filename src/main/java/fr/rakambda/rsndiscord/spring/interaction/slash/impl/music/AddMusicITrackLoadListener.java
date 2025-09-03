@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,7 +26,7 @@ public class AddMusicITrackLoadListener implements ITrackLoadListener{
 	private final LocalizationService localizationService;
 	
 	@Override
-	public void onTrackLoaded(@NotNull AudioTrack track){
+	public void onTrackLoaded(@NonNull AudioTrack track){
 		var queue = scheduler.getQueue();
 		
 		var before = queue.stream()
@@ -65,11 +65,11 @@ public class AddMusicITrackLoadListener implements ITrackLoadListener{
 	}
 	
 	@Override
-	public void onPlaylistLoaded(@NotNull Collection<AudioTrack> tracks){
+	public void onPlaylistLoaded(@NonNull Collection<AudioTrack> tracks){
 	}
 	
 	@Override
-	public void onLoadFailure(@NotNull TrackLoadException throwable){
+	public void onLoadFailure(@NonNull TrackLoadException throwable){
 		log.error("Failed to load music", throwable);
 		JDAWrappers.reply(event, throwable.getMessage()).submit(); //TODO friendly message
 	}

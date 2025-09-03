@@ -1,9 +1,9 @@
 package fr.rakambda.rsndiscord.spring.interaction.exception;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class UnknownAccessorException extends InteractionException{
-	public UnknownAccessorException(@NotNull String accessorNames){
+	public UnknownAccessorException(@NonNull String accessorNames){
 		super("Unknown configuration. Available: " + accessorNames);
 	}
 }

@@ -4,13 +4,13 @@ import fr.rakambda.rsndiscord.spring.jda.ActionWrapper;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 @Slf4j
 public class DeleteChannelWrapper extends ActionWrapper<Void, AuditableRestAction<Void>>{
 	private final TextChannel channel;
 	
-	public DeleteChannelWrapper(@NotNull TextChannel channel){
+	public DeleteChannelWrapper(@NonNull TextChannel channel){
 		super(channel.delete());
 		this.channel = channel;
 	}

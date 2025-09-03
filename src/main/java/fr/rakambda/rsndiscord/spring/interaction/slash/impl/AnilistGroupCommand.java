@@ -5,14 +5,14 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.localization.LocalizationFunction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AnilistGroupCommand implements IRegistrableSlashCommand{
 	@Override
-	@NotNull
-	public CommandData getDefinition(@NotNull LocalizationFunction localizationFunction){
+	@NonNull
+	public CommandData getDefinition(@NonNull LocalizationFunction localizationFunction){
 		return Commands.slash(getId(), "Anilist")
 				.setLocalizationFunction(localizationFunction)
 				.addSubcommands(
@@ -22,7 +22,7 @@ public class AnilistGroupCommand implements IRegistrableSlashCommand{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "anilist";
 	}

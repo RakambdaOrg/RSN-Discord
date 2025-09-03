@@ -7,8 +7,8 @@ import fr.rakambda.rsndiscord.spring.interaction.slash.api.IExecutableSlashComma
 import fr.rakambda.rsndiscord.spring.interaction.slash.api.IExecutableSlashCommandUser;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Objects;
@@ -24,7 +24,7 @@ public class SlashCommandCompletionRunner{
 		this.slashCommandService = slashCommandService;
 	}
 	
-	public void complete(@NotNull CommandAutoCompleteInteractionEvent event){
+	public void complete(@NonNull CommandAutoCompleteInteractionEvent event){
 		CompletableFuture.completedFuture(event.getFullCommandName())
 				.thenApply(path -> slashCommandService.getExecutableCommand(event.getFullCommandName())
 						.orElseThrow(() -> new IllegalStateException("Unknown command %s".formatted(path))))
@@ -32,8 +32,8 @@ public class SlashCommandCompletionRunner{
 				.exceptionally(ex -> handleExecutionError(event, ex));
 	}
 	
-	@NotNull
-	private CompletableFuture<?> runCompletion(@NotNull CommandAutoCompleteInteractionEvent event, @NotNull IExecutableSlashCommand command){
+	@NonNull
+	private CompletableFuture<?> runCompletion(@NonNull CommandAutoCompleteInteractionEvent event, @NonNull IExecutableSlashCommand command){
 		try{
 			if(event.isFromGuild()){
 				if(!(command instanceof IExecutableSlashCommandGuild commandGuild)){
@@ -54,7 +54,7 @@ public class SlashCommandCompletionRunner{
 	}
 	
 	@Nullable
-	private <T> T handleExecutionError(@NotNull CommandAutoCompleteInteractionEvent event, @NotNull Throwable ex){
+	private <T> T handleExecutionError(@NonNull CommandAutoCompleteInteractionEvent event, @NonNull Throwable ex){
 		log.error("Failed to auto complete command {}", event.getFullCommandName(), ex);
 		return null;
 	}

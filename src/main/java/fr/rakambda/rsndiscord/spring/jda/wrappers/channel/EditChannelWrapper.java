@@ -5,26 +5,26 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.managers.channel.concrete.TextChannelManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 @Slf4j
 public class EditChannelWrapper extends ActionWrapper<Void, TextChannelManager>{
 	private final TextChannel channel;
 	
-	public EditChannelWrapper(@NotNull TextChannel channel){
+	public EditChannelWrapper(@NonNull TextChannel channel){
 		super(channel.getManager());
 		this.channel = channel;
 	}
 	
-	@NotNull
-	public EditChannelWrapper sync(@NotNull Category category){
+	@NonNull
+	public EditChannelWrapper sync(@NonNull Category category){
 		log.info("Will sync permissions of {} with {}", channel, category);
 		getAction().sync(category);
 		return this;
 	}
 	
-	@NotNull
+	@NonNull
 	public EditChannelWrapper setParent(@Nullable Category category){
 		log.info("Will set {} in category {}", channel, category);
 		getAction().setParent(category);

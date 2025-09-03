@@ -6,20 +6,20 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.requests.RestAction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 @Slf4j
 public class RemoveAllReactionWrapper extends ActionWrapper<Void, RestAction<Void>>{
 	private final Object message;
 	private final Emoji reaction;
 	
-	public RemoveAllReactionWrapper(@NotNull MessageReaction reaction){
+	public RemoveAllReactionWrapper(@NonNull MessageReaction reaction){
 		super(reaction.clearReactions());
 		message = reaction.getMessageId();
 		this.reaction = reaction.getEmoji();
 	}
 	
-	public RemoveAllReactionWrapper(@NotNull Message message, @NotNull Emoji emoji){
+	public RemoveAllReactionWrapper(@NonNull Message message, @NonNull Emoji emoji){
 		super(message.clearReactions(emoji));
 		this.message = message;
 		reaction = emoji;

@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.localization.LocalizationFunction;
 import net.dv8tion.jda.api.interactions.commands.localization.ResourceBundleLocalizationFunction;
 import net.dv8tion.jda.api.requests.RestAction;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Collection;
@@ -38,15 +38,15 @@ public class SlashCommandService{
 				.collect(Collectors.toMap(IExecutableSlashCommand::getPath, e -> e));
 	}
 	
-	@NotNull
+	@NonNull
 	private LocalizationFunction getLocalizedFunction(){
 		return ResourceBundleLocalizationFunction
 				.fromBundles("lang/commands", DiscordLocale.ENGLISH_US, DiscordLocale.FRENCH)
 				.build();
 	}
 	
-	@NotNull
-	public CompletableFuture<Void> registerGlobalCommands(@NotNull JDA jda){
+	@NonNull
+	public CompletableFuture<Void> registerGlobalCommands(@NonNull JDA jda){
 		log.info("Registering global slash commands");
 		
 		var localizationFunction = getLocalizedFunction();
@@ -58,8 +58,8 @@ public class SlashCommandService{
 		return registerCommands(jda::upsertCommand, commands);
 	}
 	
-	@NotNull
-	public CompletableFuture<Void> registerGuildCommands(@NotNull Guild guild){
+	@NonNull
+	public CompletableFuture<Void> registerGuildCommands(@NonNull Guild guild){
 		log.info("Registering guild slash commands for {}", guild);
 		
 		var localizationFunction = getLocalizedFunction();
@@ -71,8 +71,8 @@ public class SlashCommandService{
 		return registerCommands(guild::upsertCommand, commands);
 	}
 	
-	@NotNull
-	private CompletableFuture<Void> registerCommands(@NotNull Function<CommandData, RestAction<Command>> action, @NotNull Collection<CommandData> commands){
+	@NonNull
+	private CompletableFuture<Void> registerCommands(@NonNull Function<CommandData, RestAction<Command>> action, @NonNull Collection<CommandData> commands){
 		if(commands.isEmpty()){
 			log.info("No commands to register");
 			return CompletableFuture.completedFuture(null);
@@ -91,12 +91,12 @@ public class SlashCommandService{
 				});
 	}
 	
-	@NotNull
-	public Optional<IExecutableSlashCommand> getExecutableCommand(@NotNull String fullCommandName){
+	@NonNull
+	public Optional<IExecutableSlashCommand> getExecutableCommand(@NonNull String fullCommandName){
 		return Optional.ofNullable(executableSlashCommands.get(fullCommandName.replace(" ", "/")));
 	}
 	
-	@NotNull
+	@NonNull
 	public Collection<String> getRegistrableCommandNames(){
 		return registrableSlashCommands.stream()
 				.filter(cmd -> !cmd.isIncludeAllServers())
@@ -104,13 +104,13 @@ public class SlashCommandService{
 				.toList();
 	}
 	
-	public void addCommand(@NotNull JDA jda, long guildId, @NotNull String value){
+	public void addCommand(@NonNull JDA jda, long guildId, @NonNull String value){
 		registrableSlashCommands.stream()
 				.filter(cmd -> Objects.equals(cmd.getRegisterName(), value))
 				.forEach(cmd -> jda.getGuildById(guildId).upsertCommand(cmd.getDefinition(getLocalizedFunction())).submit());
 	}
 	
-	public void deleteCommand(@NotNull JDA jda, long guildId, @NotNull String value){
+	public void deleteCommand(@NonNull JDA jda, long guildId, @NonNull String value){
 		registrableSlashCommands.stream()
 				.filter(cmd -> Objects.equals(cmd.getRegisterName(), value))
 				.forEach(cmd -> jda.getGuildById(guildId).deleteCommandById(cmd.getDefinition(getLocalizedFunction()).getName()).submit());

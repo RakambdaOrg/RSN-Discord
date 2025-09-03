@@ -22,8 +22,8 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.awt.*;
@@ -59,13 +59,13 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	public String getId(){
 		return "anilist.notification";
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	protected String getName(){
 		return "Anilist notification";
 	}
@@ -76,13 +76,13 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 	}
 	
 	@Override
-	@NotNull
+	@NonNull
 	protected TemporalUnit getPeriodUnit(){
 		return ChronoUnit.HOURS;
 	}
 	
 	@Override
-	protected void executeGlobal(@NotNull JDA jda){
+	protected void executeGlobal(@NonNull JDA jda){
 		var channels = getChannels(jda);
 		if(channels.isEmpty()){
 			log.info("No channels configured, skipping");
@@ -102,8 +102,8 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 		anilistRepository.saveAll(processedEntities);
 	}
 	
-	@NotNull
-	private Stream<AnilistEntity> processUser(@NotNull JDA jda, @NotNull AnilistEntity entity, @NotNull Collection<GuildMessageChannel> channels){
+	@NonNull
+	private Stream<AnilistEntity> processUser(@NonNull JDA jda, @NonNull AnilistEntity entity, @NonNull Collection<GuildMessageChannel> channels){
 		try{
 			var userOptional = JDAWrappers.findUser(jda, entity.getId());
 			if(userOptional.isEmpty()){
@@ -145,7 +145,7 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 		}
 	}
 	
-	private boolean isNewer(@NotNull Notification notification, @Nullable Instant reference){
+	private boolean isNewer(@NonNull Notification notification, @Nullable Instant reference){
 		if(Objects.isNull(reference)){
 			return true;
 		}
@@ -154,25 +154,25 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 				.orElse(false);
 	}
 	
-	@NotNull
-	private Optional<Instant> extractDate(@NotNull Notification notification){
+	@NonNull
+	private Optional<Instant> extractDate(@NonNull Notification notification){
 		return Optional.ofNullable(notification.getCreatedAt()).map(ChronoZonedDateTime::toInstant);
 	}
 	
-	private void sendUserElements(@NotNull User user, @NotNull Collection<Notification> notifications, @NotNull Collection<GuildMessageChannel> channels){
+	private void sendUserElements(@NonNull User user, @NonNull Collection<Notification> notifications, @NonNull Collection<GuildMessageChannel> channels){
 		channels.stream()
 				.filter(c -> JDAWrappers.isMember(c.getGuild(), user.getIdLong()))
 				.forEach(c -> sendUserElements(c, user, notifications));
 	}
 	
-	private void sendUserElements(@NotNull GuildMessageChannel channel, @NotNull User user, @NotNull Collection<Notification> notifications){
+	private void sendUserElements(@NonNull GuildMessageChannel channel, @NonNull User user, @NonNull Collection<Notification> notifications){
 		notifications.stream()
 				.map(n -> buildEmbed(n, user, channel.getGuild().getLocale()))
 				.forEach(e -> JDAWrappers.message(channel, user.getAsMention()).embed(e).submit());
 	}
 	
-	@NotNull
-	private MessageEmbed buildEmbed(@NotNull Notification notification, @NotNull User user, @NotNull DiscordLocale locale){
+	@NonNull
+	private MessageEmbed buildEmbed(@NonNull Notification notification, @NonNull User user, @NonNull DiscordLocale locale){
 		if(notification instanceof AiringNotification airingNotification){
 			return buildTypeEmbed(airingNotification, user, locale);
 		}
@@ -191,8 +191,8 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 		throw new IllegalStateException("Unknown type " + notification.getClass().getSimpleName());
 	}
 	
-	@NotNull
-	private MessageEmbed buildTypeEmbed(@NotNull MediaDeletionNotification notification, @NotNull User user){
+	@NonNull
+	private MessageEmbed buildTypeEmbed(@NonNull MediaDeletionNotification notification, @NonNull User user){
 		return new EmbedBuilder()
 				.setAuthor(user.getName(), null, user.getAvatarUrl())
 				.setTitle("Media entry deleted")
@@ -204,8 +204,8 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 				.build();
 	}
 	
-	@NotNull
-	private MessageEmbed buildTypeEmbed(@NotNull MediaMergeNotification notification, @NotNull User user, @NotNull DiscordLocale locale){
+	@NonNull
+	private MessageEmbed buildTypeEmbed(@NonNull MediaMergeNotification notification, @NonNull User user, @NonNull DiscordLocale locale){
 		var deletedTitles = notification.getDeletedMediaTitles().stream()
 				.map("`%s`"::formatted)
 				.collect(Collectors.joining(", "));
@@ -226,8 +226,8 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 		return builder.build();
 	}
 	
-	@NotNull
-	private MessageEmbed buildTypeEmbed(@NotNull MediaDataChangeNotification notification, @NotNull User user, @NotNull DiscordLocale locale){
+	@NonNull
+	private MessageEmbed buildTypeEmbed(@NonNull MediaDataChangeNotification notification, @NonNull User user, @NonNull DiscordLocale locale){
 		var builder = new EmbedBuilder()
 				.setAuthor(user.getName(), null, user.getAvatarUrl())
 				.setTitle("Media data changed", notification.getMedia().getUrl())
@@ -243,8 +243,8 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 		return builder.build();
 	}
 	
-	@NotNull
-	private MessageEmbed buildTypeEmbed(@NotNull RelatedMediaAdditionNotification notification, @NotNull User user, @NotNull DiscordLocale locale){
+	@NonNull
+	private MessageEmbed buildTypeEmbed(@NonNull RelatedMediaAdditionNotification notification, @NonNull User user, @NonNull DiscordLocale locale){
 		var builder = new EmbedBuilder()
 				.setAuthor(user.getName(), null, user.getAvatarUrl())
 				.setTitle(localizationService.translate(locale, "anilist.related"), notification.getMedia().getUrl())
@@ -257,8 +257,8 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 		return builder.build();
 	}
 	
-	@NotNull
-	private MessageEmbed buildTypeEmbed(@NotNull AiringNotification notification, @NotNull User user, @NotNull DiscordLocale locale){
+	@NonNull
+	private MessageEmbed buildTypeEmbed(@NonNull AiringNotification notification, @NonNull User user, @NonNull DiscordLocale locale){
 		var builder = new EmbedBuilder()
 				.setAuthor(user.getName(), null, user.getAvatarUrl())
 				.setTitle(localizationService.translate(locale, "anilist.release"), notification.getMedia().getUrl())
@@ -273,20 +273,20 @@ public class AnilistNotificationRunner extends AnilistWrappedTriggerTask{
 		return builder.build();
 	}
 	
-	@NotNull
-	private Collection<GuildMessageChannel> getChannels(@NotNull JDA jda){
+	@NonNull
+	private Collection<GuildMessageChannel> getChannels(@NonNull JDA jda){
 		return channelRepository.findAllByType(ChannelType.ANILIST_NOTIFICATION).stream()
 				.map(entity -> JDAWrappers.findChannel(jda, entity.getChannelId()))
 				.flatMap(Optional::stream)
 				.toList();
 	}
 	
-	@NotNull
+	@NonNull
 	private Collection<AnilistEntity> getUsers(){
 		return anilistRepository.findAllByEnabledIsTrue();
 	}
 	
 	@Override
-	protected void executeGuild(@NotNull Guild guild){
+	protected void executeGuild(@NonNull Guild guild){
 	}
 }

@@ -1,28 +1,28 @@
 package fr.rakambda.rsndiscord.spring.interaction.slash.impl.waward;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
 public record Pack(
-		@NotNull String name,
-		@NotNull Collection<Card> cards
+		@NonNull String name,
+		@NonNull Collection<Card> cards
 ) implements INamed, Comparable<Pack>{
-	public Pack(@NotNull String name, @NotNull Card... cards){
+	public Pack(@NonNull String name, @NonNull Card... cards){
 		this(name, Arrays.asList(cards));
 	}
 	
-	@NotNull
-	public Optional<Card> getCard(@NotNull String name){
+	@NonNull
+	public Optional<Card> getCard(@NonNull String name){
 		return cards.stream()
 				.filter(c -> Objects.equals(c.name(), name))
 				.findAny();
 	}
 	
 	@Override
-	public int compareTo(@NotNull Pack o){
+	public int compareTo(@NonNull Pack o){
 		return name().compareTo(o.name());
 	}
 }
