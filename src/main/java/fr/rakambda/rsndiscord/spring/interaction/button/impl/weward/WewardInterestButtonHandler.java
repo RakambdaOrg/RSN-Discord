@@ -19,6 +19,8 @@ import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -28,15 +30,15 @@ import java.util.function.Supplier;
 @Component
 public class WewardInterestButtonHandler implements IExecutableButtonGuild{
 	private static final String COMPONENT_ID = "weward-interest";
-	private static final ActionRowChildComponent[] BUTTONS_NORMAL = {
+	private static final Collection<? extends ActionRowChildComponent> BUTTONS_NORMAL = List.of(
 			WewardTradedButtonHandler.builder().get(),
 			WewardDeleteButtonHandler.builder().get(),
 			WewardNoLongerNeededButtonHandler.builder().get()
-	};
-	private static final ActionRowChildComponent[] BUTTONS_ORIGINAL = {
+	);
+	private static final Collection<? extends ActionRowChildComponent> BUTTONS_ORIGINAL = List.of(
 			WewardInterestButtonHandler.builder().get().asDisabled(),
 			WewardDeleteButtonHandler.builder().get()
-	};
+	);
 	
 	private final LocalizationService localizationService;
 	

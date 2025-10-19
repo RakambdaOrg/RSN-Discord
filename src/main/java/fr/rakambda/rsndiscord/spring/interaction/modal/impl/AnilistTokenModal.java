@@ -7,13 +7,13 @@ import fr.rakambda.rsndiscord.spring.interaction.modal.api.IExecutableModalGuild
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import fr.rakambda.rsndiscord.spring.util.LocalizationService;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.interactions.modals.ModalInteraction;
+import net.dv8tion.jda.api.modals.Modal;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -59,13 +59,13 @@ public class AnilistTokenModal implements IExecutableModalGuild{
 	@NonNull
 	public static Supplier<Modal> builder(String codeLink){
 		return () -> {
-			var code = TextInput.create(CODE_OPTION, "Auth code", TextInputStyle.PARAGRAPH)
+			var code = TextInput.create(CODE_OPTION, TextInputStyle.PARAGRAPH)
 					.setValue("Get your code at : " + codeLink)
 					.setRequired(true)
 					.build();
 			
 			return Modal.create(COMPONENT_ID, "Anilist register")
-					.addComponents(ActionRow.of(code))
+					.addComponents(Label.of("Auth code", code))
 					.build();
 		};
 	}
