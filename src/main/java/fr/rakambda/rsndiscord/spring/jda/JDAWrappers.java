@@ -51,7 +51,7 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.callbacks.IModalCallback;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.commands.Command;
-import net.dv8tion.jda.api.interactions.modals.Modal;
+import net.dv8tion.jda.api.modals.Modal;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import java.awt.*;

@@ -4,7 +4,7 @@ import fr.rakambda.rsndiscord.spring.jda.ActionWrapper;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.interactions.callbacks.IModalCallback;
-import net.dv8tion.jda.api.interactions.modals.Modal;
+import net.dv8tion.jda.api.modals.Modal;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
