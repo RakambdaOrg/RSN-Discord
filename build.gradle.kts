@@ -32,7 +32,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-log4j2")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.apache.logging.log4j:log4j-layout-template-json")
     modules {
@@ -74,8 +74,8 @@ repositories {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 tasks.withType<JavaCompile>(){
@@ -90,7 +90,7 @@ springBoot {
 
 jib {
     from {
-        image = "eclipse-temurin:21-jdk"
+        image = "eclipse-temurin:25-jdk"
         platforms {
             platform {
                 os = "linux"
