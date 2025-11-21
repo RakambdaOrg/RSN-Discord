@@ -223,7 +223,7 @@ public class AnilistService{
 					.blockOptional()
 					.orElseThrow(RequestFailedException::new));
 			
-			if(response.getErrors().isEmpty()){
+			if(Objects.isNull(response.getErrors()) || response.getErrors().isEmpty()){
 				return response.getData();
 			}
 			
