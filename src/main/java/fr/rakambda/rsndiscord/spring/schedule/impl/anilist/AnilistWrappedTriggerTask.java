@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import static net.dv8tion.jda.api.entities.MessageEmbed.VALUE_MAX_LENGTH;
 
 public abstract class AnilistWrappedTriggerTask extends WrappedTriggerTask{
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -84,6 +85,10 @@ public abstract class AnilistWrappedTriggerTask extends WrappedTriggerTask{
 		
 		Optional.ofNullable(media.getSource())
 				.ifPresent(source -> builder.addField("Source", source.getValue(), true));
+		
+		Optional.ofNullable(media.getDescription())
+				.map(d -> d.substring(0, Math.min(d.length(), VALUE_MAX_LENGTH)))
+				.ifPresent(description -> builder.addField("Description", description, true));
 		
 		builder.setThumbnail(media.getCoverImage().getLarge().toString())
 				.setFooter("ID: " + media.getId());

@@ -35,6 +35,7 @@ public sealed abstract class Media permits AnimeMedia, MangaMedia{
 	@JsonProperty("isAdult")
 	private boolean adult;
 	private int id;
+	private String description;
 	
 	public abstract MediaType getType();
 }

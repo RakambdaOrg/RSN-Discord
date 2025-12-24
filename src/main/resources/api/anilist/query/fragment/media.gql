@@ -37,4 +37,5 @@ fragment MediaParts on Media {
         allTime
         context
     }
+    description
 }
