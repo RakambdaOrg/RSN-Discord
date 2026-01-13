@@ -5,6 +5,7 @@ lavaplayer-youtube-v2-version = "1.16.0"
 lavasrc-version = "4.8.1"
 lp_cross-version = "0.1.1"
 opus-version = "1.1.1"
+jdave-version = "0.1.2"
 
 names-version = "0.53.0"
 jib-version = "3.5.2"
@@ -14,16 +15,22 @@ sptringboot-dm-version = "1.1.7"
 [libraries]
 jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda-version" }
 lavaplayer = { group = "dev.arbjerg", name = "lavaplayer", version.ref = "lavaplayer-version" }
-lavaplayer-youtube-v2 = { group = "dev.lavalink.youtube", name = "v2", version.ref = "lavaplayer-youtube-v2-version"}
-lavasrc = { group = "com.github.topi314.lavasrc", name = "lavasrc", version.ref = "lavasrc-version"}
-lavasrc-protocol = { group = "com.github.topi314.lavasrc", name = "lavasrc-protocol", version.ref = "lavasrc-version"}
+lavaplayer-youtube-v2 = { group = "dev.lavalink.youtube", name = "v2", version.ref = "lavaplayer-youtube-v2-version" }
+lavasrc = { group = "com.github.topi314.lavasrc", name = "lavasrc", version.ref = "lavasrc-version" }
+lavasrc-protocol = { group = "com.github.topi314.lavasrc", name = "lavasrc-protocol", version.ref = "lavasrc-version" }
 lpCross = { group = "com.github.natanbc", name = "lp-cross", version.ref = "lp_cross-version" }
 opus-api = { group = "club.minnced", name = "opus-java-api", version.ref = "opus-version" }
 opus-natives = { group = "club.minnced", name = "opus-java-natives", version.ref = "opus-version" }
+jdave-api = { group = "club.minnced", name = "jdave-api", version.ref = "jdave-version" }
+jdave-native-linux-amd = { group = "club.minnced", name = "jdave-native-linux-x86-64", version.ref = "jdave-version" }
+jdave-native-linux-arm = { group = "club.minnced", name = "jdave-native-linux-aarch64", version.ref = "jdave-version" }
+jdave-native-windows = { group = "club.minnced", name = "jdave-native-win-x86-64", version.ref = "jdave-version" }
+jdave-native-macos = { group = "club.minnced", name = "jdave-native-darwin", version.ref = "jdave-version" }
 
 [bundles]
 opus = ["opus-api", "opus-natives"]
 lavalink = ["lavaplayer", "lavaplayer-youtube-v2", "lpCross", "lavasrc", "lavasrc-protocol"]
+jdave = ["jdave-api", "jdave-native-linux-amd", "jdave-native-linux-arm", "jdave-native-windows", "jdave-native-macos"]
 
 [plugins]
 names = { id = "com.github.ben-manes.versions", version.ref = "names-version" }

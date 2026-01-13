@@ -25,6 +25,7 @@ dependencies {
         isChanging = true
     }
     implementation(libs.bundles.opus)
+    implementation(libs.bundles.jdave)
     implementation(libs.bundles.lavalink)
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
