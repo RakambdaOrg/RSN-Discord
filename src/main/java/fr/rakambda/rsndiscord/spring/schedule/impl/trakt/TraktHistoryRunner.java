@@ -275,6 +275,8 @@ public class TraktHistoryRunner extends WrappedTriggerTask{
 				.map(p -> theMovieDbService.getImageURL(p, TmdbImageSize.ORIGINAL))
 				.ifPresent(builder::setImage);
 		
+		totalEpisodes.filter(total -> episode.getNumber() >= total).ifPresent(_ -> builder.setColor(Color.GREEN));
+		
 		return builder.build();
 	}
 	
