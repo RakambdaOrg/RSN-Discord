@@ -1,9 +1,5 @@
 package fr.rakambda.rsndiscord.spring.audio;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 import com.github.topi314.lavasrc.mirror.DefaultMirroringAudioTrackResolver;
 import com.github.topi314.lavasrc.spotify.SpotifySourceManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -16,7 +12,7 @@ import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import dev.lavalink.youtube.clients.AndroidVrWithThumbnail;
 import dev.lavalink.youtube.clients.MWebWithThumbnail;
 import dev.lavalink.youtube.clients.MusicWithThumbnail;
-import dev.lavalink.youtube.clients.TvHtml5EmbeddedWithThumbnail;
+import dev.lavalink.youtube.clients.TvHtml5SimplyWithThumbnail;
 import dev.lavalink.youtube.clients.WebWithThumbnail;
 import fr.rakambda.rsndiscord.spring.audio.exception.LoadFailureException;
 import fr.rakambda.rsndiscord.spring.audio.exception.TrackLoadException;
@@ -33,6 +29,10 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 public class AudioService implements ITrackSchedulerStatusListener, ITrackLoadListener{
@@ -71,7 +71,7 @@ public class AudioService implements ITrackSchedulerStatusListener, ITrackLoadLi
 				new MusicWithThumbnail(),
 				new WebWithThumbnail(),
 				new AndroidVrWithThumbnail(),
-				new TvHtml5EmbeddedWithThumbnail(),
+				new TvHtml5SimplyWithThumbnail(),
 				new MWebWithThumbnail()
 		);
 		if(Objects.nonNull(refreshToken)){
