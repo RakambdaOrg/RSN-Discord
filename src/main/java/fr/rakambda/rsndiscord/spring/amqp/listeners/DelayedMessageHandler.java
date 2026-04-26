@@ -35,7 +35,7 @@ public class DelayedMessageHandler implements Job{
 	
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException{
-		var payload = context.get("payload");
+		var payload = context.getMergedJobDataMap().getString("payload");
 		var data = jsonMapper.convertValue(payload, DeleteMessageDelayMessage.class);
 		handleDeleteMessage(data).exceptionally(e -> handleError(e, context, data));
 	}
@@ -44,7 +44,7 @@ public class DelayedMessageHandler implements Job{
 	private <T> T handleError(@NonNull Throwable throwable, @NonNull JobExecutionContext context, @NonNull DeleteMessageDelayMessage message) {
 		log.warn("Failed to handle message", throwable);
 		
-		var retry = Optional.ofNullable(context.get("retry"))
+		var retry = Optional.ofNullable(context.getMergedJobDataMap().get("retry"))
 				.filter(Integer.class::isInstance)
 				.map(Integer.class::cast)
 				.orElse(0);
