@@ -27,7 +27,7 @@ public class RabbitService{
 	
 	public void scheduleMessage(@NonNull Duration delay, int retryCount, @NonNull IDelayedMessage message){
 		log.info("Delaying by {} message {}", delay, message);
-		rabbitTemplate.convertAndSend(amqpNameProvider.getExchangeDelayName(), amqpNameProvider.getRoutingKeyDelay(), message, getMessagePostProcessor(delay, retryCount));
+		rabbitTemplate.convertAndSend(amqpNameProvider.getExchangeDelayName(), amqpNameProvider.getRoutingKeyDelayStaging(), message, getMessagePostProcessor(delay, retryCount));
 	}
 	
 	@NonNull

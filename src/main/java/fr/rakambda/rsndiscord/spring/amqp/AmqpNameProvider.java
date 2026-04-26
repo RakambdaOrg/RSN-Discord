@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component;
 public class AmqpNameProvider{
 	private final String exchangeDelayName;
 	private final String queueDelayName;
+	private final String queueDelayStagingName;
 	private final String routingKeyDelay;
+	private final String routingKeyDelayStaging;
 	private final String xRedeliverCountRemainingHeader;
 	
 	@Autowired
@@ -19,7 +21,9 @@ public class AmqpNameProvider{
 		
 		exchangeDelayName = "%s.exchange.delay".formatted(prefix);
 		queueDelayName = "%s.queue.delay".formatted(prefix);
+		queueDelayStagingName = "%s.queue.delay.staging".formatted(prefix);
 		routingKeyDelay = "schedule-routing-key";
+		routingKeyDelayStaging = "schedule-routing-key-staging";
 		xRedeliverCountRemainingHeader = "x-redeliver-count-remaining";
 	}
 }

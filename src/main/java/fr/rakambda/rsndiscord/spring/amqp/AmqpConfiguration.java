@@ -3,8 +3,11 @@ package fr.rakambda.rsndiscord.spring.amqp;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.CustomExchange;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Exchange;
+import org.springframework.amqp.core.ExchangeBuilder;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -18,6 +21,7 @@ import org.springframework.core.retry.RetryTemplate;
 import org.springframework.util.backoff.ExponentialBackOff;
 import tools.jackson.databind.json.JsonMapper;
 import java.util.Map;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 @Configuration
 @EnableRabbit
@@ -36,15 +40,31 @@ public class AmqpConfiguration{
 	}
 	
 	@Bean
+	@Qualifier("delayStagingQueue")
+	public Queue delayStagingQueue(){
+		return QueueBuilder.durable(amqpNameProvider.getQueueDelayStagingName())
+				.withArgument("x-message-ttl", MINUTES.toMillis(15))
+				.withArgument("x-dead-letter-exchange", amqpNameProvider.getExchangeDelayName())
+				.withArgument("x-dead-letter-routing-key", amqpNameProvider.getRoutingKeyDelay())
+				.build();
+	}
+	
+	@Bean
 	@Qualifier("delayExchange")
-	public CustomExchange delayExchange(){
-		var args = Map.<String, Object> of("x-delayed-type", "direct");
-		return new CustomExchange(amqpNameProvider.getExchangeDelayName(), "x-delayed-message", true, false, args);
+	public DirectExchange delayExchange(){
+		return ExchangeBuilder.directExchange(amqpNameProvider.getExchangeDelayName())
+				.durable(true)
+				.build();
 	}
 	
 	@Bean
 	public Binding delayBinding(@Qualifier("delayQueue") Queue testeQueue, @Qualifier("delayExchange") Exchange exchange){
 		return BindingBuilder.bind(testeQueue).to(exchange).with(amqpNameProvider.getRoutingKeyDelay()).noargs();
+	}
+	
+	@Bean
+	public Binding delayStagingBinding(@Qualifier("delayStagingQueue") Queue testeQueue, @Qualifier("delayExchange") Exchange exchange){
+		return BindingBuilder.bind(testeQueue).to(exchange).with(amqpNameProvider.getRoutingKeyDelayStaging()).noargs();
 	}
 	
 	@Bean
