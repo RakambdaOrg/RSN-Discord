@@ -1,7 +1,7 @@
 package fr.rakambda.rsndiscord.spring.interaction.context.message.impl;
 
 import fr.rakambda.rsndiscord.spring.BotException;
-import fr.rakambda.rsndiscord.spring.amqp.RabbitService;
+import fr.rakambda.rsndiscord.spring.amqp.QuartzService;
 import fr.rakambda.rsndiscord.spring.interaction.context.message.api.IExecutableMessageContextMenuGuild;
 import fr.rakambda.rsndiscord.spring.interaction.context.message.api.IRegistrableMessageContextMenu;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +22,8 @@ import static fr.rakambda.rsndiscord.spring.interaction.context.message.impl.R6C
 @Slf4j
 public class RandomR6DefContextMenu extends R6ContextMenu implements IRegistrableMessageContextMenu, IExecutableMessageContextMenuGuild{
 	@Autowired
-	public RandomR6DefContextMenu(RabbitService rabbitService){
-		super(rabbitService);
+	public RandomR6DefContextMenu(QuartzService quartzService){
+		super(quartzService);
 	}
 	
 	@Override

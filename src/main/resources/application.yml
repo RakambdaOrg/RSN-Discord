@@ -19,6 +19,10 @@ spring:
       is-getter: none
     deserialization:
       fail-on-unknown-properties: true
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
 
 management:
   endpoint:

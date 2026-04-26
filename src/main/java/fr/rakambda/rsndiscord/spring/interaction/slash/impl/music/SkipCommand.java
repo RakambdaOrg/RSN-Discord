@@ -1,6 +1,6 @@
 package fr.rakambda.rsndiscord.spring.interaction.slash.impl.music;
 
-import fr.rakambda.rsndiscord.spring.amqp.RabbitService;
+import fr.rakambda.rsndiscord.spring.amqp.QuartzService;
 import fr.rakambda.rsndiscord.spring.audio.AudioServiceFactory;
 import fr.rakambda.rsndiscord.spring.audio.exception.NoTrackPlayingException;
 import fr.rakambda.rsndiscord.spring.interaction.slash.api.IExecutableSlashCommandGuild;
@@ -20,13 +20,13 @@ import java.util.concurrent.CompletableFuture;
 public class SkipCommand implements IExecutableSlashCommandGuild{
 	private final AudioServiceFactory audioServiceFactory;
 	private final LocalizationService localizationService;
-	private final RabbitService rabbitService;
+	private final QuartzService quartzService;
 	
 	@Autowired
-	public SkipCommand(AudioServiceFactory audioServiceFactory, LocalizationService localizationService, RabbitService rabbitService){
+	public SkipCommand(AudioServiceFactory audioServiceFactory, LocalizationService localizationService, QuartzService quartzService){
 		this.audioServiceFactory = audioServiceFactory;
 		this.localizationService = localizationService;
-		this.rabbitService = rabbitService;
+		this.quartzService = quartzService;
 	}
 	
 	@Override
@@ -56,6 +56,6 @@ public class SkipCommand implements IExecutableSlashCommandGuild{
 		
 		trackScheduler.skip();
 		return deferred.thenCompose(empty -> JDAWrappers.edit(event, localizationService.translate(locale, "music.skipped", event.getUser().getAsMention()))
-				.submitAndDelete(5, rabbitService));
+				.submitAndDelete(5, quartzService));
 	}
 }

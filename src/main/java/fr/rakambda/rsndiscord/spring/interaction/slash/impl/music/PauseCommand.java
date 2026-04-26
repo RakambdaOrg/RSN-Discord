@@ -1,6 +1,6 @@
 package fr.rakambda.rsndiscord.spring.interaction.slash.impl.music;
 
-import fr.rakambda.rsndiscord.spring.amqp.RabbitService;
+import fr.rakambda.rsndiscord.spring.amqp.QuartzService;
 import fr.rakambda.rsndiscord.spring.audio.AudioServiceFactory;
 import fr.rakambda.rsndiscord.spring.interaction.slash.api.IExecutableSlashCommandGuild;
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
@@ -17,13 +17,13 @@ import java.util.concurrent.CompletableFuture;
 public class PauseCommand implements IExecutableSlashCommandGuild{
 	private final AudioServiceFactory audioServiceFactory;
 	private final LocalizationService localizationService;
-	private final RabbitService rabbitService;
+	private final QuartzService quartzService;
 	
 	@Autowired
-	public PauseCommand(AudioServiceFactory audioServiceFactory, LocalizationService localizationService, RabbitService rabbitService){
+	public PauseCommand(AudioServiceFactory audioServiceFactory, LocalizationService localizationService, QuartzService quartzService){
 		this.audioServiceFactory = audioServiceFactory;
 		this.localizationService = localizationService;
-		this.rabbitService = rabbitService;
+		this.quartzService = quartzService;
 	}
 	
 	@Override
@@ -46,6 +46,6 @@ public class PauseCommand implements IExecutableSlashCommandGuild{
 		var result = audioServiceFactory.get(guild).getTrackScheduler().pause(true);
 		var message = result ? "music.paused" : "music.nothing-playing";
 		var content = localizationService.translate(event.getUserLocale(), message, event.getUser().getAsMention());
-		return deferred.thenCompose(empty -> JDAWrappers.reply(event, content).submitAndDelete(5, rabbitService));
+		return deferred.thenCompose(empty -> JDAWrappers.reply(event, content).submitAndDelete(5, quartzService));
 	}
 }

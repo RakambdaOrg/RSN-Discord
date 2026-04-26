@@ -1,6 +1,6 @@
 package fr.rakambda.rsndiscord.spring.interaction.context.message.impl;
 
-import fr.rakambda.rsndiscord.spring.amqp.RabbitService;
+import fr.rakambda.rsndiscord.spring.amqp.QuartzService;
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -96,12 +96,12 @@ public class R6ContextMenu{
 					}
 	);
 	
-	private final RabbitService rabbitService;
+	private final QuartzService quartzService;
 	
 	@NonNull
 	protected CompletableFuture<Message> executeGuild(@NonNull MessageContextInteractionEvent event, @NonNull Side side){
 		return event.deferReply(false).submit()
-				.thenCompose(empty -> JDAWrappers.reply(event, getOperatorMessage(side)).submitAndDelete(15, rabbitService));
+				.thenCompose(empty -> JDAWrappers.reply(event, getOperatorMessage(side)).submitAndDelete(15, quartzService));
 	}
 	
 	@NonNull

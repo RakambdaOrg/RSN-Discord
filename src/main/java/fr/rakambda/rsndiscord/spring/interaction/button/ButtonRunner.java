@@ -1,7 +1,7 @@
 package fr.rakambda.rsndiscord.spring.interaction.button;
 
 import fr.rakambda.rsndiscord.spring.BotException;
-import fr.rakambda.rsndiscord.spring.amqp.RabbitService;
+import fr.rakambda.rsndiscord.spring.amqp.QuartzService;
 import fr.rakambda.rsndiscord.spring.interaction.button.api.IExecutableButton;
 import fr.rakambda.rsndiscord.spring.interaction.button.api.IExecutableButtonGuild;
 import fr.rakambda.rsndiscord.spring.interaction.button.api.IExecutableButtonUser;
@@ -23,13 +23,13 @@ import java.util.concurrent.CompletableFuture;
 public class ButtonRunner{
 	private final ButtonService buttonService;
 	private final LocalizationService localizationService;
-	private final RabbitService rabbitService;
+	private final QuartzService quartzService;
 	
 	@Autowired
-	public ButtonRunner(ButtonService buttonService, LocalizationService localizationService, RabbitService rabbitService){
+	public ButtonRunner(ButtonService buttonService, LocalizationService localizationService, QuartzService quartzService){
 		this.buttonService = buttonService;
 		this.localizationService = localizationService;
-		this.rabbitService = rabbitService;
+		this.quartzService = quartzService;
 	}
 	
 	public void execute(@NonNull ButtonInteraction event){
@@ -71,7 +71,7 @@ public class ButtonRunner{
 		var message = "Failed to execute button %s: %s".formatted(event.getComponentId(), exceptionMessage);
 		
 		if(event.isAcknowledged()){
-			JDAWrappers.edit(event, message).submitAndDelete(5, rabbitService);
+			JDAWrappers.edit(event, message).submitAndDelete(5, quartzService);
 		}
 		else{
 			JDAWrappers.reply(event, message).ephemeral(true).submit();

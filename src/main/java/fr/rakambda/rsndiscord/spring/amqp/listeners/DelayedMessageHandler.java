@@ -1,58 +1,50 @@
 package fr.rakambda.rsndiscord.spring.amqp.listeners;
 
-import fr.rakambda.rsndiscord.spring.amqp.AmqpNameProvider;
-import fr.rakambda.rsndiscord.spring.amqp.RabbitService;
+import fr.rakambda.rsndiscord.spring.amqp.QuartzService;
 import fr.rakambda.rsndiscord.spring.amqp.message.DeleteMessageDelayMessage;
-import fr.rakambda.rsndiscord.spring.amqp.message.IDelayedMessage;
 import fr.rakambda.rsndiscord.spring.jda.JDAWrappers;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.messaging.handler.annotation.Headers;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.json.JsonMapper;
 import java.time.Duration;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Component
 @Slf4j
-public class DelayedMessageHandler{
+public class DelayedMessageHandler implements Job{
 	private static final Duration RETRY_DELAY = Duration.ofMinutes(15);
 	
 	private final JDA jda;
-	private final RabbitService rabbitService;
-	private final AmqpNameProvider amqpNameProvider;
+	private final JsonMapper jsonMapper;
+	private final QuartzService quartzService;
 	
-	public DelayedMessageHandler(JDA jda, RabbitService rabbitService, AmqpNameProvider amqpNameProvider){
+	public DelayedMessageHandler(JDA jda, JsonMapper jsonMapper, QuartzService quartzService){
 		this.jda = jda;
-		this.rabbitService = rabbitService;
-		this.amqpNameProvider = amqpNameProvider;
+		this.jsonMapper = jsonMapper;
+		this.quartzService = quartzService;
 	}
 	
-	@RabbitListener(queues = "#{amqpNameProvider.getQueueDelayName()}")
-	public void receive(@NonNull IDelayedMessage message, @Headers Map<String, Object> headers){
-		CompletableFuture<?> future;
-		if(message instanceof DeleteMessageDelayMessage deleteMessageDelayMessage){
-			future = handleDeleteMessage(deleteMessageDelayMessage);
-		}
-		else{
-			log.error("Received unknown delayed message of type {} : {}", message.getClass().getCanonicalName(), message);
-			return;
-		}
-		
-		future.exceptionally(e -> handleError(e, headers, message));
+	@Override
+	public void execute(JobExecutionContext context) throws JobExecutionException{
+		var payload = context.get("payload");
+		var data = jsonMapper.convertValue(payload, DeleteMessageDelayMessage.class);
+		handleDeleteMessage(data).exceptionally(e -> handleError(e, context, data));
 	}
 	
 	@Nullable
-	private <T> T handleError(@NonNull Throwable throwable, @NonNull Map<String, Object> header, @NonNull IDelayedMessage message){
+	private <T> T handleError(@NonNull Throwable throwable, @NonNull JobExecutionContext context, @NonNull DeleteMessageDelayMessage message) {
 		log.warn("Failed to handle message", throwable);
 		
-		var retry = Optional.ofNullable(header.get(amqpNameProvider.getXRedeliverCountRemainingHeader()))
+		var retry = Optional.ofNullable(context.get("retry"))
 				.filter(Integer.class::isInstance)
 				.map(Integer.class::cast)
 				.orElse(0);
@@ -61,7 +53,7 @@ public class DelayedMessageHandler{
 			return null;
 		}
 		
-		rabbitService.scheduleMessage(RETRY_DELAY, retry - 1, message);
+		quartzService.scheduleMessage(RETRY_DELAY, retry - 1, message);
 		return null;
 	}
 	
@@ -81,7 +73,7 @@ public class DelayedMessageHandler{
 	@NonNull
 	private CompletableFuture<Message> deleteThread(@NonNull Message m){
 		return Optional.ofNullable(m.getStartedThread())
-				.map(t -> JDAWrappers.delete(t).submit().thenApply(empty -> m))
+				.map(t -> JDAWrappers.delete(t).submit().thenApply(_ -> m))
 				.orElseGet(() -> CompletableFuture.completedFuture(m));
 	}
 }

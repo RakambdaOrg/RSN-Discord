@@ -1,6 +1,6 @@
 package fr.rakambda.rsndiscord.spring.jda.wrappers.message;
 
-import fr.rakambda.rsndiscord.spring.amqp.RabbitService;
+import fr.rakambda.rsndiscord.spring.amqp.QuartzService;
 import fr.rakambda.rsndiscord.spring.amqp.message.DeleteMessageDelayMessage;
 import fr.rakambda.rsndiscord.spring.jda.ActionWrapper;
 import net.dv8tion.jda.api.entities.Message;
@@ -15,15 +15,15 @@ public abstract class MessageWrapper<T extends RestAction<Message>> extends Acti
 	}
 	
 	@NonNull
-	public CompletableFuture<Message> submitAndDelete(@NonNull Duration duration, @NonNull RabbitService rabbitService){
+	public CompletableFuture<Message> submitAndDelete(@NonNull Duration duration, @NonNull QuartzService quartzService){
 		return submit().thenApply(m -> {
-			rabbitService.scheduleMessage(duration, new DeleteMessageDelayMessage(m.getChannel().getIdLong(), m.getIdLong()));
+			quartzService.scheduleMessage(duration, new DeleteMessageDelayMessage(m.getChannel().getIdLong(), m.getIdLong()));
 			return m;
 		});
 	}
 	
 	@NonNull
-	public CompletableFuture<Message> submitAndDelete(long minutes, @NonNull RabbitService rabbitService){
-		return submitAndDelete(Duration.ofMinutes(minutes), rabbitService);
+	public CompletableFuture<Message> submitAndDelete(long minutes, @NonNull QuartzService quartzService){
+		return submitAndDelete(Duration.ofMinutes(minutes), quartzService);
 	}
 }

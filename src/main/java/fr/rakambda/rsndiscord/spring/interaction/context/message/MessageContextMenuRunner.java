@@ -1,7 +1,7 @@
 package fr.rakambda.rsndiscord.spring.interaction.context.message;
 
 import fr.rakambda.rsndiscord.spring.BotException;
-import fr.rakambda.rsndiscord.spring.amqp.RabbitService;
+import fr.rakambda.rsndiscord.spring.amqp.QuartzService;
 import fr.rakambda.rsndiscord.spring.interaction.context.message.api.IExecutableMessageContextMenu;
 import fr.rakambda.rsndiscord.spring.interaction.context.message.api.IExecutableMessageContextMenuGuild;
 import fr.rakambda.rsndiscord.spring.interaction.context.message.api.IExecutableMessageContextMenuUser;
@@ -24,13 +24,13 @@ import java.util.concurrent.CompletableFuture;
 public class MessageContextMenuRunner {
 	private final MessageContextMenuService messageContextMenuService;
 	private final LocalizationService localizationService;
-	private final RabbitService rabbitService;
+	private final QuartzService quartzService;
 	
 	@Autowired
-	public MessageContextMenuRunner(MessageContextMenuService messageContextMenuService, LocalizationService localizationService, RabbitService rabbitService){
+	public MessageContextMenuRunner(MessageContextMenuService messageContextMenuService, LocalizationService localizationService, QuartzService quartzService){
 		this.messageContextMenuService = messageContextMenuService;
 		this.localizationService = localizationService;
-		this.rabbitService = rabbitService;
+		this.quartzService = quartzService;
 	}
 	
 	public void execute(@NonNull MessageContextInteractionEvent event){
@@ -82,7 +82,7 @@ public class MessageContextMenuRunner {
 		var message = "Failed to execute message context menu %s: %s".formatted(event.getName(), exceptionMessage);
 		
 		if(event.isAcknowledged()){
-			JDAWrappers.edit(event, message).submitAndDelete(5, rabbitService);
+			JDAWrappers.edit(event, message).submitAndDelete(5, quartzService);
 		}
 		else{
 			JDAWrappers.reply(event, message).ephemeral(true).submit();

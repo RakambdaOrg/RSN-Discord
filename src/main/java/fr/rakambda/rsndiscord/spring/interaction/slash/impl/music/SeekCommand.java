@@ -1,6 +1,6 @@
 package fr.rakambda.rsndiscord.spring.interaction.slash.impl.music;
 
-import fr.rakambda.rsndiscord.spring.amqp.RabbitService;
+import fr.rakambda.rsndiscord.spring.amqp.QuartzService;
 import fr.rakambda.rsndiscord.spring.audio.AudioServiceFactory;
 import fr.rakambda.rsndiscord.spring.audio.exception.NoTrackPlayingException;
 import fr.rakambda.rsndiscord.spring.interaction.slash.api.IExecutableSlashCommandGuild;
@@ -29,13 +29,13 @@ public class SeekCommand implements IExecutableSlashCommandGuild{
 	
 	private final AudioServiceFactory audioServiceFactory;
 	private final LocalizationService localizationService;
-	private final RabbitService rabbitService;
+	private final QuartzService quartzService;
 	
 	@Autowired
-	public SeekCommand(AudioServiceFactory audioServiceFactory, LocalizationService localizationService, RabbitService rabbitService){
+	public SeekCommand(AudioServiceFactory audioServiceFactory, LocalizationService localizationService, QuartzService quartzService){
 		this.audioServiceFactory = audioServiceFactory;
 		this.localizationService = localizationService;
-		this.rabbitService = rabbitService;
+		this.quartzService = quartzService;
 	}
 	
 	@Override
@@ -60,13 +60,13 @@ public class SeekCommand implements IExecutableSlashCommandGuild{
 		if(time < 0){
 			var content = localizationService.translate(locale, "music.invalid-format");
 			return deferred.thenCompose(empty -> JDAWrappers.edit(event, content)
-					.submitAndDelete(5, rabbitService));
+					.submitAndDelete(5, quartzService));
 		}
 		
 		audioServiceFactory.get(guild).getTrackScheduler().seek(time);
 		var content = localizationService.translate(locale, "music.seeked", event.getUser().getAsMention(), time);
 		return deferred.thenCompose(empty -> JDAWrappers.edit(event, content)
-				.submitAndDelete(5, rabbitService));
+				.submitAndDelete(5, quartzService));
 	}
 	
 	private static long parseTime(@NonNull String time){

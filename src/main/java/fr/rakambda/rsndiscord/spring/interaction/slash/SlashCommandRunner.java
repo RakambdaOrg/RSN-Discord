@@ -1,7 +1,7 @@
 package fr.rakambda.rsndiscord.spring.interaction.slash;
 
 import fr.rakambda.rsndiscord.spring.BotException;
-import fr.rakambda.rsndiscord.spring.amqp.RabbitService;
+import fr.rakambda.rsndiscord.spring.amqp.QuartzService;
 import fr.rakambda.rsndiscord.spring.interaction.exception.NotAllowedException;
 import fr.rakambda.rsndiscord.spring.interaction.exception.NotAvailableInGuildException;
 import fr.rakambda.rsndiscord.spring.interaction.exception.NotAvailableInUserException;
@@ -25,13 +25,13 @@ import java.util.concurrent.CompletableFuture;
 public class SlashCommandRunner{
 	private final SlashCommandService slashCommandService;
 	private final LocalizationService localizationService;
-	private final RabbitService rabbitService;
+	private final QuartzService quartzService;
 	
 	@Autowired
-	public SlashCommandRunner(SlashCommandService slashCommandService, LocalizationService localizationService, RabbitService rabbitService){
+	public SlashCommandRunner(SlashCommandService slashCommandService, LocalizationService localizationService, QuartzService quartzService){
 		this.slashCommandService = slashCommandService;
 		this.localizationService = localizationService;
-		this.rabbitService = rabbitService;
+		this.quartzService = quartzService;
 	}
 	
 	public void execute(@NonNull SlashCommandInteractionEvent event){
@@ -83,7 +83,7 @@ public class SlashCommandRunner{
 		var message = "Failed to execute command %s: %s".formatted(event.getFullCommandName(), exceptionMessage);
 		
 		if(event.isAcknowledged()){
-			JDAWrappers.edit(event, message).submitAndDelete(5, rabbitService);
+			JDAWrappers.edit(event, message).submitAndDelete(5, quartzService);
 		}
 		else{
 			JDAWrappers.reply(event, message).ephemeral(true).submit();

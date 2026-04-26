@@ -1,7 +1,7 @@
 package fr.rakambda.rsndiscord.spring.interaction.modal;
 
 import fr.rakambda.rsndiscord.spring.BotException;
-import fr.rakambda.rsndiscord.spring.amqp.RabbitService;
+import fr.rakambda.rsndiscord.spring.amqp.QuartzService;
 import fr.rakambda.rsndiscord.spring.interaction.exception.NotAvailableInGuildException;
 import fr.rakambda.rsndiscord.spring.interaction.exception.NotAvailableInUserException;
 import fr.rakambda.rsndiscord.spring.interaction.modal.api.IExecutableModal;
@@ -23,13 +23,13 @@ import java.util.concurrent.CompletableFuture;
 public class ModalRunner{
 	private final ModalService modalService;
 	private final LocalizationService localizationService;
-	private final RabbitService rabbitService;
+	private final QuartzService quartzService;
 	
 	@Autowired
-	public ModalRunner(ModalService modalService, LocalizationService localizationService, RabbitService rabbitService){
+	public ModalRunner(ModalService modalService, LocalizationService localizationService, QuartzService quartzService){
 		this.modalService = modalService;
 		this.localizationService = localizationService;
-		this.rabbitService = rabbitService;
+		this.quartzService = quartzService;
 	}
 	
 	public void execute(@NonNull ModalInteraction event){
@@ -71,7 +71,7 @@ public class ModalRunner{
 		var message = "Failed to execute modal %s: %s".formatted(event.getModalId(), exceptionMessage);
 		
 		if(event.isAcknowledged()){
-			JDAWrappers.edit(event, message).submitAndDelete(5, rabbitService);
+			JDAWrappers.edit(event, message).submitAndDelete(5, quartzService);
 		}
 		else{
 			JDAWrappers.reply(event, message).ephemeral(true).submit();
