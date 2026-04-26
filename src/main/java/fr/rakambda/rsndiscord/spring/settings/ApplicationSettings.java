@@ -18,7 +18,6 @@ public class ApplicationSettings{
 	private boolean development;
 	private List<Long> developmentGuilds = new LinkedList<>();
 	private String botToken;
-	private String amqpPrefix;
 	@NestedConfigurationProperty
 	private AnilistSettings anilist;
 	@NestedConfigurationProperty
