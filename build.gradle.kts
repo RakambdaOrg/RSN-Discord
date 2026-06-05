@@ -90,7 +90,7 @@ springBoot {
 
 jib {
     from {
-        image = "eclipse-temurin:26-jdk-alpine"
+        image = "eclipse-temurin:26-jdk"
         platforms {
             platform {
                 os = "linux"
