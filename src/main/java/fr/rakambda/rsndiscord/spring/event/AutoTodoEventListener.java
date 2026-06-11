@@ -16,7 +16,6 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import java.util.Objects;
 
@@ -36,7 +35,7 @@ public class AutoTodoEventListener extends ListenerAdapter{
 	private final ChannelRepository channelRepository;
 	
 	@Autowired
-	public AutoTodoEventListener(@Lazy ChannelRepository channelRepository){
+	public AutoTodoEventListener(ChannelRepository channelRepository){
 		this.channelRepository = channelRepository;
 	}
 	
