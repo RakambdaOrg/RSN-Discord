@@ -7,7 +7,6 @@ lp_cross-version = "0.1.1"
 opus-version = "1.1.1"
 jdave-version = "0.1.8"
 
-names-version = "0.54.0"
 jib-version = "3.5.4"
 sptringboot-version = "4.0.6"
 sptringboot-dm-version = "1.1.7"
@@ -33,7 +32,6 @@ lavalink = ["lavaplayer", "lavaplayer-youtube-v2", "lpCross", "lavasrc", "lavasr
 jdave = ["jdave-api", "jdave-native-linux-amd", "jdave-native-linux-arm", "jdave-native-windows", "jdave-native-macos"]
 
 [plugins]
-names = { id = "com.github.ben-manes.versions", version.ref = "names-version" }
 jib = { id = "com.google.cloud.tools.jib", version.ref = "jib-version" }
 sptringboot = { id = "org.springframework.boot", version.ref = "sptringboot-version" }
 sptringbootDependencyManagement = { id = "io.spring.dependency-management", version.ref = "sptringboot-dm-version" }

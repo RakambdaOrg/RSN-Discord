@@ -2,7 +2,6 @@ plugins {
     idea
     java
     application
-    alias(libs.plugins.names)
     alias(libs.plugins.jib)
     alias(libs.plugins.sptringbootDependencyManagement)
     alias(libs.plugins.sptringboot)
