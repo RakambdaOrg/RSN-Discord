@@ -1,5 +1,6 @@
 package fr.rakambda.rsndiscord.spring.json;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -32,7 +33,7 @@ public class JacksonConfiguration{
 				.visibility(GETTER, NONE)
 				.visibility(SETTER, NONE)
 				.visibility(CREATOR, NONE)
-				.serializationInclusion(NON_NULL)
+				.defaultPropertyInclusion(JsonInclude.Value.construct(NON_NULL, NON_NULL))
 				.withConfigOverride(List.class, o -> o.setSetterInfo(JsonSetter.Value.forValueNulls(AS_EMPTY)))
 				.withConfigOverride(Set.class, o -> o.setSetterInfo(JsonSetter.Value.forValueNulls(AS_EMPTY)))
 				.build();
