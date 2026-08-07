@@ -17,6 +17,7 @@ public class TraktGroupCommand implements IRegistrableSlashCommand{
 				.setLocalizationFunction(localizationFunction)
 				.addSubcommands(
 						new SubcommandData("register", "Register an account"),
+						new SubcommandData("refresh", "Refresh user token"),
 						new SubcommandData("unregister", "Unregister an account")
 				);
 	}
