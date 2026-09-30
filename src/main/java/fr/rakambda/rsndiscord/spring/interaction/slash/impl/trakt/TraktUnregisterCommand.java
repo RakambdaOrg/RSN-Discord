@@ -37,13 +37,13 @@ public class TraktUnregisterCommand implements IExecutableSlashCommandGuild{
 	@Override
 	@NonNull
 	public CompletableFuture<?> executeGuild(@NonNull SlashCommandInteraction event, @NonNull Guild guild, @NonNull Member member){
+		var deferred = event.deferReply(true).submit();
+		
 		traktRepository.findById(member.getIdLong())
 				.ifPresent(entity -> {
 					entity.setEnabled(false);
 					traktRepository.save(entity);
 				});
-		return JDAWrappers.reply(event, "Done")
-				.ephemeral(true)
-				.submit();
+		return deferred.thenCompose(empty -> JDAWrappers.reply(event, "Done").submit());
 	}
 }
