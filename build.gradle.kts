@@ -73,8 +73,8 @@ repositories {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_26
-    targetCompatibility = JavaVersion.VERSION_26
+    sourceCompatibility = JavaVersion.VERSION_27
+    targetCompatibility = JavaVersion.VERSION_27
 }
 
 tasks.withType<JavaCompile>(){
@@ -89,7 +89,7 @@ springBoot {
 
 jib {
     from {
-        image = "eclipse-temurin:26-jdk"
+        image = "eclipse-temurin:27-jdk"
         platforms {
             platform {
                 os = "linux"
